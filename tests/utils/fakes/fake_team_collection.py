@@ -7,7 +7,6 @@ class FakeTeam(Team):
 
     def __init__(self, name):
         self.name = name
-        pass
 
 
 class FakeTeamCollection(TeamCollection):
@@ -25,4 +24,4 @@ class FakeTeamCollection(TeamCollection):
         if page is None:
             return self.teams
         else:
-            return self.teams[(page - 1)*per_page:page*per_page]
+            return self.teams[(page - 1) * per_page:page * per_page]

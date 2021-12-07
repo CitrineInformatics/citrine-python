@@ -98,22 +98,7 @@ class Project(Resource['Project']):
         self.team_id: Optional[UUID] = team_id
 
     def _post_dump(self, data: dict) -> dict:
-        non_empty_data = {}
-        for key, value in data.items():
-            if value is not None:
-                non_empty_data[key] = value
-
-        return non_empty_data
-
-    # def _post_dump(self, data: dict) -> dict:
-    #     if self.session._accounts_service_v3:
-    #         non_empty_data = {}
-    #         for key, value in data.items():
-    #             if value is not None:
-    #                 non_empty_data[key] = value
-    #         return non_empty_data
-    #     else:
-    #         return data
+        return {key: value for key, value in data.items() if value is not None}
 
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
@@ -276,7 +261,7 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         self.session.checked_post(
-            self._path() + f"/published-resources/{resource_type}/batch-publish",
+            f"{self._path()}/published-resources/{resource_type}/batch-publish",
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
@@ -301,7 +286,7 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         self.session.checked_post(
-            self._path() + f"/published-resources/{resource_type}/batch-un-publish",
+            f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
@@ -325,9 +310,9 @@ class Project(Resource['Project']):
 
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
-        base_url = f'/teams/{self.team_id}' + self._path()
+        base_url = f'/teams/{self.team_id}{self._path()}'
         self.session.checked_post(
-            base_url + f'/outside-resources/{resource_type}/batch-pull-in',
+            f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
@@ -368,7 +353,7 @@ class Project(Resource['Project']):
             resource_dict = {"type": resource_type, "id": resource_id}
         if resource_dict is None:
             raise ValueError("Must specify resource to share or specify the resource type and id")
-        return self.session.post_resource(self._path() + "/share", {
+        return self.session.post_resource(f"{self._path()}/share", {
             "project_id": str(project_id),
             "resource": resource_dict
         })
@@ -398,7 +383,7 @@ class Project(Resource['Project']):
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
-            self.session.checked_post(self._path() + "/transfer-resource", {
+            self.session.checked_post(f"{self._path()}/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
                 "resource": resource.access_control_dict()})
         except AttributeError:  # If _resource_type is not implemented
@@ -425,7 +410,7 @@ class Project(Resource['Project']):
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
-            self.session.checked_post(self._path() + "/make-public", {
+            self.session.checked_post(f"{self._path()}/make-public", {
                 "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
@@ -451,7 +436,7 @@ class Project(Resource['Project']):
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available, you may be looking for project.un_publish")
         try:
-            self.session.checked_post(self._path() + "/make-private", {
+            self.session.checked_post(f"{self._path()}/make-private", {
                 "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
@@ -471,7 +456,7 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available")
-        email = self.session.get_resource(self._path() + "/creator")["email"]
+        email = self.session.get_resource(f"{self._path()}/creator")["email"]
         return email
 
     def owned_dataset_ids(self) -> List[str]:
@@ -486,7 +471,7 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available")
-        dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
+        dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
         return dataset_ids
 
     def owned_table_ids(self) -> List[str]:
@@ -501,7 +486,7 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available")
-        table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
+        table_ids = self.session.get_resource(f"{self._path()}/table_ids")["table_ids"]
         return table_ids
 
     def owned_table_config_ids(self) -> List[str]:
@@ -516,7 +501,7 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available")
-        result = self.session.get_resource(self._path() + "/table_definition_ids")
+        result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
     def list_members(self) -> List[ProjectMember]:
@@ -531,7 +516,7 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             raise NotImplementedError("Not available, please use team.list_members")
-        members = self.session.get_resource(self._path() + "/users")["users"]
+        members = self.session.get_resource(f"{self._path()}/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
     def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
@@ -620,7 +605,7 @@ class Project(Resource['Project']):
             to 2 minutes. Note that this number has no effect on the underlying job
             itself, which can also time out server-side.
         polling_delay: float
-            How long to delay between each polling retry attempt.
+            How long to delay between each polling retry attempt (in seconds).
 
         Returns
         -------
@@ -652,10 +637,7 @@ class ProjectCollection(Collection[Project]):
 
     @property
     def _api_version(self):
-        if self.session._accounts_service_v3:
-            return 'v3'
-        else:
-            return 'v1'
+        return 'v3' if self.session._accounts_service_v3 else 'v1'
 
     def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
         self.session = session

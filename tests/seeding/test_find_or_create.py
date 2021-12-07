@@ -190,7 +190,7 @@ def test_find_or_create_team_exist(team_collection):
 
 
 def test_find_or_create_raise_error_team_no_exist(team_collection):
-    # test when tea, doesn't exist and raise_error flag is on
+    # test when team doesn't exist and raise_error flag is on
     with pytest.raises(ValueError):
         find_or_create_team(team_collection=team_collection(), team_name=absent_name, raise_error=True)
 

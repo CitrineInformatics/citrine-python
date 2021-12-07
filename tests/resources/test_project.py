@@ -74,7 +74,7 @@ def collection(session) -> ProjectCollection:
 
 
 @pytest.fixture
-def collection_v3(session_v3,) -> ProjectCollection:
+def collection_v3(session_v3) -> ProjectCollection:
     return ProjectCollection(session_v3, team_id=uuid.uuid4())
 
 
