@@ -17,21 +17,21 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     ----------
     name: str
         the name of the workflow
-    design_space_id: UUID
+    design_space_id: Optional[UUID]
         the UUID corresponding to the design space to use
     processor_id: Optional[UUID]
         the UUID corresponding to the processor to use
         if none is provided, one matching your design space will be automatically generated
-    predictor_id: UUID
+    predictor_id: Optional[UUID]
         the UUID corresponding to the predictor to use
     description: Optional[str]
         a description of the workflow
 
     """
 
-    design_space_id = properties.UUID('design_space_id')
+    design_space_id = properties.Optional(properties.UUID, 'design_space_id')
     processor_id = properties.Optional(properties.UUID, 'processor_id')
-    predictor_id = properties.UUID('predictor_id')
+    predictor_id = properties.Optional(properties.UUID, 'predictor_id')
     branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id')
     """:Optional[UUID]: Unique ID of the branch that contains this workflow."""
 
@@ -42,9 +42,9 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     def __init__(self,
                  name: str,
                  *,
-                 design_space_id: UUID,
-                 processor_id: Optional[UUID],
-                 predictor_id: UUID,
+                 design_space_id: Optional[UUID] = None,
+                 processor_id: Optional[UUID] = None,
+                 predictor_id: Optional[UUID] = None,
                  description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id

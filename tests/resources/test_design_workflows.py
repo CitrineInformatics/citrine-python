@@ -1,10 +1,14 @@
 import uuid
+from itertools import combinations
 
 import pytest
 
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from tests.utils.session import FakeSession, FakeCall
+
+
+OPTIONAL_ARGS = ("processor_id", "predictor_id", "design_space_id")
 
 
 @pytest.fixture
@@ -30,9 +34,17 @@ def collection(collection_without_branch) -> DesignWorkflowCollection:
 
 
 @pytest.fixture
-def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> DesignWorkflow:
+def workflow(collection, design_workflow_dict) -> DesignWorkflow:
     workflow = collection.build(design_workflow_dict)
     workflow.uid = uuid.uuid4()
+    return workflow
+
+
+@pytest.fixture
+def workflow_minimal(collection, workflow) -> DesignWorkflow:
+    workflow.processor_id = None
+    workflow.predictor_id = None
+    workflow.design_space_id = None
     return workflow
 
 
@@ -57,7 +69,15 @@ def test_basic_methods(workflow, collection, design_workflow_dict):
     assert workflow.design_executions.project_id == workflow.project_id
 
 
-def test_register(session, workflow, collection):
+@pytest.mark.parametrize("optional_args",
+        [args for k in range(0, len(OPTIONAL_ARGS) + 1) for args in combinations(OPTIONAL_ARGS, k)])
+def test_register(session, workflow_minimal, collection, optional_args):
+    workflow = workflow_minimal
+
+    # Set a random UUID for all optional args selected for this run.
+    for arg in optional_args:
+        setattr(workflow, arg, uuid.uuid4())
+
     # Given
     post_dict = {**workflow.dump(), "branch_id": str(collection.branch_id)}
     session.set_response({**post_dict, 'status_description': 'status'})
@@ -127,7 +147,7 @@ def test_register_conflicting_branches(session, workflow, collection):
     assert_workflow(new_workflow, workflow)
 
 
-def test_only_model_has_branch(session, workflow, collection_without_branch):
+def test_register_only_model_has_branch(session, workflow, collection_without_branch):
     ### Should match the result when neither has a branch ID
 
     # Given
