@@ -1,5 +1,5 @@
+import itertools
 import uuid
-from itertools import combinations
 
 import pytest
 
@@ -8,7 +8,8 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from tests.utils.session import FakeSession, FakeCall
 
 
-OPTIONAL_ARGS = ("processor_id", "predictor_id", "design_space_id")
+PARTIAL_DW_ARGS = ("predictor_id", "design_space_id")
+OPTIONAL_ARGS = PARTIAL_DW_ARGS + ("processor_id",)
 
 
 @pytest.fixture
@@ -48,6 +49,10 @@ def workflow_minimal(collection, workflow) -> DesignWorkflow:
     return workflow
 
 
+def all_combination_lengths(vals, maxlen=None):
+    maxlen = maxlen or len(vals)
+    return [args for k in range(0, maxlen + 1) for args in itertools.combinations(vals, k)]
+
 def workflow_path(collection):
     return f'/projects/{collection.project_id}/design-workflows'
 
@@ -69,8 +74,7 @@ def test_basic_methods(workflow, collection, design_workflow_dict):
     assert workflow.design_executions.project_id == workflow.project_id
 
 
-@pytest.mark.parametrize("optional_args",
-        [args for k in range(0, len(OPTIONAL_ARGS) + 1) for args in combinations(OPTIONAL_ARGS, k)])
+@pytest.mark.parametrize("optional_args", all_combination_lengths(OPTIONAL_ARGS))
 def test_register(session, workflow_minimal, collection, optional_args):
     workflow = workflow_minimal
 
@@ -177,6 +181,19 @@ def test_register_only_model_has_branch(session, workflow, collection_without_br
     assert workflow.branch_id == old_branch_id
     assert new_workflow.branch_id == new_branch_id
     assert_workflow(new_workflow, workflow)
+
+
+@pytest.mark.parametrize("partial_args",
+                         all_combination_lengths(PARTIAL_DW_ARGS, len(PARTIAL_DW_ARGS) - 1))
+def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch, partial_args):
+    workflow = workflow_minimal
+
+    # Set a random UUID for all optional args selected for this run.
+    for arg in partial_args:
+        setattr(workflow, arg, uuid.uuid4())
+
+    with pytest.raises(ValueError):
+        collection_without_branch.register(workflow)
 
 
 def test_archive(workflow, collection):

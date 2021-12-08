@@ -44,6 +44,10 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_id is None:
+            if model.predictor_id is None or model.design_space_id is None:
+                raise ValueError("A design workflow without a predictor ID and/or a design space "
+                                 "ID must be registered to a specific branch.")
+
             # To create a design workflow without providing a branch ID, we need to hit the v1
             # API, then do a GET to grab the ID of the branch that was created automatically.
             v1 = _DesignWorkflowCollectionV1(self.project_id, self.session)
