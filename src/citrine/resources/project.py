@@ -11,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
+from citrine._utils.functions import format_escaped_url, use_teams
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -236,6 +236,7 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
+    @use_teams("project.make_public", True)
     def publish(self, *, resource: Resource):
         """
         Publish a resource from a project to its encompassing team.
@@ -255,9 +256,6 @@ class Project(Resource['Project']):
             Returns ``True`` if resource successfully published
 
         """
-        if not self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.make_public")
-
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         self.session.checked_post(
@@ -265,6 +263,7 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
+    @use_teams("project.make_private", True)
     def un_publish(self, *, resource: Resource):
         """
         Un-publish a resource from a project from its encompassing team.
@@ -280,9 +279,6 @@ class Project(Resource['Project']):
             Returns ``True`` if resource successfully un-published
 
         """
-        if not self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.make_private")
-
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         self.session.checked_post(
@@ -290,6 +286,7 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
+    @use_teams("project.make_public", True)
     def pull_in_resource(self, *, resource: Resource):
         """
         Pull in a public resource from this project's team.
@@ -305,9 +302,6 @@ class Project(Resource['Project']):
             Returns ``True`` if resource successfully pulled in
 
         """
-        if not self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.make_public")
-
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         base_url = f'/teams/{self.team_id}{self._path()}'
@@ -316,6 +310,7 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
+    @use_teams("project.publish")
     def share(self, *,
               resource: Optional[Resource] = None,
               project_id: Optional[Union[str, UUID]] = None,
@@ -339,8 +334,6 @@ class Project(Resource['Project']):
             The id of the resource to share
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.publish")
         resource_dict = None
         if resource is not None:
             resource_dict = resource.access_control_dict()
@@ -358,6 +351,7 @@ class Project(Resource['Project']):
             "resource": resource_dict
         })
 
+    @use_teams("project.publish")
     def transfer_resource(self, *, resource: Resource,
                           receiving_project_uid: Union[str, UUID]) -> bool:
         """
@@ -380,8 +374,6 @@ class Project(Resource['Project']):
             Returns ``True`` upon successful resource transfer.
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(f"{self._path()}/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
@@ -392,6 +384,7 @@ class Project(Resource['Project']):
 
         return True
 
+    @use_teams("project.publish")
     def make_public(self, resource: Resource) -> bool:
         """
         Grant public access to a resource owned by this project.
@@ -407,8 +400,6 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(f"{self._path()}/make-public", {
                 "resource": resource.access_control_dict()
@@ -418,6 +409,7 @@ class Project(Resource['Project']):
                                f"cannot be made public")
         return True
 
+    @use_teams("project.un_publish")
     def make_private(self, resource: Resource) -> bool:
         """
         Remove public access for a resource owned by this project.
@@ -433,8 +425,6 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, you may be looking for project.un_publish")
         try:
             self.session.checked_post(f"{self._path()}/make-private", {
                 "resource": resource.access_control_dict()
@@ -504,6 +494,7 @@ class Project(Resource['Project']):
         result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
+    @use_teams("team.list_members")
     def list_members(self) -> List[ProjectMember]:
         """
         List all of the members in the current project.
@@ -514,11 +505,10 @@ class Project(Resource['Project']):
             The members of the current project
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, please use team.list_members")
         members = self.session.get_resource(f"{self._path()}/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
+    @use_teams("team.update_user_action")
     def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
         Update a User's role and action permissions in the Project.
@@ -533,12 +523,11 @@ class Project(Resource['Project']):
             Returns ``True`` if user role successfully updated
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, please use team.update_user_action")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': role, 'actions': actions})
         return True
 
+    @use_teams("team.add_user")
     def add_user(self, user_uid: Union[str, UUID]):
         """
         Add a User to a Project.
@@ -552,12 +541,11 @@ class Project(Resource['Project']):
             Returns ``True`` if user successfully added
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, please use team.add_user")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
 
+    @use_teams("team.remove_user")
     def remove_user(self, user_uid: Union[str, UUID]) -> bool:
         """
         Remove a User from a Project.
@@ -568,8 +556,6 @@ class Project(Resource['Project']):
             Returns ``True`` if user successfully removed
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available, please use team.remove_user")
         self.session.checked_delete(
             self._path() + format_escaped_url("/users/{}", user_uid)
         )
@@ -667,7 +653,7 @@ class ProjectCollection(Collection[Project]):
     def _register_in_team(self, name: str, *, description: Optional[str] = None):
         if self.team_id is None:
             raise NotImplementedError("Please use team.projects")
-        path = f'teams/{self.team_id}/projects'
+        path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
         project = Project(name, description=description)
         try:
             data = self.session.post_resource(path, project.dump(), version=self._api_version)

@@ -73,8 +73,8 @@ def project_collection() -> Callable[[bool], ProjectCollection]:
 @pytest.fixture
 def team_collection() -> Callable[[bool], TeamCollection]:
 
-    def _make_team(search_implemented: bool = True):
-        teams = FakeTeamCollection(search_implemented)
+    def _make_team():
+        teams = FakeTeamCollection(True)
         for i in range(0, 5):
             teams.register("team " + str(i))
         for i in range(0, 2):

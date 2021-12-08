@@ -85,10 +85,10 @@ def test_string_representation(project):
 def test_share_post_content_v3(project_v3):
     # Given
     dataset_id = str(uuid.uuid4())
-    other_team_id = uuid.uuid4()
+    other_project_id = uuid.uuid4()
 
     with pytest.raises(NotImplementedError):
-        project_v3.share(project_id=other_team_id, resource_type='DATASET', resource_id=dataset_id)
+        project_v3.share(project_id=other_project_id, resource_type='DATASET', resource_id=dataset_id)
 
 
 def test_share_post_content(project, session):
@@ -192,13 +192,12 @@ def test_pull_in_resource_v3(project_v3, session_v3):
     assert 1 == session_v3.num_calls
     expected_call = FakeCall(
         method='POST',
-        path='/teams/{}/projects/{}/outside-resources/{}/batch-pull-in'.format(project_v3.team_id, project_v3.uid, 'DATASET'),
+        path=f'/teams/{project_v3.team_id}/projects/{project_v3.uid}/outside-resources/DATASET/batch-pull-in',
         json={
             'ids': [dataset_id]
         }
     )
     assert expected_call == session_v3.last_call
-
 
 
 def test_un_publish_resource(project, session):

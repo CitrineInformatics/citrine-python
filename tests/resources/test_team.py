@@ -57,6 +57,7 @@ def test_string_representation(team):
 
 def test_team_project_session(team):
     assert team.session == team.projects.session
+    assert team.uid == team.projects.team_id
 
 
 def test_team_registration(collection: TeamCollection, session):
