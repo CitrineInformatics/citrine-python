@@ -85,8 +85,12 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
 
-        The uids of the input data concepts resources are updated with their on-platform uids.
-        This supports storing an object that has a reference to an object that doesn't have a uid.
+        If the GEMD objects have no UIDs, Citrine IDs will be assigned to them prior to passing
+        them on to the server.  This is required as otherwise there is no way to determine how
+        objects are related to each other.  When the registered objects are returned from the
+        server, the input GEMD objects will be updated with whichever uids & _citr_auto:: tags are
+        on the returned objects.  This means GEMD objects that already exist on the server will
+        be updated with all their on-platform uids and tags.
 
         Parameters
         ----------

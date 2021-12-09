@@ -503,18 +503,26 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      dry_run=False,
                      status_bar=False) -> List[ResourceType]:
         """
-        [ALPHA] Create or update each model in models.
+        Register multiple GEMD objects to each of their appropriate collections.
 
-        This method has the same behavior as `register`, except that all no models will be
-        written if any one of them is invalid.
+        Does so in an order that is guaranteed to store all linked items before the item that
+        references them.
 
-        Using this method should yield significant improvements to write speed over separate
-        calls to `register`.
+        If the GEMD objects have no UIDs, Citrine IDs will be assigned to them prior to passing
+        them on to the server.  This is required as otherwise there is no way to determine how
+        objects are related to each other.  When the registered objects are returned from the
+        server, the input GEMD objects will be updated with whichever uids & _citr_auto:: tags are
+        on the returned objects.  This means GEMD objects that already exist on the server will
+        be updated with all their on-platform uids and tags.
+
+        This method has the same behavior as `register`, except that no models will be
+        written if any one of them is invalid.  Using this method should yield significant
+        improvements to write speed over separate calls to `register`.
 
         Parameters
         ----------
-        models: List[ResourceType]
-            The objects to be written.
+        models: List[DataConcepts]
+            The data model objects to register. Can be different types.
 
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
@@ -526,9 +534,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[ResourceType]
-            Each object model as it now exists in the database. The order and number of models
-            is guaranteed to be the same as originally specified.
+        List[DataConcepts]
+            Each object model as it now exists in the database.
 
         """
         from citrine._utils.batcher import Batcher
