@@ -515,7 +515,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         on the returned objects.  This means GEMD objects that already exist on the server will
         be updated with all their on-platform uids and tags.
 
-        This method has the same behavior as `register`, except that all no models will be
+        This method has the same behavior as `register`, except that no models will be
         written if any one of them is invalid.  Using this method should yield significant
         improvements to write speed over separate calls to `register`.
 
