@@ -12,7 +12,7 @@ class FakeTeam(Team):
 class FakeTeamCollection(TeamCollection):
 
     def __init__(self, session):
-        TeamCollection.__init__(self, session=session)
+        super().__init__(session=session)
         self.teams = []
 
     def register(self, name: str) -> Team:
