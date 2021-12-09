@@ -1,3 +1,4 @@
+import warnings
 from copy import deepcopy
 from typing import Callable, Union, Iterable, Optional, Tuple
 from uuid import UUID
@@ -8,7 +9,6 @@ from citrine._utils.functions import migrate_deprecated_argument, format_escaped
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
-
 
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
     """A collection of DesignWorkflows."""
@@ -44,6 +44,12 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_id is None:
+            # There are a number of contexts in which hitting design workflow endpoints without a
+            # branch ID is valid, so only this particular usage is deprecated.
+            msg = ('Creating a design workflow without a branch is deprecated as of 1.19.0 and '
+                   'will be removed in 2.0.0.')
+            warnings.warn(msg, category=DeprecationWarning)
+
             if model.predictor_id is None or model.design_space_id is None:
                 raise ValueError("A design workflow without a predictor ID and/or a design space "
                                  "ID must be registered to a specific branch.")
@@ -84,6 +90,18 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
+
+    def update(self, model: DesignWorkflow) -> DesignWorkflow:
+        if self.branch_id is not None:
+            if self.branch_id != model.branch_id:
+                raise ValueError('To move a design workflow to another branch, please use '
+                                 'Project.design_workflows.update')
+        # This protection is only necessary because branch_id must be optional until design
+        # workflow v1 is gone.
+        if model.branch_id is None:
+            raise ValueError('Cannot update a design workflow unless its branch_id is set.')
+
+        return super().update(model)
 
     def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
         """Archive a design workflow.
