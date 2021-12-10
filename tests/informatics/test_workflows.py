@@ -7,13 +7,14 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine._session import Session
 from citrine.informatics.workflows import DesignWorkflow, Workflow
 from citrine.resources.design_execution import DesignExecutionCollection
+from tests.utils.session import FakeSession
 
 
 @pytest.fixture
 def collection() -> DesignWorkflowCollection:
     return DesignWorkflowCollection(
         project_id=uuid4(),
-        session=Session(),
+        session=FakeSession(),
     )
 
 

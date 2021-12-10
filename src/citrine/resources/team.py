@@ -7,7 +7,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.user import User
+from citrine.resources import ProjectCollection
+from citrine.resources.user import User, UserCollection
 
 WRITE = "WRITE"
 READ = "READ"
@@ -28,7 +29,7 @@ class TeamMember:
         self.actions: List[TEAM_ACTIONS] = actions
 
     def __str__(self):
-        return '<TeamMember {!r} can {!s} of {!r}>' \
+        return '<TeamMember {!r} can {!s} in {!r}>' \
             .format(self.user.screen_name, self.actions, self.team.name)
 
 
@@ -122,8 +123,9 @@ class Team(Resource['Team']):
         """
         Add a User to a Team.
 
-        Adds User with ``READ`` action to the Team.
-        Use the ``update_user_action`` method to change a User's actions.
+        If no actions are specified, adds User with ``READ`` action to the Team.
+
+        Use the `update_user_action` method to change a User's actions.
 
         Parameters
         ----------
@@ -222,6 +224,11 @@ class Team(Resource['Team']):
         )
         return True
 
+    @property
+    def projects(self) -> ProjectCollection:
+        """Return a resource representing all visible projects in this team."""
+        return ProjectCollection(self.session, team_id=self.uid)
+
 
 class TeamCollection(Collection[Team]):
     """
@@ -282,6 +289,8 @@ class TeamCollection(Collection[Team]):
         """
         Create and upload new team.
 
+        Automatically grants user READ, WRITE, and SHARE access to this team.
+
         Parameters
         ----------
         name: str
@@ -290,4 +299,7 @@ class TeamCollection(Collection[Team]):
             Long-form description of the team to be created.
 
         """
-        return super().register(Team(name, description=description))
+        team = super().register(Team(name, description=description))
+        user_id = UserCollection(self.session).me().uid
+        team.update_user_action(user_id=user_id, actions=[READ, WRITE, SHARE])
+        return team
