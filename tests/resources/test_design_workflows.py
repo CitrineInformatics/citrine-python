@@ -53,8 +53,11 @@ def all_combination_lengths(vals, maxlen=None):
     maxlen = maxlen or len(vals)
     return [args for k in range(0, maxlen + 1) for args in itertools.combinations(vals, k)]
 
-def workflow_path(collection):
-    return f'/projects/{collection.project_id}/design-workflows'
+def workflow_path(collection, workflow=None):
+    path = f'/projects/{collection.project_id}/design-workflows'
+    if workflow:
+        path = f'{path}/{workflow.uid}'
+    return path
 
 
 def assert_workflow(actual, expected, *, include_branch=False):
@@ -119,7 +122,7 @@ def test_register_without_branch(session, workflow, collection_without_branch):
         json=post_dict)
     expected_call_get_branch = FakeCall(
         method='GET',
-        path=f'{workflow_path(collection_without_branch)}/{workflow.uid}')
+        path=workflow_path(collection_without_branch, workflow))
     assert session.calls == [expected_call_create, expected_call_get_branch]
     assert collection_without_branch.branch_id is None
     assert workflow.branch_id is None
@@ -175,7 +178,7 @@ def test_register_only_model_has_branch(session, workflow, collection_without_br
         json=post_dict)
     expected_call_get_branch = FakeCall(
         method='GET',
-        path=f'{workflow_path(collection_without_branch)}/{workflow.uid}')
+        path=workflow_path(collection_without_branch, workflow))
     assert session.calls == [expected_call_create, expected_call_get_branch]
     assert collection_without_branch.branch_id is None
     assert workflow.branch_id == old_branch_id
@@ -239,3 +242,60 @@ def test_missing_project(design_workflow_dict):
 
     with pytest.raises(AttributeError):
         workflow.design_executions
+
+
+def test_update(session, workflow, collection_without_branch):
+    # Given
+    workflow.branch_id = uuid.uuid4()
+
+    post_dict = workflow.dump()
+    session.set_response({**post_dict, 'status_description': 'status'})
+
+    # When
+    new_workflow = collection_without_branch.update(workflow)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call = FakeCall(
+        method='PUT',
+        path=workflow_path(collection_without_branch, workflow),
+        json=post_dict)
+    assert session.last_call == expected_call
+    assert_workflow(new_workflow, workflow)
+
+
+def test_update_with_matching_branch_ids(session, workflow, collection):
+    # Given
+    workflow.branch_id = collection.branch_id
+
+    post_dict = workflow.dump()
+    session.set_response({**post_dict, 'status_description': 'status'})
+
+    # When
+    new_workflow = collection.update(workflow)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call = FakeCall(
+        method='PUT',
+        path=workflow_path(collection, workflow),
+        json=post_dict)
+    assert session.last_call == expected_call
+    assert_workflow(new_workflow, workflow)
+
+
+def test_update_with_mismatched_branch_ids(session, workflow, collection):
+    # Given
+    workflow.branch_id = uuid.uuid4()
+
+    # Then/When
+    with pytest.raises(ValueError):
+        collection.update(workflow)
+
+
+def test_update_model_missing_branch_id(session, workflow, collection_without_branch):
+    # Given
+
+    # Then/When
+    with pytest.raises(ValueError):
+        collection_without_branch.update(workflow)

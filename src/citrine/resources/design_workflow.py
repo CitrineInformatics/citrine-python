@@ -10,6 +10,7 @@ from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
 
+
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
     """A collection of DesignWorkflows."""
 
@@ -92,6 +93,23 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         return workflow
 
     def update(self, model: DesignWorkflow) -> DesignWorkflow:
+        """Update a design workflow.
+
+        Identifies the workflow by the model's uid. It must have a branch_id, and if this
+        collection also has a branch_id, they must match. Prefer updating a workflow through
+        Project.design_workflows.update.
+
+        Parameters
+        ----------
+        model: DesignWorkflow
+            The design workflow values that are desired, identified by the uid.
+
+        Return
+        -------
+        DesignWorkflow
+            The design workflow resulting from the update.
+
+        """
         if self.branch_id is not None:
             if self.branch_id != model.branch_id:
                 raise ValueError('To move a design workflow to another branch, please use '
