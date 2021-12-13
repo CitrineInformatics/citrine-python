@@ -14,6 +14,7 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url, use_teams
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
+from citrine.resources.branch import BranchCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
@@ -112,6 +113,11 @@ class Project(Resource['Project']):
         return ModuleCollection(self.uid, self.session)
 
     @property
+    def branches(self) -> BranchCollection:
+        """Return a resource representing all visible branches."""
+        return BranchCollection(self.uid, self.session)
+
+    @property
     def design_spaces(self) -> DesignSpaceCollection:
         """Return a resource representing all visible design spaces."""
         return DesignSpaceCollection(self.uid, self.session)
@@ -144,7 +150,7 @@ class Project(Resource['Project']):
     @property
     def design_workflows(self) -> DesignWorkflowCollection:
         """Return a collection representing all visible design workflows."""
-        return DesignWorkflowCollection(self.uid, self.session)
+        return DesignWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:

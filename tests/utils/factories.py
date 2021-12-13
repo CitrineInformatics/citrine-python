@@ -36,6 +36,13 @@ class ProjectDataFactory(factory.DictFactory):
     created_at = None
 
 
+class BranchDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    name = factory.Faker('company')
+    created_at = None
+    updated_at = None
+
+
 class UserDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     screen_name = factory.Faker('name')
