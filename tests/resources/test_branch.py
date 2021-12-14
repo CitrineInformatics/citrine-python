@@ -44,7 +44,7 @@ def collection(session) -> BranchCollection:
 
 @pytest.fixture
 def branch_path(collection) -> str:
-    return f'/projects/{collection.project_id}/design-workflow-branches'
+    return BranchCollection._path_template.format(project_id=collection.project_id)
 
 
 def test_str(branch):
@@ -168,3 +168,37 @@ def test_branch_get_design_workflows(branch):
 def test_branch_get_design_workflows_no_project_id(branch):
     with pytest.raises(AttributeError):
         branch.design_workflows
+
+
+def test_branch_archive(session, collection, branch, branch_path):
+    # When
+    collection.archive(branch.uid)
+
+    # Then
+    assert session.num_calls == 1
+    expected_path = f'{branch_path}/{branch.uid}/archive'
+    assert session.last_call == FakeCall(method='PUT', path=expected_path, json={})
+
+
+def test_branch_restore(session, collection, branch, branch_path):
+    # When
+    collection.restore(branch.uid)
+
+    # Then
+    assert session.num_calls == 1
+    expected_path = f'{branch_path}/{branch.uid}/restore'
+    assert session.last_call == FakeCall(method='PUT', path=expected_path, json={})
+
+
+def test_branch_list_archived(session, collection, branch, branch_path):
+    # Given
+    branch_count = 5
+    branches_data = BranchDataFactory.create_batch(branch_count)
+    session.set_response({'response': branches_data})
+
+    # When
+    branches = list(collection.list_archived())
+
+    # Then
+    assert session.num_calls == 1
+    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20})
