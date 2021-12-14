@@ -44,7 +44,7 @@ def collection(session) -> BranchCollection:
 
 @pytest.fixture
 def branch_path(collection) -> str:
-    return f'/projects/{collection.project_id}/design-workflow-branches'
+    return BranchCollection._path_template.format(project_id=collection.project_id)
 
 
 def test_str(branch):
@@ -52,10 +52,11 @@ def test_str(branch):
 
 
 def test_branch_build(collection, branch):
-    new_branch = collection.build(branch.dump())
+    branch_data = BranchDataFactory()
+    new_branch = collection.build(branch_data)
 
-    assert new_branch.name == branch.name
-    assert new_branch.created_at == branch.created_at
+    assert new_branch.name == branch_data["name"]
+    assert new_branch.archived == branch_data["archived"]
     assert new_branch.project_id == collection.project_id
 
 
@@ -94,7 +95,7 @@ def test_branch_register(session, collection, branch_path):
 def test_branch_get(session, collection, branch, branch_path):
     # Given
     branch_id = uuid.uuid4()
-    session.set_response(branch.dump())
+    session.set_response(BranchDataFactory())
 
     # When
     branch = collection.get(branch_id)
@@ -134,7 +135,8 @@ def test_branch_delete(session, collection, branch_path):
 def test_branch_update(session, collection, branch, branch_path):
     # Given
     branch.name = "NEW NAME"
-    session.set_response(branch.dump())
+    branch_data = BranchDataFactory(name=branch.name)
+    session.set_response(branch_data)
 
     # When
     updated_branch = collection.update(branch)
@@ -168,3 +170,47 @@ def test_branch_get_design_workflows(branch):
 def test_branch_get_design_workflows_no_project_id(branch):
     with pytest.raises(AttributeError):
         branch.design_workflows
+
+
+def test_branch_archive(session, collection, branch_path):
+    # Given
+    branch_id = uuid.uuid4()
+    session.set_response(BranchDataFactory(archived=True))
+
+    # When
+    archived_branch = collection.archive(branch_id)
+
+    # Then
+    assert session.num_calls == 1
+    expected_path = f'{branch_path}/{branch_id}/archive'
+    assert session.last_call == FakeCall(method='PUT', path=expected_path, json={})
+    assert archived_branch.archived is True
+
+
+def test_branch_restore(session, collection, branch_path):
+    # Given
+    branch_id = uuid.uuid4()
+    session.set_response(BranchDataFactory(archived=False))
+
+    # When
+    restored_branch = collection.restore(branch_id)
+
+    # Then
+    assert session.num_calls == 1
+    expected_path = f'{branch_path}/{branch_id}/restore'
+    assert session.last_call == FakeCall(method='PUT', path=expected_path, json={})
+    assert restored_branch.archived is False
+
+
+def test_branch_list_archived(session, collection, branch, branch_path):
+    # Given
+    branch_count = 5
+    branches_data = BranchDataFactory.create_batch(branch_count)
+    session.set_response({'response': branches_data})
+
+    # When
+    branches = list(collection.list_archived())
+
+    # Then
+    assert session.num_calls == 1
+    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20})
