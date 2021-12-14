@@ -48,7 +48,9 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             # There are a number of contexts in which hitting design workflow endpoints without a
             # branch ID is valid, so only this particular usage is deprecated.
             msg = ('Creating a design workflow without a branch is deprecated as of 1.19.0 and '
-                   'will be removed in 2.0.0.')
+                   'will be removed in 2.0.0. Branches are a concept introduced in the CP2 '
+                   'version of the Citrine Platform. To learn more, see our documentation at '
+                   'https://citrineinformatics.github.io/citrine-python/workflows/design_workflows.html#branches')  # noqa
             warnings.warn(msg, category=DeprecationWarning)
 
             if model.predictor_id is None or model.design_space_id is None:
