@@ -32,19 +32,23 @@ class Citrine:
                  host: str = None,
                  port: Optional[str] = None,
                  *,
-                 scheme: str = 'https'):
+                 scheme: str = None):
         if api_key is None:
             api_key = environ.get('CITRINE_API_KEY')
             if api_key is None:
                 raise ValueError("No API key passed and environmental "
                                  "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
-            warn("Creating a session with positional arguments other than refresh_token "
+            warn("Creating a session with positional arguments other than api_key "
                  "is deprecated; use keyword arguments to specify scheme, host and port.",
                  DeprecationWarning)
-            if scheme != 'https':
+            if scheme is None:
+                scheme = legacy_scheme
+            else:
                 raise ValueError("Specify legacy_scheme or scheme, not both.")
-            scheme = legacy_scheme
+        elif scheme is None:
+            scheme = 'https'
+
         if host is None:
             host = environ.get('CITRINE_API_HOST')
             if host is None:

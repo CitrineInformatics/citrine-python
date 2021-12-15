@@ -5,7 +5,7 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
-import warnings
+from warnings import warn
 
 import jwt
 import requests
@@ -38,7 +38,7 @@ class Session(requests.Session):
                  host: str = None,
                  port: Optional[str] = None,
                  *,
-                 scheme: str = 'https'):
+                 scheme: str = None):
         super().__init__()
         if refresh_token is None:
             refresh_token = environ.get('CITRINE_API_KEY')
@@ -46,12 +46,15 @@ class Session(requests.Session):
                 raise ValueError("No refresh token passed and environmental "
                                  "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
-            warnings.warn("Creating a session with positional arguments other than refresh_token "
-                          "is deprecated; use keyword arguments to specify scheme, host and port.",
-                          DeprecationWarning)
-            if scheme != 'https':
+            warn("Creating a session with positional arguments other than refresh_token "
+                 "is deprecated; use keyword arguments to specify scheme, host and port.",
+                 DeprecationWarning)
+            if scheme is None:
+                scheme = legacy_scheme
+            else:
                 raise ValueError("Specify legacy_scheme or scheme, not both.")
-            scheme = legacy_scheme
+        elif scheme is None:
+            scheme = 'https'
         if host is None:
             host = environ.get('CITRINE_API_HOST')
             if host is None:

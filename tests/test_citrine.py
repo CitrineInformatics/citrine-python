@@ -48,6 +48,7 @@ def test_citrine_signature(monkeypatch):
         m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Citrine().session.refresh_token
+        assert patched_key == Citrine(patched_key).session.refresh_token
 
     monkeypatch.delenv("CITRINE_API_KEY")
     with pytest.raises(ValueError):
@@ -139,10 +140,3 @@ def test_citrine_user_agent():
             # enforce them to be ints.  It's common to see strings used
             # as the patch version
             assert len(product_version.split('.')) == 3
-
-
-def test_deprecated_args():
-    with requests_mock.Mocker() as m:
-        m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
-        citrine = Citrine(api_key='foo', host='citrine-testing.fake')
