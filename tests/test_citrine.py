@@ -50,11 +50,6 @@ def test_citrine_signature(monkeypatch):
         assert patched_key == Citrine().session.refresh_token
         assert patched_key == Citrine(patched_key).session.refresh_token
 
-    monkeypatch.delenv("CITRINE_API_KEY")
-    with pytest.raises(ValueError):
-        Citrine()
-
-    monkeypatch.setenv("CITRINE_API_KEY", "910")
     monkeypatch.delenv("CITRINE_API_HOST")
     with pytest.raises(ValueError):
         Citrine()

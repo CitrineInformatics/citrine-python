@@ -35,9 +35,6 @@ class Citrine:
                  scheme: str = None):
         if api_key is None:
             api_key = environ.get('CITRINE_API_KEY')
-            if api_key is None:
-                raise ValueError("No API key passed and environmental "
-                                 "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
             warn("Creating a session with positional arguments other than api_key "
                  "is deprecated; use keyword arguments to specify scheme, host and port.",

@@ -42,9 +42,6 @@ class Session(requests.Session):
         super().__init__()
         if refresh_token is None:
             refresh_token = environ.get('CITRINE_API_KEY')
-            if refresh_token is None:
-                raise ValueError("No refresh token passed and environmental "
-                                 "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
             warn("Creating a session with positional arguments other than refresh_token "
                  "is deprecated; use keyword arguments to specify scheme, host and port.",
