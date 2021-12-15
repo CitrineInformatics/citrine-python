@@ -28,7 +28,7 @@ def test_citrine_creation():
         assert '1234' == Citrine(api_key='1234', host='citrine-testing.fake').session.refresh_token
 
 
-def test_citrine_signature():
+def test_citrine_signature(monkeypatch):
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('http://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
@@ -37,6 +37,26 @@ def test_citrine_signature():
                                  scheme='http',
                                  host='citrine-testing.fake',
                                  port="8080").session.refresh_token
+
+    # Validate defaults
+    with requests_mock.Mocker() as m:
+        patched_key = "5678"
+        patched_host = "monkeypatch.citrine-testing.fake"
+        monkeypatch.setenv("CITRINE_API_KEY", patched_key)
+        monkeypatch.setenv("CITRINE_API_HOST", patched_host)
+        m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
+
+        assert patched_key == Citrine().session.refresh_token
+
+    monkeypatch.delenv("CITRINE_API_KEY")
+    with pytest.raises(ValueError):
+        Citrine()
+
+    monkeypatch.setenv("CITRINE_API_KEY", "910")
+    monkeypatch.delenv("CITRINE_API_HOST")
+    with pytest.raises(ValueError):
+        Citrine()
 
 
 def test_deprecated_positional():

@@ -33,13 +33,18 @@ class Session(requests.Session):
     """Wrapper around requests.Session that is both refresh-token and schema aware."""
 
     def __init__(self,
-                 refresh_token: str = environ.get('CITRINE_API_KEY'),
+                 refresh_token: str = None,
                  legacy_scheme: Optional[str] = None,
-                 host: str = environ.get('CITRINE_API_HOST'),
+                 host: str = None,
                  port: Optional[str] = None,
                  *,
                  scheme: str = 'https'):
         super().__init__()
+        if refresh_token is None:
+            refresh_token = environ.get('CITRINE_API_KEY')
+            if refresh_token is None:
+                raise ValueError("No refresh token passed and environmental "
+                                 "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
             warnings.warn("Creating a session with positional arguments other than refresh_token "
                           "is deprecated; use keyword arguments to specify scheme, host and port.",
@@ -47,6 +52,11 @@ class Session(requests.Session):
             if scheme != 'https':
                 raise ValueError("Specify legacy_scheme or scheme, not both.")
             scheme = legacy_scheme
+        if host is None:
+            host = environ.get('CITRINE_API_HOST')
+            if host is None:
+                raise ValueError("No host passed and environmental "
+                                 "variable CITRINE_API_HOST not set.")
 
         self.scheme: str = scheme
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))

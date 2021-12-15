@@ -16,7 +16,6 @@ import pytz
 import mock
 import requests
 import requests_mock
-from urllib.parse import urlsplit
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
 from tests.utils.session import make_fake_cursor_request_function
@@ -49,7 +48,7 @@ def session():
     return session
 
 
-def test_session_signature():
+def test_session_signature(monkeypatch):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
     with requests_mock.Mocker() as m:
         m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
@@ -59,6 +58,26 @@ def test_session_signature():
                                  scheme='ftp',
                                  host='citrine-testing.fake',
                                  port="8080").refresh_token
+
+    # Validate defaults
+    with requests_mock.Mocker() as m:
+        patched_key = "5678"
+        patched_host = "monkeypatch.citrine-testing.fake"
+        monkeypatch.setenv("CITRINE_API_KEY", patched_key)
+        monkeypatch.setenv("CITRINE_API_HOST", patched_host)
+        m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
+
+        assert patched_key == Session().refresh_token
+
+    monkeypatch.delenv("CITRINE_API_KEY")
+    with pytest.raises(ValueError):
+        Session()
+
+    monkeypatch.setenv("CITRINE_API_KEY", "910")
+    monkeypatch.delenv("CITRINE_API_HOST")
+    with pytest.raises(ValueError):
+        Session()
 
 
 def test_deprecated_positional():
@@ -316,30 +335,3 @@ def test_patch(session: Session):
         m.patch('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
         response_json = session.patch_resource('bar/something', {"ignored": "true"})
         assert response_json == json_to_validate
-
-
-@mock.patch.object(Session, '_check_accounts_version')
-@mock.patch.object(Session, '_refresh_access_token')
-def test_base_url_assembly(*_):
-    default_base = urlsplit(Session()._versioned_base_url())
-
-    scenarios = [
-        {},
-        {'scheme': 'http', 'host': None},
-        {'scheme': 'https', 'host': 'citrine-testing.fake', 'port': None},
-        {'scheme': 'http', 'host': 'citrine-testing.fake', 'port': ''},
-        {'scheme': 'https', 'host': 'citrine-testing.biz', 'port': '8080'},
-    ]
-
-    for scenario in scenarios:
-        session = Session(**scenario)
-        base = urlsplit(session._versioned_base_url())
-        assert base.scheme == scenario.get('scheme', default_base.scheme)
-        if scenario.get('host', default_base.hostname):
-            assert base.hostname == scenario.get('host', default_base.hostname)
-        else:
-            assert base.hostname is None
-        if scenario.get('port', default_base.port):
-            assert str(base.port) == scenario.get('port', default_base.port)
-        else:
-            assert base.port is None

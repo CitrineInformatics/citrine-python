@@ -15,22 +15,29 @@ class Citrine:
     ----------
     api_key: str
         Unique key that allows a user to access the Citrine Platform.
+        Default: environ.get('CITRINE_API_KEY')
     scheme: str
-        Networking protocol; usually https
+        Networking protocol; usually https.  Default: https
     host: str
-        Host URL, generally '<your_site>.citrine-platform.com'
+        Host URL, generally '<your_site>.citrine-platform.com'.
+        Default: environ.get('CITRINE_API_HOST')
     port: Optional[str]
-        Optional networking port
+        Optional networking port.  Default: None
 
     """
 
     def __init__(self,
-                 api_key: str = environ.get('CITRINE_API_KEY'),
+                 api_key: str = None,
                  legacy_scheme: Optional[str] = None,
-                 host: str = environ.get('CITRINE_API_HOST'),
+                 host: str = None,
                  port: Optional[str] = None,
                  *,
                  scheme: str = 'https'):
+        if api_key is None:
+            api_key = environ.get('CITRINE_API_KEY')
+            if api_key is None:
+                raise ValueError("No API key passed and environmental "
+                                 "variable CITRINE_API_KEY not set.")
         if legacy_scheme is not None:
             warn("Creating a session with positional arguments other than refresh_token "
                  "is deprecated; use keyword arguments to specify scheme, host and port.",
@@ -38,6 +45,11 @@ class Citrine:
             if scheme != 'https':
                 raise ValueError("Specify legacy_scheme or scheme, not both.")
             scheme = legacy_scheme
+        if host is None:
+            host = environ.get('CITRINE_API_HOST')
+            if host is None:
+                raise ValueError("No host passed and environmental "
+                                 "variable CITRINE_API_HOST not set.")
 
         self.session: Session = Session(refresh_token=api_key,
                                         scheme=scheme,
