@@ -103,7 +103,7 @@ def test_register(session, workflow_minimal, collection, optional_args):
     assert_workflow(new_workflow, workflow)
 
 
-def test_register_without_branch(session, workflow, collection_without_branch):
+def test_deprecated_register_without_branch(session, workflow, collection_without_branch):
     # Given
     new_branch_id = uuid.uuid4()
     post_dict = workflow.dump()
@@ -112,7 +112,9 @@ def test_register_without_branch(session, workflow, collection_without_branch):
         {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
 
     # When
-    new_workflow = collection_without_branch.register(workflow)
+    # Future design workflow creation will require a branch.
+    with pytest.deprecated_call():
+        new_workflow = collection_without_branch.register(workflow)
 
     # Then
     assert session.num_calls == 2
@@ -154,8 +156,8 @@ def test_register_conflicting_branches(session, workflow, collection):
     assert_workflow(new_workflow, workflow)
 
 
-def test_register_only_model_has_branch(session, workflow, collection_without_branch):
-    ### Should match the result when neither has a branch ID
+def test_deprecated_register_only_model_has_branch(session, workflow, collection_without_branch):
+    ### This situation should be handled the same way as when neither has a branch ID
 
     # Given
     new_branch_id = uuid.uuid4()
@@ -168,7 +170,9 @@ def test_register_only_model_has_branch(session, workflow, collection_without_br
         {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
 
     # When
-    new_workflow = collection_without_branch.register(workflow)
+    # Future design workflow creation will require a branch ID.
+    with pytest.deprecated_call():
+        new_workflow = collection_without_branch.register(workflow)
 
     # Then
     assert session.num_calls == 2
