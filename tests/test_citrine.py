@@ -49,6 +49,8 @@ def test_citrine_signature(monkeypatch):
 
         assert patched_key == Citrine().session.refresh_token
         assert patched_key == Citrine(patched_key).session.refresh_token
+        monkeypatch.delenv("CITRINE_API_KEY")
+        assert Citrine().session.refresh_token is None
 
     monkeypatch.delenv("CITRINE_API_HOST")
     with pytest.raises(ValueError):

@@ -70,6 +70,8 @@ def test_session_signature(monkeypatch):
 
         assert patched_key == Session().refresh_token
         assert patched_key == Session(patched_key).refresh_token
+        monkeypatch.delenv("CITRINE_API_KEY")
+        assert Session().refresh_token is None
 
     monkeypatch.delenv("CITRINE_API_HOST")
     with pytest.raises(ValueError):
