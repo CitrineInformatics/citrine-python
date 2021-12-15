@@ -142,37 +142,26 @@ def test_get_not_found(session: Session):
             session.get_resource('/foo')
 
 
-class SessionTests(unittest.TestCase):
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_409(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 409
-        mock_request.return_value = resp
+def test_status_code_409(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=409)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(WorkflowConflictException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_425(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 425
-        mock_request.return_value = resp
+
+def test_status_code_425(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=425)
         with pytest.raises(RetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(WorkflowNotReadyException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_400(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 400
+
+def test_status_code_400(session: Session):
+    with requests_mock.Mocker() as m:
         resp_json = {
             'code': 400,
             'message': 'a message',
@@ -182,59 +171,44 @@ class SessionTests(unittest.TestCase):
                 },
             ],
         }
-        resp.json = lambda: resp_json
-        resp.text = json.dumps(resp_json)
-        mock_request.return_value = resp
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              status_code=400,
+              json=resp_json
+              )
         with pytest.raises(BadRequest) as einfo:
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         assert einfo.value.api_error.validation_errors[0].failure_message \
-            == resp_json['validation_errors'][0]['failure_message']
+               == resp_json['validation_errors'][0]['failure_message']
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_401(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 401
-        resp.text = 'Some response text'
-        mock_request.return_value = resp
+
+def test_status_code_401(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=401)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(Unauthorized):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_404(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 404
-        resp.text = 'Some response text'
-        mock_request.return_value = resp
+
+def test_status_code_404(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=404)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_connection_error(self, mock_request, *_):
 
-        data = {'stuff': 'not_used'}
-        call_count = 0
+def test_connection_error(session: Session):
+    data = {'stuff': 'not_used'}
 
-        # Simulate a request using a stale session that raises
-        # a ConnectionError then works on the second call.
-        def request_side_effect(method, uri):
-            nonlocal call_count
-            if call_count == 0:
-                call_count += 1
-                raise requests.exceptions.ConnectionError
-            else:
-                return data
+    # Simulate a request using a stale session that raises
+    # a ConnectionError then works on the second call.
+    with requests_mock.Mocker() as m:
+        m.register_uri('GET',
+                       'http://citrine-testing.fake/api/v1/foo',
+                       [{'exc': requests.exceptions.ConnectionError},
+                        {'json': data, 'status_code': 200}])
 
-        mock_request.side_effect = request_side_effect
-        resp = Session()._request_with_retry('method', 'path')
-
+        resp = session.get_resource('/foo')
         assert resp == data
 
 
