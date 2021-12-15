@@ -26,10 +26,24 @@ class Citrine:
 
     def __init__(self,
                  api_key: str = environ.get('CITRINE_API_KEY'),
-                 scheme: str = 'https',
+                 legacy_scheme: Optional[str] = None,
                  host: str = environ.get('CITRINE_API_HOST'),
-                 port: Optional[str] = None):
-        self.session: Session = Session(api_key, scheme, host, port)
+                 port: Optional[str] = None,
+                 *,
+                 scheme: str = 'https'):
+        if legacy_scheme is not None:
+            warn("Creating a session with positional arguments other than refresh_token "
+                 "is deprecated; use keyword arguments to specify scheme, host and port.",
+                 DeprecationWarning)
+            if scheme != 'https':
+                raise ValueError("Specify legacy_scheme or scheme, not both.")
+            scheme = legacy_scheme
+
+        self.session: Session = Session(refresh_token=api_key,
+                                        scheme=scheme,
+                                        host=host,
+                                        port=port
+                                        )
 
     @property
     def projects(self) -> ProjectCollection:

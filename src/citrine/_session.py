@@ -5,6 +5,7 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
+import warnings
 
 import jwt
 import requests
@@ -33,10 +34,20 @@ class Session(requests.Session):
 
     def __init__(self,
                  refresh_token: str = environ.get('CITRINE_API_KEY'),
-                 scheme: str = 'https',
+                 legacy_scheme: Optional[str] = None,
                  host: str = environ.get('CITRINE_API_HOST'),
-                 port: Optional[str] = None):
+                 port: Optional[str] = None,
+                 *,
+                 scheme: str = 'https'):
         super().__init__()
+        if legacy_scheme is not None:
+            warnings.warn("Creating a session with positional arguments other than refresh_token "
+                          "is deprecated; use keyword arguments to specify scheme, host and port.",
+                          DeprecationWarning)
+            if scheme != 'https':
+                raise ValueError("Specify legacy_scheme or scheme, not both.")
+            scheme = legacy_scheme
+
         self.scheme: str = scheme
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))
         self.refresh_token: str = refresh_token

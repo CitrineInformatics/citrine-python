@@ -49,6 +49,32 @@ def session():
     return session
 
 
+def test_session_signature():
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        assert '1234' == Session(refresh_token='1234',
+                                 scheme='ftp',
+                                 host='citrine-testing.fake',
+                                 port="8080").refresh_token
+
+
+def test_deprecated_positional():
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        with pytest.warns(DeprecationWarning):
+            assert '1234' == Session('1234', 'ftp', 'citrine-testing.fake', "8080").refresh_token
+
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            Session('1234', 'ftp', scheme='ftp')
+
+
 def test_get_refreshes_token(session: Session):
     session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))

@@ -7,7 +7,6 @@ import pytz
 import requests_mock
 
 from citrine import Citrine
-from tests.utils.session import FakeSession
 
 
 def refresh_token(expiration: datetime = None) -> dict:
@@ -22,12 +21,35 @@ token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
 
 def test_citrine_creation():
-
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         assert '1234' == Citrine(api_key='1234', host='citrine-testing.fake').session.refresh_token
+
+
+def test_citrine_signature():
+    with requests_mock.Mocker() as m:
+        m.post('http://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('http://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        assert '1234' == Citrine(api_key='1234',
+                                 scheme='http',
+                                 host='citrine-testing.fake',
+                                 port="8080").session.refresh_token
+
+
+def test_deprecated_positional():
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        with pytest.warns(DeprecationWarning):
+            assert '1234' == Citrine('1234', 'ftp', 'citrine-testing.fake', "8080").session.refresh_token
+
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            Citrine('1234', 'ftp', scheme='ftp')
 
 
 def test_citrine_project_session():
@@ -97,3 +119,10 @@ def test_citrine_user_agent():
             # enforce them to be ints.  It's common to see strings used
             # as the patch version
             assert len(product_version.split('.')) == 3
+
+
+def test_deprecated_args():
+    with requests_mock.Mocker() as m:
+        m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
+        citrine = Citrine(api_key='foo', host='citrine-testing.fake')
