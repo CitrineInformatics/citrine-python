@@ -45,15 +45,17 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_id is None:
+            # Prior to the introduction of branches, partial design workflows were not supported
+            # at all. As such, their use without a branch continues to be an error.
+            if model.predictor_id is None or model.design_space_id is None:
+                raise ValueError("A design workflow without a predictor ID and/or a design space "
+                                 "ID must be registered to a specific branch.")
+
             # There are a number of contexts in which hitting design workflow endpoints without a
             # branch ID is valid, so only this particular usage is deprecated.
             msg = ('Creating a design workflow without a branch is deprecated as of 1.19.0 and '
                    'will be removed in 2.0.0.')
             warnings.warn(msg, category=DeprecationWarning)
-
-            if model.predictor_id is None or model.design_space_id is None:
-                raise ValueError("A design workflow without a predictor ID and/or a design space "
-                                 "ID must be registered to a specific branch.")
 
             # To create a design workflow without providing a branch ID, we need to hit the v1
             # API, then do a GET to grab the ID of the branch that was created automatically.
@@ -114,8 +116,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             if self.branch_id != model.branch_id:
                 raise ValueError('To move a design workflow to another branch, please use '
                                  'Project.design_workflows.update')
-        # This protection is only necessary because branch_id must be optional until design
-        # workflow v1 is gone.
+
         if model.branch_id is None:
             raise ValueError('Cannot update a design workflow unless its branch_id is set.')
 
