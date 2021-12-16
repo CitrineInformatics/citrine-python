@@ -174,7 +174,7 @@ class TableConfig(Resource["TableConfig"]):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the id of
-        the ingredient and a column for the quantity of the ingredient. If the quantities are
+        the ingredient, id for ingredient labels, and a column for the quantity of the ingredient. If the quantities are
         given in absolute amounts then there is also a column for units.
 
         Parameters
