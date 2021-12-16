@@ -5,6 +5,7 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
+from warnings import warn
 
 import jwt
 import requests
@@ -32,11 +33,31 @@ class Session(requests.Session):
     """Wrapper around requests.Session that is both refresh-token and schema aware."""
 
     def __init__(self,
-                 refresh_token: str = environ.get('CITRINE_API_KEY'),
-                 scheme: str = 'https',
-                 host: str = environ.get('CITRINE_API_HOST'),
-                 port: Optional[str] = None):
+                 refresh_token: str = None,
+                 legacy_scheme: Optional[str] = None,
+                 host: str = None,
+                 port: Optional[str] = None,
+                 *,
+                 scheme: str = None):
         super().__init__()
+        if refresh_token is None:
+            refresh_token = environ.get('CITRINE_API_KEY')
+        if legacy_scheme is not None:
+            warn("Creating a session with positional arguments other than refresh_token "
+                 "is deprecated; use keyword arguments to specify scheme, host and port.",
+                 DeprecationWarning)
+            if scheme is None:
+                scheme = legacy_scheme
+            else:
+                raise ValueError("Specify legacy_scheme or scheme, not both.")
+        elif scheme is None:
+            scheme = 'https'
+        if host is None:
+            host = environ.get('CITRINE_API_HOST')
+            if host is None:
+                raise ValueError("No host passed and environmental "
+                                 "variable CITRINE_API_HOST not set.")
+
         self.scheme: str = scheme
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))
         self.refresh_token: str = refresh_token
