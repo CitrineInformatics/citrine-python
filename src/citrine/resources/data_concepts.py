@@ -340,7 +340,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         scope = scope or CITRINE_SCOPE
         return LinkByUID(scope, uid)
     else:
-        raise TypeError("Link can only created from a GEMD object, LinkByUID, str, or UUID."
+        raise TypeError("Link can only be created from a GEMD object, LinkByUID, str, or UUID."
                         "Instead got {}.".format(gemd_object_rep))
 
 
