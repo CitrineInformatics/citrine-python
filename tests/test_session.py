@@ -16,7 +16,6 @@ import pytz
 import mock
 import requests
 import requests_mock
-from urllib.parse import urlsplit
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
 from tests.utils.session import make_fake_cursor_request_function
@@ -47,6 +46,50 @@ def session():
     session.access_token_expiration = datetime.utcnow() + timedelta(minutes=3)
 
     return session
+
+
+def test_session_signature(monkeypatch):
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        assert '1234' == Session(refresh_token='1234',
+                                 scheme='ftp',
+                                 host='citrine-testing.fake',
+                                 port="8080").refresh_token
+
+    # Validate defaults
+    with requests_mock.Mocker() as m:
+        patched_key = "5678"
+        patched_host = "monkeypatch.citrine-testing.fake"
+        monkeypatch.setenv("CITRINE_API_KEY", patched_key)
+        monkeypatch.setenv("CITRINE_API_HOST", patched_host)
+        m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
+
+        assert patched_key == Session().refresh_token
+        assert patched_key == Session(patched_key).refresh_token
+        monkeypatch.delenv("CITRINE_API_KEY")
+        assert Session().refresh_token is None
+
+    monkeypatch.delenv("CITRINE_API_HOST")
+    with pytest.raises(ValueError):
+        Session()
+
+
+def test_deprecated_positional():
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        with pytest.warns(DeprecationWarning):
+            assert '1234' == Session('1234', 'ftp', 'citrine-testing.fake', "8080").refresh_token
+
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            Session('1234', 'ftp', scheme='ftp')
 
 
 def test_get_refreshes_token(session: Session):
@@ -101,37 +144,26 @@ def test_get_not_found(session: Session):
             session.get_resource('/foo')
 
 
-class SessionTests(unittest.TestCase):
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_409(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 409
-        mock_request.return_value = resp
+def test_status_code_409(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=409)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(WorkflowConflictException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_425(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 425
-        mock_request.return_value = resp
+
+def test_status_code_425(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=425)
         with pytest.raises(RetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(WorkflowNotReadyException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_400(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 400
+
+def test_status_code_400(session: Session):
+    with requests_mock.Mocker() as m:
         resp_json = {
             'code': 400,
             'message': 'a message',
@@ -141,59 +173,44 @@ class SessionTests(unittest.TestCase):
                 },
             ],
         }
-        resp.json = lambda: resp_json
-        resp.text = json.dumps(resp_json)
-        mock_request.return_value = resp
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              status_code=400,
+              json=resp_json
+              )
         with pytest.raises(BadRequest) as einfo:
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         assert einfo.value.api_error.validation_errors[0].failure_message \
-            == resp_json['validation_errors'][0]['failure_message']
+               == resp_json['validation_errors'][0]['failure_message']
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_401(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 401
-        resp.text = 'Some response text'
-        mock_request.return_value = resp
+
+def test_status_code_401(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=401)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
         with pytest.raises(Unauthorized):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_404(self, mock_request, *_):
-        resp = mock.Mock()
-        resp.status_code = 404
-        resp.text = 'Some response text'
-        mock_request.return_value = resp
+
+def test_status_code_404(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=404)
         with pytest.raises(NonRetryableException):
-            Session().checked_request('method', 'path')
+            session.get_resource('/foo')
 
-    @mock.patch.object(Session, '_check_accounts_version')
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_connection_error(self, mock_request, *_):
 
-        data = {'stuff': 'not_used'}
-        call_count = 0
+def test_connection_error(session: Session):
+    data = {'stuff': 'not_used'}
 
-        # Simulate a request using a stale session that raises
-        # a ConnectionError then works on the second call.
-        def request_side_effect(method, uri):
-            nonlocal call_count
-            if call_count == 0:
-                call_count += 1
-                raise requests.exceptions.ConnectionError
-            else:
-                return data
+    # Simulate a request using a stale session that raises
+    # a ConnectionError then works on the second call.
+    with requests_mock.Mocker() as m:
+        m.register_uri('GET',
+                       'http://citrine-testing.fake/api/v1/foo',
+                       [{'exc': requests.exceptions.ConnectionError},
+                        {'json': data, 'status_code': 200}])
 
-        mock_request.side_effect = request_side_effect
-        resp = Session()._request_with_retry('method', 'path')
-
+        resp = session.get_resource('/foo')
         assert resp == data
 
 
@@ -290,30 +307,3 @@ def test_patch(session: Session):
         m.patch('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
         response_json = session.patch_resource('bar/something', {"ignored": "true"})
         assert response_json == json_to_validate
-
-
-@mock.patch.object(Session, '_check_accounts_version')
-@mock.patch.object(Session, '_refresh_access_token')
-def test_base_url_assembly(*_):
-    default_base = urlsplit(Session()._versioned_base_url())
-
-    scenarios = [
-        {},
-        {'scheme': 'http', 'host': None},
-        {'scheme': 'https', 'host': 'citrine-testing.fake', 'port': None},
-        {'scheme': 'http', 'host': 'citrine-testing.fake', 'port': ''},
-        {'scheme': 'https', 'host': 'citrine-testing.biz', 'port': '8080'},
-    ]
-
-    for scenario in scenarios:
-        session = Session(**scenario)
-        base = urlsplit(session._versioned_base_url())
-        assert base.scheme == scenario.get('scheme', default_base.scheme)
-        if scenario.get('host', default_base.hostname):
-            assert base.hostname == scenario.get('host', default_base.hostname)
-        else:
-            assert base.hostname is None
-        if scenario.get('port', default_base.port):
-            assert str(base.port) == scenario.get('port', default_base.port)
-        else:
-            assert base.port is None
