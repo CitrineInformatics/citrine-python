@@ -180,14 +180,15 @@ A branch has a name, along with any number of design workflows. A DesignWorkflow
     print(validated_workflow.status_info)
 
 
-When you're done with a branch, it can be archived, removing it from the results of ``list`` and sets the ``archived`` flag. ``list_archived`` lists all archived branches on a project. An archived branch can be restore it via its unique ID.
+When you're done with a branch, it can be archived, removing it from the results of ``list`` and setting the ``archived`` flag.
+``list_archived`` lists all archived branches in a project. An archived branch can be restored via its unique ID.
 
 .. code:: python
 
-    # Display if your branch is archived.
+    # Display whether your branch is archived.
     print(my_branch.archived)
 
-    # Archive the branch, hiding it from normal view.
+    # Archive the branch, hiding it from view.
     my_branch = project.branches.archive(my_branch.uid)  # my_branch.archived == True
 
     # List only the branches in this project which have been archived.
