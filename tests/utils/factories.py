@@ -39,6 +39,7 @@ class ProjectDataFactory(factory.DictFactory):
 class BranchDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
+    archived = factory.Faker('boolean')
     created_at = None
     updated_at = None
 
