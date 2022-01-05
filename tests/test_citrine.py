@@ -7,7 +7,6 @@ import pytz
 import requests_mock
 
 from citrine import Citrine
-from tests.utils.session import FakeSession
 
 
 def refresh_token(expiration: datetime = None) -> dict:
@@ -22,12 +21,53 @@ token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
 
 def test_citrine_creation():
-
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         assert '1234' == Citrine(api_key='1234', host='citrine-testing.fake').session.refresh_token
+
+
+def test_citrine_signature(monkeypatch):
+    with requests_mock.Mocker() as m:
+        m.post('http://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('http://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        assert '1234' == Citrine(api_key='1234',
+                                 scheme='http',
+                                 host='citrine-testing.fake',
+                                 port="8080").session.refresh_token
+
+    # Validate defaults
+    with requests_mock.Mocker() as m:
+        patched_key = "5678"
+        patched_host = "monkeypatch.citrine-testing.fake"
+        monkeypatch.setenv("CITRINE_API_KEY", patched_key)
+        monkeypatch.setenv("CITRINE_API_HOST", patched_host)
+        m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
+
+        assert patched_key == Citrine().session.refresh_token
+        assert patched_key == Citrine(patched_key).session.refresh_token
+        monkeypatch.delenv("CITRINE_API_KEY")
+        assert Citrine().session.refresh_token is None
+
+    monkeypatch.delenv("CITRINE_API_HOST")
+    with pytest.raises(ValueError):
+        Citrine()
+
+
+def test_deprecated_positional():
+    with requests_mock.Mocker() as m:
+        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
+        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
+
+        with pytest.warns(DeprecationWarning):
+            assert '1234' == Citrine('1234', 'ftp', 'citrine-testing.fake', "8080").session.refresh_token
+
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            Citrine('1234', 'ftp', scheme='ftp')
 
 
 def test_citrine_project_session():
