@@ -33,7 +33,7 @@ setup(name='citrine',
       ],
       extras_require={
           "builders": [
-              "pandas>=1.1.0,<2"
+              "pandas>=1.1.5,<2"
           ]
       },
       classifiers=[
