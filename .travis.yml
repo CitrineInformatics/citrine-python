@@ -5,6 +5,10 @@ python:
 - '3.8'
 - '3.9'
 - '3.10'
+- '3.11'
+matrix:
+  allow_failures:
+    - python: '3.11'
 install:
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
