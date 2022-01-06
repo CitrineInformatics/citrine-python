@@ -33,7 +33,7 @@ setup(name='citrine',
       ],
       extras_require={
           "builders": [
-              "pandas>=1.1.0,<2"
+              "pandas>=1.1.5,<2"
           ]
       },
       classifiers=[
@@ -41,5 +41,7 @@ setup(name='citrine',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
       ],
 )
