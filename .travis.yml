@@ -1,8 +1,12 @@
 language: python
+dist: bionic
 python:
 - '3.6'
 - '3.7'
 - '3.8'
+- '3.9'
+- '3.10.0'
+- '3.10.1'
 install:
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
