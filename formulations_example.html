@@ -1,84 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>5. Formulations Example &mdash; Citrine Python 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-
-  
-  
+  <title>5. Formulations Example &mdash; Citrine Python 1.21.2 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="6. FAQ" href="FAQ/index.html" />
     <link rel="prev" title="4.12. AI Engine Code Examples" href="workflows/code_examples.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html">
-          
-
-          
-            
             <img src="_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.21.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -86,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a></li>
@@ -115,73 +60,32 @@
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Citrine Python</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li><span class="section-number">5. </span>Formulations Example</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/formulations_example.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="formulations-example">
-<h1><span class="section-number">5. </span>Formulations Example<a class="headerlink" href="#formulations-example" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">5. </span>Formulations Example<a class="headerlink" href="#formulations-example" title="Permalink to this headline"></a></h1>
 <p>The Citrine Platform is a powerful tool to analyze formulations data.
 A formulation is, generally speaking, a mixture of mixtures.
 Individual ingredients are mixed together to form more complex ingredients, which may themselves be mixed with other ingredients and/or mixtures, and so on.
@@ -192,7 +96,7 @@ In addition, each mixing process may be characterized by attributes such as the 
 and Citrine’s AI Engine turns this information into trained models that can predict the properties of novel formulations.
 This section demonstrates how to express a complete formulations example with the Citrine Python client, from data ingestion to new candidate generation.</p>
 <section id="example-raw-data">
-<h2><span class="section-number">5.1. </span>Example Raw Data<a class="headerlink" href="#example-raw-data" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.1. </span>Example Raw Data<a class="headerlink" href="#example-raw-data" title="Permalink to this headline"></a></h2>
 <p>To demonstrate the formulations machinery, we consider a toy problem – margaritas!
 We scour our pantry and gather some materials, laid out in the table below.
 These are known as “atomic” materials because for our purposes they are not broken into more fundamental materials.
@@ -205,7 +109,7 @@ A label describes how a material is used or the role it plays, not the material 
 But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.</p>
 </div>
 <table class="colwidths-given docutils align-default" id="id1">
-<caption><span class="caption-text">Atomic Materials Data</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<caption><span class="caption-text">Atomic Materials Data</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -255,7 +159,7 @@ But to keep this example simple, we assume that a given ingredient always has al
 <p>We begin by creating two types of simple syrup–a mixture of sugar and water.
 The quantities are in units of mass fraction.</p>
 <table class="colwidths-given docutils align-default" id="id2">
-<caption><span class="caption-text">Simple Syrup Data</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<caption><span class="caption-text">Simple Syrup Data</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -288,7 +192,7 @@ In addition to the ingredient mass fractions, we record the blending time, in se
 The margaritas are judged on an ultra-rigorous “tastiness” scale, which ranges from 0.0 to 10.0
 The table below shows two examples.</p>
 <table class="colwidths-given docutils align-default" id="id3">
-<caption><span class="caption-text">Margarita Data</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<caption><span class="caption-text">Margarita Data</span><a class="headerlink" href="#id3" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 11%" />
 <col style="width: 8%" />
@@ -341,7 +245,7 @@ The table below shows two examples.</p>
 </table>
 </section>
 <section id="ingesting-data">
-<h2><span class="section-number">5.2. </span>Ingesting Data<a class="headerlink" href="#ingesting-data" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.2. </span>Ingesting Data<a class="headerlink" href="#ingesting-data" title="Permalink to this headline"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Ingesting data to GEMD is most easily done with additional tooling to reduce the amount of required programming.</p>
@@ -479,13 +383,13 @@ That’s a lot, which is why this is best done with additional tooling, whether 
 <figure class="align-center" id="id4">
 <img alt="_images/GEMD_history_example.png" src="_images/GEMD_history_example.png" />
 <figcaption>
-<p><span class="caption-text">Material History for Blended Margarita B</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Material History for Blended Margarita B</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>Repeating this process once for each margarita sample, we can build up a rich dataset for machine learning.</p>
 </section>
 <section id="building-a-table">
-<h2><span class="section-number">5.3. </span>Building a Table<a class="headerlink" href="#building-a-table" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.3. </span>Building a Table<a class="headerlink" href="#building-a-table" title="Permalink to this headline"></a></h2>
 <p>We now build a GEM Table to represent the margaritas’ material histories in tabular format.
 This table will be used as training data when building a machine learning graphical model.
 For more detailed information on GEM Tables, see the section on <a class="reference internal" href="data_extraction.html"><span class="doc">data extraction</span></a>.</p>
@@ -577,7 +481,7 @@ Because they both have the “margarita” heading, “blend time” and “tast
 <figure class="align-center" id="id5">
 <img alt="_images/GEM_Table_formulation_properties.png" src="_images/GEM_Table_formulation_properties.png" />
 <figcaption>
-<p><span class="caption-text">GEM Table “margarita properties” columns</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">GEM Table “margarita properties” columns</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>We now add a set of three variables for each mixing ingredient: one for the identifier, one for the quantity, and one for the labels.
@@ -634,7 +538,7 @@ This must be repeated once for each ingredient.</p>
 <figure class="align-center" id="id6">
 <img alt="_images/GEM_Table_formulation_ingredient.png" src="_images/GEM_Table_formulation_ingredient.png" />
 <figcaption>
-<p><span class="caption-text">GEM Table “simple syrup ingredient” columns</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">GEM Table “simple syrup ingredient” columns</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>Lastly, we register the configuration and build the table.
@@ -646,7 +550,7 @@ To build the table asynchronously, use <a class="reference internal" href="refer
 </div>
 </section>
 <section id="training-a-predictor">
-<h2><span class="section-number">5.4. </span>Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.4. </span>Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline"></a></h2>
 <p>With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a <a class="reference internal" href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> based on the GEM Table, <code class="docutils literal notranslate"><span class="pre">table</span></code>.
 We choose to define a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> to hold the formulation;
@@ -795,12 +699,12 @@ Make sure that these are the descriptors you are using as inputs to your predict
 <figure class="align-center" id="id7">
 <img alt="_images/formulations_graphical_model.png" src="_images/formulations_graphical_model.png" />
 <figcaption>
-<p><span class="caption-text">Graphical model to predict tastiness of a margarita</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">Graphical model to predict tastiness of a margarita</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>
 <section id="defining-a-design-space">
-<h2><span class="section-number">5.5. </span>Defining a Design Space<a class="headerlink" href="#defining-a-design-space" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.5. </span>Defining a Design Space<a class="headerlink" href="#defining-a-design-space" title="Permalink to this headline"></a></h2>
 <p>Now that we have a trained predictor, the next step to finding the <em>world’s best margarita</em> is to define the search space.
 A <a class="reference internal" href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDesignSpace</span></code></a> defines the ingredients, the labels, and any constraints.
 In addition to the labels used in the predictor, we also create a label for “simple syrup A” and “simple syrup B.”
@@ -846,7 +750,7 @@ We do this by wrapping a <a class="reference internal" href="reference/citrine.i
 </div>
 </section>
 <section id="proposing-new-formulation-candidates">
-<h2><span class="section-number">5.6. </span>Proposing New Formulation Candidates<a class="headerlink" href="#proposing-new-formulation-candidates" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.6. </span>Proposing New Formulation Candidates<a class="headerlink" href="#proposing-new-formulation-candidates" title="Permalink to this headline"></a></h2>
 <p>With the pieces assembled, we define a <a class="reference internal" href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignWorkflow</span></code></a>.
 Our goal is to find the margarita that is most likely to have a tastiness score above 7.5, while keeping the cost per kg below $12.50.
 We define an <a class="reference internal" href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> with this objective and constraint, define a design workflow with the predictor and design space, and trigger the design workflow on the score.</p>
@@ -882,50 +786,33 @@ Well, that depends on the training data.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="FAQ/index.html" class="btn btn-neutral float-right" title="6. FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="workflows/code_examples.html" class="btn btn-neutral float-left" title="4.12. AI Engine Code Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="FAQ/index.html" class="btn btn-neutral float-right" title="6. FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Citrine Informatics.
-
-    </p>
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(false);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

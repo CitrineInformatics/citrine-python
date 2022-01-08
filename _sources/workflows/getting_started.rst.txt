@@ -20,7 +20,7 @@ Design Workflow
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
 This workflow generates scored candidates for Sequential Learning.
-It requires one of each of the modules listed below and executes in the following manner:
+To run, it requires one of each of the modules listed below and executes in the following manner:
 
 -  Material candidates are pulled from the design space.
 -  The predictor adds additional information to the candidates.
@@ -30,6 +30,12 @@ After a given number of iterations, candidates are ranked according to their sco
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
 
 Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
+
+Branches
+########
+
+A ``Branch`` is a named container which can contain any number of design workflows, and is purely a tool for organization.
+If you do not see branches in the Citrine Platform, you do not need to change how you work with design workflows. They will contain an additional field ``branch_id``, which you can ignore.
 
 Predictor Evaluation Workflow
 *****************************

@@ -10,6 +10,7 @@ Submodules
    citrine.resources.api_error
    citrine.resources.attribute_templates
    citrine.resources.audit_info
+   citrine.resources.branch
    citrine.resources.condition_template
    citrine.resources.data_concepts
    citrine.resources.data_objects
@@ -50,6 +51,7 @@ Submodules
    citrine.resources.report
    citrine.resources.response
    citrine.resources.table_config
+   citrine.resources.team
    citrine.resources.templates
    citrine.resources.user
 

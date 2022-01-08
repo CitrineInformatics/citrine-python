@@ -1,82 +1,38 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>citrine.exceptions module &mdash; Citrine Python 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-
-  
-  
+  <title>citrine.exceptions module &mdash; Citrine Python 1.21.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.21.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +40,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
@@ -105,317 +50,276 @@
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Citrine Python</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>citrine.exceptions module</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/reference/citrine.exceptions.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="module-citrine.exceptions">
-<span id="citrine-exceptions-module"></span><h1>citrine.exceptions module<a class="headerlink" href="#module-citrine.exceptions" title="Permalink to this headline">¶</a></h1>
+<span id="citrine-exceptions-module"></span><h1>citrine.exceptions module<a class="headerlink" href="#module-citrine.exceptions" title="Permalink to this headline"></a></h1>
 <p>Citrine-specific exceptions.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.BadRequest">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.BadRequest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.BadRequest" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>The user is trying to perform an invalid operation. (http status 400).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.BadRequest.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.BadRequest.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.BadRequest.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.BadRequest.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.BadRequest.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.BadRequest.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.CitrineException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">CitrineException</span></span><a class="headerlink" href="#citrine.exceptions.CitrineException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">CitrineException</span></span><a class="headerlink" href="#citrine.exceptions.CitrineException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>The base exception class for Citrine-Python exceptions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.CitrineException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.CitrineException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.CitrineException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.CitrineException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.CitrineException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.CitrineException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.JobFailureError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">JobFailureError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_reasons</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.JobFailureError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">JobFailureError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_reasons</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.JobFailureError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>The asynchronous job completed with the given failure message.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.JobFailureError.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.JobFailureError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.JobFailureError.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.JobFailureError.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.JobFailureError.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.JobFailureError.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.ModuleRegistrationFailedException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">ModuleRegistrationFailedException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moduleType</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">ModuleRegistrationFailedException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moduleType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>A module failed to register.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.ModuleRegistrationFailedException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.ModuleRegistrationFailedException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonRetryableException</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonRetryableException</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.CitrineException" title="citrine.exceptions.CitrineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.CitrineException</span></code></a></p>
 <p>Indicates that a non-retryable error occurred.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableHttpException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonRetryableHttpException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonRetryableHttpException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>An exception originating from an HTTP error from a Citrine API.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableHttpException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.NonRetryableHttpException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NonRetryableHttpException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.NotFound">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>A particular url was not found. (http status 404).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.NotFound.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.NotFound.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NotFound.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.NotFound.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.PollingTimeoutError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">PollingTimeoutError</span></span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">PollingTimeoutError</span></span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>Polling for an asynchronous result has exceeded the timeout.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.PollingTimeoutError.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.PollingTimeoutError.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.RetryableException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">RetryableException</span></span><a class="headerlink" href="#citrine.exceptions.RetryableException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">RetryableException</span></span><a class="headerlink" href="#citrine.exceptions.RetryableException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.CitrineException" title="citrine.exceptions.CitrineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.CitrineException</span></code></a></p>
 <p>Indicates an error occurred but it is retryable.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.RetryableException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.RetryableException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.RetryableException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.RetryableException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.RetryableException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.RetryableException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.Unauthorized">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">Unauthorized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.Unauthorized" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">Unauthorized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.Unauthorized" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>The user is unauthorized to make this api call. (http status 401).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.Unauthorized.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.Unauthorized.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.Unauthorized.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.Unauthorized.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.Unauthorized.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.Unauthorized.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.UnauthorizedRefreshToken">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnauthorizedRefreshToken</span></span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnauthorizedRefreshToken</span></span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>The token used to refresh authentication is invalid.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.UnauthorizedRefreshToken.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.UnauthorizedRefreshToken.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowConflictException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowConflictException</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowConflictException</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
 <p>There is a conflict preventing the workflow from being executed. (http status 409).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowConflictException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowConflictException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowNotReadyException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowNotReadyException</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowNotReadyException</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.RetryableException" title="citrine.exceptions.RetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.RetryableException</span></code></a></p>
 <p>The workflow is not ready to be executed. I.e., still validating. (http status 425).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowNotReadyException.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException.with_traceback" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException.with_traceback" title="Permalink to this definition"></a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowNotReadyException.args">
-<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException.args" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowNotReadyException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -424,46 +328,30 @@ set self.__traceback__ to tb and return self.</p>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Citrine Informatics.
-
-    </p>
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(false);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

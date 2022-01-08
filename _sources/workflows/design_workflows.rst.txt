@@ -142,3 +142,58 @@ For example:
 
     # Assume a molecular structure descriptor, 'solvent', represented as a MolecularStructure variable
     candidate.material.values['solvent'].smiles
+
+Branches
+--------
+
+Branches are purely an organizational concept, used to group design workflows under a single name. If you do not wish to interact with them, ignore the ``branch_id`` on a DesignWorkflow, and it will be handled for you.
+
+A branch has a name, along with any number of design workflows. A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch. You can still list all design workflows on the project as before.
+
+.. code:: python
+
+    from citrine.informatics.workflows import DesignWorkflow
+    from citrine.jobs.waiting import wait_while_validating
+    from citrine.resources import Branch
+
+    # create a branch to hold a new design workflow
+    branch = project.branches.register(Branch(name='example branch'))
+
+    # create a workflow using existing modules and register it with the project
+    workflow = branch.design_workflows.register(
+        DesignWorkflow(
+            name='Example workflow',
+            predictor_id=predictor.uid,
+            processor_id=processor.uid,
+            design_space_id=design_space.uid
+        )
+    )
+
+    # wait until the workflow is no longer validating
+    wait_while_validating(collection=branch.design_workflows, module=workflow, print_status_info=True)
+
+    # print final validation status
+    validated_workflow = branch.design_workflows.get(workflow.uid)
+    print(validated_workflow.status)
+    # status info will contain relevant validation information
+    # (i.e. why the workflow is valid/invalid)
+    print(validated_workflow.status_info)
+
+
+When you're done with a branch, it can be archived, removing it from the results of ``list`` and setting the ``archived`` flag.
+``list_archived`` lists all archived branches in a project. An archived branch can be restored via its unique ID.
+
+.. code:: python
+
+    # Display whether your branch is archived.
+    print(my_branch.archived)
+
+    # Archive the branch, hiding it from view.
+    my_branch = project.branches.archive(my_branch.uid)  # my_branch.archived == True
+
+    # List only the branches in this project which have been archived.
+    for branch in project.branches.list_archived():
+        print(branch.uid)
+
+    # Restore the branch to active status.
+    my_branch = project.branches.restore(my_branch.uid)  # my_branch.archived == False

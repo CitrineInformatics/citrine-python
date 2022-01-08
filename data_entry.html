@@ -1,84 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>2. GEMD Data Model &mdash; Citrine Python 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-
-  
-  
+  <title>2. GEMD Data Model &mdash; Citrine Python 1.21.2 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="3. [ALPHA] Data Extraction" href="data_extraction.html" />
     <link rel="prev" title="1.8. Code Examples" href="getting_started/code_examples.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html">
-          
-
-          
-            
             <img src="_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.21.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -86,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. GEMD Data Model</a><ul>
@@ -121,75 +66,34 @@
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Citrine Python</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li><span class="section-number">2. </span>GEMD Data Model</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/data_entry.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="gemd-data-model">
-<h1><span class="section-number">2. </span>GEMD Data Model<a class="headerlink" href="#gemd-data-model" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">2. </span>GEMD Data Model<a class="headerlink" href="#gemd-data-model" title="Permalink to this headline"></a></h1>
 <section id="creating-data-model-objects">
-<h2><span class="section-number">2.1. </span>Creating Data Model Objects<a class="headerlink" href="#creating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.1. </span>Creating Data Model Objects<a class="headerlink" href="#creating-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>Each data object and template in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> (Graphical Expression of Materials Data) data model has a corresponding resource in the Citrine Python client.
 For example, the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a> class implements the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec">ProcessSpec</a> object in <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a>.
 The Citrine Python client implementations are consistent with the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> model specification.</p>
@@ -197,7 +101,7 @@ The Citrine Python client implementations are consistent with the <a class="refe
 Any method that accepts the Citrine Python client’s implementations of data model objects should also accept those from GEMD.</p>
 </section>
 <section id="identifying-data-model-objects">
-<h2><span class="section-number">2.2. </span>Identifying Data Model Objects<a class="headerlink" href="#identifying-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.2. </span>Identifying Data Model Objects<a class="headerlink" href="#identifying-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>After registering a data model object, you will probably want to be able to find that object again.
 The easiest way to get an existing object is by one of its unique identifiers.
 Every data model object on the Citrine Platform has a platform-issued identifier, often referred to as the “Citrine Identifier” or “CitrineId”.
@@ -209,7 +113,7 @@ As a pair, they must be unique across the entire platform.
 You can think of each value of <code class="docutils literal notranslate"><span class="pre">scope</span></code> as defining a namespace, with <code class="docutils literal notranslate"><span class="pre">id</span></code> being the name within that namespace.</p>
 </section>
 <section id="registering-data-model-objects">
-<h2><span class="section-number">2.3. </span>Registering Data Model Objects<a class="headerlink" href="#registering-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.3. </span>Registering Data Model Objects<a class="headerlink" href="#registering-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>Data model objects are created on the Citrine Platform through the <code class="docutils literal notranslate"><span class="pre">register</span></code> method present in each data model object collection that comes from a dataset.
 For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
@@ -220,7 +124,7 @@ The data model object collections that are defined with the project scope (such 
 <p>If you have <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> objects, e.g., <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python client.</p>
 </section>
 <section id="finding-data-model-objects">
-<h2><span class="section-number">2.4. </span>Finding Data Model Objects<a class="headerlink" href="#finding-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.4. </span>Finding Data Model Objects<a class="headerlink" href="#finding-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>If you know any a data model object’s unique identifiers, then you can get that object by its unique identifier.
 For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;standard-templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;milling&quot;</span><span class="p">)</span>
@@ -259,14 +163,14 @@ or <a class="reference internal" href="reference/citrine.resources.ingredient_sp
 <a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_material" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MeasurementRunCollection.list_by_material()</span></code></a>.</p>
 </section>
 <section id="updating-data-model-objects">
-<h2><span class="section-number">2.5. </span>Updating Data Model Objects<a class="headerlink" href="#updating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.5. </span>Updating Data Model Objects<a class="headerlink" href="#updating-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>Runs and specs can be quickly modified in-place and persisted with <code class="docutils literal notranslate"><span class="pre">upload</span></code>, but templates require more care.
 In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
 To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="citrine.resources.data_concepts.DataConceptsCollection.async_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">async_update()</span></code></a>.
 If the update is invalid, then the reasons for failure are logged.</p>
 </section>
 <section id="referencing-data-model-objects">
-<h2><span class="section-number">2.6. </span>Referencing Data Model Objects<a class="headerlink" href="#referencing-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.6. </span>Referencing Data Model Objects<a class="headerlink" href="#referencing-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>Many data model objects contain links to other data model objects.
 For example, a <a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialSpec</span></code></a> references the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a> that produced it.
 These links are created with the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class, for example:</p>
@@ -279,7 +183,7 @@ These links are created with the <a class="reference external" href="https://cit
 </div>
 </section>
 <section id="material-history">
-<h2><span class="section-number">2.7. </span>Material History<a class="headerlink" href="#material-history" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.7. </span>Material History<a class="headerlink" href="#material-history" title="Permalink to this headline"></a></h2>
 <p>Starting with a specific terminal <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
 you can retrieve the complete material history – every process, ingredient, and material that contributed to
 the target material, as well as the measurements that were performed on all of those materials.
@@ -287,9 +191,9 @@ The method is <a class="reference internal" href="reference/citrine.resources.ma
 and it requires you to know a unique identifier (scope/id pair) for the material.</p>
 </section>
 <section id="validating-data-model-objects">
-<h2><span class="section-number">2.8. </span>Validating Data Model Objects<a class="headerlink" href="#validating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.8. </span>Validating Data Model Objects<a class="headerlink" href="#validating-data-model-objects" title="Permalink to this headline"></a></h2>
 <section id="dry-run-validation">
-<h3><span class="section-number">2.8.1. </span>Dry-Run Validation<a class="headerlink" href="#dry-run-validation" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">2.8.1. </span>Dry-Run Validation<a class="headerlink" href="#dry-run-validation" title="Permalink to this headline"></a></h3>
 <p>If you try to <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> an invalid data model object, the operation fails with an error message that
 specifies in what way(s) the data model object was invalid. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
@@ -319,7 +223,7 @@ object will not be registered or deleted.</p>
 <p>Setting <code class="docutils literal notranslate"><span class="pre">dry_run=False</span></code> is equivalent to not specifying <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> at all and will have no effect.</p>
 </section>
 <section id="template-and-simple-validations">
-<h3><span class="section-number">2.8.2. </span>Template and Simple Validations<a class="headerlink" href="#template-and-simple-validations" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">2.8.2. </span>Template and Simple Validations<a class="headerlink" href="#template-and-simple-validations" title="Permalink to this headline"></a></h3>
 <p>Sometimes, it is convenient to validate a group of runs and/or specs against their attribute and object
 templates before any of the data objects are stored.
 The <code class="docutils literal notranslate"><span class="pre">.validate_templates()</span></code> methods, available for all runs and specs, validate the provided object against all of the
@@ -399,50 +303,33 @@ value provided to the <code class="docutils literal notranslate"><span class="pr
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="data_extraction.html" class="btn btn-neutral float-right" title="3. [ALPHA] Data Extraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="getting_started/code_examples.html" class="btn btn-neutral float-left" title="1.8. Code Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_extraction.html" class="btn btn-neutral float-right" title="3. [ALPHA] Data Extraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Citrine Informatics.
-
-    </p>
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(false);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

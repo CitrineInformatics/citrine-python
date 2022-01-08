@@ -1,84 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>4.6. Processors &mdash; Citrine Python 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-
-  
-  
+  <title>4.6. Processors &mdash; Citrine Python 1.21.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.7. Design Workflows" href="design_workflows.html" />
     <link rel="prev" title="4.5. Design Spaces" href="design_spaces.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.21.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -86,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
@@ -126,75 +71,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Citrine Python</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html"><span class="section-number">4. </span>AI Engine</a> &raquo;</li>
-        
       <li><span class="section-number">4.6. </span>Processors</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/workflows/processors.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="processors">
-<h1><span class="section-number">4.6. </span>Processors<a class="headerlink" href="#processors" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">4.6. </span>Processors<a class="headerlink" href="#processors" title="Permalink to this headline"></a></h1>
 <p>A processor defines how a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> is searched.
 There are three processors:</p>
 <ul class="simple">
@@ -203,7 +106,7 @@ There are three processors:</p>
 <li><p><a class="reference external" href="#monte-carlo-processor">MonteCarloProcessor</a> uses Monte Carlo methods to explore a space, taking a semi-directed random walk to find high-performing points.</p></li>
 </ul>
 <section id="enumerated-processor">
-<h2><span class="section-number">4.6.1. </span>Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.6.1. </span>Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline"></a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
 The maximum number of candidates sampled from the Design Space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the Citrine Python client.
 To be valid, enumerated processors must have a maximum number of candidates of at least 1.</p>
@@ -247,7 +150,7 @@ Finite elements repeat once the Cartesian product is exhausted.</p>
 </div>
 </section>
 <section id="grid-processor">
-<h2><span class="section-number">4.6.2. </span>Grid processor<a class="headerlink" href="#grid-processor" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.6.2. </span>Grid processor<a class="headerlink" href="#grid-processor" title="Permalink to this headline"></a></h2>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor" title="citrine.informatics.processors.GridProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GridProcessor</span></code></a> generates samples from the outer product of finite dimensions.
 This processor can only be used with a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.product_design_space.html#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a>.
 To create a finite set of materials from continuous dimensions, a uniform grid is created between the bounds of the descriptor.
@@ -289,7 +192,7 @@ a 2D Design Space of enumerated x values and continuous y values:</p>
 </div>
 </section>
 <section id="monte-carlo-processor">
-<h2><span class="section-number">4.6.3. </span>Monte Carlo processor<a class="headerlink" href="#monte-carlo-processor" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.6.3. </span>Monte Carlo processor<a class="headerlink" href="#monte-carlo-processor" title="Permalink to this headline"></a></h2>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.MonteCarloProcessor" title="citrine.informatics.processors.MonteCarloProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Monte</span> <span class="pre">Carlo</span> <span class="pre">processor</span></code></a> uses Monte Carlo methods to explore the Design Space.
 A Monte Carlo method involves a random walk in which steps that improve the score are always accepted, and steps that make the score worse are accepted probabilistically.
 This balances exploitation, the desire to find the best nearby candidate, with exploration, the desire to investigate different regions of the Design Space.
@@ -301,50 +204,33 @@ The Monte Carlo processor can be applied to any Design Space, although it is mos
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="design_workflows.html" class="btn btn-neutral float-right" title="4.7. Design Workflows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="design_spaces.html" class="btn btn-neutral float-left" title="4.5. Design Spaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="design_workflows.html" class="btn btn-neutral float-right" title="4.7. Design Workflows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Citrine Informatics.
-
-    </p>
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(false);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

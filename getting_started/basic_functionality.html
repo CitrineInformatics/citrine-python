@@ -1,84 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>1.3. Managing Resources &mdash; Citrine Python 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-
-  
-  
+  <title>1.3. Managing Resources &mdash; Citrine Python 1.21.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/favicon.png"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="1.4. Projects" href="projects.html" />
     <link rel="prev" title="1.2. Connecting to the Citrine Platform" href="connecting.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html">
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.21.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -86,18 +42,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">1.1. Overview</a></li>
@@ -128,75 +73,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Citrine Python</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html"><span class="section-number">1. </span>Getting Started</a> &raquo;</li>
-        
       <li><span class="section-number">1.3. </span>Managing Resources</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/getting_started/basic_functionality.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="managing-resources">
-<h1><span class="section-number">1.3. </span>Managing Resources<a class="headerlink" href="#managing-resources" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1.3. </span>Managing Resources<a class="headerlink" href="#managing-resources" title="Permalink to this headline"></a></h1>
 <p>The Citrine Python client can create, read, update, and delete resources.
 This document describes those mechanics in general terms, without assuming a knowledge of what the resources are.</p>
 <p>In general, for every resource type there is a corresponding collection.
@@ -204,7 +107,7 @@ For example, a <a class="reference internal" href="../reference/citrine.resource
 Generally, the collection is used to perform create/read/update/delete actions on the resources.
 This pattern is illustrated in the examples below.</p>
 <section id="creating">
-<h2><span class="section-number">1.3.1. </span>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3.1. </span>Creating<a class="headerlink" href="#creating" title="Permalink to this headline"></a></h2>
 <p>To create a local resource, initialize it as you would any other Python object. For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
 <span class="n">buy_electrolyte_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;Buy ammonium chloride&quot;</span><span class="p">)</span>
@@ -223,10 +126,10 @@ The collection has a <code class="docutils literal notranslate"><span class="pre
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.</p>
 </section>
 <section id="reading">
-<span id="functionality-reading-label"></span><h2><span class="section-number">1.3.2. </span>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
+<span id="functionality-reading-label"></span><h2><span class="section-number">1.3.2. </span>Reading<a class="headerlink" href="#reading" title="Permalink to this headline"></a></h2>
 <p>There are several ways to retrieve a resource from the database.</p>
 <section id="get">
-<h3><span class="section-number">1.3.2.1. </span>Get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">1.3.2.1. </span>Get<a class="headerlink" href="#get" title="Permalink to this headline"></a></h3>
 <p>Get retrieves a specific resource with a known unique identifier string.
 If the project <code class="docutils literal notranslate"><span class="pre">ceramic_resistors_project</span></code> has a dataset with an id that you have saved as <code class="docutils literal notranslate"><span class="pre">special_dataset_id</span></code>, then you could retrieve it with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ceramic_resistors_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">special_dataset_id</span><span class="p">)</span>
@@ -234,7 +137,7 @@ If the project <code class="docutils literal notranslate"><span class="pre">cera
 </div>
 </section>
 <section id="list">
-<h3><span class="section-number">1.3.2.2. </span>List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">1.3.2.2. </span>List<a class="headerlink" href="#list" title="Permalink to this headline"></a></h3>
 <p>List returns an iterator of every resource in a collection.
 To list every design space in the project <code class="docutils literal notranslate"><span class="pre">uv_absorbing_glasses</span></code>, use the command:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uv_absorbing_glasses</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -243,7 +146,7 @@ To list every design space in the project <code class="docutils literal notransl
 </section>
 </section>
 <section id="updating">
-<h2><span class="section-number">1.3.3. </span>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3.3. </span>Updating<a class="headerlink" href="#updating" title="Permalink to this headline"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> command updates an object. The following code creates and persists
 a process spec <code class="docutils literal notranslate"><span class="pre">sintering</span></code> to a dataset <code class="docutils literal notranslate"><span class="pre">tungsten_dataset</span></code>, then updates it locally
 and persists that update.</p>
@@ -254,14 +157,14 @@ and persists that update.</p>
 </div>
 </section>
 <section id="deleting">
-<h2><span class="section-number">1.3.4. </span>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3.4. </span>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline"></a></h2>
 <p>Resources can generally be deleted with the <code class="docutils literal notranslate"><span class="pre">delete</span></code> command.
 However, resources may link to other resources, and deleting these interconnected objects is tricky.
 For more information, see the section on <a class="reference internal" href="data_model.html#deleting-data-objects-label"><span class="std std-ref">deleting data objects</span></a>.</p>
 <p>AI modules cannot be deleted at this time, but they can be <a class="reference internal" href="../workflows/getting_started.html#archiving-label"><span class="std std-ref">archived</span></a>.</p>
 </section>
 <section id="data-model-object-specific-methods">
-<h2><span class="section-number">1.3.5. </span>Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3.5. </span>Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline"></a></h2>
 <p>The client supports additional methods on certain data model object resources, such as more powerful ways to get resources.
 These are detailed in the documentation of <a class="reference internal" href="../data_entry.html"><span class="doc">GEMD data objects</span></a></p>
 </section>
@@ -269,50 +172,33 @@ These are detailed in the documentation of <a class="reference internal" href=".
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="projects.html" class="btn btn-neutral float-right" title="1.4. Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="connecting.html" class="btn btn-neutral float-left" title="1.2. Connecting to the Citrine Platform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="projects.html" class="btn btn-neutral float-right" title="1.4. Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, Citrine Informatics.
-
-    </p>
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(false);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
