@@ -794,10 +794,11 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Searching not available.")
-        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
         search_params = {} if search_params is None else search_params
+
+        if self.session._accounts_service_v3:
+            return self.search_all(search_params)
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
         return self._paginator.paginate(page_fetcher=self._fetch_page_search,
                                         collection_builder=self._build_collection_elements,
