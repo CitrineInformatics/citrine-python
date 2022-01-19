@@ -1,10 +1,12 @@
-from typing import Optional, Iterator
+import functools
+from typing import Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.design_workflow import DesignWorkflowCollection
 
 
@@ -17,6 +19,7 @@ class Branch(Resource['Branch']):
 
     name = properties.String('name')
     uid = properties.Optional(properties.UUID(), 'id')
+    archived = properties.Boolean('archived', serializable=False)
     created_at = properties.Optional(properties.Datetime(), 'created_at', serializable=False)
     updated_at = properties.Optional(properties.Datetime(), 'updated_at', serializable=False)
 
@@ -76,20 +79,73 @@ class BranchCollection(Collection[Branch]):
 
     def list(self, *, per_page: int = 20) -> Iterator[Branch]:
         """
-        List branches using pagination.
+        List active branches using pagination.
 
-        Yields all elements in the collection, paginating over all available pages.
+        Yields all active branches, paginating over all available pages.
 
         Parameters
         ---------
         per_page: int, optional
-            Max number of results to return per page. Default is 20.  This parameter
-            is used when making requests to the backend service.
+            Max number of branches to return per page. Default is 20. This parameter is used when
+            making requests to the backend service.
 
         Returns
         -------
         Iterator[Branch]
-            Branches in this collection.
+            Active branches in this collection.
 
         """
         return super().list(per_page=per_page)
+
+    def list_archived(self, *, per_page: int = 20) -> Iterator[Branch]:
+        """
+        List archived branches using pagination.
+
+        Yields all archived branches, paginating over all available pages.
+
+        Parameters
+        ---------
+        per_page: int, optional
+            Max number of branches to return per page. Default is 20. This parameter is used when
+            making requests to the backend service.
+
+        Returns
+        -------
+        Iterator[Branch]
+            Archived branches in this collection.
+
+        """
+        fetcher = functools.partial(self._fetch_page, additional_params={"archived": True})
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page)
+
+    def archive(self, uid: Union[UUID, str] = None):
+        """
+        Archive a branch.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            Unique identifier of the branch to archive
+
+        """
+        archive_path_template = f'{self._get_path(uid)}/archive'
+        url = format_escaped_url(archive_path_template, project_id=self.project_id, branch_id=uid)
+        data = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(data)
+
+    def restore(self, uid: Union[UUID, str] = None):
+        """
+        Restore an archived branch.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            Unique identifier of the branch to restore
+
+        """
+        restore_path_template = f'{self._get_path(uid)}/restore'
+        url = format_escaped_url(restore_path_template, project_id=self.project_id, branch_id=uid)
+        data = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(data)
