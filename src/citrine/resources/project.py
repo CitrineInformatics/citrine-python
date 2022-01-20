@@ -728,7 +728,7 @@ class ProjectCollection(Collection[Project]):
                                         per_page=per_page)
 
     def search_all(self, search_params: Optional[dict]) -> Iterable[Project]:
-        path = self._get_path() + 'projects/search'
+        path = self._get_path() + '/search'
 
         data = self.session.post_resource(path, search_params, version=self._api_version)
 
