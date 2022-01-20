@@ -4,6 +4,11 @@ Teams
 
 Teams overview
 
+.. warning::
+    Teams are not available on all Citrine Platform deployments.
+
+    Please contact support for more information.
+
 Basic Team Use
 -----------------
 
@@ -49,7 +54,7 @@ There are three types of access permissions a user can have on a team: READ, SHA
 - WRITE allows them to modify those resources.
 - SHARE allows them to publish those resources to other Teams.
 
-There are several methods for managing teams, Users, and user membership in teams.
+There are several methods for managing teams, Users, and user membership in teams
 
 
 Listing Users in a Team
