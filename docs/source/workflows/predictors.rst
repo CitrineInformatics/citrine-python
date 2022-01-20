@@ -394,7 +394,7 @@ These labels are specified via:
 
 .. code:: python
 
-    labels = {"solvent": {"water'}, "solute": {"salt"}}
+    labels = {"solvent": {"water"}, "solute": {"salt"}}
 
 The following example illustrates how an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is constructed for the saline example.
 
