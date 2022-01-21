@@ -727,7 +727,7 @@ class ProjectCollection(Collection[Project]):
                                         page=page,
                                         per_page=per_page)
 
-    def search_all(self, search_params: Optional[dict]) -> Iterable[Project]:
+    def search_all(self, search_params: Optional[dict]) -> Iterable[Dict]:
         path = self._get_path() + '/search'
 
         data = self.session.post_resource(path, search_params, version=self._api_version)
@@ -797,7 +797,7 @@ class ProjectCollection(Collection[Project]):
         search_params = {} if search_params is None else search_params
 
         if self.session._accounts_service_v3:
-            return self.search_all(search_params)
+            return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
         return self._paginator.paginate(page_fetcher=self._fetch_page_search,
