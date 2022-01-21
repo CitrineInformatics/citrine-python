@@ -652,7 +652,8 @@ class ProjectCollection(Collection[Project]):
         """
         project = Project.build(data)
         project.session = self.session
-        project.team_id = self.team_id
+        if self.team_id is not None:
+            project.team_id = self.team_id
         return project
 
     def _register_in_team(self, name: str, *, description: Optional[str] = None):
