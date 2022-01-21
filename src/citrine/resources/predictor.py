@@ -136,3 +136,27 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         if 'instance' in data:
             data['config'] = data.pop('instance')
         return self.build(data)
+
+    def convert_to_graph(self, uid: Union[UUID, str]):
+        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
+
+        Converts any SimpleML predictors to AutoML. SimpleML predictors are deprecated, so this
+        conversion is to aid in their removal. The predictor must be trained and in the READY
+        state. If it isn't a SimpleML or Graph predictor, an error will be raised.
+
+        Note this conversion is not performed in place! That is, the predictor returned is not
+        persisted on the platform. To persist it, pass the converted predictor to
+        `PredictorCollection.update`. Or you can do this in one step with
+        `PredictorCollection.convert_and_update`.
+        """
+        path = format_escaped_url("/projects/{}/predictors/{}/convert", self.project_id, uid)
+        data = self.session.get_resource(path)
+        return self.build(data)
+
+    def convert_and_update(self, uid: Union[UUID, str]):
+        """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
+
+        See `PredictorCollection.convert_to_graph` for more detail.
+        """
+        new_pred = self.convert_to_graph(uid)
+        return self.update(new_pred)

@@ -4,7 +4,7 @@ import pytest
 import uuid
 from copy import deepcopy
 
-from citrine.exceptions import ModuleRegistrationFailedException, NotFound
+from citrine.exceptions import BadRequest, ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
@@ -15,8 +15,12 @@ from citrine.informatics.predictors import (
     LabelFractionsPredictor
 )
 from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
-from tests.utils.session import FakeSession, FakeCall
-from tests.utils.session import FakeRequestResponse
+from tests.utils.session import (
+    FakeCall,
+    FakeRequest,
+    FakeRequestResponse,
+    FakeSession
+)
 
 
 @pytest.fixture(scope='module')
@@ -322,3 +326,86 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
 
+
+@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+def test_convert_to_graph(predictor_data, request):
+    predictor_data = request.getfixturevalue(predictor_data)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(predictor_data))
+
+    session.set_responses(deepcopy(predictor_data))
+
+    # When
+    response = collection.convert_to_graph(predictor.uid)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(
+        method="GET",
+        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    assert session.last_call == expected_call_convert
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+def test_convert_and_update(predictor_data, request):
+    predictor_data = request.getfixturevalue(predictor_data)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(predictor_data))
+
+    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data))
+
+    # When
+    response = collection.convert_and_update(predictor.uid)
+
+    # Then
+    assert session.num_calls == 2
+    expected_call_convert = FakeCall(
+        method="GET",
+        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    expected_call_store = FakeCall(
+        method="PUT",
+        path=f"/projects/{project_id}/modules/{predictor_id}",
+        json=predictor.dump())
+    assert session.calls == [expected_call_convert, expected_call_store]
+    assert response.dump() == predictor.dump()
+
+
+def test_update_non_simple_to_graph(valid_expression_predictor_data):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_expression_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    convert_path = f"/projects/{project_id}/modules/{predictor_id}/convert"
+    
+    response = FakeRequestResponse(400, text="Predictor must be of type `Simple` or `Graph` in a 'READY' state.")
+    response.request.method = "GET"
+    session.set_response(BadRequest(convert_path, response))
+
+    # When
+    with pytest.raises(BadRequest):
+        collection.convert_and_update(predictor_id)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(
+        method="GET",
+        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    assert session.last_call == expected_call_convert
