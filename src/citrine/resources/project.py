@@ -730,9 +730,7 @@ class ProjectCollection(Collection[Project]):
     def search_all(self, search_params: Optional[dict]) -> Iterable[Project]:
         path = self._get_path() + '/search'
 
-        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
-
-        data = self.session.post_resource(path, json_body, version=self._api_version)
+        data = self.session.post_resource(path, search_params, version=self._api_version)
 
         if self._collection_key is None:
             collection = data
