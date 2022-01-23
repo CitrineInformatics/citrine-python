@@ -27,7 +27,7 @@ def find_collection(*, collection, name):
             collection_list = collection.list()
     else:
         collection_list = collection.list()
-    print(collection_list)
+
     matching_resources = [resource for resource in collection_list if resource.name == name]
     if len(matching_resources) > 1:
         raise ValueError("Found multiple collections with name '{}'".format(name))
