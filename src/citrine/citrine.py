@@ -83,3 +83,4 @@ class Citrine:
             raise NotImplementedError("This method is inoperable until your Citrine Platform "
                                       "deployment has migrated to the CP2 release of the Citrine "
                                       "Platform Web Interface. See our FAQ for details.")
+
