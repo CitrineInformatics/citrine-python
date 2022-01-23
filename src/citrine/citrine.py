@@ -80,5 +80,7 @@ class Citrine:
         if self.session._accounts_service_v3:
             return TeamCollection(self.session)
         else:
-            return TeamCollection(self.session)
+            raise NotImplementedError("This method is inoperable until your Citrine Platform "
+                                      "deployment has migrated to the CP2 release of the Citrine "
+                                      "Platform Web Interface. See our FAQ for details.")
 
