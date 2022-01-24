@@ -728,6 +728,46 @@ class ProjectCollection(Collection[Project]):
                                         per_page=per_page)
 
     def search_all(self, search_params: Optional[dict]) -> Iterable[Dict]:
+        """
+        Search across all projects in a domain.
+
+        There is no pagination on search_all.
+
+         This is compatible with accounts v3 only.
+
+        Parameters
+        ----------
+        search_params: dict, optional
+            A ``dict`` representing the body of the post request that will be sent to the search
+            endpoint to filter the results, e.g.,
+
+            .. code:: python
+
+                {
+                    "name": {
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                }
+
+            The ``dict`` can contain any combination of (one or all) search specifications for the
+            name, description, and status fields of a project. For each parameter specified, the
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
+
+
+        Returns
+        -------
+        Iterable[Dict]
+            Projects in this collection.
+
+        """
         path = self._get_path() + '/search'
 
         data = self.session.post_resource(path, search_params, version=self._api_version)
