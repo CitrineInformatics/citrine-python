@@ -264,8 +264,11 @@ class Session(requests.Session):
     def _extract_response_json(path, response) -> dict:
         """Extract json from the response or log and return an empty dict if extraction fails."""
         try:
-            print(response.headers['content-type'])
-            return response.json()
+            content_type = response.headers['content-type']
+            if content_type[0] == 'application/json':
+                return response.json()
+            else:
+                return {}
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'
                         ' exception %s. Returning empty value.',
