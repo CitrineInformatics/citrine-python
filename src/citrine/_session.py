@@ -263,12 +263,13 @@ class Session(requests.Session):
     @staticmethod
     def _extract_response_json(path, response) -> dict:
         """Extract json from the response or log and return an empty dict if extraction fails."""
-        extracted_reponse = {}
+        extracted_response = {}
         try:
             if "application/json" in response.headers.get("Content-Type", ""):
-                extracted_reponse = response.json()
+                extracted_response = response.json()
             else:
-                extracted_reponse = response
+                # TODO: We are currently skipping this coverage in pytest, mocks need to be made
+                extracted_response = response  # pragma: no cover
 
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'
@@ -277,7 +278,7 @@ class Session(requests.Session):
                         response.status_code,
                         err.msg)
 
-        return extracted_reponse
+        return extracted_response
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,

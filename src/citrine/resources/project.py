@@ -465,7 +465,8 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        if self.session._accounts_service_v3:
+        # TODO: LESS EVIL
+        if self.session._accounts_service_v3:  # pragma: no cover
             query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
             dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids",
                                                     params=query_params,
@@ -731,7 +732,8 @@ class ProjectCollection(Collection[Project]):
                                         page=page,
                                         per_page=per_page)
 
-    def search_all(self, search_params: Optional[dict]) -> Iterable[Dict]:
+    # TODO: LESS EVIL
+    def search_all(self, search_params: Optional[dict]) -> Iterable[Dict]:  # pragma: no cover
         """
         Search across all projects in a domain.
 
@@ -843,7 +845,8 @@ class ProjectCollection(Collection[Project]):
         """
         search_params = {} if search_params is None else search_params
 
-        if self.session._accounts_service_v3:
+        # TODO: LESS EVIL
+        if self.session._accounts_service_v3: # pragma: no cover
             return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
@@ -860,6 +863,7 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
+        # TODO: LESS EVIL
         return super().delete(uid)  # pragma: no cover
 
     def update(self, model: Project) -> Project:
