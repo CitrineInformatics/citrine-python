@@ -103,7 +103,7 @@ def test_get_refreshes_token(session: Session):
 
         resp = session.get_resource('/foo')
 
-    assert {'foo': 'bar'} == resp
+    assert {'foo': 'bar'} == json.loads(resp.text)
     assert datetime(2019, 3, 14) == session.access_token_expiration
 
 
