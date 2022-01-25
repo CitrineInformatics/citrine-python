@@ -263,15 +263,21 @@ class Session(requests.Session):
     @staticmethod
     def _extract_response_json(path, response) -> dict:
         """Extract json from the response or log and return an empty dict if extraction fails."""
+        extracted_reponse = {}
         try:
-            return response.json()
+            if "application/json" in response.headers.get("Content-Type", ""):
+                extracted_reponse = response.json()
+            else:
+                extracted_reponse = response
+
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'
                         ' exception %s. Returning empty value.',
                         path,
                         response.status_code,
                         err.msg)
-            return {}
+
+        return extracted_reponse
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,
