@@ -774,7 +774,10 @@ class ProjectCollection(Collection[Project]):
         """
         path = self._get_path() + '/search'
         query_params = {'userId': ""}
-        data = self.session.post_resource(path, params=query_params, json=search_params, version="v3")
+        data = self.session.post_resource(path,
+                                          params=query_params,
+                                          json=search_params,
+                                          version="v3")
 
         if self._collection_key is None:
             collection = data
