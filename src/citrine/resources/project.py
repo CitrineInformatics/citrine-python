@@ -467,7 +467,9 @@ class Project(Resource['Project']):
         """
         if self.session._accounts_service_v3:
             query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-            dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids", params=query_params, version="v3").get('ids', [])
+            dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids",
+                                                    params=query_params,
+                                                    version="v3").get('ids', [])
         else:
             dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
         return dataset_ids
