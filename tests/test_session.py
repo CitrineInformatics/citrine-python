@@ -99,11 +99,13 @@ def test_get_refreshes_token(session: Session):
     with requests_mock.Mocker() as m:
         m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'})
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              json={'foo': 'bar'},
+              headers={'content-type': "application/json"})
 
         resp = session.get_resource('/foo')
 
-    assert {'foo': 'bar'} == json.loads(resp.text)
+    assert {'foo': 'bar'} == resp
     assert datetime(2019, 3, 14) == session.access_token_expiration
 
 
@@ -131,7 +133,7 @@ def test_get_refresh_token_failure(session: Session):
 
 def test_get_no_refresh(session: Session):
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'})
+        m.get('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'}, headers={'content-type': "application/json"})
         resp = session.get_resource('/foo')
 
     assert {'foo': 'bar'} == resp
@@ -208,7 +210,7 @@ def test_connection_error(session: Session):
         m.register_uri('GET',
                        'http://citrine-testing.fake/api/v1/foo',
                        [{'exc': requests.exceptions.ConnectionError},
-                        {'json': data, 'status_code': 200}])
+                        {'json': data, 'status_code': 200, 'headers': {'content-type': "application/json"}}])
 
         resp = session.get_resource('/foo')
         assert resp == data
@@ -222,7 +224,7 @@ def test_post_refreshes_token_when_denied(session: Session):
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.register_uri('POST', 'http://citrine-testing.fake/api/v1/foo', [
             {'status_code': 401, 'json': {'reason': 'invalid-token'}},
-            {'json': {'foo': 'bar'}}
+            {'json': {'foo': 'bar'}, 'headers': {'content-type': "application/json"}}
         ])
 
         resp = session.post_resource('/foo', json={'data': 'hi'})
@@ -288,7 +290,9 @@ def test_cursor_paged_resource():
 
 def test_bad_json_response(session: Session):
     with requests_mock.Mocker() as m:
-        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=200)
+        m.delete('http://citrine-testing.fake/api/v1/bar/something',
+                 status_code=200,
+                 headers={'content-type': "application/json"})
         response_json = session.delete_resource('/bar/something')
         assert response_json == {}
 
@@ -296,7 +300,10 @@ def test_bad_json_response(session: Session):
 def test_good_json_response(session: Session):
     with requests_mock.Mocker() as m:
         json_to_validate = {"bar": "something"}
-        m.put('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
+        m.put('http://citrine-testing.fake/api/v1/bar/something',
+              status_code=200,
+              json=json_to_validate,
+              headers={'content-type': "application/json"})
         response_json = session.put_resource('bar/something', {"ignored": "true"})
         assert response_json == json_to_validate
 
@@ -304,6 +311,9 @@ def test_good_json_response(session: Session):
 def test_patch(session: Session):
     with requests_mock.Mocker() as m:
         json_to_validate = {"bar": "something"}
-        m.patch('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
+        m.patch('http://citrine-testing.fake/api/v1/bar/something',
+                status_code=200,
+                json=json_to_validate,
+                headers={'content-type': "application/json"})
         response_json = session.patch_resource('bar/something', {"ignored": "true"})
         assert response_json == json_to_validate
