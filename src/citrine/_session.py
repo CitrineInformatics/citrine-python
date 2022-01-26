@@ -267,9 +267,6 @@ class Session(requests.Session):
         try:
             if "application/json" in response.headers.get("Content-Type", ""):
                 extracted_response = response.json()
-            else:
-                # TODO: We are currently skipping this coverage in pytest, mocks need to be made
-                extracted_response = response  # pragma: no cover
 
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'

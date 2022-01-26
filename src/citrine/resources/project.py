@@ -774,19 +774,20 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        path = self._get_path() + '/search'
-        query_params = {'userId': ""}
-        data = self.session.post_resource(path,
-                                          params=query_params,
-                                          json=search_params,
-                                          version=self._api_version())
-
-        if self._collection_key is None:
-            collection = data
-        else:
-            collection = data[self._collection_key]
-
-        return collection
+        # path = self._get_path() + '/search'
+        # query_params = {'userId': ""}
+        # data = self.session.post_resource(path,
+        #                                   params=query_params,
+        #                                   json=search_params,
+        #                                   version=self._api_version())
+        #
+        # if self._collection_key is None:
+        #     collection = data
+        # else:
+        #     collection = data[self._collection_key]
+        #
+        # return collection
+        pass
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
