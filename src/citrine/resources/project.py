@@ -470,7 +470,7 @@ class Project(Resource['Project']):
             query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
             dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids",
                                                     params=query_params,
-                                                    version="v3").get('ids', [])
+                                                    version=self._api_version()).get('ids', [])
         else:
             dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
         return dataset_ids
@@ -779,7 +779,7 @@ class ProjectCollection(Collection[Project]):
         data = self.session.post_resource(path,
                                           params=query_params,
                                           json=search_params,
-                                          version="v3")
+                                          version=self._api_version())
 
         if self._collection_key is None:
             collection = data
