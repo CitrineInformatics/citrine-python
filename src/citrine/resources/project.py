@@ -465,9 +465,14 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available")
-        dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
+        # TODO: LESS EVIL
+        if self.session._accounts_service_v3:  # pragma: no cover
+            query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
+            dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids",
+                                                    params=query_params,
+                                                    version="v3").get('ids', [])
+        else:
+            dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
         return dataset_ids
 
     def owned_table_ids(self) -> List[str]:
@@ -727,6 +732,61 @@ class ProjectCollection(Collection[Project]):
                                         page=page,
                                         per_page=per_page)
 
+    # TODO: LESS EVIL
+    def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:  # pragma: no cover
+        """
+        Search across all projects in a domain.
+
+        There is no pagination on search_all.
+
+         This is compatible with accounts v3 only.
+
+        Parameters
+        ----------
+        search_params: dict, optional
+            A ``dict`` representing the body of the post request that will be sent to the search
+            endpoint to filter the results, e.g.,
+
+            .. code:: python
+
+                {
+                    "name": {
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                }
+
+            The ``dict`` can contain any combination of (one or all) search specifications for the
+            name, description, and status fields of a project. For each parameter specified, the
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
+
+
+        Returns
+        -------
+        Iterable[Dict]
+            Projects in this collection.
+
+        """
+        collections = []
+        path = self._get_path() + '/search'
+        query_params = {'userId': ""}
+        data = self.session.post_resource(path,
+                                          params=query_params,
+                                          json=search_params,
+                                          version=self._api_version)
+
+        if self._collection_key is not None:
+            collections = data[self._collection_key]
+
+        return collections
+
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
@@ -782,10 +842,12 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Searching not available.")
-        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
         search_params = {} if search_params is None else search_params
+
+        # TODO: LESS EVIL
+        if self.session._accounts_service_v3:  # pragma: no cover
+            return self._build_collection_elements(self.search_all(search_params))
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
         return self._paginator.paginate(page_fetcher=self._fetch_page_search,
                                         collection_builder=self._build_collection_elements,
@@ -800,6 +862,7 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
+        # TODO: LESS EVIL
         return super().delete(uid)  # pragma: no cover
 
     def update(self, model: Project) -> Project:
