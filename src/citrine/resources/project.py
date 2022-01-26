@@ -733,7 +733,7 @@ class ProjectCollection(Collection[Project]):
                                         per_page=per_page)
 
     # TODO: LESS EVIL
-    def search_all(self, search_params: Optional[dict]) -> Iterable[Dict]:  # pragma: no cover
+    def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:  # pragma: no cover
         """
         Search across all projects in a domain.
 
@@ -774,6 +774,7 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
+        collections = []
         path = self._get_path() + '/search'
         query_params = {'userId': ""}
         data = self.session.post_resource(path,
@@ -781,13 +782,10 @@ class ProjectCollection(Collection[Project]):
                                           json=search_params,
                                           version=self._api_version)
 
-        if self._collection_key is None:
-            collection = data
-        else:
-            collection = data[self._collection_key]
+        if self._collection_key is not None:
+            collections = data[self._collection_key]
 
-        return collection
-        # pass
+        return collections
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
