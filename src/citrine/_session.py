@@ -270,7 +270,6 @@ class Session(requests.Session):
             else:  # pragma: no cover
                 logger.info(f"""Response at {path} with status code of {response.status_code}
                     lacked the required 'application/json' Content-Type in the header.""")
-                raise JSONDecodeError
 
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'
