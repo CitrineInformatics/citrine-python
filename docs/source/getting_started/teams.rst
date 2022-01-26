@@ -2,7 +2,8 @@
 Teams
 ========
 
-Teams overview
+Teams were introduced to simplify securely sharing your assets across projects. All assets
+are owned by Teams, including projects.
 
 .. warning::
     Teams are not available on all Citrine Platform deployments.
@@ -12,49 +13,47 @@ Teams overview
 Basic Team Use
 -----------------
 
-Most commonly, the first thing you will want to do after connecting to the Citrine Platform
-is to find a certain Team. Assume that you have created a :class:`~citrine.citrine.Citrine`
-client object named ``citrine``. To list all of the Teams that you are a member of, use the
-``list`` command.
+In the following examples, ``citrine`` is the name of your :class:`~citrine.citrine.Citrine`
+client object.
+
+After connecting to the Citrine Platform, you'll most likely want to find a specific Team.
+To list all Teams of which you are a member, use the ``list`` method.
 
 .. code-block:: python
 
     citrine.teams.list()
 
-To retrieve a Team that you are a member of, either find the Team in the list:
+There are a few ways to find a single Team from this list.
 
 .. code-block:: python
 
+    # 1. Iterate over the list of teams and filter by name.
     team_name = "Team A"
-    all_teamss = citrine.teams.list()
+    all_teams = citrine.teams.list()
     team_a = next((team for team in all_teams if team.name == team_name), None)
 
-or get the Team by name using a helper method:
-
-.. code-block:: python
-
+    # 2. Use a helper method from citrine.seeding.find_or_create, such as find_or_create_team.
     from citrine.seeding.find_or_create import find_or_create_team
     team_name = "Team A"
     team_a = find_or_create_team(team_collection=citrine.teams, team_name=team_name)
 
-or get it by unique identifier:
+    # 3. If you have its unique ID, retrieve it directly.
+    team_a = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 
-.. code-block:: python
-
-    team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
+Note that you can only retrieve a Team of which you are a member.
 
 Managing Users
 --------------
 
-Admin users can manage permissions of Users in Teams.
+Admin users can manage permissions of Users in Teams. These replace the previous concept of roles.
 
-There are three types of access permissions a user can have on a team: READ, SHARE and WRITE.
+There are three types of access permissions a user can have on a team: READ, SHARE, and WRITE.
 
 - READ allows a user to view resources in a Team.
 - WRITE allows them to modify those resources.
 - SHARE allows them to publish those resources to other Teams.
 
-There are several methods for managing teams, Users, and user membership in teams
+There are several methods for managing teams, Users, and user membership in teams.
 
 
 Listing Users in a Team
@@ -71,7 +70,7 @@ as well as a copy of the User and Team objects.
      # List Members of a team
      team_members = team.list_members()
 
-     # See their roles
+     # See their actions
      [(m.user.screen_name, m.actions) for m in team_members]
      # or
      [str(m) for m in team_members]
@@ -96,8 +95,9 @@ When adding a User to a Team, you can specify the actions that User should have:
 
 .. code-block:: python
 
-    # Add user to your team and give them write and share permissions
-    team.add_user(user_id, actions=["WRITE", "READ", "SHARE"])
+    from citrine.resources.team import READ, WRITE, SHARE
+    # Add user to your team and give them read, write, and share permissions
+    team.add_user(user_id, actions=[READ, WRITE, SHARE])
 
 
 Remove User from a Team
@@ -128,5 +128,5 @@ A user's actions in a team can be updated. The method
     user_id = "bed6f207-f15e-4aef-932d-87d99b2d6203"
     team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 
-    # Make the user a member with write access
-    team.update_user_actions(user_uid=user_id, actions=[WRITE, READ])
+    # Make the user a member with read and write access
+    team.update_user_actions(user_uid=user_id, actions=[READ, WRITE])

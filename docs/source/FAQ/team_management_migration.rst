@@ -13,16 +13,15 @@ What's new?
 Teams
 ------
 
-The biggest fundamental change that affects Citrine Python when migrating to CP2 is the
-introduction of the Teams concept for access control. After this update, all projects and assets are owned by Teams that include one or more users on the platform. This concept was introduced to make it easier for Citrine Platform users to securely share assets across projects where it makes sense for their business.
+The biggest change is the introduction of the Teams concept for access control. After this update, all projects and assets are owned by Teams that include one or more users on the platform. This concept was introduced to make it easier for Citrine Platform users to securely share assets across projects.
 
 Projects
 ---------
-Projects are now available as a Team asset. Once you have a Project in hand, methods related to asset sharing and user management will direct you to the corresponding Team methods, and other methods will continue to work as expected. 
+Projects are now available as a Team asset. Project methods related to asset sharing and user management will direct you to the corresponding Team methods. Other methods will continue to work as before.
 
 User Management
 ---------------
-Many user management actions that were previously available on Projects are now only available on Teams.
+Many user management actions that were previously available on Projects are now only available on Teams. Attempting to use them on a Project will raise an error with a message directing you towards the equivalent Team method.
 
 
 How does this change my code?
@@ -30,9 +29,10 @@ How does this change my code?
 
 The main change is that you should get the Project from the encompasing Team rather than the Citrine client.
 
+Previously:
+
 .. code-block:: python
 
-	# previously
 	project = citrine.projects.get(project_id)
 	# or
 	project = citrine.projects.register(name="My Project")
@@ -42,8 +42,11 @@ The main change is that you should get the Project from the encompasing Team rat
 		project_name="My Project"
 	)
 
+The Teams equivalent:
 
-	# with Teams, you will use the Team collection instead
+.. code-block:: python
+
+	# You will lookup your team
 	team = citrine.teams.get(team_id)
 	# or
 	team = find_or_create_team(
@@ -51,7 +54,7 @@ The main change is that you should get the Project from the encompasing Team rat
 		team_name="My Team"
 	)
 
-	# with which you can then find your project
+	# Then find your project within the team
 	project = team.projects.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 	# or
 	project = team.projects.register(name="My Project")
@@ -61,20 +64,24 @@ The main change is that you should get the Project from the encompasing Team rat
 		project_name="My Project"
 	)
 
-
 If your scripts managed user membership in projects, that user management now works on the team level instead.
+
+Previously:
 
 .. code-block:: python
 
-	# previously, for a given project
 	project.add_user(user_uid)
 	project.remove_user(user_uid)
 	project.update_user_role(user_uid=user_uid, role=LEAD, actions=[WRITE])
 	project.list_members()
 
-	# after the migration to teams
+The Teams equivalent:
+
+.. code-block:: python
+
 	team.add_user(user_uid)
 	team.remove_user(user_uid)
-	team.update_user_action(user_uid=user_uid, actions=[WRITE])
+	team.update_user_action(user_uid=user_uid, actions=[WRITE, READ, SHARE])
 	team.list_members()
 
+As shown above, with the introduction of Teams, roles are replaced by specifying a user's actions as any combination of READ, WRITE, and SHARE.
