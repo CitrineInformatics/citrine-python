@@ -64,8 +64,8 @@ class Citrine:
         # Fetch the version of accounts
 
         if self.session._accounts_service_v3:
-            warn("Your Citrine Platform deployment has migrated to the CP2 release of the"
-                 " Citrine Platform Web Interface. See our FAQ for details.", UserWarning)
+            warn("Your Citrine Platform deployment has migrated to include the Teams release."
+                 "See our FAQ for details.", UserWarning)
         return ProjectCollection(self.session)
 
     @property
@@ -81,5 +81,5 @@ class Citrine:
             return TeamCollection(self.session)
         else:
             raise NotImplementedError("This method is inoperable until your Citrine Platform "
-                                      "deployment has migrated to the CP2 release of the Citrine "
-                                      "Platform Web Interface. See our FAQ for details.")
+                                      "deployment has migrated to include the Teams release. "
+                                      "See our FAQ for details.")

@@ -10,6 +10,7 @@ Getting Started
     overview
     connecting
     basic_functionality
+    teams
     projects
     datasets
     data_model
