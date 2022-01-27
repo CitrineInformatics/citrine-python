@@ -2,8 +2,8 @@
 Teams
 ========
 
-Teams were introduced to simplify securely sharing your assets across projects. All assets
-are owned by Teams, including projects.
+Teams were introduced to simplify securely sharing your assets across projects. All assets are
+owned by Teams, including projects.
 
 .. warning::
     Teams are not available on all Citrine Platform deployments.
@@ -13,11 +13,11 @@ are owned by Teams, including projects.
 Basic Team Use
 -----------------
 
-In the following examples, ``citrine`` is the name of your :class:`~citrine.citrine.Citrine`
-client object.
+In the following examples, ``citrine`` is the name of your :class:`~citrine.citrine.Citrine` client
+object.
 
-After connecting to the Citrine Platform, you'll most likely want to find a specific Team.
-To list all Teams of which you are a member, use the ``list`` method.
+After connecting to the Citrine Platform, you'll most likely want to find a specific Team. To list
+all Teams of which you are a member, use the ``list`` method.
 
 .. code-block:: python
 
@@ -27,17 +27,12 @@ There are a few ways to find a single Team from this list.
 
 .. code-block:: python
 
-    # 1. Iterate over the list of teams and filter by name.
-    team_name = "Team A"
-    all_teams = citrine.teams.list()
-    team_a = next((team for team in all_teams if team.name == team_name), None)
-
-    # 2. Use a helper method from citrine.seeding.find_or_create, such as find_or_create_team.
+    # 1. Use a helper method from citrine.seeding.find_or_create, such as find_or_create_team.
     from citrine.seeding.find_or_create import find_or_create_team
     team_name = "Team A"
     team_a = find_or_create_team(team_collection=citrine.teams, team_name=team_name)
 
-    # 3. If you have its unique ID, retrieve it directly.
+    # 2. If you have its unique ID, retrieve it directly.
     team_a = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 
 Note that you can only retrieve a Team of which you are a member.
@@ -60,8 +55,8 @@ Listing Users in a Team
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Users in a Team can be listed using the :func:`~citrine.resources.team.Team.list_members` method.
-The ``TeamMember`` array returned from this method has the user's access permissions in the Team
-as well as a copy of the User and Team objects.
+The ``TeamMember`` array returned from this method has the user's access permissions in the Team as
+well as a copy of the User and Team objects.
 
 .. code-block:: python
 
@@ -79,8 +74,8 @@ as well as a copy of the User and Team objects.
 Add User to a Team
 ^^^^^^^^^^^^^^^^^^^^^
 
-Users can be added to a Team. They will be granted READ access to resources in the Team.
-This is accomplished with the :func:`~citrine.resources.team.Team.add_user` method.
+Users can be added to a Team. They will be granted READ access to resources in the Team. This is
+accomplished with the :func:`~citrine.resources.team.Team.add_user` method.
 
 .. code-block:: python
 

@@ -5,7 +5,8 @@ Teams User Management Migration
 Summary
 =======
 
-This is an FAQ about migrating your code to the :class:`~citrine.resources.team.Team` version of the Citrine Platform.
+This is an FAQ about migrating your code to the :class:`~citrine.resources.team.Team` version of
+the Citrine Platform.
 
 What's new?
 ====================
@@ -13,21 +14,27 @@ What's new?
 Teams
 ------
 
-The biggest change is the introduction of the Teams concept for access control. After this update, all projects and assets are owned by Teams that include one or more users on the platform. This concept was introduced to make it easier for Citrine Platform users to securely share assets across projects.
+The biggest change is the introduction of Teams for access control. After this update, all projects
+and assets will be owned by Teams that include one or more users on the platform. This concept was
+introduced to make it easier for Citrine Platform users to securely share assets across projects.
 
 Projects
 ---------
-Projects are now available as a Team asset. Project methods related to asset sharing and user management will direct you to the corresponding Team methods. Other methods will continue to work as before.
+Projects are now available as a Team asset. Project methods related to asset sharing and user
+management will direct you to the corresponding Team methods. Other methods will continue to work
+as before.
 
 User Management
 ---------------
-Many user management actions that were previously available on Projects are now only available on Teams. Attempting to use them on a Project will raise an error with a message directing you towards the equivalent Team method.
+Many user management actions that were previously available on Projects are now only available on
+Teams. Attempting to use them on a Project will raise an error with a message directing you towards
+the equivalent Team method.
 
 
 How does this change my code?
 =============================
 
-The main change is that you should get the Project from the encompasing Team rather than the Citrine client.
+The main change is retrieving a Project from the encompasing Team rather than the Citrine client.
 
 Previously:
 
@@ -64,7 +71,8 @@ The Teams equivalent:
 		project_name="My Project"
 	)
 
-If your scripts managed user membership in projects, that user management now works on the team level instead.
+If your scripts managed user membership in projects, that user management now works on the team
+level instead.
 
 Previously:
 
@@ -84,4 +92,5 @@ The Teams equivalent:
 	team.update_user_action(user_uid=user_uid, actions=[WRITE, READ, SHARE])
 	team.list_members()
 
-As shown above, with the introduction of Teams, roles are replaced by specifying a user's actions as any combination of READ, WRITE, and SHARE.
+As shown above, with the introduction of Teams, roles are replaced by specifying a user's actions
+as any combination of READ, WRITE, and SHARE.
