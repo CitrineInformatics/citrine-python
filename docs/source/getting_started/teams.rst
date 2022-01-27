@@ -3,7 +3,7 @@ Teams
 ========
 
 Teams were introduced to simplify securely sharing your assets across projects. All assets are
-owned by Teams, including projects.
+owned by teams, including projects.
 
 .. warning::
     Teams are not available on all Citrine Platform deployments.
@@ -16,14 +16,14 @@ Basic Team Use
 In the following examples, ``citrine`` is the name of your :class:`~citrine.citrine.Citrine` client
 object.
 
-After connecting to the Citrine Platform, you'll most likely want to find a specific Team. To list
-all Teams of which you are a member, use the ``list`` method.
+After connecting to the Citrine Platform, you'll most likely want to find a specific team. To list
+all teams of which you are a member, use the ``list`` method.
 
 .. code-block:: python
 
     citrine.teams.list()
 
-There are a few ways to find a single Team from this list.
+There are a few ways to find a specific team in this list.
 
 .. code-block:: python
 
@@ -35,28 +35,28 @@ There are a few ways to find a single Team from this list.
     # 2. If you have its unique ID, retrieve it directly.
     team_a = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 
-Note that you can only retrieve a Team of which you are a member.
+Note that you can only retrieve a ``Team`` of which you are a member.
 
 Managing Users
 --------------
 
-Admin users can manage permissions of Users in Teams. These replace the previous concept of roles.
+Admins can manage user permissions in teams. Permissions replace the previous concept of roles.
 
 There are three types of access permissions a user can have on a team: READ, SHARE, and WRITE.
 
-- READ allows a user to view resources in a Team.
+- READ allows a user to view resources in a team.
 - WRITE allows them to modify those resources.
-- SHARE allows them to publish those resources to other Teams.
+- SHARE allows them to publish those resources to other teams.
 
-There are several methods for managing teams, Users, and user membership in teams.
+There are several methods for managing teams, users, and user membership in teams.
 
 
 Listing Users in a Team
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Users in a Team can be listed using the :func:`~citrine.resources.team.Team.list_members` method.
-The ``TeamMember`` array returned from this method has the user's access permissions in the Team as
-well as a copy of the User and Team objects.
+Users in a team can be listed using the :func:`~citrine.resources.team.Team.list_members` method,
+which returns a ``TeamMember`` array. Each ``TeamMember`` contains the user's access permissions,
+a copy of the ``User`` object, and a copy of the ``Team`` object.
 
 .. code-block:: python
 
@@ -74,8 +74,8 @@ well as a copy of the User and Team objects.
 Add User to a Team
 ^^^^^^^^^^^^^^^^^^^^^
 
-Users can be added to a Team. They will be granted READ access to resources in the Team. This is
-accomplished with the :func:`~citrine.resources.team.Team.add_user` method.
+Users can be added to a team. They will be granted ``READ`` access to resources in the team. This
+is accomplished with the :func:`~citrine.resources.team.Team.add_user` method.
 
 .. code-block:: python
 
@@ -86,7 +86,7 @@ accomplished with the :func:`~citrine.resources.team.Team.add_user` method.
     # Add them to your team
     team.add_user(user_id)
 
-When adding a User to a Team, you can specify the actions that User should have:
+When adding a user to a team, you can specify the actions that user should have:
 
 .. code-block:: python
 
@@ -98,12 +98,12 @@ When adding a User to a Team, you can specify the actions that User should have:
 Remove User from a Team
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Users can also be removed from a Team. This is achieved with the
+Users can also be removed from a team. This is achieved with the
 :func:`~citrine.resources.team.Team.remove_user` method.
 
 .. code-block:: python
 
-    # Get the UUID fo the user you'd like to delete
+    # Get the UUID of the user you'd like to delete
     user_id = "bed6f207-f15e-4aef-932d-87d99b2d6203"
     team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
 
@@ -114,7 +114,7 @@ Users can also be removed from a Team. This is achieved with the
 Update User's Actions in a Team
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 A user's actions in a team can be updated. The method
-:func:`~citrine.resources.team.Team.update_user_actions` facilitates changing a User's actions.
+:func:`~citrine.resources.team.Team.update_user_actions` facilitates changing a user's actions.
 
 
 .. code-block:: python
