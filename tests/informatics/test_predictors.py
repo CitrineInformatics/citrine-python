@@ -7,7 +7,7 @@ import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
-    FormulationDescriptor, ChemicalFormulaDescriptor
+    FormulationDescriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
 from citrine.informatics.predictors import *
 
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
@@ -17,6 +17,7 @@ density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
@@ -119,11 +120,11 @@ def mean_property_predictor() -> MeanPropertyPredictor:
         name='Mean property predictor',
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
-        properties=[density],
-        p=2,
+        properties=[density, chain_type],
+        p=2.5,
         training_data=[formulation_data_source],
         impute_properties=True,
-        default_properties={'density': 1.0},
+        default_properties={'density': 1.0, 'Chain Type': 'Gaussian Coil'},
         label='solvent'
     )
 
@@ -282,11 +283,11 @@ def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
     assert mean_property_predictor.input_descriptor.key == 'formulation'
-    assert mean_property_predictor.properties == [density]
-    assert mean_property_predictor.p == 2
+    assert mean_property_predictor.properties == [density, chain_type]
+    assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
     assert mean_property_predictor.training_data == [formulation_data_source]
-    assert mean_property_predictor.default_properties == {'density': 1.0}
+    assert mean_property_predictor.default_properties == {'density': 1.0, 'Chain Type': 'Gaussian Coil'}
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
     assert str(mean_property_predictor) == expected_str

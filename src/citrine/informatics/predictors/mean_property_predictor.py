@@ -44,7 +44,7 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
     label: Optional[str]
-        Only ingredients with this label will be counted in calculating the mean.
+        Only ingredients with this label are counted when calculating the component-weighted mean.
         If ``None`` (default) all ingredients will be counted.
     default_properties: Optional[Mapping[str, Union[str, float]]]
         Default values to use for imputed properties.
@@ -102,7 +102,8 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
         self.p: float = p
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
-        self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
+        self.default_properties: Optional[Mapping[str, Union[str, float]]] = \
+            default_properties or {}
         self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
