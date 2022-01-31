@@ -31,7 +31,7 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
     properties: List[Union[RealDescriptor, CategoricalDescriptor]]
-        List of real or categorical descriptors to featurize.
+        list of real or categorical descriptors to featurize
     p: float
         Power of the component-weighted mean.
         Positive, negative, and fractional powers are supported.
