@@ -4,7 +4,7 @@ import pytest
 import uuid
 from copy import deepcopy
 
-from citrine.exceptions import BadRequest, ModuleRegistrationFailedException, NotFound
+from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
@@ -337,7 +337,7 @@ def test_convert_to_graph(predictor_data, request):
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
 
-    # Building a graph predictor modifies the input data object, which interferes with the test
+    # Building a predictor may modify the input data object, which interferes with the test
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
@@ -387,25 +387,64 @@ def test_convert_and_update(predictor_data, request):
     assert response.dump() == predictor.dump()
 
 
-def test_update_non_simple_to_graph(valid_expression_predictor_data):
+@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_and_update_errors(error_args, method_name):
     # Given
     project_id = uuid.uuid4()
-    predictor_id = valid_expression_predictor_data["id"]
+    predictor_id = uuid.uuid4()
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
-    convert_path = f"/projects/{project_id}/modules/{predictor_id}/convert"
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
     
-    response = FakeRequestResponse(400, text="Predictor must be of type `Simple` or `Graph` in a 'READY' state.")
+    error_code, error_cls = error_args[:]
+    response = FakeRequestResponse(error_code)
     response.request.method = "GET"
-    session.set_response(BadRequest(convert_path, response))
+    session.set_response(error_cls(convert_path, response))
 
     # When
-    with pytest.raises(BadRequest):
-        collection.convert_and_update(predictor_id)
+    method = getattr(collection, method_name)
+    with pytest.raises(error_cls):
+        method(predictor_id)
 
     # Then
     assert session.num_calls == 1
-    expected_call_convert = FakeCall(
-        method="GET",
-        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    expected_call_convert = FakeCall(method="GET", path=convert_path)
     assert session.last_call == expected_call_convert
+
+
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_graph_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    pred_path = f"/projects/{project_id}/modules/{predictor_id}"
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+    
+    response = FakeRequestResponse(409)
+    response.request.method = "GET"
+
+    session.set_responses(
+            Conflict(convert_path, response),
+            deepcopy(valid_graph_predictor_data),
+            deepcopy(valid_graph_predictor_data))
+
+    # When
+    method = getattr(collection, method_name)
+    response = method(predictor_id, retrain_if_needed=True)
+
+    # Then
+    expected_calls = [
+        FakeCall(method="GET", path=convert_path),
+        FakeCall(method="GET", path=pred_path),
+        FakeCall(method="PUT", path=pred_path, json=predictor.dump())
+    ]
+    assert session.num_calls == 3
+    assert session.calls == expected_calls
+    assert response is None

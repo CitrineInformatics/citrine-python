@@ -184,6 +184,7 @@ class FakeS3Client:
         return self.put_object_output
 
 
+# TODO: Generalize. That is, don't assume "BadRequest" and pass the method to FakeRequest.
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
