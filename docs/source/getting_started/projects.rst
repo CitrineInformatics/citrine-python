@@ -2,6 +2,12 @@
 Projects
 ========
 
+.. warning::
+    Once your deployment is updated to the Teams version of the Citrine Platform, project behavior
+    will change. Details can be found in the :doc:`Teams FAQ <../FAQ/team_management_migration>`.
+
+    Please contact support for more information.
+
 A Project is the basic unit of collaboration and access on the Citrine Platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
