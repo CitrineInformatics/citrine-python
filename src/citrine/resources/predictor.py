@@ -102,8 +102,9 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         and `AutoMLPredictor`s for any variables identified as responses in the training data.
         The configuration generated while using the `AutoConfigureMode.FORMULATION` pattern
         includes these same components, as well as a `SimpleMixturePredictor`,
-        `LabelFractionsPredictor`, `IngredientFractionsPredictor`, and a series of `MeanPropertyPredictor`s
-        to handle featurization of formulation quantities and ingredient properties.
+        `LabelFractionsPredictor`, `IngredientFractionsPredictor`, and a series of
+        `MeanPropertyPredictor`s to handle featurization of formulation quantities
+        and ingredient properties.
         The `AutoConfigureMode.INFER` pattern chooses an appropriate mode based on whether
         the data source contains formulations data or not.
 
