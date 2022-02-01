@@ -5,11 +5,12 @@ import pytest
 import unittest
 
 from citrine.exceptions import (
+    BadRequest,
+    CitrineException,
+    Conflict,
     NonRetryableException,
-    WorkflowConflictException,
     WorkflowNotReadyException,
-    RetryableException,
-    BadRequest, CitrineException)
+    RetryableException)
 
 from datetime import datetime, timedelta
 import pytz
@@ -148,11 +149,20 @@ def test_get_not_found(session: Session):
 
 def test_status_code_409(session: Session):
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/foo', status_code=409)
-        with pytest.raises(NonRetryableException):
-            session.get_resource('/foo')
-        with pytest.raises(WorkflowConflictException):
-            session.get_resource('/foo')
+        url = '/foo'
+        conflict_message = 'you have a conflict'
+        resp_json = {
+            'code': 409,
+            'message': 'a message',
+            'validation_errors': [{'failure_message': conflict_message}]
+        }
+        m.get('http://citrine-testing.fake/api/v1/foo', status_code=409, json=resp_json)
+        with pytest.raises(Conflict) as einfo:
+            session.get_resource(url)
+
+        assert getattr(einfo.value, "url", None) == url
+        assert conflict_message in str(einfo.value)
+        assert "409" in str(einfo.value)
 
 
 def test_status_code_425(session: Session):
