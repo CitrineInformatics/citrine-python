@@ -498,8 +498,8 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.deserialize(value)
             except ValueError:
                 pass
-        raise RuntimeError("An unexpected error occurred while trying to deserialize {} to one of the "
-                           "following types: {}.".format(value, self.underlying_types))
+        raise RuntimeError("An unexpected error occurred while trying to deserialize {} to "
+                           "one of the following types: {}.".format(value, self.underlying_types))
 
 
 class SpecifiedMixedList(PropertyCollection[list, list]):
