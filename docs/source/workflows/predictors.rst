@@ -577,7 +577,7 @@ to compute the mean solute density and the distribution of acetone solubility in
         name='Mean property predictor',
         description='Computes 1-mean ingredient properties',
         input_descriptor=formulation,
-        # featurize ingredient density and crystal structure
+        # featurize ingredient density and acetone solubility
         properties=[density, acetone_solubility],
         # compute the arithmetic mean
         p=1,
