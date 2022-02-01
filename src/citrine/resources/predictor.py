@@ -167,11 +167,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
         .. code:: python
 
-            converted = project.predictors.convert_and_update(predictor_uid)
+            converted = project.predictors.convert_and_update(pred.uid, retrain_if_needed=True)
             if converted is None:
-                predictor = project.predictors.get(predictor_uid)
-                wait_while_validating(collection=project.predictors, predictor)
-                converted = project.predictors.convert_and_update(predictor_uid)
+                predictor = project.predictors.get(pred.uid)
+                wait_while_validating(collection=project.predictors, module=predictor)
+                converted = project.predictors.convert_and_update(pred.uid)
         """
         path = format_escaped_url("/projects/{}/predictors/{}/convert", self.project_id, uid)
         try:
