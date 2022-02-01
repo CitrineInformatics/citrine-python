@@ -503,9 +503,9 @@ To configure a mean property predictor, we must specify:
 * The power of the quantity-weighted mean.
   Positive, negative, and fractional powers are supported.
   ``p=1`` corresponds to an arithmetic mean, which weights all quantities evenly.
-  Higher powers, such as ``p=2``, place more weight on the properties of
-  greater quantity components in the mixture.
-  Negative powers place more weight on the properties of lesser quantity components.
+  Higher powers, such as ``p=2``, place more weight on the property values of
+  components present at greater quantities in the mixture.
+  Negative powers place more weight on the property values of components with smaller quantities.
 * A data source that contains all ingredients and their properties
 * How to handle missing ingredient properties
 
