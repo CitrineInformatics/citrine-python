@@ -495,7 +495,7 @@ If the densities of water and salt are known, we can compute the expected densit
 
 The :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor` computes mean properties of formulation ingredients.
 For real-valued properties, a quantity-weighted mean value is computed.
-For categorical-valued properties, a quantity-weighted distribution of property values is accumulated.
+For categorical-valued properties, a quantity-weighted distribution of property values is computed.
 To configure a mean property predictor, we must specify:
 
 * An input descriptor that holds the mixture's recipe and ingredient labels
@@ -534,9 +534,9 @@ Our leaf ingredient data might resemble:
 +---------------+----------------+--------------------+
 | Ingredient id | Density (g/cc) | Acetone Solubility |
 +===============+================+====================+
-| water         | 1.0            | Yes                |
+| water         | 1.0            | Soluble            |
 +---------------+----------------+--------------------+
-| salt          | 2.16           | No                 |
+| salt          | 2.16           | Insoluble          |
 +---------------+----------------+--------------------+
 | boric acid    | N/A            | N/A                |
 +---------------+----------------+--------------------+
@@ -544,9 +544,9 @@ Our leaf ingredient data might resemble:
 If ``impute_properties == False``, any mixture that includes boric acid will not be featurized.
 If ``impute_properties == True`` and no ``default_properties`` are specified,
 a mean density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58`
-and a distribution of acetone solubility with weights ``{'Yes': 0.5, 'No': 0.5}`` will be used.
-If something other than the imputed values should be used (e.g. 2.0 or 'Partial'),
-this can be specified by setting ``default_properties = {'density': 2.0, 'acetone solubility': 'Partial'}``.
+and a distribution of acetone solubility with weights ``{'Soluble': 0.5, 'Insoluble': 0.5}`` will be used.
+If something other than the imputed values should be used (e.g. 2.0 or 'Slightly Soluble'),
+this can be specified by setting ``default_properties = {'density': 2.0, 'acetone solubility': 'Slightly Soluble'}``.
 
 The example below shows how to configure a mean property predictor
 to compute the mean solute density and the distribution of acetone solubility in a formulation.
@@ -563,7 +563,7 @@ to compute the mean solute density and the distribution of acetone solubility in
     # property descriptor to featurize
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
     acetone_solubility = CategoricalDescriptor(
-        key='acetone solubility', categories={'Yes', 'No', 'Partial'}
+        key='acetone solubility', categories={'Soluble', 'Insoluble', 'Slightly Soluble'}
     )
 
     # table with formulations and their ingredients
@@ -585,7 +585,7 @@ to compute the mean solute density and the distribution of acetone solubility in
         # impute ingredient properties, if missing
         impute_properties=True,
         # if missing, use with 2.0
-        default_properties={'density': 2.0, 'acetone solubility': 'Partial'},
+        default_properties={'density': 2.0, 'acetone solubility': 'Slightly Soluble'},
         # only featurize ingredients labeled as a solute
         label='solute'
     )
