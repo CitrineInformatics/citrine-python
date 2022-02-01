@@ -209,7 +209,7 @@ def test_union_runtime_errors():
         Union([Enumeration(BaseEnumeration)]).serialize(EnumerationExample.FOO)
     # The serialized type is correct (dict) but it is missing fields
     incomplete_dataset_dict = {'name': 'name'}
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ValueError):
         Union([Object(Dataset)]).deserialize(incomplete_dataset_dict)
 
 

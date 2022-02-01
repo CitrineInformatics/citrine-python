@@ -90,7 +90,10 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
                 if self.default is None and not self.optional:
                     msg = "Unable to deserialize {} into {}, missing a required field: {}".format(
                         data, self.underlying_types, field)
-                    raise ValueError(msg)
+                    # TODO(PLA-9109): Make this a ValueError, as it should be.
+                    # This is a runtime error so collection._build_collection_elements
+                    # does not let it slip through. Update when that try/catch is gone
+                    raise RuntimeError(msg)
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
                 # or if its value is null.
                 # Use the default value and stop traversing, even if we have not yet reached
@@ -498,8 +501,12 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.deserialize(value)
             except ValueError:
                 pass
-        raise RuntimeError("An unexpected error occurred while trying to deserialize {} to "
-                           "one of the following types: {}.".format(value, self.underlying_types))
+            except RuntimeError:
+                # TODO(PLA-9109): Remove this catch once deserialize_from_dict throws ValueError
+                pass
+        # TODO(PLA-9109): Make this a RuntimeError, as it should be. Update test.
+        raise ValueError("An unexpected error occurred while trying to deserialize {} to "
+                         "one of the following types: {}.".format(value, self.underlying_types))
 
 
 class SpecifiedMixedList(PropertyCollection[list, list]):

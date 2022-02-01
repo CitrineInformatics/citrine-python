@@ -614,7 +614,8 @@ def test_list_projects_filters_non_projects(collection, session):
     session.set_response({'projects': projects_data})
 
     # Then
-    assert len(list(collection.list())) == 5
+    with pytest.raises(RuntimeError):
+        list(collection.list())
 
 
 def test_list_projects_with_page_params(collection, session):
