@@ -16,12 +16,13 @@ from urllib3.util.retry import Retry
 import citrine
 from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import (
+    BadRequest,
+    CitrineException,
+    Conflict,
     NotFound,
     Unauthorized,
     UnauthorizedRefreshToken,
-    WorkflowConflictException,
-    WorkflowNotReadyException,
-    BadRequest, CitrineException)
+    WorkflowNotReadyException)
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -216,7 +217,7 @@ class Session(requests.Session):
                 raise NotFound(path, response)
             elif response.status_code == 409:
                 logger.debug('%s %s %s', response.status_code, method, path)
-                raise WorkflowConflictException(response.text)
+                raise Conflict(path, response)
             elif response.status_code == 425:
                 logger.debug('%s %s %s', response.status_code, method, path)
                 msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)

@@ -184,6 +184,7 @@ class FakeS3Client:
         return self.put_object_output
 
 
+# TODO: Generalize. That is, don't assume "BadRequest" and pass the method to FakeRequest.
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
@@ -198,6 +199,8 @@ class FakeRequestResponse:
         return self.content
 
 
+# TODO: Generalize. That is, don't require validation_errors, don't assume "BadRequest", and pass
+#       the method to FakeRequest.
 class FakeRequestResponseApiError:
     """A fake version of a requests.request() response that has an ApiError"""
     def __init__(self, code: int, message: str, validation_errors: List[ValidationError],
@@ -215,6 +218,8 @@ class FakeRequestResponseApiError:
 
 
 class FakeRequest:
+    # Defaults to PATCH for legacy reasons.
+    # TODO: require the method to be passed.
     def __init__(self):
         self.method = "PATCH"
 

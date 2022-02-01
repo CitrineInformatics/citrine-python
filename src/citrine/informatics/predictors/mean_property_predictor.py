@@ -107,8 +107,7 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
         self.p: float = p
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
-        self.default_properties: Optional[Mapping[str, Union[str, float]]] = \
-            default_properties or {}
+        self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
         self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
