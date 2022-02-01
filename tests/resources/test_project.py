@@ -614,9 +614,7 @@ def test_list_projects_filters_non_projects(collection, session):
     session.set_response({'projects': projects_data})
 
     # Then
-    with pytest.raises(ValueError):
-        # When
-        list(collection.list())
+    assert len(list(collection.list())) == 5
 
 
 def test_list_projects_with_page_params(collection, session):

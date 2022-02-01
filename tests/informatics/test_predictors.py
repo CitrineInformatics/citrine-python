@@ -1,7 +1,5 @@
-"""Tests for citrine.informatics.processors."""
+"""Tests for citrine.informatics.predictors."""
 import uuid
-import warnings
-
 import mock
 import pytest
 
