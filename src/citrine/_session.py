@@ -217,7 +217,7 @@ class Session(requests.Session):
                 raise NotFound(path, response)
             elif response.status_code == 409:
                 logger.debug('%s %s %s', response.status_code, method, path)
-                raise Conflict(response.text)
+                raise Conflict(path, response)
             elif response.status_code == 425:
                 logger.debug('%s %s %s', response.status_code, method, path)
                 msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
