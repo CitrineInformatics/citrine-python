@@ -4,7 +4,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
-    FormulationDescriptor, RealDescriptor, CategoricalDescriptor, Descriptor
+    FormulationDescriptor, RealDescriptor, CategoricalDescriptor
 )
 from citrine.informatics.predictors import Predictor
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -16,7 +16,7 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
     """A predictor that computes a component-weighted mean of real or categorical properties.
 
     Each component in a formulation contributes to the mean property
-    a weight equal to its quantity raised to the `p` power.
+    a weight equal to its quantity raised to the power `p`.
     For real-valued properties, the property values of each component are averaged
     with these weights to yield the component-weighted mean property.
     For categorical-valued properties, these weights are accumulated to yield a
@@ -25,13 +25,13 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
     Parameters
     ----------
     name: str
-        name of the configuration
+        Name of the configuration
     description: str
-        description of the predictor
+        Description of the predictor
     input_descriptor: FormulationDescriptor
-        descriptor that represents the input formulation
+        Descriptor that represents the input formulation
     properties: List[Union[RealDescriptor, CategoricalDescriptor]]
-        list of real or categorical descriptors to featurize
+        List of real or categorical descriptors to featurize
     p: float
         Power of the component-weighted mean.
         Positive, negative, and fractional powers are supported.
@@ -66,7 +66,12 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
     _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    properties = _properties.List(_properties.Object(Descriptor), 'config.properties')
+    properties = _properties.List(
+        _properties.Union(
+            [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
+        ),
+        'config.properties'
+    )
     p = _properties.Float('config.p')
     impute_properties = _properties.Boolean('config.impute_properties')
     label = _properties.Optional(_properties.String, 'config.label')

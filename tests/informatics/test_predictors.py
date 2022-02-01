@@ -293,6 +293,17 @@ def test_mean_property_initialization(mean_property_predictor):
     assert str(mean_property_predictor) == expected_str
 
 
+def test_mean_property_round_robin(mean_property_predictor):
+    """Make sure that the MPP can be de/serialized appropriately."""
+    data = mean_property_predictor.dump()
+    new_mpp = MeanPropertyPredictor.build(data)
+    real_props = [d for d in new_mpp.properties if isinstance(d, RealDescriptor)]
+    cat_props = [d for d in new_mpp.properties if isinstance(d, CategoricalDescriptor)]
+    assert len(new_mpp.properties) == 2
+    assert len(real_props) == 1
+    assert len(cat_props) == 1
+
+
 def test_deprecated_ingredients_to_simple_mixture():
     """make sure deprecation warnings are issued."""
     with pytest.warns(DeprecationWarning):
