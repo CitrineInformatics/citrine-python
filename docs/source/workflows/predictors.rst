@@ -532,7 +532,7 @@ but do not know its density (a real-valued property) or its solubility in aceton
 Our leaf ingredient data might resemble:
 
 +---------------+----------------+--------------------+
-| Ingredient id | Density (g/cc) | Acetone Solubility |
+| Ingredient ID | Density (g/cc) | Acetone Solubility |
 +===============+================+====================+
 | water         | 1.0            | Soluble            |
 +---------------+----------------+--------------------+
@@ -575,16 +575,16 @@ to compute the mean solute density and the distribution of acetone solubility in
 
     mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
-        description='Computes 1-mean ingredient properties',
+        description='Computes 1-weighted ingredient properties',
         input_descriptor=formulation,
         # featurize ingredient density and acetone solubility
         properties=[density, acetone_solubility],
-        # compute the arithmetic mean
+        # compute the response with component quantities weighted evenly
         p=1,
         training_data=[data_source],
         # impute ingredient properties, if missing
         impute_properties=True,
-        # if missing, use with 2.0
+        # if missing, use provided defaults
         default_properties={'density': 2.0, 'acetone solubility': 'Slightly Soluble'},
         # only featurize ingredients labeled as a solute
         label='solute'
