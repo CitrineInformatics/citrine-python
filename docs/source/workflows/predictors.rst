@@ -545,7 +545,7 @@ If ``impute_properties == False``, any mixture that includes boric acid will not
 If ``impute_properties == True`` and no ``default_properties`` are specified,
 a mean density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58`
 and a distribution of acetone solubility with weights ``{'Soluble': 0.5, 'Insoluble': 0.5}`` will be used.
-If something other than the imputed values should be used (e.g. 2.0 or 'Slightly Soluble'),
+If something other than the imputed values should be used (e.g., 2.0 or 'Slightly Soluble'),
 this can be specified by setting ``default_properties = {'density': 2.0, 'acetone solubility': 'Slightly Soluble'}``.
 
 The example below shows how to configure a mean property predictor
