@@ -137,7 +137,7 @@ class Collection(Generic[ResourceType], Pageable):
             try:
                 yield self.build(element)
             except(KeyError, ValueError) as e:
-                # TODO:  This is a patch to handle deprecated predictors client side.
+                # TODO(PLA-9109): This is a patch to handle deprecated predictors client side
                 # Remove when predictors are migrated
                 warnings.warn(f"Building element skipped due to error: {e}")  # pragma: no cover
                 pass  # pragma: no cover

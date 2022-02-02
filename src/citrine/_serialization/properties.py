@@ -90,7 +90,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
                 if self.default is None and not self.optional:
                     msg = "Unable to deserialize {} into {}, missing a required field: {}".format(
                         data, self.underlying_types, field)
-                    raise RuntimeError(msg)
+                    raise ValueError(msg)
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
                 # or if its value is null.
                 # Use the default value and stop traversing, even if we have not yet reached
@@ -489,8 +489,8 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.serialize(value)
             except ValueError:
                 pass
-        raise RuntimeError("An unexpected error occurred while trying to serialize {} to one "
-                           "of the following types: {}.".format(value, self.serialized_types))
+        raise ValueError("An unexpected error occurred while trying to serialize {} to one "
+                         "of the following types: {}.".format(value, self.serialized_types))
 
     def _deserialize(self, value: typing.Any) -> typing.Any:
         for prop in self.element_types:
@@ -498,10 +498,8 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.deserialize(value)
             except ValueError:
                 pass
-        # this is a failsafe that shouldn't actually ever get hit, hence no cover
-        msg = "An unexpected error occurred while trying to deserialize {} to one of the " \
-              "following types: {}.".format(value, self.underlying_types)  # pragma: no cover
-        raise ValueError(msg)  # pragma: no cover
+        raise ValueError("An unexpected error occurred while trying to deserialize {} to "
+                         "one of the following types: {}.".format(value, self.underlying_types))
 
 
 class SpecifiedMixedList(PropertyCollection[list, list]):
