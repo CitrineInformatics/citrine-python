@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.project module &mdash; Citrine Python 1.21.2 documentation</title>
+  <title>citrine.resources.project module &mdash; Citrine Python 1.23.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.21.2
+                1.23.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -745,6 +745,47 @@ the maximum number of elements in the response.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.project.ProjectCollection.search_all">
+<span class="sig-name descname"><span class="pre">search_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.search_all" title="Permalink to this definition"></a></dt>
+<dd><p>Search across all projects in a domain.</p>
+<p>There is no pagination on search_all.</p>
+<blockquote>
+<div><p>This is compatible with accounts v3 only.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>search_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> representing the body of the post request that will be sent to the search
+endpoint to filter the results, e.g.,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Polymer Project&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_method&quot;</span><span class="p">:</span> <span class="s2">&quot;EXACT&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;polymer chain length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_method&quot;</span><span class="p">:</span> <span class="s2">&quot;SUBSTRING&quot;</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">dict</span></code> can contain any combination of (one or all) search specifications for the
+name, description, and status fields of a project. For each parameter specified, the
+<code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> to match, as well as the <code class="docutils literal notranslate"><span class="pre">&quot;search_method&quot;</span></code> must be provided.
+The available <code class="docutils literal notranslate"><span class="pre">search_methods</span></code> are <code class="docutils literal notranslate"><span class="pre">&quot;SUBSTRING&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;EXACT&quot;</span></code>. The example above
+demonstrates the input necessary to list projects with the exact name
+<code class="docutils literal notranslate"><span class="pre">&quot;Polymer</span> <span class="pre">Project&quot;</span></code> and descriptions including the phrase <code class="docutils literal notranslate"><span class="pre">&quot;polymer</span> <span class="pre">chain</span> <span class="pre">length&quot;</span></code>.</p>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Projects in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[Dict]</p>
 </dd>
 </dl>
 </dd></dl>

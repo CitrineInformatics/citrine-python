@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 1.21.2 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.23.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.21.2
+                1.23.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -485,7 +485,7 @@ Labels are specified using a map from each label to a list of all ingredients th
 Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
 For example, we may wish to label <code class="docutils literal notranslate"><span class="pre">water</span></code> as a solvent and <code class="docutils literal notranslate"><span class="pre">salt</span></code> as a solute.
 These labels are specified via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&#39;}, &quot;</span><span class="n">solute</span><span class="s2">&quot;: {&quot;</span><span class="n">salt</span><span class="s2">&quot;}}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">},</span> <span class="s2">&quot;solute&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;salt&quot;</span><span class="p">}}</span>
 </pre></div>
 </div>
 <p>The following example illustrates how an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> is constructed for the saline example.</p>
@@ -575,14 +575,18 @@ For example, the density of a saline solution can be computed from the densities
 <p>where <span class="math notranslate nohighlight">\(d\)</span> is density and <span class="math notranslate nohighlight">\(f\)</span> is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.</p>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a> computes mean properties of formulation ingredients.
+For real-valued properties, a quantity-weighted mean value is computed.
+For categorical-valued properties, a quantity-weighted distribution of property values is computed.
 To configure a mean property predictor, we must specify:</p>
 <ul class="simple">
 <li><p>An input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
-<li><p>A list of properties to featurize</p></li>
-<li><p>The power of the <a class="reference external" href="https://en.wikipedia.org/wiki/Generalized_mean">generalized mean</a>.
-Only integer powers are supported. <code class="docutils literal notranslate"><span class="pre">p=1</span></code> corresponds to the arithmetic mean, which weights
-all values evenly. Higher powers, such as <code class="docutils literal notranslate"><span class="pre">p=2</span></code> (the root mean square), place more weight
-on larger values of the property. Negative powers place more weight on smaller values.</p></li>
+<li><p>A list of properties to featurize (which may be either real or categorical)</p></li>
+<li><p>The power of the quantity-weighted mean.
+Positive, negative, and fractional powers are supported.
+<code class="docutils literal notranslate"><span class="pre">p=1</span></code> corresponds to an arithmetic mean, which weights all quantities evenly.
+Higher powers, such as <code class="docutils literal notranslate"><span class="pre">p=2</span></code>, place more weight on the property values of
+components present at greater quantities in the mixture.
+Negative powers place more weight on the property values of components with smaller quantities.</p></li>
 <li><p>A data source that contains all ingredients and their properties</p></li>
 <li><p>How to handle missing ingredient properties</p></li>
 </ul>
@@ -592,40 +596,55 @@ on larger values of the property. Negative powers place more weight on smaller v
 <li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">False</span></code>, all ingredients must define a value for all featurized properties.
 Otherwise, the row will not be featurized.
 Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, missing properties will be filled in using the average value across the entire dataset.
-The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
+<li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified,
+missing properties will be filled in using the average value across the entire dataset.
+For real-valued properties this average is the mean over the training data,
+while for categorical-valued properties it is the distribution of property values in the dataset.
+The average is computed from any row with data corresponding to the missing property,
+regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified,
+the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
 This allows complete control over what values are imputed.
 Default properties cannot be specified if <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">False</span></code> (because missing properties are not filled in).</p></li>
 </ol>
-<p>For example, say we add boric acid (a common antiseptic) as a possible ingredient to a saline solution but do not know its density.
+<p>For example, say we add boric acid (a common antiseptic) as a possible ingredient to a saline solution,
+but do not know its density (a real-valued property) or its solubility in acetone (a categorical-valued property).
 Our leaf ingredient data might resemble:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 48%" />
-<col style="width: 52%" />
+<col style="width: 29%" />
+<col style="width: 31%" />
+<col style="width: 39%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Ingredient id</p></th>
+<tr class="row-odd"><th class="head"><p>Ingredient ID</p></th>
 <th class="head"><p>Density (g/cc)</p></th>
+<th class="head"><p>Acetone Solubility</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>water</p></td>
 <td><p>1.0</p></td>
+<td><p>Soluble</p></td>
 </tr>
 <tr class="row-odd"><td><p>salt</p></td>
 <td><p>2.16</p></td>
+<td><p>Insoluble</p></td>
 </tr>
 <tr class="row-even"><td><p>boric acid</p></td>
+<td><p>N/A</p></td>
 <td><p>N/A</p></td>
 </tr>
 </tbody>
 </table>
 <p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">False</span></code>, any mixture that includes boric acid will not be featurized.
-If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, an density of <span class="math notranslate nohighlight">\(\left( 1.0 + 2.16 \right) / 2 = 1.58\)</span> will be used.
-If a value other than 1.58 should be used (e.g., 2.0), this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0}</span></code>.</p>
-<p>The example below shows how to configure a mean property predictor to compute mean solute density in formulations.</p>
+If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified,
+a mean density of <span class="math notranslate nohighlight">\(\left( 1.0 + 2.16 \right) / 2 = 1.58\)</span>
+and a distribution of acetone solubility with weights <code class="docutils literal notranslate"><span class="pre">{'Soluble':</span> <span class="pre">0.5,</span> <span class="pre">'Insoluble':</span> <span class="pre">0.5}</span></code> will be used.
+If something other than the imputed values should be used (e.g., 2.0 or ‘Slightly Soluble’),
+this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0,</span> <span class="pre">'acetone</span> <span class="pre">solubility':</span> <span class="pre">'Slightly</span> <span class="pre">Soluble'}</span></code>.</p>
+<p>The example below shows how to configure a mean property predictor
+to compute the mean solute density and the distribution of acetone solubility in a formulation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">MeanPropertyPredictor</span>
@@ -635,6 +654,9 @@ If a value other than 1.58 should be used (e.g., 2.0), this can be specified by 
 
 <span class="c1"># property descriptor to featurize</span>
 <span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cm^3&#39;</span><span class="p">)</span>
+<span class="n">acetone_solubility</span> <span class="o">=</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;acetone solubility&#39;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Soluble&#39;</span><span class="p">,</span> <span class="s1">&#39;Insoluble&#39;</span><span class="p">,</span> <span class="s1">&#39;Slightly Soluble&#39;</span><span class="p">}</span>
+<span class="p">)</span>
 
 <span class="c1"># table with formulations and their ingredients</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
@@ -645,30 +667,33 @@ If a value other than 1.58 should be used (e.g., 2.0), this can be specified by 
 
 <span class="n">mean_property_predictor</span> <span class="o">=</span> <span class="n">MeanPropertyPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean property predictor&#39;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Computes 1-mean ingredient properties&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Computes 1-weighted ingredient properties&#39;</span><span class="p">,</span>
     <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
-    <span class="c1"># featurize ingredient density</span>
-    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="n">density</span><span class="p">],</span>
-    <span class="c1"># compute the arithmetic mean</span>
+    <span class="c1"># featurize ingredient density and acetone solubility</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="n">density</span><span class="p">,</span> <span class="n">acetone_solubility</span><span class="p">],</span>
+    <span class="c1"># compute the response with component quantities weighted evenly</span>
     <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">],</span>
     <span class="c1"># impute ingredient properties, if missing</span>
     <span class="n">impute_properties</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="c1"># if missing, use with 2.0</span>
-    <span class="n">default_properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
+    <span class="c1"># if missing, use provided defaults</span>
+    <span class="n">default_properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;acetone solubility&#39;</span><span class="p">:</span> <span class="s1">&#39;Slightly Soluble&#39;</span><span class="p">},</span>
     <span class="c1"># only featurize ingredients labeled as a solute</span>
     <span class="n">label</span><span class="o">=</span><span class="s1">&#39;solute&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This predictor will compute a real descriptor with a key <code class="docutils literal notranslate"><span class="pre">mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">density</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">formulation</span></code> which can be retrieved using:</p>
+<p>This predictor will compute a real descriptor with a key  <code class="docutils literal notranslate"><span class="pre">mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">density</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">formulation</span></code>
+and a categorical descriptor with key <code class="docutils literal notranslate"><span class="pre">distribution</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">acetone</span> <span class="pre">solubility</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">formulation</span></code>,
+which can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_property_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
     <span class="n">predictor</span><span class="o">=</span><span class="n">mean_property_predictor</span><span class="p">,</span>
     <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature (e.g., <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>).</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature
+(e.g., <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code> or <code class="docutils literal notranslate"><span class="pre">2.0-weighted</span> <span class="pre">distribution</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">color</span></code>).</p>
 </section>
 <section id="ingredient-fractions-predictor">
 <h2><span class="section-number">4.4.9. </span>Ingredient fractions predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline"></a></h2>

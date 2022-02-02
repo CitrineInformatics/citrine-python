@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.4. Teams &mdash; Citrine Python 1.23.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.5. Projects" href="projects.html" />
+    <link rel="prev" title="1.3. Managing Resources" href="basic_functionality.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.23.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.2. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Managing Resources</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.4. Teams</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-team-use">1.4.1. Basic Team Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#managing-users">1.4.2. Managing Users</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#listing-users-in-a-team">1.4.2.1. Listing Users in a Team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-user-to-a-team">1.4.2.2. Add User to a Team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-user-from-a-team">1.4.2.3. Remove User from a Team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#update-user-s-actions-in-a-team">1.4.2.4. Update User’s Actions in a Team</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">1.5. Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">1.6. Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.7. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai_modules.html">1.8. AI Engine Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.9. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">1. </span>Getting Started</a> &raquo;</li>
+      <li><span class="section-number">1.4. </span>Teams</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting_started/teams.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="teams">
+<h1><span class="section-number">1.4. </span>Teams<a class="headerlink" href="#teams" title="Permalink to this headline"></a></h1>
+<p>Teams were introduced to simplify securely sharing your assets across projects. All assets are
+owned by teams, including projects.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Teams are not available on all Citrine Platform deployments.</p>
+<p>Please contact support for more information.</p>
+</div>
+<section id="basic-team-use">
+<h2><span class="section-number">1.4.1. </span>Basic Team Use<a class="headerlink" href="#basic-team-use" title="Permalink to this headline"></a></h2>
+<p>In the following examples, <code class="docutils literal notranslate"><span class="pre">citrine</span></code> is the name of your <a class="reference internal" href="../reference/citrine.citrine.html#citrine.citrine.Citrine" title="citrine.citrine.Citrine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Citrine</span></code></a> client
+object.</p>
+<p>After connecting to the Citrine Platform, you’ll most likely want to find a specific team. To list
+all teams of which you are a member, use the <code class="docutils literal notranslate"><span class="pre">list</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>There are a few ways to find a specific team in this list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Use a helper method from citrine.seeding.find_or_create, such as find_or_create_team.</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_team</span>
+<span class="n">team_name</span> <span class="o">=</span> <span class="s2">&quot;Team A&quot;</span>
+<span class="n">team_a</span> <span class="o">=</span> <span class="n">find_or_create_team</span><span class="p">(</span><span class="n">team_collection</span><span class="o">=</span><span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="p">,</span> <span class="n">team_name</span><span class="o">=</span><span class="n">team_name</span><span class="p">)</span>
+
+<span class="c1"># 2. If you have its unique ID, retrieve it directly.</span>
+<span class="n">team_a</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that you can only retrieve a <code class="docutils literal notranslate"><span class="pre">Team</span></code> of which you are a member.</p>
+</section>
+<section id="managing-users">
+<h2><span class="section-number">1.4.2. </span>Managing Users<a class="headerlink" href="#managing-users" title="Permalink to this headline"></a></h2>
+<p>Admins can manage user permissions in teams. Permissions replace the previous concept of roles.</p>
+<p>There are three types of access permissions a user can have on a team: READ, SHARE, and WRITE.</p>
+<ul class="simple">
+<li><p>READ allows a user to view resources in a team.</p></li>
+<li><p>WRITE allows them to modify those resources.</p></li>
+<li><p>SHARE allows them to publish those resources to other teams.</p></li>
+</ul>
+<p>There are several methods for managing teams, users, and user membership in teams.</p>
+<section id="listing-users-in-a-team">
+<h3><span class="section-number">1.4.2.1. </span>Listing Users in a Team<a class="headerlink" href="#listing-users-in-a-team" title="Permalink to this headline"></a></h3>
+<p>Users in a team can be listed using the <a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.list_members" title="citrine.resources.team.Team.list_members"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_members()</span></code></a> method,
+which returns a <code class="docutils literal notranslate"><span class="pre">TeamMember</span></code> array. Each <code class="docutils literal notranslate"><span class="pre">TeamMember</span></code> contains the user’s access permissions,
+a copy of the <code class="docutils literal notranslate"><span class="pre">User</span></code> object, and a copy of the <code class="docutils literal notranslate"><span class="pre">Team</span></code> object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">team</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Team&quot;</span><span class="p">)</span>
+
+<span class="c1"># List Members of a team</span>
+<span class="n">team_members</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">list_members</span><span class="p">()</span>
+
+<span class="c1"># See their actions</span>
+<span class="p">[(</span><span class="n">m</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">team_members</span><span class="p">]</span>
+<span class="c1"># or</span>
+<span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">team_members</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="add-user-to-a-team">
+<h3><span class="section-number">1.4.2.2. </span>Add User to a Team<a class="headerlink" href="#add-user-to-a-team" title="Permalink to this headline"></a></h3>
+<p>Users can be added to a team. They will be granted <code class="docutils literal notranslate"><span class="pre">READ</span></code> access to resources in the team. This
+is accomplished with the <a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.add_user" title="citrine.resources.team.Team.add_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_user()</span></code></a> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID of the user you&#39;d like to add</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">team</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add them to your team</span>
+<span class="n">team</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When adding a user to a team, you can specify the actions that user should have:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.team</span> <span class="kn">import</span> <span class="n">READ</span><span class="p">,</span> <span class="n">WRITE</span><span class="p">,</span> <span class="n">SHARE</span>
+<span class="c1"># Add user to your team and give them read, write, and share permissions</span>
+<span class="n">team</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">READ</span><span class="p">,</span> <span class="n">WRITE</span><span class="p">,</span> <span class="n">SHARE</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="remove-user-from-a-team">
+<h3><span class="section-number">1.4.2.3. </span>Remove User from a Team<a class="headerlink" href="#remove-user-from-a-team" title="Permalink to this headline"></a></h3>
+<p>Users can also be removed from a team. This is achieved with the
+<a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.remove_user" title="citrine.resources.team.Team.remove_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_user()</span></code></a> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID of the user you&#39;d like to delete</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">team</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+
+<span class="c1"># Remove them from the team</span>
+<span class="n">team</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="update-user-s-actions-in-a-team">
+<h3><span class="section-number">1.4.2.4. </span>Update User’s Actions in a Team<a class="headerlink" href="#update-user-s-actions-in-a-team" title="Permalink to this headline"></a></h3>
+<p>A user’s actions in a team can be updated. The method
+<code class="xref py py-func docutils literal notranslate"><span class="pre">update_user_actions()</span></code> facilitates changing a user’s actions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.team</span> <span class="kn">import</span> <span class="n">READ</span><span class="p">,</span> <span class="n">WRITE</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">team</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+
+<span class="c1"># Make the user a member with read and write access</span>
+<span class="n">team</span><span class="o">.</span><span class="n">update_user_actions</span><span class="p">(</span><span class="n">user_uid</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">READ</span><span class="p">,</span> <span class="n">WRITE</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basic_functionality.html" class="btn btn-neutral float-left" title="1.3. Managing Resources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="projects.html" class="btn btn-neutral float-right" title="1.5. Projects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

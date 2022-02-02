@@ -394,7 +394,7 @@ These labels are specified via:
 
 .. code:: python
 
-    labels = {"solvent": {"water'}, "solute": {"salt"}}
+    labels = {"solvent": {"water"}, "solute": {"salt"}}
 
 The following example illustrates how an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is constructed for the saline example.
 
@@ -494,14 +494,18 @@ where :math:`d` is density and :math:`f` is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
 
 The :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor` computes mean properties of formulation ingredients.
+For real-valued properties, a quantity-weighted mean value is computed.
+For categorical-valued properties, a quantity-weighted distribution of property values is computed.
 To configure a mean property predictor, we must specify:
 
 * An input descriptor that holds the mixture's recipe and ingredient labels
-* A list of properties to featurize
-* The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
-  Only integer powers are supported. ``p=1`` corresponds to the arithmetic mean, which weights
-  all values evenly. Higher powers, such as ``p=2`` (the root mean square), place more weight
-  on larger values of the property. Negative powers place more weight on smaller values.
+* A list of properties to featurize (which may be either real or categorical)
+* The power of the quantity-weighted mean.
+  Positive, negative, and fractional powers are supported.
+  ``p=1`` corresponds to an arithmetic mean, which weights all quantities evenly.
+  Higher powers, such as ``p=2``, place more weight on the property values of
+  components present at greater quantities in the mixture.
+  Negative powers place more weight on the property values of components with smaller quantities.
 * A data source that contains all ingredients and their properties
 * How to handle missing ingredient properties
 
@@ -512,30 +516,40 @@ Missing ingredient properties can be handled one of three ways:
 1. If ``impute_properties == False``, all ingredients must define a value for all featurized properties.
    Otherwise, the row will not be featurized.
    Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.
-2. If ``impute_properties == True`` and no ``default_properties`` are specified, missing properties will be filled in using the average value across the entire dataset.
-   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).
-3. If ``impute_properties == True`` and ``default_properties`` are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
+2. If ``impute_properties == True`` and no ``default_properties`` are specified,
+   missing properties will be filled in using the average value across the entire dataset.
+   For real-valued properties this average is the mean over the training data,
+   while for categorical-valued properties it is the distribution of property values in the dataset.
+   The average is computed from any row with data corresponding to the missing property,
+   regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).
+3. If ``impute_properties == True`` and ``default_properties`` are specified,
+   the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
    This allows complete control over what values are imputed.
    Default properties cannot be specified if ``impute_properties == False`` (because missing properties are not filled in).
 
-For example, say we add boric acid (a common antiseptic) as a possible ingredient to a saline solution but do not know its density.
+For example, say we add boric acid (a common antiseptic) as a possible ingredient to a saline solution,
+but do not know its density (a real-valued property) or its solubility in acetone (a categorical-valued property).
 Our leaf ingredient data might resemble:
 
-+---------------+----------------+
-| Ingredient id | Density (g/cc) |
-+===============+================+
-| water         | 1.0            |
-+---------------+----------------+
-| salt          | 2.16           |
-+---------------+----------------+
-| boric acid    | N/A            |
-+---------------+----------------+
++---------------+----------------+--------------------+
+| Ingredient ID | Density (g/cc) | Acetone Solubility |
++===============+================+====================+
+| water         | 1.0            | Soluble            |
++---------------+----------------+--------------------+
+| salt          | 2.16           | Insoluble          |
++---------------+----------------+--------------------+
+| boric acid    | N/A            | N/A                |
++---------------+----------------+--------------------+
 
 If ``impute_properties == False``, any mixture that includes boric acid will not be featurized.
-If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
-If a value other than 1.58 should be used (e.g., 2.0), this can be specified by setting ``default_properties = {'density': 2.0}``.
+If ``impute_properties == True`` and no ``default_properties`` are specified,
+a mean density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58`
+and a distribution of acetone solubility with weights ``{'Soluble': 0.5, 'Insoluble': 0.5}`` will be used.
+If something other than the imputed values should be used (e.g., 2.0 or 'Slightly Soluble'),
+this can be specified by setting ``default_properties = {'density': 2.0, 'acetone solubility': 'Slightly Soluble'}``.
 
-The example below shows how to configure a mean property predictor to compute mean solute density in formulations.
+The example below shows how to configure a mean property predictor
+to compute the mean solute density and the distribution of acetone solubility in a formulation.
 
 .. code:: python
 
@@ -548,6 +562,9 @@ The example below shows how to configure a mean property predictor to compute me
 
     # property descriptor to featurize
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
+    acetone_solubility = CategoricalDescriptor(
+        key='acetone solubility', categories={'Soluble', 'Insoluble', 'Slightly Soluble'}
+    )
 
     # table with formulations and their ingredients
     data_source = GemTableDataSource(
@@ -558,22 +575,24 @@ The example below shows how to configure a mean property predictor to compute me
 
     mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
-        description='Computes 1-mean ingredient properties',
+        description='Computes 1-weighted ingredient properties',
         input_descriptor=formulation,
-        # featurize ingredient density
-        properties=[density],
-        # compute the arithmetic mean
+        # featurize ingredient density and acetone solubility
+        properties=[density, acetone_solubility],
+        # compute the response with component quantities weighted evenly
         p=1,
         training_data=[data_source],
         # impute ingredient properties, if missing
         impute_properties=True,
-        # if missing, use with 2.0
-        default_properties={'density': 2.0},
+        # if missing, use provided defaults
+        default_properties={'density': 2.0, 'acetone solubility': 'Slightly Soluble'},
         # only featurize ingredients labeled as a solute
         label='solute'
     )
 
-This predictor will compute a real descriptor with a key ``mean of property density with label solute in formulation`` which can be retrieved using:
+This predictor will compute a real descriptor with a key  ``mean of property density with label solute in formulation``
+and a categorical descriptor with key ``distribution of property acetone solubility with label solute in formulation``,
+which can be retrieved using:
 
 .. code:: python
 
@@ -582,7 +601,8 @@ This predictor will compute a real descriptor with a key ``mean of property dens
         inputs=[formulation_descriptor]
     )
 
-If ``p`` is given a value other than ``1``, that value will be included in the key for the feature (e.g., ``2.0-mean of property viscosity``).
+If ``p`` is given a value other than ``1``, that value will be included in the key for the feature
+(e.g., ``2.0-mean of property viscosity`` or ``2.0-weighted distribution of property color``).
 
 Ingredient fractions predictor
 ------------------------------

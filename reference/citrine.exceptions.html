@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.exceptions module &mdash; Citrine Python 1.21.2 documentation</title>
+  <title>citrine.exceptions module &mdash; Citrine Python 1.23.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.21.2
+                1.23.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -113,6 +113,12 @@ set self.__traceback__ to tb and return self.</p>
 <span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.exceptions.CitrineException.args" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.exceptions.Conflict">
+<span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">Conflict</span></span><a class="headerlink" href="#citrine.exceptions.Conflict" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#citrine.exceptions.WorkflowConflictException" title="citrine.exceptions.WorkflowConflictException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.WorkflowConflictException</span></code></a></p>
 </dd></dl>
 
 <dl class="py exception">
@@ -288,8 +294,8 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowConflictException">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowConflictException</span></span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">WorkflowConflictException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.WorkflowConflictException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>There is a conflict preventing the workflow from being executed. (http status 409).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.WorkflowConflictException.with_traceback">
