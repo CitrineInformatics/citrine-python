@@ -518,7 +518,7 @@ Missing ingredient properties can be handled one of three ways:
    Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.
 2. If ``impute_properties == True`` and no ``default_properties`` are specified,
    missing properties will be filled in using the average value across the entire dataset.
-   For real-valued properties, this average is the mean over the training data,
+   For real-valued properties this average is the mean over the training data,
    while for categorical-valued properties, it is the distribution of property values in the dataset.
    The average is computed from any row with data corresponding to the missing property,
    regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).
