@@ -1,4 +1,10 @@
-# TODO: Add a docstring here
+"""
+Citrine.io Python Client
+
+Documentation:
+https://citrineinformatics.github.io/citrine-python/index.html
+
+"""
 from citrine.citrine import Citrine  # noqa: F401
 import logging
 import warnings
