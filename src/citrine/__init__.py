@@ -1,5 +1,5 @@
 """
-Citrine.io Python Client
+Citrine.io Python Client.
 
 Documentation:
 https://citrineinformatics.github.io/citrine-python/index.html

@@ -977,8 +977,9 @@ def test_owned_dataset_ids(project, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(method='GET', path='/projects/{}/dataset_ids'.format(project.uid))
     assert expect_call == session.last_call
+    assert len(ids) == len(id_set) # Test length first
     assert all(x in id_set for x in ids)
-    assert len(ids) == len(id_set)
+
 
 
 def test_owned_table_ids(project, session):
@@ -1013,12 +1014,30 @@ def test_owned_table_config_ids(project, session):
     assert len(ids) == len(id_set)
 
 
-@pytest.mark.skip(reason="Not yet implemented, only compatible with accounts V3")
 def test_owned_dataset_ids_v3(project_v3):
-    # TODO: This tests needs proper mocking before it can be used
-    # with pytest.raises(NotImplementedError):
-    #     project_v3.owned_dataset_ids()
-    pass
+    # Create a set of datasets in the project
+    ids = {uuid.uuid4() for _ in range(5)}
+    for d_id in ids:
+        dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
+        project_v3.datasets.register(dataset)
+
+    # Set the session response to have the list of dataset IDs
+    project_v3.session.set_response({'ids': list(ids)})
+
+    # Fetch the list of UUID owned by the current project using accounts v3 context
+    owned_ids = project_v3.owned_dataset_ids()
+
+    # Let's mock our expected API call so we can compare and ensure that the one made is the same
+    expect_call = FakeCall(method='GET',
+                           path='/DATASET/authorized-ids',
+                           params={'userId': '',
+                                   'domain': '/projects/16fd2706-8baf-433b-82eb-8c7fada847da',
+                                   'action': 'WRITE'})
+    # Compare our calls
+    assert expect_call == project_v3.session.last_call
+    assert project_v3.session.num_calls == len(ids) + 1
+    assert ids == set(owned_ids)
+
 
 def test_owned_table_ids_v3(project_v3):
     with pytest.raises(NotImplementedError):
