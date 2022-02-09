@@ -630,20 +630,35 @@ def test_list_projects_with_page_params(collection, session):
     expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
     assert expected_call == session.last_call
 
-@pytest.mark.skip(reason="Not yet implemented, only compatible with accounts V3")
+
 def test_search_projects_v3(collection_v3: ProjectCollection):
-    # TODO: This tests needs proper mocking before it can be used
     # Given
-    # search_params = {'search_params': {
-    #     'name': {
-    #         'value': 'Some Name',
-    #         'search_method': 'EXACT'}}}
+    projects_data = ProjectDataFactory.create_batch(2)
+    project_name_to_match = projects_data[0]['name']
+
+    search_params = {'search_params': {
+        'name': {
+            'value': project_name_to_match,
+            'search_method': 'EXACT'}}}
+    expected_response = list(filter(lambda p: p["name"] == project_name_to_match, projects_data))
+
+    collection_v3.session.set_response({'projects': expected_response})
 
     # Then
-    # collection = collection_v3.search(search_params=search_params)
-    # with pytest.raises(NotImplementedError):
-    #     list(collection_v3.search(search_params=search_params))
-    pass
+    collection = list(collection_v3.search(search_params=search_params))
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={'search_params': {
+                                 'name': {
+                                     'value': project_name_to_match,
+                                     'search_method': 'EXACT'}}})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert 1 == len(collection)
+
 
 def test_search_projects(collection: ProjectCollection, session):
     # Given
