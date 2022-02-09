@@ -631,6 +631,35 @@ def test_list_projects_with_page_params(collection, session):
     assert expected_call == session.last_call
 
 
+def test_search_all(collection_v3: ProjectCollection):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+    project_name_to_match = projects_data[0]['name']
+
+    search_params = {'search_params': {
+        'name': {
+            'value': project_name_to_match,
+            'search_method': 'EXACT'}}}
+    expected_response = list(filter(lambda p: p["name"] == project_name_to_match, projects_data))
+
+    collection_v3.session.set_response({'projects': expected_response})
+
+    # Then
+    collection = list(collection_v3.search_all(search_params=search_params))
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={'search_params': {
+                                 'name': {
+                                     'value': project_name_to_match,
+                                     'search_method': 'EXACT'}}})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert 1 == len(collection)
+
+
 def test_search_projects_v3(collection_v3: ProjectCollection):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
