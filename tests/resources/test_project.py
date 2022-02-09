@@ -669,7 +669,7 @@ def test_search_projects_v3(collection_v3: ProjectCollection):
         'name': {
             'value': project_name_to_match,
             'search_method': 'EXACT'}}}
-    expected_response = list(filter(lambda p: p["name"] == project_name_to_match, projects_data))
+    expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
 
     collection_v3.session.set_response({'projects': expected_response})
 
