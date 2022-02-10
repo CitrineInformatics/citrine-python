@@ -6,17 +6,6 @@ from citrine.resources.data_concepts import DataConcepts
 
 from gemd.util import make_index, writable_sort_order
 
-from gemd.entity.object.has_parameters import HasParameters
-from gemd.entity.object.has_conditions import HasConditions
-from gemd.entity.object.has_properties import HasProperties
-from gemd.entity.object.has_template import HasTemplate
-from gemd.entity.template.has_parameter_templates import HasParameterTemplates
-from gemd.entity.template.has_condition_templates import HasConditionTemplates
-from gemd.entity.template.has_property_templates import HasPropertyTemplates
-
-from gemd.entity.object import IngredientRun, MaterialRun, MeasurementRun, ProcessRun
-from gemd.entity.object import IngredientSpec, MaterialSpec  # no ProcessSpec
-
 
 class Batcher(ABC):
     """Base class for Data Concepts batching routines."""
@@ -66,7 +55,7 @@ class BatchByDependency(Batcher):
         index = make_index(objects)
         by_type = defaultdict(list)
         for obj in objects:
-            depends[obj] = self._all_dependencies(obj)
+            depends[obj] = obj.all_dependencies()
             by_type[obj.typ].append(obj)
 
         # Deep dependencies w/ objects only, build inverse index
@@ -114,55 +103,3 @@ class BatchByDependency(Batcher):
                 queued.update(cluster)
 
         return clusters
-
-    @staticmethod
-    def _all_dependencies(obj: DataConcepts):
-        """Map out all the objects that this object depends on."""
-        depends = []
-
-        # Index attribute templates from attributes
-        if isinstance(obj, HasParameters):
-            for attr in obj.parameters:
-                if attr.template is not None:
-                    depends.append(attr.template)
-        if isinstance(obj, HasConditions):
-            for attr in obj.conditions:
-                if attr.template is not None:
-                    depends.append(attr.template)
-        if isinstance(obj, HasProperties):
-            for attr in obj.properties:
-                if attr.template is not None:
-                    depends.append(attr.template)
-        if isinstance(obj, MaterialSpec):
-            for attr in obj.properties:
-                if attr.property.template is not None:
-                    depends.append(attr.property.template)
-                for condition in attr.conditions:
-                    if condition.template is not None:
-                        depends.append(condition.template)
-
-        # Index direct attribute template dependencies
-        if isinstance(obj, HasPropertyTemplates):
-            for attr in obj.properties:
-                depends.append(attr[0])
-        if isinstance(obj, HasConditionTemplates):
-            for attr in obj.conditions:
-                depends.append(attr[0])
-        if isinstance(obj, HasParameterTemplates):
-            for attr in obj.parameters:
-                depends.append(attr[0])
-
-        if isinstance(obj, HasTemplate):
-            if obj.template is not None:
-                depends.append(obj.template)
-        if isinstance(obj, (IngredientRun, MaterialRun, MeasurementRun, ProcessRun)):
-            if obj.spec is not None:
-                depends.append(obj.spec)
-        if isinstance(obj, (IngredientRun, IngredientSpec, MeasurementRun)):
-            if obj.material is not None:
-                depends.append(obj.material)
-        if isinstance(obj, (IngredientRun, IngredientSpec, MaterialRun, MaterialSpec)):
-            if obj.process is not None:
-                depends.append(obj.process)
-
-        return depends
