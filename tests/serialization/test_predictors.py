@@ -85,9 +85,7 @@ def test_ingredient_fractions_serialization(valid_ingredient_fractions_predictor
 
 def test_auto_ml_serialization(valid_auto_ml_predictor_data):
     """"Ensure that a serialized AutoMLPredictor looks sane."""
-    backwards_compatible_auto_ml_data = deepcopy(valid_auto_ml_predictor_data)
-    backwards_compatible_auto_ml_data['config']['responses'] = backwards_compatible_auto_ml_data['config']['outputs']
-    serialization_check(backwards_compatible_auto_ml_data, AutoMLPredictor)
+    serialization_check(valid_auto_ml_predictor_data, AutoMLPredictor)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):
