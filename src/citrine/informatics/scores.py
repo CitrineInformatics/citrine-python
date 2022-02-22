@@ -52,9 +52,8 @@ class LIScore(Serializable['LIScore'], Score):
     ----------
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
-        If multiple objectives are specified they are evaluated independently, and ranked by the
-        highest likelihood of exceeding a baseline. This should therefore *not* be used to
-        simultaneously optimize multiple objectives.
+        If multiple objectives are specified then this score evaluates the likelihood of
+        simultaneously exceeding all objectives.
     baselines: list[float]
         best-so-far values for the various objectives (there must be one for each objective)
     constraints: list[Constraint]
