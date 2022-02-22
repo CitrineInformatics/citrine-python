@@ -40,9 +40,9 @@ Likelihood of improvement
 
 Likelihood of improvement (LI) is the probability that a candidate satisfies a set of constraints and is an improvement over known objective values.
 :class:`~citrine.informatics.scores.LIScore` supports 0 or more objectives.
-If no objectives are provided, the LI score is 0.
-When multiple objectives are present, the score is the probability of the objective that is most likely to be improved.
-LI scores are bounded by 0 and 1.
+If no objectives are provided, the LI score is the probability of satisfying the constraints.
+When multiple objectives are present, the score is the probability of simultaneously improving *all* objectives.
+LI scores are bounded between 0 and 1.
 
 The following demonstrates how to create an LI score and use it when triggering a design workflow:
 
