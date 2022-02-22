@@ -11,4 +11,4 @@ Detailed instructions on installation and usage can be found in the complete [ci
 
 To find detailed contributing guidelines, please see the [contributing documentation](https://github.com/CitrineInformatics/citrine-python/blob/main/CONTRIBUTING.md).
 
-
+_Copyright 2022 Citrine Informatics_
