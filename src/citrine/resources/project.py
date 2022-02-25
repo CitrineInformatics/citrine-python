@@ -775,9 +775,12 @@ class ProjectCollection(Collection[Project]):
         collections = []
         path = self._get_path() + '/search'
         query_params = {'userId': ""}
+
+        json = {} if search_params is None else {'search_params': search_params}
+
         data = self.session.post_resource(path,
                                           params=query_params,
-                                          json=search_params,
+                                          json=json,
                                           version=self._api_version)
 
         if self._collection_key is not None:

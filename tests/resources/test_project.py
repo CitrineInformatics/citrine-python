@@ -637,10 +637,10 @@ def test_search_all(collection_v3: ProjectCollection):
     projects_data = ProjectDataFactory.create_batch(2)
     project_name_to_match = projects_data[0]['name']
 
-    search_params = {'search_params': {
+    search_params = {
         'name': {
             'value': project_name_to_match,
-            'search_method': 'EXACT'}}}
+            'search_method': 'EXACT'}}
     expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
 
     collection_v3.session.set_response({'projects': expected_response})
@@ -666,10 +666,10 @@ def test_search_projects_v3(collection_v3: ProjectCollection):
     projects_data = ProjectDataFactory.create_batch(2)
     project_name_to_match = projects_data[0]['name']
 
-    search_params = {'search_params': {
+    search_params = {
         'name': {
             'value': project_name_to_match,
-            'search_method': 'EXACT'}}}
+            'search_method': 'EXACT'}}
     expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
 
     collection_v3.session.set_response({'projects': expected_response})
