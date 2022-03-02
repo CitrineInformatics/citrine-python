@@ -843,8 +843,6 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        search_params = {} if search_params is None else search_params
-
         if self.session._accounts_service_v3:
             return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
