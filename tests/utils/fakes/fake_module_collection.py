@@ -44,7 +44,7 @@ class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCo
 
 class FakePredictorCollection(FakeModuleCollection[Predictor], PredictorCollection):
 
-    def auto_configure(self, *, training_data: DataSource, pattern="PLAIN") -> Predictor:
+    def auto_configure(self, *, training_data: DataSource, pattern="PLAIN", prefer_valid=True) -> Predictor:
         return GraphPredictor(
             name=f"Default {pattern.lower()} predictor",
             description="",

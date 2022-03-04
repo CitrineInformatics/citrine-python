@@ -122,7 +122,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         prefer_valid: Boolean
             If True, this sets the filterSparse option to True and sets targetMaxModels and
             targetMaxInput to the maxModels and maxModelInputs values for the predictor build
-            settings. Toggled off uses the default predictor build settings. Default: True.
+            settings. Toggled off uses the default predictor build settings.
+            Default: True.
 
         Returns
         -------
