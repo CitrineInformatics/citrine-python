@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar, Type
 from abc import abstractmethod
 from citrine._serialization.serializable import Serializable
+from citrine._rest.resource import Resource
 
 
 SelfType = TypeVar('SelfType', bound='Resource')

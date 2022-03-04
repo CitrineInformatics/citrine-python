@@ -137,7 +137,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         pattern = pattern.value
 
         path = f'projects/{self.project_id}/predictors/default-predictor'
-        body = {"data_source": training_data.dump(), "pattern": pattern, "prefer_valid": prefer_valid}
+        body = {"data_source": training_data.dump(), "pattern": pattern,
+                "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body)
         if 'instance' in data:
             data['config'] = data.pop('instance')
