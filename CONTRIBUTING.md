@@ -193,7 +193,7 @@ A passing build requires the following:
 
 PR descriptions should describe the motivation and context of the code changes in the PR,
 both for the reviewer and also for future developers.
-If there's a JIRA ticket or Github issue, linking to it is an easy and often effective way to provide that context.
+If there's a JIRA ticket or Github issue, the PR should be linked to the ticket/issue to provide that context.
 
 ## Documentation<a name="documentation"></a>
 
