@@ -6,7 +6,7 @@ from uuid import UUID
 
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource, ResourceRef
+from citrine._rest.resource import ResourceRef
 from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
