@@ -4,10 +4,12 @@ from citrine.resources.project import Project
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
     ChemicalFormulaFeaturizer,
-    MeanPropertyPredictor
+    MeanPropertyPredictor,
+    AutoMLPredictor,
+    GraphPredictor
 )
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
-
+from citrine.informatics.data_sources import DataSource
 
 def build_mean_feature_property_predictors(
         *,
@@ -136,3 +138,70 @@ def _build_mean_property_predictor(
     )
 
 ## Add simple ml builder
+def build_simple_ml(
+    name: str,
+    description: str,
+    inputs: List[Descriptor],
+    outputs: List[Descriptor],
+    latent_variables: List[Descriptor],
+    training_data: Optional[List[DataSource]] = None
+) -> GraphPredictor:
+    """Build a graph predictor that connects all inputs to all latent variables and outputs.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        the description of the predictor
+    inputs: list[Descriptor]
+        Descriptors that represent inputs to relations
+    outputs: list[Descriptor]
+        Descriptors that represent outputs of relations
+    latent_variables: list[Descriptor]
+        Descriptors that are predicted from inputs and used when predicting the outputs
+    training_data: Optional[List[DataSource]]
+        Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
+        multiple data sources will be combined into a flattened list and de-duplicated by uid and
+        identifiers. de-duplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a de-duplicated row will contain the union of data across all
+        rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        predictor is part of a graph that includes all training data required by this predictor.
+
+    Returns
+    -------
+    GraphPredictor
+        GraphPredictor connecting all inputs to all latent variables and all inputs and latent
+        variables to all outputs.
+    """
+    ml_model_feature_descriptors = [d for d in inputs if d.typ in ['Real', 'Categorical']]
+
+    automl_lv_predictors = [
+        AutoMLPredictor(
+            name=f'{latent_variable_descriptor.key} Predictor',
+            description='',
+            inputs=[*ml_model_feature_descriptors],
+            output=latent_variable_descriptor,
+        ) for latent_variable_descriptor in latent_variables
+    ]
+
+    automl_output_predictors = [
+        AutoMLPredictor(
+            name=f'{output_descriptor.key} Predictor',
+            description='',
+            inputs=[*ml_model_feature_descriptors, *latent_variables],
+            output=output_descriptor,
+        ) for output_descriptor in outputs
+    ]
+
+    predictor = GraphPredictor(
+        name=name,
+        description=description,
+        predictors=[
+            *automl_lv_predictors,
+            *automl_output_predictors,
+        ],
+        training_data=training_data
+    )
+
+    return predictor
