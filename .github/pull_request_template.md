@@ -2,11 +2,14 @@
 
 ## Description 
 Please briefly explain the goal of the changes/this PR.
+The reviewer should be able to understand why the change is being made by reading this description
+and its links (e.g. JIRA tickets).
 
 ### PR Type:
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
+- [ ] Maintenance (non-breaking change to assist developers)
 
 ### Adherence to team decisions
 - [ ] I have added tests for 100% coverage
