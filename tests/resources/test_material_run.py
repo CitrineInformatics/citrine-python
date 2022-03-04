@@ -5,12 +5,20 @@ from citrine._session import Session
 from citrine._utils.functions import scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
+from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_run import MaterialRun as CitrineRun
+
+from gemd.demo.cake import make_cake, change_scope
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_run import MaterialRun as GEMDRun
+from gemd.entity.object.material_spec import MaterialSpec as GEMDSpec
+from gemd.json import GEMDJson
+from gemd.util import flatten
 
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
-from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
+from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, \
     MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
 from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
     FakeRequestResponse
@@ -72,15 +80,15 @@ def test_nomutate_gemd(collection, session):
     """When registering a GEMD object, the object should not change (aside from auto ids)"""
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
-    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
+    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for _ in range(2))
 
     # When
     registered = collection.register(after)
 
     # Then
+    assert after.uids.pop(CITRINE_SCOPE) is not None
     assert before == after
     assert "<Material run 'Test MR mutation'>" == str(registered)
-    assert after.uids.get("id") is None
     assert registered.uid is not None
 
 
@@ -92,7 +100,7 @@ def test_get_history(collection, session):
     })
 
     # When
-    run = collection.get_history(scope='id', id='1234')
+    run = collection.get_history(id=LinkByUID(scope='id', id='1234'))
 
     # Then
     assert 1 == session.num_calls
@@ -192,7 +200,8 @@ def test_filter_by_attribute_bounds(collection, session):
     bounds = {link: IntegerBounds(1, 5)}
 
     # When
-    runs = collection.filter_by_attribute_bounds(bounds, page=1, per_page=10)
+    with pytest.warns(DeprecationWarning):
+        runs = collection.filter_by_attribute_bounds(bounds, page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls
@@ -236,6 +245,7 @@ def test_delete_material_run(collection, session):
         params={'dry_run': False}
     )
     assert expected_call == session.last_call
+
 
 def test_dry_run_delete_material_run(collection, session):
     # Given
@@ -434,3 +444,74 @@ def test_list_by_template(collection, session):
     # Then
     assert 3 == session.num_calls
     assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
+
+
+def test_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.material_run import MaterialRun as CitrineMaterialRun
+    from gemd.entity.object import MaterialRun as GEMDMaterialRun
+
+    gemd_obj = GEMDMaterialRun(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMaterialRun(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_deep_equals(collection):
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    flat_list = flatten(cake)
+    # Note that registered turns them into a flat list of Citrine resources
+    registered = set(collection.register_all(flat_list))
+    assert len(flat_list) == len(registered), "All objects registered"
+    while flat_list:
+        before = flat_list.pop()
+        afters = [x for x in registered if x == before]
+        assert len(afters) >= 1, "All flattened objects were registered"
+        for x in afters:
+            registered.remove(x)
+    assert len(registered) == 0, "All registered objects are in the flat list"
+
+    assert cake == CitrineRun.build(cake.dump()), "Equality works in hydrated form"
+
+
+def test_nonmutating_dry_run(collection):
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    uid_stash = cake.uids.copy()
+
+    flat_list = flatten(cake)
+    # Note that registered turns them into a flat list of Citrine resources
+    tested = set(collection.register_all(flat_list, dry_run=True))
+    assert uid_stash == cake.uids  # No mutation
+
+    # Note that the lists are different lengths because of how dry_run batching works
+    while flat_list:
+        before = flat_list.pop()
+        afters = [x for x in tested if x == before]
+        assert len(afters) >= 1, "All flattened objects were registered"
+        for x in afters:
+            tested.remove(x)
+    assert len(tested) == 0, "All registered objects are in the flat list"
+
+
+def test_args_only(collection):
+    """"Test that only arguments to register_all get registered/tested/returned."""
+    obj = GEMDRun("name", spec=GEMDSpec("name"))
+    GEMDJson(scope='test_args_only').dumps(obj)  # no-op to populate ids
+    dry = collection.register_all([obj], dry_run=True)
+    assert obj in dry
+    assert obj.spec not in dry
+
+    not_dry = collection.register_all([obj], dry_run=False)
+    assert obj in not_dry
+    assert obj.spec not in not_dry

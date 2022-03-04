@@ -1,21 +1,21 @@
 import uuid
 from logging import getLogger
+from unittest import mock
 
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
-import warnings
 
-from citrine.informatics.workflows.design_workflow import DesignWorkflow
+from citrine.exceptions import NotFound, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError, ValidationError
+from citrine.resources.dataset import Dataset
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
-from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
-from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
+from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession, FakeRequestResponse
 
 logger = getLogger(__name__)
 
@@ -26,8 +26,18 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
+def session_v3() -> FakeSession:
+    return FakeSession(accounts_v3=True)
+
+
+@pytest.fixture
 def paginated_session() -> FakePaginatedSession:
     return FakePaginatedSession()
+
+
+@pytest.fixture
+def paginated_session_accounts_v3() -> FakeSession:
+    return FakePaginatedSession(accounts_v3=True)
 
 
 @pytest.fixture
@@ -48,12 +58,37 @@ def project(session) -> Project:
 
 
 @pytest.fixture
+def project_v3(session_v3) -> Project:
+    project = Project(
+        name='Test Project',
+        session=session_v3,
+        team_id=uuid.UUID('11111111-8baf-433b-82eb-8c7fada847da')
+    )
+    project.uid = uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    return project
+
+
+@pytest.fixture
 def collection(session) -> ProjectCollection:
     return ProjectCollection(session)
 
 
+@pytest.fixture
+def collection_v3(session_v3) -> ProjectCollection:
+    return ProjectCollection(session_v3, team_id=uuid.uuid4())
+
+
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
+
+
+def test_share_post_content_v3(project_v3):
+    # Given
+    dataset_id = str(uuid.uuid4())
+    other_project_id = uuid.uuid4()
+
+    with pytest.raises(NotImplementedError):
+        project_v3.share(project_id=other_project_id, resource_type='DATASET', resource_id=dataset_id)
 
 
 def test_share_post_content(project, session):
@@ -62,10 +97,8 @@ def test_share_post_content(project, session):
 
     # When
     # Share using resource type/id, which is deprecated
-    with warnings.catch_warnings(record=True) as caught:
+    with pytest.warns(DeprecationWarning):
         project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
-        assert len(caught) == 1
-        assert caught[0].category == DeprecationWarning
 
     # Then
     assert 1 == session.num_calls
@@ -98,12 +131,114 @@ def test_share_post_content(project, session):
     assert expected_call == session.last_call
 
     # providing both the resource and the type/id is an error
-    with pytest.raises(ValueError):
-        project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
 
     # Providing neither the resource nor the type/id is an error
     with pytest.raises(ValueError):
         project.share(project_id=project.uid)
+
+
+def test_publish_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(NotImplementedError):
+        project.publish(resource=dataset)
+
+
+def test_publish_resource_v3(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.publish(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/published-resources/{}/batch-publish'.format(project_v3.uid, 'DATASET'),
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+
+def test_pull_in_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(NotImplementedError):
+        project.pull_in_resource(resource=dataset)
+
+
+def test_pull_in_resource_v3(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.pull_in_resource(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'/teams/{project_v3.team_id}/projects/{project_v3.uid}/outside-resources/DATASET/batch-pull-in',
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+
+def test_un_publish_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(NotImplementedError):
+        project.un_publish(resource=dataset)
+
+
+def test_un_publish_resource_v3(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.un_publish(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/published-resources/{}/batch-un-publish'.format(project_v3.uid, 'DATASET'),
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+
+def test_make_resource_public_v3(project_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(NotImplementedError):
+        project_v3.make_public(dataset)
 
 
 def test_make_resource_public(project, session):
@@ -128,6 +263,16 @@ def test_make_resource_public(project, session):
         project.make_public(ProcessSpec("dummy process"))
 
 
+def test_make_resource_private_v3(project_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="private dataset", summary="test", description="test"
+    ))
+    with pytest.raises(NotImplementedError):
+        project_v3.make_private(dataset)
+
+
 def test_make_resource_private(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
@@ -147,6 +292,19 @@ def test_make_resource_private(project, session):
 
     with pytest.raises(RuntimeError):
         project.make_private(ProcessSpec("dummy process"))
+
+
+def test_transfer_resource_v3(project_v3):
+
+    dataset_id = str(uuid.uuid4())
+    other_project_id = uuid.uuid4()
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="dataset to transfer", summary="test", description="test"
+    ))
+
+    with pytest.raises(NotImplementedError):
+        project_v3.transfer_resource(resource=dataset, receiving_project_uid=other_project_id)
 
 
 def test_transfer_resource(project, session):
@@ -272,13 +430,22 @@ def test_design_workflows_get_project_id(project):
     assert project.uid == project.design_workflows.project_id
 
 
+def test_design_workflows_get_branch_id(project):
+    assert None is project.design_workflows.branch_id
+
+
+def test_branches_get_project_id(project):
+    assert project.uid == project.branches.project_id
+
+
 def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
 
-def test_project_registration(collection, session):
+def test_project_registration_v3(collection: ProjectCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
+
     project_data = ProjectDataFactory(
         name='testing',
         description='A sample project',
@@ -309,7 +476,84 @@ def test_project_registration(collection, session):
     assert create_time == created_project.created_at
 
 
-def test_get_project(collection, session):
+def test_failed_register_v3():
+    team_id = uuid.uuid4()
+    session = mock.Mock()
+    session.post_resource.side_effect = NotFound(f'/teams/{team_id}/projects',
+                                                 FakeRequestResponse(400))
+    project_collection = ProjectCollection(session=session, team_id=team_id)
+    with pytest.raises(ModuleRegistrationFailedException) as e:
+        project_collection.register("Project")
+    assert 'The "Project" failed to register.' in str(e.value)
+    assert f'/teams/{team_id}/projects' in str(e.value)
+
+
+def test_failed_register_v3_no_team(session_v3):
+    project_collection = ProjectCollection(session=session_v3)
+    with pytest.raises(NotImplementedError):
+        project_collection.register("Project")
+
+
+def test_project_registration(collection: ProjectCollection, session):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session.set_response({'project': project_data})
+
+    # When
+    created_project = collection.register('testing')
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects',
+        json={
+            'name': 'testing'
+        }
+    )
+    assert expected_call == session.last_call
+
+    assert 'A sample project' == created_project.description
+    assert 'CREATED' == created_project.status
+    assert create_time == created_project.created_at
+
+
+def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session_v3.set_response({'project': project_data})
+    team_id = collection_v3.team_id
+
+    # When
+    created_project = collection_v3.register('testing')
+
+    # Then
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{team_id}/projects',
+        json={
+            'name': 'testing'
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+    assert 'A sample project' == created_project.description
+    assert 'CREATED' == created_project.status
+    assert create_time == created_project.created_at
+
+
+def test_get_project(collection: ProjectCollection, session):
     # Given
     project_data = ProjectDataFactory(name='single project')
     session.set_response({'project': project_data})
@@ -342,6 +586,27 @@ def test_list_projects(collection, session):
     assert 5 == len(projects)
 
 
+def test_list_projects_v3(collection_v3, session_v3):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session_v3.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection_v3.list())
+
+    # Then
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000})
+    assert expected_call == session_v3.last_call
+    assert 5 == len(projects)
+
+
+def test_failed_list_v3_no_team(session_v3):
+    project_collection = ProjectCollection(session=session_v3)
+    with pytest.raises(NotImplementedError):
+        project_collection.list()
+
+
 def test_list_projects_filters_non_projects(collection, session):
     # Given
     projects_data = ProjectDataFactory.create_batch(5)
@@ -349,9 +614,8 @@ def test_list_projects_filters_non_projects(collection, session):
     session.set_response({'projects': projects_data})
 
     # Then
-    with pytest.raises(RuntimeError):
-        # When
-        list(collection.list())
+    with pytest.warns(UserWarning):
+        assert len(list(collection.list())) == 5 # Skip the bad one
 
 
 def test_list_projects_with_page_params(collection, session):
@@ -360,15 +624,112 @@ def test_list_projects_with_page_params(collection, session):
     session.set_response({'projects': [project_data]})
 
     # When
-    list(collection.list(page=3, per_page=10))
+    list(collection.list(per_page=10))
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
     assert expected_call == session.last_call
 
 
-def test_search_projects(collection, session):
+def test_search_all(collection_v3: ProjectCollection):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+    project_name_to_match = projects_data[0]['name']
+
+    search_params = {
+        'name': {
+            'value': project_name_to_match,
+            'search_method': 'EXACT'}}
+    expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
+
+    collection_v3.session.set_response({'projects': expected_response})
+
+    # Then
+    collection = list(collection_v3.search_all(search_params=search_params))
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={'search_params': {
+                                 'name': {
+                                     'value': project_name_to_match,
+                                     'search_method': 'EXACT'}}})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert 1 == len(collection)
+
+def test_search_all_no_search_params(collection_v3: ProjectCollection):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+
+    expected_response = projects_data
+
+    collection_v3.session.set_response({'projects': expected_response})
+
+    # Then
+    collection = list(collection_v3.search_all(search_params=None))
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert len(expected_response) == len(collection)
+
+
+def test_search_projects_v3(collection_v3: ProjectCollection):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+    project_name_to_match = projects_data[0]['name']
+
+    search_params = {
+        'name': {
+            'value': project_name_to_match,
+            'search_method': 'EXACT'}}
+    expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
+
+    collection_v3.session.set_response({'projects': expected_response})
+
+    # Then
+    collection = list(collection_v3.search(search_params=search_params))
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={'search_params': {
+                                 'name': {
+                                     'value': project_name_to_match,
+                                     'search_method': 'EXACT'}}})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert 1 == len(collection)
+
+def test_search_projects_v3_no_search_params(collection_v3: ProjectCollection):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+
+    expected_response = projects_data
+
+    collection_v3.session.set_response({'projects': expected_response})
+
+    # Then
+    collection = list(collection_v3.search())
+
+    expected_call = FakeCall(method='POST',
+                             path='/projects/search',
+                             params={'userId': ''},
+                             json={})
+
+    assert 1 == collection_v3.session.num_calls
+    assert expected_call == collection_v3.session.last_call
+    assert len(projects_data)== len(collection)
+
+def test_search_projects(collection: ProjectCollection, session):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
 
@@ -388,27 +749,25 @@ def test_search_projects(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': 1000}, json={'search_params': search_params})
+                             params={'per_page': 1000}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
 
-def test_search_projects_with_pagination(paginated_collection, paginated_session):
+def test_search_projects_with_pagination(paginated_collection: ProjectCollection, paginated_session):
     # Given
     common_name = "same name"
 
     same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
     ProjectDataFactory.create_batch(35, name="some other name")
 
-
     per_page = 10
 
-    paginated_session.set_response({ 'projects': same_name_projects_data })
+    paginated_session.set_response({'projects': same_name_projects_data})
 
     search_params = {'status': {
         'value': common_name,
         'search_method': 'EXACT'}}
-
 
     # When
     projects = list(paginated_collection.search(per_page=per_page, search_params=search_params))
@@ -416,9 +775,9 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
     # Then
     assert 4 == paginated_session.num_calls
     expected_first_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': per_page}, json={'search_params': search_params} )
+                                   params={'per_page': per_page}, json={'search_params': search_params})
     expected_last_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
+                                  params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
 
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -442,10 +801,15 @@ def test_delete_project(collection, session):
     assert expected_call == session.last_call
 
 
-def test_update_project(collection, project):
+def test_update_project(collection: ProjectCollection, project):
     project.name = "updated name"
     with pytest.raises(NotImplementedError):
         collection.update(project)
+
+
+def test_list_members_v3(project_v3):
+    with pytest.raises(NotImplementedError):
+        project_v3.list_members()
 
 
 def test_list_members(project, session):
@@ -464,6 +828,15 @@ def test_list_members(project, session):
     assert isinstance(members[0], ProjectMember)
 
 
+def test_update_user_role_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(NotImplementedError):
+        project_v3.update_user_role(user_uid=user_id, role=LEAD)
+
+
 def test_update_user_role(project, session):
     # Given
     user = UserDataFactory()
@@ -479,6 +852,7 @@ def test_update_user_role(project, session):
     assert expect_call == session.last_call
     assert update_user_role_response is True
 
+
 def test_update_user_actions(project, session):
     # Given
     user = UserDataFactory()
@@ -493,6 +867,15 @@ def test_update_user_actions(project, session):
                            json={'role': LEAD, 'actions': [WRITE]})
     assert expect_call == session.last_call
     assert update_user_role_response is True
+
+
+def test_add_user_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(NotImplementedError):
+        project_v3.add_user(user_id)
 
 
 def test_add_user(project, session):
@@ -511,6 +894,15 @@ def test_add_user(project, session):
     })
     assert expect_call == session.last_call
     assert add_user_response is True
+
+
+def test_remove_user_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(NotImplementedError):
+        project_v3.remove_user(user_id)
 
 
 def test_remove_user(project, session):
@@ -574,7 +966,7 @@ def test_project_batch_delete(project, session):
     import json
     failures_escaped_json = json.dumps([
         {
-            "id":{
+            "id": {
                 'scope': 'somescope',
                 'id': 'abcd-1234'
             },
@@ -617,25 +1009,29 @@ def test_project_batch_delete(project, session):
                                       failure_message="fail msg",
                                       failure_id="identifier.coreid.missing")])
 
-
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
     # And again with tuples of (scope, id)
     del_resp = project.gemd_batch_delete([LinkByUID('id',
-                                            '16fd2706-8baf-433b-82eb-8c7fada847da')])
+                                                    '16fd2706-8baf-433b-82eb-8c7fada847da')])
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
 
-def test_batch_delete_bad_input(project, session):
+def test_batch_delete_bad_input(project):
     with pytest.raises(TypeError):
         project.gemd_batch_delete([True])
 
 
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
+
+
+def test_creator_v3(project_v3):
+    with pytest.raises(NotImplementedError):
+        project_v3.creator()
 
 
 def test_creator(project, session):
@@ -665,8 +1061,9 @@ def test_owned_dataset_ids(project, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(method='GET', path='/projects/{}/dataset_ids'.format(project.uid))
     assert expect_call == session.last_call
+    assert len(ids) == len(id_set) # Test length first
     assert all(x in id_set for x in ids)
-    assert len(ids) == len(id_set)
+
 
 
 def test_owned_table_ids(project, session):
@@ -699,3 +1096,38 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
+
+
+def test_owned_dataset_ids_v3(project_v3):
+    # Create a set of datasets in the project
+    ids = {uuid.uuid4() for _ in range(5)}
+    for d_id in ids:
+        dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
+        project_v3.datasets.register(dataset)
+
+    # Set the session response to have the list of dataset IDs
+    project_v3.session.set_response({'ids': list(ids)})
+
+    # Fetch the list of UUID owned by the current project using accounts v3 context
+    owned_ids = project_v3.owned_dataset_ids()
+
+    # Let's mock our expected API call so we can compare and ensure that the one made is the same
+    expect_call = FakeCall(method='GET',
+                           path='/DATASET/authorized-ids',
+                           params={'userId': '',
+                                   'domain': '/projects/16fd2706-8baf-433b-82eb-8c7fada847da',
+                                   'action': 'WRITE'})
+    # Compare our calls
+    assert expect_call == project_v3.session.last_call
+    assert project_v3.session.num_calls == len(ids) + 1
+    assert ids == set(owned_ids)
+
+
+def test_owned_table_ids_v3(project_v3):
+    with pytest.raises(NotImplementedError):
+        project_v3.owned_table_ids()
+
+
+def test_owned_table_config_ids_v3(project_v3):
+    with pytest.raises(NotImplementedError):
+        project_v3.owned_table_config_ids()

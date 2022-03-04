@@ -20,7 +20,7 @@ def test_mean_feature_properties():
     smiles = MolecularStructureDescriptor("smiles")
     chem = ChemicalFormulaDescriptor("formula")
     formulation = FormulationDescriptor("formulation")
-    mol_featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=smiles)
+    mol_featurizer = MolecularStructureFeaturizer(name="", description="", input_descriptor=smiles)
     chem_featurizer = ChemicalFormulaFeaturizer(name="", description="", input_descriptor=chem)
 
     for featurizer in [mol_featurizer, chem_featurizer]:

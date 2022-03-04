@@ -30,11 +30,12 @@ class Collection(Generic[ResourceType], Pageable):
     _resource: ResourceType = NotImplemented
     _collection_key: str = 'entries'
     _paginator: Paginator = Paginator()
+    _api_version: str = "v1"
 
     def _put_resource_ref(self, subpath: str, uid: Union[UUID, str]):
         url = self._get_path(subpath)
         ref = ResourceRef(uid)
-        return self.session.put_resource(url, ref.dump())
+        return self.session.put_resource(url, ref.dump(), version=self._api_version)
 
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
@@ -56,7 +57,7 @@ class Collection(Generic[ResourceType], Pageable):
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         path = self._get_path(uid)
-        data = self.session.get_resource(path)
+        data = self.session.get_resource(path, version=self._api_version)
         data = data[self._individual_key] if self._individual_key else data
         return self.build(data)
 
@@ -64,7 +65,7 @@ class Collection(Generic[ResourceType], Pageable):
         """Create a new element of the collection by registering an existing resource."""
         path = self._get_path()
         try:
-            data = self.session.post_resource(path, model.dump())
+            data = self.session.post_resource(path, model.dump(), version=self._api_version)
             data = data[self._individual_key] if self._individual_key else data
             self._check_experimental(data)
             return self.build(data)
@@ -105,7 +106,7 @@ class Collection(Generic[ResourceType], Pageable):
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
         url = self._get_path(model.uid)
-        updated = self.session.put_resource(url, model.dump())
+        updated = self.session.put_resource(url, model.dump(), version=self._api_version)
         data = updated[self._individual_key] if self._individual_key else updated
         self._check_experimental(data)
         return self.build(data)
@@ -113,7 +114,7 @@ class Collection(Generic[ResourceType], Pageable):
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Delete a particular element of the collection."""
         url = self._get_path(uid)
-        data = self.session.delete_resource(url)
+        data = self.session.delete_resource(url, version=self._api_version)
         return Response(body=data)
 
     def _build_collection_elements(self,
@@ -136,10 +137,10 @@ class Collection(Generic[ResourceType], Pageable):
             try:
                 yield self.build(element)
             except(KeyError, ValueError) as e:
-                # TODO:  This is a patch to handle deprecated predictors client side.
+                # TODO(PLA-9109): This is a patch to handle deprecated predictors client side
                 # Remove when predictors are migrated
-                warnings.warn(f"Building element skipped due to error: {e}")  # pragma: no cover
-                pass  # pragma: no cover
+                warnings.warn(f"Building element skipped due to error: {e}", UserWarning)
+                pass
 
     def _check_experimental(self, data):
         if data.get("experimental", False):

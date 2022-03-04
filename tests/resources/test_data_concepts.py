@@ -1,10 +1,12 @@
 from collections.abc import Iterator
 
 import pytest
-import warnings
 from uuid import uuid4
 
+from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.template import ProcessTemplate as GEMDTemplate
 from gemd.entity.link_by_uid import LinkByUID
+
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid, CITRINE_SCOPE
 from citrine.resources.process_run import ProcessRun
@@ -17,7 +19,7 @@ def run_noop_gemd_relation_search_test(search_for, search_with, collection, sear
     collection.session.set_response({'contents': []})
     test_id = 'foo-id'
     test_scope = 'foo-scope'
-    result = search_fn(test_id, scope=test_scope)
+    result = search_fn(LinkByUID(id=test_id, scope=test_scope))
     if isinstance(result, Iterator):
         # evaluate iterator to make calls happen
         list(result)
@@ -50,10 +52,10 @@ def test_assign_audit_info():
     })
     assert another_object.audit_info == audit_info_obj, "Audit info should be built from an obj"
 
-    with pytest.raises(AttributeError, message="Audit info cannot be set"):
+    with pytest.raises(AttributeError, match=r"can't set attribute"):
         sample_object.audit_info = None
 
-    with pytest.raises(TypeError, message="Audit info must be dict or obj valued"):
+    with pytest.raises(TypeError, match=r"audit_info must be a dictionary or None"):
         ProcessSpec.build({
             'type': 'process_spec',
             'name': "A process spec",
@@ -76,10 +78,8 @@ def test_make_link_by_uid():
     assert _make_link_by_uid(no_citrine_id) == LinkByUID(scope="custom scope", id="custom id")
 
     # If the scope argument is specified, throw a warning but respect the argument
-    with warnings.catch_warnings(record=True) as caught:
+    with pytest.warns(DeprecationWarning):
         assert _make_link_by_uid(uid, scope="my scope") == LinkByUID(scope="my scope", id=str(uid))
-        assert len(caught) == 1
-        assert issubclass(caught[0].category, DeprecationWarning)
 
     with pytest.raises(ValueError):
         _make_link_by_uid(ProcessSpec("spec"))  # no ids

@@ -1,5 +1,6 @@
 import inspect
 import os
+from functools import wraps
 from typing import Any, Optional
 from urllib.parse import urlparse, quote
 from warnings import warn
@@ -210,3 +211,30 @@ def format_escaped_url(
     return template.format(*[quote(str(x), safe='') for x in args],
                            **{k: quote(str(v), safe='') for (k, v) in kwargs.items()}
                            )
+
+
+def use_teams(alt, negate=False):
+    """
+    Raises error with a redirect message if method is unavailable with(out) teams support.
+
+    Parameters
+    ----------
+    alt: str
+        the alternative method the user should use. Added to the Error message
+    negate: bool
+        Set to True if the error should be raised if teams are in use. Keep False
+        if error should be raised if teams are not available.
+
+    """
+    def decorator(f):
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            if negate:
+                if not self.session._accounts_service_v3:
+                    raise NotImplementedError(f"Not available, you may be looking for {alt}")
+            else:
+                if self.session._accounts_service_v3:
+                    raise NotImplementedError(f"Not available, you may be looking for {alt}")
+            return f(self, *args, **kwargs)
+        return wrapper
+    return decorator

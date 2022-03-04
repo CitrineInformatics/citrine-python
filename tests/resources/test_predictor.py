@@ -4,18 +4,23 @@ import pytest
 import uuid
 from copy import deepcopy
 
-from citrine.exceptions import ModuleRegistrationFailedException, NotFound
+from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
     GraphPredictor,
     SimpleMLPredictor,
     ExpressionPredictor,
-    AutoMLPredictor
+    AutoMLPredictor,
+    LabelFractionsPredictor
 )
-from citrine.resources.predictor import PredictorCollection
-from tests.utils.session import FakeSession, FakeCall
-from tests.utils.session import FakeRequestResponse
+from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
+from tests.utils.session import (
+    FakeCall,
+    FakeRequest,
+    FakeRequestResponse,
+    FakeSession
+)
 
 
 @pytest.fixture(scope='module')
@@ -47,7 +52,7 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
     session.get_resource.return_value = valid_label_fractions_predictor_data
 
-    def _mock_put_resource(url, data):
+    def _mock_put_resource(url, data, version):
         """Assume that update returns the serialized predictor data."""
         return data
     session.put_resource.side_effect = _mock_put_resource
@@ -277,6 +282,26 @@ def test_unexpected_pattern():
         pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
+def test_auto_configure_mode_pattern(valid_graph_predictor_data):
+    """Check that using AutoConfigureMode doesn't result in an error"""
+    # Given
+
+    session = FakeSession()
+    # Setup a response that includes instance instead of config
+    response = deepcopy(valid_graph_predictor_data)
+    response["instance"] = response["config"]
+    del response["config"]
+    session.set_response(response)
+
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern=AutoConfigureMode.INFER)
+
+    # Then
+    assert (session.calls[0].json['pattern'] == "INFER")
+
+
 def test_returned_predictor(valid_graph_predictor_data):
     """Check that auto_configure works on the happy path."""
     # Given
@@ -300,3 +325,126 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
+
+
+@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+def test_convert_to_graph(predictor_data, request):
+    predictor_data = request.getfixturevalue(predictor_data)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a predictor may modify the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(predictor_data))
+
+    session.set_responses(deepcopy(predictor_data))
+
+    # When
+    response = collection.convert_to_graph(predictor.uid)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(
+        method="GET",
+        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    assert session.last_call == expected_call_convert
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+def test_convert_and_update(predictor_data, request):
+    predictor_data = request.getfixturevalue(predictor_data)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(predictor_data))
+
+    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data))
+
+    # When
+    response = collection.convert_and_update(predictor.uid)
+
+    # Then
+    assert session.num_calls == 2
+    expected_call_convert = FakeCall(
+        method="GET",
+        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
+    expected_call_store = FakeCall(
+        method="PUT",
+        path=f"/projects/{project_id}/modules/{predictor_id}",
+        json=predictor.dump())
+    assert session.calls == [expected_call_convert, expected_call_store]
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_and_update_errors(error_args, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = uuid.uuid4()
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
+    
+    error_code, error_cls = error_args[:]
+    response = FakeRequestResponse(error_code)
+    response.request.method = "GET"
+    session.set_response(error_cls(convert_path, response))
+
+    # When
+    method = getattr(collection, method_name)
+    with pytest.raises(error_cls):
+        method(predictor_id)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(method="GET", path=convert_path)
+    assert session.last_call == expected_call_convert
+
+
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_graph_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    pred_path = f"/projects/{project_id}/modules/{predictor_id}"
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+    
+    response = FakeRequestResponse(409)
+    response.request.method = "GET"
+
+    session.set_responses(
+            Conflict(convert_path, response),
+            deepcopy(valid_graph_predictor_data),
+            deepcopy(valid_graph_predictor_data))
+
+    # When
+    method = getattr(collection, method_name)
+    response = method(predictor_id, retrain_if_needed=True)
+
+    # Then
+    expected_calls = [
+        FakeCall(method="GET", path=convert_path),
+        FakeCall(method="GET", path=pred_path),
+        FakeCall(method="PUT", path=pred_path, json=predictor.dump())
+    ]
+    assert session.num_calls == 3
+    assert session.calls == expected_calls
+    assert response is None

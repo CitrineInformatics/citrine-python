@@ -355,7 +355,7 @@ def test_gemd_posts(dataset):
             assert pair not in seen_ids  # All ids are different
             seen_ids.add(pair)
 
-    after = dataset.register_all(before)
+    after = dataset.register_all(before, status_bar=True)  # Exercise the status_bar path
     assert len(before) == len(after)
     for obj in after:
         for pair in obj.uids.items():
@@ -387,23 +387,20 @@ def test_deprecated_delete_contents(dataset):
     session = dataset.session
     session.set_responses(job_resp, failed_job_resp)
 
-    with catch_warnings(record=True) as caught:
-        # When
+    # When
+    with pytest.warns(DeprecationWarning):
         del_resp = dataset.delete_contents()
 
-        # Then
-        assert len(del_resp) == 0
+    # Then
+    assert len(del_resp) == 0
 
-        # Ensure we made the expected delete call
-        expected_call = FakeCall(
-            method='DELETE',
-            path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
-        )
-        assert len(session.calls) == 2
-        assert session.calls[0] == expected_call
-
-        assert len(caught) == 1
-        assert caught[0].category == DeprecationWarning
+    # Ensure we made the expected delete call
+    expected_call = FakeCall(
+        method='DELETE',
+        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
+    )
+    assert len(session.calls) == 2
+    assert session.calls[0] == expected_call
 
 
 def test_delete_contents_ok(dataset, monkeypatch):

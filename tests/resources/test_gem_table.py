@@ -64,6 +64,27 @@ def test_get_table_metadata(collection, session):
     # Then
     assert retrieved_table.version == version_number
 
+    # Given
+    config = TableConfig(name="foo", description="bar", datasets=[], variables=[], rows=[], columns=[])
+    session.set_response({
+        "version": {
+            "ara_definition": config.dump(),
+            "version_number": config.version_number,
+            "id": config.config_uid,
+        },
+        "definition": {"id": uuid4()}
+    })
+
+    # Then
+    assert retrieved_table.config.name == config.name
+    assert retrieved_table.name == config.name
+    assert retrieved_table.description == config.description
+    expect_call = FakeCall(
+        method="GET",
+        path="projects/{}/display-tables/{}/versions/{}/definition".format(project_id, retrieved_table.uid, retrieved_table.version)
+    )
+    assert session.last_call == expect_call
+
 
 def test_list_tables(collection, session):
     # Given
@@ -245,7 +266,6 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
 
 
 @patch("citrine.resources.gemtables.write_file_locally")
-@pytest.mark.filterwarnings("ignore:A tuple*:DeprecationWarning")
 def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
@@ -253,7 +273,8 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
         retrieved_table = table(remote_url)
         session.set_response(retrieved_table.dump())
         mock_get.get(remote_url, text='stuff')
-        collection.read(table=(retrieved_table.uid, retrieved_table.version), local_path="table4.csv")
+        with pytest.warns(DeprecationWarning):
+            collection.read(table=(retrieved_table.uid, retrieved_table.version), local_path="table4.csv")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 1
         assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")

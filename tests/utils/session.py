@@ -37,13 +37,14 @@ class FakeCall:
 
 class FakeSession:
     """Fake version of Session used to test API interaction."""
-    def __init__(self):
+    def __init__(self, *, accounts_v3=False):
         self.calls = []
         self.responses = []
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
         self.use_idempotent_dataset_put = False
+        self._accounts_service_v3 = accounts_v3
 
     def set_response(self, resp):
         self.responses = [resp]
@@ -68,6 +69,9 @@ class FakeSession:
     def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         return self.checked_put(path, json, **kwargs)
 
+    def patch_resource(self, path: str, json: dict, **kwargs) -> dict:
+        return self.checked_patch(path, json, **kwargs)
+
     def delete_resource(self, path: str, **kwargs) -> dict:
         return self.checked_delete(path, **kwargs)
 
@@ -83,8 +87,15 @@ class FakeSession:
         self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params')))
         return self._get_response(default_response=json)
 
+    def checked_patch(self, path: str, json: dict, **kwargs) -> dict:
+        self.calls.append(FakeCall('PATCH', path, json, params=kwargs.get('params')))
+        return self._get_response(default_response=json)
+
     def checked_delete(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
+        if 'json' in kwargs:
+            self.calls.append(FakeCall('DELETE', path, kwargs.get('json'), params=kwargs.get('params')))
+        else:
+            self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
         return self._get_response()
 
     def _get_response(self, default_response: dict = None):
@@ -173,10 +184,11 @@ class FakeS3Client:
         return self.put_object_output
 
 
+# TODO: Generalize. That is, don't assume "BadRequest" and pass the method to FakeRequest.
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
-    def __init__(self, status_code, content=None, text="", reason = 'BadRequest'):
+    def __init__(self, status_code, content=None, text="", reason='BadRequest'):
         self.content = content
         self.text = text
         self.status_code = status_code
@@ -187,13 +199,15 @@ class FakeRequestResponse:
         return self.content
 
 
+# TODO: Generalize. That is, don't require validation_errors, don't assume "BadRequest", and pass
+#       the method to FakeRequest.
 class FakeRequestResponseApiError:
     """A fake version of a requests.request() response that has an ApiError"""
-    def __init__(self, code: int, message: str, validation_errors: List[
-        ValidationError], reason: str = 'BadRequest'):
+    def __init__(self, code: int, message: str, validation_errors: List[ValidationError],
+                 reason: str = 'BadRequest'):
         self.api_error_json = {"code": code,
                                "message": message,
-                               "validation_errors":[ve.as_dict() for ve in validation_errors]}
+                               "validation_errors": [ve.as_dict() for ve in validation_errors]}
         self.text = message
         self.status_code = code
         self.reason = reason
@@ -202,9 +216,13 @@ class FakeRequestResponseApiError:
     def json(self):
         return self.api_error_json
 
+
 class FakeRequest:
+    # Defaults to PATCH for legacy reasons.
+    # TODO: require the method to be passed.
     def __init__(self):
         self.method = "PATCH"
+
 
 def make_fake_cursor_request_function(all_results: list):
     """

@@ -1,13 +1,11 @@
-"""Tests for citrine.informatics.processors."""
+"""Tests for citrine.informatics.predictors."""
 import uuid
-import warnings
-
 import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
-    FormulationDescriptor, ChemicalFormulaDescriptor
+    FormulationDescriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
 from citrine.informatics.predictors import *
 
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
@@ -17,6 +15,7 @@ density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
@@ -119,11 +118,11 @@ def mean_property_predictor() -> MeanPropertyPredictor:
         name='Mean property predictor',
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
-        properties=[density],
-        p=2,
+        properties=[density, chain_type],
+        p=2.5,
         training_data=[formulation_data_source],
         impute_properties=True,
-        default_properties={'density': 1.0},
+        default_properties={'density': 1.0, 'Chain Type': 'Gaussian Coil'},
         label='solvent'
     )
 
@@ -282,20 +281,30 @@ def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
     assert mean_property_predictor.input_descriptor.key == 'formulation'
-    assert mean_property_predictor.properties == [density]
-    assert mean_property_predictor.p == 2
+    assert mean_property_predictor.properties == [density, chain_type]
+    assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
     assert mean_property_predictor.training_data == [formulation_data_source]
-    assert mean_property_predictor.default_properties == {'density': 1.0}
+    assert mean_property_predictor.default_properties == {'density': 1.0, 'Chain Type': 'Gaussian Coil'}
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
     assert str(mean_property_predictor) == expected_str
 
 
+def test_mean_property_round_robin(mean_property_predictor):
+    """Make sure that the MPP can be de/serialized appropriately."""
+    data = mean_property_predictor.dump()
+    new_mpp = MeanPropertyPredictor.build(data)
+    real_props = [d for d in new_mpp.properties if isinstance(d, RealDescriptor)]
+    cat_props = [d for d in new_mpp.properties if isinstance(d, CategoricalDescriptor)]
+    assert len(new_mpp.properties) == 2
+    assert len(real_props) == 1
+    assert len(cat_props) == 1
+
+
 def test_deprecated_ingredients_to_simple_mixture():
     """make sure deprecation warnings are issued."""
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
+    with pytest.warns(DeprecationWarning):
         i2sm = IngredientsToSimpleMixturePredictor(
             name="deprecated",
             description="",
@@ -305,9 +314,6 @@ def test_deprecated_ingredients_to_simple_mixture():
         )
         assert i2sm.name == "deprecated"
         assert i2sm.labels == {"label": {"foo"}}
-        assert len(caught) == 1
-        w = caught[0]
-        assert issubclass(w.category, DeprecationWarning)
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):

@@ -45,3 +45,24 @@ def test_list_by_process(collection: IngredientRunCollection):
         collection=collection,
         search_fn=collection.list_by_process,
     )
+
+
+def test_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.ingredient_run import IngredientRun as CitrineIngredientRun
+    from gemd.entity.object import IngredientRun as GEMDIngredientRun
+    from gemd.entity.value import NominalReal
+
+    gemd_obj = GEMDIngredientRun(
+        mass_fraction=NominalReal(1.0, ""),
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineIngredientRun(
+        mass_fraction=NominalReal(1.0, ""),
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"

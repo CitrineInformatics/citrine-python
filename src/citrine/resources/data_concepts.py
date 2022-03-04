@@ -1,6 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+import re
 from warnings import warn
+from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
@@ -9,12 +11,12 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
+from gemd.util import recursive_foreach, make_index, substitute_objects, set_uuids
 
 from citrine._rest.collection import Collection
-from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.properties import Property as SerializableProperty
+from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links, \
@@ -25,9 +27,10 @@ from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
 
 CITRINE_SCOPE = 'id'
+CITRINE_TAG_PREFIX = 'citr_auto'
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
+class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
     """
     An abstract data concepts object.
 
@@ -71,7 +74,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
 
     client_specific_fields = {
         "audit_info": AuditInfo,
-        "dataset": properties.UUID,
+        "dataset": PropertyUUID,
     }
     """
     Fields that are added to the gemd data objects when they are used in this client
@@ -278,9 +281,49 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
             )
         return cls.json_support
 
+    def dump(self) -> dict:
+        """Overload dump to include the client-specific fields."""
+        result = super().dump()
+        for field, clazz in self.client_specific_fields.items():
+            value = getattr(self, f"_{field}", None)
+            if value is None:
+                serialized = None
+            elif isinstance(value, DictSerializable):
+                serialized = value.as_dict()
+            elif issubclass(clazz, SerializableProperty):
+                # deserialize handles type checking already
+                serialized = clazz(clazz).serialize(value)
+            else:  # pragma: no cover
+                raise NotImplementedError("No serialization strategy reported for client "
+                                          "field type {} for field {}.".format(clazz, field))
+            if serialized is not None:
+                result[field] = serialized
+        return result
+
     def as_dict(self) -> dict:
-        """Dump to a dictionary (useful for interoperability with gemd)."""
-        return self.dump()
+        """
+        Dump to a dictionary (useful for interoperability with gemd).
+
+        Note that something in the serialization stack changes the result df __dict__ dramatically
+        between gemd.entity.dict_serializable and this class.  This means we can't just use gemd's
+        as_dict, and so we'll trust citrine._serialization.properties to get us the list.
+        """
+        from citrine._serialization import properties as serial_properties
+
+        result = dict()
+        for property_name in serial_properties.Object(type(self)).fields:
+            result[property_name] = getattr(self, property_name, None)
+        result["type"] = result.pop("typ")
+        return result
+
+    def _dict_for_compare(self):
+        """Which fields should be ignored in equality comparison."""
+        base = super()._dict_for_compare()
+        for field in base:
+            base[field] = getattr(self, field, base[field])
+        base.pop("audit_info", None)
+        base.pop("dataset", None)
+        return base
 
 
 def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
@@ -289,9 +332,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
              "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
     if isinstance(gemd_object_rep, BaseEntity):
-        if not gemd_object_rep.uids:  # an empty dictionary
-            raise ValueError('GEMD object must have at least one uid to construct a link.')
-        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+        return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
     elif isinstance(gemd_object_rep, (str, UUID)):
@@ -299,7 +340,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         scope = scope or CITRINE_SCOPE
         return LinkByUID(scope, uid)
     else:
-        raise TypeError("Link can only created from a GEMD object, LinkByUID, str, or UUID."
+        raise TypeError("Link can only be created from a GEMD object, LinkByUID, str, or UUID."
                         "Instead got {}.".format(gemd_object_rep))
 
 
@@ -351,8 +392,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             A data model object built from the dictionary.
 
         """
-        data_concepts_object = self.get_type().build(data)
-        return data_concepts_object
+        return self.get_type().build(data)
 
     def list(self, *,
              page: Optional[int] = None,
@@ -429,38 +469,77 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
-        GEMDJson(scope=scope).dumps(model)  # This apparent no-op populates uids
+        set_uuids(model, scope=scope)
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
-        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
 
         data = self.session.post_resource(path, dumped_data, params=params)
-        return self.build(data)
+        registered = self.build(data)
 
-    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        if not dry_run:
+            # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
+            model.uids.update({k: v for k, v in registered.uids.items()})
+            if registered.tags is not None:
+                if model.tags is None:  # This is somehow hit by nextgen-devkit tests
+                    model.tags = list()  # pragma: no cover
+                model.tags.extend([tag for tag in registered.tags
+                                   if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)])
+        else:
+            # Remove of the tags/uids the platform spuriously added
+            # this might leave objects with just the temp ids, which we want to strip later
+            if CITRINE_SCOPE not in model.uids:
+                registered.uids.pop(CITRINE_SCOPE, None)
+            if registered.tags is not None:
+                todo = [tag for tag in registered.tags
+                        if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                for tag in todo:  # Covering this block would require dark art
+                    if tag not in model.tags:
+                        registered.tags.remove(tag)
+        return registered
+
+    def register_all(self,
+                     models: List[ResourceType],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[ResourceType]:
         """
-        [ALPHA] Create or update each model in models.
+        Register multiple GEMD objects to each of their appropriate collections.
 
-        This method has the same behavior as `register`, except that all no models will be
-        written if any one of them is invalid.
+        Does so in an order that is guaranteed to store all linked items before the item that
+        references them.
 
-        Using this method should yield significant improvements to write speed over separate
-        calls to `register`.
+        If the GEMD objects have no UIDs, Citrine IDs will be assigned to them prior to passing
+        them on to the server.  This is required as otherwise there is no way to determine how
+        objects are related to each other.  When the registered objects are returned from the
+        server, the input GEMD objects will be updated with whichever uids & _citr_auto:: tags are
+        on the returned objects.  This means GEMD objects that already exist on the server will
+        be updated with all their on-platform uids and tags.
+
+        This method has the same behavior as `register`, except that no models will be
+        written if any one of them is invalid.  Using this method should yield significant
+        improvements to write speed over separate calls to `register`.
 
         Parameters
         ----------
-        models: List[ResourceType]
-            The objects to be written.
+        models: List[DataConcepts]
+            The data model objects to register. Can be different types.
+
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
+
         Returns
         -------
-        List[ResourceType]
-            Each object model as it now exists in the database. The order and number of models
-            is guaranteed to be the same as originally specified.
+        List[DataConcepts]
+            Each object model as it now exists in the database.
 
         """
+        from citrine._utils.batcher import Batcher
+
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
@@ -468,19 +547,61 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
-        json = GEMDJson(scope=scope)
-        [json.dumps(x) for x in models]  # This apparent no-op populates uids
+        set_uuids(models, scope=scope)
 
-        objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+        resources = list()
+        batch_size = 50
+        result_index = dict()
+        if dry_run:
+            batcher = Batcher.by_dependency()
+        else:
+            batcher = Batcher.by_type()
 
-        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        if status_bar:
+            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
+            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
+        else:
+            iterator = batcher.batch(models, batch_size)
 
-        response_data = self.session.put_resource(
-            path + '/batch',
-            json={'objects': objects},
-            params=params
-        )
-        return [self.build(obj) for obj in response_data['objects']]
+        for batch in iterator:
+            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
+            response_data = self.session.put_resource(
+                path + '/batch',
+                json={'objects': objects},
+                params=params
+            )
+            registered = [self.build(obj) for obj in response_data['objects']]
+            result_index.update(make_index(registered))
+            substitute_objects(registered, result_index, inplace=True)
+
+            if not dry_run:
+                # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    obj.uids.update({k: v for k, v in result.uids.items()})
+                    if result.tags is not None:
+                        obj.tags = list(result.tags)
+            else:
+                # Remove of the tags/uids the platform spuriously added
+                # this might leave objects with just the temp ids, which we want to strip later
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    if CITRINE_SCOPE not in obj.uids:
+                        citr_id = result.uids.pop(CITRINE_SCOPE, None)
+                        result_index.pop(LinkByUID(scope=CITRINE_SCOPE, id=citr_id), None)
+                    if result.tags is not None:
+                        todo = [tag for tag in result.tags
+                                if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                        for tag in todo:  # Covering this block would require dark art
+                            if tag not in obj.tags:
+                                result.tags.remove(tag)
+
+            resources.extend(registered)
+
+        if dry_run:  # No-op if not dry-run
+            recursive_foreach(list(models) + list(resources),
+                              lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        return resources
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""

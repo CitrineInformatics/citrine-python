@@ -3,6 +3,7 @@ from uuid import UUID
 import pytest
 
 from citrine.resources.process_spec import ProcessSpecCollection
+
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.session import FakeSession
 
@@ -27,3 +28,23 @@ def test_list_by_template(collection: ProcessSpecCollection):
         collection=collection,
         search_fn=collection.list_by_template,
     )
+
+
+def test_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.process_spec import ProcessSpec as CitrineProcesssSpec
+    from gemd.entity.object import ProcessSpec as GEMDProcessSpec
+
+    gemd_obj = GEMDProcessSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineProcesssSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"

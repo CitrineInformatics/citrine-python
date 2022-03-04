@@ -1,25 +1,28 @@
+import platform
+from datetime import datetime, timedelta
+from json.decoder import JSONDecodeError
+from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
-from logging import getLogger
-from datetime import datetime, timedelta
-
-from requests import Response
-from json.decoder import JSONDecodeError
 from urllib.parse import urlunsplit
-from urllib3.util.retry import Retry
-
-from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import (
-    NotFound,
-    Unauthorized,
-    UnauthorizedRefreshToken,
-    WorkflowConflictException,
-    WorkflowNotReadyException,
-    BadRequest, CitrineException)
+from warnings import warn
 
 import jwt
 import requests
 import requests.auth
+from requests import Response
+from urllib3.util.retry import Retry
+
+import citrine
+from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import (
+    BadRequest,
+    CitrineException,
+    Conflict,
+    NotFound,
+    Unauthorized,
+    UnauthorizedRefreshToken,
+    WorkflowNotReadyException)
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -31,19 +34,48 @@ class Session(requests.Session):
     """Wrapper around requests.Session that is both refresh-token and schema aware."""
 
     def __init__(self,
-                 refresh_token: str = environ.get('CITRINE_API_KEY'),
-                 scheme: str = 'https',
-                 host: str = environ.get('CITRINE_API_HOST'),
-                 port: Optional[str] = None):
+                 refresh_token: str = None,
+                 legacy_scheme: Optional[str] = None,
+                 host: str = None,
+                 port: Optional[str] = None,
+                 *,
+                 scheme: str = None):
         super().__init__()
+        if refresh_token is None:
+            refresh_token = environ.get('CITRINE_API_KEY')
+        if legacy_scheme is not None:
+            warn("Creating a session with positional arguments other than refresh_token "
+                 "is deprecated; use keyword arguments to specify scheme, host and port.",
+                 DeprecationWarning)
+            if scheme is None:
+                scheme = legacy_scheme
+            else:
+                raise ValueError("Specify legacy_scheme or scheme, not both.")
+        elif scheme is None:
+            scheme = 'https'
+        if host is None:
+            host = environ.get('CITRINE_API_HOST')
+            if host is None:
+                raise ValueError("No host passed and environmental "
+                                 "variable CITRINE_API_HOST not set.")
+
         self.scheme: str = scheme
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))
         self.refresh_token: str = refresh_token
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
+        self._accounts_service_v3: bool = False
+
+        agent = "{}/{} python-requests/{} citrine-python/{}".format(
+            platform.python_implementation(),
+            platform.python_version(),
+            requests.__version__,
+            citrine.__version__)
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
-        self.headers.update({"Content-Type": "application/json"})
+        self.headers.update({
+            "Content-Type": "application/json",
+            "User-Agent": agent})
 
         # Default parameters for S3 connectivity. Can be changed by tests.
         self.s3_endpoint_url = None
@@ -73,6 +105,8 @@ class Session(requests.Session):
         self.retry_errs = (ConnectionError,
                            requests.exceptions.ConnectionError,
                            requests.exceptions.ChunkedEncodingError)
+        self._refresh_access_token()
+        self._check_accounts_version()
 
     def _versioned_base_url(self, version: str = 'v1'):
         return urlunsplit((
@@ -103,6 +137,15 @@ class Session(requests.Session):
         # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.
         self.auth = BearerAuth(self.access_token)
 
+    def _check_accounts_version(self) -> None:
+        """Checks Product to find out what version of Accounts is used."""
+        response = self._request_with_retry('GET',
+                                            self._versioned_base_url() + 'utils/runtime-config')
+
+        if response.status_code != 200:
+            raise CitrineException(response.text)
+        self._accounts_service_v3 = response.json().get('accounts_service_v3', False)
+
     def _request_with_retry(self, method, uri, **kwargs):
         """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
         # The urllib3 Retry object does not handle retries when ConnectionErrors
@@ -126,6 +169,7 @@ class Session(requests.Session):
 
         if self._is_access_token_expired():
             self._refresh_access_token()
+            self._check_accounts_version()
         uri = self._versioned_base_url(version) + path.lstrip('/')
 
         logger.debug('\turi: {}'.format(uri))
@@ -139,6 +183,7 @@ class Session(requests.Session):
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
+                self._check_accounts_version()
                 response = self._request_with_retry(method, uri, **kwargs)
         except AttributeError:
             # Catch AttributeErrors and log response
@@ -172,7 +217,7 @@ class Session(requests.Session):
                 raise NotFound(path, response)
             elif response.status_code == 409:
                 logger.debug('%s %s %s', response.status_code, method, path)
-                raise WorkflowConflictException(response.text)
+                raise Conflict(path, response)
             elif response.status_code == 425:
                 logger.debug('%s %s %s', response.status_code, method, path)
                 msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
@@ -206,6 +251,11 @@ class Session(requests.Session):
         response = self.checked_put(path, json=json, **kwargs)
         return self._extract_response_json(path, response)
 
+    def patch_resource(self, path: str, json: dict, **kwargs) -> dict:
+        """PATCH data given by some JSON at a particular resource."""
+        response = self.checked_patch(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
+
     def delete_resource(self, path: str, **kwargs) -> dict:
         """DELETE a particular resource as JSON."""
         response = self.checked_delete(path, **kwargs)
@@ -214,15 +264,22 @@ class Session(requests.Session):
     @staticmethod
     def _extract_response_json(path, response) -> dict:
         """Extract json from the response or log and return an empty dict if extraction fails."""
+        extracted_response = {}
         try:
-            return response.json()
+            if "application/json" in response.headers.get("Content-Type", ""):
+                extracted_response = response.json()
+            else:  # pragma: no cover
+                logger.info(f"""Response at {path} with status code of {response.status_code}
+                    lacked the required 'application/json' Content-Type in the header.""")
+
         except JSONDecodeError as err:
             logger.info('Response at path %s with status code %s failed json parsing with'
                         ' exception %s. Returning empty value.',
                         path,
                         response.status_code,
                         err.msg)
-            return {}
+
+        return extracted_response
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,
@@ -254,6 +311,10 @@ class Session(requests.Session):
     def checked_put(self, path: str, json: dict, **kwargs) -> Response:
         """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, json=json, **kwargs)
+
+    def checked_patch(self, path: str, json: dict, **kwargs) -> Response:
+        """Execute a PATCH request to a URL and utilize error filtering on the response."""
+        return self.checked_request('PATCH', path, json=json, **kwargs)
 
     def checked_delete(self, path: str, **kwargs) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""

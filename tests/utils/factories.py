@@ -21,12 +21,27 @@ class WithIdDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
 
 
+class TeamDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    name = factory.Faker('company')
+    description = factory.Faker('catch_phrase')
+    created_at = None
+
+
 class ProjectDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
     description = factory.Faker('catch_phrase')
     status = 'CREATED'
     created_at = None
+
+
+class BranchDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    name = factory.Faker('company')
+    archived = factory.Faker('boolean')
+    created_at = None
+    updated_at = None
 
 
 class UserDataFactory(factory.DictFactory):
@@ -252,8 +267,6 @@ class MLIScoreFactory(factory.Factory):
     class Meta:
         model = LIScore
 
-    name = factory.Faker('bs')
-    description = factory.Faker('catch_phrase')
     baselines = []
     objectives = []
     constraints = []

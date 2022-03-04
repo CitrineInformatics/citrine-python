@@ -97,10 +97,14 @@ class BadRequest(NonRetryableHttpException):
     pass
 
 
-class WorkflowConflictException(NonRetryableException):
+class WorkflowConflictException(NonRetryableHttpException):
     """There is a conflict preventing the workflow from being executed. (http status 409)."""
 
     pass
+
+
+# A 409 is a Conflict, and can be raised anywhere a conflict occurs, not just in a workflow.
+Conflict = WorkflowConflictException
 
 
 class WorkflowNotReadyException(RetryableException):

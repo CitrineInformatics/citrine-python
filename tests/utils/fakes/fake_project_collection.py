@@ -3,8 +3,12 @@ from uuid import uuid4
 
 from citrine.exceptions import NotFound
 from citrine.resources.project import Project, ProjectCollection
-from tests.utils.fakes import FakeDatasetCollection, FakePredictorCollection, FakeDesignSpaceCollection
-from tests.utils.fakes.fake_descriptor_methods import FakeDescriptorMethods
+from tests.utils.fakes import FakeDatasetCollection
+from tests.utils.fakes import FakeDesignSpaceCollection, FakeDesignWorkflowCollection
+from tests.utils.fakes import FakeGemTableCollection, FakeTableConfigCollection
+from tests.utils.fakes import FakePredictorCollection, FakePredictorEvaluationWorkflowCollection
+from tests.utils.fakes import FakePredictorEvaluationExecutionCollection
+from tests.utils.fakes import FakeDescriptorMethods
 from tests.utils.session import FakeSession
 
 
@@ -58,9 +62,14 @@ class FakeProject(Project):
         Project.__init__(self, name=name, description=description, session=session)
         self.uid = uuid4()
         self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
+        self._design_workflows = FakeDesignWorkflowCollection(self.uid, self.session)
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
         self._datasets = FakeDatasetCollection(self.uid, self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
+        self._pees = FakePredictorEvaluationExecutionCollection(self.uid, self.session)
+        self._pews = FakePredictorEvaluationWorkflowCollection(self.uid, self.session)
+        self._tables = FakeGemTableCollection(self.uid, self.session)
+        self._table_configs = FakeTableConfigCollection(self.uid, self.session)
 
     @property
     def datasets(self) -> FakeDatasetCollection:
@@ -71,9 +80,29 @@ class FakeProject(Project):
         return self._design_spaces
 
     @property
+    def design_workflows(self) -> FakeDesignWorkflowCollection:
+        return self._design_workflows
+
+    @property
     def descriptors(self) -> FakeDescriptorMethods:
         return self._descriptor_methods
 
     @property
     def predictors(self) -> FakePredictorCollection:
         return self._predictors
+
+    @property
+    def predictor_evaluation_executions(self) -> FakePredictorEvaluationExecutionCollection:
+        return self._pees
+
+    @property
+    def predictor_evaluation_workflows(self) -> FakePredictorEvaluationWorkflowCollection:
+        return self._pews
+
+    @property
+    def tables(self) -> FakeGemTableCollection:
+        return self._tables
+
+    @property
+    def table_configs(self) -> FakeTableConfigCollection:
+        return self._table_configs

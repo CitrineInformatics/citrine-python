@@ -138,7 +138,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('ingredient-specs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='ingredient-specs', uid=link)
 
     def list_by_process(self,
                         uid: Union[UUID, str, LinkByUID, GEMDProcessRun], *,
@@ -161,7 +161,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation(relation='process-runs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='process-runs', uid=link)
 
     def list_by_material(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
@@ -184,4 +184,4 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation(relation='material-runs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='material-runs', uid=link)

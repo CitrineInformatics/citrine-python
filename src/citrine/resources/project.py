@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of projects."""
+from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 from warnings import warn
@@ -9,17 +10,19 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url, use_teams
+from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
+from citrine.resources.branch import BranchCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -51,8 +54,8 @@ class Project(Resource['Project']):
     """
     A Citrine Project.
 
-    A project is a collection of datasets, some of which belong directly to the project
-    and some of which have been shared with the project.
+    A project is a collection of datasets and AI assets, some of which belong directly
+    to the project, and some of which have been shared with the project.
 
     Parameters
     ----------
@@ -82,15 +85,21 @@ class Project(Resource['Project']):
     uid = properties.Optional(properties.UUID(), 'id')
     status = properties.Optional(properties.String(), 'status')
     created_at = properties.Optional(properties.Datetime(), 'created_at')
+    team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
                  name: str,
                  *,
                  description: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 session: Optional[Session] = None,
+                 team_id: Optional[UUID] = None):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
+        self.team_id: Optional[UUID] = team_id
+
+    def _post_dump(self, data: dict) -> dict:
+        return {key: value for key, value in data.items() if value is not None}
 
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
@@ -102,6 +111,11 @@ class Project(Resource['Project']):
     def modules(self) -> ModuleCollection:
         """Return a resource representing all visible design spaces."""
         return ModuleCollection(self.uid, self.session)
+
+    @property
+    def branches(self) -> BranchCollection:
+        """Return a resource representing all visible branches."""
+        return BranchCollection(self.uid, self.session)
 
     @property
     def design_spaces(self) -> DesignSpaceCollection:
@@ -136,7 +150,7 @@ class Project(Resource['Project']):
     @property
     def design_workflows(self) -> DesignWorkflowCollection:
         """Return a collection representing all visible design workflows."""
-        return DesignWorkflowCollection(self.uid, self.session)
+        return DesignWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
@@ -228,6 +242,81 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
+    @use_teams("project.make_public", True)
+    def publish(self, *, resource: Resource):
+        """
+        Publish a resource from a project to its encompassing team.
+
+        In order to use the Resource in a different project,
+        you should use project.pull_in_resource() to pull that resource
+        into the other project.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be published
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully published
+
+        """
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        self.session.checked_post(
+            f"{self._path()}/published-resources/{resource_type}/batch-publish",
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
+
+    @use_teams("project.make_private", True)
+    def un_publish(self, *, resource: Resource):
+        """
+        Un-publish a resource from a project from its encompassing team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be un-published
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully un-published
+
+        """
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        self.session.checked_post(
+            f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
+
+    @use_teams("project.make_public", True)
+    def pull_in_resource(self, *, resource: Resource):
+        """
+        Pull in a public resource from this project's team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by the encompassing team, which will be pulled in
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully pulled in
+
+        """
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        base_url = f'/teams/{self.team_id}{self._path()}'
+        self.session.checked_post(
+            f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
+
+    @use_teams("project.publish")
     def share(self, *,
               resource: Optional[Resource] = None,
               project_id: Optional[Union[str, UUID]] = None,
@@ -263,11 +352,12 @@ class Project(Resource['Project']):
             resource_dict = {"type": resource_type, "id": resource_id}
         if resource_dict is None:
             raise ValueError("Must specify resource to share or specify the resource type and id")
-        return self.session.post_resource(self._path() + "/share", {
+        return self.session.post_resource(f"{self._path()}/share", {
             "project_id": str(project_id),
             "resource": resource_dict
         })
 
+    @use_teams("project.publish")
     def transfer_resource(self, *, resource: Resource,
                           receiving_project_uid: Union[str, UUID]) -> bool:
         """
@@ -291,7 +381,7 @@ class Project(Resource['Project']):
 
         """
         try:
-            self.session.checked_post(self._path() + "/transfer-resource", {
+            self.session.checked_post(f"{self._path()}/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
                 "resource": resource.access_control_dict()})
         except AttributeError:  # If _resource_type is not implemented
@@ -300,6 +390,7 @@ class Project(Resource['Project']):
 
         return True
 
+    @use_teams("project.publish")
     def make_public(self, resource: Resource) -> bool:
         """
         Grant public access to a resource owned by this project.
@@ -316,7 +407,7 @@ class Project(Resource['Project']):
 
         """
         try:
-            self.session.checked_post(self._path() + "/make-public", {
+            self.session.checked_post(f"{self._path()}/make-public", {
                 "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
@@ -324,6 +415,7 @@ class Project(Resource['Project']):
                                f"cannot be made public")
         return True
 
+    @use_teams("project.un_publish")
     def make_private(self, resource: Resource) -> bool:
         """
         Remove public access for a resource owned by this project.
@@ -340,7 +432,7 @@ class Project(Resource['Project']):
 
         """
         try:
-            self.session.checked_post(self._path() + "/make-private", {
+            self.session.checked_post(f"{self._path()}/make-private", {
                 "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
@@ -358,7 +450,9 @@ class Project(Resource['Project']):
             The email of the creator of this resource.
 
         """
-        email = self.session.get_resource(self._path() + "/creator")["email"]
+        if self.session._accounts_service_v3:
+            raise NotImplementedError("Not available")
+        email = self.session.get_resource(f"{self._path()}/creator")["email"]
         return email
 
     def owned_dataset_ids(self) -> List[str]:
@@ -371,7 +465,13 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
+        if self.session._accounts_service_v3:
+            query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
+            dataset_ids = self.session.get_resource(f"/DATASET/authorized-ids",
+                                                    params=query_params,
+                                                    version="v3")['ids']
+        else:
+            dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
         return dataset_ids
 
     def owned_table_ids(self) -> List[str]:
@@ -384,7 +484,9 @@ class Project(Resource['Project']):
             The ids of the tables owned by current project
 
         """
-        table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
+        if self.session._accounts_service_v3:
+            raise NotImplementedError("Not available")
+        table_ids = self.session.get_resource(f"{self._path()}/table_ids")["table_ids"]
         return table_ids
 
     def owned_table_config_ids(self) -> List[str]:
@@ -397,9 +499,12 @@ class Project(Resource['Project']):
             The ids of the table configs owned by current project
 
         """
-        result = self.session.get_resource(self._path() + "/table_definition_ids")
+        if self.session._accounts_service_v3:
+            raise NotImplementedError("Not available")
+        result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
+    @use_teams("team.list_members")
     def list_members(self) -> List[ProjectMember]:
         """
         List all of the members in the current project.
@@ -410,9 +515,10 @@ class Project(Resource['Project']):
             The members of the current project
 
         """
-        members = self.session.get_resource(self._path() + "/users")["users"]
+        members = self.session.get_resource(f"{self._path()}/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
+    @use_teams("team.update_user_action")
     def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
         Update a User's role and action permissions in the Project.
@@ -431,6 +537,7 @@ class Project(Resource['Project']):
                                   {'role': role, 'actions': actions})
         return True
 
+    @use_teams("team.add_user")
     def add_user(self, user_uid: Union[str, UUID]):
         """
         Add a User to a Project.
@@ -448,6 +555,7 @@ class Project(Resource['Project']):
                                   {'role': MEMBER, 'actions': []})
         return True
 
+    @use_teams("team.remove_user")
     def remove_user(self, user_uid: Union[str, UUID]) -> bool:
         """
         Remove a User from a Project.
@@ -488,6 +596,12 @@ class Project(Resource['Project']):
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
             BaseEntity can also be used to provide an external ID.
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up. Defaults
+            to 2 minutes. Note that this number has no effect on the underlying job
+            itself, which can also time out server-side.
+        polling_delay: float
+            How long to delay between each polling retry attempt (in seconds).
 
         Returns
         -------
@@ -517,8 +631,13 @@ class ProjectCollection(Collection[Project]):
     _collection_key = 'projects'
     _resource = Project
 
-    def __init__(self, session: Session):
+    @property
+    def _api_version(self):
+        return 'v3' if self.session._accounts_service_v3 else 'v1'
+
+    def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
         self.session = session
+        self.team_id = team_id
 
     def build(self, data) -> Project:
         """
@@ -537,7 +656,21 @@ class ProjectCollection(Collection[Project]):
         """
         project = Project.build(data)
         project.session = self.session
+        if self.team_id is not None:
+            project.team_id = self.team_id
         return project
+
+    def _register_in_team(self, name: str, *, description: Optional[str] = None):
+        if self.team_id is None:
+            raise NotImplementedError("Please use team.projects")
+        path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
+        project = Project(name, description=description)
+        try:
+            data = self.session.post_resource(path, project.dump(), version=self._api_version)
+            data = data[self._individual_key]
+            return self.build(data)
+        except NonRetryableException as e:
+            raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
     def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
@@ -551,7 +684,10 @@ class ProjectCollection(Collection[Project]):
             Long-form description of the project to be created.
 
         """
-        return super().register(Project(name, description=description))
+        if self.session._accounts_service_v3:
+            return self._register_in_team(name, description=description)
+        else:
+            return super().register(Project(name, description=description))
 
     def list(self, *,
              page: Optional[int] = None,
@@ -578,7 +714,79 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        return super().list(page=page, per_page=per_page)
+        if self.session._accounts_service_v3:
+            return self._list_v3(page=page, per_page=per_page)
+        else:
+            return super().list(page=page, per_page=per_page)
+
+    def _list_v3(self, *, page: Optional[int] = None, per_page: int = 1000) -> Iterator[Project]:
+        if self.team_id is None:
+            raise NotImplementedError("Please use team.projects")
+
+        path = format_escaped_url('/teams/{team_id}/projects', team_id=self.team_id)
+
+        fetcher = partial(self._fetch_page, path=path)
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
+
+    def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
+        """
+        Search across all projects in a domain.
+
+        There is no pagination on search_all.
+
+         This is compatible with accounts v3 only.
+
+        Parameters
+        ----------
+        search_params: dict, optional
+            A ``dict`` representing the body of the post request that will be sent to the search
+            endpoint to filter the results, e.g.,
+
+            .. code:: python
+
+                {
+                    "name": {
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                }
+
+            The ``dict`` can contain any combination of (one or all) search specifications for the
+            name, description, and status fields of a project. For each parameter specified, the
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
+
+
+        Returns
+        -------
+        Iterable[Dict]
+            Projects in this collection.
+
+        """
+        collections = []
+        path = self._get_path() + '/search'
+        query_params = {'userId': ""}
+
+        json = {} if search_params is None else {'search_params': search_params}
+
+        data = self.session.post_resource(path,
+                                          params=query_params,
+                                          json=json,
+                                          version=self._api_version)
+
+        if self._collection_key is not None:
+            collections = data[self._collection_key]
+
+        return collections
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
@@ -635,8 +843,9 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
+        if self.session._accounts_service_v3:
+            return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
-        search_params = {} if search_params is None else search_params
 
         return self._paginator.paginate(page_fetcher=self._fetch_page_search,
                                         collection_builder=self._build_collection_elements,
@@ -651,7 +860,7 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
-        return super().delete(uid)  # pragma: no cover
+        return super().delete(uid)
 
     def update(self, model: Project) -> Project:
         """Projects cannot be updated."""

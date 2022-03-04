@@ -9,7 +9,7 @@ from citrine.resources.project import Project
 try:
     import pandas as pd
 except ImportError:  # pragma: no cover
-    raise ImportError('pandas>=0.25 is a requirement for the builders module')
+    raise ImportError('pandas>=1.1.5 is a requirement for the builders module')
 try:
     import numpy as np
 except ImportError:  # pragma: no cover

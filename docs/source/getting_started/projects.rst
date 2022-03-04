@@ -2,6 +2,12 @@
 Projects
 ========
 
+.. warning::
+    Once your deployment is updated to the Teams version of the Citrine Platform, project behavior
+    will change. Details can be found in the :doc:`Teams FAQ <../FAQ/team_management_migration>`.
+
+    Please contact support for more information.
+
 A Project is the basic unit of collaboration and access on the Citrine Platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
@@ -114,7 +120,7 @@ A user's role in a Project can be updated. The method
     project = citrine.projects.register(name="Your Project")
 
     # Make the user a lead
-    project.update_user_role(user_id=user_id, role=LEAD)
+    project.update_user_role(user_uid=user_id, role=LEAD)
 
 
 .. code-block:: python
@@ -124,4 +130,4 @@ A user's role in a Project can be updated. The method
     project = citrine.projects.register(name="Your Project")
 
     # Make the user a member with write access
-    project.update_user_role(user_id=user_id, role=MEMBER, actions=[WRITE])
+    project.update_user_role(user_uid=user_id, role=MEMBER, actions=[WRITE])

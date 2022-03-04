@@ -45,6 +45,7 @@ def test_mime_types(collection):
     assert collection._mime_type("asdf.csv") == expected_csv
     assert collection._mime_type("asdf.FAKE") == expected_unk
 
+
 def test_build_equivalence(collection, valid_data):
     """Test that build() works the same whether called from FileLink or FileCollection."""
     assert collection.build(valid_data).dump() == FileLink.build(valid_data).dump()
@@ -156,6 +157,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
 def test_upload_missing_file(collection):
     with pytest.raises(ValueError):
         collection.upload(file_path='this-file-does-not-exist.xls')
+
 
 @patch('citrine.resources.file_link.os.stat')
 def test_upload_request(mock_stat, collection, session, uploader):
@@ -312,7 +314,7 @@ def test_list_file_links(collection, session, valid_data):
         'files': [returned_data]
     })
 
-    files_iterator = collection.list(page=1, per_page=15)
+    files_iterator = collection.list(per_page=15)
     files = [file for file in files_iterator]
 
     assert session.num_calls == 1
@@ -320,7 +322,6 @@ def test_list_file_links(collection, session, valid_data):
         method='GET',
         path=collection._get_path(),
         params={
-            'page': 1,
             'per_page': 15
         }
     )
@@ -340,9 +341,10 @@ def test_list_file_links(collection, session, valid_data):
     session.set_response({
         'files': [bad_returned_data]
     })
-    with pytest.raises(ValueError):
-        files_iterator = collection.list(page=1, per_page=15)
-        [file for file in files_iterator]
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            files_iterator = collection.list(page=1, per_page=15)
+            [file for file in files_iterator]
 
 
 @patch("citrine.resources.file_link.write_file_locally")

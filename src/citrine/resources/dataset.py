@@ -199,15 +199,23 @@ class Dataset(Resource['Dataset']):
         """Register a data model object to the appropriate collection."""
         return self.gemd.register(model, dry_run=dry_run)
 
-    def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
+    def register_all(self,
+                     models: List[DataConcepts],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
 
-        The uids of the input data concepts resources are updated with their on-platform uids.
-        This supports storing an object that has a reference to an object that doesn't have a uid.
+        If the GEMD objects have no UIDs, Citrine IDs will be assigned to them prior to passing
+        them on to the server.  This is required as otherwise there is no way to determine how
+        objects are related to each other.  When the registered objects are returned from the
+        server, the input GEMD objects will be updated with whichever uids & _citr_auto:: tags are
+        on the returned objects.  This means GEMD objects that already exist on the server will
+        be updated with all their on-platform uids and tags.
 
         Parameters
         ----------
@@ -218,13 +226,17 @@ class Dataset(Resource['Dataset']):
             Whether to actually register the item or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
+
         Returns
         -------
         List[DataConcepts]
             The registered versions
 
         """
-        return self.gemd.register_all(models, dry_run=dry_run)
+        return self.gemd.register_all(models, dry_run=dry_run, status_bar=status_bar)
 
     def update(self, model: DataConcepts) -> DataConcepts:
         """Update a data model object using the appropriate collection."""
@@ -282,7 +294,8 @@ class Dataset(Resource['Dataset']):
                           "deprecated.  Please explicitly pass True or False", DeprecationWarning)
 
         while prompt_to_confirm:
-            print(f"Confirm you want to delete the contents of {self.uid} [Y/N]")
+            print(f"Confirm you want to delete the contents of "
+                  f"Dataset {self.name} {self.uid} [Y/N]")
             user_response = input()
             if user_response.lower() in {'y', 'yes'}:
                 break  # return to main flow

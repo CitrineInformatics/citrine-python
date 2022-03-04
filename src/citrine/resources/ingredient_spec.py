@@ -140,7 +140,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation(relation='process-specs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='process-specs', uid=link)
 
     def list_by_material(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec], *,
@@ -163,4 +163,4 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation(relation='material-specs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='material-specs', uid=link)

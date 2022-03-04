@@ -9,6 +9,7 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 class ResourceTypeEnum(BaseEnumeration):
     """The type of the resource; used for modifying access controls.
 
+    * TEAM is a Team
     * PROJECT is a Project
     * DATASET is a Dataset
     * MODULE is a Module: a Predictor, Design Space, or Processor
@@ -18,6 +19,7 @@ class ResourceTypeEnum(BaseEnumeration):
 
     """
 
+    TEAM = "TEAM"
     PROJECT = "PROJECT"
     DATASET = "DATASET"
     MODULE = "MODULE"

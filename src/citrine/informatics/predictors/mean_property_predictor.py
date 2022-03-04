@@ -1,32 +1,40 @@
-from typing import List, Optional, Mapping
+from typing import List, Optional, Mapping, Union
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+from citrine.informatics.descriptors import (
+    FormulationDescriptor, RealDescriptor, CategoricalDescriptor
+)
 from citrine.informatics.predictors import Predictor
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['MeanPropertyPredictor']
 
 
-class MeanPropertyPredictor(
-        Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
-    """A predictor interface that computes mean component properties.
+class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
+    """A predictor that computes a component-weighted mean of real or categorical properties.
+
+    Each component in a formulation contributes to the mean property
+    a weight equal to its quantity raised to the power `p`.
+    For real-valued properties, the property values of each component are averaged
+    with these weights to yield the component-weighted mean property.
+    For categorical-valued properties, these weights are accumulated to yield a
+    distribution over property values in the formulation.
 
     Parameters
     ----------
     name: str
-        name of the configuration
+        Name of the configuration
     description: str
-        description of the predictor
+        Description of the predictor
     input_descriptor: FormulationDescriptor
-        descriptor that represents the input formulation
-    properties: List[RealDescriptor]
-        List of descriptors to featurize
-    p: int
-        Power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
-        Only integer powers are supported.
+        Descriptor that represents the input formulation
+    properties: List[Union[RealDescriptor, CategoricalDescriptor]]
+        List of real or categorical descriptors to featurize
+    p: float
+        Power of the component-weighted mean.
+        Positive, negative, and fractional powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
         If ``False`` all ingredients must define values for all featurized properties.
@@ -36,8 +44,15 @@ class MeanPropertyPredictor(
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
     label: Optional[str]
-        Only ingredients with this label will be counted in calculating the generalized mean.
+        Only ingredients with this label are counted when calculating the component-weighted mean.
         If ``None`` (default) all ingredients will be counted.
+    default_properties: Optional[Mapping[str, Union[str, float]]]
+        Default values to use for imputed properties.
+        Defaults are specified as a map from descriptor key to its default value.
+        If not specified and ``impute_properties == True`` the average over the entire dataset
+        will be used to fill in missing values. Any specified defaults will be used in place of
+        the average over the dataset. ``impute_properties`` must be ``True`` if
+        ``default_properties`` are provided.
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
@@ -45,27 +60,31 @@ class MeanPropertyPredictor(
         more rows. The content of a de-duplicated row will contain the union of data across all
         rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
         predictor is part of a graph that includes all training data required by this predictor.
-    default_properties: Optional[Mapping[str, float]]
-        Default values to use for imputed properties.
-        Defaults are specified as a map from descriptor key to its default value.
-        If not specified and ``impute_properties == True`` the average over the entire dataset
-        will be used to fill in missing values. Any specified defaults will be used in place of
-        the average over the dataset. ``impute_properties`` must be ``True`` if
-        ``default_properties`` are provided.
 
     """
 
     _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')
-    p = _properties.Integer('config.p')
-    training_data = _properties.List(_properties.Object(DataSource),
-                                     'config.training_data', default=[])
+    properties = _properties.List(
+        _properties.Union(
+            [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
+        ),
+        'config.properties'
+    )
+    p = _properties.Float('config.p')
     impute_properties = _properties.Boolean('config.impute_properties')
-    default_properties = _properties.Optional(
-        _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
+    default_properties = _properties.Optional(
+        _properties.Mapping(
+            _properties.String,
+            _properties.Union([_properties.String, _properties.Float])
+        ),
+        'config.default_properties'
+    )
+    training_data = _properties.List(
+        _properties.Object(DataSource), 'config.training_data', default=[]
+    )
 
     typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -75,21 +94,21 @@ class MeanPropertyPredictor(
                  *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 properties: List[RealDescriptor],
-                 p: int,
+                 properties: List[Union[RealDescriptor, CategoricalDescriptor]],
+                 p: float,
                  impute_properties: bool,
-                 default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
+                 default_properties: Optional[Mapping[str, Union[str, float]]] = None,
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.properties: List[RealDescriptor] = properties
-        self.p: int = p
-        self.training_data: List[DataSource] = training_data or []
+        self.properties: List[Union[RealDescriptor, CategoricalDescriptor]] = properties
+        self.p: float = p
         self.impute_properties: bool = impute_properties
-        self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
+        self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
+        self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

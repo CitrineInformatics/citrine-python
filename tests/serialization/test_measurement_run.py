@@ -85,10 +85,9 @@ def test_serialization(valid_data):
     """Ensure that a serialized Measurement Run looks sane."""
     measurement_run: MeasurementRun = MeasurementRun.build(valid_data)
     serialized = measurement_run.dump()
-    valid_data['material'].pop('audit_info')
-    valid_data['material'].pop('dataset')
-    valid_data.pop('audit_info')
-    valid_data.pop('dataset')
+    # Null subelements of audit info are not excluded from serialization (though they should be)
+    serialized['audit_info'].pop('updated_by')
+    serialized['audit_info'].pop('updated_at')
     assert serialized == valid_data
 
 

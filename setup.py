@@ -24,15 +24,16 @@ setup(name='citrine',
           "requests>=2.25.1,<3",
           "pyjwt>=1.7.1,<2",
           "arrow>=0.15.4,<0.16",
-          "gemd>=1.0.0,<2",
+          "gemd>=1.8.1,<2",
           "boto3>=1.17.93,<2",
           "botocore>=1.20.95,<2",
           "deprecation>=2.0.7,<3",
-          "urllib3>=1.26.5,<2"
+          "urllib3>=1.26.5,<2",
+          "tqdm>=4.62.3,<5"
       ],
       extras_require={
           "builders": [
-              "pandas>=1.1.0,<2"
+              "pandas>=1.1.5,<2"
           ]
       },
       classifiers=[
@@ -40,5 +41,7 @@ setup(name='citrine',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
       ],
 )

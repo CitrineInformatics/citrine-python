@@ -174,8 +174,8 @@ class TableConfig(Resource["TableConfig"]):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the id of
-        the ingredient and a column for the quantity of the ingredient. If the quantities are
-        given in absolute amounts then there is also a column for units.
+        the ingredient, id for ingredient labels, and a column for the quantity of the ingredient.
+        If the quantities are given in absolute amounts then there is also a column for units.
 
         Parameters
         ------------
@@ -198,7 +198,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
         link = _make_link_by_uid(process_template)
-        process: ProcessTemplate = project.process_templates.get(uid=link.id, scope=link.scope)
+        process: ProcessTemplate = project.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -278,7 +278,7 @@ class TableConfig(Resource["TableConfig"]):
         Parameters
         ------------
         process_templates: List[LinkByUID]
-            registered process templates from which to pull allowed ingredeintes and at which to
+            registered process templates from which to pull allowed ingredients and at which to
             halt searching
         project: Project
             a project that has access to the process template
@@ -395,6 +395,27 @@ class TableConfigCollection(Collection[TableConfig]):
             version_numbers = [version_data['version_number'] for version_data in data['versions']]
             index = version_numbers.index(max(version_numbers))
             data['version'] = data['versions'][index]
+        return self.build(data)
+
+    def get_for_table(self, table: "GemTable") -> TableConfig:  # noqa: F821
+        """
+        Get the TableConfig used to build the given table.
+
+        Parameters
+        ----------
+        table: GemTable
+            Table for which to get the config.
+
+        Returns
+        -------
+        TableConfig
+            The table config used to produce the given table.
+
+        """
+        # the route to fetch the config is built off the display table route tree
+        path = 'projects/{project_id}/display-tables/{uid}/versions/{version}/definition'.format(
+            project_id=self.project_id, uid=table.uid, version=table.version)
+        data = self.session.get_resource(path)
         return self.build(data)
 
     @deprecated(deprecated_in="0.124.0", removed_in="2.0.0",
