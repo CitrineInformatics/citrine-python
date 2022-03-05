@@ -8,7 +8,13 @@ from citrine.informatics.predictors import (
     AutoMLPredictor,
     GraphPredictor
 )
-from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
+from citrine.informatics.descriptors import (
+    Descriptor,
+    FormulationDescriptor,
+    RealDescriptor,
+    ChemicalFormulaDescriptor,
+    MolecularStructureDescriptor,
+)
 from citrine.informatics.data_sources import DataSource
 
 def build_mean_feature_property_predictors(
@@ -139,6 +145,8 @@ def _build_mean_property_predictor(
 
 ## Add simple ml builder
 def build_simple_ml(
+    *,
+    project: Project,
     name: str,
     description: str,
     inputs: List[Descriptor],
@@ -150,8 +158,10 @@ def build_simple_ml(
 
     Parameters
     ----------
+    project: Project
+        Project that contains the predictor to be built
     name: str
-        name of the configuration
+        name of the returned predictor
     description: str
         the description of the predictor
     inputs: list[Descriptor]
@@ -175,12 +185,42 @@ def build_simple_ml(
         variables to all outputs.
     """
     ml_model_feature_descriptors = [d for d in inputs if d.typ in ['Real', 'Categorical']]
+    chemical_formula_descriptors = [d for d in inputs if d.typ is ChemicalFormulaDescriptor]
+    molecular_structure_descriptors = [d for d in inputs if d.type is MolecularStructureDescriptor]
+
+    chemical_formula_featurizers = [
+        ChemicalFormulaFeaturizer(
+            name=f'{chemical_formula_descriptor.key} featurizer',
+            description='',
+            input_descriptor=chemical_formula_descriptor,
+            features='standard',
+        ) for chemical_formula_descriptor in chemical_formula_descriptors
+    ]
+
+    molecular_structure_featurizers = [
+        MolecularStructureFeaturizer(
+            name=f'{molecular_structure_descriptor.key} featurizer',
+            description='',
+            input_descriptor=molecular_structure_descriptor,
+            features=['standard'],
+        ) for molecular_structure_descriptor in molecular_structure_descriptors
+    ]
+
+    # TODO: Fix needing to pass the project (if possible)
+    featurizer_responses = []
+    for featurizer in [*chemical_formula_featurizers, *molecular_structure_featurizers]:
+        featurizer_responses.extend(
+            project.descriptors.from_predictor_responses(
+                predictor=featurizer,
+                inputs=[featurizer.input_descriptor],
+            )
+        )
 
     automl_lv_predictors = [
         AutoMLPredictor(
             name=f'{latent_variable_descriptor.key} Predictor',
             description='',
-            inputs=[*ml_model_feature_descriptors],
+            inputs=[*ml_model_feature_descriptors, *featurizer_responses],
             output=latent_variable_descriptor,
         ) for latent_variable_descriptor in latent_variables
     ]
@@ -189,7 +229,7 @@ def build_simple_ml(
         AutoMLPredictor(
             name=f'{output_descriptor.key} Predictor',
             description='',
-            inputs=[*ml_model_feature_descriptors, *latent_variables],
+            inputs=[*ml_model_feature_descriptors, *latent_variables, *featurizer_responses],
             output=output_descriptor,
         ) for output_descriptor in outputs
     ]
