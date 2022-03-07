@@ -300,6 +300,7 @@ def test_auto_configure_mode_pattern(valid_graph_predictor_data):
 
     # Then
     assert (session.calls[0].json['pattern'] == "INFER")
+    assert (session.calls[0].json['prefer_valid'] == True)
 
 
 def test_returned_predictor(valid_graph_predictor_data):

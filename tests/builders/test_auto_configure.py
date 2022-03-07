@@ -452,15 +452,16 @@ def test_auto_configure_full_run(project):
     # Create input material
     material = MaterialRun(name="I am fake.")
 
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_ready):
-        with mock.patch.object(auto_config, 'from_table', wraps=auto_config.from_table) as from_table:
-            print_status_info = False
-            auto_config.from_material(
-                material=material,
-                mode=AutoConfigureMode.PLAIN,
-                print_status_info=print_status_info
-            )
-            assert len(auto_config.assets) == 6
-            assert auto_config.status == "DESIGN WORKFLOW CREATED"
-            assert from_table.call_args.kwargs["print_status_info"] == print_status_info
-            assert from_table.call_args.kwargs["prefer_valid"] == True
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_ready), \
+            mock.patch.object(auto_config, 'from_table', wraps=auto_config.from_table) as from_table:
+        print_status_info = False
+        auto_config.from_material(
+            material=material,
+            mode=AutoConfigureMode.PLAIN,
+            print_status_info=print_status_info
+        )
+        assert len(auto_config.assets) == 6
+        assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
+        assert from_table.call_args.kwargs["print_status_info"] == print_status_info
+        assert from_table.call_args.kwargs["prefer_valid"] == True
