@@ -1,3 +1,4 @@
+import warnings
 from typing import List, Optional
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -13,8 +14,7 @@ __all__ = ['AutoMLPredictor']
 class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata):
     """[ALPHA] A predictor interface that builds a single ML model.
 
-    The model uses the set of inputs to predict the output.
-    Only one value for output is currently supported.
+    The model uses the set of inputs to predict the output(s).
     Only one machine learning model is built.
 
     Parameters
@@ -26,7 +26,10 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
     inputs: list[Descriptor]
         Descriptors that represent inputs to the model
     output: Descriptor
+        [DEPRECATED] Please use ``outputs`` instead
         A single Descriptor that represents the output of the model
+    outputs: list[Descriptor]
+        Descriptors that represents the output(s) of the model
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
@@ -40,7 +43,7 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
     _resource_type = ResourceTypeEnum.MODULE
 
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    output = _properties.Object(Descriptor, 'output')
+    outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     training_data = _properties.List(_properties.Object(DataSource),
                                      'config.training_data', default=[])
 
@@ -51,28 +54,52 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
                  name: str,
                  *,
                  description: str,
-                 output: Descriptor,
+                 output: Descriptor = None,
+                 outputs: List[Descriptor] = None,
                  inputs: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
-        self.output: Descriptor = output
         self.training_data: List[DataSource] = training_data or []
+
+        if output is not None:
+            msg = ('The "output" parameter is deprecated as of 1.24.0 and will be removed in '
+                   '2.0.0. Please use the "outputs" field instead.')
+            warnings.warn(msg, category=DeprecationWarning)
+            if outputs is not None:
+                raise ValueError('Found values for "outputs" and the deprecated "output". Please '
+                                 'provide only "outputs".')
+
+        self.outputs: List[Descriptor] = []
+        if outputs is not None:
+            self.outputs = outputs
+        elif output is not None:
+            self.outputs = [output]
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
-        data['config']['outputs'] = [data['output']]
-        data['config']['responses'] = [data['output']]
         return data
 
-    @classmethod
-    def _pre_build(cls, data: dict) -> dict:
-        if 'outputs' in data['config']:
-            data['output'] = data['config']['outputs'][0]
-        elif 'responses' in data['config']:
-            data['output'] = data['config']['responses'][0]
-        return data
+    @property
+    def output(self) -> Optional[Descriptor]:
+        """[DEPRECATED] Get the first output descriptor."""
+        msg = ('The "output" field is deprecated as of 1.24.0 and will be removed in 2.0.0. '
+               'Please use the "outputs" field instead.')
+        warnings.warn(msg, category=DeprecationWarning)
+        return self.outputs[0] if self.outputs else None
+
+    @output.setter
+    def output(self, value):
+        """[DEPRECATED] Set the output descriptor."""
+        msg = ('The "output" field is deprecated as of 1.24.0 and will be removed in 2.0.0. '
+               'Please use the "outputs" field instead.')
+        warnings.warn(msg, category=DeprecationWarning)
+        if not isinstance(value, Descriptor):
+            # Mirroring the error emited by serialization.
+            raise ValueError(f"{value} is not one of valid types: <class 'Descriptor'> for output")
+
+        self.outputs = [value]
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)

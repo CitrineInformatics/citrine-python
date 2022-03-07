@@ -63,7 +63,27 @@ def auto_ml() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from input x',
         inputs=[x],
-        output=z,
+        outputs=[z],
+        training_data=[data_source]
+    )
+
+@pytest.fixture
+def auto_ml_no_outputs() -> AutoMLPredictor:
+    return AutoMLPredictor(
+        name='AutoML Predictor',
+        description='Predicts z from input x',
+        inputs=[x],
+        outputs=[],
+        training_data=[data_source]
+    )
+
+@pytest.fixture
+def auto_ml_multiple_outputs() -> AutoMLPredictor:
+    return AutoMLPredictor(
+        name='AutoML Predictor',
+        description='Predicts z from input x',
+        inputs=[x],
+        outputs=[z, y],
         training_data=[data_source]
     )
 
@@ -260,11 +280,91 @@ def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from input x"
     assert auto_ml.inputs == [x]
-    assert auto_ml.output == z
     assert auto_ml.training_data == [data_source]
     assert auto_ml.dump()['config']['outputs'] == [z.dump()]
+    with pytest.deprecated_call():
+        assert auto_ml.output == z
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
+
+    built = AutoMLPredictor.build(auto_ml.dump())
+    assert built.outputs == [z]
+    assert built.dump()['config']['outputs'] == [z.dump()]
+    with pytest.deprecated_call():
+        assert built.output == z
+
+
+def test_auto_ml_no_outputs(auto_ml_no_outputs):
+    assert auto_ml_no_outputs.outputs == []
+    assert auto_ml_no_outputs.dump()['config']['outputs'] == []
+    with pytest.deprecated_call():
+        assert auto_ml_no_outputs.output is None
+
+    built = AutoMLPredictor.build(auto_ml_no_outputs.dump())
+    assert built.outputs == []
+    assert built.dump()['config']['outputs'] == []
+    with pytest.deprecated_call():
+        assert built.output is None
+
+
+def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
+    assert auto_ml_multiple_outputs.outputs == [z, y]
+    assert auto_ml_multiple_outputs.dump()['config']['outputs'] == [z.dump(), y.dump()]
+    with pytest.deprecated_call():
+        assert auto_ml_multiple_outputs.output == z
+
+    built = AutoMLPredictor.build(auto_ml_multiple_outputs.dump())
+    assert built.outputs == [z, y]
+    assert built.dump()['config']['outputs'] == [z.dump(), y.dump()]
+    with pytest.deprecated_call():
+        assert built.output == z
+
+
+def test_auto_ml_assign_to_deprecated_output(auto_ml):
+    with pytest.deprecated_call():
+        auto_ml.output = y
+
+    with pytest.deprecated_call():
+        assert auto_ml.output == y
+    assert auto_ml.outputs == [y]
+
+    with pytest.raises(ValueError):
+        with pytest.deprecated_call():
+            auto_ml.output = None
+
+def test_auto_ml_create_with_deprecated_output():
+    # Set output in the constructor
+    with pytest.deprecated_call():
+        new_predictor = AutoMLPredictor(
+                name='AutoML Predictor',
+                description='test',
+                inputs=[x],
+                output=y,
+                training_data=[data_source])
+    with pytest.deprecated_call():
+        assert new_predictor.output == y
+    assert new_predictor.outputs == [y]
+
+    # Omit both output and outputs
+    new_predictor = AutoMLPredictor(
+            name='AutoML Predictor',
+            description='test',
+            inputs=[x],
+            training_data=[data_source])
+    with pytest.deprecated_call():
+        assert new_predictor.output is None
+    assert new_predictor.outputs == []
+
+    # Pass both output and outputs
+    with pytest.raises(ValueError):
+        with pytest.deprecated_call():
+            new_predictor = AutoMLPredictor(
+                    name='AutoML Predictor',
+                    description='test',
+                    inputs=[x],
+                    output=y,
+                    outputs=[z],
+                    training_data=[data_source])
 
 
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
