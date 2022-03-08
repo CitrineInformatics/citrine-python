@@ -42,7 +42,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """Trigger a Design Workflow execution given a score."""
         path = self._get_path()
         data = self.session.post_resource(path, {'score': execution_input.dump()})
-        self._check_experimental(data)
         return self.build(data)
 
     def register(self, model: DesignExecution) -> DesignExecution:

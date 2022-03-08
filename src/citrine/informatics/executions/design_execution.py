@@ -1,5 +1,6 @@
+from deprecation import deprecated
 from functools import partial
-from typing import Optional, Iterable
+from typing import Iterable, List, Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -50,14 +51,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         serializable=False
     )
     """:Optional[List[str]]: human-readable explanations of the status"""
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    """:bool: whether the execution is experimental (newer, less well-tested functionality)"""
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
@@ -107,3 +100,15 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
                                         collection_builder=self._build_candidates,
                                         page=page,
                                         per_page=per_page)
+
+    @property
+    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    def experimental(self) -> bool:
+        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
+        return False
+
+    @property
+    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    def experimental_reasons(self) -> List[str]:
+        """[DEPRECATED] human-readable reasons why the execution is experimental."""
+        return []

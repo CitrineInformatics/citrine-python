@@ -1,5 +1,6 @@
+from deprecation import deprecated
 from functools import lru_cache
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -41,14 +42,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
         serializable=False
     )
     """:Optional[List[str]]: human-readable explanations of the status"""
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    """:bool: whether the execution is experimental (newer, less well-tested functionality)"""
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
 
     def __init__(self):
         """Predictor evaluation executions are not directly instantiated by the user."""
@@ -92,3 +85,15 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     def __iter__(self):
         return iter(self.evaluator_names)
+
+    @property
+    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    def experimental(self) -> bool:
+        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
+        return False
+
+    @property
+    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    def experimental_reasons(self) -> List[str]:
+        """[DEPRECATED] human-readable reasons why the execution is experimental."""
+        return []
