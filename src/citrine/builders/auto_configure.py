@@ -401,9 +401,9 @@ class AutoConfigureWorkflow():
             Whether to print the status info during validation of assets.
             Default: False
         prefer_valid: Boolean
-            If True, this sets the filterSparse option to True and sets targetMaxModels and
-            targetMaxInput to the maxModels and maxModelInputs values for the predictor build
-            settings. Toggled off uses the default predictor build settings.
+            If True, enables filtering of sparse descriptors and trimming of
+            excess graph components in attempt to return a default configuration
+            that will pass validation.
             Default: True.
 
         """
@@ -467,9 +467,9 @@ class AutoConfigureWorkflow():
             Whether to print the status info during validation of assets.
             Default: False
         prefer_valid: Boolean
-            If True, this sets the filterSparse option to True and sets targetMaxModels and
-            targetMaxInput to the maxModels and maxModelInputs values for the predictor build
-            settings. Toggled off uses the default predictor build settings.
+            If True, enables filtering of sparse descriptors and trimming of
+            excess graph components in attempt to return a default configuration
+            that will pass validation.
             Default: True.
 
         """
