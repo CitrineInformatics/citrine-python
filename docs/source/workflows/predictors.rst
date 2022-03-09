@@ -32,7 +32,7 @@ This has several benefits when compared to creating one Auto ML Predictor for ea
 * Higher model accuracy (especially if the data are sparse)
 * Faster training and prediction
 * More accurate uncertainty estimates that understand the correlations between outputs
-* More accurate scoring and candidate suggestions when running a :doc:`design workflow <design_workflows>`.
+* More accurate scoring and candidate suggestions when running a :doc:`design workflow <design_workflows>`
 
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
