@@ -22,9 +22,17 @@ There must be at least one input and at least one output.
 Unlike the `SimpleMLPredictor <#simple-ml-predictor>`__, only one model is trained from inputs to the outputs.
 
 AutoMLPredictors support both regression and classification.
-If the output descriptor is a :class:`~citrine.informatics.descriptors.RealDescriptor`, regression is performed.
-If the output descriptor is a :class:`~citrine.informatics.descriptors.CategoricalDescriptor`, classification is performed.
+For each :class:`~citrine.informatics.descriptors.RealDescriptor` output, regression is performed.
+For each :class:`~citrine.informatics.descriptors.CategoricalDescriptor` output, classification is performed.
 Both binary and multi-class classification are supported automatically based on the number of categories in the data.
+
+Assuming they have the same inputs, it is generally preferable to combine multiple related outputs into a single Auto ML Predictor.
+This has several benefits when compared to creating one Auto ML Predictor for each output.
+
+* Higher model accuracy (especially if the data are sparse)
+* Faster training and prediction
+* More accurate uncertainty estimates that understand the correlations between outputs
+* More accurate scoring and candidate suggestions when running a :doc:`design workflow <design_workflows>`
 
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
