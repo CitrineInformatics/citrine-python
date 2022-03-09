@@ -112,23 +112,6 @@ def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_da
     assert registered.name == 'AutoML predictor'
 
 
-def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    post_response = deepcopy(valid_simple_ml_predictor_data)
-    post_response["experimental"] = True
-    post_response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-    session.post_resource.return_value = post_response
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    with pytest.warns(UserWarning) as record:
-        pc.register(predictor)
-    msg = str(record[0].message)
-    assert "Predictor" in msg
-    assert "This is a test" in msg
-    assert "Of experimental reasons" in msg
-
-
 def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
     copy_graph_data = deepcopy(valid_graph_predictor_data)
     session = mock.Mock()
@@ -430,3 +413,26 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     assert session.num_calls == 3
     assert session.calls == expected_calls
     assert response is None
+
+
+def test_experimental_deprecated(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+    response = deepcopy(valid_graph_predictor_data)
+    response["experimental"] = True
+    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+    
+    session.set_response(response)
+
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = GraphPredictor.build(valid_graph_predictor_data)
+
+    # When
+    registered = pc.register(predictor)
+    
+    # Then
+    with pytest.deprecated_call():
+        assert registered.experimental is False
+    with pytest.deprecated_call():
+        assert registered.experimental_reasons == []
+

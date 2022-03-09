@@ -54,7 +54,6 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             workflow_id=self.workflow_id
         )
         data = self.session.post_resource(path, ResourceRef(predictor_id).dump())
-        self._check_experimental(data)
         return self.build(data)
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:

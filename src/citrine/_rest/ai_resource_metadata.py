@@ -1,3 +1,6 @@
+from deprecation import deprecated
+from typing import List
+
 from citrine._serialization import properties
 
 
@@ -24,15 +27,6 @@ class AIResourceMetadata():
     """:Optional[datetime]: date and time at which the resource was archived,
     if it has been archived"""
 
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    """:bool: whether the resource is experimental (newer, less well-tested functionality)"""
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    """:Optional[List[str]]: human-readable reasons why the resource is experimental"""
-
     status = properties.Optional(properties.String(), 'status', serializable=False)
     """:Optional[str]: short description of the resource's status"""
     status_info = properties.Optional(
@@ -41,3 +35,15 @@ class AIResourceMetadata():
         serializable=False
     )
     """:Optional[List[str]]: human-readable explanations of the status"""
+
+    @property
+    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
+    def experimental(self) -> bool:
+        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
+        return False
+
+    @property
+    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
+    def experimental_reasons(self) -> List[str]:
+        """[DEPRECATED] human-readable reasons why the execution is experimental."""
+        return []
