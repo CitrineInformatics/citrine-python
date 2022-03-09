@@ -37,13 +37,13 @@ class AIResourceMetadata():
     """:Optional[List[str]]: human-readable explanations of the status"""
 
     @property
-    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
     def experimental(self) -> bool:
         """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
         return False
 
     @property
-    @deprecated(deprecated_in="1.24.1", removed_in="2.0.0")
+    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
     def experimental_reasons(self) -> List[str]:
         """[DEPRECATED] human-readable reasons why the execution is experimental."""
         return []
