@@ -12,6 +12,7 @@ from citrine.informatics.descriptors import (
     Descriptor,
     FormulationDescriptor,
     RealDescriptor,
+    CategoricalDescriptor,
     ChemicalFormulaDescriptor,
     MolecularStructureDescriptor,
 )
@@ -184,9 +185,9 @@ def build_simple_ml(
         GraphPredictor connecting all inputs to all latent variables and all inputs and latent
         variables to all outputs.
     """
-    ml_model_feature_descriptors = [d for d in inputs if d.typ in ['Real', 'Categorical']]
-    chemical_formula_descriptors = [d for d in inputs if d.typ is ChemicalFormulaDescriptor]
-    molecular_structure_descriptors = [d for d in inputs if d.type is MolecularStructureDescriptor]
+    ml_model_feature_descriptors = [d for d in inputs if type(d) in [RealDescriptor, CategoricalDescriptor]]
+    chemical_formula_descriptors = [d for d in inputs if type(d) is ChemicalFormulaDescriptor]
+    molecular_structure_descriptors = [d for d in inputs if type(d) is MolecularStructureDescriptor]
 
     chemical_formula_featurizers = [
         ChemicalFormulaFeaturizer(
