@@ -194,7 +194,7 @@ def build_simple_ml(
             name=f'{chemical_formula_descriptor.key} featurizer',
             description='',
             input_descriptor=chemical_formula_descriptor,
-            features='standard',
+            features=['standard'],
         ) for chemical_formula_descriptor in chemical_formula_descriptors
     ]
 
@@ -239,6 +239,8 @@ def build_simple_ml(
         name=name,
         description=description,
         predictors=[
+            *chemical_formula_featurizers,
+            *molecular_structure_featurizers,
             *automl_lv_predictors,
             *automl_output_predictors,
         ],
