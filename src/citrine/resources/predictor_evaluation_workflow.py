@@ -93,5 +93,4 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         url = self._get_path('default')
         payload = {'predictor_id': str(predictor_id)}
         data = self.session.post_resource(url, payload)
-        self._check_experimental(data)
         return self.build(data)
