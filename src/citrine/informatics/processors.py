@@ -138,7 +138,7 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
         return '<EnumeratedProcessor {!r}>'.format(self.name)
 
 
-class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
+class MonteCarloProcessor(Resource['ContinuousSearch'], Processor, AIResourceMetadata):
     """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
