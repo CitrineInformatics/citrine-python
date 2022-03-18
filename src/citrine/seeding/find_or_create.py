@@ -1,6 +1,7 @@
 from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
 from citrine.resources.dataset import Dataset
+from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine._rest.collection import CreationType, Collection
 from copy import deepcopy
 
@@ -147,6 +148,10 @@ def create_or_update(*, collection: Collection[CreationType], resource: Creation
         # Copy so that passed-in resource is unaffected
         new_resource = deepcopy(resource)
         new_resource.uid = old_resource.uid
+        # Locally created design workflows likely won't have a branch ID but
+        # need one to be updated.
+        if isinstance(old_resource, DesignWorkflow):
+            new_resource.branch_id = old_resource.branch_id
         return collection.update(new_resource)
     else:
         print("Registering new module:  {}".format(resource.name))
