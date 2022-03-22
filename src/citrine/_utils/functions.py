@@ -96,10 +96,12 @@ def object_to_link_by_uid(json: dict) -> dict:
 
 def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
     """
-    When the tests are run inside Devkit, Localstack uses the hostname "localstack" and port 4566 for the local S3
-    files URL. If you're hitting localhost from outside devkit, the host "localstack" won't resolve, but the port
-    4566 is still mapped to the host port (also on 4566), so we need to write the file links S3 endpoint hostname to
-    "localhost".
+    Rewrite s3 links from localstack.
+
+    When the tests are run inside Devkit, Localstack uses the hostname "localstack" and port
+    4566 for the local S3 files URL. If you're hitting localhost from outside devkit, the
+    host "localstack" won't resolve, but the port 4566 is still mapped to the host port (also
+    on 4566), so we need to write the file links S3 endpoint hostname to "localhost".
 
     The caller should supply the correct S3 endpoint URL, eg: session.s3_endpoint_url
     """
@@ -220,7 +222,6 @@ def use_teams(alt, negate=False):
         if error should be raised if teams are not available.
 
     """
-
     def decorator(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
