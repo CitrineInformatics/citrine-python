@@ -10,9 +10,6 @@ import requests
 from boto3 import client as boto3_client
 from boto3.session import Config
 from botocore.exceptions import ClientError
-from gemd.entity.bounds.base_bounds import BaseBounds
-from gemd.entity.file_link import FileLink as GEMDFileLink
-
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -20,9 +17,12 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Integer
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, format_escaped_url
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.file_link import FileLink as GEMDFileLink
 
 logger = getLogger(__name__)
 
@@ -427,7 +427,8 @@ class FileCollection(Collection[FileLink]):
         content_link_path = file_link.url + '/content-link'
         content_link_response = self.session.get_resource(content_link_path)
         pre_signed_url = content_link_response['pre_signed_read_link']
-        download_response = requests.get(pre_signed_url)
+        rewritten_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
+        download_response = requests.get(rewritten_url)
         write_file_locally(download_response.content, local_path)
 
     def process(self, *, file_link: FileLink,
