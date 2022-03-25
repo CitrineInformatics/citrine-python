@@ -4,6 +4,7 @@ import os
 from enum import Enum
 from logging import getLogger
 from typing import Iterable, Optional, Tuple, Union, List, Dict
+from urllib.parse import urlparse
 from uuid import UUID
 
 import requests
@@ -423,12 +424,16 @@ class FileCollection(Collection[FileLink]):
             filename = file_link.filename
         local_path = os.path.join(directory, filename)
 
-        # The "/content-link" route returns a pre-signed url to download the file.
-        content_link_path = file_link.url + '/content-link'
-        content_link_response = self.session.get_resource(content_link_path)
-        pre_signed_url = content_link_response['pre_signed_read_link']
-        rewritten_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
-        download_response = requests.get(rewritten_url)
+        if len(urlparse(url=file_link.url).scheme) == 0:  # Relative path; platform
+            # The "/content-link" route returns a pre-signed url to download the file.
+            content_link_path = file_link.url + '/content-link'
+            content_link_response = self.session.get_resource(content_link_path)
+            pre_signed_url = content_link_response['pre_signed_read_link']
+            final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
+        else:  # Absolute path; pull it from where ever it lives
+            final_url = file_link.url
+
+        download_response = requests.get(final_url)
         write_file_locally(download_response.content, local_path)
 
     def process(self, *, file_link: FileLink,
