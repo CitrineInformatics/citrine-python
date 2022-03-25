@@ -8,6 +8,7 @@ from citrine.informatics.descriptors import *
 
 @pytest.fixture(params=[
     RealDescriptor('alpha', lower_bound=0, upper_bound=100, units=""),
+    IntDescriptor('beta', lower_bound=0, upper_bound=100, units=""),
     ChemicalFormulaDescriptor('formula'),
     MolecularStructureDescriptor("organic"),
     CategoricalDescriptor("my categorical", categories=["a", "b"]),
