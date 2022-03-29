@@ -4,24 +4,32 @@ import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
-    FormulationDescriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
+from citrine.informatics.descriptors import RealDescriptor, IntDescriptor, \
+    MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
+    CategoricalDescriptor
 from citrine.informatics.predictors import *
 
+w = IntDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
 z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
 density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
-shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
-youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
+shear_modulus = RealDescriptor('Property~Shear modulus',
+                               lower_bound=0, upper_bound=100, units='GPa')
+youngs_modulus = RealDescriptor('Property~Young\'s modulus',
+                                lower_bound=0, upper_bound=100, units='GPa')
+poissons_ratio = RealDescriptor('Property~Poisson\'s ratio',
+                                lower_bound=-1, upper_bound=0.5, units='')
+chain_type = CategoricalDescriptor('Chain Type', categories={
+                                   'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
 salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
-data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
-formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
+data_source = GemTableDataSource(table_id=uuid.UUID(
+    'e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
+formulation_data_source = GemTableDataSource(table_id=uuid.UUID(
+    '6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
 
 
 @pytest.fixture
@@ -45,6 +53,7 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         excludes=["standard"]
     )
 
+
 @pytest.fixture
 def chemical_featurizer() -> ChemicalFormulaFeaturizer:
     return ChemicalFormulaFeaturizer(
@@ -61,28 +70,30 @@ def chemical_featurizer() -> ChemicalFormulaFeaturizer:
 def auto_ml() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[z],
         training_data=[data_source]
     )
+
 
 @pytest.fixture
 def auto_ml_no_outputs() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[],
         training_data=[data_source]
     )
+
 
 @pytest.fixture
 def auto_ml_multiple_outputs() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[z, y],
         training_data=[data_source]
     )
@@ -191,7 +202,8 @@ def test_simple_initialization(simple_predictor):
     assert simple_predictor.outputs[0] == z
     assert len(simple_predictor.latent_variables) == 1
     assert simple_predictor.latent_variables[0] == y
-    assert simple_predictor.training_data[0].table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
+    assert simple_predictor.training_data[0].table_id == uuid.UUID(
+        'e5c51369-8e71-4ec6-b027-1f92bdc14762')
     assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
 
 
@@ -201,7 +213,8 @@ def test_simple_report(simple_predictor):
         # without a project or session, this should error
         assert simple_predictor.report is None
     session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
+    session.get_resource.return_value = dict(status='OK', report=dict(
+        descriptors=[], models=[]), uid=str(uuid.uuid4()))
     simple_predictor._session = session
     simple_predictor._project_id = uuid.uuid4()
     simple_predictor.uid = uuid.uuid4()
@@ -278,8 +291,8 @@ def test_chemical_featurizer(chemical_featurizer):
 
 def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
-    assert auto_ml.description == "Predicts z from input x"
-    assert auto_ml.inputs == [x]
+    assert auto_ml.description == "Predicts z from inputs w and x"
+    assert auto_ml.inputs == [w, x]
     assert auto_ml.training_data == [data_source]
     assert auto_ml.dump()['config']['outputs'] == [z.dump()]
     with pytest.deprecated_call():
@@ -332,25 +345,26 @@ def test_auto_ml_assign_to_deprecated_output(auto_ml):
         with pytest.deprecated_call():
             auto_ml.output = None
 
+
 def test_auto_ml_create_with_deprecated_output():
     # Set output in the constructor
     with pytest.deprecated_call():
         new_predictor = AutoMLPredictor(
-                name='AutoML Predictor',
-                description='test',
-                inputs=[x],
-                output=y,
-                training_data=[data_source])
+            name='AutoML Predictor',
+            description='test',
+            inputs=[x],
+            output=y,
+            training_data=[data_source])
     with pytest.deprecated_call():
         assert new_predictor.output == y
     assert new_predictor.outputs == [y]
 
     # Omit both output and outputs
     new_predictor = AutoMLPredictor(
-            name='AutoML Predictor',
-            description='test',
-            inputs=[x],
-            training_data=[data_source])
+        name='AutoML Predictor',
+        description='test',
+        inputs=[x],
+        training_data=[data_source])
     with pytest.deprecated_call():
         assert new_predictor.output is None
     assert new_predictor.outputs == []
@@ -359,19 +373,20 @@ def test_auto_ml_create_with_deprecated_output():
     with pytest.raises(ValueError):
         with pytest.deprecated_call():
             new_predictor = AutoMLPredictor(
-                    name='AutoML Predictor',
-                    description='test',
-                    inputs=[x],
-                    output=y,
-                    outputs=[z],
-                    training_data=[data_source])
+                name='AutoML Predictor',
+                description='test',
+                inputs=[x],
+                output=y,
+                outputs=[z],
+                training_data=[data_source])
 
 
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     """Make sure the correct fields go to the correct places for an ingredients to formulation predictor."""
     assert ing_to_formulation_predictor.name == 'Ingredients to formulation predictor'
     assert ing_to_formulation_predictor.output.key == 'formulation'
-    assert ing_to_formulation_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
+    assert ing_to_formulation_predictor.id_to_quantity == {
+        'water': water_quantity, 'salt': salt_quantity}
     assert ing_to_formulation_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = f'<IngredientsToFormulationPredictor \'{ing_to_formulation_predictor.name}\'>'
     assert str(ing_to_formulation_predictor) == expected_str
@@ -385,7 +400,8 @@ def test_mean_property_initialization(mean_property_predictor):
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
     assert mean_property_predictor.training_data == [formulation_data_source]
-    assert mean_property_predictor.default_properties == {'density': 1.0, 'Chain Type': 'Gaussian Coil'}
+    assert mean_property_predictor.default_properties == {
+        'density': 1.0, 'Chain Type': 'Gaussian Coil'}
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
     assert str(mean_property_predictor) == expected_str
@@ -409,7 +425,8 @@ def test_deprecated_ingredients_to_simple_mixture():
             name="deprecated",
             description="",
             output=FormulationDescriptor("formulation"),
-            id_to_quantity={"quantity 1": RealDescriptor("foo", lower_bound=0, upper_bound=1, units="")},
+            id_to_quantity={"quantity 1": RealDescriptor(
+                "foo", lower_bound=0, upper_bound=1, units="")},
             labels={"label": {"foo"}}
         )
         assert i2sm.name == "deprecated"

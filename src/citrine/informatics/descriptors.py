@@ -110,8 +110,9 @@ class IntDescriptor(Serializable['IntDescriptor'], Descriptor):
         inclusive lower bound for valid integer values
     upper_bound: int
         inclusive upper bound for valid int values
-    units: str
-        units string; use an empty string to denote a dimensionless quantity
+    units: optional[str] = ''
+        optional units string which must be parseable by Pint; default is an
+        empty string which corresponds to a dimensionless unit.
 
     """
 
@@ -128,7 +129,7 @@ class IntDescriptor(Serializable['IntDescriptor'], Descriptor):
                  *,
                  lower_bound: int,
                  upper_bound: int,
-                 units: str):
+                 units: str = ''):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
