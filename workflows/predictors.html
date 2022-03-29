@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 1.23.0 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.26.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.23.0
+                1.26.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -117,15 +117,23 @@ Types of predictors include machine learning models, featurizers, and analytic e
 <h2><span class="section-number">4.4.1. </span>Auto ML predictor (ALPHA)<a class="headerlink" href="#auto-ml-predictor-alpha" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 AutoMLPredictors allow you to use your domain knowledge to construct custom <a class="reference external" href="#graph-predictor">GraphPredictors</a> with fine grain control over the resulting graph.
-Each AutoMLPredictor is defined by a set of inputs and an output.
+Each AutoMLPredictor is defined by a set of inputs and outputs.
 Inputs are used as input features to the machine learning model.
-The output is the property that you would like the model to predict.
-There must be at least one input and only one output.
-Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPredictor</a>, only one model is trained from inputs to the output.</p>
+The outputs are the properties that you would like the model to predict.
+There must be at least one input and at least one output.
+Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPredictor</a>, only one model is trained from inputs to the outputs.</p>
 <p>AutoMLPredictors support both regression and classification.
-If the output descriptor is a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>, regression is performed.
-If the output descriptor is a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a>, classification is performed.
+For each <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a> output, regression is performed.
+For each <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> output, classification is performed.
 Both binary and multi-class classification are supported automatically based on the number of categories in the data.</p>
+<p>Assuming they have the same inputs, it is generally preferable to combine multiple related outputs into a single Auto ML Predictor.
+This has several benefits when compared to creating one Auto ML Predictor for each output.</p>
+<ul class="simple">
+<li><p>Higher model accuracy (especially if the data are sparse)</p></li>
+<li><p>Faster training and prediction</p></li>
+<li><p>More accurate uncertainty estimates that understand the correlations between outputs</p></li>
+<li><p>More accurate scoring and candidate suggestions when running a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a></p></li>
+</ul>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
 There are two important helper methods in this regard.
@@ -141,7 +149,7 @@ There are two important helper methods in this regard.
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">output_descriptor_1</span><span class="p">,</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
@@ -176,7 +184,7 @@ The ML models are independently registered on-platform, but the expression predi
     <span class="n">file_link</span> <span class="o">=</span> <span class="n">elastic_properties_file</span><span class="p">,</span>
     <span class="n">column_definition</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Tempering Time (s)&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
-        <span class="s2">&quot;Bulk Modulus (GPa)&quot;</span><span class="p">:</span> <span class="n">bulk_modulu</span><span class="p">,</span>
+        <span class="s2">&quot;Bulk Modulus (GPa)&quot;</span><span class="p">:</span> <span class="n">bulk_modulus</span><span class="p">,</span>
         <span class="s2">&quot;Poisson</span><span class="se">\&#39;</span><span class="s2">s Ratio&quot;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
     <span class="p">}</span>
 <span class="p">)</span>
@@ -186,7 +194,7 @@ The ML models are independently registered on-platform, but the expression predi
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;predict bulk modulus from tempering time&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">],</span>
-        <span class="n">output</span><span class="o">=</span><span class="n">bulk_modulus</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">bulk_modulus</span><span class="p">],</span>
         <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">training_data</span><span class="p">]</span>
     <span class="p">)</span>
 <span class="p">)</span>
@@ -195,7 +203,7 @@ The ML models are independently registered on-platform, but the expression predi
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;predict Poisson</span><span class="se">\&#39;</span><span class="s2">s ratio from tempering time&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">],</span>
-        <span class="n">output</span><span class="o">=</span><span class="n">poissons_ratio</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">poissons_ratio</span><span class="p">],</span>
         <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">training_data</span><span class="p">]</span>
     <span class="p">)</span>
 <span class="p">)</span>
@@ -205,7 +213,7 @@ The ML models are independently registered on-platform, but the expression predi
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Young</span><span class="se">\&#39;</span><span class="s2">s modulus from bulk modulus and Poisson&#39;s ratio&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">expression</span><span class="o">=</span><span class="s2">&quot;3 * K * (1 - 2 * eta)&quot;</span><span class="p">,</span>
-    <span class="n">output</span><span class="o">=</span><span class="n">youngs_modulus</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">youngs_modulus</span><span class="p">],</span>
     <span class="n">aliases</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="n">bulk_modulus</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">poissons_ratio</span><span class="p">}</span>
 <span class="p">)</span>
 
@@ -325,7 +333,7 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML Model for Density&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the density, given molecular features of the solvent&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">output_desc</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_desc</span><span class="p">],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="p">)</span>
 
@@ -400,7 +408,7 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML Model for Melting Temperature&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the melting temperature, given chemical features of the alloy&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">output_desc</span><span class="p">,</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_desc</span><span class="p">],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="p">)</span>
 

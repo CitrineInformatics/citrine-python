@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.8. Scores &mdash; Citrine Python 1.23.0 documentation</title>
+  <title>4.8. Scores &mdash; Citrine Python 1.26.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.23.0
+                1.26.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -133,9 +133,9 @@ Higher uncertainty leads to exploration of a design space, e.g., little is know
 <h2><span class="section-number">4.8.2. </span>Likelihood of improvement<a class="headerlink" href="#likelihood-of-improvement" title="Permalink to this headline"></a></h2>
 <p>Likelihood of improvement (LI) is the probability that a candidate satisfies a set of constraints and is an improvement over known objective values.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> supports 0 or more objectives.
-If no objectives are provided, the LI score is 0.
-When multiple objectives are present, the score is the probability of the objective that is most likely to be improved.
-LI scores are bounded by 0 and 1.</p>
+If no objectives are provided, the LI score is the probability of satisfying the constraints.
+When multiple objectives are present, the score is the probability of simultaneously improving <em>all</em> objectives.
+LI scores are bounded between 0 and 1.</p>
 <p>The following demonstrates how to create an LI score and use it when triggering a design workflow:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">LIScore</span>

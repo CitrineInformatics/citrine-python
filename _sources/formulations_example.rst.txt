@@ -569,7 +569,7 @@ We also use ``blend time`` as an input.
     ml_model = AutoMLPredictor(
         name="ML model for tastiness",
         description="",
-        output=tastiness,
+        outputs=[tastiness],
         inputs=ml_inputs
     )
 

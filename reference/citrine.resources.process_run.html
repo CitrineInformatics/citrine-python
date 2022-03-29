@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.process_run module &mdash; Citrine Python 1.23.0 documentation</title>
+  <title>citrine.resources.process_run module &mdash; Citrine Python 1.26.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.23.0
+                1.26.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -133,7 +133,7 @@ creating each ingredient run and setting its <cite>process</cite> field to this 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.process_run.ProcessRun.add_uid">
-<span class="sig-name descname"><span class="pre">add_uid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.add_uid" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_uid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.add_uid" title="Permalink to this definition"></a></dt>
 <dd><p>Add a uid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -143,6 +143,12 @@ creating each ingredient run and setting its <cite>process</cite> field to this 
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.process_run.ProcessRun.all_dependencies">
+<span class="sig-name descname"><span class="pre">all_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseEntity</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LinkByUID</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.all_dependencies" title="Permalink to this definition"></a></dt>
+<dd><p>Return a set of all immediate dependencies (no recursion).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -320,7 +326,7 @@ This method will also work if data is a deserialized GEMD object.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingredients</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingredients</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">IngredientRun</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
 <dd><p>Get the input ingredient runs.</p>
 </dd></dl>
 
@@ -342,7 +348,7 @@ This method will also work if data is a deserialized GEMD object.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id1">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_material</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_material</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">MaterialRun</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
 <dd><p>Get the output material run.</p>
 </dd></dl>
 
@@ -373,8 +379,8 @@ This method will also work if data is a deserialized GEMD object.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.resources.process_run.ProcessRun.template">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template</span></span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.template" title="Permalink to this definition"></a></dt>
-<dd><p>Get the template of the spec, if applicable.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.base_template.html#gemd.entity.template.base_template.BaseTemplate" title="(in GEMD-python)"><span class="pre">gemd.entity.template.base_template.BaseTemplate</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.template" title="Permalink to this definition"></a></dt>
+<dd><p>Get the template associated with the spec.</p>
 </dd></dl>
 
 <dl class="py attribute">
