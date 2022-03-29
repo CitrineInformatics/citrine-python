@@ -21,10 +21,10 @@ def valid_data():
         parameters=[],
         properties=[{'name': 'sweetness', 'type': 'property', 'template': None, 'notes': None,
                      'origin': 'measured', 'file_links': [],
-                     'value': {'type': 'nominal_integer', 'nominal': 7}},
+                     'value': {'type': 'nominal_integer', 'nominal': 7, 'units': 'dimensionless'}},
                     {'type': 'property', 'name': 'fluffiness', 'template': None, 'notes': None,
                      'origin': 'measured', 'file_links': [],
-                     'value': {'type': 'nominal_integer', 'nominal': 10}
+                     'value': {'type': 'nominal_integer', 'nominal': 10, 'units': 'dimensionless'}
                      }],
         material={
             'uids': {'id': str(uuid4())},

@@ -51,7 +51,8 @@ def test_register_material_run(collection, session):
 
 
 def test_register_all(collection, session):
-    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'),  MaterialRunFactory(name='3')]
+    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'),
+            MaterialRunFactory(name='3')]
     session.set_response({'objects': [r.dump() for r in runs]})
     registered = collection.register_all(runs)
     assert [r.name for r in runs] == [r.name for r in registered]
@@ -60,7 +61,8 @@ def test_register_all(collection, session):
     assert session.calls[0].path == 'projects/{}/datasets/{}/material-runs/batch'.format(
         collection.project_id, collection.dataset_id)
     with pytest.raises(RuntimeError):
-        MaterialRunCollection(collection.project_id, dataset_id=None, session=session).register_all([])
+        MaterialRunCollection(collection.project_id, dataset_id=None,
+                              session=session).register_all([])
 
 
 def test_dry_run_register_material_run(collection, session):
@@ -125,7 +127,8 @@ def test_get_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/datasets/{}/material-runs/id/{}'.format(collection.project_id, collection.dataset_id, mr_id)
+        path='projects/{}/datasets/{}/material-runs/id/{}'.format(
+            collection.project_id, collection.dataset_id, mr_id)
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
@@ -215,7 +218,8 @@ def test_filter_by_attribute_bounds(collection, session):
         },
         json={
             'attribute_bounds': {
-                link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}
+                link.id: {'lower_bound': 1, 'upper_bound': 5,
+                          'default_units': 'dimensionless', 'type': 'integer_bounds'}
             }
         }
     )
@@ -338,7 +342,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == []
 
@@ -357,7 +361,8 @@ def test_validate_templates_successful_all_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(model=run, object_template=template, ingredient_process_template=unused_process_template)
+    errors = collection.validate_templates(
+        model=run, object_template=template, ingredient_process_template=unused_process_template)
 
     # Then
     assert 1 == session.num_calls
@@ -381,7 +386,8 @@ def test_validate_templates_errors(collection, session):
 
     # When
     validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
-    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
+    session.set_response(BadRequest("path", FakeRequestResponseApiError(
+        400, "Bad Request", [validation_error])))
     errors = collection.validate_templates(model=run)
 
     # Then
@@ -389,7 +395,7 @@ def test_validate_templates_errors(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == [validation_error]
 
@@ -415,7 +421,8 @@ def test_validate_templates_unrelated_400_with_api_error(collection, session):
     run = MaterialRunFactory()
 
     # When
-    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
+    session.set_response(BadRequest("path", FakeRequestResponseApiError(
+        400, "I am not a validation error", [])))
     with pytest.raises(BadRequest):
         collection.validate_templates(model=run)
 
@@ -443,7 +450,8 @@ def test_list_by_template(collection, session):
 
     # Then
     assert 3 == session.num_calls
-    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
+    assert runs == [collection.build(run) for run in [sample_run1_1,
+                                                      sample_run1_2, sample_run2_1, sample_run2_2]]
 
 
 def test_equals():

@@ -149,11 +149,6 @@ def test_valid_template_conversions():
 def test_invalid_template_conversions():
     with pytest.raises(NoEquivalentDescriptorError):
         template_to_descriptor(
-            ConditionTemplate("foo", bounds=IntegerBounds(lower_bound=0, upper_bound=1))
-        )
-
-    with pytest.raises(NoEquivalentDescriptorError):
-        template_to_descriptor(
             PropertyTemplate("mixture", bounds=CompositionBounds(components=["sugar", "spice"]))
         )
 
@@ -187,9 +182,9 @@ def test_from_template(fake_project: Project):
     """Test that only correct scopes and bounds are loaded from templates."""
     v = PlatformVocabulary.from_templates(project=fake_project, scope="my_scope")
 
-    # no volume since it is an integer, no speed since it doesn't have the right scope
-    assert len(v) == 1
-    assert list(v) == ["density"]
+    # no speed since it doesn't have the right scope
+    assert len(v) == 2
+    assert list(v) == ["density", "volume"]
     assert v["density"] == density_desc
 
 
@@ -204,8 +199,8 @@ def test_from_material(fake_project: Project):
     )
 
     density_desc_plain = RealDescriptor("Measurement~density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
-    assert len(v1) == 2  # Because integer variable is skipped
-    assert list(v1) == ['Processing~speed', 'Measurement~density']
+    assert len(v1) == 3
+    assert list(v1) == ['Processing~volume', 'Processing~speed', 'Measurement~density']
     assert v1['Measurement~density'] == density_desc_plain
 
     # Same length for sample history
