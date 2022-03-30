@@ -115,6 +115,7 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
 
     lower_bound = properties.Integer('lower_bound')
     upper_bound = properties.Integer('upper_bound')
+    units = properties.String('units', default='dimensionless')
     typ = properties.String('type', default='Integer', deserializable=False)
 
     def __eq__(self, other):
