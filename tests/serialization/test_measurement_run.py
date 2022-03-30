@@ -65,9 +65,9 @@ def test_simple_deserialization(valid_data):
     assert measurement_run.conditions == []
     assert measurement_run.parameters == []
     assert measurement_run.properties[0] == Property('sweetness', origin="measured",
-                                                            value=NominalInteger(7))
+                                                            value=NominalInteger(7, units='dimensionless'))
     assert measurement_run.properties[1] == Property('fluffiness', origin="measured",
-                                                            value=NominalInteger(10))
+                                                            value=NominalInteger(10, units='dimensionless'))
     assert measurement_run.file_links == []
     assert measurement_run.template is None
     assert measurement_run.material == MaterialRun('sponge cake',
