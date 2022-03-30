@@ -110,37 +110,31 @@ class IntDescriptor(Serializable['IntDescriptor'], Descriptor):
         inclusive lower bound for valid integer values
     upper_bound: int
         inclusive upper bound for valid int values
-    units: optional[str] = ''
-        optional units string which must be parseable by Pint; default is an
-        empty string which corresponds to a dimensionless unit.
 
     """
 
     lower_bound = properties.Integer('lower_bound')
     upper_bound = properties.Integer('upper_bound')
-    units = properties.String('units', default='')
     typ = properties.String('type', default='Integer', deserializable=False)
 
     def __eq__(self, other):
-        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "typ"])
 
     def __init__(self,
                  key: str,
                  *,
                  lower_bound: int,
-                 upper_bound: int,
-                 units: str = ''):
+                 upper_bound: int):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
-        self.units = units
 
     def __str__(self):
         return "<IntDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntDescriptor({}, {}, {}, {})".format(
-            self.key, self.lower_bound, self.upper_bound, self.units)
+        return "IntDescriptor({}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound)
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):

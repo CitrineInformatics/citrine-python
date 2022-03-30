@@ -219,7 +219,7 @@ def test_filter_by_attribute_bounds(collection, session):
         json={
             'attribute_bounds': {
                 link.id: {'lower_bound': 1, 'upper_bound': 5,
-                          'default_units': 'dimensionless', 'type': 'integer_bounds'}
+                          'type': 'integer_bounds'}
             }
         }
     )

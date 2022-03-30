@@ -81,8 +81,7 @@ def template_to_descriptor(template: AttributeTemplate, *,
         return IntDescriptor(
             key=descriptor_key,
             lower_bound=bounds.lower_bound,
-            upper_bound=bounds.upper_bound,
-            units=bounds.default_units
+            upper_bound=bounds.upper_bound
         )
     raise ValueError("Template has unrecognized bounds: {}".format(type(bounds)))
 
