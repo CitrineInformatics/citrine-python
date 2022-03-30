@@ -7,7 +7,7 @@ from citrine._serialization import properties
 
 __all__ = ['Descriptor',
            'RealDescriptor',
-           'IntDescriptor',
+           'IntegerDescriptor',
            'ChemicalFormulaDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
@@ -31,7 +31,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
             "Inorganic": ChemicalFormulaDescriptor,
             "Organic": MolecularStructureDescriptor,
             "Real": RealDescriptor,
-            "Integer": IntDescriptor,
+            "Integer": IntegerDescriptor,
         }[data["type"]]
 
     def _equals(self, other, attrs):
@@ -99,7 +99,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
             self.key, self.lower_bound, self.upper_bound, self.units)
 
 
-class IntDescriptor(Serializable['IntDescriptor'], Descriptor):
+class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
     """A descriptor to hold integer-valued numbers.
 
     Parameters
@@ -130,10 +130,10 @@ class IntDescriptor(Serializable['IntDescriptor'], Descriptor):
         self.upper_bound: int = upper_bound
 
     def __str__(self):
-        return "<IntDescriptor {!r}>".format(self.key)
+        return "<IntegerDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntDescriptor({}, {}, {})".format(
+        return "IntegerDescriptor({}, {}, {})".format(
             self.key, self.lower_bound, self.upper_bound)
 
 

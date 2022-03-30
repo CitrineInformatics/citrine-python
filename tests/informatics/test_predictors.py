@@ -4,12 +4,12 @@ import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor, IntDescriptor, \
+from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
     MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
     CategoricalDescriptor
 from citrine.informatics.predictors import *
 
-w = IntDescriptor("w", lower_bound=0, upper_bound=100)
+w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
 z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
