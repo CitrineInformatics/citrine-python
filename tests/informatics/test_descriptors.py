@@ -26,6 +26,18 @@ def test_deser_from_parent(descriptor):
     assert descriptor == descriptor_deserialized
 
 
+def test_equals(descriptor):
+
+    assert descriptor._equals(descriptor, descriptor.__dict__.keys())
+
+    # attributes missing from the descriptor should raise an exception
+    with pytest.raises(AttributeError):
+        descriptor._equals(None, ["missing_attr"])
+
+    # attributes missing from the 'other' instance should return False
+    assert not descriptor._equals(None, ["key"])
+
+
 def test_invalid_eq(descriptor):
     other = None
     assert not descriptor == other

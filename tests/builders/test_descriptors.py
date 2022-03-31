@@ -24,7 +24,7 @@ from gemd.entity.bounds import (
 from citrine.builders.descriptors import PlatformVocabulary, template_to_descriptor, \
     NoEquivalentDescriptorError
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
-     CategoricalDescriptor, MolecularStructureDescriptor, ChemicalFormulaDescriptor
+    CategoricalDescriptor, MolecularStructureDescriptor, ChemicalFormulaDescriptor
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
@@ -34,8 +34,7 @@ from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.builders.auto_configure import AutoConfigureMode
 
 
-density_desc = RealDescriptor("density", lower_bound=0,
-                              upper_bound=100, units="gram / centimeter ** 3")
+density_desc = RealDescriptor("density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
 count_desc = IntegerDescriptor("count", lower_bound=0, upper_bound=100)
 pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, units="GPa")
 
@@ -44,18 +43,15 @@ pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, uni
 def fake_project():
     """Fake project that serves templates from template collection's list method."""
     attributes = [
-        ConditionTemplate("volume", bounds=IntegerBounds(
-            lower_bound=0, upper_bound=11), uids={"my_scope": "volume"}),
+        ConditionTemplate("volume", bounds=IntegerBounds(lower_bound=0, upper_bound=11), uids={"my_scope": "volume"}),
         ParameterTemplate("speed", bounds=CategoricalBounds(categories=["slow", "fast"]), uids={}),
-        PropertyTemplate("density", bounds=RealBounds(lower_bound=0, upper_bound=100,
-                                                      default_units="g / cm^3"), uids={"my_scope": "density"})
+        PropertyTemplate("density", bounds=RealBounds(lower_bound=0, upper_bound=100, default_units="g / cm^3"), uids={"my_scope": "density"})
     ]
 
     values = [
         Condition('volume', template=attributes[0], value=NominalInteger(nominal=4)),
         Parameter('speed', template=attributes[1], value=NominalCategorical(category='slow')),
-        Property('density', template=attributes[2], value=NominalReal(
-            nominal=50.0, units=attributes[2].bounds.default_units))
+        Property('density', template=attributes[2], value=NominalReal(nominal=50.0, units=attributes[2].bounds.default_units))
     ]
 
     # Object templates
