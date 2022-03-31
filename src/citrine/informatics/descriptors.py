@@ -38,7 +38,8 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         """Check to see if the attrs from the other instance match this instance.
 
         Returns True if all of the attribute names from attrs match between this and
-        the other instance, else False. A missing attribute will also return False.
+        the other instance, else False. A missing attribute from this instance will
+        raise an AttributeError, and False if missing from the other instance.
 
         Parameters
         ----------
@@ -48,6 +49,10 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
             A list of attribute names to lookup and compare
 
         """
+
+        # Check that all attrs exist on this object and raise an AttributeError if not.
+        [self.__getattribute__(key) for key in attrs]
+
         try:
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
@@ -129,7 +134,6 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
-        self.units = "dimensionless"
 
     def __str__(self):
         return "<IntegerDescriptor {!r}>".format(self.key)
