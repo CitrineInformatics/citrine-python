@@ -23,8 +23,8 @@ from gemd.entity.bounds import (
 
 from citrine.builders.descriptors import PlatformVocabulary, template_to_descriptor, \
     NoEquivalentDescriptorError
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
-    MolecularStructureDescriptor, ChemicalFormulaDescriptor
+from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
+     CategoricalDescriptor, MolecularStructureDescriptor, ChemicalFormulaDescriptor
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
@@ -36,6 +36,7 @@ from citrine.builders.auto_configure import AutoConfigureMode
 
 density_desc = RealDescriptor("density", lower_bound=0,
                               upper_bound=100, units="gram / centimeter ** 3")
+count_desc = IntegerDescriptor("count", lower_bound=0, upper_bound=100)
 pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, units="GPa")
 
 
@@ -133,6 +134,10 @@ def test_valid_template_conversions():
             PropertyTemplate(name="density", bounds=RealBounds(
                 lower_bound=0, upper_bound=100, default_units="g/cm^3")),
             density_desc
+        ),
+        (
+            PropertyTemplate(name="count", bounds=IntegerBounds(
+                lower_bound=0, upper_bound=100)), count_desc
         ),
         (
             ConditionTemplate(name="speed", bounds=CategoricalBounds(categories=["low", "high"])),

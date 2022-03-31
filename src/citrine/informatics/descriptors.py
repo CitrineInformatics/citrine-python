@@ -119,7 +119,7 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
     typ = properties.String('type', default='Integer', deserializable=False)
 
     def __eq__(self, other):
-        return self._equals(other, ["key", "lower_bound", "upper_bound", "typ"])
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
 
     def __init__(self,
                  key: str,
@@ -129,13 +129,14 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
+        self.units = "dimensionless"
 
     def __str__(self):
         return "<IntegerDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntegerDescriptor({}, {}, {})".format(
-            self.key, self.lower_bound, self.upper_bound)
+        return "IntegerDescriptor({}, {}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound, self.units)
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
