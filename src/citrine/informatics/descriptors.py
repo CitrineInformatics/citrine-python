@@ -49,7 +49,6 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
             A list of attribute names to lookup and compare
 
         """
-
         # Check that all attrs exist on this object and raise an AttributeError if not.
         [self.__getattribute__(key) for key in attrs]
 
