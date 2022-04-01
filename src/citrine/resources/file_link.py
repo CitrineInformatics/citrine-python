@@ -4,7 +4,7 @@ import os
 from enum import Enum
 from logging import getLogger
 from typing import Iterable, Optional, Tuple, Union, List, Dict
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 from uuid import UUID
 
 import requests
@@ -149,6 +149,31 @@ class FileCollection(Collection[FileLink]):
         self.dataset_id = dataset_id
         self.session = session
 
+    def _get_versioned_path(self,
+                            file_id: Union[str, UUID],
+                            version_id: Union[str, UUID],
+                            *,
+                            action: str = None) -> str:
+        """Build the path for taking an action with a particular file version."""
+        base = urlparse(self._get_path(file_id))
+        new_path = base.path.split('/')
+        new_path.extend([quote(x) for x in ('versions', str(version_id))])
+        if action is not None:
+            new_path.append(quote(action))
+
+        return base._replace(path='/'.join(new_path)).geturl()
+
+    def _get_path_from_file_link(self, file_link: FileLink,
+                                 *,
+                                 action: str = None) -> str:
+        """Build the path for taking an action with a particular file link."""
+        # Use this sessions project/dataset credentials and the URL's file / version
+        parsed = urlparse(file_link.url)
+        file_id = parsed.path.split('/')[-3]
+        version_id = parsed.path.split('/')[-1]
+        # The "/content-link" route returns a pre-signed url to download the file.
+        return self._get_versioned_path(file_id, version_id, action=action)
+
     def build(self, data: dict) -> FileLink:
         """Build an instance of FileLink."""
         return FileLink.build(data)
@@ -207,26 +232,14 @@ class FileCollection(Collection[FileLink]):
             A dictionary that can be built into a FileLink object.
 
         """
-        typ = 'file_link'
         filename = file['filename']
+        file_id = file['id']
+        version_id = file['version']
 
-        # The field 'versioned_url' contains some information necessary to construct a file path,
-        # but does not contain project and dataset id. It also contains extraneous information.
-        # We assert that the 'versioned_url' "picks up" where the collection path leaves off
-        # (at "/files"). We take what comes after "/files" and combine it with the collection path
-        # to create the file url.
-        split_url = file['versioned_url'].split('/')
-        try:
-            split_collection_path = self._get_path().split('/')
-            overlap_index = split_url.index(split_collection_path[-1])
-        except ValueError:
-            raise ValueError("Versioned URL, '{}', cannot be joined with collection path "
-                             "'{}'".format(file['versioned_url'], self._get_path()))
-        url = '/'.join(split_collection_path + split_url[overlap_index + 1:])
         file_dict = {
-            'url': url,
+            'url': self._get_versioned_path(file_id, version_id),
             'filename': filename,
-            'type': typ
+            'type': GEMDFileLink.typ
         }
         return file_dict
 
@@ -403,40 +416,44 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
 
-        url = self._get_path(file_id) + format_escaped_url('/versions/{}', version)
+        url = self._get_versioned_path(file_id, version)
         return FileLink(filename=dest_name, url=url)
 
-    def download(self, *, file_link: FileLink, local_path: str):
+    def download(self, *, file_link: Union[str, UUID, FileLink], local_path: str):
         """
         Download the file associated with a given FileLink to the local computer.
 
         Parameters
         ----------
-        file_link: FileLink
-            Resource referencing the external file.
+        file_link: FileLink, str, UUID
+            Resource referencing the file.
         local_path: str
             Path to save file on the local computer. If `local_path` is a directory,
             then the filename of this FileLink object will be appended to the path.
 
         """
+        file_link = self._resolve_file_link(file_link)
+
         directory, filename = os.path.split(local_path)
         if not filename:
             filename = file_link.filename
         local_path = os.path.join(directory, filename)
 
-        if len(urlparse(url=file_link.url).scheme) == 0:  # Relative path; platform
+        if self._is_external_url(file_link.url):  # Pull it from where ever it lives
+            final_url = file_link.url
+        elif self._validate_filelink_url(file_link.url):
             # The "/content-link" route returns a pre-signed url to download the file.
-            content_link_path = file_link.url + '/content-link'
-            content_link_response = self.session.get_resource(content_link_path)
+            content_link = self._get_path_from_file_link(file_link, action='content-link')
+            content_link_response = self.session.get_resource(content_link)
             pre_signed_url = content_link_response['pre_signed_read_link']
             final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
-        else:  # Absolute path; pull it from where ever it lives
-            final_url = file_link.url
+        else:  # Unrecognized
+            raise ValueError(f"URL was malformed for a local file resource ({file_link.url}).")
 
         download_response = requests.get(final_url)
         write_file_locally(download_response.content, local_path)
 
-    def process(self, *, file_link: FileLink,
+    def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
                 wait_for_response: bool = True,
                 timeout: float = 2 * 60,
@@ -450,9 +467,17 @@ class FileCollection(Collection[FileLink]):
         :param processing_type:  The type of file processing to invoke.
         :return: A JobSubmissionResponse which can be used to poll for the result.
         """
+        file_link = self._resolve_file_link(file_link)
+        if not self._validate_filelink_url(file_link.url):
+            raise ValueError(f"Only on-platform resources can be processed. "
+                             f"Passed URL {file_link.url}.")
+
         params = {"processing_type": processing_type.value}
-        response = self.session.put_resource(file_link.url + "/processed", json={},
-                                             params=params)
+        response = self.session.put_resource(
+            self._get_path_from_file_link(file_link, action="processed"),
+            json={},
+            params=params
+        )
         job = JobSubmissionResponse.build(response)
         logger.info('Build job submitted with job ID {}.'.format(job.job_id))
 
@@ -516,7 +541,7 @@ class FileCollection(Collection[FileLink]):
             The file processing results, mapped by processing type.
 
         """
-        processed_results_path = file_link.url + '/processed'
+        processed_results_path = self._get_path_from_file_link(file_link, action="processed")
 
         params = []
         for proc_type in processing_types:
@@ -547,10 +572,77 @@ class FileCollection(Collection[FileLink]):
             Resource referencing the external file.
 
         """
+        if self._is_external_url(file_link.url):
+            raise ValueError(f"Only local resources can be deleted; passed URL {file_link.url}")
+        if not self._validate_filelink_url(file_link.url):
+            raise ValueError(f"URL was malformed for local resources; passed URL {file_link.url}")
         split_url = file_link.url.split('/')
-        assert split_url[-2] == 'versions' and split_url[-4] == 'files', \
-            "File URL is expected to end with '/files/{{file_id}}/version/{{version id}}', " \
-            "but FileLink instead has url {}".format(file_link.url)
         file_id = split_url[-3]
         data = self.session.delete_resource(self._get_path(file_id))
         return Response(body=data)
+
+    def _resolve_file_link(self, identifier: Union[str, UUID]) -> FileLink:
+        """Generate the FileLink object referenced by the passed argument."""
+        if isinstance(identifier, FileLink):
+            return identifier
+        try:  # Check if the string is actually a UUID
+            if isinstance(identifier, str):
+                identifier = UUID(identifier)
+        except ValueError:
+            pass
+        if isinstance(identifier, UUID):
+            # Assume it's the file UUID on platform
+            hit = next((f for f in self.list() if str(identifier) in f.url), None)
+            if hit is None:
+                raise ValueError(f"Found no file associated with UUID {identifier}")
+            else:
+                return hit
+        elif isinstance(identifier, str) and self._is_external_url(identifier):
+            # Assume it's an absolute URL
+            filename = urlparse(identifier).path.split('/')[-1]
+            file_dict = {
+                'url': identifier,
+                'filename': filename,
+                'type': GEMDFileLink.typ
+            }
+            return FileLink.build(file_dict)
+        elif isinstance(identifier, str) and self._validate_filelink_url(identifier):
+            # It's an on-platform URL
+            hit = next((f for f in self.list() if identifier == f.url), None)
+            if hit is None:
+                raise ValueError(f"Found no file with URL {identifier}")
+            else:
+                return hit
+        elif isinstance(identifier, str):
+            # Assume it's the filename on platform
+            hit = next((f for f in self.list() if identifier == f.filename), None)
+            if hit is None:
+                raise ValueError(f"Found no file named {identifier}")
+            else:
+                return hit
+        else:
+            raise TypeError(f"File Link can only be resolved from str, or UUID."
+                            f"Instead got {type(identifier)} {identifier}.")
+
+    def _is_external_url(self, url: str):
+        """Check if the URL is absolute and not associated with this platform instance."""
+        parsed = urlparse(url)
+        if len(parsed.scheme) == 0 or len(parsed.netloc) == 0:
+            # Relative
+            return False
+
+        return urlparse(self._get_path()).netloc != parsed.netloc
+
+    @staticmethod
+    def _validate_filelink_url(url):
+        """Verify link is well formed."""
+        parsed = urlparse(url)
+        if len(parsed.scheme) > 0 or len(parsed.netloc) > 0:
+            # Absolute
+            return False
+        if len(parsed.query) > 0 or len(parsed.fragment) > 0:
+            # Illegal modifiers
+            return False
+
+        split_path = parsed.path.split('/')
+        return len(split_path) >= 4 and split_path[-4] == 'files' and split_path[-2] == 'versions'

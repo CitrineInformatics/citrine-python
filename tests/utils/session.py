@@ -108,6 +108,8 @@ class FakeSession:
             return default_response
 
         response = self.responses.pop(0)
+        if not self.responses:  # Restore it if we ran out
+            self.responses.append(response)
         if isinstance(response, NonRetryableHttpException):
             raise response
         return response

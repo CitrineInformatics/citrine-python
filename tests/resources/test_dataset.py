@@ -346,6 +346,7 @@ def test_gemd_posts(dataset):
         dataset.session.set_response(updated.dump())
         dataset.delete(updated)
         assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
+        dataset.session.set_responses()
 
     # Register all
     before = list(expected.values())
