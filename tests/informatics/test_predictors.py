@@ -4,10 +4,12 @@ import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
-    FormulationDescriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
+from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
+    MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
+    CategoricalDescriptor
 from citrine.informatics.predictors import *
 
+w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
 z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
@@ -45,6 +47,7 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         excludes=["standard"]
     )
 
+
 @pytest.fixture
 def chemical_featurizer() -> ChemicalFormulaFeaturizer:
     return ChemicalFormulaFeaturizer(
@@ -61,28 +64,30 @@ def chemical_featurizer() -> ChemicalFormulaFeaturizer:
 def auto_ml() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[z],
         training_data=[data_source]
     )
+
 
 @pytest.fixture
 def auto_ml_no_outputs() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[],
         training_data=[data_source]
     )
+
 
 @pytest.fixture
 def auto_ml_multiple_outputs() -> AutoMLPredictor:
     return AutoMLPredictor(
         name='AutoML Predictor',
-        description='Predicts z from input x',
-        inputs=[x],
+        description='Predicts z from inputs w and x',
+        inputs=[w, x],
         outputs=[z, y],
         training_data=[data_source]
     )
@@ -278,8 +283,8 @@ def test_chemical_featurizer(chemical_featurizer):
 
 def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
-    assert auto_ml.description == "Predicts z from input x"
-    assert auto_ml.inputs == [x]
+    assert auto_ml.description == "Predicts z from inputs w and x"
+    assert auto_ml.inputs == [w, x]
     assert auto_ml.training_data == [data_source]
     assert auto_ml.dump()['config']['outputs'] == [z.dump()]
     with pytest.deprecated_call():
@@ -332,25 +337,26 @@ def test_auto_ml_assign_to_deprecated_output(auto_ml):
         with pytest.deprecated_call():
             auto_ml.output = None
 
+
 def test_auto_ml_create_with_deprecated_output():
     # Set output in the constructor
     with pytest.deprecated_call():
         new_predictor = AutoMLPredictor(
-                name='AutoML Predictor',
-                description='test',
-                inputs=[x],
-                output=y,
-                training_data=[data_source])
+            name='AutoML Predictor',
+            description='test',
+            inputs=[x],
+            output=y,
+            training_data=[data_source])
     with pytest.deprecated_call():
         assert new_predictor.output == y
     assert new_predictor.outputs == [y]
 
     # Omit both output and outputs
     new_predictor = AutoMLPredictor(
-            name='AutoML Predictor',
-            description='test',
-            inputs=[x],
-            training_data=[data_source])
+        name='AutoML Predictor',
+        description='test',
+        inputs=[x],
+        training_data=[data_source])
     with pytest.deprecated_call():
         assert new_predictor.output is None
     assert new_predictor.outputs == []
@@ -359,12 +365,12 @@ def test_auto_ml_create_with_deprecated_output():
     with pytest.raises(ValueError):
         with pytest.deprecated_call():
             new_predictor = AutoMLPredictor(
-                    name='AutoML Predictor',
-                    description='test',
-                    inputs=[x],
-                    output=y,
-                    outputs=[z],
-                    training_data=[data_source])
+                name='AutoML Predictor',
+                description='test',
+                inputs=[x],
+                output=y,
+                outputs=[z],
+                training_data=[data_source])
 
 
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
