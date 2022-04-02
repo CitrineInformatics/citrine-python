@@ -1,9 +1,10 @@
 from os.path import basename
 from uuid import UUID, uuid4
-from warnings import catch_warnings
 
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.demo.cake import make_cake
+from gemd.util import recursive_flatmap, flatten
 
 from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
@@ -362,6 +363,26 @@ def test_gemd_posts(dataset):
             assert pair in seen_ids  # registered items have the same ids
 
 
+def test_register_all_nested(dataset):
+    cake = make_cake()
+    after = dataset.register_all([cake], include_nested=True)
+    assert cake in after
+    assert len(after) == len(recursive_flatmap(cake, lambda o: [o], unidirectional=False))
+
+
+def test_register_all_iterable(dataset):
+    """Test that register all behaves well with non-standard inputs."""
+    cake = make_cake()
+    cake_set = flatten(cake)
+    dry = dataset.register_all(cake_set, dry_run=True)
+    assert cake in flatten(dry)
+    assert len(dry) >= len(cake_set)
+
+    wet = dataset.register_all(cake_set, dry_run=False)
+    assert cake in flatten(wet)
+    assert len(wet) == len(cake_set)
+
+
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""
     with pytest.raises(TypeError):
@@ -442,6 +463,6 @@ def test_delete_contents_ok(dataset, monkeypatch):
 
 def test_delete_contents_abort(dataset, monkeypatch):
     user_responses = iter(['N'])
-    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
     with pytest.raises(RuntimeError):
         dataset.delete_contents(prompt_to_confirm=True)
