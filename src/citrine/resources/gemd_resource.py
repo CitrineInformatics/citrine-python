@@ -118,7 +118,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """
         # Endpoints are polymorphic now, so it doesn't matter which we hit
         if len(models) == 0:
-            return []  # Fast exit to avoid
+            return []  # Fast exit since there's nothing to process
         collection = self._collection_for(next(m for m in models))
         return collection.register_all(
             models,
