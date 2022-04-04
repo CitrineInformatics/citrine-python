@@ -1,6 +1,7 @@
 from uuid import uuid4, UUID
 from typing import Iterator, Union
 import pytest
+import mock
 
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -22,8 +23,8 @@ from gemd.entity.bounds import (
 
 from citrine.builders.descriptors import PlatformVocabulary, template_to_descriptor, \
     NoEquivalentDescriptorError
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
-    MolecularStructureDescriptor, ChemicalFormulaDescriptor
+from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
+    CategoricalDescriptor, MolecularStructureDescriptor, ChemicalFormulaDescriptor
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
@@ -34,6 +35,7 @@ from citrine.builders.auto_configure import AutoConfigureMode
 
 
 density_desc = RealDescriptor("density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
+count_desc = IntegerDescriptor("count", lower_bound=0, upper_bound=100)
 pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, units="GPa")
 
 
@@ -125,8 +127,13 @@ def fake_project():
 def test_valid_template_conversions():
     expected = [
         (
-            PropertyTemplate(name="density", bounds=RealBounds(lower_bound=0, upper_bound=100, default_units="g/cm^3")),
+            PropertyTemplate(name="density", bounds=RealBounds(
+                lower_bound=0, upper_bound=100, default_units="g/cm^3")),
             density_desc
+        ),
+        (
+            PropertyTemplate(name="count", bounds=IntegerBounds(
+                lower_bound=0, upper_bound=100)), count_desc
         ),
         (
             ConditionTemplate(name="speed", bounds=CategoricalBounds(categories=["low", "high"])),
@@ -137,7 +144,8 @@ def test_valid_template_conversions():
             MolecularStructureDescriptor(key="solvent")
         ),
         (
-            PropertyTemplate(name="formula", bounds=CompositionBounds(components=EmpiricalFormula.all_elements())),
+            PropertyTemplate(name="formula", bounds=CompositionBounds(
+                components=EmpiricalFormula.all_elements())),
             ChemicalFormulaDescriptor(key="formula")
         )
     ]
@@ -147,11 +155,6 @@ def test_valid_template_conversions():
 
 
 def test_invalid_template_conversions():
-    with pytest.raises(NoEquivalentDescriptorError):
-        template_to_descriptor(
-            ConditionTemplate("foo", bounds=IntegerBounds(lower_bound=0, upper_bound=1))
-        )
-
     with pytest.raises(NoEquivalentDescriptorError):
         template_to_descriptor(
             PropertyTemplate("mixture", bounds=CompositionBounds(components=["sugar", "spice"]))
@@ -187,10 +190,16 @@ def test_from_template(fake_project: Project):
     """Test that only correct scopes and bounds are loaded from templates."""
     v = PlatformVocabulary.from_templates(project=fake_project, scope="my_scope")
 
-    # no volume since it is an integer, no speed since it doesn't have the right scope
-    assert len(v) == 1
-    assert list(v) == ["density"]
+    # no speed since it doesn't have the right scope
+    assert len(v) == 2
+    assert list(v) == ["density", "volume"]
     assert v["density"] == density_desc
+
+    # templates that raise NoEquivalentDescriptorError are skipped, mainly for test coverage
+    with mock.patch("citrine.builders.descriptors.template_to_descriptor") as mock_template_to_descriptor:
+        mock_template_to_descriptor.side_effect = NoEquivalentDescriptorError
+        PlatformVocabulary.from_templates(project=fake_project, scope="my_scope")
+        mock_template_to_descriptor.assert_called()
 
 
 def test_from_material(fake_project: Project):
@@ -203,9 +212,10 @@ def test_from_material(fake_project: Project):
         full_history=True
     )
 
-    density_desc_plain = RealDescriptor("Measurement~density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
-    assert len(v1) == 2  # Because integer variable is skipped
-    assert list(v1) == ['Processing~speed', 'Measurement~density']
+    density_desc_plain = RealDescriptor(
+        "Measurement~density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
+    assert len(v1) == 3
+    assert list(v1) == ['Processing~volume', 'Processing~speed', 'Measurement~density']
     assert v1['Measurement~density'] == density_desc_plain
 
     # Same length for sample history
@@ -224,3 +234,14 @@ def test_from_material(fake_project: Project):
             material=sample_mr,
             mode='BAD MODE CHOICE'
         )
+
+    # templates that raise NoEquivalentDescriptorError are skipped, mainly for test coverage
+    with mock.patch("citrine.builders.descriptors.template_to_descriptor") as mock_template_to_descriptor:
+        mock_template_to_descriptor.side_effect = NoEquivalentDescriptorError
+        PlatformVocabulary.from_material(
+            project=fake_project,
+            material=sample_mr,
+            mode=AutoConfigureMode.PLAIN,
+            full_history=True
+        )
+        mock_template_to_descriptor.assert_called()

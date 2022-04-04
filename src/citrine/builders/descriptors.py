@@ -14,7 +14,7 @@ from gemd.util import recursive_flatmap, set_uuids
 
 from citrine.builders.auto_configure import AutoConfigureMode
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
-    MolecularStructureDescriptor, Descriptor, ChemicalFormulaDescriptor
+    MolecularStructureDescriptor, Descriptor, ChemicalFormulaDescriptor, IntegerDescriptor
 from citrine.resources.data_concepts import DataConceptsCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
@@ -78,7 +78,11 @@ def template_to_descriptor(template: AttributeTemplate, *,
             msg = "Cannot create descriptor for CompositionBounds with non-atomic components"
             raise NoEquivalentDescriptorError(msg)
     if isinstance(bounds, IntegerBounds):
-        raise NoEquivalentDescriptorError("Cannot create a descriptor for integer-valued data")
+        return IntegerDescriptor(
+            key=descriptor_key,
+            lower_bound=bounds.lower_bound,
+            upper_bound=bounds.upper_bound
+        )
     raise ValueError("Template has unrecognized bounds: {}".format(type(bounds)))
 
 
