@@ -232,8 +232,11 @@ class FileCollection(Collection[FileLink]):
             A dictionary that can be built into a FileLink object.
 
         """
+        # FIXME  While the 'id' field is supposed to be the file ID, it contains the version
+        #  for some reason.  Needs to be fixed on back end.  PLA-9482
         filename = file['filename']
-        file_id = file['id']
+        # file_id = file['id']
+        file_id = file['unversioned_url'].split('/')[-1]
         version_id = file['version']
 
         file_dict = {
@@ -411,12 +414,12 @@ class FileCollection(Collection[FileLink]):
 
         try:
             file_id = complete_response['file_info']['file_id']
-            version = complete_response['file_info']['version']
+            version_id = complete_response['file_info']['version']
         except KeyError:
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
 
-        url = self._get_versioned_path(file_id, version)
+        url = self._get_versioned_path(file_id, version_id)
         return FileLink(filename=dest_name, url=url)
 
     def download(self, *, file_link: Union[str, UUID, FileLink], local_path: str):
