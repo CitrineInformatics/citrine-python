@@ -3,7 +3,7 @@ from abc import abstractmethod, ABC
 import re
 from warnings import warn
 from tqdm.auto import tqdm
-from typing import TypeVar, Type, List, Union, Optional, Iterator
+from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
 import deprecation
 
@@ -11,7 +11,8 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach, make_index, substitute_objects, set_uuids
+from gemd.util import recursive_foreach, recursive_flatmap, make_index, \
+    substitute_objects, set_uuids
 
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -498,10 +499,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return registered
 
     def register_all(self,
-                     models: List[ResourceType],
+                     models: Iterable[ResourceType],
                      *,
-                     dry_run=False,
-                     status_bar=False) -> List[ResourceType]:
+                     dry_run: bool = False,
+                     status_bar: bool = False,
+                     include_nested: bool = False) -> List[ResourceType]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -521,7 +523,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Parameters
         ----------
-        models: List[DataConcepts]
+        models: Iterable[DataConcepts]
             The data model objects to register. Can be different types.
 
         dry_run: bool
@@ -531,6 +533,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         status_bar: bool
             Whether to display a status bar using the tqdm module to track progress in
             registration. Requires installing the optional tqdm module. Default: false
+
+        include_nested: bool
+            Whether to just register the objects passed in the list, or include nested objects
+            (e.g., obj.process, obj.spec.template, ...).  Default: false
 
         Returns
         -------
@@ -544,6 +550,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
         params = {'dry_run': dry_run}
+
+        if include_nested:
+            models = recursive_flatmap(models, lambda o: [o], unidirectional=False)
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
