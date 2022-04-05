@@ -1,9 +1,11 @@
+from collections import defaultdict
 from os.path import basename
 from uuid import UUID, uuid4
-from warnings import catch_warnings
 
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.demo.cake import make_cake, get_demo_scope, get_template_scope
+from gemd.util import recursive_flatmap, flatten
 
 from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
@@ -363,6 +365,44 @@ def test_gemd_posts(dataset):
             assert pair in seen_ids  # registered items have the same ids
 
 
+def test_register_all_nested(dataset):
+    cake = make_cake()
+    after = dataset.register_all([cake], include_nested=True)
+    assert cake in after
+    assert len(after) == len(recursive_flatmap(cake, lambda o: [o], unidirectional=False))
+
+
+def test_register_all_iterable(dataset):
+    """Test that register all behaves well with non-standard inputs."""
+    cake = make_cake()
+    cake_set = frozenset(flatten(cake))
+    dry = dataset.register_all(cake_set, dry_run=True)
+    dry_dict = defaultdict(list)
+    for d in dry:
+        scope = get_demo_scope() if get_demo_scope() in d.uids else get_template_scope()
+        if scope not in d.uids:
+            pass
+        dry_dict[d.to_link(scope)].append(d)
+    for c in cake_set:
+        scope = get_demo_scope() if get_demo_scope() in c.uids else get_template_scope()
+        assert c.to_link(scope) in dry_dict, f"Results didn't contain {c.typ} {c.name}"
+        assert all(c == d for d in dry_dict[c.to_link(scope)]), f"Not all matched {c.typ} {c.name}"
+        del dry_dict[c.to_link(scope)]
+    assert len(dry_dict) == 0, f"{len(dry_dict)} unmatched objects"
+
+    wet = dataset.register_all(cake_set, dry_run=False)
+    wet_dict = defaultdict(list)
+    for w in wet:
+        scope = get_demo_scope() if get_demo_scope() in w.uids else get_template_scope()
+        wet_dict[w.to_link(scope)].append(w)
+    for c in cake_set:
+        scope = get_demo_scope() if get_demo_scope() in c.uids else get_template_scope()
+        assert c.to_link(scope) in wet_dict, f"Results didn't contain {c.typ} {c.name}"
+        assert all(c == w for w in wet_dict[c.to_link(scope)]), f"Not all matched {c.typ} {c.name}"
+        del wet_dict[c.to_link(scope)]
+    assert len(wet_dict) == 0, f"{len(wet_dict)} unmatched objects"
+
+
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""
     with pytest.raises(TypeError):
@@ -443,6 +483,6 @@ def test_delete_contents_ok(dataset, monkeypatch):
 
 def test_delete_contents_abort(dataset, monkeypatch):
     user_responses = iter(['N'])
-    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
     with pytest.raises(RuntimeError):
         dataset.delete_contents(prompt_to_confirm=True)
