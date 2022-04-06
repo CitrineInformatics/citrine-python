@@ -317,6 +317,8 @@ def test_list_file_links(collection, session, valid_data):
         'version': version,
         'filename': filename,
     }
+    returned_data["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}"
+    returned_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}/versions/{returned_data['version']}"
     session.set_response({
         'files': [returned_data]
     })
@@ -346,6 +348,8 @@ def test_list_file_links(collection, session, valid_data):
         'version': version,
         'filename': filename,
     }
+    listed_data["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{listed_data['id']}"
+    listed_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{listed_data['id']}/versions/{listed_data['version']}"
     session.set_response({
         'files': [listed_data]
     })
@@ -525,6 +529,10 @@ def test_resolve_file_link(collection: FileCollection, session):
             'filename': "file2.txt",
         },
     ]
+    for raw in raw_files:
+        raw["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}"
+        raw["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}/versions/{raw['version']}"
+
     session.set_response({
         'files': raw_files
     })
