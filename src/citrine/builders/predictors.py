@@ -18,6 +18,7 @@ from citrine.informatics.descriptors import (
 )
 from citrine.informatics.data_sources import DataSource
 
+
 def build_mean_feature_property_predictors(
         *,
         project: Project,
@@ -144,7 +145,8 @@ def _build_mean_property_predictor(
         label=label
     )
 
-## Add simple ml builder
+
+# Add simple ml builder
 def build_simple_ml(
     *,
     project: Project,
@@ -185,9 +187,12 @@ def build_simple_ml(
         GraphPredictor connecting all inputs to all latent variables and all inputs and latent
         variables to all outputs.
     """
-    ml_model_feature_descriptors = [d for d in inputs if type(d) in [RealDescriptor, CategoricalDescriptor]]
-    chemical_formula_descriptors = [d for d in inputs if type(d) is ChemicalFormulaDescriptor]
-    molecular_structure_descriptors = [d for d in inputs if type(d) is MolecularStructureDescriptor]
+    ml_model_feature_descriptors = [d for d in inputs
+                                    if isinstance(d, (RealDescriptor, CategoricalDescriptor))]
+    chemical_formula_descriptors = [d for d in inputs
+                                    if isinstance(d, (ChemicalFormulaDescriptor))]
+    molecular_structure_descriptors = [d for d in inputs
+                                       if isinstance(d, (MolecularStructureDescriptor))]
 
     chemical_formula_featurizers = [
         ChemicalFormulaFeaturizer(
@@ -209,7 +214,7 @@ def build_simple_ml(
 
     # TODO: Fix needing to pass the project (if possible)
     featurizer_responses = []
-    for featurizer in [*chemical_formula_featurizers, *molecular_structure_featurizers]:
+    for featurizer in chemical_formula_featurizers + molecular_structure_featurizers:
         featurizer_responses.extend(
             project.descriptors.from_predictor_responses(
                 predictor=featurizer,
@@ -221,7 +226,7 @@ def build_simple_ml(
         AutoMLPredictor(
             name=f'{latent_variable_descriptor.key} Predictor',
             description='',
-            inputs=[*ml_model_feature_descriptors, *featurizer_responses],
+            inputs=ml_model_feature_descriptors + featurizer_responses,
             output=latent_variable_descriptor,
         ) for latent_variable_descriptor in latent_variables
     ]
@@ -230,7 +235,7 @@ def build_simple_ml(
         AutoMLPredictor(
             name=f'{output_descriptor.key} Predictor',
             description='',
-            inputs=[*ml_model_feature_descriptors, *latent_variables, *featurizer_responses],
+            inputs=ml_model_feature_descriptors + latent_variables + featurizer_responses,
             output=output_descriptor,
         ) for output_descriptor in outputs
     ]
@@ -239,10 +244,10 @@ def build_simple_ml(
         name=name,
         description=description,
         predictors=[
-            *chemical_formula_featurizers,
-            *molecular_structure_featurizers,
-            *automl_lv_predictors,
-            *automl_output_predictors,
+            * chemical_formula_featurizers,
+            * molecular_structure_featurizers,
+            * automl_lv_predictors,
+            * automl_output_predictors,
         ],
         training_data=training_data
     )

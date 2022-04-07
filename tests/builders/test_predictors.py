@@ -3,14 +3,16 @@ import pytest
 from citrine.informatics.descriptors import (
     MolecularStructureDescriptor,
     ChemicalFormulaDescriptor,
-    FormulationDescriptor
+    FormulationDescriptor,
+    CategoricalDescriptor,
+    RealDescriptor
 )
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
     ChemicalFormulaFeaturizer,
     LabelFractionsPredictor,
 )
-from citrine.builders.predictors import build_mean_feature_property_predictors
+from citrine.builders.predictors import build_mean_feature_property_predictors, build_simple_ml
 from tests.utils.fakes import FakeProject
 
 
@@ -89,3 +91,34 @@ def test_mean_feature_properties():
             p=1,
             labels="not inside a list!"
         )
+
+
+def test_simple_ml():
+    project = FakeProject()
+    smiles = MolecularStructureDescriptor("smiles")
+    chem = ChemicalFormulaDescriptor("formula")
+    w = CategoricalDescriptor(key="w",categories=["A","B","C"]) 
+    x = RealDescriptor(key="x", lower_bound=0, upper_bound=100, units="")
+    y = RealDescriptor(key="y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor(key="z", lower_bound=0, upper_bound=100, units="")
+    inputs=[w, x, smiles, chem]
+    latent_variables=[y]
+    outputs=[z]
+
+    simple_ml = build_simple_ml(
+        project = project,
+        name = 'test',
+        description = '',
+        inputs = inputs,
+        outputs = outputs,
+        latent_variables = latent_variables,
+    )
+    assert len(simple_ml.predictors) == 4
+    for predictor in simple_ml.predictors:
+        if predictor.typ == 'AutoML':
+            if predictor.output == z:
+                assert len(predictor.inputs) == 11
+            else:
+                assert len(predictor.inputs) == 10
+        else:
+            assert predictor.features == ['standard']
