@@ -81,15 +81,6 @@ def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data)
     assert predictor.description == 'Predicts z from input x'
 
 
-def test_automl_build_old(old_auto_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = pc.build(old_auto_ml_predictor_data)
-    assert predictor.name == 'AutoML predictor'
-    assert predictor.description == 'Predicts z from input x'
-
-
 def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data
@@ -119,33 +110,6 @@ def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_da
     predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
     registered = pc.register(predictor)
     assert registered.name == 'AutoML predictor'
-
-
-def test_automl_register_old(old_auto_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    session.post_resource.return_value = old_auto_ml_predictor_data
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = AutoMLPredictor.build(old_auto_ml_predictor_data)
-    registered = pc.register(predictor)
-    assert registered.name == 'AutoML predictor'
-
-
-def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    post_response = deepcopy(valid_simple_ml_predictor_data)
-    post_response["experimental"] = True
-    post_response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-    session.post_resource.return_value = post_response
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    with pytest.warns(UserWarning) as record:
-        pc.register(predictor)
-    msg = str(record[0].message)
-    assert "Predictor" in msg
-    assert "This is a test" in msg
-    assert "Of experimental reasons" in msg
 
 
 def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
@@ -300,6 +264,7 @@ def test_auto_configure_mode_pattern(valid_graph_predictor_data):
 
     # Then
     assert (session.calls[0].json['pattern'] == "INFER")
+    assert (session.calls[0].json['prefer_valid'] == True)
 
 
 def test_returned_predictor(valid_graph_predictor_data):
@@ -396,7 +361,7 @@ def test_convert_and_update_errors(error_args, method_name):
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
     convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
-    
+
     error_code, error_cls = error_args[:]
     response = FakeRequestResponse(error_code)
     response.request.method = "GET"
@@ -426,7 +391,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     # Building a graph predictor modifies the input data object, which interferes with the test
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(valid_graph_predictor_data))
-    
+
     response = FakeRequestResponse(409)
     response.request.method = "GET"
 
@@ -448,3 +413,26 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     assert session.num_calls == 3
     assert session.calls == expected_calls
     assert response is None
+
+
+def test_experimental_deprecated(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+    response = deepcopy(valid_graph_predictor_data)
+    response["experimental"] = True
+    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+    
+    session.set_response(response)
+
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = GraphPredictor.build(valid_graph_predictor_data)
+
+    # When
+    registered = pc.register(predictor)
+    
+    # Then
+    with pytest.deprecated_call():
+        assert registered.experimental is False
+    with pytest.deprecated_call():
+        assert registered.experimental_reasons == []
+

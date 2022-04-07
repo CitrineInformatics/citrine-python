@@ -363,6 +363,7 @@ class AutoConfigureWorkflow():
             score: Optional[Union[Score, Objective]] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
+            prefer_valid: bool = True,
     ):
         """[ALPHA] Auto configure platform assets from material history to design workflow.
 
@@ -399,6 +400,11 @@ class AutoConfigureWorkflow():
         print_status_info: bool
             Whether to print the status info during validation of assets.
             Default: False
+        prefer_valid: Boolean
+            If True, enables filtering of sparse descriptors and trimming of
+            excess graph components in attempt to return a default configuration
+            that will pass validation.
+            Default: True.
 
         """
         if not isinstance(mode, AutoConfigureMode):
@@ -410,7 +416,8 @@ class AutoConfigureWorkflow():
         # Finish workflow from table stage
         self.from_table(
             table=self.table, score=score, evaluator=evaluator,
-            design_space=design_space, mode=mode, print_status_info=print_status_info
+            design_space=design_space, mode=mode, print_status_info=print_status_info,
+            prefer_valid=prefer_valid
         )
 
     def from_table(
@@ -422,6 +429,7 @@ class AutoConfigureWorkflow():
             score: Optional[Union[Score, Objective]] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
+            prefer_valid: bool = True,
     ):
         """[ALPHA] Auto configure platform assets from GEM table to design workflow.
 
@@ -458,6 +466,11 @@ class AutoConfigureWorkflow():
         print_status_info: bool
             Whether to print the status info during validation of assets.
             Default: False
+        prefer_valid: Boolean
+            If True, enables filtering of sparse descriptors and trimming of
+            excess graph components in attempt to return a default configuration
+            that will pass validation.
+            Default: True.
 
         """
         if not isinstance(mode, AutoConfigureMode):
@@ -468,7 +481,8 @@ class AutoConfigureWorkflow():
         # Get default predictor, pass to next stage for registration
         data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
         predictor = self.project.predictors.auto_configure(
-            training_data=data_source, pattern=mode.value  # Uses same string pattern
+            training_data=data_source, pattern=mode.value,  # Uses same string pattern
+            prefer_valid=prefer_valid
         )
 
         # Finish workflow from predictor stage

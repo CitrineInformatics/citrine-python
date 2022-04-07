@@ -357,7 +357,7 @@ def test_file_download(mock_write_file_locally, collection, session):
     """
     # Given
     filename = 'diagram.pdf'
-    url = "http://citrine.com/api/files/123/versions/456"
+    url = "projects/uuid1/datasets/uuid2/files/uuid3/versions/uuid4"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
@@ -380,6 +380,32 @@ def test_file_download(mock_write_file_locally, collection, session):
         assert expected_call == session.last_call
         assert mock_write_file_locally.call_count == 1
         assert mock_write_file_locally.call_args == call(b'0101001', local_path + file.filename)
+
+
+@patch("citrine.resources.file_link.write_file_locally")
+def test_external_file_download(mock_write_file_locally, collection, session):
+    """
+    Test that downloading a file works as expected for external files.
+
+    It should make the full file path if only a directory is given, make the directory if
+    it does not exist, and make a single call to download.
+    """
+    # Given
+    filename = 'spreadsheet.xlsx'
+    url = "http://customer.com/data-lake/files/123/versions/456"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+    local_path = 'Users/me/some/new/directory/new_name.xlsx'
+
+    with requests_mock.mock() as mock_get:
+        mock_get.get(url, text='content')
+
+        # When
+        collection.download(file_link=file, local_path=local_path)
+
+        # When
+        assert mock_get.call_count == 1
+        assert mock_write_file_locally.call_count == 1
+        assert mock_write_file_locally.call_args == call(b'content', local_path)
 
 
 def test_process_file(collection, session):

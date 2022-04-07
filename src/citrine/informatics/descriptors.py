@@ -7,6 +7,7 @@ from citrine._serialization import properties
 
 __all__ = ['Descriptor',
            'RealDescriptor',
+           'IntegerDescriptor',
            'ChemicalFormulaDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
@@ -30,7 +31,33 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
             "Inorganic": ChemicalFormulaDescriptor,
             "Organic": MolecularStructureDescriptor,
             "Real": RealDescriptor,
+            "Integer": IntegerDescriptor,
         }[data["type"]]
+
+    def _equals(self, other, attrs):
+        """Check to see if the attrs from the other instance match this instance.
+
+        Returns True if all of the attribute names from attrs match between this and
+        the other instance, else False. A missing attribute from this instance will
+        raise an AttributeError, and False if missing from the other instance.
+
+        Parameters
+        ----------
+        other: Description
+            the Description instance to compare to
+        attrs: List[str]
+            A list of attribute names to lookup and compare
+
+        """
+        # Check that all attrs exist on this object and raise an AttributeError if not.
+        [self.__getattribute__(key) for key in attrs]
+
+        try:
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except AttributeError:
+            return False
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
@@ -55,13 +82,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
     typ = properties.String('type', default='Real', deserializable=False)
 
     def __eq__(self, other):
-        try:
-            attrs = ["key", "lower_bound", "upper_bound", "units", "typ"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except AttributeError:
-            return False
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
 
     def __init__(self,
                  key: str,
@@ -82,6 +103,45 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
             self.key, self.lower_bound, self.upper_bound, self.units)
 
 
+class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
+    """A descriptor to hold integer-valued numbers.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+    lower_bound: int
+        inclusive lower bound for valid integer values
+    upper_bound: int
+        inclusive upper bound for valid int values
+
+    """
+
+    lower_bound = properties.Integer('lower_bound')
+    upper_bound = properties.Integer('upper_bound')
+    units = properties.String('units', default='dimensionless')
+    typ = properties.String('type', default='Integer', deserializable=False)
+
+    def __eq__(self, other):
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
+
+    def __init__(self,
+                 key: str,
+                 *,
+                 lower_bound: int,
+                 upper_bound: int):
+        self.key: str = key
+        self.lower_bound: int = lower_bound
+        self.upper_bound: int = upper_bound
+
+    def __str__(self):
+        return "<IntegerDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "IntegerDescriptor({}, {}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound, self.units)
+
+
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
     """Captures domain-specific context about a stoichiometric chemical formula.
 
@@ -95,13 +155,7 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
-        try:
-            attrs = ["key", "typ"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except AttributeError:
-            return False
+        return self._equals(other, ["key", "typ"])
 
     def __init__(self, key: str):
         self.key: str = key
@@ -129,13 +183,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     typ = properties.String('type', default='Organic', deserializable=False)
 
     def __eq__(self, other):
-        try:
-            attrs = ["key", "typ"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except AttributeError:
-            return False
+        return self._equals(other, ["key", "typ"])
 
     def __init__(self, key: str):
         self.key: str = key
@@ -165,13 +213,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     categories = properties.Set(properties.String, 'descriptor_values')
 
     def __eq__(self, other):
-        try:
-            attrs = ["key", "categories", "typ"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except AttributeError:
-            return False
+        return self._equals(other, ["key", "categories", "typ"])
 
     def __init__(self, key: str, *, categories: Set[str]):
         self.key: str = key
@@ -200,13 +242,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     typ = properties.String('type', default='Formulation', deserializable=False)
 
     def __eq__(self, other):
-        try:
-            attrs = ["key", "typ"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except AttributeError:
-            return False
+        return self._equals(other, ["key", "typ"])
 
     def __init__(self, key: str):
         self.key: str = key

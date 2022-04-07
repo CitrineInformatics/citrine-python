@@ -4,15 +4,13 @@ import os
 from enum import Enum
 from logging import getLogger
 from typing import Iterable, Optional, Tuple, Union, List, Dict
+from urllib.parse import urlparse
 from uuid import UUID
 
 import requests
 from boto3 import client as boto3_client
 from boto3.session import Config
 from botocore.exceptions import ClientError
-from gemd.entity.bounds.base_bounds import BaseBounds
-from gemd.entity.file_link import FileLink as GEMDFileLink
-
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -20,9 +18,12 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Integer
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, format_escaped_url
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.file_link import FileLink as GEMDFileLink
 
 logger = getLogger(__name__)
 
@@ -423,11 +424,16 @@ class FileCollection(Collection[FileLink]):
             filename = file_link.filename
         local_path = os.path.join(directory, filename)
 
-        # The "/content-link" route returns a pre-signed url to download the file.
-        content_link_path = file_link.url + '/content-link'
-        content_link_response = self.session.get_resource(content_link_path)
-        pre_signed_url = content_link_response['pre_signed_read_link']
-        download_response = requests.get(pre_signed_url)
+        if len(urlparse(url=file_link.url).scheme) == 0:  # Relative path; platform
+            # The "/content-link" route returns a pre-signed url to download the file.
+            content_link_path = file_link.url + '/content-link'
+            content_link_response = self.session.get_resource(content_link_path)
+            pre_signed_url = content_link_response['pre_signed_read_link']
+            final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
+        else:  # Absolute path; pull it from where ever it lives
+            final_url = file_link.url
+
+        download_response = requests.get(final_url)
         write_file_locally(download_response.content, local_path)
 
     def process(self, *, file_link: FileLink,

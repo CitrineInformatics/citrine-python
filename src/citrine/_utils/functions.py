@@ -96,29 +96,25 @@ def object_to_link_by_uid(json: dict) -> dict:
 
 def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
     """
-    Rewrites 'localstack' hosts to localhost for testing.
+    Rewrite s3 links from localstack.
 
-    This is required for dockerized environments. In docker environments,
-    virtual hosts are created with virtual port numbers.
+    When the tests are run inside Devkit, Localstack uses the hostname "localstack" and port
+    4566 for the local S3 files URL. If you're hitting localhost from outside devkit, the
+    host "localstack" won't resolve, but the port 4566 is still mapped to the host port (also
+    on 4566), so we need to write the file links S3 endpoint hostname to "localhost".
 
-    localstack:4572 is an example of a virtualHost:virtualPort
-
-    In order to access dockerized servers from outside of docker, the
-    host:port space must be mapped onto localhost. For S3, this mapping is as follows:
-    localstack:4572 => localhost:9572
-
-    Allows for an explicit override, useful for tests that are trying to access this endpoint
-    from within the docker context
+    The caller should supply the correct S3 endpoint URL, eg: session.s3_endpoint_url
     """
     parsed_url = urlparse(url)
+
     if s3_endpoint_url is not None:
+        # Given an explicit endpoint to use instead
         parsed_s3_endpoint = urlparse(s3_endpoint_url)
         return parsed_url._replace(scheme=parsed_s3_endpoint.scheme,
                                    netloc=parsed_s3_endpoint.netloc).geturl()
-    elif parsed_url.netloc != "localstack:4572":
-        return url
     else:
-        return parsed_url._replace(netloc="localhost:9572").geturl()
+        # Else return the URL unmodified
+        return url
 
 
 def write_file_locally(content, local_path: str):
@@ -236,5 +232,7 @@ def use_teams(alt, negate=False):
                 if self.session._accounts_service_v3:
                     raise NotImplementedError(f"Not available, you may be looking for {alt}")
             return f(self, *args, **kwargs)
+
         return wrapper
+
     return decorator

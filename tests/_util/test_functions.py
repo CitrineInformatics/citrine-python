@@ -62,7 +62,7 @@ def test_object_to_link_by_uid_missing_uids():
 
 
 def test_rewrite_s3_links_locally():
-    assert "http://localhost:9572" == rewrite_s3_links_locally("http://localstack:4572")
+    assert "http://localhost:9566" == rewrite_s3_links_locally("http://localstack:4566", "http://localhost:9566")
 
 
 @patch("os.path.isdir")

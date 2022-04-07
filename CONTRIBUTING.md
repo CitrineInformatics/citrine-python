@@ -191,6 +191,10 @@ A passing build requires the following:
 * The linter finds no violations of PEP8 style
 * Every line of code is executed by a test (100% coverage)
 
+PR descriptions should describe the motivation and context of the code changes in the PR,
+both for the reviewer and also for future developers.
+If there's a JIRA ticket or Github issue, the PR should be linked to the ticket/issue to provide that context.
+
 ## Documentation<a name="documentation"></a>
 
 The documentation for this project is built using [Sphinx](http://www.sphinx-doc.org/en/master/) and can be found [here](https://citrineinformatics.github.io/citrine-python/index.html).

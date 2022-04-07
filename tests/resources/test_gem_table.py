@@ -3,11 +3,11 @@ from uuid import UUID, uuid4
 
 import pytest
 import requests_mock
+from citrine.exceptions import JobFailureError, PollingTimeoutError
+from citrine.resources.gemtables import GemTableCollection, GemTable
+from citrine.resources.table_config import TableConfig
 from mock import patch, call
 
-from citrine.exceptions import JobFailureError, PollingTimeoutError
-from citrine.resources.table_config import TableConfig
-from citrine.resources.gemtables import GemTableCollection, GemTable
 from tests.utils.factories import GemTableDataFactory, ListGemTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -81,7 +81,8 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.description == config.description
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/display-tables/{}/versions/{}/definition".format(project_id, retrieved_table.uid, retrieved_table.version)
+        path="projects/{}/display-tables/{}/versions/{}/definition".format(project_id, retrieved_table.uid,
+                                                                           retrieved_table.version)
     )
     assert session.last_call == expect_call
 
@@ -224,7 +225,7 @@ def test_build_from_config_failures(collection: GemTableCollection, session):
 def test_read_table_from_collection(mock_write_files_locally, collection, table):
     # When
     with requests_mock.mock() as mock_get:
-        remote_url = "http://otherhost:4572/anywhere"
+        remote_url = "http://otherhost:4566/anywhere"
         mock_get.get(remote_url, text='stuff')
         collection.read(table=table(remote_url), local_path="table.pdf")
         assert mock_get.call_count == 1
@@ -233,8 +234,8 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
 
     with requests_mock.mock() as mock_get:
         # When
-        localstack_url = "http://localstack:4572/anywhere"
-        mock_get.get("http://localhost:9572/anywhere", text='stuff')
+        localstack_url = "http://localstack:4566/anywhere"
+        mock_get.get(localstack_url, text='stuff')
         collection.read(table=table(localstack_url), local_path="table2.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 2
@@ -242,7 +243,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
 
     with requests_mock.mock() as mock_get:
         # When
-        localstack_url = "http://localstack:4572/anywhere"
+        localstack_url = "http://localstack:4566/anywhere"
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
@@ -253,7 +254,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
 
     with requests_mock.mock() as mock_get:
         # When
-        localstack_url = "http://localstack:4572/anywhere"
+        localstack_url = "http://localstack:4566/anywhere"
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
@@ -269,7 +270,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
 def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
-        remote_url = "http://otherhost:4572/anywhere"
+        remote_url = "http://otherhost:4566/anywhere"
         retrieved_table = table(remote_url)
         session.set_response(retrieved_table.dump())
         mock_get.get(remote_url, text='stuff')
@@ -283,7 +284,7 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
 def test_read_table_into_memory_from_collection(table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
-        remote_url = "http://otherhost:4572/anywhere"
+        remote_url = "http://otherhost:4566/anywhere"
         content = "stuff"
         retrieved_table = table(remote_url)
         session.set_response(retrieved_table.dump())

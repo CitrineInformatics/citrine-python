@@ -220,30 +220,6 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
 
 
 @pytest.fixture
-def old_auto_ml_predictor_data(valid_gem_data_source_dict):
-    """Produce valid data used for tests."""
-    from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
-    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='AutoML predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
-            type='AutoML',
-            name='AutoML predictor',
-            description='Predicts z from input x',
-            inputs=[x.dump()],
-            responses=[z.dump()],
-            training_data=[valid_gem_data_source_dict]
-        )
-    )
-
-
-@pytest.fixture
 def valid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource

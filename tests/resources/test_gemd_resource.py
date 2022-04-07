@@ -233,6 +233,8 @@ def test_register_all(gemd_collection):
         for pair in obj.uids.items():
             assert pair in seen_ids  # registered items have the same ids
 
+    assert gemd_collection.register_all([]) == [], "Trouble with an empty list."
+
 
 def test_register_all_dry_run(gemd_collection):
     """Verify expected behavior around batching.  Note we cannot actually test dependencies."""

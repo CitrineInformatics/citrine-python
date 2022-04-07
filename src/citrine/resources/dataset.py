@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of datasets."""
-from typing import List, Optional, Union, Tuple, Iterator
+from typing import List, Optional, Union, Tuple, Iterator, Iterable
 from uuid import UUID
 import warnings
 
@@ -200,10 +200,11 @@ class Dataset(Resource['Dataset']):
         return self.gemd.register(model, dry_run=dry_run)
 
     def register_all(self,
-                     models: List[DataConcepts],
+                     models: Iterable[DataConcepts],
                      *,
-                     dry_run=False,
-                     status_bar=False) -> List[DataConcepts]:
+                     dry_run: bool = False,
+                     status_bar: bool = False,
+                     include_nested: bool = False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -219,7 +220,7 @@ class Dataset(Resource['Dataset']):
 
         Parameters
         ----------
-        models: List[DataConcepts]
+        models: Iterable[DataConcepts]
             The data model objects to register. Can be different types.
 
         dry_run: bool
@@ -230,13 +231,22 @@ class Dataset(Resource['Dataset']):
             Whether to display a status bar using the tqdm module to track progress in
             registration. Requires installing the optional tqdm module. Default: false
 
+        include_nested: bool
+            Whether to just register the objects passed in the list, or include nested objects
+            (e.g., obj.process, obj.spec.template, ...).  Default: false
+
         Returns
         -------
         List[DataConcepts]
             The registered versions
 
         """
-        return self.gemd.register_all(models, dry_run=dry_run, status_bar=status_bar)
+        return self.gemd.register_all(
+            models,
+            dry_run=dry_run,
+            status_bar=status_bar,
+            include_nested=include_nested
+        )
 
     def update(self, model: DataConcepts) -> DataConcepts:
         """Update a data model object using the appropriate collection."""

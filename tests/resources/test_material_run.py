@@ -51,7 +51,7 @@ def test_register_material_run(collection, session):
 
 
 def test_register_all(collection, session):
-    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'),  MaterialRunFactory(name='3')]
+    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'), MaterialRunFactory(name='3')]
     session.set_response({'objects': [r.dump() for r in runs]})
     registered = collection.register_all(runs)
     assert [r.name for r in runs] == [r.name for r in registered]
@@ -338,7 +338,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == []
 
@@ -389,7 +389,7 @@ def test_validate_templates_errors(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == [validation_error]
 

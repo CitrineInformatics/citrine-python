@@ -15,16 +15,24 @@ Auto ML predictor (ALPHA)
 
 The :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` predicts material properties using a machine-learned model.
 AutoMLPredictors allow you to use your domain knowledge to construct custom `GraphPredictors <#graph-predictor>`__ with fine grain control over the resulting graph.
-Each AutoMLPredictor is defined by a set of inputs and an output.
+Each AutoMLPredictor is defined by a set of inputs and outputs.
 Inputs are used as input features to the machine learning model.
-The output is the property that you would like the model to predict.
-There must be at least one input and only one output.
-Unlike the `SimpleMLPredictor <#simple-ml-predictor>`__, only one model is trained from inputs to the output.
+The outputs are the properties that you would like the model to predict.
+There must be at least one input and at least one output.
+Unlike the `SimpleMLPredictor <#simple-ml-predictor>`__, only one model is trained from inputs to the outputs.
 
 AutoMLPredictors support both regression and classification.
-If the output descriptor is a :class:`~citrine.informatics.descriptors.RealDescriptor`, regression is performed.
-If the output descriptor is a :class:`~citrine.informatics.descriptors.CategoricalDescriptor`, classification is performed.
+For each :class:`~citrine.informatics.descriptors.RealDescriptor` output, regression is performed.
+For each :class:`~citrine.informatics.descriptors.CategoricalDescriptor` output, classification is performed.
 Both binary and multi-class classification are supported automatically based on the number of categories in the data.
+
+Assuming they have the same inputs, it is generally preferable to combine multiple related outputs into a single Auto ML Predictor.
+This has several benefits when compared to creating one Auto ML Predictor for each output.
+
+* Higher model accuracy (especially if the data are sparse)
+* Faster training and prediction
+* More accurate uncertainty estimates that understand the correlations between outputs
+* More accurate scoring and candidate suggestions when running a :doc:`design workflow <design_workflows>`
 
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
@@ -45,7 +53,7 @@ The following example demonstrates how to use the Citrine Python client to creat
        name = 'Predictor name',
        description = 'Predictor description',
        inputs = [input_descriptor_1, input_descriptor_2],
-       output = output_descriptor_1,
+       outputs = [output_descriptor_1],
        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
    )
 
@@ -86,7 +94,7 @@ The ML models are independently registered on-platform, but the expression predi
         file_link = elastic_properties_file,
         column_definition = {
             "Tempering Time (s)": time,
-            "Bulk Modulus (GPa)": bulk_modulu,
+            "Bulk Modulus (GPa)": bulk_modulus,
             "Poisson\'s Ratio": poissons_ratio
         }
     )
@@ -96,7 +104,7 @@ The ML models are independently registered on-platform, but the expression predi
             name="predict bulk modulus from tempering time",
             description="",
             inputs=[time],
-            output=bulk_modulus,
+            outputs=[bulk_modulus],
             training_data=[training_data]
         )
     )
@@ -105,7 +113,7 @@ The ML models are independently registered on-platform, but the expression predi
             name="predict Poisson\'s ratio from tempering time",
             description="",
             inputs=[time],
-            output=poissons_ratio,
+            outputs=[poissons_ratio],
             training_data=[training_data]
         )
     )
@@ -115,7 +123,7 @@ The ML models are independently registered on-platform, but the expression predi
         name="Young\'s modulus from bulk modulus and Poisson's ratio",
         description="",
         expression="3 * K * (1 - 2 * eta)",
-        output=youngs_modulus,
+        outputs=[youngs_modulus],
         aliases={"K": bulk_modulus, "eta": poissons_ratio}
     )
 
@@ -239,17 +247,17 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         predictor=featurizer,
         inputs=[input_desc]
     )
- 
+
     # create AutoMLPredictor, using the feature names as inputs
     # note: the molecular structure, `input_desc`, should not be included in the inputs here
     ml_predictor = AutoMLPredictor(
         name='ML Model for Density',
         description='Predict the density, given molecular features of the solvent',
         inputs = features,
-        output = output_desc,
+        output = [output_desc],
         training_data = []
     )
- 
+
     # use a graph predictor to wrap together the featurizer and the machine learning model
     graph_predictor = GraphPredictor(
         name='Density from solvent molecular structure',
@@ -257,7 +265,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         predictors = [featurizer, ml_predictor],
         training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
     )
- 
+
     # register or update predictor by name
     predictor = create_or_update(
         collection=project.predictors,
@@ -326,7 +334,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='ML Model for Melting Temperature',
         description='Predict the melting temperature, given chemical features of the alloy',
         inputs = features,
-        output = output_desc,
+        outputs = [output_desc],
         training_data = []
     )
 
@@ -597,7 +605,7 @@ which can be retrieved using:
 .. code:: python
 
     mean_property_descriptors = project.descriptors.from_predictor_responses(
-        predictor=mean_property_predictor, 
+        predictor=mean_property_predictor,
         inputs=[formulation_descriptor]
     )
 
@@ -702,9 +710,9 @@ The following example demonstrates how to use the python SDK to create a :class:
 
    from citrine import Citrine
    from citrine.seeding.find_or_create import (find_or_create_project,
-                                               create_or_update 
+                                               create_or_update
                                               )
-   from citrine.jobs.waiting import wait_while_validating 
+   from citrine.jobs.waiting import wait_while_validating
    from citrine.informatics.predictors import SimpleMLPredictor
    from citrine.informatics.data_sources import GemTableDataSource
 
@@ -775,7 +783,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 
     # get the descriptors the ingredient fractions predictor returns given the formulation descriptor
     ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
-        predictor=ingredient_fractions, 
+        predictor=ingredient_fractions,
         inputs=[formulation_descriptor]
     )
     # ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient
@@ -797,7 +805,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 Predictor reports
 -----------------
 
-A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
+A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include predictor evaluation metrics.
 To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>`.
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import List
+from typing import List, Iterable
 
 from citrine.resources.data_concepts import DataConcepts
 
@@ -11,7 +11,7 @@ class Batcher(ABC):
     """Base class for Data Concepts batching routines."""
 
     @abstractmethod
-    def batch(self, objects: List[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
         """Collect a list of DataConcepts into batches according to some batching algorithm."""
 
     @staticmethod
@@ -28,18 +28,29 @@ class Batcher(ABC):
 class BatchByType(Batcher):
     """Batching by object type."""
 
-    def batch(self, objects: List[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
         """Collect object batches by type, following an order that will satisfy prereqs."""
         batches = list()
         by_type = defaultdict(list)
+        seen = {}
         for obj in objects:
-            by_type[obj.typ].append(obj)
+            if obj.to_link() in seen:  # Repeat in the iterable; don't add it to the batch
+                if seen[obj.to_link()] != obj:  # verify that it's a replicate
+                    raise ValueError(f"Colliding objects for {obj.to_link()}")
+            else:
+                by_type[obj.typ].append(obj)
+                for scope in obj.uids:
+                    seen[obj.to_link(scope)] = obj
         typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
         for typ_group in typ_groups:
             num_batches = len(typ_group) // batch_size
             for batch_num in range(num_batches + 1):
                 batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
                 batches.append(batch)
+        for i in reversed(range(len(batches) - 1)):
+            if len(batches[i]) + len(batches[i + 1]) <= batch_size:
+                batches[i].extend(batches[i + 1])
+                del batches[i + 1]
 
         return batches
 
@@ -47,14 +58,14 @@ class BatchByType(Batcher):
 class BatchByDependency(Batcher):
     """Batching by clusters where nothing references anything outside the cluster."""
 
-    def batch(self, objects: List[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
         """Collect object batches that are internally consistent for dry_run object tests."""
         # Collect shallow dependences, UID references, and type-based clusters
         depends = dict()
         obj_set = set(objects)
         index = make_index(objects)
         by_type = defaultdict(list)
-        for obj in objects:
+        for obj in objects:  # Don't worry about replicates since we'd have them anyway
             depends[obj] = obj.all_dependencies()
             by_type[obj.typ].append(obj)
 

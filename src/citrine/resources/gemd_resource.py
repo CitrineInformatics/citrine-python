@@ -1,5 +1,5 @@
 """Collection class for generic GEMD objects and templates."""
-from typing import Type, Union, Optional, List, Tuple
+from typing import Type, Union, Optional, List, Tuple, Iterable
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -75,10 +75,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         return self._collection_for(model).register(model, dry_run=dry_run)
 
     def register_all(self,
-                     models: List[DataConcepts],
+                     models: Iterable[DataConcepts],
                      *,
                      dry_run=False,
-                     status_bar=False) -> List[DataConcepts]:
+                     status_bar=False,
+                     include_nested=False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -94,7 +95,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Parameters
         ----------
-        models: List[DataConcepts]
+        models: Iterable[DataConcepts]
             The data model objects to register. Can be different types.
 
         dry_run: bool
@@ -105,6 +106,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Whether to display a status bar using the tqdm module to track progress in
             registration. Requires installing the optional tqdm module. Default: false
 
+        include_nested: bool
+            Whether to just register the objects passed in the list, or include nested objects
+            (e.g., obj.process, obj.spec.template, ...).  Default: false
+
         Returns
         -------
         List[DataConcepts]
@@ -112,8 +117,15 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         """
         # Endpoints are polymorphic now, so it doesn't matter which we hit
-        collection = self._collection_for(list(models)[0])
-        return collection.register_all(models, dry_run=dry_run, status_bar=status_bar)
+        if len(models) == 0:
+            return []  # Fast exit since there's nothing to process
+        collection = self._collection_for(next(m for m in models))
+        return collection.register_all(
+            models,
+            dry_run=dry_run,
+            status_bar=status_bar,
+            include_nested=include_nested
+        )
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,
