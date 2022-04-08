@@ -6,6 +6,7 @@ import requests_mock
 from botocore.exceptions import ClientError
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader, \
     FileProcessingType
+from citrine.exceptions import NotFound
 from mock import patch, Mock, call
 
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
@@ -77,7 +78,7 @@ def test_delete(collection: FileCollection, session):
     """Test that deletion calls the expected endpoint and checks the url structure."""
     # Given
     file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = collection._get_versioned_path(file_id, version_id)
+    full_url = collection._get_path(uid=file_id, version=version_id)
     file_link = collection.build(FileLinkDataFactory(url=full_url))
 
     # When
@@ -368,7 +369,7 @@ def test_file_download(mock_write_file_locally, collection: FileCollection, sess
     """
     # Given
     filename = 'diagram.pdf'
-    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/uuid3/versions/uuid4"
+    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{uuid4()}/versions/{uuid4()}"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
@@ -516,22 +517,33 @@ def test_resolve_file_link(collection: FileCollection, session):
         {
             'id': str(uuid4()),
             'version': str(uuid4()),
-            'filename': "file0.txt",
+            'filename': 'file0.txt',
+            'version_number': 1
         },
         {
             'id': str(uuid4()),
             'version': str(uuid4()),
-            'filename': "file1.txt",
+            'filename': 'file1.txt',
+            'version_number': 3
         },
         {
             'id': str(uuid4()),
             'version': str(uuid4()),
-            'filename': "file2.txt",
+            'filename': 'file2.txt',
+            'version_number': 1
         },
     ]
+    file1_versions = [raw_files[1].copy() for _ in range(3)]
+    file1_versions[0]['version'] = str(uuid4())
+    file1_versions[0]['version_number'] = 1
+    file1_versions[2]['version'] = str(uuid4())
+    file1_versions[2]['version_number'] = 2
     for raw in raw_files:
-        raw["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}"
-        raw["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}/versions/{raw['version']}"
+        raw['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}"
+        raw['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}/versions/{raw['version']}"
+    for f1 in file1_versions:
+        f1['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}"
+        f1['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}/versions/{f1['version']}"
 
     session.set_response({
         'files': raw_files
@@ -542,8 +554,16 @@ def test_resolve_file_link(collection: FileCollection, session):
     assert collection._resolve_file_link(file1) == file1, "Resolving a FileLink is a no-op"
     assert session.num_calls == 0, "No-op still hit server"
 
+    session.set_response({
+        'files': file1_versions
+    })
+
     assert collection._resolve_file_link(UUID(raw_files[1]['id'])) == file1, "UUID didn't resolve"
     assert session.num_calls == 1
+
+    session.set_response({
+        'files': raw_files
+    })
 
     assert collection._resolve_file_link(raw_files[1]['id']) == file1, "String UUID didn't resolve"
     assert session.num_calls == 2
@@ -551,50 +571,144 @@ def test_resolve_file_link(collection: FileCollection, session):
     assert collection._resolve_file_link(raw_files[1]['version']) == file1, "Version UUID didn't resolve"
     assert session.num_calls == 3
 
-    with pytest.raises(ValueError, match="no file"):
-        collection._resolve_file_link(str(uuid4()))
-    assert session.num_calls == 4
-
     abs_link = "https://wwww.website.web/web.pdf"
     assert collection._resolve_file_link(abs_link).filename == "web.pdf"
     assert collection._resolve_file_link(abs_link).url == abs_link
 
+    session.set_response(raw_files[1])
+
     assert collection._resolve_file_link(file1.url) == file1, "Relative path didn't resolve"
-    assert session.num_calls == 5
+    assert session.num_calls == 4
+
+    session.set_response({"files": raw_files})
 
     assert collection._resolve_file_link(file1.filename) == file1, "Filename didn't resolve"
-    assert session.num_calls == 6
-
-    with pytest.raises(ValueError, match="no file"):
-        collection._resolve_file_link(str(uuid4()))
-    assert session.num_calls == 7
-
-    with pytest.raises(ValueError, match="no file"):
-        collection._resolve_file_link(file1.url + '0')
-    assert session.num_calls == 8
-
-    with pytest.raises(ValueError, match="no file"):
-        collection._resolve_file_link(file1.filename + '0')
-    assert session.num_calls == 9
+    assert session.num_calls == 5
 
     with pytest.raises(TypeError):
         collection._resolve_file_link(12345)
-    assert session.num_calls == 9
+    assert session.num_calls == 5
 
 
 def test_validate_filelink_url(collection: FileCollection):
     good = [
-        "projects/uuid1/datasets/uuid2/files/uuid3/versions/uuid4",
-        "/files/uuid3/versions/uuid4",
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
+        f"/files/{uuid4()}/versions/{uuid4()}"
     ]
     bad = [
-        "/projects/uuid1/datasets/uuid2/files/uuid3/versions/uuid4/action",
-        "/projects/uuid1/datasets/uuid2/uuid3/versions/uuid4",
-        "projects/uuid1/datasets/uuid2/files/uuid3/versions/uuid4?query=param",
-        "projects/uuid1/datasets/uuid2/files/uuid3/versions/uuid4?#fragment",
+        f"/projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
+        f"/projects/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?query=param",
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?#fragment",
         "http://customer.com/data-lake/files/123/versions/456",
+        "/files/uuid4/versions/uuid4",
     ]
     for x in good:
-        assert collection._validate_filelink_url(x)
+        assert collection._validate_local_url(x)
     for x in bad:
-        assert not collection._validate_filelink_url(x)
+        assert not collection._validate_local_url(x)
+
+
+def test_get_ids_from_url(collection: FileCollection):
+    good = [
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
+        f"/files/{uuid4()}/versions/{uuid4()}",
+    ]
+    file = [
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}",
+        f"/files/{uuid4()}",
+    ]
+    bad = [
+        f"/projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
+        f"/projects/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?query=param",
+        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?#fragment",
+        "http://customer.com/data-lake/files/123/versions/456",
+        "/files/uuid4/versions/uuid4",
+    ]
+    for x in good:
+        assert collection._get_ids_from_url(x)[0] is not None
+        assert collection._get_ids_from_url(x)[1] is not None
+    for x in file:
+        assert collection._get_ids_from_url(x)[0] is not None
+        assert collection._get_ids_from_url(x)[1] is None
+    for x in bad:
+        assert collection._get_ids_from_url(x)[0] is None
+        assert collection._get_ids_from_url(x)[1] is None
+
+
+def test_get(collection: FileCollection, session):
+    raw_files = [
+        {
+            'id': str(uuid4()),
+            'version': str(uuid4()),
+            'filename': 'file0.txt',
+            'version_number': 1
+        },
+        {
+            'id': str(uuid4()),
+            'version': str(uuid4()),
+            'filename': 'file1.txt',
+            'version_number': 3
+        },
+        {
+            'id': str(uuid4()),
+            'version': str(uuid4()),
+            'filename': 'file2.txt',
+            'version_number': 1
+        },
+    ]
+    file1_versions = [raw_files[1].copy() for _ in range(3)]
+    file1_versions[0]['version'] = str(uuid4())
+    file1_versions[0]['version_number'] = 1
+    file1_versions[2]['version'] = str(uuid4())
+    file1_versions[2]['version_number'] = 2
+    for raw in raw_files:
+        raw['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}"
+        raw['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{raw['id']}/versions/{raw['version']}"
+    for f1 in file1_versions:
+        f1['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}"
+        f1['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}/versions/{f1['version']}"
+    file1 = FileLink.build(collection._as_dict_from_resource(raw_files[1]))
+
+    session.set_response(raw_files[1])
+    assert collection.get(uid=raw_files[1]['id'], version=raw_files[1]['version']) == file1
+
+    session.set_response({
+        'files': file1_versions
+    })
+    assert collection.get(uid=raw_files[1]['id'], version=raw_files[1]['version_number']) == file1
+
+    session.set_responses(
+        {'files': raw_files},
+        {'files': file1_versions}
+    )
+    assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version_number']) == file1
+
+    session.set_responses(
+        {'files': raw_files},
+        {'files': file1_versions}
+    )
+    with pytest.raises(NotFound):
+        collection.get(uid=raw_files[1]['filename'], version=4)
+
+
+def test_exceptions(collection: FileCollection, session):
+    file_link = FileLink(url="http://customer.com/data-lake/files/123/versions/456", filename="456")
+    with pytest.raises(ValueError):
+        collection._get_path_from_file_link(file_link)
+
+    with pytest.raises(TypeError):
+        collection.get(uid=12345)
+
+    with pytest.raises(TypeError):
+        collection.get(uid=uuid4(), version=set())
+
+    with pytest.raises(ValueError):
+        collection.get(uid=uuid4(), version="Words!")
+
+    session.set_response({
+        'files': []
+    })
+    with pytest.raises(NotFound):
+        collection.get(uid="name")

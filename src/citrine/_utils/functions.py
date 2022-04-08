@@ -122,7 +122,7 @@ def write_file_locally(content, local_path: str):
     directory, filename = os.path.split(local_path)
     if filename == "":
         raise ValueError("A filename must be provided in the path")
-    if not os.path.isdir(directory):
+    if directory != "" and not os.path.isdir(directory):
         os.makedirs(directory)
     with open(local_path, 'wb') as output_file:
         output_file.write(content)

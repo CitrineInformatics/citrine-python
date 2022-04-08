@@ -20,6 +20,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, format_escaped_url
+from citrine.exceptions import NotFound
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -140,7 +141,6 @@ class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
-    _individual_key = 'file'
     _collection_key = 'files'
     _resource = FileLink
 
@@ -149,30 +149,56 @@ class FileCollection(Collection[FileLink]):
         self.dataset_id = dataset_id
         self.session = session
 
-    def _get_versioned_path(self,
-                            file_id: Union[str, UUID],
-                            version_id: Union[str, UUID],
-                            *,
-                            action: str = None) -> str:
+    def _get_path(self,
+                  uid: Optional[Union[UUID, str]] = None,
+                  ignore_dataset: Optional[bool] = False,
+                  *,
+                  version: Union[str, UUID] = None,
+                  action: str = None) -> str:
         """Build the path for taking an action with a particular file version."""
-        base = urlparse(self._get_path(file_id))
+        base = urlparse(super()._get_path(uid=uid, ignore_dataset=ignore_dataset))
         new_path = base.path.split('/')
-        new_path.extend([quote(x) for x in ('versions', str(version_id))])
+        if version is not None:
+            new_path.extend([quote(x) for x in ('versions', str(version))])
         if action is not None:
             new_path.append(quote(action))
 
         return base._replace(path='/'.join(new_path)).geturl()
 
+    @staticmethod
+    def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
+        parsed = urlparse(url)
+        if len(parsed.query) > 0 or len(parsed.fragment) > 0:
+            # Illegal modifiers
+            return None, None
+        split_path = urlparse(url).path.split('/')
+        if len(split_path) >= 4 and split_path[-4] == 'files' and split_path[-2] == 'versions':
+            file_id = split_path[-3]
+            version_id = split_path[-1]
+        elif len(split_path) >= 2 and split_path[-2] == 'files':
+            file_id = split_path[-1]
+            version_id = None
+        else:
+            file_id, version_id = None, None
+
+        if file_id is not None:
+            try:
+                file_id = UUID(file_id)
+                if version_id is not None:
+                    version_id = UUID(version_id)
+            except ValueError:
+                return None, None
+        return file_id, version_id
+
     def _get_path_from_file_link(self, file_link: FileLink,
                                  *,
                                  action: str = None) -> str:
         """Build the path for taking an action with a particular file link."""
-        # Use this sessions project/dataset credentials and the URL's file / version
-        parsed = urlparse(file_link.url)
-        file_id = parsed.path.split('/')[-3]
-        version_id = parsed.path.split('/')[-1]
-        # The "/content-link" route returns a pre-signed url to download the file.
-        return self._get_versioned_path(file_id, version_id, action=action)
+        # Use this sessions project/dataset credentials and the URLs file / version
+        file_id, version_id = self._get_ids_from_url(file_link.url)
+        if file_id is None:
+            raise ValueError(f"FileLink did not contain a Citrine platform file URL.")
+        return self._get_path(uid=file_id, version=version_id, action=action)
 
     def build(self, data: dict) -> FileLink:
         """Build an instance of FileLink."""
@@ -236,15 +262,98 @@ class FileCollection(Collection[FileLink]):
         #  for some reason.  Needs to be fixed on back end.  PLA-9482
         filename = file['filename']
         # file_id = file['id']
-        file_id = file['unversioned_url'].split('/')[-1]
-        version_id = file['version']
+        # version_id = file['version']
+        file_id, version_id = self._get_ids_from_url(file['versioned_url'])
 
         file_dict = {
-            'url': self._get_versioned_path(file_id, version_id),
+            'url': self._get_path(uid=file_id, version=version_id),
             'filename': filename,
             'type': GEMDFileLink.typ
         }
         return file_dict
+
+    def get(self,
+            uid: Union[UUID, str],
+            *,
+            version: Optional[Union[UUID, str, int]] = None) -> FileLink:
+        """
+        Get an element of the collection by its id.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            A representation of the FileLink (Citrine id or file name)
+        version: Optional[UUID, str, int]
+            The version, as a UUID or str(UUID) of the version_id or an int or
+            str(int) of the version number.  If None, returns the file with the
+            highest version number (most recent).
+
+        Returns
+        -------
+        ResourceType
+            An object with specified scope and uid
+
+        """
+        if not isinstance(uid, (str, UUID)):
+            raise TypeError(f"File Link can only be resolved from str or UUID."
+                            f"Instead got {type(uid)} {uid}.")
+        if version is not None and not isinstance(version, (str, UUID, int)):
+            raise TypeError(f"Version can only be resolved from str, int or UUID."
+                            f"Instead got {type(uid)} {uid}.")
+
+        try:  # Check if the uid string is actually a UUID
+            if isinstance(uid, str):
+                uid = UUID(uid)
+        except ValueError:
+            pass
+
+        try:  # Check if the version string is actually a UUID
+            if isinstance(version, str):
+                version = UUID(version)
+        except ValueError:
+            pass
+
+        try:  # Check if the version string is actually an int / version number
+            if isinstance(version, str):
+                version = int(version)
+        except ValueError:
+            pass
+
+        if isinstance(version, str):
+            raise ValueError(
+                f"Version {version} could not be converted to either an int or a UUID"
+            )
+
+        if isinstance(uid, str):
+            # Assume it's the filename on platform; resolve to UUID
+            match = next((f for f in self.list() if uid == f.filename), None)
+            if match is None:
+                raise NotFound(f"Found no file named {uid}")
+            match_file, match_version = self._get_ids_from_url(match.url)
+            if version is None or version == match_version:
+                # Done; the list endpoint always returns the most recent version
+                return match
+
+            # Stash the now-resolved UUID to match with a version
+            uid = match_file
+
+        if isinstance(version, UUID):
+            # Can only return 0 or 1 result
+            path = self._get_path(uid=uid, version=version)
+            data = self.session.get_resource(path, version=self._api_version)
+            return self.build(self._as_dict_from_resource(data))
+
+        # version is an int / version number
+        path = self._get_path(uid=uid)
+        data = self.session.get_resource(path, version=self._api_version)['files']
+        if version is None:
+            recent = max(data, key=lambda x: x['version_number'])
+            return self.build(self._as_dict_from_resource(recent))
+        for result in data:
+            if result['version_number'] == version:
+                return self.build(self._as_dict_from_resource(result))
+
+        raise NotFound(f"Found file, but no version {version}")
 
     def upload(self, *, file_path: str, dest_name: str = None) -> FileLink:
         """
@@ -419,7 +528,7 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
 
-        url = self._get_versioned_path(file_id, version_id)
+        url = self._get_path(uid=file_id, version=version_id)
         return FileLink(filename=dest_name, url=url)
 
     def download(self, *, file_link: Union[str, UUID, FileLink], local_path: str):
@@ -444,7 +553,7 @@ class FileCollection(Collection[FileLink]):
 
         if self._is_external_url(file_link.url):  # Pull it from where ever it lives
             final_url = file_link.url
-        elif self._validate_filelink_url(file_link.url):
+        elif self._validate_local_url(file_link.url):
             # The "/content-link" route returns a pre-signed url to download the file.
             content_link = self._get_path_from_file_link(file_link, action='content-link')
             content_link_response = self.session.get_resource(content_link)
@@ -466,12 +575,28 @@ class FileCollection(Collection[FileLink]):
         """
         Start a File Processing async job, returning a pollable job response.
 
-        :param file_link: The file to process.
-        :param processing_type:  The type of file processing to invoke.
-        :return: A JobSubmissionResponse which can be used to poll for the result.
+        Parameters
+        ----------
+        file_link: FileLink, str, or UUID
+            The file to process.
+        processing_type: FileProcessingType
+            The type of file processing to invoke.
+        wait_for_response: bool
+            Whether to wait for a result, vs. just return a job handle.  Default: True
+        timeout: float
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.  Default: 120 seconds.
+        polling_delay: float
+            How long to delay between each polling retry attempt.  Default: 1 second.
+
+        Returns
+        -------
+        JobSubmissionResponse
+            A JobSubmissionResponse which can be used to poll for the result.
+
         """
         file_link = self._resolve_file_link(file_link)
-        if not self._validate_filelink_url(file_link.url):
+        if not self._validate_local_url(file_link.url):
             raise ValueError(f"Only on-platform resources can be processed. "
                              f"Passed URL {file_link.url}.")
 
@@ -503,6 +628,10 @@ class FileCollection(Collection[FileLink]):
 
         Parameters
         ----------
+        file_link: FileLink
+            The file to process.
+        processing_type: FileProcessingType
+            The processing algorithm to apply.
         job_id: UUID
            The background job ID to poll for.
         timeout:
@@ -577,29 +706,16 @@ class FileCollection(Collection[FileLink]):
         """
         if self._is_external_url(file_link.url):
             raise ValueError(f"Only local resources can be deleted; passed URL {file_link.url}")
-        if not self._validate_filelink_url(file_link.url):
+        file_id = self._get_ids_from_url(file_link.url)[0]
+        if file_id is None:
             raise ValueError(f"URL was malformed for local resources; passed URL {file_link.url}")
-        split_url = file_link.url.split('/')
-        file_id = split_url[-3]
         data = self.session.delete_resource(self._get_path(file_id))
         return Response(body=data)
 
-    def _resolve_file_link(self, identifier: Union[str, UUID]) -> FileLink:
+    def _resolve_file_link(self, identifier: Union[str, UUID, FileLink]) -> FileLink:
         """Generate the FileLink object referenced by the passed argument."""
-        if isinstance(identifier, FileLink):
+        if isinstance(identifier, FileLink):  # Passthrough for convenience
             return identifier
-        try:  # Check if the string is actually a UUID
-            if isinstance(identifier, str):
-                identifier = UUID(identifier)
-        except ValueError:
-            pass
-        if isinstance(identifier, UUID):
-            # Assume it's the file UUID on platform
-            hit = next((f for f in self.list() if str(identifier) in f.url), None)
-            if hit is None:
-                raise ValueError(f"Found no file associated with UUID {identifier}")
-            else:
-                return hit
         elif isinstance(identifier, str) and self._is_external_url(identifier):
             # Assume it's an absolute URL
             filename = urlparse(identifier).path.split('/')[-1]
@@ -609,20 +725,14 @@ class FileCollection(Collection[FileLink]):
                 'type': GEMDFileLink.typ
             }
             return FileLink.build(file_dict)
-        elif isinstance(identifier, str) and self._validate_filelink_url(identifier):
-            # It's an on-platform URL
-            hit = next((f for f in self.list() if identifier == f.url), None)
-            if hit is None:
-                raise ValueError(f"Found no file with URL {identifier}")
-            else:
-                return hit
-        elif isinstance(identifier, str):
-            # Assume it's the filename on platform
-            hit = next((f for f in self.list() if identifier == f.filename), None)
-            if hit is None:
-                raise ValueError(f"Found no file named {identifier}")
-            else:
-                return hit
+        elif isinstance(identifier, str):  # It's either a filename or URL
+            file_id, version_id = self._get_ids_from_url(identifier)
+            if file_id is None:  # Try it as a name or a stand-alone UID
+                return self.get(identifier)
+            else:  # We got a file UID (and possibly a version UID) from a URL
+                return self.get(uid=file_id, version=version_id)
+        elif isinstance(identifier, UUID):  # File UID
+            return self.get(uid=identifier)
         else:
             raise TypeError(f"File Link can only be resolved from str, or UUID."
                             f"Instead got {type(identifier)} {identifier}.")
@@ -636,16 +746,9 @@ class FileCollection(Collection[FileLink]):
 
         return urlparse(self._get_path()).netloc != parsed.netloc
 
-    @staticmethod
-    def _validate_filelink_url(url):
+    def _validate_local_url(self, url):
         """Verify link is well formed."""
-        parsed = urlparse(url)
-        if len(parsed.scheme) > 0 or len(parsed.netloc) > 0:
-            # Absolute
-            return False
-        if len(parsed.query) > 0 or len(parsed.fragment) > 0:
-            # Illegal modifiers
+        if self._is_external_url(url):
             return False
 
-        split_path = parsed.path.split('/')
-        return len(split_path) >= 4 and split_path[-4] == 'files' and split_path[-2] == 'versions'
+        return self._get_ids_from_url(url)[1] is not None  # Implies file_id is None, too
