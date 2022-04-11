@@ -6,7 +6,7 @@ from gemd.demo.cake import make_cake
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object import *
 from gemd.entity.template import *
-from gemd.util import flatten, writable_sort_order
+from gemd.util import flatten
 
 
 def test_by_type():
@@ -15,24 +15,13 @@ def test_by_type():
     cake = make_cake()
     first = batcher.batch(flatten(cake), batch_size=10)
     assert all(len(batch) <= 10 for batch in first), "A batch was too long"
-    for i in range(len(first) - 1):
-        assert max(writable_sort_order(x) for x in first[i]) \
-               <= min(writable_sort_order(x) for x in first[i+1]), "Load order violated"
+    for batch in first:
+        assert len({type(x) for x in batch}) <= 1, "A batch had mixed types"
     assert len(flatten(cake)) == len({y for x in first for y in x}), "Object missing"
     assert len(flatten(cake)) == len([y for x in first for y in x]), "Object repeated"
 
     second = batcher.batch(flatten(cake), batch_size=20)
     assert any(len(batch) > 10 for batch in second)  # batch_size matters
-
-    third = batcher.batch(flatten(cake) + flatten(cake), batch_size=10)
-    assert third == first, "Replicates changed the batching"
-
-    with pytest.raises(ValueError):
-        bad = [
-            ProcessSpec(name="One", uids={"bad": "id"}),
-            ProcessSpec(name="Two", uids={"bad": "id"})
-        ]
-        batcher.batch(bad, batch_size=10)
 
 
 def test_by_dependency():
