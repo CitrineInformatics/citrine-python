@@ -29,7 +29,7 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
         [DEPRECATED] Please use ``outputs`` instead
         A single Descriptor that represents the output of the model
     outputs: list[Descriptor]
-        Descriptors that represents the output(s) of the model. 
+        Descriptors that represents the output(s) of the model.
         Currently, only one output Descriptor is supported.
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
