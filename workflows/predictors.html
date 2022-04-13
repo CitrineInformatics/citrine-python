@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 1.26.0 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.28.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.26.0
+                1.28.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -53,7 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.4. Predictors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#auto-ml-predictor-alpha">4.4.1. Auto ML predictor (ALPHA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auto-ml-predictor">4.4.1. Auto ML predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#graph-predictor">4.4.2. Graph predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">4.4.3. Expression predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#molecular-structure-featurizer">4.4.4. Molecular Structure Featurizer</a></li>
@@ -113,27 +113,19 @@
 All predictors take one or more <a class="reference internal" href="descriptors.html"><span class="doc">descriptors</span></a> as inputs and produce one or more output descriptors.
 Types of predictors include machine learning models, featurizers, and analytic expressions.</p>
 <p>A predictor must be registered to a project to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.</p>
-<section id="auto-ml-predictor-alpha">
-<h2><span class="section-number">4.4.1. </span>Auto ML predictor (ALPHA)<a class="headerlink" href="#auto-ml-predictor-alpha" title="Permalink to this headline"></a></h2>
+<section id="auto-ml-predictor">
+<h2><span class="section-number">4.4.1. </span>Auto ML predictor<a class="headerlink" href="#auto-ml-predictor" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 AutoMLPredictors allow you to use your domain knowledge to construct custom <a class="reference external" href="#graph-predictor">GraphPredictors</a> with fine grain control over the resulting graph.
 Each AutoMLPredictor is defined by a set of inputs and outputs.
 Inputs are used as input features to the machine learning model.
 The outputs are the properties that you would like the model to predict.
-There must be at least one input and at least one output.
+Currently, only one output per AutoML predictor is supported, and there must be at least one input.
 Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPredictor</a>, only one model is trained from inputs to the outputs.</p>
 <p>AutoMLPredictors support both regression and classification.
 For each <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a> output, regression is performed.
 For each <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> output, classification is performed.
 Both binary and multi-class classification are supported automatically based on the number of categories in the data.</p>
-<p>Assuming they have the same inputs, it is generally preferable to combine multiple related outputs into a single Auto ML Predictor.
-This has several benefits when compared to creating one Auto ML Predictor for each output.</p>
-<ul class="simple">
-<li><p>Higher model accuracy (especially if the data are sparse)</p></li>
-<li><p>Faster training and prediction</p></li>
-<li><p>More accurate uncertainty estimates that understand the correlations between outputs</p></li>
-<li><p>More accurate scoring and candidate suggestions when running a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a></p></li>
-</ul>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
 There are two important helper methods in this regard.

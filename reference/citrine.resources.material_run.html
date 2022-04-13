@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.material_run module &mdash; Citrine Python 1.26.0 documentation</title>
+  <title>citrine.resources.material_run module &mdash; Citrine Python 1.28.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.26.0
+                1.28.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -810,7 +810,7 @@ Dry run is intended to be used for validation. Default: false</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.material_run.MaterialRunCollection.register_all">
-<span class="sig-name descname"><span class="pre">register_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.register_all" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">register_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_bar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_nested</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.register_all" title="Permalink to this definition"></a></dt>
 <dd><p>Register multiple GEMD objects to each of their appropriate collections.</p>
 <p>Does so in an order that is guaranteed to store all linked items before the item that
 references them.</p>
@@ -826,11 +826,13 @@ improvements to write speed over separate calls to <cite>register</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>models</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a><em>]</em>) – The data model objects to register. Can be different types.</p></li>
+<li><p><strong>models</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a><em>]</em>) – The data model objects to register. Can be different types.</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the objects or run a dry run of the register operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 <li><p><strong>status_bar</strong> (<em>bool</em>) – Whether to display a status bar using the tqdm module to track progress in
 registration. Requires installing the optional tqdm module. Default: false</p></li>
+<li><p><strong>include_nested</strong> (<em>bool</em>) – Whether to just register the objects passed in the list, or include nested objects
+(e.g., obj.process, obj.spec.template, …).  Default: false</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

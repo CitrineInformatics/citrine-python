@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.2. Descriptors &mdash; Citrine Python 1.26.0 documentation</title>
+  <title>4.2. Descriptors &mdash; Citrine Python 1.28.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.26.0
+                1.28.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -51,10 +51,11 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. Descriptors</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#real-descriptor">4.2.1. Real Descriptor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#categorical-descriptor">4.2.2. Categorical Descriptor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#chemical-formula-descriptor">4.2.3. Chemical Formula Descriptor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#molecular-structure-descriptor">4.2.4. Molecular Structure Descriptor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#formulation-descriptor">4.2.5. Formulation Descriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integer-descriptor">4.2.2. Integer Descriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#categorical-descriptor">4.2.3. Categorical Descriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chemical-formula-descriptor">4.2.4. Chemical Formula Descriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#molecular-structure-descriptor">4.2.5. Molecular Structure Descriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#formulation-descriptor">4.2.6. Formulation Descriptor</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#platform-vocabularies">4.3. Platform Vocabularies</a></li>
@@ -106,6 +107,7 @@ If you are familiar with the GEMD data model, descriptors are roughly equivalent
 <p>The AI Engine currently supports 5 kinds of descriptors:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#real-descriptor">Real Descriptors</a></p></li>
+<li><p><a class="reference external" href="#integer-descriptor">Integer Descriptor</a></p></li>
 <li><p><a class="reference external" href="#categorical-descriptor">Categorical Descriptor</a></p></li>
 <li><p><a class="reference external" href="#chemical-formula-descriptor">Chemical Formula Descriptor</a></p></li>
 <li><p><a class="reference external" href="#molecular-structure-descriptor">Molecular Structure Descriptor</a></p></li>
@@ -121,20 +123,28 @@ It is better to err on the side of broader bounds than narrower ones.</p>
 Any <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html">GEMD-compatible</a> unit string may be used.
 If a variable is dimensionless, you can use an empty string.</p>
 </section>
+<section id="integer-descriptor">
+<h2><span class="section-number">4.2.2. </span>Integer Descriptor<a class="headerlink" href="#integer-descriptor" title="Permalink to this headline"></a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor" title="citrine.informatics.descriptors.IntegerDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerDescriptor</span></code></a> is used to represent discrete, dimensionless variables.
+Each Integer Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
+If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
+It is better to err on the side of broader bounds than narrower ones.</p>
+<p>Integer Descriptors use dimensionless units, other units are not supported.</p>
+</section>
 <section id="categorical-descriptor">
-<h2><span class="section-number">4.2.2. </span>Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.2.3. </span>Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline"></a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> is used to represent variables that can take one of
 a set of values, i.e., categories.
 All of the possible categories must be known ahead of time and specified in the Categorical Descriptor.</p>
 </section>
 <section id="chemical-formula-descriptor">
-<h2><span class="section-number">4.2.3. </span>Chemical Formula Descriptor<a class="headerlink" href="#chemical-formula-descriptor" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.2.4. </span>Chemical Formula Descriptor<a class="headerlink" href="#chemical-formula-descriptor" title="Permalink to this headline"></a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="citrine.informatics.descriptors.ChemicalFormulaDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaDescriptor</span></code></a> is used to represent variables that should be
 interpreted as chemical formulas.
 The Chemical Formula Descriptor has no parameters other than a name.</p>
 </section>
 <section id="molecular-structure-descriptor">
-<h2><span class="section-number">4.2.4. </span>Molecular Structure Descriptor<a class="headerlink" href="#molecular-structure-descriptor" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.2.5. </span>Molecular Structure Descriptor<a class="headerlink" href="#molecular-structure-descriptor" title="Permalink to this headline"></a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureDescriptor</span></code></a> is used to represent variables that should be
 interpreted as molecular structures.
 Both <a class="reference external" href="https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system">SMILES</a>
@@ -142,7 +152,7 @@ and <a class="reference external" href="https://en.wikipedia.org/wiki/Internatio
 The Molecular Structure Descriptor has no parameters other than a name.</p>
 </section>
 <section id="formulation-descriptor">
-<h2><span class="section-number">4.2.5. </span>Formulation Descriptor<a class="headerlink" href="#formulation-descriptor" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.2.6. </span>Formulation Descriptor<a class="headerlink" href="#formulation-descriptor" title="Permalink to this headline"></a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> is used to represent variables that contain information
 about mixtures of other materials.
 The Formulation Descriptor has no parameters other than a name.</p>

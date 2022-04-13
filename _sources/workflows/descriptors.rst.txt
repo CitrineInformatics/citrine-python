@@ -8,6 +8,7 @@ If you are familiar with the GEMD data model, descriptors are roughly equivalent
 The AI Engine currently supports 5 kinds of descriptors:
 
 -  `Real Descriptors <#real-descriptor>`__
+-  `Integer Descriptor <#integer-descriptor>`__
 -  `Categorical Descriptor <#categorical-descriptor>`__
 -  `Chemical Formula Descriptor <#chemical-formula-descriptor>`__
 -  `Molecular Structure Descriptor <#molecular-structure-descriptor>`__
@@ -24,6 +25,16 @@ It is better to err on the side of broader bounds than narrower ones.
 Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
 Any `GEMD-compatible <https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html>`__ unit string may be used.
 If a variable is dimensionless, you can use an empty string.
+
+Integer Descriptor
+------------------
+
+:class:`~citrine.informatics.descriptors.IntegerDescriptor` is used to represent discrete, dimensionless variables.
+Each Integer Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
+If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
+It is better to err on the side of broader bounds than narrower ones.
+
+Integer Descriptors use dimensionless units, other units are not supported.
 
 Categorical Descriptor
 ----------------------
