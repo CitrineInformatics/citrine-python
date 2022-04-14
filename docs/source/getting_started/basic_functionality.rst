@@ -42,7 +42,7 @@ The database may decorate the object with additional information, such as a uniq
 Controlling Flow
 ----------------
 
-It is often useful to know when a resource has completed validating, especially when subsequent lines of code relies on the resource. The ``wait_while_validating`` function will pause execution of the script until the resource has successfully validated.
+It is often useful to know when a resource has completed validating, especially when subsequent lines of code involve the validated resource. The ``wait_while_validating`` function will pause execution of the script until the resource has successfully validated.
 
 .. code-block:: python
     
