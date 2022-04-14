@@ -186,13 +186,14 @@ def build_simple_ml(
     GraphPredictor
         GraphPredictor connecting all inputs to all latent variables and all inputs and latent
         variables to all outputs.
+
     """
     ml_model_feature_descriptors = [d for d in inputs
                                     if isinstance(d, (RealDescriptor, CategoricalDescriptor))]
     chemical_formula_descriptors = [d for d in inputs
-                                    if isinstance(d, (ChemicalFormulaDescriptor))]
+                                    if isinstance(d, ChemicalFormulaDescriptor)]
     molecular_structure_descriptors = [d for d in inputs
-                                       if isinstance(d, (MolecularStructureDescriptor))]
+                                       if isinstance(d, MolecularStructureDescriptor)]
 
     chemical_formula_featurizers = [
         ChemicalFormulaFeaturizer(
@@ -243,12 +244,10 @@ def build_simple_ml(
     predictor = GraphPredictor(
         name=name,
         description=description,
-        predictors=[
-            * chemical_formula_featurizers,
-            * molecular_structure_featurizers,
-            * automl_lv_predictors,
-            * automl_output_predictors,
-        ],
+        predictors=(chemical_formula_featurizers
+                    + molecular_structure_featurizers
+                    + automl_lv_predictors
+                    + automl_output_predictors),
         training_data=training_data
     )
 
