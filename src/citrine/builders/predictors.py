@@ -244,10 +244,12 @@ def build_simple_ml(
     predictor = GraphPredictor(
         name=name,
         description=description,
-        predictors=(chemical_formula_featurizers
-                    + molecular_structure_featurizers
-                    + automl_lv_predictors
-                    + automl_output_predictors),
+        predictors=[
+            * chemical_formula_featurizers,
+            * molecular_structure_featurizers,
+            * automl_lv_predictors,
+            * automl_output_predictors
+        ],
         training_data=training_data
     )
 
