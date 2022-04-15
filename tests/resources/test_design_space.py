@@ -2,13 +2,14 @@ from copy import deepcopy
 import uuid
 from random import random
 
+import mock
 import pytest
 
+from citrine.exceptions import NotFound
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
-from tests.utils.session import FakeSession
-
+from tests.utils.session import FakeCall, FakeSession
 
 @pytest.fixture
 def valid_product_design_space(valid_product_design_space_data) -> ProductDesignSpace:
@@ -121,3 +122,71 @@ def test_create_default(valid_product_design_space_data,
     )
     default_design_space = collection.create_default(predictor_id=uuid.uuid4())
     assert default_design_space.dump() == valid_product_design_space.dump()
+
+def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+    # Given
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
+    session.set_response(
+        {
+            'entries': [valid_formulation_design_space_data, valid_enumerated_design_space_data],
+            'next': ''
+        }
+    )
+
+    # When
+    design_spaces = list(collection.list(per_page=20))
+
+    # Then
+    expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
+            params={'per_page': 20, 'module_type': "DESIGN_SPACE"})
+    assert 1 == session.num_calls, session.calls
+    assert expected_call == session.calls[0]
+    assert len(design_spaces) == 2
+
+
+def test_experimental_deprecated(valid_formulation_design_space_data):
+    # Given
+    session = FakeSession()
+    response = deepcopy(valid_formulation_design_space_data)
+    response["experimental"] = True
+    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+    
+    session.set_response(response)
+
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    design_space = DesignSpace.build(valid_formulation_design_space_data)
+
+    # When
+    registered = dsc.register(design_space)
+    
+    # Then
+    with pytest.deprecated_call():
+        assert registered.experimental is False
+    with pytest.deprecated_call():
+        assert registered.experimental_reasons == []
+
+
+def test_archive_and_restore(valid_formulation_design_space_data):
+    session = mock.Mock()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    session.get_resource.return_value = valid_formulation_design_space_data
+
+    def _mock_put_resource(url, data, version):
+        """Assume that update returns the serialized design space data."""
+        return data
+    session.put_resource.side_effect = _mock_put_resource
+    archived_design_space = dsc.archive(uuid.uuid4())
+    assert archived_design_space.archived
+
+    valid_formulation_design_space_data["archived"] = True
+    session.get_resource.return_value = valid_formulation_design_space_data
+    restored_design_space = dsc.restore(uuid.uuid4())
+    assert not restored_design_space.archived
+
+    session.get_resource.side_effect = NotFound("")
+    with pytest.raises(RuntimeError):
+        dsc.archive(uuid.uuid4())
+
+    with pytest.raises(RuntimeError):
+        dsc.restore(uuid.uuid4())

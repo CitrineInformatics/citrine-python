@@ -4,6 +4,31 @@ from copy import deepcopy
 import pytest
 
 
+def build_predictor_entity(instance, status="READY", status_info=[]):
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
+    return dict(
+        id=str(uuid.uuid4()),
+        data=dict(
+            name=instance.get("name"),
+            description=instance.get("description"),
+            instance=instance
+        ),
+        metadata=dict(
+            status=status,
+            status_info=status_info,
+            creation=dict(
+                user=user,
+                time=time
+            ),
+            last_update=dict(
+                user=user,
+                time=time
+            )
+        )
+    )
+    
+
 @pytest.fixture
 def valid_product_design_space_data():
     """Produce valid product design space data."""
@@ -176,14 +201,8 @@ def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='ML predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='Simple',
             name='ML predictor',
             description='Predicts z from input x and latent variable y',
@@ -201,14 +220,8 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='AutoML predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='AutoML',
             name='AutoML predictor',
             description='Predicts z from input x',
@@ -224,14 +237,8 @@ def valid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Graph predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='Graph',
             name='Graph predictor',
             description='description',
@@ -261,14 +268,8 @@ def valid_deprecated_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Expression predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='Expression',
             name='Expression predictor',
             description='Computes shear modulus from Youngs modulus and Poissons ratio',
@@ -289,14 +290,8 @@ def valid_expression_predictor_data():
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
     youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
     poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Expression predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='AnalyticExpression',
             name='Expression predictor',
             description='Computes shear modulus from Youngs modulus and Poissons ratio',
@@ -378,14 +373,8 @@ def valid_predictor_report_data():
 def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Ingredients to formulation predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='IngredientsToSimpleMixture',
             name='Ingredients to formulation predictor',
             description='Constructs mixtures from ingredients',
@@ -408,14 +397,8 @@ def valid_generalized_mean_property_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
     formulation_descriptor = FormulationDescriptor('simple mixture')
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Mean property predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='GeneralizedMeanProperty',
             name='Mean property predictor',
             description='Computes mean ingredient properties',
@@ -437,14 +420,8 @@ def valid_mean_property_predictor_data():
     from citrine.informatics.data_sources import GemTableDataSource
     formulation_descriptor = FormulationDescriptor('simple mixture')
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Mean property predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='MeanProperty',
             name='Mean property predictor',
             description='Computes mean ingredient properties',
@@ -463,14 +440,8 @@ def valid_mean_property_predictor_data():
 def valid_label_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Label fractions predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='LabelFractions',
             name='Label fractions predictor',
             description='Computes relative proportions of labeled ingredients',
@@ -484,14 +455,8 @@ def valid_label_fractions_predictor_data():
 def valid_ingredient_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Ingredient fractions predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='IngredientFractions',
             name='Ingredient fractions predictor',
             description='Computes ingredient fractions',
@@ -521,20 +486,16 @@ def invalid_predictor_data():
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    return dict(
-        module_type='PREDICTOR',
-        status='INVALID',
-        status_info=['Something is wrong', 'Very wrong'],
-        archived=True,
-        display_name='my predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        instance=dict(
             type='invalid',
             name='my predictor',
             description='does some things',
             inputs=[x.dump(), y.dump()],
             output=z.dump()
-        )
+        ),
+        status='INVALID',
+        status_info=['Something is wrong', 'Very wrong'],
     )
 
 
@@ -564,14 +525,8 @@ def valid_simple_mixture_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     input_formulation = FormulationDescriptor('input formulation')
     output_formulation = FormulationDescriptor('output formulation')
-    return dict(
-        module_type='PREDICTOR',
-        status='READY',
-        status_info=[],
-        archived=False,
-        display_name='Simple mixture predictor',
-        id=str(uuid.uuid4()),
-        config=dict(
+    return build_predictor_entity(
+        dict(
             type='SimpleMixture',
             name='Simple mixture predictor',
             description='simple mixture description',

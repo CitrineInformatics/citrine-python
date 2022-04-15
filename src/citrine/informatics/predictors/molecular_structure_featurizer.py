@@ -3,17 +3,17 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.predictor_resource import PredictorResource
 from citrine._serialization import properties as _properties
 from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
+from citrine._rest.predictor_metadata import PredictorMetadata
 
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Predictor, AIResourceMetadata):
+class MolecularStructureFeaturizer(PredictorResource['MolecularStructureFeaturizer'], Predictor, PredictorMetadata):
     """
     A featurizer for molecular structures, powered by CDK.
 
@@ -80,14 +80,11 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
+    input_descriptor = _properties.Object(Descriptor, 'data.instance.descriptor')
+    features = _properties.List(_properties.String, 'data.instance.features')
+    excludes = _properties.List(_properties.String, 'data.instance.excludes')
 
-    input_descriptor = _properties.Object(Descriptor, 'config.descriptor')
-    features = _properties.List(_properties.String, 'config.features')
-    excludes = _properties.List(_properties.String, 'config.excludes')
-
-    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='MoleculeFeaturizer', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -105,10 +102,6 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
         self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<MolecularStructureFeaturizer {!r}>'.format(self.name)

@@ -1,16 +1,17 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.predictor_resource import PredictorResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
+from citrine._rest.predictor_metadata import PredictorMetadata
 
 __all__ = ['SimpleMixturePredictor']
 
 
-class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIResourceMetadata):
+class SimpleMixturePredictor(
+        PredictorResource['SimpleMixturePredictor'], Predictor, PredictorMetadata):
     """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters
@@ -33,16 +34,13 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
+    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
+    output_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.output')
     training_data = _properties.List(_properties.Object(DataSource),
-                                     'config.training_data', default=[])
+                                     'data.instance.training_data', default=[])
 
-    typ = _properties.String('config.type', default='SimpleMixture',
+    typ = _properties.String('data.instance.type', default='SimpleMixture',
                              deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,
@@ -56,10 +54,6 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
         self.training_data: List[DataSource] = training_data or []
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)

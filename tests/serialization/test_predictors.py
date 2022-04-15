@@ -49,9 +49,8 @@ def test_graph_serialization(valid_graph_predictor_data):
     graph_data_copy = deepcopy(valid_graph_predictor_data)
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     serialized = predictor.dump()
-    serialized['id'] = graph_data_copy['id']
-    assert serialized['config']['predictors'] == graph_data_copy['config']['predictors']
-    assert serialized == valid_serialization_output(graph_data_copy)
+    assert serialized['instance']['predictors'] == graph_data_copy['data']['instance']['predictors']
+    assert serialized == valid_serialization_output(graph_data_copy['data'])
 
 
 def test_expression_serialization(valid_expression_predictor_data):

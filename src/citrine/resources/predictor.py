@@ -1,6 +1,7 @@
 """Resources that represent collections of predictors."""
+from functools import partial
 from uuid import UUID
-from typing import TypeVar, Optional, Union
+from typing import Iterable, TypeVar, Optional, Union
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -9,7 +10,7 @@ from citrine._utils.functions import migrate_deprecated_argument, format_escaped
 from citrine.exceptions import Conflict
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.predictors import Predictor, GraphPredictor
+from citrine.informatics.predictors import Predictor
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -37,14 +38,19 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
     """
 
-    _path_template = '/projects/{project_id}/modules'
+    _api_version = 'v3'
+    _path_template = '/projects/{project_id}/predictors'
     _individual_key = None
     _resource = Predictor
-    _module_type = 'PREDICTOR'
+    _collection_key = 'response'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
+
+    def _predictors_path(self, subpath: str, uid: Union[UUID, str] = None):
+        path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
+        return format_escaped_url(path_template, project_id=self.project_id)
 
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
@@ -52,6 +58,62 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
+
+    def update(self, predictor: Predictor) -> Predictor:
+        """Update a Predictor."""
+        super().update(predictor)
+
+        # The /api/v3/predictors endpoint switched (un)archive from a field on the update payload
+        # to their own endpoints. To maintain backwards compatibilty, all predictors have an
+        # _archived field set by the archived property. It will be archived if True, and restored
+        # if False. It defaults to None, which does nothing. The value is reset afterwards.
+        if predictor._archived is True:
+            self.archive(predictor.uid)
+        elif predictor._archived is False:
+            self.restore(predictor.uid)
+        predictor._archived = None
+
+        # We never exposed saving a model without training, so we should
+        # continue to do it automatically.
+        return self._train(predictor.uid)
+
+    def _train(self, uid: Union[UUID, str]):
+        path = self._predictors_path("train", uid)
+        entity = self.session.put_resource(path, {}, version=self._api_version)
+        return self.build(entity)
+
+    def archive(self, uid: Union[UUID, str]):
+        """Archive a predictor.
+
+        uid: Union[UUID, str]
+            Unique identifier of the predictor to archive.
+
+        """
+        path = self._predictors_path("archive", uid)
+        entity = self.session.put_resource(path, {}, version=self._api_version)
+        return self.build(entity)
+
+    def restore(self, uid: Union[UUID, str]):
+        """Restore an archived predictor.
+
+        uid: Union[UUID, str]
+            Unique identifier of the predictor to restore.
+
+        """
+        path = self._predictors_path("restore", uid)
+        entity = self.session.put_resource(path, {}, version=self._api_version)
+        return self.build(entity)
+
+    def list_archived(self,
+                      *,
+                      page: Optional[int] = None,
+                      per_page: int = 20) -> Iterable[Predictor]:
+        """List archived Predictors."""
+        fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
 
     def check_for_update(self, uid: Union[UUID, str] = None,
                          predictor_id: Union[UUID, str] = None) -> Optional[Predictor]:
@@ -78,14 +140,10 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
         """
         uid = migrate_deprecated_argument(uid, "uid", predictor_id, "predictor_id")
-        path = format_escaped_url("/projects/{}/predictors/{}/check-for-update",
-                                  self.project_id,
-                                  uid
-                                  )
-        data = self.session.get_resource(path)
-        if data["updatable"]:
-            enveloped = GraphPredictor.stuff_predictor_into_envelope(data["update"])
-            built: Predictor = Predictor.build(enveloped)
+        path = self._predictors_path("update-check", uid)
+        update_data = self.session.get_resource(path, version=self._api_version)
+        if update_data["updatable"]:
+            built = Predictor.build(update_data)
             built.uid = uid
             return built
         else:
@@ -136,13 +194,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             pattern = AutoConfigureMode.get_enum(pattern)
         pattern = pattern.value
 
-        path = f'projects/{self.project_id}/predictors/default-predictor'
+        path = self._predictors_path("default")
         body = {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
-        data = self.session.post_resource(path, json=body)
-        if 'instance' in data:
-            data['config'] = data.pop('instance')
-        return self.build(data)
+        data = self.session.post_resource(path, json=body, version=self._api_version)
+        return self.build(Predictor.wrap_instance(data["instance"]))
 
     def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False):
         """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
@@ -179,10 +235,10 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 wait_while_validating(collection=project.predictors, module=predictor)
                 converted = project.predictors.convert_and_update(pred.uid)
         """
-        path = format_escaped_url("/projects/{}/predictors/{}/convert", self.project_id, uid)
+        path = self._predictors_path("convert", uid)
         try:
-            data = self.session.get_resource(path)
-            return self.build(data)
+            entity = self.session.get_resource(path, version=self._api_version)
+            return self.build(entity)
         except Conflict as exc:
             if retrain_if_needed:
                 self.update(self.get(uid))

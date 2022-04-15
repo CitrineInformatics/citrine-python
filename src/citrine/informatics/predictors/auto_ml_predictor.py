@@ -1,17 +1,17 @@
 import warnings
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.predictor_resource import PredictorResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
+from citrine._rest.predictor_metadata import PredictorMetadata
 
 __all__ = ['AutoMLPredictor']
 
 
-class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata):
+class AutoMLPredictor(PredictorResource['AutoMLPredictor'], Predictor, PredictorMetadata):
     """A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output(s).
@@ -41,15 +41,12 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
+    inputs = _properties.List(_properties.Object(Descriptor), 'data.instance.inputs')
+    outputs = _properties.List(_properties.Object(Descriptor), 'data.instance.outputs')
     training_data = _properties.List(_properties.Object(DataSource),
-                                     'config.training_data', default=[])
+                                     'data.instance.training_data', default=[])
 
-    typ = _properties.String('config.type', default='AutoML', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='AutoML', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -77,10 +74,6 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
             self.outputs = outputs
         elif output is not None:
             self.outputs = [output]
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     @property
     def output(self) -> Optional[Descriptor]:

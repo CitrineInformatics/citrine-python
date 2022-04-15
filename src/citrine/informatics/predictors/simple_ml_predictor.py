@@ -1,16 +1,16 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.predictor_resource import PredictorResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
+from citrine._rest.predictor_metadata import PredictorMetadata
 
 __all__ = ['SimpleMLPredictor']
 
 
-class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetadata):
+class SimpleMLPredictor(PredictorResource['SimplePredictor'], Predictor, PredictorMetadata):
     """A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
@@ -39,16 +39,14 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
-    latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
+    inputs = _properties.List(_properties.Object(Descriptor), 'data.instance.inputs')
+    outputs = _properties.List(_properties.Object(Descriptor), 'data.instance.outputs')
+    latent_variables = _properties.List(_properties.Object(Descriptor),
+                                        'data.instance.latent_variables')
     training_data = _properties.List(_properties.Object(DataSource),
-                                     'config.training_data', default=[])
+                                     'data.instance.training_data', default=[])
 
-    typ = _properties.String('config.type', default='Simple', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='Simple', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -64,10 +62,6 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: List[DataSource] = training_data or []
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)
