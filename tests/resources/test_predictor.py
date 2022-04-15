@@ -8,11 +8,12 @@ from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedExc
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
-    GraphPredictor,
-    SimpleMLPredictor,
-    ExpressionPredictor,
     AutoMLPredictor,
-    LabelFractionsPredictor
+    ExpressionPredictor,
+    LabelFractionsPredictor,
+    GraphPredictor,
+    Predictor,
+    SimpleMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
 from tests.utils.session import (
@@ -50,26 +51,108 @@ def test_delete():
 def test_archive_and_restore(valid_label_fractions_predictor_data):
     session = mock.Mock()
     pc = PredictorCollection(uuid.uuid4(), session)
-    session.get_resource.return_value = valid_label_fractions_predictor_data
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    entity["metadata"]["archived"] = entity["metadata"]["created"]
+    session.put_resource.return_value = entity
 
-    def _mock_put_resource(url, data, version):
-        """Assume that update returns the serialized predictor data."""
-        return data
-    session.put_resource.side_effect = _mock_put_resource
     archived_predictor = pc.archive(uuid.uuid4())
-    assert archived_predictor.archived
+    assert archived_predictor.is_archived
 
-    valid_label_fractions_predictor_data["archived"] = True
-    session.get_resource.return_value = valid_label_fractions_predictor_data
+    del entity["metadata"]["archived"]
+    session.put_resource.return_value = entity
     restored_predictor = pc.restore(uuid.uuid4())
-    assert not restored_predictor.archived
+    assert not restored_predictor.is_archived
 
-    session.get_resource.side_effect = NotFound("")
-    with pytest.raises(RuntimeError):
-        pc.archive(uuid.uuid4())
+def test_archive(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    base_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    pred_id = valid_label_fractions_predictor_data["id"]
 
-    with pytest.raises(RuntimeError):
-        pc.restore(uuid.uuid4())
+    session.set_response(valid_label_fractions_predictor_data)
+
+    archived_design_space = pc.archive(pred_id)
+
+    assert session.calls == [
+        FakeCall(method='PUT', path=f"{base_path}/{pred_id}/archive", json={})
+    ]
+
+
+def test_restore(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    base_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    pred_id = valid_label_fractions_predictor_data["id"]
+
+    session.set_response(valid_label_fractions_predictor_data)
+
+    archived_design_space = pc.restore(pred_id)
+
+    assert session.calls == [
+        FakeCall(method='PUT', path=f"{base_path}/{pred_id}/restore", json={})
+    ]
+
+
+def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    entity["metadata"]["archived"] = entity["metadata"]["created"]
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+    with pytest.deprecated_call():
+        predictor.archived = True
+
+    predictors_path = f"/projects/{pc.project_id}/predictors/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=predictors_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{predictors_path}/archive", json={}),
+        FakeCall(method="PUT", path=f"{predictors_path}/train", json={})
+    ]
+
+    archived_predictor = pc.update(predictor)
+
+    assert session.num_calls == len(expected_calls)
+    assert session.calls == expected_calls
+    assert archived_predictor._archived is None
+
+def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+    with pytest.deprecated_call():
+        predictor.archived = False
+
+    predictors_path = f"/projects/{pc.project_id}/predictors/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=predictors_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{predictors_path}/restore", json={}),
+        FakeCall(method="PUT", path=f"{predictors_path}/train", json={})
+    ]
+
+    restored_predictor = pc.update(predictor)
+
+    assert session.num_calls == len(expected_calls)
+    assert session.calls == expected_calls
+    assert restored_predictor._archived is None
+
+
+def test_deprecated_archived_property(valid_label_fractions_predictor_data):
+    session = mock.Mock()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    predictor = pc.build(valid_label_fractions_predictor_data)
+
+    with pytest.deprecated_call():
+        assert predictor.archived == predictor.is_archived
+
+    with pytest.deprecated_call():
+        predictor.archived = True
+        assert predictor._archived is True
 
 
 def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
@@ -92,19 +175,30 @@ def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     assert len(predictor.training_data) == 1
 
 
-def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    session.post_resource.return_value = valid_simple_ml_predictor_data
-    session.get_resource.return_value = basic_predictor_report_data
+def test_register(valid_label_fractions_predictor_data):
+    session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    registered = pc.register(predictor)
-    assert registered.name == 'ML predictor'
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+
+    predictors_path = f"/projects/{pc.project_id}/predictors"
+    expected_calls = [
+        FakeCall(method="POST", path=predictors_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", json={})
+    ]
+
+    updated_predictor = pc.register(predictor)
+
+    assert session.num_calls == len(expected_calls)
+    assert session.calls == expected_calls
 
 
 def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.post_resource.return_value = valid_auto_ml_predictor_data
+    session.put_resource.return_value = valid_auto_ml_predictor_data
     session.get_resource.return_value = basic_predictor_report_data
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
@@ -112,10 +206,10 @@ def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_da
     assert registered.name == 'AutoML predictor'
 
 
-def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
-    copy_graph_data = deepcopy(valid_graph_predictor_data)
+def test_graph_register(valid_graph_predictor_data, valid_graph_predictor_data_response, basic_predictor_report_data):
     session = mock.Mock()
-    session.post_resource.return_value = copy_graph_data
+    session.post_resource.return_value = deepcopy(valid_graph_predictor_data_response)
+    session.put_resource.return_value = deepcopy(valid_graph_predictor_data_response)
     session.get_resource.return_value = basic_predictor_report_data
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = GraphPredictor.build(valid_graph_predictor_data)
@@ -135,24 +229,24 @@ def test_failed_register(valid_simple_ml_predictor_data):
     assert '/projects/uuid/not_found' in str(e.value)
 
 
-def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_report_data):
-    # Given
+def test_update(valid_label_fractions_predictor_data):
     session = FakeSession()
-    collection = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    session.set_responses(valid_simple_ml_predictor_data, valid_predictor_report_data)
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    session.set_response(entity)
 
-    # When
-    predictor.archived = False
-    collection.update(predictor)
+    predictor = pc.build(entity)
 
-    # Then
-    assert 1 == session.num_calls, session.calls
+    predictors_path = f"/projects/{pc.project_id}/predictors/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=predictors_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{predictors_path}/train", json={})
+    ]
 
-    first_call = session.calls[0]  # First call is the update
-    assert first_call.method == 'PUT'
-    assert first_call.path == '/projects/{}/modules/{}'.format(collection.project_id, predictor.uid)
-    assert not first_call.json['archived']
+    updated_predictor = pc.update(predictor)
+
+    assert session.num_calls == len(expected_calls)
+    assert session.calls == expected_calls
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
@@ -162,7 +256,7 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     collection = PredictorCollection(uuid.uuid4(), session)
     session.set_responses(
         {
-            'entries': [valid_simple_ml_predictor_data, valid_expression_predictor_data],
+            'response': [valid_simple_ml_predictor_data, valid_expression_predictor_data],
             'next': ''
         },
         basic_predictor_report_data,
@@ -173,8 +267,8 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     predictors = list(collection.list(per_page=20))
 
     # Then
-    expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
-                                   params={'per_page': 20, 'module_type': 'PREDICTOR'})
+    expected_call = FakeCall(method='GET', path='/projects/{}/predictors'.format(collection.project_id),
+                                   params={'per_page': 20})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
@@ -205,7 +299,7 @@ def test_check_update_none():
 
     # then
     assert update_check is None
-    expected_call = FakeCall(method='GET', path='/projects/{}/predictors/{}/check-for-update'.format(pc.project_id, predictor_id))
+    expected_call = FakeCall(method='GET', path='/projects/{}/predictors/{}/update-check'.format(pc.project_id, predictor_id))
     assert session.calls[0] == expected_call
 
 
@@ -214,15 +308,15 @@ def test_check_update_some():
     # given
     session = FakeSession()
     desc = RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg")
-    response = {
+    response = Predictor.wrap_instance({
         "type": "AnalyticExpression",
         "name": "foo",
         "description": "bar",
         "expression": "2 * x",
         "output": RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg").dump(),
         "aliases": {}
-    }
-    session.set_response({"updatable": True, "update": response})
+    })
+    session.set_response({"updatable": True, **response})
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor_id = uuid.uuid4()
 
@@ -230,6 +324,7 @@ def test_check_update_some():
     update_check = pc.check_for_update(predictor_id)
 
     # then
+    assert pc._api_version == 'v3'
     expected = ExpressionPredictor("foo", description="bar", expression="2 * x", output=desc, aliases={})
     assert update_check.dump() == expected.dump()
     assert update_check.uid == predictor_id
@@ -253,9 +348,7 @@ def test_auto_configure_mode_pattern(valid_graph_predictor_data):
     session = FakeSession()
     # Setup a response that includes instance instead of config
     response = deepcopy(valid_graph_predictor_data)
-    response["instance"] = response["config"]
-    del response["config"]
-    session.set_response(response)
+    session.set_response(response["data"])
 
     pc = PredictorCollection(uuid.uuid4(), session)
 
@@ -273,9 +366,7 @@ def test_returned_predictor(valid_graph_predictor_data):
     session = FakeSession()
 
     # Setup a response that includes instance instead of config
-    response = deepcopy(valid_graph_predictor_data)
-    response["instance"] = response["config"]
-    del response["config"]
+    response = deepcopy(valid_graph_predictor_data)["data"]
 
     session.set_response(response)
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -284,7 +375,7 @@ def test_returned_predictor(valid_graph_predictor_data):
     result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
     # Then the response is parsed in a predictor
-    assert result.name == valid_graph_predictor_data["display_name"]
+    assert result.name == valid_graph_predictor_data["data"]["name"]
     assert isinstance(result, GraphPredictor)
     # including nested predictors
     assert len(result.predictors) == 2
@@ -334,21 +425,20 @@ def test_convert_and_update(predictor_data, request):
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
-    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data))
+    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data), deepcopy(predictor_data))
+
+    expected_calls = [
+        FakeCall(method="GET", path=f"/projects/{project_id}/predictors/{predictor_id}/convert"),
+        FakeCall(method="PUT", path=f"/projects/{project_id}/predictors/{predictor_id}", json=predictor.dump()),
+        FakeCall(method="PUT", path=f"/projects/{project_id}/predictors/{predictor_id}/train", json={})
+    ]
 
     # When
     response = collection.convert_and_update(predictor.uid)
 
     # Then
-    assert session.num_calls == 2
-    expected_call_convert = FakeCall(
-        method="GET",
-        path=f"/projects/{project_id}/predictors/{predictor_id}/convert")
-    expected_call_store = FakeCall(
-        method="PUT",
-        path=f"/projects/{project_id}/modules/{predictor_id}",
-        json=predictor.dump())
-    assert session.calls == [expected_call_convert, expected_call_store]
+    assert session.num_calls == len(expected_calls)
+    assert session.calls == expected_calls
     assert response.dump() == predictor.dump()
 
 
@@ -385,8 +475,9 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     predictor_id = valid_graph_predictor_data["id"]
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
-    pred_path = f"/projects/{project_id}/modules/{predictor_id}"
-    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
+    pred_path = f"/projects/{project_id}/predictors/{predictor_id}"
+    convert_path = f"{pred_path}/convert"
+    train_path = f"{pred_path}/train"
 
     # Building a graph predictor modifies the input data object, which interferes with the test
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
@@ -398,6 +489,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     session.set_responses(
             Conflict(convert_path, response),
             deepcopy(valid_graph_predictor_data),
+            deepcopy(valid_graph_predictor_data),
             deepcopy(valid_graph_predictor_data))
 
     # When
@@ -408,31 +500,44 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     expected_calls = [
         FakeCall(method="GET", path=convert_path),
         FakeCall(method="GET", path=pred_path),
-        FakeCall(method="PUT", path=pred_path, json=predictor.dump())
+        FakeCall(method="PUT", path=pred_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=train_path, json={})
     ]
-    assert session.num_calls == 3
+    assert session.num_calls == 4
     assert session.calls == expected_calls
     assert response is None
 
 
-def test_experimental_deprecated(valid_graph_predictor_data):
+def test_experimental_deprecated(valid_auto_ml_predictor_data):
     # Given
     session = FakeSession()
-    response = deepcopy(valid_graph_predictor_data)
+    response = valid_auto_ml_predictor_data
     response["experimental"] = True
     response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-    
-    session.set_response(response)
+
+    session.set_responses(response)
 
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = GraphPredictor.build(valid_graph_predictor_data)
+    predictor = Predictor.build(valid_auto_ml_predictor_data)
 
     # When
     registered = pc.register(predictor)
-    
+
     # Then
     with pytest.deprecated_call():
         assert registered.experimental is False
     with pytest.deprecated_call():
         assert registered.experimental_reasons == []
 
+def test_predictor_list_archived(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+    session.set_response({'response': [valid_graph_predictor_data]})
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    list(pc.list_archived())
+
+    # Then
+    assert session.num_calls == 1
+    assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20})

@@ -39,7 +39,7 @@ class DescriptorMethods:
             path=format_escaped_url('/projects/{}/material-descriptors/predictor-responses',
                                     self.project_id),
             json={
-                'predictor': predictor.dump()['config'],
+                'predictor': predictor.dump()['instance'],
                 'inputs': [i.dump() for i in inputs]
             }
         )

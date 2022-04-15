@@ -1,16 +1,15 @@
 from typing import Set, Mapping
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['IngredientsToFormulationPredictor']
 
 
 class IngredientsToFormulationPredictor(
-        Resource['IngredientsToFormulationPredictor'], Predictor, AIResourceMetadata):
+        EngineResource['IngredientsToFormulationPredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a formulation from ingredient quantities.
 
     Parameters
@@ -30,17 +29,14 @@ class IngredientsToFormulationPredictor(
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    output = _properties.Object(FormulationDescriptor, 'config.output')
+    output = _properties.Object(FormulationDescriptor, 'data.instance.output')
     id_to_quantity = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
-                                         'config.id_to_quantity')
+                                         'data.instance.id_to_quantity')
     labels = _properties.Mapping(_properties.String, _properties.Set(_properties.String),
-                                 'config.labels')
+                                 'data.instance.labels')
 
-    typ = _properties.String('config.type', default='IngredientsToSimpleMixture',
+    typ = _properties.String('data.instance.type', default='IngredientsToSimpleMixture',
                              deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,
@@ -54,10 +50,6 @@ class IngredientsToFormulationPredictor(
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
         self.labels: Mapping[str, Set[str]] = labels
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<IngredientsToFormulationPredictor {!r}>'.format(self.name)

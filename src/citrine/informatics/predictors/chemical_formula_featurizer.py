@@ -1,16 +1,14 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ChemicalFormulaFeaturizer']
 
 
-class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
-                                Predictor, AIResourceMetadata):
+class ChemicalFormulaFeaturizer(EngineResource['ChemicalFormulaFeaturizer'], Predictor):
     """
     A featurizer for chemical formulae. Inspired by Magpie.
 
@@ -132,16 +130,13 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
+    input_descriptor = _properties.Object(Descriptor, 'data.instance.input')
+    features = _properties.List(_properties.String, 'data.instance.features')
+    excludes = _properties.List(_properties.String, 'data.instance.excludes')
+    powers = _properties.List(_properties.Integer, 'data.instance.powers')
 
-    input_descriptor = _properties.Object(Descriptor, 'config.input')
-    features = _properties.List(_properties.String, 'config.features')
-    excludes = _properties.List(_properties.String, 'config.excludes')
-    powers = _properties.List(_properties.Integer, 'config.powers')
-
-    typ = _properties.String('config.type', default='ChemicalFormulaFeaturizer',
+    typ = _properties.String('data.instance.type', default='ChemicalFormulaFeaturizer',
                              deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,
@@ -157,10 +152,6 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
         self.powers = powers if powers is not None else [1]
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<ChemicalFormulaFeaturizer {!r}>'.format(self.name)

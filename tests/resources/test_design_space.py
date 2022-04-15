@@ -2,13 +2,14 @@ from copy import deepcopy
 import uuid
 from random import random
 
+import mock
 import pytest
 
+from citrine.exceptions import NotFound
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
-from tests.utils.session import FakeSession
-
+from tests.utils.session import FakeCall, FakeRequestResponse, FakeSession
 
 @pytest.fixture
 def valid_product_design_space(valid_product_design_space_data) -> ProductDesignSpace:
@@ -121,3 +122,108 @@ def test_create_default(valid_product_design_space_data,
     )
     default_design_space = collection.create_default(predictor_id=uuid.uuid4())
     assert default_design_space.dump() == valid_product_design_space.dump()
+
+def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+    # Given
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
+    session.set_response(
+        {
+            'entries': [valid_formulation_design_space_data, valid_enumerated_design_space_data],
+            'next': ''
+        }
+    )
+
+    # When
+    design_spaces = list(collection.list(per_page=20))
+
+    # Then
+    expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
+            params={'per_page': 20, 'module_type': "DESIGN_SPACE"})
+    assert 1 == session.num_calls, session.calls
+    assert expected_call == session.calls[0]
+    assert len(design_spaces) == 2
+
+
+def test_experimental_deprecated(valid_formulation_design_space_data):
+    # Given
+    session = FakeSession()
+    response = deepcopy(valid_formulation_design_space_data)
+    response["experimental"] = True
+    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+
+    session.set_response(response)
+
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    design_space = DesignSpace.build(valid_formulation_design_space_data)
+
+    # When
+    registered = dsc.register(design_space)
+
+    # Then
+    with pytest.deprecated_call():
+        assert registered.experimental is False
+    with pytest.deprecated_call():
+        assert registered.experimental_reasons == []
+
+
+def test_archive(valid_formulation_design_space_data):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
+    ds_id = valid_formulation_design_space_data["id"]
+
+    get_response = deepcopy(valid_formulation_design_space_data)
+    update_response = {**get_response, "archived": True}
+    session.set_responses(get_response, update_response)
+
+    expected_payload = deepcopy(update_response)
+    del expected_payload["status"]
+    del expected_payload["status_info"]
+    del expected_payload["id"]
+
+    archived_design_space = dsc.archive(ds_id)
+
+    assert archived_design_space.archived
+    assert session.calls == [
+        FakeCall(method='GET', path=f"{base_path}/{ds_id}"),
+        FakeCall(method='PUT', path=f"{base_path}/{ds_id}", json=expected_payload)
+    ]
+
+def test_restore(valid_formulation_design_space_data):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
+    ds_id = valid_formulation_design_space_data["id"]
+
+    get_response = deepcopy(valid_formulation_design_space_data)
+    update_response = {**get_response, "archived": False}
+    session.set_responses(get_response, update_response)
+
+    expected_payload = deepcopy(update_response)
+    del expected_payload["status"]
+    del expected_payload["status_info"]
+    del expected_payload["id"]
+
+    archived_design_space = dsc.restore(ds_id)
+
+    assert not archived_design_space.archived
+    assert session.calls == [
+        FakeCall(method='GET', path=f"{base_path}/{ds_id}"),
+        FakeCall(method='PUT', path=f"{base_path}/{ds_id}", json=expected_payload)
+    ]
+
+def test_archive_restore_not_found():
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
+
+    response = FakeRequestResponse(404)
+    response.request.method = "GET"
+    session.set_response(NotFound(base_path, response))
+
+    with pytest.raises(RuntimeError):
+        dsc.archive(uuid.uuid4())
+
+    with pytest.raises(RuntimeError):
+        dsc.restore(uuid.uuid4())

@@ -3,17 +3,16 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
 from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Predictor, AIResourceMetadata):
+class MolecularStructureFeaturizer(EngineResource['MolecularStructureFeaturizer'], Predictor):
     """
     A featurizer for molecular structures, powered by CDK.
 
@@ -21,7 +20,7 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     structure data, e.g., SMILES or InChI strings.  The features are computed using the
     `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.  The features are configured
     using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined
-    aliases.  
+    aliases.
 
     The default is the `standard` alias, corresponding to eight features that are
     a good balance of cost and performance:
@@ -34,7 +33,7 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
         - `HBondDonorCount  <http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HBondDonorCountDescriptor.html>`_
         - `MassAutocorr  <http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorMass.html>`_
         - `PolarizabilityAutocorr  <https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorPolarizability.html>`_
-    
+
     The ``extended`` alias includes more features that may improve model performance but are slower and may dilute the signal in the features.
     It includes the ``standard`` set and:
 
@@ -80,14 +79,11 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
+    input_descriptor = _properties.Object(Descriptor, 'data.instance.descriptor')
+    features = _properties.List(_properties.String, 'data.instance.features')
+    excludes = _properties.List(_properties.String, 'data.instance.excludes')
 
-    input_descriptor = _properties.Object(Descriptor, 'config.descriptor')
-    features = _properties.List(_properties.String, 'config.features')
-    excludes = _properties.List(_properties.String, 'config.excludes')
-
-    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='MoleculeFeaturizer', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -105,10 +101,6 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
         self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<MolecularStructureFeaturizer {!r}>'.format(self.name)

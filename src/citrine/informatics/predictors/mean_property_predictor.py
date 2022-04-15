@@ -1,18 +1,18 @@
 from typing import List, Optional, Mapping, Union
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
     FormulationDescriptor, RealDescriptor, CategoricalDescriptor
 )
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['MeanPropertyPredictor']
 
 
-class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
+class MeanPropertyPredictor(
+        EngineResource['MeanPropertyPredictor'], Predictor):
     """A predictor that computes a component-weighted mean of real or categorical properties.
 
     Each component in a formulation contributes to the mean property
@@ -63,31 +63,28 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
+    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
     properties = _properties.List(
         _properties.Union(
             [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
         ),
-        'config.properties'
+        'data.instance.properties'
     )
-    p = _properties.Float('config.p')
-    impute_properties = _properties.Boolean('config.impute_properties')
-    label = _properties.Optional(_properties.String, 'config.label')
+    p = _properties.Float('data.instance.p')
+    impute_properties = _properties.Boolean('data.instance.impute_properties')
+    label = _properties.Optional(_properties.String, 'data.instance.label')
     default_properties = _properties.Optional(
         _properties.Mapping(
             _properties.String,
             _properties.Union([_properties.String, _properties.Float])
         ),
-        'config.default_properties'
+        'data.instance.default_properties'
     )
     training_data = _properties.List(
-        _properties.Object(DataSource), 'config.training_data', default=[]
+        _properties.Object(DataSource), 'data.instance.training_data', default=[]
     )
 
-    typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='MeanProperty', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -109,10 +106,6 @@ class MeanPropertyPredictor(Resource['MeanPropertyPredictor'], Predictor, AIReso
         self.label: Optional[str] = label
         self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
         self.training_data: List[DataSource] = training_data or []
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<MeanPropertyPredictor {!r}>'.format(self.name)
