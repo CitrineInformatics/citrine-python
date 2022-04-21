@@ -197,7 +197,7 @@ class Dataset(Resource['Dataset']):
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
         """Register a data model object to the appropriate collection."""
-        return self.gemd.register(model, dry_run=dry_run)
+        return self.gemd._collection_for(model).register(model, dry_run=dry_run)
 
     def register_all(self,
                      models: Iterable[DataConcepts],
@@ -250,7 +250,7 @@ class Dataset(Resource['Dataset']):
 
     def update(self, model: DataConcepts) -> DataConcepts:
         """Update a data model object using the appropriate collection."""
-        return self.gemd.update(model)
+        return self.gemd._collection_for(model).update(model)
 
     def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
         """
@@ -265,7 +265,11 @@ class Dataset(Resource['Dataset']):
             Dry run is intended to be used for validation. Default: false
 
         """
-        return self.gemd.delete(uid, dry_run=dry_run)
+        if isinstance(uid, DataConcepts):
+            collection = self.gemd._collection_for(uid)
+        else:
+            collection = self.gemd
+        return collection.delete(uid, dry_run=dry_run)
 
     def delete_contents(
             self,

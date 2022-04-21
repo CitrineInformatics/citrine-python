@@ -2,7 +2,6 @@
 from abc import abstractmethod, ABC
 import re
 from warnings import warn
-from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
 import deprecation
@@ -11,8 +10,7 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach, recursive_flatmap, make_index, \
-    substitute_objects, set_uuids
+from gemd.util import recursive_foreach, set_uuids
 
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -193,7 +191,7 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         return DataConcepts.class_dict[data['type']]
 
     @classmethod
-    def get_collection_type(cls, data) -> Type[Collection]:
+    def get_collection_type(cls, data) -> "Type[DataConceptsCollection]":
         """
         Determine the associated collection type for a serialized data object.
 
@@ -544,73 +542,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Each object model as it now exists in the database.
 
         """
-        from citrine._utils.batcher import Batcher
-
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to register a data model object.")
-        path = self._get_path()
-        params = {'dry_run': dry_run}
-
-        if include_nested:
-            models = recursive_flatmap(models, lambda o: [o], unidirectional=False)
-
-        temp_scope = str(uuid4())
-        scope = temp_scope if dry_run else CITRINE_SCOPE
-        set_uuids(models, scope=scope)
-
-        resources = list()
-        batch_size = 50
-        result_index = dict()
-        if dry_run:
-            batcher = Batcher.by_dependency()
-        else:
-            batcher = Batcher.by_type()
-
-        if status_bar:
-            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
-            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
-        else:
-            iterator = batcher.batch(models, batch_size)
-
-        for batch in iterator:
-            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
-            response_data = self.session.put_resource(
-                path + '/batch',
-                json={'objects': objects},
-                params=params
-            )
-            registered = [self.build(obj) for obj in response_data['objects']]
-            result_index.update(make_index(registered))
-            substitute_objects(registered, result_index, inplace=True)
-
-            if not dry_run:
-                # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
-                for obj in batch:
-                    result = result_index[obj.to_link()]
-                    obj.uids.update({k: v for k, v in result.uids.items()})
-                    if result.tags is not None:
-                        obj.tags = list(result.tags)
-            else:
-                # Remove of the tags/uids the platform spuriously added
-                # this might leave objects with just the temp ids, which we want to strip later
-                for obj in batch:
-                    result = result_index[obj.to_link()]
-                    if CITRINE_SCOPE not in obj.uids:
-                        citr_id = result.uids.pop(CITRINE_SCOPE, None)
-                        result_index.pop(LinkByUID(scope=CITRINE_SCOPE, id=citr_id), None)
-                    if result.tags is not None:
-                        todo = [tag for tag in result.tags
-                                if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
-                        for tag in todo:  # Covering this block would require dark art
-                            if tag not in obj.tags:
-                                result.tags.remove(tag)
-
-            resources.extend(registered)
-
-        if dry_run:  # No-op if not dry-run
-            recursive_foreach(list(models) + list(resources),
-                              lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
-        return resources
+        from citrine.resources.gemd_resource import GEMDResourceCollection
+        gemd_collection = GEMDResourceCollection(self.project_id, self.dataset_id, self.session)
+        return gemd_collection.register_all(
+            models,
+            dry_run=dry_run,
+            status_bar=status_bar,
+            include_nested=include_nested
+        )
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""

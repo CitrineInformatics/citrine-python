@@ -10,6 +10,7 @@ from gemd.util import recursive_flatmap, flatten
 from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
 from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
 from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
@@ -348,6 +349,11 @@ def test_gemd_posts(dataset):
         dataset.session.set_response(updated.dump())
         dataset.delete(updated)
         assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
+
+        # But they would have dispatched differently w/ just a uid
+        dataset.session.set_response(updated.dump())
+        dataset.delete(updated.uid)
+        assert dataset.session.calls[-1].path.split("/")[-3] == basename(GEMDResourceCollection._path_template)
 
     # Register all
     before = list(expected.values())

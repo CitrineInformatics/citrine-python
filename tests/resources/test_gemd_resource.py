@@ -91,31 +91,31 @@ def test_list(gemd_collection, session):
 
 def test_register(gemd_collection):
     """Check that register routes to the correct collections"""
-    expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo"),
-        MaterialSpecCollection: MaterialSpec("foo"),
-        MaterialRunCollection: MaterialRun("foo"),
-        ProcessTemplateCollection: ProcessTemplate("foo"),
-        ProcessSpecCollection: ProcessSpec("foo"),
-        ProcessRunCollection: ProcessRun("foo"),
-        MeasurementTemplateCollection: MeasurementTemplate("foo"),
-        MeasurementSpecCollection: MeasurementSpec("foo"),
-        MeasurementRunCollection: MeasurementRun("foo"),
-        IngredientSpecCollection: IngredientSpec("foo"),
-        IngredientRunCollection: IngredientRun(),
-        PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
-        ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
-        ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
-    }
+    targets = [
+        MaterialTemplate("foo"),
+        MaterialSpec("foo"),
+        MaterialRun("foo"),
+        ProcessTemplate("foo"),
+        ProcessSpec("foo"),
+        ProcessRun("foo"),
+        MeasurementTemplate("foo"),
+        MeasurementSpec("foo"),
+        MeasurementRun("foo"),
+        IngredientSpec("foo"),
+        IngredientRun(),
+        PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+    ]
 
-    for specific_collection, obj in expected.items():
+    for obj in targets:
         assert len(obj.uids) == 0
         gemd_collection.register(obj, dry_run=True)
         assert len(obj.uids) == 0
         registered = gemd_collection.register(obj, dry_run=False)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
-        assert basename(gemd_collection.session.calls[-1].path) == basename(specific_collection._path_template)
+        assert basename(gemd_collection.session.calls[-1].path) == basename(gemd_collection._path_template)
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
@@ -285,18 +285,23 @@ def test_delete(gemd_collection, session):
     and works when passed a data object or a UUID representation.
 
     """
-    expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
-        MaterialSpecCollection: MaterialSpec("foo", uids={CITRINE_SCOPE: str(uuid4())}),
-        MaterialRunCollection: MaterialRun("foo", uids={CITRINE_SCOPE: str(uuid4())}),
-        ProcessTemplateCollection: ProcessTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
-    }
+    targets = [
+        MaterialTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        MaterialSpec("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        MaterialRun("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        ProcessTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+    ]
 
-    for specific_collection, obj in expected.items():
+    for obj in targets:
         for dry_run in True, False:
             session.set_response(obj.dump())  # Delete calls get, must return object data internally
             gemd_collection.delete(obj, dry_run=dry_run)
-            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(specific_collection._path_template)
+            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(gemd_collection._path_template)
+
+            # And again, with uids
+            session.set_response(obj.dump())  # Delete calls get, must return object data internally
+            gemd_collection.delete(obj.uid, dry_run=dry_run)
+            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(gemd_collection._path_template)
 
 
 def test_update(gemd_collection):
