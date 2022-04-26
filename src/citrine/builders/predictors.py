@@ -228,7 +228,7 @@ def build_simple_ml(
             name=f'{latent_variable_descriptor.key} Predictor',
             description='',
             inputs=ml_model_feature_descriptors + featurizer_responses,
-            output=latent_variable_descriptor,
+            outputs=[latent_variable_descriptor],
         ) for latent_variable_descriptor in latent_variables
     ]
 
@@ -237,7 +237,7 @@ def build_simple_ml(
             name=f'{output_descriptor.key} Predictor',
             description='',
             inputs=ml_model_feature_descriptors + latent_variables + featurizer_responses,
-            output=output_descriptor,
+            outputs=[output_descriptor],
         ) for output_descriptor in outputs
     ]
 
