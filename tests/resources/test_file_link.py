@@ -1,13 +1,13 @@
-from collections import namedtuple
+from boto3 import Session
+from botocore.exceptions import ClientError
+from pathlib import Path
+import pytest
 from uuid import uuid4, UUID
 
-import pytest
 import requests_mock
-from botocore.exceptions import ClientError
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader, \
     FileProcessingType
 from citrine.exceptions import NotFound
-from mock import patch, Mock, call
 
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
 from tests.utils.session import FakeSession, FakeS3Client, FakeCall
@@ -32,19 +32,19 @@ def valid_data() -> dict:
     return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
 
 
-def test_mime_types(collection):
+def test_mime_types(collection: FileCollection):
     expected_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     expected_xls = "application/vnd.ms-excel"
     expected_txt = "text/plain"
     expected_unk = "application/octet-stream"
     expected_csv = "text/csv"
 
-    assert collection._mime_type("asdf.xlsx") == expected_xlsx
-    assert collection._mime_type("asdf.XLSX") == expected_xlsx
-    assert collection._mime_type("asdf.xls") == expected_xls
-    assert collection._mime_type("asdf.TXT") == expected_txt
-    assert collection._mime_type("asdf.csv") == expected_csv
-    assert collection._mime_type("asdf.FAKE") == expected_unk
+    assert collection._mime_type(Path("asdf.xlsx")) == expected_xlsx
+    assert collection._mime_type(Path("asdf.XLSX")) == expected_xlsx
+    assert collection._mime_type(Path("asdf.xls")) == expected_xls
+    assert collection._mime_type(Path("asdf.TXT")) == expected_txt
+    assert collection._mime_type(Path("asdf.csv")) == expected_csv
+    assert collection._mime_type(Path("asdf.FAKE")) == expected_unk
 
 
 def test_build_equivalence(collection, valid_data):
@@ -106,19 +106,9 @@ def test_delete(collection: FileCollection, session):
         collection.delete(ext_invalid_file_link)
 
 
-@patch('citrine.resources.file_link.boto3_client')
-@patch('citrine.resources.file_link.open')
-@patch('citrine.resources.file_link.os.stat')
-@patch('citrine.resources.file_link.os.path.isfile')
-def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection, session):
+def test_upload(collection: FileCollection, session, tmpdir, monkeypatch):
     """Test signaling that an upload has completed and the creation of a FileLink object."""
-    StatStub = namedtuple('StatStub', ['st_size'])
-
-    mock_isfile.return_value = True
-    mock_stat.return_value = StatStub(st_size=22300)
-    mock_open.return_value.__enter__.return_value = 'Random file contents'
-    mock_boto3_client.return_value = FakeS3Client({'VersionId': '3'})
-
+    monkeypatch.setattr(Session, 'client', lambda *args, **kwargs: FakeS3Client({'VersionId': '42'}))
     # It would be good to test these, but the values assigned are not accessible
     dest_names = {
         'foo.txt': 'text/plain',
@@ -152,8 +142,11 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     }
 
     for dest_name in dest_names:
+        tmp_path = Path(tmpdir) / dest_name
+        tmp_path.write_text("Something")
+
         session.set_responses(uploads_response, file_info_response)
-        file_link = collection.upload(file_path=dest_name)
+        file_link = collection.upload(file_path=tmp_path)
 
         url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
             .format(collection.project_id, collection.dataset_id, file_id, version)
@@ -162,18 +155,16 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     assert session.num_calls == 2 * len(dest_names)
 
 
-def test_upload_missing_file(collection):
+def test_upload_missing_file(collection: FileCollection):
     with pytest.raises(ValueError):
         collection.upload(file_path='this-file-does-not-exist.xls')
 
 
-@patch('citrine.resources.file_link.os.stat')
-def test_upload_request(mock_stat, collection, session, uploader):
+def test_upload_request(collection: FileCollection, session, uploader, tmpdir):
     """Test that an upload request response contains all required fields."""
-    # Mock the method that gets the size of the file.
-    mock_stat_object = Mock()
-    mock_stat_object.st_size = 17
-    mock_stat.return_value = mock_stat_object
+    filename = 'foo.txt'
+    tmppath = Path(tmpdir) / filename
+    tmppath.write_text("Arbitrary text")
 
     # This is the dictionary structure we expect from the upload request
     upload_request_response = {
@@ -192,7 +183,7 @@ def test_upload_request(mock_stat, collection, session, uploader):
         ]
     }
     session.set_response(upload_request_response)
-    new_uploader = collection._make_upload_request('foo.txt', 'foo.txt')
+    new_uploader = collection._make_upload_request(tmppath, filename)
     assert session.num_calls == 1
     assert new_uploader.bucket == uploader.bucket
     assert new_uploader.object_key == uploader.object_key
@@ -209,16 +200,14 @@ def test_upload_request(mock_stat, collection, session, uploader):
     # Using a request response that is missing a field throws a RuntimeError
     del upload_request_response['s3_bucket']
     with pytest.raises(RuntimeError):
-        collection._make_upload_request('foo.txt', 'foo.txt')
+        collection._make_upload_request(tmppath, filename)
 
 
-@patch('citrine.resources.file_link.os.stat')
-def test_upload_request_s3_overrides(mock_stat, collection, session, uploader):
+def test_upload_request_s3_overrides(collection: FileCollection, session, uploader, tmpdir):
     """Test that an upload request response contains all required fields."""
-    # Mock the method that gets the size of the file.
-    mock_stat_object = Mock()
-    mock_stat_object.st_size = 17
-    mock_stat.return_value = mock_stat_object
+    filename = 'foo.txt'
+    tmppath = Path(tmpdir) / filename
+    tmppath.write_text("Arbitrary text")
 
     # This is the dictionary structure we expect from the upload request
     upload_request_response = {
@@ -246,29 +235,33 @@ def test_upload_request_s3_overrides(mock_stat, collection, session, uploader):
     session.s3_addressing_style = addressing_style
     session.s3_use_ssl = use_ssl
 
-    new_uploader = collection._make_upload_request('foo.txt', 'foo.txt')
+    new_uploader = collection._make_upload_request(tmppath, filename)
     assert new_uploader.s3_endpoint_url == endpoint
     assert new_uploader.s3_use_ssl == use_ssl
     assert new_uploader.s3_addressing_style == addressing_style
 
 
-@patch('citrine.resources.file_link.open')
-def test_upload_file(_, collection, uploader):
+def test_upload_file(collection: FileCollection, session, uploader, tmpdir, monkeypatch):
     """Test that uploading a file returns the version ID."""
+    filename = 'foo.txt'
+    tmppath = Path(tmpdir) / filename
+    tmppath.write_text("Arbitrary text")
+
     # A successful file upload sets uploader.s3_version
     new_version = '3'
-    with patch('citrine.resources.file_link.boto3_client',
-               return_value=FakeS3Client({'VersionId': new_version})):
-        new_uploader = collection._upload_file('foo.txt', uploader)
+    with monkeypatch.context() as m:
+        client = FakeS3Client({'VersionId': new_version})
+        m.setattr(Session, 'client', lambda *args, **kwargs: client)
+        new_uploader = collection._upload_file(tmppath, uploader)
         assert new_uploader.s3_version == new_version
 
     # If the client throws a ClientError when attempting to upload, throw a RuntimeError
-    bad_client = Mock()
-    bad_client.put_object.side_effect = ClientError(error_response={}, operation_name='put')
-    with patch('citrine.resources.file_link.boto3_client',
-               return_value=bad_client):
+    with monkeypatch.context() as m:
+        client = FakeS3Client(ClientError(error_response={}, operation_name='put'), raises=True)
+        m.setattr(Session, 'client', lambda *args, **kwargs: client)
+
         with pytest.raises(RuntimeError):
-            collection._upload_file('foo.txt', uploader)
+            collection._upload_file(tmppath, uploader)
 
     s3_addressing_style = 'path'
     s3_endpoint_url = 'http://foo.bar'
@@ -278,20 +271,22 @@ def test_upload_file(_, collection, uploader):
     uploader.s3_endpoint_url = s3_endpoint_url
     uploader.s3_use_ssl = s3_use_ssl
 
-    s3_override_client = Mock()
-    s3_override_client.put_object.return_value = {'VersionId': '3'}
+    with monkeypatch.context() as m:
+        stashed_kwargs = {}
 
-    with patch('citrine.resources.file_link.boto3_client',
-               return_value=s3_override_client) as mock_boto_client:
-        collection._upload_file('foo.txt', uploader)
+        def _stash_kwargs(*args, **kwargs):
+            stashed_kwargs.update(kwargs)
+            return FakeS3Client({'VersionId': '71'})
 
-        # Ensure we're connecting to S3 with the proper parameter overrides for a different endpoint.
-        assert mock_boto_client.call_args.kwargs['config'].s3['addressing_style'] is s3_addressing_style
-        assert mock_boto_client.call_args.kwargs['endpoint_url'] is s3_endpoint_url
-        assert mock_boto_client.call_args.kwargs['use_ssl'] is s3_use_ssl
+        m.setattr(Session, 'client', _stash_kwargs)
+        collection._upload_file(tmppath, uploader)
+
+        assert stashed_kwargs['config'].s3['addressing_style'] is s3_addressing_style
+        assert stashed_kwargs['endpoint_url'] is s3_endpoint_url
+        assert stashed_kwargs['use_ssl'] is s3_use_ssl
 
 
-def test_upload_missing_version(collection, session, uploader):
+def test_upload_missing_version(collection: FileCollection, session, uploader):
     dest_name = 'foo.txt'
     file_id = '12345'
     version = '14'
@@ -307,7 +302,7 @@ def test_upload_missing_version(collection, session, uploader):
         collection._complete_upload(dest_name, uploader)
 
 
-def test_list_file_links(collection, session, valid_data):
+def test_list_file_links(collection: FileCollection, session, valid_data):
     """Test that all files in a dataset can be turned into FileLink and listed."""
     file_id = str(uuid4())
     version = str(uuid4())
@@ -319,7 +314,8 @@ def test_list_file_links(collection, session, valid_data):
         'filename': filename,
     }
     returned_data["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}"
-    returned_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}/versions/{returned_data['version']}"
+    returned_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}" \
+                                     f"/versions/{returned_data['version']}"
     session.set_response({
         'files': [returned_data]
     })
@@ -350,7 +346,8 @@ def test_list_file_links(collection, session, valid_data):
         'filename': filename,
     }
     listed_data["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{listed_data['id']}"
-    listed_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/{listed_data['id']}/versions/{listed_data['version']}"
+    listed_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/" \
+                                   f"{listed_data['id']}/versions/{listed_data['version']}"
     session.set_response({
         'files': [listed_data]
     })
@@ -359,8 +356,7 @@ def test_list_file_links(collection, session, valid_data):
         assert FileLink.build(collection._as_dict_from_resource(listed_data)) in [file for file in files_iterator]
 
 
-@patch("citrine.resources.file_link.write_file_locally")
-def test_file_download(mock_write_file_locally, collection: FileCollection, session):
+def test_file_download(collection: FileCollection, session, tmpdir):
     """
     Test that downloading a file works as expected.
 
@@ -375,32 +371,45 @@ def test_file_download(mock_write_file_locally, collection: FileCollection, sess
     session.set_response({
         'pre_signed_read_link': pre_signed_url,
     })
-    local_path = 'Users/me/some/new/directory/'
+    target_dir = str(tmpdir) + 'some/new/directory/'
+    target_file = target_dir + filename
 
-    with requests_mock.mock() as mock_get:
-        mock_get.get(pre_signed_url, text='0101001')
+    def _checked_write(path, content):
+        with requests_mock.mock() as mock_get:
+            mock_get.get(pre_signed_url, text=content)
+            # When
+            collection.download(file_link=file, local_path=path)
 
-        # When
-        collection.download(file_link=file, local_path=local_path)
+            # When
+            assert mock_get.call_count == 1
+            expected_call = FakeCall(
+                method='GET',
+                path=url + '/content-link'
+            )
+            assert expected_call == session.last_call
 
-        # When
-        assert mock_get.call_count == 1
-        expected_call = FakeCall(
-            method='GET',
-            path=url + '/content-link'
-        )
-        assert expected_call == session.last_call
-        assert mock_write_file_locally.call_count == 1
-        assert mock_write_file_locally.call_args == call(b'0101001', local_path + file.filename)
+    _checked_write(target_dir, 'content')
+    assert Path(target_file).read_text() == 'content'
+
+    # Now the directory exists
+    _checked_write(Path(target_dir), 'other content')
+    assert Path(target_file).read_text() == 'other content'
+
+    # Give it the filename instead
+    _checked_write(target_file, 'more content')
+    assert Path(target_file).read_text() == 'more content'
+
+    # And as a Path
+    _checked_write(target_file, 'love that content')
+    assert Path(target_file).read_text() == 'love that content'
 
     bad_url = f"bin/uuid3/versions/uuid4"
     bad_file = FileLink.build(FileLinkDataFactory(url=bad_url, filename=filename))
     with pytest.raises(ValueError, match="malformed"):
-        collection.download(file_link=bad_file, local_path=local_path)
+        collection.download(file_link=bad_file, local_path=target_dir)
 
 
-@patch("citrine.resources.file_link.write_file_locally")
-def test_external_file_download(mock_write_file_locally, collection, session):
+def test_external_file_download(collection: FileCollection, session, tmpdir):
     """
     Test that downloading a file works as expected for external files.
 
@@ -411,21 +420,21 @@ def test_external_file_download(mock_write_file_locally, collection, session):
     filename = 'spreadsheet.xlsx'
     url = "http://customer.com/data-lake/files/123/versions/456"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
-    local_path = 'Users/me/some/new/directory/new_name.xlsx'
+    local_path = Path(tmpdir) / 'test_external_file_download/new_name.xlsx'
 
     with requests_mock.mock() as mock_get:
-        mock_get.get(url, text='content')
+        mock_get.get(url, text='010111011')
 
         # When
         collection.download(file_link=file, local_path=local_path)
 
         # When
         assert mock_get.call_count == 1
-        assert mock_write_file_locally.call_count == 1
-        assert mock_write_file_locally.call_args == call(b'content', local_path)
+
+    assert local_path.read_text() == '010111011'
 
 
-def test_process_file(collection, session):
+def test_process_file(collection: FileCollection, session):
     """Test processing an existing file."""
 
     file_id, version_id = str(uuid4()), str(uuid4())
@@ -473,7 +482,7 @@ def test_process_file(collection, session):
     collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV)
 
 
-def test_process_file_no_waiting(collection, session):
+def test_process_file_no_waiting(collection: FileCollection, session):
     """Test processing an existing file without waiting on the result."""
 
     file_id, version_id = str(uuid4()), str(uuid4())
@@ -492,23 +501,19 @@ def test_process_file_no_waiting(collection, session):
     assert str(resp.job_id) == job_id_resp['job_id']
 
 
-def test_process_file_exceptions(collection, session):
+def test_process_file_exceptions(collection: FileCollection, session):
     """Test processing an existing file without waiting on the result."""
 
     file_id, version_id = str(uuid4()), str(uuid4())
     full_url = 'https://www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
     file_link = collection.build(FileLinkDataFactory(url=full_url))
 
-    job_id_resp = {
-        'job_id': str(uuid4())
-    }
-
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     with pytest.raises(ValueError, match="on-platform resources"):
-        resp = collection.process(file_link=file_link,
-                                  processing_type=FileProcessingType.VALIDATE_CSV,
-                                  wait_for_response=False)
+        collection.process(file_link=file_link,
+                           processing_type=FileProcessingType.VALIDATE_CSV,
+                           wait_for_response=False)
 
 
 def test_resolve_file_link(collection: FileCollection, session):
