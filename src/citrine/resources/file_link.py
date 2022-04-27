@@ -1,6 +1,7 @@
 """A collection of FileLink objects."""
 import mimetypes
 import os
+from pathlib import Path
 from enum import Enum
 from logging import getLogger
 from typing import Iterable, Optional, Tuple, Union, List, Dict
@@ -167,6 +168,7 @@ class FileCollection(Collection[FileLink]):
 
     @staticmethod
     def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
+        """Attempt to extract file_id and version_id from a URL."""
         parsed = urlparse(url)
         if len(parsed.query) > 0 or len(parsed.fragment) > 0:
             # Illegal modifiers
@@ -193,8 +195,8 @@ class FileCollection(Collection[FileLink]):
     def _get_path_from_file_link(self, file_link: FileLink,
                                  *,
                                  action: str = None) -> str:
-        """Build the path for taking an action with a particular file link."""
-        # Use this sessions project/dataset credentials and the URLs file / version
+        """Build the platform path for taking an action with a particular file link."""
+        # Use this sessions project/dataset credentials and the URL's file / version
         file_id, version_id = self._get_ids_from_url(file_link.url)
         if file_id is None:
             raise ValueError(f"FileLink did not contain a Citrine platform file URL.")
@@ -355,13 +357,13 @@ class FileCollection(Collection[FileLink]):
 
         raise NotFound(f"Found file, but no version {version}")
 
-    def upload(self, *, file_path: str, dest_name: str = None) -> FileLink:
+    def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
         """
         Uploads a file to the dataset.
 
         Parameters
         ----------
-        file_path: str
+        file_path: str, Path
             The path to the file on the local computer.
         dest_name: str, optional
             The name the file will have after being uploaded. If unspecified, the local name of
@@ -376,24 +378,25 @@ class FileCollection(Collection[FileLink]):
             The filename and url of the uploaded object.
 
         """
-        if not os.path.isfile(file_path):
-            raise ValueError("No file at specified path {}".format(file_path))
+        file_path = Path(file_path).expanduser()
+        if not file_path.is_file():
+            raise ValueError(f"{file_path} is not a file.")
 
         if not dest_name:
             # Use the file name as a default dest_name
-            dest_name = os.path.basename(file_path)
+            dest_name = file_path.name
 
         uploader = self._make_upload_request(file_path, dest_name)
         uploader = self._upload_file(file_path, uploader)
         return self._complete_upload(dest_name, uploader)
 
-    def _make_upload_request(self, file_path: str, dest_name: str):
+    def _make_upload_request(self, file_path: Path, dest_name: str):
         """
         Make a request to the backend to upload a file. Uses mimetypes.guess_type.
 
         Parameters
         ----------
-        file_path: str
+        file_path: Path
             The path to the file on the local computer.
         dest_name: str
             The name the file will have after being uploaded.
@@ -407,9 +410,8 @@ class FileCollection(Collection[FileLink]):
 
         """
         path = self._get_path() + "/uploads"
-        # This string coercion is for supporting pathlib.Path objects in python 3.6
-        mime_type = self._mime_type(str(file_path))
-        file_size = os.stat(file_path).st_size
+        mime_type = self._mime_type(file_path)
+        file_size = file_path.stat().st_size
         assert isinstance(file_size, int)
         upload_json = {
             'files': [
@@ -446,20 +448,21 @@ class FileCollection(Collection[FileLink]):
         return uploader
 
     @staticmethod
-    def _mime_type(file_path: str):
-        mime_type = mimetypes.guess_type(file_path)[0]
+    def _mime_type(file_path: Path):
+        # This string coercion is for supporting pathlib.Path objects in python 3.6
+        mime_type = mimetypes.guess_type(str(file_path))[0]
         if mime_type is None:
             mime_type = "application/octet-stream"
         return mime_type
 
     @staticmethod
-    def _upload_file(file_path: str, uploader: _Uploader):
+    def _upload_file(file_path: Path, uploader: _Uploader):
         """
         Upload a file to S3.
 
         Parameters
         ----------
-        file_path: str
+        file_path: Path
             The path to the file on the local computer.
         uploader: _Uploader
             Holds the parameters returned by the upload request.
@@ -484,7 +487,7 @@ class FileCollection(Collection[FileLink]):
                                  aws_secret_access_key=uploader.aws_secret_access_key,
                                  aws_session_token=uploader.aws_session_token,
                                  **additional_s3_opts)
-        with open(file_path, 'rb') as f:
+        with file_path.open(mode='rb') as f:
             try:
                 # NOTE: This is only using the simple PUT logic, not the more sophisticated
                 # multipart upload approach that is also available (providing parallel
@@ -495,8 +498,8 @@ class FileCollection(Collection[FileLink]):
                     Body=f,
                     Metadata={"X-Citrine-Upload-Id": uploader.upload_id})
             except ClientError as e:
-                raise RuntimeError("Upload of file {} failed with the following "
-                                   "exception: {}".format(file_path, e))
+                raise RuntimeError(f"Upload of file {file_path} failed with the following "
+                                   f"exception: {e}")
         uploader.s3_version = upload_response['VersionId']
         return uploader
 
@@ -531,7 +534,7 @@ class FileCollection(Collection[FileLink]):
         url = self._get_path(uid=file_id, version=version_id)
         return FileLink(filename=dest_name, url=url)
 
-    def download(self, *, file_link: Union[str, UUID, FileLink], local_path: str):
+    def download(self, *, file_link: Union[str, UUID, FileLink], local_path: Union[str, Path]):
         """
         Download the file associated with a given FileLink to the local computer.
 
@@ -539,17 +542,23 @@ class FileCollection(Collection[FileLink]):
         ----------
         file_link: FileLink, str, UUID
             Resource referencing the file.
-        local_path: str
+        local_path: str, Path
             Path to save file on the local computer. If `local_path` is a directory,
             then the filename of this FileLink object will be appended to the path.
 
         """
         file_link = self._resolve_file_link(file_link)
 
-        directory, filename = os.path.split(local_path)
-        if not filename:
-            filename = file_link.filename
-        local_path = os.path.join(directory, filename)
+        if isinstance(local_path, str):
+            directory, filename = os.path.split(local_path)
+            if len(filename) == 0:  # the string ended with /
+                final_path = Path(directory) / file_link.filename
+            else:
+                final_path = Path(directory) / filename
+        elif local_path.is_dir():
+            final_path = local_path / file_link.filename
+        else:
+            final_path = local_path
 
         if self._is_external_url(file_link.url):  # Pull it from where ever it lives
             final_url = file_link.url
@@ -563,7 +572,7 @@ class FileCollection(Collection[FileLink]):
             raise ValueError(f"URL was malformed for a local file resource ({file_link.url}).")
 
         download_response = requests.get(final_url)
-        write_file_locally(download_response.content, local_path)
+        write_file_locally(download_response.content, final_path)
 
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,

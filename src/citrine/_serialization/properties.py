@@ -10,6 +10,8 @@ import arrow
 from gemd.enumeration.base_enumeration import BaseEnumeration
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.dict_serializable import DictSerializable
+from gemd.util.impl import _cached_isinstance as isinstance
+
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 
