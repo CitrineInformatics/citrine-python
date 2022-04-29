@@ -34,6 +34,14 @@ setup(name='citrine',
       extras_require={
           "builders": [
               "pandas>=1.1.5,<2"
+          ],
+          "../tests": [
+              "factory-boy>=2.12.0,<3"
+              "mock>=3.0.5,<4",
+              "pandas>=1.1.5,<2",
+              "pytest>=6.2.5,<7",
+              "pytz>=2019.3"
+              "requests-mock>=1.7.0,<2",
           ]
       },
       classifiers=[
