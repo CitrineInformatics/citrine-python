@@ -1,8 +1,7 @@
+from pathlib import Path
+import pytest
 import uuid
 
-import pytest
-import warnings
-from mock import patch, call, mock_open
 from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -65,23 +64,28 @@ def test_rewrite_s3_links_locally():
     assert "http://localhost:9566" == rewrite_s3_links_locally("http://localstack:4566", "http://localhost:9566")
 
 
-@patch("os.path.isdir")
-@patch("os.path.join")
-@patch("os.makedirs")
-def test_write_file_locally(mock_makedirs, mock_join, mock_isdir):
-    mock_isdir.return_value = False
-    mock_join.return_value = "/User/is/fake/myfile.pdf"
-    with patch("builtins.open", mock_open()) as m:
-        write_file_locally(b"something", "/User/is/fake/myfile.pdf")
-        assert m.call_args_list == [call('/User/is/fake/myfile.pdf', 'wb')]
-        handle = m()
-        handle.write.assert_called_once_with(b'something')
-    mock_makedirs.assert_called_once_with("/User/is/fake")
+def test_write_file_locally(tmpdir):
+    target = Path(tmpdir) / "user/is/fake/myfile.pdf"
+    assert not target.parent.is_dir()
+    assert not target.exists()
+    write_file_locally(b"something", target)
+    assert target.exists()
+    assert target.read_text() == "something"
+
+    write_file_locally(b"something else", str(target))
+    assert target.read_text() == "something else"
 
 
 def test_write_file_locally_fails_with_no_filename():
     with pytest.raises(ValueError):
         write_file_locally(b"anything", "/user/is/")
+
+
+def test_write_file_locally_fails_if_directory(tmpdir):
+    newdir = Path(tmpdir) / "wasnt/there/before"
+    newdir.mkdir(parents=True)
+    with pytest.raises(ValueError):
+        write_file_locally(b"anything", newdir)
 
 
 def test_shadow_classes_in_module():

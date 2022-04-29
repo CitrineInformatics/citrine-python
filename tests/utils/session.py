@@ -1,6 +1,7 @@
 from json import dumps
 from typing import Callable, Iterator, List
 from urllib.parse import urlencode
+from botocore.exceptions import ClientError
 
 from citrine.exceptions import NonRetryableHttpException
 from citrine.resources.api_error import ValidationError
@@ -108,6 +109,8 @@ class FakeSession:
             return default_response
 
         response = self.responses.pop(0)
+        if not self.responses:  # Restore it if we ran out
+            self.responses.append(response)
         if isinstance(response, NonRetryableHttpException):
             raise response
         return response
@@ -176,12 +179,16 @@ class FakePaginatedSession(FakeSession):
 class FakeS3Client:
     """A fake version of the S3 client that has a put_object method."""
 
-    def __init__(self, put_object_output):
+    def __init__(self, put_object_output, *, raises=False):
         self.put_object_output = put_object_output
+        self.raises = raises
 
     def put_object(self, *args, **kwargs):
         """Return the expected output of the real client's put_object method."""
-        return self.put_object_output
+        if self.raises:
+            raise self.put_object_output
+        else:
+            return self.put_object_output
 
 
 # TODO: Generalize. That is, don't assume "BadRequest" and pass the method to FakeRequest.

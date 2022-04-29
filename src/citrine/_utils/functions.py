@@ -1,7 +1,8 @@
 import inspect
-import os
 from functools import wraps
-from typing import Any, Optional
+import os
+from pathlib import Path
+from typing import Any, Optional, Union
 from urllib.parse import urlparse, quote
 from warnings import warn
 
@@ -117,15 +118,20 @@ def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
         return url
 
 
-def write_file_locally(content, local_path: str):
+def write_file_locally(content, local_path: Union[str, Path]):
     """Take content from remote and ensure path exists."""
-    directory, filename = os.path.split(local_path)
-    if filename == "":
-        raise ValueError("A filename must be provided in the path")
-    if not os.path.isdir(directory):
-        os.makedirs(directory)
-    with open(local_path, 'wb') as output_file:
-        output_file.write(content)
+    if isinstance(local_path, str):
+        if len(os.path.split(local_path)[-1]) == 0:
+            raise ValueError(f"A filename must be provided in the path ({local_path})")
+        local_path = Path(local_path)
+
+    # Resolve ~, .., and the like
+    local_path = local_path.expanduser().resolve()
+    if local_path.is_dir():
+        raise ValueError(f"A filename must be provided in the path ({local_path})")
+
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    local_path.open(mode='wb').write(content)
 
 
 def shadow_classes_in_module(source_module, target_module):
