@@ -6,18 +6,18 @@ AI Engine Code Examples
 Example: preprocessing and postprocessing in a GraphPredictor
 -------------------------------------------------------------
 
-Within a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, one can use :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor` modules to preprocess data before performing machine learning with a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`, and to post-process the SimpleMLPredictor's output.
+Within a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, one can use :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor` modules to preprocess data before performing machine learning with a :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, and to post-process the AutoMLPredictor's output.
 This is a very common and powerful use case for graphical modeling.
 Here we show an example of how to combine these modules to accomplish those many suitable tasks.
 
 Using ExpressionPredictors to perform pre-processing can be used to featurize data, which is a valuable way to leverage domain knowledge by transforming raw inputs into quantities known to be relevant.
 In the example below, we use an ExpressionPredictor to annotate the training data with a "hydration ratio".
 The hydration ratio is the mass ratio of water to flour.
-Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
+Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the AutoMLPredictor make more efficient use of scarce training data.
 (In a more standard materials science context, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)
 
 In the example below, we use the ExpressionPredictor feature to compute a bread loaf product's shelf life as a figure of merit.
-This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
+This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the AutoMLPredictor, as well as the fraction of salt in the ingredients.
 Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
 This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a :doc:`DesignWorkflow <design_workflows>`.
 
@@ -27,7 +27,7 @@ This pattern is also extremely useful for performing optimization over complex o
     from citrine.informatics.predictors import (
         ExpressionPredictor,
         GraphPredictor,
-        SimpleMLPredictor
+        AutoMLPredictor
     )
 
     ######## Omitted step: create DataSource with columns associated with the following descriptors ########
@@ -66,7 +66,7 @@ This pattern is also extremely useful for performing optimization over complex o
         }
     )
 
-    physical_properties_predictor = SimpleMLModel(
+    physical_properties_predictor = AutoMLModel(
         name = 'physical properties model',
         inputs = [
             wheat_flour_quantity,

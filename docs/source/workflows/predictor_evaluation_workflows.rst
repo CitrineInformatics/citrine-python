@@ -160,7 +160,7 @@ The predictor we'll evaluate is defined below:
 
     from citrine.informatics.data_sources import CSVDataSource
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.predictors import AutoMLPredictor
 
     x = RealDescriptor(key='x', lower_bound=0.0, upper_bound=1.0, units='')
     y = RealDescriptor(key='y', lower_bound=0.0, upper_bound=1.0, units='')
@@ -170,12 +170,11 @@ The predictor we'll evaluate is defined below:
         column_definitions={'x': x, 'y': y}
     )
 
-    predictor = SimpleMLPredictor(
+    predictor = AutoMLPredictor(
         name='y predictor',
         description='predicts y given x',
         inputs=[y],
         outputs=[x],
-        latent_variables=[],
         training_data=[data_source]
     )
 
