@@ -157,7 +157,11 @@ def build_simple_ml(
     latent_variables: List[Descriptor],
     training_data: Optional[List[DataSource]] = None
 ) -> GraphPredictor:
-    """Build a graph predictor that connects all inputs to all latent variables and outputs.
+    """
+    Build a graph predictor that connects all inputs to all latent variables and outputs.
+
+    The structure of the returned, unregistered graph predictor should be analogous to the
+    structure returned by SimpleMLPredictor.
 
     Parameters
     ----------
