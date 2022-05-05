@@ -116,7 +116,7 @@ def test_simple_ml():
     assert len(simple_ml.predictors) == 4
     for predictor in simple_ml.predictors:
         if predictor.typ == 'AutoML':
-            if predictor.output == z:
+            if predictor.outputs == [z]:
                 assert len(predictor.inputs) == 11
             else:
                 assert len(predictor.inputs) == 10

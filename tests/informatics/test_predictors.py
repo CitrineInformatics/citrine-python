@@ -29,12 +29,13 @@ formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4
 @pytest.fixture
 def simple_predictor() -> SimpleMLPredictor:
     """Build a SimpleMLPredictor for testing."""
-    return SimpleMLPredictor(name='ML predictor',
-                             description='Predicts z from input x and latent variable y',
-                             inputs=[x],
-                             outputs=[z],
-                             latent_variables=[y],
-                             training_data=[data_source])
+    with pytest.deprecated_call():
+        return SimpleMLPredictor(name='ML predictor',
+                                 description='Predicts z from input x and latent variable y',
+                                 inputs=[x],
+                                 outputs=[z],
+                                 latent_variables=[y],
+                                 training_data=[data_source])
 
 
 @pytest.fixture
