@@ -10,7 +10,6 @@ from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['SimpleMLPredictor']
 
-
 class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetadata):
     """[DEPRECATED] A predictor interface that builds a simple graphical model.
 
@@ -59,12 +58,8 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None):
-        warn("{this_class} has been deprecated. Please use {replacement} instead. "
-             "Any {this_class} must be converted to a GraphPredictor to be supported in v2.0"
-             .format(this_class=self.__class__.__name__,
-                     replacement="build_simple_ml"),
-             DeprecationWarning
-             )
+        warn("SimpleMLPredictor is deprecated as of 1.29.0 and will be removed in 2.0.0."
+             " Please use the builders.predictors.build_simple_ml.", category=DeprecationWarning)
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
