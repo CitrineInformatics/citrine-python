@@ -61,7 +61,7 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
                  training_data: Optional[List[DataSource]] = None):
         warn("{this_class} has been deprecated. Please use {replacement} instead. "
              "Any {this_class} must be converted to a GraphPredictor to be supported in v2.0"
-             .format(this_class=.self.__class__.__name__, 
+             .format(this_class=self.__class__.__name__,
                      replacement="build_simple_ml"),
              DeprecationWarning
              )
