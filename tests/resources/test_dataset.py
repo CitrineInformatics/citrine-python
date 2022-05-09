@@ -356,6 +356,9 @@ def test_gemd_posts(dataset):
         dataset.delete(updated.uid)
         assert dataset.session.calls[-1].path.split("/")[-3] == basename(GEMDResourceCollection._path_template)
 
+        # Clear responses for the next loop
+        dataset.session.set_responses()
+
     # Register all
     before = list(expected.values())
     seen_ids = set()
