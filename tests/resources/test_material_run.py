@@ -8,6 +8,7 @@ from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.material_run import MaterialRun as CitrineRun
+from citrine.resources.gemd_resource import GEMDResourceCollection
 
 from gemd.demo.cake import make_cake, change_scope
 from gemd.entity.bounds.integer_bounds import IntegerBounds
@@ -57,8 +58,8 @@ def test_register_all(collection, session):
     assert [r.name for r in runs] == [r.name for r in registered]
     assert len(session.calls) == 1
     assert session.calls[0].method == 'PUT'
-    assert session.calls[0].path == 'projects/{}/datasets/{}/material-runs/batch'.format(
-        collection.project_id, collection.dataset_id)
+    assert GEMDResourceCollection(collection.project_id, collection.dataset_id, collection.session)._get_path() \
+           in session.calls[0].path
     with pytest.raises(RuntimeError):
         MaterialRunCollection(collection.project_id, dataset_id=None, session=session).register_all([])
 
