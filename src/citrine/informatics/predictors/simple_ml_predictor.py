@@ -10,6 +10,7 @@ from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['SimpleMLPredictor']
 
+
 class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetadata):
     """[DEPRECATED] A predictor interface that builds a simple graphical model.
 
