@@ -160,7 +160,7 @@ def build_simple_ml(
     """
     Build a graph predictor that connects all inputs to all latent variables and outputs.
 
-    The structure of the returned, unregistered graph predictor should be analogous to the
+    The structure of the returned, unregistered graph predictor will be analogous to the
     structure returned by SimpleMLPredictor.
 
     Parameters

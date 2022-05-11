@@ -686,7 +686,7 @@ Simple ML predictor
 
 .. Warning::
     Simple ML Predictors are not supported on the Web UI and will be deprecated as of v2.0.
-    For an analogous behavior use the build_simple_ml method to construct a Graph Predictor.
+    For analogous behavior use the build_simple_ml method to construct a Graph Predictor.
     Use the convert_and_update (`source <https://github.com/CitrineInformatics/citrine-python/blob/main/src/citrine/resources/predictor.py#L193>`_).
     method to convert existing Simple ML Predictors to Graph Predictors.
 
