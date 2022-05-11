@@ -101,20 +101,22 @@ def predictor_collection() -> PredictorCollection:
 
     #Adding a few predictors in the collection to have something to update
     for i in range(0, 5):
-        predictors.register(SimpleMLPredictor(name = "resource " + str(i),
-                                            description = '',
-                                            inputs = [],
-                                            outputs = [],
-                                            latent_variables =[]))
+        with pytest.deprecated_call():
+            predictors.register(SimpleMLPredictor(name = "resource " + str(i),
+                                                description = '',
+                                                inputs = [],
+                                                outputs = [],
+                                                latent_variables =[]))
 
     #Adding a few predictors with the same name ("resource {0,1}" were made above)
     # this is used to test behavior if there are duplicates
     for i in range(0, 2):
-        predictors.register(SimpleMLPredictor(name = "resource " + str(i),
-                                            description = '',
-                                            inputs = [],
-                                            outputs = [],
-                                            latent_variables =[]))
+        with pytest.deprecated_call():
+            predictors.register(SimpleMLPredictor(name = "resource " + str(i),
+                                                description = '',
+                                                inputs = [],
+                                                outputs = [],
+                                                latent_variables =[]))
     return predictors
 
 
@@ -300,11 +302,12 @@ def test_find_or_create_dataset_raise_error_exist_multiple(dataset_collection):
 def test_create_or_update_none_found(predictor_collection):
     # test when resource doesn't exist with listed name and check if new one is created
     assert not [r for r in list(predictor_collection.list()) if r.name == absent_name]
-    pred = SimpleMLPredictor(name=absent_name,
-                            description = '',
-                            inputs = [],
-                            outputs = [],
-                            latent_variables = [])
+    with pytest.deprecated_call():
+        pred = SimpleMLPredictor(name=absent_name,
+                                description = '',
+                                inputs = [],
+                                outputs = [],
+                                latent_variables = [])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.uid == pred.uid
@@ -315,11 +318,12 @@ def test_create_or_update_none_found(predictor_collection):
 
 def test_create_or_update_unique_found(predictor_collection):
     # test when there is a single unique resource that exists with the listed name and update
-    pred = SimpleMLPredictor(name="resource 4", #this is a unique name in the collection
-                            description = 'I am updated!',
-                            inputs = [],
-                            outputs = [],
-                            latent_variables = [])
+    with pytest.deprecated_call():
+        pred = SimpleMLPredictor(name="resource 4", #this is a unique name in the collection
+                                description = 'I am updated!',
+                                inputs = [],
+                                outputs = [],
+                                latent_variables = [])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.name == pred.name
@@ -330,10 +334,11 @@ def test_create_or_update_unique_found(predictor_collection):
 
 def test_create_or_update_raise_error_multiple_found(predictor_collection):
     # test when there are multiple resources that exists with the same listed name and raise error
-    pred = SimpleMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
-                            description = 'I am updated!',
-                            inputs = [],
-                            outputs = [],
-                            latent_variables = [])
+    with pytest.deprecated_call():
+        pred = SimpleMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
+                                description = 'I am updated!',
+                                inputs = [],
+                                outputs = [],
+                                latent_variables = [])
     with pytest.raises(ValueError):
         create_or_update(collection=predictor_collection, resource=pred)

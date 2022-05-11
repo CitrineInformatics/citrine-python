@@ -32,7 +32,7 @@ That file could be used as the training data for a predictor as:
 .. code:: python
 
     from citrine.informatics.data_sources import CSVDataSource
-    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.predictors import AutoMLPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
     file_link = dataset.files.upload("./data.csv", "bandgap_data.csv")
@@ -49,7 +49,7 @@ That file could be used as the training data for a predictor as:
         }
     )
 
-    predictor = SimpleMLPredictor(
+    predictor = AutoMLPredictor(
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
@@ -59,7 +59,6 @@ That file could be used as the training data for a predictor as:
             data_source.column_definitions["Crystallinity"]
         ],
         outputs = [data_source.column_definitions["Gap"]],
-        latent_variables = [],
         training_data = [data_source]
     )
 
@@ -155,7 +154,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
 .. code:: python
 
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.predictors import AutoMLPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
     data_source = GemTableDataSource(
@@ -163,7 +162,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
         table_version = "2"
     )
 
-    predictor = SimpleMLPredictor(
+    predictor = AutoMLPredictor(
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
@@ -172,7 +171,6 @@ The example below assumes that the uuid and the version of the desired GEM Table
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         ],
         outputs = [RealDescriptor("terminal~band gap", lower_bound=0, upper_bound=20, units="eV")],
-        latent_variables = [],
         training_data = [data_source]
     )
 

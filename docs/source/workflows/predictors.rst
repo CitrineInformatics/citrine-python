@@ -684,6 +684,13 @@ This predictor will compute 2 responses, ``solute share in formulation`` and ``s
 Simple ML predictor
 -------------------
 
+.. Warning::
+    Simple ML Predictors are not supported on the Web UI and will be deprecated as of v2.0.
+    For analogous behavior use the build_simple_ml method to construct a Graph Predictor.
+    Use the convert_and_update (`source <https://github.com/CitrineInformatics/citrine-python/blob/main/src/citrine/resources/predictor.py#L193>`_).
+    method to convert existing Simple ML Predictors to Graph Predictors.
+
+
 The :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.
