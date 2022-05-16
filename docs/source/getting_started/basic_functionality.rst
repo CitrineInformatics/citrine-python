@@ -39,6 +39,41 @@ The database may decorate the object with additional information, such as a uniq
 
 .. _functionality_reading_label:
 
+Controlling Flow
+----------------
+
+It is often useful to know when a resource has completed validating, especially when subsequent lines of code involve the validated resource. The ``wait_while_validating`` function will pause execution of the script until the resource has successfully validated.
+
+.. code-block:: python
+    
+    sintering_model = sintering_project.predictors.register(sintering_model)
+    wait_while_validating(collection=sintering_project.predictors, module=sintering_model)
+    
+Similarly, the ``wait_while_executing`` function will wait for a design or performance evaluation workflow to complete executing.
+
+.. code-block:: python
+    
+    pew_workflow = sintering_project.predictor_evaluation_workflows.register(pew_workflow)
+    pew_workflow = wait_while_validating(collection=sintering_project.predictor_evaluation_workflows, module=pew_workflow)
+    pew_ex = pew_workflow.trigger(sintering_model)
+    wait_while_executing(collection=sintering_project.predictor_evaluation_executions, execution=pew_ex, print_status_info=True)
+
+Checking Status
+---------------
+
+After registering an asset, the ``status`` command can be used to obtain a static readout of the state of the asset on the platform (e.g., VALID, INVALID, VALIDATING, SUCCEEDED, FAILED, INPROGRESS). 
+
+.. code-block:: python
+
+    sintering_model = sintering_project.predictors.register(sintering_model)
+    sintering_model.status
+    
+The ``status_info`` command returns additional details about an asset's status that can be very useful for debugging.
+
+.. code-block:: python
+
+    sintering_model.status_info
+
 Reading
 -------
 
