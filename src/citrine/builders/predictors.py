@@ -4,9 +4,19 @@ from citrine.resources.project import Project
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
     ChemicalFormulaFeaturizer,
-    MeanPropertyPredictor
+    MeanPropertyPredictor,
+    AutoMLPredictor,
+    GraphPredictor
 )
-from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
+from citrine.informatics.descriptors import (
+    Descriptor,
+    FormulationDescriptor,
+    RealDescriptor,
+    CategoricalDescriptor,
+    ChemicalFormulaDescriptor,
+    MolecularStructureDescriptor,
+)
+from citrine.informatics.data_sources import DataSource
 
 
 def build_mean_feature_property_predictors(
@@ -134,3 +144,117 @@ def _build_mean_property_predictor(
         impute_properties=impute_properties,
         label=label
     )
+
+
+# Add simple ml builder
+def build_simple_ml(
+    *,
+    project: Project,
+    name: str,
+    description: str,
+    inputs: List[Descriptor],
+    outputs: List[Descriptor],
+    latent_variables: List[Descriptor],
+    training_data: Optional[List[DataSource]] = None
+) -> GraphPredictor:
+    """
+    Build a graph predictor that connects all inputs to all latent variables and outputs.
+
+    The structure of the returned, unregistered graph predictor will be analogous to the
+    structure returned by SimpleMLPredictor.
+
+    Parameters
+    ----------
+    project: Project
+        Project that contains the predictor to be built
+    name: str
+        name of the returned predictor
+    description: str
+        the description of the predictor
+    inputs: list[Descriptor]
+        Descriptors that represent inputs to relations
+    outputs: list[Descriptor]
+        Descriptors that represent outputs of relations
+    latent_variables: list[Descriptor]
+        Descriptors that are predicted from inputs and used when predicting the outputs
+    training_data: Optional[List[DataSource]]
+        Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
+        multiple data sources will be combined into a flattened list and de-duplicated by uid and
+        identifiers. de-duplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a de-duplicated row will contain the union of data across all
+        rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        predictor is part of a graph that includes all training data required by this predictor.
+
+    Returns
+    -------
+    GraphPredictor
+        GraphPredictor connecting all inputs to all latent variables and all inputs and latent
+        variables to all outputs.
+
+    """
+    ml_model_feature_descriptors = [d for d in inputs
+                                    if isinstance(d, (RealDescriptor, CategoricalDescriptor))]
+    chemical_formula_descriptors = [d for d in inputs
+                                    if isinstance(d, ChemicalFormulaDescriptor)]
+    molecular_structure_descriptors = [d for d in inputs
+                                       if isinstance(d, MolecularStructureDescriptor)]
+
+    chemical_formula_featurizers = [
+        ChemicalFormulaFeaturizer(
+            name=f'{chemical_formula_descriptor.key} featurizer',
+            description='',
+            input_descriptor=chemical_formula_descriptor,
+            features=['standard'],
+        ) for chemical_formula_descriptor in chemical_formula_descriptors
+    ]
+
+    molecular_structure_featurizers = [
+        MolecularStructureFeaturizer(
+            name=f'{molecular_structure_descriptor.key} featurizer',
+            description='',
+            input_descriptor=molecular_structure_descriptor,
+            features=['standard'],
+        ) for molecular_structure_descriptor in molecular_structure_descriptors
+    ]
+
+    # TODO: Fix needing to pass the project (if possible)
+    featurizer_responses = []
+    for featurizer in chemical_formula_featurizers + molecular_structure_featurizers:
+        featurizer_responses.extend(
+            project.descriptors.from_predictor_responses(
+                predictor=featurizer,
+                inputs=[featurizer.input_descriptor],
+            )
+        )
+
+    automl_lv_predictors = [
+        AutoMLPredictor(
+            name=f'{latent_variable_descriptor.key} Predictor',
+            description='',
+            inputs=ml_model_feature_descriptors + featurizer_responses,
+            outputs=[latent_variable_descriptor],
+        ) for latent_variable_descriptor in latent_variables
+    ]
+
+    automl_output_predictors = [
+        AutoMLPredictor(
+            name=f'{output_descriptor.key} Predictor',
+            description='',
+            inputs=ml_model_feature_descriptors + latent_variables + featurizer_responses,
+            outputs=[output_descriptor],
+        ) for output_descriptor in outputs
+    ]
+
+    predictor = GraphPredictor(
+        name=name,
+        description=description,
+        predictors=[
+            * chemical_formula_featurizers,
+            * molecular_structure_featurizers,
+            * automl_lv_predictors,
+            * automl_output_predictors
+        ],
+        training_data=training_data
+    )
+
+    return predictor

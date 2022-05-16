@@ -1,4 +1,5 @@
 from typing import List, Optional
+from warnings import warn
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
@@ -11,7 +12,7 @@ __all__ = ['SimpleMLPredictor']
 
 
 class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetadata):
-    """A predictor interface that builds a simple graphical model.
+    """[DEPRECATED] A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
@@ -58,6 +59,8 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None):
+        warn("SimpleMLPredictor is deprecated as of 1.29.0 and will be removed in 2.0.0."
+             " Please use the builders.predictors.build_simple_ml.", category=DeprecationWarning)
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs

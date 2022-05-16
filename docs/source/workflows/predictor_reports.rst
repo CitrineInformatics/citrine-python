@@ -49,9 +49,9 @@ An example is shown below:
 
 For simple models, such as those that featurize inputs, the ``model_settings`` and ``feature_importances`` fields might be empty.
 
-As an example, consider a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
+As an example, consider a :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
 This predictor will produce a single model to predict ``z`` from ``x`` and ``y``.
-In cases involving latent variables and/or input featurization, more models will be produced.
+In cases involving multiple ml predictors and/or input featurization, more models will be produced.
 The code below shows how to create the predictor, register it, and view the report.
 Assume that there is a training data table with known id and version.
 
@@ -59,7 +59,7 @@ Assume that there is a training data table with known id and version.
 
     from time import sleep
 
-    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor
     from citrine.informatics.descriptors import RealDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
 
@@ -68,18 +68,24 @@ Assume that there is a training data table with known id and version.
     y = RealDescriptor(key='y', lower_bound=0, upper_bound=10, units='')
     z = RealDescriptor(key='z', lower_bound=0, upper_bound=10, units='')
 
+    # create ML predictor
+    auto_ml_predictor = AutoMLPredictor(
+       name='ML predictor for z',
+       description='Predicts z from x and y',
+       inputs=[x, y],
+       outputs=[z],
+       training_data=[GemTableDataSource(
+        table_id = training_table_id,
+        table_version = training_table_version
+        )]
+    )
+
     # register a predictor with a project
     predictor = project.predictors.register(
-       SimpleMLPredictor(
+       GraphPredictor(
            name='ML predictor for z',
            description='Predicts z from x and y',
-           inputs=[x, y],
-           latent_variables=[],
-           outputs=[z],
-           training_data=[GemTableDataSource(
-            table_id = training_table_id,
-            table_version = training_table_version
-           )]
+           predictors=[auto_ml_predictor]
        )
     )
 

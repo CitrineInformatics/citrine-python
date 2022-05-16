@@ -1,23 +1,33 @@
 """Collection class for generic GEMD objects and templates."""
 from typing import Type, Union, Optional, List, Tuple, Iterable
-from uuid import UUID
+from uuid import UUID, uuid4
+import re
+from tqdm.auto import tqdm
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.util import recursive_flatmap, recursive_foreach, set_uuids, \
+    make_index, substitute_objects
 
 from citrine.resources.api_error import ApiError
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, \
+    CITRINE_SCOPE, CITRINE_TAG_PREFIX
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
+from citrine._utils.functions import scrub_none, replace_objects_with_links
 
 
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
-    _path_template = 'projects/{project_id}/storables'
+    _path_template = 'projects/{project_id}/datasets/{dataset_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
+        DataConceptsCollection.__init__(self,
+                                        project_id=project_id,
+                                        dataset_id=dataset_id,
+                                        session=session)
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
@@ -50,30 +60,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """
         return super().build(data)
 
-    def update(self, model: DataConcepts) -> DataConcepts:
-        """Update a data model object using the appropriate collection."""
-        return self._collection_for(model).update(model)
-
-    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
-        """
-        Delete a GEMD resource from the appropriate collection.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str, LinkByUID, DataConcepts]
-            A representation of the resource to delete (Citrine id, LinkByUID, or the object)
-        dry_run: bool
-            Whether to actually delete the item or run a dry run of the delete operation.
-            Dry run is intended to be used for validation. Default: false
-
-        """
-        model = self.get(uid)  # Get full object for collection lookup
-        return self._collection_for(model).delete(model, dry_run=dry_run)
-
-    def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
-        """Register a GEMD object to the appropriate collection."""
-        return self._collection_for(model).register(model, dry_run=dry_run)
-
     def register_all(self,
                      models: Iterable[DataConcepts],
                      *,
@@ -92,6 +78,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         server, the input GEMD objects will be updated with whichever uids & _citr_auto:: tags are
         on the returned objects.  This means GEMD objects that already exist on the server will
         be updated with all their on-platform uids and tags.
+
+        This method has the same behavior as `register`, except that no models will be
+        written if any one of them is invalid.  Using this method should yield significant
+        improvements to write speed over separate calls to `register`.
 
         Parameters
         ----------
@@ -116,16 +106,73 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             The registered versions
 
         """
-        # Endpoints are polymorphic now, so it doesn't matter which we hit
-        if len(models) == 0:
-            return []  # Fast exit since there's nothing to process
-        collection = self._collection_for(next(m for m in models))
-        return collection.register_all(
-            models,
-            dry_run=dry_run,
-            status_bar=status_bar,
-            include_nested=include_nested
-        )
+        from citrine._utils.batcher import Batcher
+
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset in order to register a data model object.")
+        path = self._get_path()
+        params = {'dry_run': dry_run}
+
+        if include_nested:
+            models = recursive_flatmap(models, lambda o: [o], unidirectional=False)
+
+        temp_scope = str(uuid4())
+        scope = temp_scope if dry_run else CITRINE_SCOPE
+        set_uuids(models, scope=scope)
+
+        resources = list()
+        batch_size = 50
+        result_index = dict()
+        if dry_run:
+            batcher = Batcher.by_dependency()
+        else:
+            batcher = Batcher.by_type()
+
+        if status_bar:
+            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
+            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
+        else:
+            iterator = batcher.batch(models, batch_size)
+
+        for batch in iterator:
+            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
+            response_data = self.session.put_resource(
+                path + '/batch',
+                json={'objects': objects},
+                params=params
+            )
+            registered = [self.build(obj) for obj in response_data['objects']]
+            result_index.update(make_index(registered))
+            substitute_objects(registered, result_index, inplace=True)
+
+            if not dry_run:
+                # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    obj.uids.update({k: v for k, v in result.uids.items()})
+                    if result.tags is not None:
+                        obj.tags = list(result.tags)
+            else:
+                # Remove of the tags/uids the platform spuriously added
+                # this might leave objects with just the temp ids, which we want to strip later
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    if CITRINE_SCOPE not in obj.uids:
+                        citr_id = result.uids.pop(CITRINE_SCOPE, None)
+                        result_index.pop(LinkByUID(scope=CITRINE_SCOPE, id=citr_id), None)
+                    if result.tags is not None:
+                        todo = [tag for tag in result.tags
+                                if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                        for tag in todo:  # Covering this block would require dark art
+                            if tag not in obj.tags:
+                                result.tags.remove(tag)
+
+            resources.extend(registered)
+
+        if dry_run:  # No-op if not dry-run
+            recursive_foreach(list(models) + list(resources),
+                              lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        return resources
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,
