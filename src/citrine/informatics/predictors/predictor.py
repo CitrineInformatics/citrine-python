@@ -1,14 +1,19 @@
-from typing import Type
+from typing import Optional, Type
+from uuid import UUID
 
+from deprecation import deprecated
+
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
-from citrine.informatics.modules import Module
+from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._session import Session
 from citrine.resources.report import ReportResource
 
 
 __all__ = ['Predictor']
 
 
-class Predictor(Module):
+class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     """Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. Subtype
@@ -18,8 +23,27 @@ class Predictor(Module):
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
+    name = properties.String('data.name')
+    description = properties.Optional(properties.String(), 'data.description')
+
+    _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
+    _in_progress_statuses = ["VALIDATING", "CREATED"]
+    _succeeded_statuses = ["READY"]
+    _failed_statuses = ["INVALID", "ERROR"]
+
+    @property
+    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0",
+                details="Please use `isinstance` or `issubclass` instead.")
+    def module_type(self):
+        """The type of module."""
+        return "PREDICTOR"
+
+    @module_type.setter
+    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0")
+    def module_type(self, value):
+        pass
 
     @property
     def report(self):
@@ -28,6 +52,20 @@ class Predictor(Module):
             msg = "Cannot get the report for a predictor that wasn't read from the platform"
             raise ValueError(msg)
         return ReportResource(self._project_id, self._session).get(self.uid)
+
+    @staticmethod
+    def wrap_instance(predictor_data: dict) -> dict:
+        """Insert a serialized embedded predictor into a module envelope.
+
+        This facilitates deserialization.
+        """
+        return {
+            "data": {
+                "name": predictor_data.get("name", ""),
+                "description": predictor_data.get("description", ""),
+                "instance": predictor_data
+            }
+        }
 
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:
@@ -56,12 +94,12 @@ class Predictor(Module):
             "ChemicalFormulaFeaturizer": ChemicalFormulaFeaturizer,
             "AutoML": AutoMLPredictor,
         }
-        typ = type_dict.get(data['config']['type'])
+        typ = type_dict.get(data['data']['instance']['type'])
 
         if typ is not None:
             return typ
         else:
             raise ValueError(
                 '{} is not a valid predictor type. '
-                'Must be in {}.'.format(data['config']['type'], type_dict.keys())
+                'Must be in {}.'.format(data['data']['instance']['type'], type_dict.keys())
             )

@@ -1,16 +1,15 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
+class GraphPredictor(EngineResource['GraphPredictor'], Predictor):
     """A predictor interface that stitches other predictors together.
 
     Parameters
@@ -32,17 +31,14 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
     predictors = _properties.List(_properties.Union(
-        [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
+        [_properties.UUID, _properties.Object(Predictor)]), 'data.instance.predictors')
     # the default seems to be defined in instances, not the class itself
     # this is tested in test_graph_default_training_data
     training_data = _properties.List(_properties.Object(DataSource),
-                                     'config.training_data', default=[])
+                                     'data.instance.training_data', default=[])
 
-    typ = _properties.String('config.type', default='Graph', deserializable=False)
-    module_type = _properties.String('module_type', default='PREDICTOR')
+    typ = _properties.String('data.instance.type', default='Graph', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -56,32 +52,19 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
         self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        for i, predictor in enumerate(data['config']['predictors']):
+        data = super()._post_dump(data)
+        for i, predictor in enumerate(data['instance']['predictors']):
             if isinstance(predictor, dict):
                 # embedded predictors are not modules, so only serialize their config
-                data['config']['predictors'][i] = predictor['config']
+                data['instance']['predictors'][i] = predictor['instance']
         return data
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        for i, predictor in enumerate(data['config']['predictors']):
-            if isinstance(predictor, dict):
-                data['config']['predictors'][i] = \
-                    GraphPredictor.stuff_predictor_into_envelope(predictor)
+        for i, predictor_data in enumerate(data['data']['instance']['predictors']):
+            if isinstance(predictor_data, dict):
+                data['data']['instance']['predictors'][i] = Predictor.wrap_instance(predictor_data)
         return data
-
-    @staticmethod
-    def stuff_predictor_into_envelope(predictor: dict) -> dict:
-        """Insert a serialized embedded predictor into a module envelope.
-
-        This facilitates deserialization.
-        """
-        return dict(
-            module_type='PREDICTOR',
-            config=predictor,
-            archived=False
-        )
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)

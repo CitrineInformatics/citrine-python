@@ -97,7 +97,7 @@ def test_simple_ml():
     project = FakeProject()
     smiles = MolecularStructureDescriptor("smiles")
     chem = ChemicalFormulaDescriptor("formula")
-    w = CategoricalDescriptor(key="w",categories=["A","B","C"]) 
+    w = CategoricalDescriptor(key="w",categories=["A","B","C"])
     x = RealDescriptor(key="x", lower_bound=0, upper_bound=100, units="")
     y = RealDescriptor(key="y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor(key="z", lower_bound=0, upper_bound=100, units="")

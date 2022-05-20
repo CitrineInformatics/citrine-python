@@ -105,7 +105,23 @@ class TableDataSourceDataFactory(factory.DictFactory):
     formulation_descriptor = None
 
 
-class PredictorConfigDataFactory(factory.DictFactory):
+class UserTimestampDataFactory(factory.DictFactory):
+    user = factory.Faker("uuid4")
+    time = factory.Faker("iso8601")
+
+
+class StatusDataFactory(factory.DictFactory):
+    name = "READY"
+    info = []
+
+
+class PredictorMetadataDataFactory(factory.DictFactory):
+    status = factory.SubFactory(StatusDataFactory)
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+
+
+class PredictorInstanceDataFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     predictors = []
@@ -113,14 +129,18 @@ class PredictorConfigDataFactory(factory.DictFactory):
     type = "Graph"
 
 
-class PredictorDataFactory(factory.DictFactory):
-    config = factory.SubFactory(PredictorConfigDataFactory)
+# The name isn't a typo. The class is a factory (which uses the suffix "DataFactory") for the
+# predictor data object.
+class PredictorDataDataFactory(factory.DictFactory):
+    name = factory.LazyAttribute(lambda data: data.instance["name"])
+    description = factory.LazyAttribute(lambda data: data.instance["description"])
+    instance = factory.SubFactory(PredictorInstanceDataFactory)
+
+
+class PredictorEntityDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
-    name = factory.Faker("company")
-    archived = False
-    module_type = "PREDICTOR"
-    status = "READY"
-    status_info = []
+    data = factory.SubFactory(PredictorDataDataFactory)
+    metadata = factory.SubFactory(PredictorMetadataDataFactory)
 
 
 class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):

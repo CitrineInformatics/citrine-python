@@ -9,6 +9,9 @@ from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
     CategoricalDescriptor
 from citrine.informatics.predictors import *
 
+from tests.utils.factories import PredictorEntityDataFactory, PredictorDataDataFactory
+
+
 w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
@@ -24,6 +27,37 @@ water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, 
 salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
 data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
 formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
+
+
+def build_predictor_data(instance):
+    return dict(
+        name=instance.get("name"),
+        description=instance.get("description"),
+        instance=instance
+    )
+
+
+def build_predictor_entity(data):
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
+    return dict(
+        id=str(uuid.uuid4()),
+        data=data,
+        metadata=dict(
+            status=dict(
+                name='READY',
+                info=[]
+            ),
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            )
+        )
+    )
 
 
 @pytest.fixture
@@ -243,17 +277,14 @@ def test_molecule_featurizer(molecule_featurizer):
 
     assert str(molecule_featurizer) == "<MolecularStructureFeaturizer 'Molecule featurizer'>"
 
-    assert molecule_featurizer.dump() == {
-        'config': {
-            'name': 'Molecule featurizer', 'description': 'description',
+    assert molecule_featurizer.dump() == PredictorDataDataFactory(instance={
+            'name': 'Molecule featurizer',
+            'description': 'description',
             'descriptor': {'descriptor_key': 'SMILES', 'type': 'Organic'},
-            'features': ['all'], 'excludes': ['standard'],
+            'features': ['all'],
+            'excludes': ['standard'],
             'type': 'MoleculeFeaturizer'
-        },
-        'archived': False,
-        'module_type': 'PREDICTOR',
-        'display_name': 'Molecule featurizer'
-    }
+        })
 
 
 def test_chemical_featurizer(chemical_featurizer):
@@ -266,20 +297,15 @@ def test_chemical_featurizer(chemical_featurizer):
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
 
-    assert chemical_featurizer.dump() == {
-        'config': {
-            'name': 'Chemical featurizer',
-            'description': 'description',
-            'input': ChemicalFormulaDescriptor("formula").dump(),
-            'features': ['standard'],
-            'excludes': [],
-            'powers': [1, 2],
-            'type': 'ChemicalFormulaFeaturizer'
-        },
-        'archived': False,
-        'module_type': 'PREDICTOR',
-        'display_name': 'Chemical featurizer'
-    }
+    assert chemical_featurizer.dump() == PredictorDataDataFactory(instance={
+        'name': 'Chemical featurizer',
+        'description': 'description',
+        'input': ChemicalFormulaDescriptor("formula").dump(),
+        'features': ['standard'],
+        'excludes': [],
+        'powers': [1, 2],
+        'type': 'ChemicalFormulaFeaturizer'
+    })
 
 
 def test_auto_ml(auto_ml):
@@ -287,41 +313,41 @@ def test_auto_ml(auto_ml):
     assert auto_ml.description == "Predicts z from inputs w and x"
     assert auto_ml.inputs == [w, x]
     assert auto_ml.training_data == [data_source]
-    assert auto_ml.dump()['config']['outputs'] == [z.dump()]
+    assert auto_ml.dump()['instance']['outputs'] == [z.dump()]
     with pytest.deprecated_call():
         assert auto_ml.output == z
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
-    built = AutoMLPredictor.build(auto_ml.dump())
+    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml.dump()))
     assert built.outputs == [z]
-    assert built.dump()['config']['outputs'] == [z.dump()]
+    assert built.dump()['instance']['outputs'] == [z.dump()]
     with pytest.deprecated_call():
         assert built.output == z
 
 
 def test_auto_ml_no_outputs(auto_ml_no_outputs):
     assert auto_ml_no_outputs.outputs == []
-    assert auto_ml_no_outputs.dump()['config']['outputs'] == []
+    assert auto_ml_no_outputs.dump()['instance']['outputs'] == []
     with pytest.deprecated_call():
         assert auto_ml_no_outputs.output is None
 
-    built = AutoMLPredictor.build(auto_ml_no_outputs.dump())
+    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_no_outputs.dump()))
     assert built.outputs == []
-    assert built.dump()['config']['outputs'] == []
+    assert built.dump()['instance']['outputs'] == []
     with pytest.deprecated_call():
         assert built.output is None
 
 
 def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
     assert auto_ml_multiple_outputs.outputs == [z, y]
-    assert auto_ml_multiple_outputs.dump()['config']['outputs'] == [z.dump(), y.dump()]
+    assert auto_ml_multiple_outputs.dump()['instance']['outputs'] == [z.dump(), y.dump()]
     with pytest.deprecated_call():
         assert auto_ml_multiple_outputs.output == z
 
-    built = AutoMLPredictor.build(auto_ml_multiple_outputs.dump())
+    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_multiple_outputs.dump()))
     assert built.outputs == [z, y]
-    assert built.dump()['config']['outputs'] == [z.dump(), y.dump()]
+    assert built.dump()['instance']['outputs'] == [z.dump(), y.dump()]
     with pytest.deprecated_call():
         assert built.output == z
 
@@ -400,7 +426,7 @@ def test_mean_property_initialization(mean_property_predictor):
 
 def test_mean_property_round_robin(mean_property_predictor):
     """Make sure that the MPP can be de/serialized appropriately."""
-    data = mean_property_predictor.dump()
+    data = PredictorEntityDataFactory(data=mean_property_predictor.dump())
     new_mpp = MeanPropertyPredictor.build(data)
     real_props = [d for d in new_mpp.properties if isinstance(d, RealDescriptor)]
     cat_props = [d for d in new_mpp.properties if isinstance(d, CategoricalDescriptor)]
@@ -458,3 +484,11 @@ def test_status(valid_label_fractions_predictor_data, auto_ml):
     # A deserialized predictor should have the correct status
     predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
+
+
+def test_deprecated_module_type(auto_ml):
+    with pytest.deprecated_call():
+        auto_ml.module_type = "foo"
+
+    with pytest.deprecated_call():
+        assert auto_ml.module_type == "PREDICTOR"
