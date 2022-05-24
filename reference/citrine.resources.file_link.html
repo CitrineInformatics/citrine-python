@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -194,13 +194,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.download">
-<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.download" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.download" title="Permalink to this definition"></a></dt>
 <dd><p>Download the file associated with a given FileLink to the local computer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_link</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a>) – Resource referencing the external file.</p></li>
-<li><p><strong>local_path</strong> (<em>str</em>) – Path to save file on the local computer. If <cite>local_path</cite> is a directory,
+<li><p><strong>file_link</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>, </em><em>str</em><em>, </em><em>UUID</em>) – Resource referencing the file.</p></li>
+<li><p><strong>local_path</strong> (<em>str</em><em>, </em><em>Path</em>) – Path to save file on the local computer. If <cite>local_path</cite> is a directory,
 then the filename of this FileLink object will be appended to the path.</p></li>
 </ul>
 </dd>
@@ -229,8 +229,24 @@ then the filename of this FileLink object will be appended to the path.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.get" title="Permalink to this definition"></a></dt>
-<dd><p>Get a particular element of the collection.</p>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get an element of the collection by its id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – A representation of the FileLink (Citrine id or file name)</p></li>
+<li><p><strong>version</strong> (<em>Optional</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em>) – The version, as a UUID or str(UUID) of the version_id or an int or
+str(int) of the version number.  If None, returns the file with the
+highest version number (most recent).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object with specified scope and uid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -266,6 +282,8 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>file_link</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a>) – The file to process.</p></li>
+<li><p><strong>processing_type</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><em>FileProcessingType</em></a>) – The processing algorithm to apply.</p></li>
 <li><p><strong>job_id</strong> (<em>UUID</em>) – The background job ID to poll for.</p></li>
 <li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
 (fractional) seconds.</p></li>
@@ -284,17 +302,24 @@ it will return None to indicate the job was successful.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.process">
-<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><span class="pre">citrine.resources.file_link.FileProcessingType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><span class="pre">citrine.resources.file_link.FileProcessingType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.file_link.FileProcessingResult" title="citrine.resources.file_link.FileProcessingResult"><span class="pre">citrine.resources.file_link.FileProcessingResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.process" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><span class="pre">citrine.resources.file_link.FileProcessingType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><span class="pre">citrine.resources.file_link.FileProcessingType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.file_link.FileProcessingResult" title="citrine.resources.file_link.FileProcessingResult"><span class="pre">citrine.resources.file_link.FileProcessingResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.process" title="Permalink to this definition"></a></dt>
 <dd><p>Start a File Processing async job, returning a pollable job response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_link</strong> – The file to process.</p></li>
-<li><p><strong>processing_type</strong> – The type of file processing to invoke.</p></li>
+<li><p><strong>file_link</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>, </em><em>str</em><em>, or </em><em>UUID</em>) – The file to process.</p></li>
+<li><p><strong>processing_type</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType"><em>FileProcessingType</em></a>) – The type of file processing to invoke.</p></li>
+<li><p><strong>wait_for_response</strong> (<em>bool</em>) – Whether to wait for a result, vs. just return a job handle.  Default: True</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.  Default: 120 seconds.</p></li>
+<li><p><strong>polling_delay</strong> (<em>float</em>) – How long to delay between each polling retry attempt.  Default: 1 second.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A JobSubmissionResponse which can be used to poll for the result.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse">JobSubmissionResponse</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,12 +338,12 @@ it will return None to indicate the job was successful.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.upload">
-<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.upload" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.upload" title="Permalink to this definition"></a></dt>
 <dd><p>Uploads a file to the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<em>str</em>) – The path to the file on the local computer.</p></li>
+<li><p><strong>file_path</strong> (<em>str</em><em>, </em><em>Path</em>) – The path to the file on the local computer.</p></li>
 <li><p><strong>dest_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name the file will have after being uploaded. If unspecified, the local name of
 the file will be used. That is, the file at “/Users/me/diagram.pdf” will be uploaded
 with the name “diagram.pdf”. File names <strong>must be unique</strong> within a dataset. If a file

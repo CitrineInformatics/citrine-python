@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.10. Predictor Reports &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>4.10. Predictor Reports &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -133,14 +133,14 @@ An example is shown below:</p>
 </pre></div>
 </div>
 <p>For simple models, such as those that featurize inputs, the <code class="docutils literal notranslate"><span class="pre">model_settings</span></code> and <code class="docutils literal notranslate"><span class="pre">feature_importances</span></code> fields might be empty.</p>
-<p>As an example, consider a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> with numeric inputs <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> and numeric output <code class="docutils literal notranslate"><span class="pre">z</span></code>.
+<p>As an example, consider a <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> with numeric inputs <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> and numeric output <code class="docutils literal notranslate"><span class="pre">z</span></code>.
 This predictor will produce a single model to predict <code class="docutils literal notranslate"><span class="pre">z</span></code> from <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.
-In cases involving latent variables and/or input featurization, more models will be produced.
+In cases involving multiple ml predictors and/or input featurization, more models will be produced.
 The code below shows how to create the predictor, register it, and view the report.
 Assume that there is a training data table with known id and version.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span><span class="p">,</span> <span class="n">AutoMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
@@ -149,18 +149,24 @@ Assume that there is a training data table with known id and version.</p>
 <span class="n">y</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="n">z</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
+<span class="c1"># create ML predictor</span>
+<span class="n">auto_ml_predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
+   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML predictor for z&#39;</span><span class="p">,</span>
+   <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predicts z from x and y&#39;</span><span class="p">,</span>
+   <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
+   <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">z</span><span class="p">],</span>
+   <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span>
+    <span class="n">table_id</span> <span class="o">=</span> <span class="n">training_table_id</span><span class="p">,</span>
+    <span class="n">table_version</span> <span class="o">=</span> <span class="n">training_table_version</span>
+    <span class="p">)]</span>
+<span class="p">)</span>
+
 <span class="c1"># register a predictor with a project</span>
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-   <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+   <span class="n">GraphPredictor</span><span class="p">(</span>
        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML predictor for z&#39;</span><span class="p">,</span>
        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predicts z from x and y&#39;</span><span class="p">,</span>
-       <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
-       <span class="n">latent_variables</span><span class="o">=</span><span class="p">[],</span>
-       <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">z</span><span class="p">],</span>
-       <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span>
-        <span class="n">table_id</span> <span class="o">=</span> <span class="n">training_table_id</span><span class="p">,</span>
-        <span class="n">table_version</span> <span class="o">=</span> <span class="n">training_table_version</span>
-       <span class="p">)]</span>
+       <span class="n">predictors</span><span class="o">=</span><span class="p">[</span><span class="n">auto_ml_predictor</span><span class="p">]</span>
    <span class="p">)</span>
 <span class="p">)</span>
 

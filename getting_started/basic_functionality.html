@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1.3. Managing Resources &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>1.3. Managing Resources &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -49,14 +49,16 @@
 <li class="toctree-l2"><a class="reference internal" href="connecting.html">1.2. Connecting to the Citrine Platform</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Managing Resources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating">1.3.1. Creating</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#reading">1.3.2. Reading</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#get">1.3.2.1. Get</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#list">1.3.2.2. List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#controlling-flow">1.3.2. Controlling Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-status">1.3.3. Checking Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading">1.3.4. Reading</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get">1.3.4.1. Get</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list">1.3.4.2. List</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#updating">1.3.3. Updating</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#deleting">1.3.4. Deleting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#data-model-object-specific-methods">1.3.5. Data Model Object Specific Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#updating">1.3.5. Updating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deleting">1.3.6. Deleting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-model-object-specific-methods">1.3.7. Data Model Object Specific Methods</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="teams.html">1.4. Teams</a></li>
@@ -126,11 +128,38 @@ The collection has a <code class="docutils literal notranslate"><span class="pre
 <p>The <code class="docutils literal notranslate"><span class="pre">register</span></code> command returns a copy of the resource as it now exists in the database.
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.</p>
 </section>
+<section id="controlling-flow">
+<span id="functionality-reading-label"></span><h2><span class="section-number">1.3.2. </span>Controlling Flow<a class="headerlink" href="#controlling-flow" title="Permalink to this headline"></a></h2>
+<p>It is often useful to know when a resource has completed validating, especially when subsequent lines of code involve the validated resource. The <code class="docutils literal notranslate"><span class="pre">wait_while_validating</span></code> function will pause execution of the script until the resource has successfully validated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sintering_model</span> <span class="o">=</span> <span class="n">sintering_project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">sintering_model</span><span class="p">)</span>
+<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">sintering_project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">sintering_model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">wait_while_executing</span></code> function will wait for a design or performance evaluation workflow to complete executing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pew_workflow</span> <span class="o">=</span> <span class="n">sintering_project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">pew_workflow</span><span class="p">)</span>
+<span class="n">pew_workflow</span> <span class="o">=</span> <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">sintering_project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">pew_workflow</span><span class="p">)</span>
+<span class="n">pew_ex</span> <span class="o">=</span> <span class="n">pew_workflow</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">sintering_model</span><span class="p">)</span>
+<span class="n">wait_while_executing</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">sintering_project</span><span class="o">.</span><span class="n">predictor_evaluation_executions</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="n">pew_ex</span><span class="p">,</span> <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="checking-status">
+<h2><span class="section-number">1.3.3. </span>Checking Status<a class="headerlink" href="#checking-status" title="Permalink to this headline"></a></h2>
+<p>After registering an asset, the <code class="docutils literal notranslate"><span class="pre">status</span></code> command can be used to obtain a static readout of the state of the asset on the platform (e.g., VALID, INVALID, VALIDATING, SUCCEEDED, FAILED, INPROGRESS).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sintering_model</span> <span class="o">=</span> <span class="n">sintering_project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">sintering_model</span><span class="p">)</span>
+<span class="n">sintering_model</span><span class="o">.</span><span class="n">status</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">status_info</span></code> command returns additional details about an asset’s status that can be very useful for debugging.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sintering_model</span><span class="o">.</span><span class="n">status_info</span>
+</pre></div>
+</div>
+</section>
 <section id="reading">
-<span id="functionality-reading-label"></span><h2><span class="section-number">1.3.2. </span>Reading<a class="headerlink" href="#reading" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">1.3.4. </span>Reading<a class="headerlink" href="#reading" title="Permalink to this headline"></a></h2>
 <p>There are several ways to retrieve a resource from the database.</p>
 <section id="get">
-<h3><span class="section-number">1.3.2.1. </span>Get<a class="headerlink" href="#get" title="Permalink to this headline"></a></h3>
+<h3><span class="section-number">1.3.4.1. </span>Get<a class="headerlink" href="#get" title="Permalink to this headline"></a></h3>
 <p>Get retrieves a specific resource with a known unique identifier string.
 If the project <code class="docutils literal notranslate"><span class="pre">ceramic_resistors_project</span></code> has a dataset with an id that you have saved as <code class="docutils literal notranslate"><span class="pre">special_dataset_id</span></code>, then you could retrieve it with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ceramic_resistors_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">special_dataset_id</span><span class="p">)</span>
@@ -138,7 +167,7 @@ If the project <code class="docutils literal notranslate"><span class="pre">cera
 </div>
 </section>
 <section id="list">
-<h3><span class="section-number">1.3.2.2. </span>List<a class="headerlink" href="#list" title="Permalink to this headline"></a></h3>
+<h3><span class="section-number">1.3.4.2. </span>List<a class="headerlink" href="#list" title="Permalink to this headline"></a></h3>
 <p>List returns an iterator of every resource in a collection.
 To list every design space in the project <code class="docutils literal notranslate"><span class="pre">uv_absorbing_glasses</span></code>, use the command:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uv_absorbing_glasses</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -147,7 +176,7 @@ To list every design space in the project <code class="docutils literal notransl
 </section>
 </section>
 <section id="updating">
-<h2><span class="section-number">1.3.3. </span>Updating<a class="headerlink" href="#updating" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">1.3.5. </span>Updating<a class="headerlink" href="#updating" title="Permalink to this headline"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> command updates an object. The following code creates and persists
 a process spec <code class="docutils literal notranslate"><span class="pre">sintering</span></code> to a dataset <code class="docutils literal notranslate"><span class="pre">tungsten_dataset</span></code>, then updates it locally
 and persists that update.</p>
@@ -158,14 +187,14 @@ and persists that update.</p>
 </div>
 </section>
 <section id="deleting">
-<h2><span class="section-number">1.3.4. </span>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">1.3.6. </span>Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline"></a></h2>
 <p>Resources can generally be deleted with the <code class="docutils literal notranslate"><span class="pre">delete</span></code> command.
 However, resources may link to other resources, and deleting these interconnected objects is tricky.
 For more information, see the section on <a class="reference internal" href="data_model.html#deleting-data-objects-label"><span class="std std-ref">deleting data objects</span></a>.</p>
 <p>AI modules cannot be deleted at this time, but they can be <a class="reference internal" href="../workflows/getting_started.html#archiving-label"><span class="std std-ref">archived</span></a>.</p>
 </section>
 <section id="data-model-object-specific-methods">
-<h2><span class="section-number">1.3.5. </span>Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">1.3.7. </span>Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline"></a></h2>
 <p>The client supports additional methods on certain data model object resources, such as more powerful ways to get resources.
 These are detailed in the documentation of <a class="reference internal" href="../data_entry.html"><span class="doc">GEMD data objects</span></a></p>
 </section>

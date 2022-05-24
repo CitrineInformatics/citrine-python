@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -762,6 +762,13 @@ A separate response is computed for each featurized label by summing all quantit
 </section>
 <section id="simple-ml-predictor">
 <h2><span class="section-number">4.4.11. </span>Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Simple ML Predictors are not supported on the Web UI and will be deprecated as of v2.0.
+For analogous behavior use the build_simple_ml method to construct a Graph Predictor.
+Use the convert_and_update (<a class="reference external" href="https://github.com/CitrineInformatics/citrine-python/blob/main/src/citrine/resources/predictor.py#L193">source</a>).
+method to convert existing Simple ML Predictors to Graph Predictors.</p>
+</div>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.

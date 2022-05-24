@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.builders.predictors module &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>citrine.builders.predictors module &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,6 +111,39 @@ as inputs to one or more ML models.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tuple[List[<a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor">MeanPropertyPredictor</a>], List[<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor">Descriptor</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="citrine.builders.predictors.build_simple_ml">
+<span class="sig-prename descclassname"><span class="pre">citrine.builders.predictors.</span></span><span class="sig-name descname"><span class="pre">build_simple_ml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.builders.predictors.build_simple_ml" title="Permalink to this definition"></a></dt>
+<dd><p>Build a graph predictor that connects all inputs to all latent variables and outputs.</p>
+<p>The structure of the returned, unregistered graph predictor will be analogous to the
+structure returned by SimpleMLPredictor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project that contains the predictor to be built</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of the returned predictor</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>inputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent inputs to relations</p></li>
+<li><p><strong>outputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent outputs of relations</p></li>
+<li><p><strong>latent_variables</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that are predicted from inputs and used when predicting the outputs</p></li>
+<li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
+multiple data sources will be combined into a flattened list and de-duplicated by uid and
+identifiers. de-duplication is performed if a uid or identifier is shared between two or
+more rows. The content of a de-duplicated row will contain the union of data across all
+rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
+predictor is part of a graph that includes all training data required by this predictor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GraphPredictor connecting all inputs to all latent variables and all inputs and latent
+variables to all outputs.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor">GraphPredictor</a></p>
 </dd>
 </dl>
 </dd></dl>

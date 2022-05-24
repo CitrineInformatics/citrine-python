@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.12. AI Engine Code Examples &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>4.12. AI Engine Code Examples &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -98,23 +98,23 @@
 <h1><span class="section-number">4.12. </span>AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline"></a></h1>
 <section id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
 <span id="graph-predictor-example"></span><h2><span class="section-number">4.12.1. </span>Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline"></a></h2>
-<p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, and to post-process the SimpleMLPredictor’s output.
+<p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, and to post-process the AutoMLPredictor’s output.
 This is a very common and powerful use case for graphical modeling.
 Here we show an example of how to combine these modules to accomplish those many suitable tasks.</p>
 <p>Using ExpressionPredictors to perform pre-processing can be used to featurize data, which is a valuable way to leverage domain knowledge by transforming raw inputs into quantities known to be relevant.
 In the example below, we use an ExpressionPredictor to annotate the training data with a “hydration ratio”.
 The hydration ratio is the mass ratio of water to flour.
-Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
+Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the AutoMLPredictor make more efficient use of scarce training data.
 (In a more standard materials science context, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)</p>
 <p>In the example below, we use the ExpressionPredictor feature to compute a bread loaf product’s shelf life as a figure of merit.
-This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">pH</span></code> and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">hydration</span></code> as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
+This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">pH</span></code> and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">hydration</span></code> as estimated by the AutoMLPredictor, as well as the fraction of salt in the ingredients.
 Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
 This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ExpressionPredictor</span><span class="p">,</span>
     <span class="n">GraphPredictor</span><span class="p">,</span>
-    <span class="n">SimpleMLPredictor</span>
+    <span class="n">AutoMLPredictor</span>
 <span class="p">)</span>
 
 <span class="c1">######## Omitted step: create DataSource with columns associated with the following descriptors ########</span>
@@ -153,7 +153,7 @@ This pattern is also extremely useful for performing optimization over complex o
     <span class="p">}</span>
 <span class="p">)</span>
 
-<span class="n">physical_properties_predictor</span> <span class="o">=</span> <span class="n">SimpleMLModel</span><span class="p">(</span>
+<span class="n">physical_properties_predictor</span> <span class="o">=</span> <span class="n">AutoMLModel</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;physical properties model&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">wheat_flour_quantity</span><span class="p">,</span>

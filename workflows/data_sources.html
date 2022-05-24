@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.9. Data Sources &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>4.9. Data Sources &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -117,7 +117,7 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
 </div>
 <p>That file could be used as the training data for a predictor as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
 
 <span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;bandgap_data.csv&quot;</span><span class="p">)</span>
@@ -134,7 +134,7 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
     <span class="p">}</span>
 <span class="p">)</span>
 
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
@@ -144,7 +144,6 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
         <span class="n">data_source</span><span class="o">.</span><span class="n">column_definitions</span><span class="p">[</span><span class="s2">&quot;Crystallinity&quot;</span><span class="p">]</span>
     <span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="o">.</span><span class="n">column_definitions</span><span class="p">[</span><span class="s2">&quot;Gap&quot;</span><span class="p">]],</span>
-    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
@@ -258,7 +257,7 @@ A formulation descriptor must be specified if formulations should be built from 
 If specified, any formulations emitted by the data source are stored using the provided descriptor.
 The example below assumes that the uuid and the version of the desired GEM Table are known.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
 
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
@@ -266,7 +265,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
     <span class="n">table_version</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
 <span class="p">)</span>
 
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
@@ -275,7 +274,6 @@ The example below assumes that the uuid and the version of the desired GEM Table
             <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
     <span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;terminal~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
-    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>

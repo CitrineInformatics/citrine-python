@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.gemd_resource module &mdash; Citrine Python 1.28.3 documentation</title>
+  <title>citrine.resources.gemd_resource module &mdash; Citrine Python 1.31.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.28.3
+                1.31.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -176,12 +176,14 @@ deleted.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.delete" title="Permalink to this definition"></a></dt>
-<dd><p>Delete a GEMD resource from the appropriate collection.</p>
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Delete an element of the collection by its id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a><em>]</em>) – A representation of the resource to delete (Citrine id, LinkByUID, or the object)</p></li>
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><em>BaseEntity</em><em>]</em>) – A representation of the object (Citrine id, LinkByUID, or the object itself)</p></li>
+<li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] use a LinkByUID to specify a custom scope
+The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
@@ -354,8 +356,32 @@ it will return None to indicate the job was successful.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.register" title="Permalink to this definition"></a></dt>
-<dd><p>Register a GEMD object to the appropriate collection.</p>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.register" title="Permalink to this definition"></a></dt>
+<dd><p>Create a new element of the collection or update an existing element.</p>
+<p>If the input model has an ID that corresponds to an existing object in the
+database, then that object will be updated. Otherwise a new object will be created.</p>
+<p>Only the top-level object in <cite>model</cite> itself is written to the database with this
+method. References to other objects are persisted as links, and the object returned
+by this method has all instances of data objects replaced by instances of LinkByUid.
+Registering an object which references other objects does NOT implicitly register
+those other objects. Rather, those other objects’ values are ignored, and the
+pre-existence of objects with their IDs is asserted before attempting to write
+<cite>model</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the item or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the registered object as it now exists in the database.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -370,6 +396,9 @@ objects are related to each other.  When the registered objects are returned fro
 server, the input GEMD objects will be updated with whichever uids &amp; _citr_auto:: tags are
 on the returned objects.  This means GEMD objects that already exist on the server will
 be updated with all their on-platform uids and tags.</p>
+<p>This method has the same behavior as <cite>register</cite>, except that no models will be
+written if any one of them is invalid.  Using this method should yield significant
+improvements to write speed over separate calls to <cite>register</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -393,8 +422,8 @@ registration. Requires installing the optional tqdm module. Default: false</p></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.update" title="Permalink to this definition"></a></dt>
-<dd><p>Update a data model object using the appropriate collection.</p>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ResourceType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update a data object model.</p>
 </dd></dl>
 
 </dd></dl>
