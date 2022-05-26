@@ -173,10 +173,10 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
         the quantile to use for the column, defined between 0.0 and 1.0
     target_units: Optional[str]
         units to convert the real variable into. If not specified:
-            a) If there is a OriginalUnitsColumnDefinition for that source,
+            a) If there is an OriginalUnitsColumnDefinition for that source,
                 no conversion will be made.
-            b) If not, the real variable is going to be converted by using the 
-            default_units from the associated template.
+            b) If not, the real variable will be converted by using the 
+                default_units from the associated template.
 
     """
 
