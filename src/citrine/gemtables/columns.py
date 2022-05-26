@@ -175,7 +175,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
         units to convert the real variable into. If not specified:
             a) If there is an OriginalUnitsColumnDefinition for that source,
                 no conversion will be made.
-            b) If not, the real variable will be converted by using the 
+            b) If not, the real variable will be converted by using the
                 default_units from the associated template.
 
     """
