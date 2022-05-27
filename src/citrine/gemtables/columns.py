@@ -127,10 +127,10 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
         name of the variable to use when populating the column
     target_units: Optional[str]
         units to convert the real variable into. If not specified:
-            a) If there is a OriginalUnitsColumnDefinition for that source,
+            a) If there is an OriginalUnitsColumnDefinition for that source,
                 no conversion will be made.
-            b) If not, the real variable is going to be converted by using the
-            default_units from the associated template.
+            b) If not, the real variable will be converted by using the
+                default_units from the associated template.
 
     """
 
