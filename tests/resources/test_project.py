@@ -601,10 +601,17 @@ def test_list_projects_v3(collection_v3, session_v3):
     assert 5 == len(projects)
 
 
-def test_failed_list_v3_no_team(session_v3):
+def test_list_v3_no_team(session_v3):
     project_collection = ProjectCollection(session=session_v3)
-    with pytest.raises(NotImplementedError):
-        project_collection.list()
+    projects_data = ProjectDataFactory.create_batch(5)
+    session_v3.set_response({'projects': projects_data})
+
+    projects = list(project_collection.list())
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000})
+    assert expected_call == session_v3.last_call
+    assert 5 == len(projects)
 
 
 def test_list_projects_filters_non_projects(collection, session):
