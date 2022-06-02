@@ -146,9 +146,14 @@ For example:
 Branches
 --------
 
-Branches are purely an organizational concept, used to group design workflows under a single name. If you do not wish to interact with them, ignore the ``branch_id`` on a DesignWorkflow, and it will be handled for you.
+Branches are purely an organizational concept, used to group design workflows with similar goals under a single name.
+They are the primary organizational concept of AI assets as displayed in our web UI.
+In the context of the Citrine Python client, they can be thought of as a bucket of design workflows.
+If you do not wish to interact with them in the python client, ignore the ``branch_id`` on a DesignWorkflow, and it will be handled for you.
 
-A branch has a name, along with any number of design workflows. A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch. You can still list all design workflows on the project as before.
+A branch has a name, along with any number of design workflows.
+A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch.
+You can still list all design workflows on the project as before.
 
 .. code:: python
 
@@ -182,6 +187,10 @@ A branch has a name, along with any number of design workflows. A DesignWorkflow
 
 When you're done with a branch, it can be archived, removing it from the results of ``list`` and setting the ``archived`` flag.
 ``list_archived`` lists all archived branches in a project. An archived branch can be restored via its unique ID.
+Note that archiving branches are independent of archiving the design workflows contained within it.
+Archiving a branch, by removing it from listing methods, will hide the entire branch from default displays in the web UI.
+Similarly, archiving a design workflow will result in its executions and relevant assets no longer being displayed within the branch.
+Yet archiving a branch will NOT change the archived status of the contained design workflows in the context of design workflow listing methods.
 
 .. code:: python
 
