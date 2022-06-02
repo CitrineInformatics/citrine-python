@@ -103,10 +103,23 @@ The ``Team`` equivalent:
 
 .. code-block:: python
 
-	team.add_user(user_uid)
-	team.remove_user(user_uid)
-	team.update_user_action(user_uid=user_uid, actions=[WRITE, READ, SHARE])
-	team.list_members()
+  # adding a user to a team
+  team.add_user(user_uid)
+
+  # removing a user from a team
+  team.remove_user(user_uid)
+
+  # overwriting a user's permissions on a team
+  team.update_user_action(user_id=user_uid, actions=[WRITE, READ, SHARE])
+	
+  # listing user's and their permissions on a team
+  team.list_members()
 
 As shown above, with the introduction of teams, roles are replaced by specifying a user's actions
 as any combination of ``READ``, ``WRITE``, and ``SHARE``.
+
+User permissions should be modified using the ``Team`` object, but for backward compatibility 
+purposes, listing project members via ``project.list_members()`` will simply list members of 
+the project's parent team.
+
+

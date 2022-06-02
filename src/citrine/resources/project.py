@@ -50,6 +50,30 @@ from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
 
 
+def _get_team_collection(session: Session):
+    """
+    Gets a TeamCollection object initialized with the session.
+
+    For backward compatibility of the teams release, we need to be able to list
+    a project's parent team's members when calling project.list_members().
+    This function serves as a temporary way to handle the circular import
+    required to access Teams functionality in this class.
+
+    Parameters
+    ----------
+    session: Session
+        The Citrine session for the currently acting user.
+
+    Returns
+    -------
+    TeamCollection
+        The TeamCollection that can be used to access teams for the session.
+
+    """
+    from citrine.resources.team import TeamCollection
+    return TeamCollection(session)
+
+
 class Project(Resource['Project']):
     """
     A Citrine Project.
@@ -504,17 +528,22 @@ class Project(Resource['Project']):
         result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
-    @use_teams("team.list_members")
-    def list_members(self) -> List[ProjectMember]:
+    def list_members(self):
         """
         List all of the members in the current project.
 
         Returns
         -------
-        List[ProjectMember]
-            The members of the current project
+        List[ProjectMember] | List[TeamMember]
+            The members of the current project, or the members of the team
+            containing the project if teams have been released.
 
         """
+        if self.session._accounts_service_v3:
+            team_collection = _get_team_collection(self.session)
+            parent_team = team_collection.get(str(self.team_id))
+            return parent_team.list_members()
+
         members = self.session.get_resource(f"{self._path()}/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 

@@ -149,7 +149,7 @@ class Team(Resource['Team']):
     def update_user_action(self, user_id: Union[str, UUID], *,
                            actions: List[TEAM_ACTIONS]) -> bool:
         """
-        Update a User's action permissions in the Team.
+        Overwrites a User's action permissions in the Team.
 
         Parameters
         ----------

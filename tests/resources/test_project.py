@@ -14,8 +14,9 @@ from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
-from tests.utils.factories import ProjectDataFactory, UserDataFactory
+from tests.utils.factories import ProjectDataFactory, UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession, FakeRequestResponse
+from citrine.resources.team import  READ, TeamMember
 
 logger = getLogger(__name__)
 
@@ -814,9 +815,34 @@ def test_update_project(collection: ProjectCollection, project):
         collection.update(project)
 
 
-def test_list_members_v3(project_v3):
-    with pytest.raises(NotImplementedError):
-        project_v3.list_members()
+def test_list_members_v3(project_v3, session_v3):
+    # Given
+    user = UserDataFactory()
+    user["actions"] = READ
+    user.pop("position")
+
+    team_data = TeamDataFactory(
+        id=str(project_v3.team_id),
+    )
+
+    session_v3.set_responses(
+        {'team': team_data},
+        {'users': [user]}
+    )
+
+    # When
+    members = project_v3.list_members()
+
+    # Then
+    assert 2 == session_v3.num_calls
+    expect_call_1 = FakeCall(
+        method='GET',
+        path='/teams/{}'.format(team_data['id']),
+    )
+    expect_call_2 = FakeCall(method='GET', path='/teams/{}/users'.format(project_v3.team_id))
+    assert expect_call_1 == session_v3.calls[0]
+    assert expect_call_2 == session_v3.calls[1]
+    assert isinstance(members[0], TeamMember)
 
 
 def test_list_members(project, session):
