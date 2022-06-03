@@ -187,10 +187,14 @@ You can still list all design workflows on the project as before.
 
 When you're done with a branch, it can be archived, removing it from the results of ``list`` and setting the ``archived`` flag.
 ``list_archived`` lists all archived branches in a project. An archived branch can be restored via its unique ID.
-Note that archiving branches are independent of archiving the design workflows contained within it.
-Archiving a branch, by removing it from listing methods, will hide the entire branch from default displays in the web UI.
+
+Note that archiving branches is independent of archiving the design workflows contained within it.
+Archiving a branch will hide the entire branch from default displays in the web UI.
+As a result, the design workflows it contained within it will also be hidden.
+Yet archiving th branch will *not* change the archived status of the contained design workflows in the context of design workflow listing methods.
+
 Similarly, archiving a design workflow will result in its executions and relevant assets no longer being displayed within the branch.
-Yet archiving a branch will NOT change the archived status of the contained design workflows in the context of design workflow listing methods.
+Thus, archiving all the design workflows contained within a branch will result in a hidden branch on the web UI, but the archival status of the branch will not change.
 
 .. code:: python
 
