@@ -721,9 +721,9 @@ class ProjectCollection(Collection[Project]):
 
     def _list_v3(self, *, page: Optional[int] = None, per_page: int = 1000) -> Iterator[Project]:
         if self.team_id is None:
-            raise NotImplementedError("Please use team.projects")
-
-        path = format_escaped_url('/teams/{team_id}/projects', team_id=self.team_id)
+            path = '/projects'
+        else:
+            path = format_escaped_url('/teams/{team_id}/projects', team_id=self.team_id)
 
         fetcher = partial(self._fetch_page, path=path)
         return self._paginator.paginate(page_fetcher=fetcher,
