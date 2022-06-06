@@ -504,19 +504,29 @@ class Project(Resource['Project']):
         result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
-    @use_teams("team.list_members")
-    def list_members(self) -> List[ProjectMember]:
+    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:
         """
         List all of the members in the current project.
 
         Returns
         -------
-        List[ProjectMember]
-            The members of the current project
+        List[ProjectMember] | List[TeamMember]
+            The members of the current project, or the members of the team
+            containing the project if teams have been released.
 
         """
-        members = self.session.get_resource(f"{self._path()}/users")["users"]
-        return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
+        from citrine.resources.team import TeamCollection
+
+        if self.session._accounts_service_v3:
+            team_collection = TeamCollection(self.session)
+            parent_team = team_collection.get(self.team_id)
+            return parent_team.list_members()
+        else:
+            members = self.session.get_resource(f"{self._path()}/users")["users"]
+            return [ProjectMember(user=User.build(m),
+                                  project=self,
+                                  role=m["role"])
+                    for m in members]
 
     @use_teams("team.update_user_action")
     def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
