@@ -43,6 +43,8 @@ Previously:
 
 	project = citrine.projects.get(project_id)
 	# or
+	projects = citrine.projects.list()
+	# or
 	project = citrine.projects.register(name="My Project")
 	# or
 	project = find_or_create_project(
@@ -64,6 +66,8 @@ The ``Team`` equivalent:
 
 	# Then find your project within the team
 	project = team.projects.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
+	# or 
+	projects = team.projects.list()
 	# or
 	project = team.projects.register(name="My Project")
 	# or
@@ -71,6 +75,17 @@ The ``Team`` equivalent:
 		project_collection=team.projects,
 		project_name="My Project"
 	)
+
+You should modify your code to make use of these new access patterns, but for backward 
+compatibility purposes, the following methods will continue to work after the teams 
+migration:
+
+.. code-block:: python
+
+	project = citrine.projects.get(project_id)
+	
+	projects = citrine.projects.list()
+
 
 If your scripts managed user membership in projects, that user management now works on the team
 level instead.
