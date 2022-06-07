@@ -117,7 +117,9 @@ def test_share_post_content(project, session):
     # When
     dataset = Dataset(name="foo", summary="", description="")
     dataset.uid = str(uuid.uuid4())
-    project.share(resource=dataset, project_id=project.uid)
+
+    with pytest.warns(DeprecationWarning):
+        project.share(resource=dataset, project_id=project.uid)
 
     # Then
     assert 2 == session.num_calls
@@ -137,8 +139,27 @@ def test_share_post_content(project, session):
             project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
 
     # Providing neither the resource nor the type/id is an error
-    with pytest.raises(ValueError):
-        project.share(project_id=project.uid)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            project.share(project_id=project.uid)
+
+
+def test_share_deprecation_warning(project, session):
+    dataset = Dataset(name="foo", summary="", description="")
+
+    with pytest.warns(DeprecationWarning):
+        project.share(resource=dataset, project_id=project.uid)
+
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/share'.format(project.uid),
+        json={
+            'project_id': str(project.uid),
+            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
+        }
+    )
+    assert expected_call == session.last_call
 
 
 def test_publish_resource(project, session):
@@ -248,7 +269,9 @@ def test_make_resource_public(project, session):
         id=dataset_id,
         name="public dataset", summary="test", description="test"
     ))
-    assert project.make_public(dataset)
+
+    with pytest.warns(DeprecationWarning):
+        assert project.make_public(dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
@@ -260,8 +283,9 @@ def test_make_resource_public(project, session):
     )
     assert expected_call == session.last_call
 
-    with pytest.raises(RuntimeError):
-        project.make_public(ProcessSpec("dummy process"))
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(RuntimeError):
+            project.make_public(ProcessSpec("dummy process"))
 
 
 def test_make_resource_private_v3(project_v3):
@@ -280,7 +304,8 @@ def test_make_resource_private(project, session):
         id=dataset_id,
         name="private dataset", summary="test", description="test"
     ))
-    assert project.make_private(dataset)
+    with pytest.warns(DeprecationWarning):
+        assert project.make_private(dataset)
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
@@ -291,8 +316,9 @@ def test_make_resource_private(project, session):
     )
     assert expected_call == session.last_call
 
-    with pytest.raises(RuntimeError):
-        project.make_private(ProcessSpec("dummy process"))
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(RuntimeError):
+            project.make_private(ProcessSpec("dummy process"))
 
 
 def test_transfer_resource_v3(project_v3):
@@ -316,7 +342,8 @@ def test_transfer_resource(project, session):
         name="dataset to transfer", summary="test", description="test"
     ))
 
-    assert project.transfer_resource(resource=dataset, receiving_project_uid=project.uid)
+    with pytest.warns(DeprecationWarning):
+        assert project.transfer_resource(resource=dataset, receiving_project_uid=project.uid)
 
     expected_call = FakeCall(
         method='POST',
@@ -328,8 +355,9 @@ def test_transfer_resource(project, session):
     )
     assert expected_call == session.last_call
 
-    with pytest.raises(RuntimeError):
-        project.transfer_resource(resource=ProcessSpec("dummy process"), receiving_project_uid=project.uid)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(RuntimeError):
+            project.transfer_resource(resource=ProcessSpec("dummy process"), receiving_project_uid=project.uid)
 
 
 def test_datasets_get_project_id(project):
@@ -831,7 +859,8 @@ def test_list_members_v3(project_v3, session_v3):
     )
 
     # When
-    members = project_v3.list_members()
+    with pytest.warns(DeprecationWarning):
+        members = project_v3.list_members()
 
     # Then
     assert 2 == session_v3.num_calls
@@ -852,7 +881,8 @@ def test_list_members(project, session):
     session.set_response({'users': [user]})
 
     # When
-    members = project.list_members()
+    with pytest.warns(DeprecationWarning):
+        members = project.list_members()
 
     # Then
     assert 1 == session.num_calls
@@ -876,7 +906,8 @@ def test_update_user_role(project, session):
     session.set_response({'actions': [], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD)
+    with pytest.warns(DeprecationWarning):
+        update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD)
 
     # Then
     assert 1 == session.num_calls
@@ -892,7 +923,8 @@ def test_update_user_actions(project, session):
     session.set_response({'actions': ['READ'], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD, actions=[WRITE])
+    with pytest.warns(DeprecationWarning):
+        update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD, actions=[WRITE])
 
     # Then
     assert 1 == session.num_calls
@@ -917,7 +949,8 @@ def test_add_user(project, session):
     session.set_response({'actions': [], 'role': 'MEMBER'})
 
     # When
-    add_user_response = project.add_user(user["id"])
+    with pytest.warns(DeprecationWarning):
+        add_user_response = project.add_user(user["id"])
 
     # Then
     assert 1 == session.num_calls
@@ -943,7 +976,8 @@ def test_remove_user(project, session):
     user = UserDataFactory()
 
     # When
-    remove_user_response = project.remove_user(user["id"])
+    with pytest.warns(DeprecationWarning):
+        remove_user_response = project.remove_user(user["id"])
 
     # Then
     assert 1 == session.num_calls

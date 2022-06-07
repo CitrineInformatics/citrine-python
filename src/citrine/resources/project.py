@@ -11,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, use_teams
+from citrine._utils.functions import format_escaped_url, use_teams, v1_deprecation_warn
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
@@ -341,6 +341,8 @@ class Project(Resource['Project']):
         return True
 
     @use_teams("project.publish")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.share")
     def share(self, *,
               resource: Optional[Resource] = None,
               project_id: Optional[Union[str, UUID]] = None,
@@ -382,6 +384,7 @@ class Project(Resource['Project']):
         })
 
     @use_teams("project.publish")
+    @v1_deprecation_warn()
     def transfer_resource(self, *, resource: Resource,
                           receiving_project_uid: Union[str, UUID]) -> bool:
         """
@@ -415,6 +418,8 @@ class Project(Resource['Project']):
         return True
 
     @use_teams("project.publish")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use project.publish")
     def make_public(self, resource: Resource) -> bool:
         """
         Grant public access to a resource owned by this project.
@@ -440,6 +445,8 @@ class Project(Resource['Project']):
         return True
 
     @use_teams("project.un_publish")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use project.un_publish")
     def make_private(self, resource: Resource) -> bool:
         """
         Remove public access for a resource owned by this project.
@@ -528,6 +535,8 @@ class Project(Resource['Project']):
         result = self.session.get_resource(f"{self._path()}/table_definition_ids")
         return result["table_definition_ids"]
 
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.list_members", True)
     def list_members(self):
         """
         List all of the members in the current project.
@@ -548,6 +557,8 @@ class Project(Resource['Project']):
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
     @use_teams("team.update_user_action")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.update_user_action")
     def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
         Update a User's role and action permissions in the Project.
@@ -567,6 +578,8 @@ class Project(Resource['Project']):
         return True
 
     @use_teams("team.add_user")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.add_user")
     def add_user(self, user_uid: Union[str, UUID]):
         """
         Add a User to a Project.
@@ -585,6 +598,8 @@ class Project(Resource['Project']):
         return True
 
     @use_teams("team.remove_user")
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.remove_user")
     def remove_user(self, user_uid: Union[str, UUID]) -> bool:
         """
         Remove a User from a Project.

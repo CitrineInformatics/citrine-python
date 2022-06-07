@@ -242,3 +242,27 @@ def use_teams(alt, negate=False):
         return wrapper
 
     return decorator
+
+
+def v1_deprecation_warn(
+        msg="This method will be deprecated once teams are released", warn_with_teams=False):
+    """
+    Raises deprecation warning for methods that will be unavailable with teams release.
+
+    Parameters
+    ----------
+    msg: str
+        The deprecation message that will be printed in the warning.
+    warn_with_teams: bol
+        Whether or not to keep the deprecation warning once teams are released.
+
+    """
+    def decorator(f):
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            if not self.session._accounts_service_v3 or warn_with_teams:
+                warn(msg, DeprecationWarning)
+            return f(self, *args, **kwargs)
+        return wrapper
+
+    return decorator
