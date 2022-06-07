@@ -697,6 +697,8 @@ class ProjectCollection(Collection[Project]):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
+    @v1_deprecation_warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use team.projects.register", True)
     def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.

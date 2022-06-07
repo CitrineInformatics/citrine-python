@@ -201,7 +201,8 @@ def test_find_or_create_project_no_exist(project_collection):
     # test when project doesn't exist
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    result = find_or_create_project(project_collection=collection, project_name=absent_name)
+    with pytest.warns(DeprecationWarning):
+        result = find_or_create_project(project_collection=collection, project_name=absent_name)
     new_project_count = len(list(collection.list()))
     assert result.name == absent_name
     assert new_project_count == old_project_count + 1
@@ -211,7 +212,8 @@ def test_find_or_create_project_exist(project_collection):
     # test when project exists
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    result = find_or_create_project(project_collection=collection, project_name="project 2")
+    with pytest.warns(DeprecationWarning):
+        result = find_or_create_project(project_collection=collection, project_name="project 2")
     new_project_count = len(list(collection.list()))
     assert result.name == "project 2"
     assert new_project_count == old_project_count
@@ -221,7 +223,8 @@ def test_find_or_create_project_exist_no_search(project_collection):
     # test when project exists
     collection = project_collection(False)
     old_project_count = len(list(collection.list()))
-    result = find_or_create_project(project_collection=collection, project_name="project 2")
+    with pytest.warns(DeprecationWarning):
+        result = find_or_create_project(project_collection=collection, project_name="project 2")
     new_project_count = len(list(collection.list()))
     assert result.name == "project 2"
     assert new_project_count == old_project_count
@@ -229,21 +232,24 @@ def test_find_or_create_project_exist_no_search(project_collection):
 
 def test_find_or_create_project_exist_multiple(project_collection):
     # test when project exists multiple times
-    with pytest.raises(ValueError):
-        find_or_create_project(project_collection=project_collection(), project_name=duplicate_name)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            find_or_create_project(project_collection=project_collection(), project_name=duplicate_name)
 
 
 def test_find_or_create_raise_error_project_no_exist(project_collection):
     # test when project doesn't exist and raise_error flag is on
-    with pytest.raises(ValueError):
-        find_or_create_project(project_collection=project_collection(), project_name=absent_name, raise_error=True)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            find_or_create_project(project_collection=project_collection(), project_name=absent_name, raise_error=True)
 
 
 def test_find_or_create_raise_error_project_exist(project_collection):
     # test when project exists and raise_error flag is on
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    result = find_or_create_project(project_collection=collection, project_name="project 3", raise_error=True)
+    with pytest.warns(DeprecationWarning):
+        result = find_or_create_project(project_collection=collection, project_name="project 3", raise_error=True)
     new_project_count = len(list(collection.list()))
     assert result.name == "project 3"
     assert new_project_count == old_project_count
@@ -251,8 +257,9 @@ def test_find_or_create_raise_error_project_exist(project_collection):
 
 def test_find_or_create_raise_error_project_exist_multiple(project_collection):
     # test when project exists multiple times and raise_error flag is on
-    with pytest.raises(ValueError):
-        find_or_create_project(project_collection=project_collection(), project_name=duplicate_name, raise_error=True)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            find_or_create_project(project_collection=project_collection(), project_name=duplicate_name, raise_error=True)
 
 
 def test_find_or_create_dataset_no_exist(dataset_collection):

@@ -4,6 +4,7 @@ from citrine.resources.dataset import Dataset
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine._rest.collection import CreationType, Collection
 from copy import deepcopy
+from warnings import warn
 
 
 def find_collection(*, collection, name):
@@ -73,6 +74,9 @@ def find_or_create_project(*, project_collection, project_name, raise_error=Fals
 
     If not found, creates a new project with the given name
     """
+    warn("This method will be deprecated with the Team's release. \
+        Once Teams are released, use find_or_create_team", DeprecationWarning)
+
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:
