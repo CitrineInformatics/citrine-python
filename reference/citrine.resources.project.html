@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.project module &mdash; Citrine Python 1.31.1 documentation</title>
+  <title>citrine.resources.project module &mdash; Citrine Python 1.33.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.31.1
+                1.33.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -209,14 +209,15 @@ deleted.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.list_members">
-<span class="sig-name descname"><span class="pre">list_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember" title="citrine.resources.project_member.ProjectMember"><span class="pre">citrine.resources.project_member.ProjectMember</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.list_members" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">list_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember" title="citrine.resources.project_member.ProjectMember"><span class="pre">citrine.resources.project_member.ProjectMember</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TeamMember</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.list_members" title="Permalink to this definition"></a></dt>
 <dd><p>List all of the members in the current project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The members of the current project</p>
+<dd class="field-odd"><p>The members of the current project, or the members of the team
+containing the project if teams have been released.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[<a class="reference internal" href="citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember" title="citrine.resources.project_member.ProjectMember">ProjectMember</a>]</p>
+<dd class="field-even"><p>List[<a class="reference internal" href="citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember" title="citrine.resources.project_member.ProjectMember">ProjectMember</a>] | List[<a class="reference internal" href="citrine.resources.team.html#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember">TeamMember</a>]</p>
 </dd>
 </dl>
 </dd></dl>

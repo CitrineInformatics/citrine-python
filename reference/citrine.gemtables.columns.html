@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.gemtables.columns module &mdash; Citrine Python 1.31.1 documentation</title>
+  <title>citrine.gemtables.columns module &mdash; Citrine Python 1.33.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -32,7 +32,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.31.1
+                1.33.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -347,7 +347,22 @@ like <code class="docutils literal notranslate"><span class="pre">&quot;(spam)4(
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_source</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><em>Variable</em></a><em>]</em>) – name of the variable to use when populating the column</p></li>
-<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – <dl class="simple">
+<dt>units to convert the real variable into. If not specified:</dt><dd><ol class="loweralpha simple">
+<li><dl class="simple">
+<dt>If there is an OriginalUnitsColumnDefinition for that source,</dt><dd><p>no conversion will be made.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If not, the real variable will be converted by using the</dt><dd><p>default_units from the associated template.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -676,7 +691,22 @@ in the column would be:</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_source</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><em>Variable</em></a><em>]</em>) – name of the variable to use when populating the column</p></li>
 <li><p><strong>quantile</strong> (<em>float</em>) – the quantile to use for the column, defined between 0.0 and 1.0</p></li>
-<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – <dl class="simple">
+<dt>units to convert the real variable into. If not specified:</dt><dd><ol class="loweralpha simple">
+<li><dl class="simple">
+<dt>If there is an OriginalUnitsColumnDefinition for that source,</dt><dd><p>no conversion will be made.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If not, the real variable will be converted by using the</dt><dd><p>default_units from the associated template.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -729,7 +759,22 @@ in the column would be:</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_source</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><em>Variable</em></a><em>]</em>) – name of the variable to use when populating the column</p></li>
-<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+<li><p><strong>target_units</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – <dl class="simple">
+<dt>units to convert the real variable into. If not specified:</dt><dd><ol class="loweralpha simple">
+<li><dl class="simple">
+<dt>If there is an OriginalUnitsColumnDefinition for that source,</dt><dd><p>no conversion will be made.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If not, the real variable will be converted by using the</dt><dd><p>default_units from the associated template.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 </dl>

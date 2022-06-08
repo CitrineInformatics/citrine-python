@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6.2. Teams User Management Migration &mdash; Citrine Python 1.31.1 documentation</title>
+  <title>6.2. Teams User Management Migration &mdash; Citrine Python 1.33.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -32,7 +32,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.31.1
+                1.33.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -125,6 +125,8 @@ teams. Attempting to use them on a <code class="docutils literal notranslate"><s
 <p>Previously:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
 <span class="c1"># or</span>
+<span class="n">projects</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="c1"># or</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;My Project&quot;</span><span class="p">)</span>
 <span class="c1"># or</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span>
@@ -145,12 +147,22 @@ teams. Attempting to use them on a <code class="docutils literal notranslate"><s
 <span class="c1"># Then find your project within the team</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
 <span class="c1"># or</span>
+<span class="n">projects</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="c1"># or</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;My Project&quot;</span><span class="p">)</span>
 <span class="c1"># or</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span>
         <span class="n">project_collection</span><span class="o">=</span><span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
         <span class="n">project_name</span><span class="o">=</span><span class="s2">&quot;My Project&quot;</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+<p>You should modify your code to make use of these new access patterns, but for backward
+compatibility purposes, the following methods will continue to work after the teams
+migration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+
+<span class="n">projects</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If your scripts managed user membership in projects, that user management now works on the team
@@ -163,14 +175,24 @@ level instead.</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">Team</span></code> equivalent:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">team</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># adding a user to a team</span>
+<span class="n">team</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span>
+
+<span class="c1"># removing a user from a team</span>
 <span class="n">team</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span>
-<span class="n">team</span><span class="o">.</span><span class="n">update_user_action</span><span class="p">(</span><span class="n">user_uid</span><span class="o">=</span><span class="n">user_uid</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">WRITE</span><span class="p">,</span> <span class="n">READ</span><span class="p">,</span> <span class="n">SHARE</span><span class="p">])</span>
+
+<span class="c1"># overwriting a user&#39;s permissions on a team</span>
+<span class="n">team</span><span class="o">.</span><span class="n">update_user_action</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_uid</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">WRITE</span><span class="p">,</span> <span class="n">READ</span><span class="p">,</span> <span class="n">SHARE</span><span class="p">])</span>
+
+<span class="c1"># listing user&#39;s and their permissions on a team</span>
 <span class="n">team</span><span class="o">.</span><span class="n">list_members</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>As shown above, with the introduction of teams, roles are replaced by specifying a user’s actions
 as any combination of <code class="docutils literal notranslate"><span class="pre">READ</span></code>, <code class="docutils literal notranslate"><span class="pre">WRITE</span></code>, and <code class="docutils literal notranslate"><span class="pre">SHARE</span></code>.</p>
+<p>User permissions should be modified using the <code class="docutils literal notranslate"><span class="pre">Team</span></code> object, but for backward compatibility
+purposes, listing project members via <code class="docutils literal notranslate"><span class="pre">project.list_members()</span></code> will simply list members of
+the project’s parent team.</p>
 </section>
 </section>
 

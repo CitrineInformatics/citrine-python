@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.7. Design Workflows &mdash; Citrine Python 1.31.1 documentation</title>
+  <title>4.7. Design Workflows &mdash; Citrine Python 1.33.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.31.1
+                1.33.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -228,8 +228,13 @@ Each variable is represented as one of:</p>
 </section>
 <section id="branches">
 <h2><span class="section-number">4.7.3. </span>Branches<a class="headerlink" href="#branches" title="Permalink to this headline"></a></h2>
-<p>Branches are purely an organizational concept, used to group design workflows under a single name. If you do not wish to interact with them, ignore the <code class="docutils literal notranslate"><span class="pre">branch_id</span></code> on a DesignWorkflow, and it will be handled for you.</p>
-<p>A branch has a name, along with any number of design workflows. A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch. You can still list all design workflows on the project as before.</p>
+<p>Branches are purely an organizational concept, used to group design workflows with similar goals under a single name.
+They are the primary organizational concept of AI assets as displayed in our web UI.
+In the context of the Citrine Python client, they can be thought of as a bucket of design workflows.
+If you do not wish to interact with them in the python client, ignore the <code class="docutils literal notranslate"><span class="pre">branch_id</span></code> on a DesignWorkflow, and it will be handled for you.</p>
+<p>A branch has a name, along with any number of design workflows.
+A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch.
+You can still list all design workflows on the project as before.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.workflows</span> <span class="kn">import</span> <span class="n">DesignWorkflow</span>
 <span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
 <span class="kn">from</span> <span class="nn">citrine.resources</span> <span class="kn">import</span> <span class="n">Branch</span>
@@ -260,6 +265,12 @@ Each variable is represented as one of:</p>
 </div>
 <p>When you’re done with a branch, it can be archived, removing it from the results of <code class="docutils literal notranslate"><span class="pre">list</span></code> and setting the <code class="docutils literal notranslate"><span class="pre">archived</span></code> flag.
 <code class="docutils literal notranslate"><span class="pre">list_archived</span></code> lists all archived branches in a project. An archived branch can be restored via its unique ID.</p>
+<p>Note that archiving branches is independent of archiving the design workflows contained within it.
+Archiving a branch will hide the entire branch from default displays in the web UI.
+As a result, the design workflows it contained within it will also be hidden.
+Yet archiving th branch will <em>not</em> change the archived status of the contained design workflows in the context of design workflow listing methods.</p>
+<p>Similarly, archiving a design workflow will result in its executions and relevant assets no longer being displayed within the branch.
+Thus, archiving all the design workflows contained within a branch will result in a hidden branch on the web UI, but the archival status of the branch will not change.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display whether your branch is archived.</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">my_branch</span><span class="o">.</span><span class="n">archived</span><span class="p">)</span>
 
