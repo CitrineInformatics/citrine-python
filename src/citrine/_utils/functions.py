@@ -253,7 +253,7 @@ def v1_deprecation_warn(
     ----------
     msg: str
         The deprecation message that will be printed in the warning.
-    warn_with_teams: bol
+    warn_with_teams: bool
         Whether or not to keep the deprecation warning once teams are released.
 
     """

@@ -316,7 +316,7 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
-    @use_teams("project.publish")
+    @use_teams("team.share")
     @v1_deprecation_warn("This method will be deprecated with the Team's release. \
         Once Teams are released, use team.share")
     def share(self, *,
