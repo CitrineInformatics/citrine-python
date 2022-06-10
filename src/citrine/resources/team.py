@@ -13,7 +13,9 @@ from citrine.resources.user import User, UserCollection
 WRITE = "WRITE"
 READ = "READ"
 SHARE = "SHARE"
-TEAM_ACTIONS = Union[WRITE, READ, SHARE]
+CREATE = "CREATE"
+PUBLISH = "PUBLISH"
+TEAM_ACTIONS = Union[WRITE, READ, SHARE, CREATE, PUBLISH]
 
 
 class TeamMember:
@@ -223,6 +225,30 @@ class Team(Resource['Team']):
             json={"target_team_id": str(target_team_id)}
         )
         return True
+
+    def list_resources(self, resource_type: ResourceTypeEnum, action: TEAM_ACTIONS) -> List[str]:
+        """
+        List all the ids of the specified resource in this project.
+
+        Parameters
+        ----------
+        resource_type: ResourceTypeEnum
+            The resource type to list, must be one of "PROJECT", "DATASET", "MODULE",
+            "TABLE" or "TABLE_DEFINITION"
+        action: Union[str]
+            The action the user has on the resources, must be one of "READ", "WRITE",
+            "CREATE", "SHARE" or "PUBLISH"
+
+        Returns
+        -------
+        List[str]
+            The ids of the resources in this team where the owner has the specified action
+
+        """
+        query_params = {"domain": self._path(), "action": action}
+        return self.session.checked_get(f"/{resource_type}/authorized-ids",
+            params=query_params,
+            version="v3")['ids']
 
     @property
     def projects(self) -> ProjectCollection:

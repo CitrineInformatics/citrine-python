@@ -277,3 +277,21 @@ def test_un_share(team, session):
     )
     assert expect_call == session.last_call
     assert share_response is True
+
+
+def test_list_resources(team, session):
+    # Given
+    response = {'ids': [uuid.uuid4(), uuid.uuid4()]}
+    session.set_response(response)
+
+    # When
+    resource_type = ResourceTypeEnum.DATASET
+    action = "READ"
+    resource_ids = team.list_resources(resource_type=resource_type, action=action)
+
+    # Then
+    assert 1 == session.num_calls
+    params = {"domain": f"/teams/{team.uid}", "action": action}
+    expect_call = FakeCall(method='GET', path=f'/{resource_type}/authorized-ids', params=params)
+    assert expect_call == session.last_call
+    assert resource_ids == response['ids']
