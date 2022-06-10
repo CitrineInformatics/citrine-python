@@ -247,8 +247,8 @@ class Team(Resource['Team']):
         """
         query_params = {"domain": self._path(), "action": action}
         return self.session.checked_get(f"/{resource_type}/authorized-ids",
-            params=query_params,
-            version="v3")['ids']
+                                        params=query_params,
+                                        version="v3")['ids']
 
     @property
     def projects(self) -> ProjectCollection:
