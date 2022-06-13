@@ -226,16 +226,16 @@ class Team(Resource['Team']):
         )
         return True
 
-    def list_resources(self, resource_type: ResourceTypeEnum, action: TEAM_ACTIONS) -> List[str]:
+    def list_resources(self, resource_type: str, action: str) -> List[str]:
         """
         List all the ids of the specified resource in this project.
 
         Parameters
         ----------
-        resource_type: ResourceTypeEnum
-            The resource type to list, must be one of "PROJECT", "DATASET", "MODULE",
-            "TABLE" or "TABLE_DEFINITION"
-        action: Union[str]
+        resource_type: str
+            The resource type to list, must be one of "DATASET", "MODULE", "TABLE"
+            or "TABLE_DEFINITION"
+        action: str
             The action the user has on the resources, must be one of "READ", "WRITE",
             "CREATE", "SHARE" or "PUBLISH"
 
@@ -246,7 +246,7 @@ class Team(Resource['Team']):
 
         """
         query_params = {"domain": self._path(), "action": action}
-        return self.session.checked_get(f"/{resource_type}/authorized-ids",
+        return self.session.get_resource(f"/{resource_type}/authorized-ids",
                                         params=query_params,
                                         version="v3")['ids']
 
