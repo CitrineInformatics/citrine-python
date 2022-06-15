@@ -17,6 +17,12 @@ CREATE = "CREATE"
 PUBLISH = "PUBLISH"
 TEAM_ACTIONS = Union[WRITE, READ, SHARE, CREATE, PUBLISH]
 
+DATASET = "DATASET"
+MODULE = "MODULE"
+TABLE = "TABLE"
+TABLE_DEFINITION = "TABLE_DEFINITION"
+TEAM_RESOURCES = Union[DATASET, MODULE, TABLE, TABLE_DEFINITION]
+
 
 class TeamMember:
     """A Member of a Team."""
@@ -226,7 +232,7 @@ class Team(Resource['Team']):
         )
         return True
 
-    def list_resources(self, resource_type: str, action: str) -> List[str]:
+    def list_resources(self, resource_type: TEAM_RESOURCES, action: TEAM_ACTIONS) -> List[str]:
         """
         List all the ids of the specified resource in this project.
 
