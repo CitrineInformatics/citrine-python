@@ -215,7 +215,7 @@ def format_escaped_url(
                            )
 
 
-def use_teams(alt, negate=False):
+def use_teams(alt, negate=False, deprecated=False):
     """
     Raises error with a redirect message if method is unavailable with(out) teams support.
 
@@ -235,34 +235,19 @@ def use_teams(alt, negate=False):
                 if not self.session._accounts_service_v3:
                     raise NotImplementedError(f"Not available, you may be looking for {alt}")
             else:
-                if self.session._accounts_service_v3:
+                if deprecated:
+                    # If the method is just deprecated, print a warning even once they're on Teams.
+                    warn(f"This method is deprecated. Use {alt} instead.", DeprecationWarning)
+                elif self.session._accounts_service_v3:
+                    # If deprecated is false, that means it's unavailable on Teams, so error.
                     raise NotImplementedError(f"Not available, you may be looking for {alt}")
+                else:
+                    # If this user isn't on Teams, but it will be unavailable once they are, treat
+                    # it like a deprecation warning but specify it will be unavailable.
+                    warn("This method will be unavailable once Teams are released, and you will "
+                         "need to use {alt}.", DeprecationWarning)
             return f(self, *args, **kwargs)
 
-        return wrapper
-
-    return decorator
-
-
-def v1_deprecation_warn(
-        msg="This method will be deprecated once teams are released", warn_with_teams=False):
-    """
-    Raises deprecation warning for methods that will be unavailable with teams release.
-
-    Parameters
-    ----------
-    msg: str
-        The deprecation message that will be printed in the warning.
-    warn_with_teams: bool
-        Whether or not to keep the deprecation warning once teams are released.
-
-    """
-    def decorator(f):
-        @wraps(f)
-        def wrapper(self, *args, **kwargs):
-            if not self.session._accounts_service_v3 or warn_with_teams:
-                warn(msg, DeprecationWarning)
-            return f(self, *args, **kwargs)
         return wrapper
 
     return decorator
