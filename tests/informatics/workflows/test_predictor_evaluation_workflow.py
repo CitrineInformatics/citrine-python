@@ -1,16 +1,20 @@
 import pytest
+import uuid
 
-from citrine.informatics.predictor_evaluator import CrossValidationEvaluator, PredictorEvaluator
+from citrine.informatics.data_sources import GemTableDataSource
+from citrine.informatics.predictor_evaluator import HoldoutSetEvaluator, CrossValidationEvaluator, PredictorEvaluator
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 
 
 @pytest.fixture()
 def pew():
-    evaluator = CrossValidationEvaluator(name="test", responses={"foo"})
+    data_source = GemTableDataSource(table_id=uuid.uuid4(), table_version=3)
+    evaluator1 = CrossValidationEvaluator(name="test CV", responses={"foo"})
+    evaluator2 = HoldoutSetEvaluator(name="test holdout", responses={"foo"}, data_source=data_source)
     pew = PredictorEvaluationWorkflow(
         name="Test",
         description="TestWorkflow",
-        evaluators=[evaluator]
+        evaluators=[evaluator1, evaluator2]
     )
     return pew
 
