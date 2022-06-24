@@ -543,8 +543,8 @@ def valid_simple_mixture_predictor_data():
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
-@pytest.fixture()
-def example_evaluator_dict():
+@pytest.fixture
+def example_cv_evaluator_dict():
     return {
         "type": "CrossValidationEvaluator",
         "name": "Example evaluator",
@@ -558,6 +558,16 @@ def example_evaluator_dict():
         "ignore_when_grouping": ["temperature"]
     }
 
+
+@pytest.fixture
+def example_holdout_evaluator_dict(valid_gem_data_source_dict):
+    return {
+        "type": "HoldoutSetEvaluator",
+        "name": "Example holdout evaluator",
+        "responses": ["sweetness"],
+        "data_source": valid_gem_data_source_dict,
+        "metrics": [{"type": "RMSE"}]
+    }
 
 @pytest.fixture()
 def example_rmse_metrics():
@@ -624,10 +634,10 @@ def example_categorical_pva_metrics():
 
 
 @pytest.fixture()
-def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_categorical_pva_metrics, example_f1_metrics, example_real_pva_metrics):
+def example_cv_result_dict(example_cv_evaluator_dict, example_rmse_metrics, example_categorical_pva_metrics, example_f1_metrics, example_real_pva_metrics):
     return {
         "type": "CrossValidationResult",
-        "evaluator": example_evaluator_dict,
+        "evaluator": example_cv_evaluator_dict,
         "response_results": {
             "salt?": {
                 "metrics": {
@@ -638,6 +648,21 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
             "saltiness": {
                 "metrics": {
                     "predicted_vs_actual": example_real_pva_metrics,
+                    "rmse": example_rmse_metrics
+                }
+            }
+        }
+    }
+
+
+@pytest.fixture()
+def example_holdout_result_dict(example_holdout_evaluator_dict, example_rmse_metrics):
+    return {
+        "type": "HoldoutSetResult",
+        "evaluator": example_holdout_evaluator_dict,
+        "response_results": {
+            "sweetness": {
+                "metrics": {
                     "rmse": example_rmse_metrics
                 }
             }
@@ -717,12 +742,12 @@ def design_execution_dict(generic_entity):
 
 
 @pytest.fixture
-def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
+def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict, example_holdout_evaluator_dict):
     ret = deepcopy(generic_entity)
     ret.update({
         "name": "Example PEW",
         "description": "Example PEW for testing",
-        "evaluators": [example_evaluator_dict]
+        "evaluators": [example_cv_evaluator_dict, example_holdout_evaluator_dict]
     })
     return ret
 

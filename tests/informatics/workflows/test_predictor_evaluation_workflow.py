@@ -24,6 +24,7 @@ def test_round_robin(pew):
     assert dumped["name"] == "Test"
     assert dumped["description"] == "TestWorkflow"
     assert PredictorEvaluator.build(dumped["evaluators"][0]).name == pew.evaluators[0].name
+    assert PredictorEvaluator.build(dumped["evaluators"][1]).name == pew.evaluators[1].name
 
 
 def test_print(pew):

@@ -61,15 +61,16 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
 
 
-def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecution, session, example_result_dict):
+def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecution, session,
+                                    example_cv_result_dict):
     # Given
-    session.set_response(example_result_dict)
+    session.set_response(example_cv_result_dict)
 
     # When
     results = workflow_execution["Example Evaluator"]
 
     # Then
-    assert results.evaluator == PredictorEvaluationResult.build(example_result_dict).evaluator
+    assert results.evaluator == PredictorEvaluationResult.build(example_cv_result_dict).evaluator
     expected_path = '/projects/{}/predictor-evaluation-executions/{}/results'.format(
         workflow_execution.project_id,
         workflow_execution.uid,
