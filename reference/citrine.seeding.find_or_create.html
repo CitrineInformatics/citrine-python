@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.seeding.find_or_create module &mdash; Citrine Python 1.33.1 documentation</title>
+  <title>citrine.seeding.find_or_create module &mdash; Citrine Python 1.33.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.33.1
+                1.33.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -118,6 +118,9 @@ resources with the same name it will throw an error.</p>
 <span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_or_create_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_project" title="Permalink to this definition"></a></dt>
 <dd><p>Tries to find a project by name (returns first hit).</p>
 <p>If not found, creates a new project with the given name</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.33.1: </span>This will be removed in 2.0.0. This method will be unreliable once Teams are released, at which point you should use find_or_create_team.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
