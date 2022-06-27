@@ -10,27 +10,27 @@ from citrine.resources.api_error import ValidationError
 class FakeCall:
     """Encapsulates a call to a FakeSession."""
 
-    def __init__(self, method, path, json=None, params: dict = None, version: str = None):
+    def __init__(self, method, path, json=None, params: dict = None, version: str = None, **kwargs):
         self.method = method
         self.path = path
         self.json = json
         self.params = params or {}
         self.version = version
+        self.kwargs = kwargs
 
     def __repr__(self):
-        return 'FakeCall({})'.format(self)
+        return f'FakeCall({self})'
 
     def __str__(self) -> str:
+        path = self.path
         if self.version:
-            path = self.path[1:] if self.path[0] == '/' else self.path
-            path = '{}/{}'.format(self.version, path)
-        else:
-            path = self.path
+            path = path[1:] if path.startswith('/') else path
+            path = f'{self.version}/{path}'
 
         if self.params:
-            path = '{}?{}'.format(path, urlencode(self.params))
+            path = f'{path}?{urlencode(self.params)}'
 
-        return '{} {} : {}'.format(self.method, path, dumps(self.json))
+        return f'{self.method} {path} : {dumps(self.json)}'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, FakeCall):
@@ -84,26 +84,23 @@ class FakeSession:
         return self.checked_delete(path, **kwargs)
 
     def checked_get(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('GET', path, params=kwargs.get('params'), version=kwargs.get('version')))
+        self.calls.append(FakeCall('GET', path, **kwargs))
         return self._get_response()
 
     def checked_post(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params'), version=kwargs.get('version')))
+        self.calls.append(FakeCall('POST', path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_put(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params'), version=kwargs.get('version')))
+        self.calls.append(FakeCall('PUT', path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_patch(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('PATCH', path, json, params=kwargs.get('params'), version=kwargs.get('version')))
+        self.calls.append(FakeCall('PATCH', path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_delete(self, path: str, **kwargs) -> dict:
-        if 'json' in kwargs:
-            self.calls.append(FakeCall('DELETE', path, kwargs.get('json'), params=kwargs.get('params'), version=kwargs.get('version')))
-        else:
-            self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params'), version=kwargs.get('version')))
+        self.calls.append(FakeCall('DELETE', path, **kwargs))
         return self._get_response()
 
     def _get_response(self, default_response: dict = None):
