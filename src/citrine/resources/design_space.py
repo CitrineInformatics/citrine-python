@@ -64,7 +64,8 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         self._validate_write_request(model)
         return AbstractModuleCollection.update(self, model)
 
-    def create_default(self, *,
+    def create_default(self,
+                       *,
                        predictor_id: UUID,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,

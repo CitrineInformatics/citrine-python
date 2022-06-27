@@ -1,4 +1,3 @@
-import itertools
 import uuid
 from copy import deepcopy
 from random import random
@@ -144,10 +143,11 @@ def test_create_default(valid_product_design_space_data,
     assert default_design_space.dump() == valid_product_design_space.dump()
 
 
-@pytest.mark.parametrize("config_flags", itertools.product((True, False), repeat=3))
-def test_create_default_with_config(valid_product_design_space_data, valid_product_design_space, config_flags):
-    ingredient_fractions, label_fractions, label_count = config_flags
-
+@pytest.mark.parametrize("ingredient_fractions", (True, False))
+@pytest.mark.parametrize("label_fractions", (True, False))
+@pytest.mark.parametrize("label_count", (True, False))
+def test_create_default_with_config(valid_product_design_space_data, valid_product_design_space,
+                                    ingredient_fractions, label_fractions, label_count):
     # The instance field isn't renamed to config in objects returned from this route
     # This renames the config key to instance to match the data we get from the API
     data_with_instance = deepcopy(valid_product_design_space_data)
