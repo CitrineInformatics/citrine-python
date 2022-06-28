@@ -1,5 +1,5 @@
-from copy import deepcopy
 import uuid
+from copy import deepcopy
 from random import random
 
 import mock
@@ -116,12 +116,76 @@ def test_create_default(valid_product_design_space_data,
 
     session = FakeSession()
     session.set_response(data_with_instance)
+    
+    predictor_id = uuid.uuid4()
     collection = DesignSpaceCollection(
         project_id=uuid.uuid4(),
         session=session
     )
-    default_design_space = collection.create_default(predictor_id=uuid.uuid4())
+
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{collection.project_id}/design-spaces/default",
+        json={
+            "predictor_id": predictor_id,
+            "include_ingredient_fraction_constraints": False,
+            "include_label_fraction_constraints": False,
+            "include_label_count_constraints": False
+        },
+        version="v2"
+    )
+    
+    default_design_space = collection.create_default(predictor_id=predictor_id)
+
+    assert session.num_calls == 1
+    assert session.last_call == expected_call
+    
     assert default_design_space.dump() == valid_product_design_space.dump()
+
+
+@pytest.mark.parametrize("ingredient_fractions", (True, False))
+@pytest.mark.parametrize("label_fractions", (True, False))
+@pytest.mark.parametrize("label_count", (True, False))
+def test_create_default_with_config(valid_product_design_space_data, valid_product_design_space,
+                                    ingredient_fractions, label_fractions, label_count):
+    # The instance field isn't renamed to config in objects returned from this route
+    # This renames the config key to instance to match the data we get from the API
+    data_with_instance = deepcopy(valid_product_design_space_data)
+    data_with_instance['instance'] = data_with_instance.pop('config')
+
+    session = FakeSession()
+    session.set_response(data_with_instance)
+    
+    predictor_id = uuid.uuid4()
+    collection = DesignSpaceCollection(
+        project_id=uuid.uuid4(),
+        session=session
+    )
+
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{collection.project_id}/design-spaces/default",
+        json={
+            "predictor_id": predictor_id,
+            "include_ingredient_fraction_constraints": ingredient_fractions,
+            "include_label_fraction_constraints": label_fractions,
+            "include_label_count_constraints": label_count
+        },
+        version="v2"
+    )
+    
+    default_design_space = collection.create_default(
+        predictor_id=predictor_id,
+        include_ingredient_fraction_constraints=ingredient_fractions,
+        include_label_fraction_constraints=label_fractions,
+        include_label_count_constraints=label_count
+    )
+
+    assert session.num_calls == 1
+    assert session.last_call == expected_call
+    
+    assert default_design_space.dump() == valid_product_design_space.dump()
+
 
 def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
     # Given

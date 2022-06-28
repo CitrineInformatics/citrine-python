@@ -64,7 +64,12 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         self._validate_write_request(model)
         return AbstractModuleCollection.update(self, model)
 
-    def create_default(self, *, predictor_id: UUID) -> DesignSpace:
+    def create_default(self,
+                       *,
+                       predictor_id: UUID,
+                       include_ingredient_fraction_constraints: bool = False,
+                       include_label_fraction_constraints: bool = False,
+                       include_label_count_constraints: bool = False) -> DesignSpace:
         """[ALPHA] Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
@@ -83,14 +88,32 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         predictor_id: UUID
             UUID of the predictor used to construct the design space
 
+        include_ingredient_fraction_constraints: bool
+            Whether to include constraints on ingredient fractions based on the training data.
+            Defaults to False.
+
+        include_label_fraction_constraints: bool
+            Whether to include constraints on label fractions based on the training data.
+            Defaults to False.
+
+        include_label_count_constraints: bool
+            Whether to include constraints on labeled ingredient counts based on the training data.
+            Defaults to False.
+
         Returns
         -------
         DesignSpace
             Default design space
 
         """
-        path = f'projects/{self.project_id}/predictors/{predictor_id}/default-design-space'
-        data = self.session.get_resource(path)
+        path = f'projects/{self.project_id}/design-spaces/default'
+        payload = {
+            "predictor_id": predictor_id,
+            "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
+            "include_label_fraction_constraints": include_label_fraction_constraints,
+            "include_label_count_constraints": include_label_count_constraints
+        }
+        data = self.session.post_resource(path, json=payload, version="v2")
         if 'instance' in data:
             data['config'] = data.pop('instance')
         return self.build(data)
