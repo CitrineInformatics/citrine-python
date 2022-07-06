@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.design_space module &mdash; Citrine Python 1.33.2 documentation</title>
+  <title>citrine.resources.design_space module &mdash; Citrine Python 1.34.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.33.2
+                1.34.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -109,7 +109,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection.create_default">
-<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a></span></span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.create_default" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_ingredient_fraction_constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_label_fraction_constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_label_count_constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a></span></span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.create_default" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Create a default design space for a predictor.</p>
 <p>This method will return an unregistered design space for all inputs
 that are not responses of the predictor. The design space will contain a
@@ -123,7 +123,15 @@ other inputs. Enumerated values taken from the allowed <code class="docutils lit
 unique values from the training data for all other descriptors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>predictor_id</strong> (<em>UUID</em>) – UUID of the predictor used to construct the design space</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predictor_id</strong> (<em>UUID</em>) – UUID of the predictor used to construct the design space</p></li>
+<li><p><strong>include_ingredient_fraction_constraints</strong> (<em>bool</em>) – Whether to include constraints on ingredient fractions based on the training data.
+Defaults to False.</p></li>
+<li><p><strong>include_label_fraction_constraints</strong> (<em>bool</em>) – Whether to include constraints on label fractions based on the training data.
+Defaults to False.</p></li>
+<li><p><strong>include_label_count_constraints</strong> (<em>bool</em>) – Whether to include constraints on labeled ingredient counts based on the training data.
+Defaults to False.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Default design space</p>
