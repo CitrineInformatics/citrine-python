@@ -275,24 +275,28 @@ class Team(Resource['Team']):
         """Return a resource representing all visible projects in this team."""
         return ProjectCollection(self.session, team_id=self.uid)
 
+    @property
     def dataset_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published dataset IDs"""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.DATASET.value)
 
+    @property
     def module_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published module IDs"""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.MODULE.value)
 
+    @property
     def table_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published table IDs"""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.TABLE.value)
 
+    @property
     def table_definition_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published table definition IDs"""
         return TeamResourceIDs(session=self.session,
