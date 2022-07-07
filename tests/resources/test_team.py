@@ -305,13 +305,13 @@ def test_list_resource_ids(team, session, resource_type, method):
     assert session.num_calls == 3
     assert session.calls[0] == FakeCall(method='GET',
                                         path=f'/{resource_type.value}/authorized-ids',
-                                        params={"domain": f"/teams/{team.uid}", "action": "READ"})
+                                        params={"domain": f"/teams/{team.uid}", "action": READ})
     assert session.calls[1] == FakeCall(method='GET',
                                         path=f'/{resource_type.value}/authorized-ids',
-                                        params={"domain": f"/teams/{team.uid}", "action": "WRITE"})
+                                        params={"domain": f"/teams/{team.uid}", "action": WRITE})
     assert session.calls[2] == FakeCall(method='GET',
                                         path=f'/{resource_type.value}/authorized-ids',
-                                        params={"domain": f"/teams/{team.uid}", "action": "SHARE"})
+                                        params={"domain": f"/teams/{team.uid}", "action": SHARE})
     assert readable_ids == read_response['ids']
     assert writeable_ids == write_response['ids']
     assert shareable_ids == share_response['ids']
