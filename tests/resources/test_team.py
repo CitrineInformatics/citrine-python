@@ -302,6 +302,9 @@ def test_list_resource_ids(team, session, resource_type, method):
     session.set_response(share_response)
     shareable_ids = resource_listing.list_shareable()
 
+    with pytest.raises(AttributeError):
+        setattr(team, method, [])
+
     # Then
     assert session.num_calls == 3
     assert session.calls[0] == FakeCall(method='GET',
