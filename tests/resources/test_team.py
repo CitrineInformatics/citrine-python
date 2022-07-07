@@ -293,6 +293,7 @@ def test_list_resource_ids(team, session, resource_type, method):
     share_response = {'ids': [uuid.uuid4(), uuid.uuid4()]}
 
     # When
+    # This is equivalent to team.dataset_ids(), team.module_ids(), etc.
     resource_listing = getattr(team, method)()
     session.set_response(read_response)
     readable_ids = resource_listing.list_readable()
