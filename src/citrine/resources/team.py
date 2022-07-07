@@ -7,9 +7,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources import ProjectCollection, Dataset
+from citrine.resources import ProjectCollection
 from citrine.resources.user import User, UserCollection
-from abc import abstractmethod
 
 WRITE = "WRITE"
 READ = "READ"
@@ -33,6 +32,7 @@ class TeamMember:
         return '<TeamMember {!r} can {!s} in {!r}>' \
             .format(self.user.screen_name, self.actions, self.team.name)
 
+
 class TeamResourceIDs:
     """
     A Citrine Team Resource IDs class.
@@ -52,18 +52,22 @@ class TeamResourceIDs:
 
     _api_version = "v3"
 
-    def __init__(self, team_id, resource_type) -> None:
+    def __init__(self,
+                 session: Session,
+                 team_id: Union[str, UUID],
+                 resource_type: str) -> None:
+        self.session = session
         self.team_id = team_id
         self.resource_type = resource_type
 
     def _path(self) -> str:
-        return format_escaped_url(f'/teams/{self.team_id}')
+        return format_escaped_url(f'/teams/{str(self.team_id)}')
 
     def _list_ids(self, action: str) -> List[str]:
         query_params = {"domain": self._path(), "action": action}
         return self.session.get_resource(f"/{self.resource_type}/authorized-ids",
-                                            params=query_params,
-                                            version=self._api_version)['ids']
+                                         params=query_params,
+                                         version=self._api_version)['ids']
 
     def list_readable(self):
         return self._list_ids(action="READ")
@@ -73,6 +77,7 @@ class TeamResourceIDs:
 
     def list_shareable(self):
         return self._list_ids(action="SHARE")
+
 
 class Team(Resource['Team']):
     """
@@ -271,20 +276,28 @@ class Team(Resource['Team']):
         return ProjectCollection(self.session, team_id=self.uid)
 
     def dataset_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published dataset IDs in this team"""
-        return TeamResourceIDs(team_id=self.uid, resource_type=ResourceTypeEnum.DATASET.value)
+        """Return a TeamResourceIDs instance for listing published dataset IDs"""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.DATASET.value)
 
     def module_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published module IDs in this team"""
-        return TeamResourceIDs(team_id=self.uid, resource_type=ResourceTypeEnum.MODULE.value)
+        """Return a TeamResourceIDs instance for listing published module IDs"""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.MODULE.value)
 
     def table_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table IDs in this team"""
-        return TeamResourceIDs(team_id=self.uid, resource_type=ResourceTypeEnum.TABLE.value)
+        """Return a TeamResourceIDs instance for listing published table IDs"""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.TABLE.value)
 
     def table_definition_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table definition IDs in this team"""
-        return TeamResourceIDs(team_id=self.uid, resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
+        """Return a TeamResourceIDs instance for listing published table definition IDs"""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
 
 
 class TeamCollection(Collection[Team]):
