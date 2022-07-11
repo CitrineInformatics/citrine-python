@@ -26,8 +26,23 @@ from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 logger = getLogger(__name__)
+
+
+class SearchFileFilterTypeEnum(BaseEnumeration):
+    """The type of the filter used to search for files
+
+    * SEARCH_BY_NAME Search a file by name in a specific dataset, returns by default the last version or a specific one
+    * SEARCH_BY_VERSION_ID Search by a specific file version id
+    * SEARCH_BY_DATASET_FILE_ID Search either the last version or a specific version number for a specific dataset file id
+
+    """
+
+    SEARCH_BY_NAME = "search_by_name"
+    SEARCH_BY_VERSION_ID = "search_by_version_id"
+    SEARCH_BY_DATASET_FILE_ID = "search_by_dataset_file_id"
 
 
 class _Uploader:
@@ -357,6 +372,81 @@ class FileCollection(Collection[FileLink]):
 
         raise NotFound(f"Found file, but no version {version}")
 
+    def get2(self,
+             uid: Union[UUID, str],
+             *,
+             version: Optional[Union[UUID, str, int]] = None) -> FileLink:
+        """
+        Get an element of the collection by its id.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            A representation of the FileLink (Citrine id or file name)
+        version: Optional[UUID, str, int]
+            The version, as a UUID or str(UUID) of the version_id or an int or
+            str(int) of the version number.  If None, returns the file with the
+            highest version number (most recent).
+
+        Returns
+        -------
+        ResourceType
+            An object with specified scope and uid
+
+        """
+        if not isinstance(uid, (str, UUID)):
+            raise TypeError(f"File Link can only be resolved from str or UUID."
+                            f"Instead got {type(uid)} {uid}.")
+        if version is not None and not isinstance(version, (str, UUID, int)):
+            raise TypeError(f"Version can only be resolved from str, int or UUID."
+                            f"Instead got {type(uid)} {uid}.")
+
+        try:  # Check if the uid string is actually a UUID
+            if isinstance(uid, str):
+                uid = UUID(uid)
+        except ValueError:
+            pass
+
+        try:  # Check if the version string is actually a UUID
+            if isinstance(version, str):
+                version = UUID(version)
+        except ValueError:
+            pass
+
+        try:  # Check if the version string is actually an int / version number
+            if isinstance(version, str):
+                version = int(version)
+        except ValueError:
+            pass
+
+        if isinstance(version, str):
+            raise ValueError(
+                f"Version {version} could not be converted to either an int or a UUID"
+            )
+
+        if isinstance(uid, str):
+            # Assume it's the filename on platform;
+            file = None
+            if version is None or isinstance(version, int):
+                file = self._search_by_file_name(dset_id=self.dataset_id, file_name=uid, file_version_number=version)
+            elif isinstance(version, UUID):
+                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
+            if file is None:
+                raise NotFound(f"Found no file named {uid}")
+            else:
+                return file
+        elif isinstance(uid, UUID):
+            file = None
+            if version is None or isinstance(version, int):
+                file = self._search_by_dataset_file_id(dataset_file_id=uid, dset_id=self.dataset_id,
+                                                       file_version_number=version)
+            elif isinstance(version, UUID):
+                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
+            if file is None:
+                raise NotFound(f"Found no file named {uid}")
+            else:
+                return file
+
     def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
         """
         Uploads a file to the dataset.
@@ -446,6 +536,97 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
         return uploader
+
+    def _search_by_file_name(self,
+                             file_name: str,
+                             dset_id: UUID,
+                             file_version_number: Optional[int] = None
+                             ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by name.
+        Note that you can specify a version number, in case you don't, it will
+        return the last version by default.
+
+        Parameters
+        ----------
+        file_name: str
+            A filter type that indicates the strategy for the search.
+        dset_id: UUID
+            UUID that represents a dataset.
+        file_version_number: Optional[int]
+            As optional, you can send a specific version number
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': [
+                {
+                    'type': SearchFileFilterTypeEnum.SEARCH_BY_NAME,
+                    'datasetId': dset_id,
+                    'fileName': file_name,
+                    'fileVersionNumber': file_version_number
+                }
+            ]
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        if data:
+            return self.build(self._as_dict_from_resource(data[0]))
+        else:
+            return None
+
+    def _search_by_file_version_id(self,
+                                   file_version_id: UUID
+                                   ) -> Optional[FileLink]:
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': [
+                {
+                    'type': SearchFileFilterTypeEnum.SEARCH_BY_VERSION_ID,
+                    'fileVersionUuid': file_version_id
+                }
+            ]
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        if data:
+            return self.build(self._as_dict_from_resource(data[0]))
+        else:
+            return None
+
+    def _search_by_dataset_file_id(self,
+                                   dataset_file_id: UUID,
+                                   dset_id: UUID,
+                                   file_version_number: Optional[int] = None
+                                   ) -> Optional[FileLink]:
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': [
+                {
+                    'type': SearchFileFilterTypeEnum.SEARCH_BY_DATASET_FILE_ID,
+                    'datasetId': dset_id,
+                    'datasetFileId': dataset_file_id,
+                    'fileVersionNumber': file_version_number
+                }
+            ]
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        if data:
+            return self.build(self._as_dict_from_resource(data[0]))
+        else:
+            return None
 
     @staticmethod
     def _mime_type(file_path: Path):
