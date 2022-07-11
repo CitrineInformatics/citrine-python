@@ -236,7 +236,7 @@ class Team(Resource['Team']):
         ----------
         resource: Resource
             The resource owned by this team, which will be shared
-        target_team_id: Union[str, UUID]
+        target_team_id: Union[str, UUID, Team]
             The id of the team with which to share the resource
 
         Returns
@@ -245,6 +245,8 @@ class Team(Resource['Team']):
             Returns ``True`` if resource successfully shared
 
         """
+        if isinstance(target_team_id, Team):
+            target_team_id = target_team_id.uid
         resource_access = resource.access_control_dict()
         payload = {
             "resource_type": resource_access["type"],
@@ -265,7 +267,7 @@ class Team(Resource['Team']):
         ----------
         resource: Resource
             The resource owned by this team, which will be un-shared
-        target_team_id: Union[str, UUID]
+        target_team_id: Union[str, UUID, Team]
             The id of the team which should not have access to the resource
 
         Returns
@@ -274,6 +276,8 @@ class Team(Resource['Team']):
             Returns ``True`` if resource successfully un-shared
 
         """
+        if isinstance(target_team_id, Team):
+            target_team_id = target_team_id.uid
         resource_type = resource.access_control_dict()["type"]
         resource_id = resource.access_control_dict()["id"]
         self.session.checked_delete(
