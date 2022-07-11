@@ -61,7 +61,7 @@ class TeamResourceIDs:
         self.resource_type = resource_type
 
     def _path(self) -> str:
-        return format_escaped_url(f'/teams/{str(self.team_id)}')
+        return format_escaped_url(f'/teams/{self.team_id}')
 
     def _list_ids(self, action: str) -> List[str]:
         query_params = {"domain": self._path(), "action": action}
@@ -70,13 +70,13 @@ class TeamResourceIDs:
                                          version=self._api_version)['ids']
 
     def list_readable(self):
-        return self._list_ids(action="READ")
+        return self._list_ids(action=READ)
 
     def list_writeable(self):
-        return self._list_ids(action="WRITE")
+        return self._list_ids(action=WRITE)
 
     def list_shareable(self):
-        return self._list_ids(action="SHARE")
+        return self._list_ids(action=SHARE)
 
 
 class Team(Resource['Team']):
