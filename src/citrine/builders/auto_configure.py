@@ -1,3 +1,4 @@
+from logging import getLogger
 from uuid import UUID
 from typing import Union, Optional, List
 import warnings
@@ -23,6 +24,8 @@ from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig, TableBuildAlgorithm
 
 from citrine.builders.scores import create_default_score
+
+logger = getLogger(__name__)
 
 
 class AutoConfigureStatus(BaseEnumeration):
@@ -135,7 +138,7 @@ class AutoConfigureWorkflow():
 
     @staticmethod
     def _print_status(msg: str):
-        print(f"AutoConfigureWorkflow: {msg}")
+        logger.info(f"AutoConfigureWorkflow: {msg}")
 
     @property
     def project(self) -> Project:
@@ -229,17 +232,17 @@ class AutoConfigureWorkflow():
             )
         else:
             self._table_config = self.project.table_configs.get(self.table_config.uid)
-            print("Found existing: {}".format(self.table_config))
+            logger.info("Found existing: {}".format(self.table_config))
 
         # Table
         if self.table is None:
             if self.table_config is not None:
                 self._table = next(self.project.tables.list_by_config(self.table_config.uid), None)
                 if self.table is not None:
-                    print("Found existing: {}".format(self.table))
+                    logger.info("Found existing: {}".format(self.table))
         else:
             self._table = self.project.tables.get(self.table.uid)
-            print("Found existing: {}".format(self.table))
+            logger.info("Found existing: {}".format(self.table))
 
         # Predictor
         if self.predictor is None:
@@ -249,7 +252,7 @@ class AutoConfigureWorkflow():
             )
         else:
             self._predictor = self.project.predictors.get(self.predictor.uid)
-            print("Found existing: {}".format(self.predictor))
+            logger.info("Found existing: {}".format(self.predictor))
 
         # PEW
         if self.predictor_evaluation_workflow is None:
@@ -261,7 +264,7 @@ class AutoConfigureWorkflow():
             self._predictor_evaluation_workflow = self.project.predictor_evaluation_workflows.get(
                 self.predictor_evaluation_workflow.uid
             )
-            print("Found existing: {}".format(self.predictor_evaluation_workflow))
+            logger.info("Found existing: {}".format(self.predictor_evaluation_workflow))
 
         # Design space
         if self.design_space is None:
@@ -271,7 +274,7 @@ class AutoConfigureWorkflow():
             )
         else:
             self._design_space = self.project.design_spaces.get(self.design_space.uid)
-            print("Found existing: {}".format(self.design_space))
+            logger.info("Found existing: {}".format(self.design_space))
 
         # Design workflow
         if self.design_workflow is None:
@@ -281,7 +284,7 @@ class AutoConfigureWorkflow():
             )
         else:
             self._design_workflow = self.project.design_workflows.get(self.design_workflow.uid)
-            print("Found existing: {}".format(self.design_workflow))
+            logger.info("Found existing: {}".format(self.design_workflow))
 
     def _update_status(self):
         """Update status info based on currently stored assets."""
@@ -659,7 +662,7 @@ class AutoConfigureWorkflow():
         if pew.failed():
             # Can proceed without raising error, but can't get PEE
             self._status = AutoConfigureStatus.PEW_FAILED
-            warnings.warn(
+            logger.warning(
                 "Predictor evaluation workflow failed -- unable to configure execution."
             )
         elif evaluator is not None:

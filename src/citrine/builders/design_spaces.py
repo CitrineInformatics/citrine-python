@@ -1,4 +1,5 @@
 import csv
+from logging import getLogger
 from uuid import UUID
 
 from citrine.exceptions import BadRequest
@@ -16,9 +17,10 @@ except ImportError:  # pragma: no cover
     raise ImportError('numpy is a requirement for the builders module')
 from itertools import product
 from typing import Mapping, Sequence, List, Optional
-from warnings import warn
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DataSourceDesignSpace
 from citrine.informatics.descriptors import Descriptor, RealDescriptor
+
+logger = getLogger(__name__)
 
 
 def enumerate_cartesian_product(
@@ -54,7 +56,7 @@ def enumerate_cartesian_product(
         [len(grid_points) for grid_points in design_grid.values()]
     ) * len(design_grid)
     if grid_size > 2E8:
-        warn(
+        logger.warning(
             "Product design grid contains {n} grid points. This may cause memory issues "
             "downstream.".format(n=grid_size)
         )
@@ -214,7 +216,7 @@ def cartesian_join_design_spaces(
     grid_size = np.prod([len(ds.data) for ds in subspaces]) \
         * np.sum([len(ds.data[0]) for ds in subspaces])
     if grid_size > 2E8:
-        warn(
+        logger.warning(
             "Product design grid contains {n} grid points. This may cause memory issues "
             "downstream.".format(n=grid_size)
         )
@@ -332,7 +334,7 @@ def migrate_enumerated_design_space(*,
         try:
             project.design_spaces.archive(enumerated_ds.uid)
         except BadRequest as err:
-            warn("Unable to archive design space with uid {}, received the following response: {}"
+            logger.warning("Unable to archive design space with uid {}, received the following response: {}"
                  .format(uid, err.response_text))
 
     return data_source_ds
