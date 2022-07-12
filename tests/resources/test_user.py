@@ -127,8 +127,6 @@ def test_delete_user(collection, session):
 def test_get_me(collection, session):
     # Given
     user = UserDataFactory()
-    user["id"] = user["id"]
-    del user["id"]
     session.set_response(user)
 
     # When
