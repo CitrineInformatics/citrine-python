@@ -1,3 +1,4 @@
+import logging
 from uuid import uuid4
 
 import pytest
@@ -292,7 +293,7 @@ def test_auto_configure_predictor_registration(project):
 
 
 @mock.patch("citrine.builders.auto_configure.PredictorEvaluationWorkflow", FakePredictorEvaluationWorkflow)
-def test_auto_configure_predictor_evaluation(project):
+def test_auto_configure_predictor_evaluation(project, caplog):
     """Test the predictor evaluation stage of auto configure."""
     config_name = "Test"
     resources = default_resources(config_name)
@@ -320,7 +321,8 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create default w/ an invalid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        with pytest.warns(UserWarning):
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
             auto_config._predictor_evaluation_stage(
                 predictor=predictor,
                 evaluator=None,
@@ -328,6 +330,7 @@ def test_auto_configure_predictor_evaluation(project):
             )
             assert len(auto_config.assets) == 4
             assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+            assert any(r.levelno == logging.WARNING for r in caplog.records)
 
     # Create manual w/ a valid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
@@ -341,7 +344,8 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create manual w/ a failed response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        with pytest.warns(UserWarning):
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
             auto_config._predictor_evaluation_stage(
                 predictor=predictor,
                 evaluator=evaluator,
@@ -349,6 +353,7 @@ def test_auto_configure_predictor_evaluation(project):
             )
         assert len(auto_config.assets) == 4
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+        assert any(r.levelno == logging.WARNING for r in caplog.records)
 
 
 def test_auto_configure_design_space_build(project):

@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+from logging import getLogger
 from deprecation import deprecated
 
 from citrine.exceptions import NotFound
@@ -7,6 +7,8 @@ from citrine.resources import ProjectCollection
 from citrine.resources.dataset import Dataset
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine._rest.collection import CreationType, Collection
+
+logger = getLogger(__name__)
 
 
 def find_collection(*, collection, name):
@@ -37,7 +39,7 @@ def find_collection(*, collection, name):
         raise ValueError("Found multiple collections with name '{}'".format(name))
     if len(matching_resources) == 1:
         result = matching_resources.pop()
-        print('Found existing: {}'.format(result))
+        logger.info('Found existing: {}'.format(result))
         return result
     else:
         return None
@@ -53,7 +55,7 @@ def get_by_name_or_create(*, collection, name, default_provider):
     if found:
         return found
     else:
-        print('Failed to find resource with name {}, creating one instead.'.format(name))
+        logger.info('Failed to find resource with name {}, creating one instead.'.format(name))
         return default_provider()
 
 
@@ -149,7 +151,7 @@ def create_or_update(*, collection: Collection[CreationType], resource: Creation
     """
     old_resource = find_collection(collection=collection, name=resource.name)
     if old_resource:
-        print("Updating module: {}".format(resource.name))
+        logger.info("Updating module: {}".format(resource.name))
         # Copy so that passed-in resource is unaffected
         new_resource = deepcopy(resource)
         new_resource.uid = old_resource.uid
@@ -159,5 +161,5 @@ def create_or_update(*, collection: Collection[CreationType], resource: Creation
             new_resource.branch_id = old_resource.branch_id
         return collection.update(new_resource)
     else:
-        print("Registering new module:  {}".format(resource.name))
+        logger.info("Registering new module:  {}".format(resource.name))
         return collection.register(resource)

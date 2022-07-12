@@ -1,5 +1,7 @@
 """Tests for citrine.informatics.descriptors."""
 import json
+import logging
+
 import pytest
 from citrine.informatics.predictor_evaluation_metrics import *
 
@@ -39,13 +41,17 @@ def test_to_json(metric):
     assert deser == metric[0]
 
 
-def test_coverage_levels():
+def test_coverage_levels(caplog):
     assert CoverageProbability(coverage_level="0.123")._level_str == "0.123"
-    with pytest.warns(UserWarning):
+    with caplog.at_level(logging.WARNING):
+        caplog.clear()
         assert CoverageProbability(coverage_level="0.1234")._level_str == "0.123"
+        assert any(r.levelno == logging.WARNING for r in caplog.records)
     assert CoverageProbability(coverage_level=0.123)._level_str == "0.123"
-    with pytest.warns(UserWarning):
+    with caplog.at_level(logging.WARNING):
+        caplog.clear()
         assert CoverageProbability(coverage_level=0.1234)._level_str == "0.123"
+        assert any(r.levelno == logging.WARNING for r in caplog.records)
 
     with pytest.raises(TypeError):
         CoverageProbability(coverage_level=123)
@@ -59,5 +65,7 @@ def test_coverage_levels():
     with pytest.raises(ValueError):
         CoverageProbability(coverage_level="68.2")
 
-    with pytest.warns(UserWarning):
+    with caplog.at_level(logging.WARNING):
+        caplog.clear()
         CoverageProbability(coverage_level=".1111")
+        assert any(r.levelno == logging.WARNING for r in caplog.records)

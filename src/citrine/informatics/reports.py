@@ -2,7 +2,7 @@
 from typing import Type, Dict, TypeVar, Iterable
 from abc import abstractmethod
 from itertools import groupby
-import warnings
+from logging import getLogger
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -11,6 +11,8 @@ from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.descriptors import Descriptor
 
 SelfType = TypeVar('SelfType', bound='Report')
+
+logger = getLogger(__name__)
 
 
 class Report(PolymorphicSerializable['Report'], AsynchronousObject):
@@ -162,9 +164,9 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         as_list = list(it)
         if len(as_list) > 1:
             serialized_descriptors = [d.dump() for d in as_list]
-            warnings.warn("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
-                          "selecting the first one. The descriptors are: {}"
-                          .format(as_list[0].key, serialized_descriptors), RuntimeWarning)
+            logger.warning("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
+                           "selecting the first one. The descriptors are: {}"
+                           .format(as_list[0].key, serialized_descriptors))
         return as_list[0]
 
     @staticmethod
