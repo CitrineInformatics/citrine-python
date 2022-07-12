@@ -1,4 +1,3 @@
-import warnings
 from abc import abstractmethod
 from logging import getLogger
 from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator

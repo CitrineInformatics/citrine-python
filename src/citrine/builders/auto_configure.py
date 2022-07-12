@@ -1,7 +1,6 @@
 from logging import getLogger
 from uuid import UUID
 from typing import Union, Optional, List
-import warnings
 
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration

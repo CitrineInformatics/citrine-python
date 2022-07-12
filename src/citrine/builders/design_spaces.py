@@ -334,7 +334,7 @@ def migrate_enumerated_design_space(*,
         try:
             project.design_spaces.archive(enumerated_ds.uid)
         except BadRequest as err:
-            logger.warning("Unable to archive design space with uid {}, received the following response: {}"
-                 .format(uid, err.response_text))
+            logger.warning(f"Unable to archive design space with uid {uid}, "
+                           f"received the following response: {err.response_text}")
 
     return data_source_ds
