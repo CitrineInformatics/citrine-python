@@ -70,12 +70,39 @@ class TeamResourceIDs:
                                          version=self._api_version)['ids']
 
     def list_readable(self):
+        """
+        List IDs of the published resources with READ access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
         return self._list_ids(action=READ)
 
     def list_writeable(self):
+        """
+        List IDs of the published resources with WRITE access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
         return self._list_ids(action=WRITE)
 
     def list_shareable(self):
+        """
+        List IDs of the published resources with SHARE access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
         return self._list_ids(action=SHARE)
 
 
@@ -277,28 +304,28 @@ class Team(Resource['Team']):
 
     @property
     def dataset_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published dataset IDs"""
+        """Return a TeamResourceIDs instance for listing published dataset IDs."""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.DATASET.value)
 
     @property
     def module_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published module IDs"""
+        """Return a TeamResourceIDs instance for listing published module IDs."""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.MODULE.value)
 
     @property
     def table_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table IDs"""
+        """Return a TeamResourceIDs instance for listing published table IDs."""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.TABLE.value)
 
     @property
     def table_definition_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table definition IDs"""
+        """Return a TeamResourceIDs instance for listing published table definition IDs."""
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
