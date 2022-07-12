@@ -37,6 +37,16 @@ def team(session) -> Team:
 
 
 @pytest.fixture
+def other_team(session) -> Team:
+    team = Team(
+        name='Test Team',
+        session=session
+    )
+    team.uid = uuid.uuid4()
+    return team
+
+
+@pytest.fixture
 def collection(session) -> TeamCollection:
     return TeamCollection(session)
 
@@ -162,13 +172,31 @@ def test_list_members(team, session):
     assert isinstance(members[0], TeamMember)
 
 
+def test_me(team, session):
+    # Given
+    user = UserDataFactory()
+    member = user.copy()
+    member["actions"] = [READ]
+    member.pop("position")
+    session.set_responses({**user}, {'user': member})
+
+    # When
+    member = team.me()
+
+    # Then
+    assert 2 == session.num_calls
+    member_call = FakeCall(method='GET', path='/teams/{}/users/{}'.format(team.uid, user["id"]))
+    assert member_call == session.last_call
+    assert isinstance(member, TeamMember)
+
+
 def test_update_user_actions(team, session):
     # Given
     user = UserDataFactory()
     session.set_response({'id': user['id'], 'actions': ['READ']})
 
     # When
-    update_user_role_response = team.update_user_action(user_id=user["id"], actions=[WRITE, SHARE])
+    update_user_role_response = team.update_user_action(user_id=User.build(user), actions=[WRITE, SHARE])
 
     # Then
     assert 1 == session.num_calls
@@ -184,7 +212,7 @@ def test_add_user(team, session):
     session.set_response({'id': user["id"], 'actions': ['READ']})
 
     # When
-    add_user_response = team.add_user(user["id"])
+    add_user_response = team.add_user(User.build(user))
 
     # Then
     assert 1 == session.num_calls
@@ -220,7 +248,7 @@ def test_remove_user(team, session):
     session.set_response({'ids': [user["id"]]})
 
     # When
-    remove_user_response = team.remove_user(user["id"])
+    remove_user_response = team.remove_user(User.build(user))
 
     # Then
     assert 1 == session.num_calls
@@ -233,14 +261,13 @@ def test_remove_user(team, session):
     assert remove_user_response is True
 
 
-def test_share(team, session):
+def test_share(team, other_team, session):
     # Given
-    target_team_id = uuid.uuid4()
     dataset = Dataset(name="foo", summary="", description="")
     dataset.uid = str(uuid.uuid4())
 
     # When
-    share_response = team.share(resource=dataset, target_team_id=target_team_id)
+    share_response = team.share(resource=dataset, target_team_id=other_team)
 
     # Then
     assert 1 == session.num_calls
@@ -250,21 +277,20 @@ def test_share(team, session):
         json={
             "resource_type": "DATASET",
             "resource_id": str(dataset.uid),
-            "target_team_id": str(target_team_id)
+            "target_team_id": str(other_team.uid)
         }
     )
     assert expect_call == session.last_call
     assert share_response is True
 
 
-def test_un_share(team, session):
+def test_un_share(team, other_team, session):
     # Given
-    target_team_id = uuid.uuid4()
     dataset = Dataset(name="foo", summary="", description="")
     dataset.uid = str(uuid.uuid4())
 
     # When
-    share_response = team.un_share(resource=dataset, target_team_id=target_team_id)
+    share_response = team.un_share(resource=dataset, target_team_id=other_team)
 
     # Then
     assert 1 == session.num_calls
@@ -272,7 +298,7 @@ def test_un_share(team, session):
         method="DELETE",
         path="/teams/{}/shared-resources/{}/{}".format(team.uid, "DATASET", str(dataset.uid)),
         json={
-            "target_team_id": str(target_team_id)
+            "target_team_id": str(other_team.uid)
         }
     )
     assert expect_call == session.last_call

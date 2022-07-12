@@ -89,6 +89,8 @@ class Team(Resource['Team']):
         """
         List all of the members in the current team.
 
+        Requires admin privileges.
+
         Returns
         -------
         List[TeamMember]
@@ -99,9 +101,11 @@ class Team(Resource['Team']):
                                             version=self._api_version)["users"]
         return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
-    def remove_user(self, user_id: Union[str, UUID]) -> bool:
+    def get_member(self, user_id: Union[str, UUID, User]) -> TeamMember:
         """
-        Remove a User from a Team.
+        Get a particular member in the current team.
+
+        May require admin privileges depending on which user is being requested.
 
         Parameters
         ----------
@@ -110,18 +114,60 @@ class Team(Resource['Team']):
 
         Returns
         -------
+        TeamMember
+            The requested team member
+
+        """
+        if isinstance(user_id, User):
+            user_id = user_id.uid
+        path = self._path() + format_escaped_url('/users/{user_id}', user_id=user_id)
+        member = self.session.get_resource(path=path, version=self._api_version)["user"]
+        return TeamMember(user=User.build(member), team=self, actions=member["actions"])
+
+    def me(self) -> TeamMember:
+        """
+        Get the member for the current user.
+
+        Returns
+        -------
+        TeamMember
+            The TeamMember object representing the current user
+
+        """
+        me = UserCollection(self.session).me()
+        return self.get_member(me)
+
+    def remove_user(self, user_id: Union[str, UUID, User]) -> bool:
+        """
+        Remove a User from a Team.
+
+        Requires admin privileges.
+
+        Parameters
+        ----------
+        user_id: User, str or uuid
+            The id of the user to remove from the team
+
+        Returns
+        -------
         bool
             Returns ``True`` if user successfully removed
 
         """
+        if isinstance(user_id, User):
+            user_id = user_id.uid
         self.session.checked_post(self._path() + "/users/batch-remove",
                                   json={"ids": [str(user_id)]}, version=self._api_version)
         return True  # note: only get here if checked_post doesn't raise error
 
-    def add_user(self, user_id: Union[str, UUID], *,
+    def add_user(self,
+                 user_id: Union[str, UUID, User],
+                 *,
                  actions: Optional[List[TEAM_ACTIONS]] = None) -> bool:
         """
         Add a User to a Team.
+
+        Requires admin privileges.
 
         If no actions are specified, adds User with ``READ`` action to the Team.
 
@@ -129,7 +175,7 @@ class Team(Resource['Team']):
 
         Parameters
         ----------
-        user_id: str or uuid
+        user_id: User, str or uuid
             The id of the user to add to the team
         actions: list of TEAM_ACTIONS
             The actions to give the new user in this team
@@ -142,18 +188,24 @@ class Team(Resource['Team']):
             Returns ``True`` if user successfully added
 
         """
+        if isinstance(user_id, User):
+            user_id = user_id.uid
         if actions is None:
             actions = [READ]
         return self.update_user_action(user_id, actions=actions)
 
-    def update_user_action(self, user_id: Union[str, UUID], *,
+    def update_user_action(self,
+                           user_id: Union[str, UUID, User],
+                           *,
                            actions: List[TEAM_ACTIONS]) -> bool:
         """
         Overwrites a User's action permissions in the Team.
 
+        Requires admin privileges.
+
         Parameters
         ----------
-        user_id: str or uuid
+        user_id: User, str or uuid
             The id of the user to add to the team
         actions: list of TEAM_ACTIONS
             The actions to give the new user in this team
@@ -165,21 +217,26 @@ class Team(Resource['Team']):
             Returns ``True`` if user successfully added
 
         """
+        if isinstance(user_id, User):
+            user_id = user_id.uid
         self.session.checked_put(self._path() + "/users", version=self._api_version,
                                  json={'id': str(user_id), "actions": actions})
         return True
 
-    def share(self, *,
+    def share(self,
+              *,
               resource: Resource,
-              target_team_id: Union[str, UUID]) -> bool:
+              target_team_id: Union[str, UUID, "Team"]) -> bool:
         """
         Share a resource with another team.
+
+        Requires SHARE action.
 
         Parameters
         ----------
         resource: Resource
             The resource owned by this team, which will be shared
-        target_team_id: Union[str, UUID]
+        target_team_id: Union[str, UUID, Team]
             The id of the team with which to share the resource
 
         Returns
@@ -188,6 +245,8 @@ class Team(Resource['Team']):
             Returns ``True`` if resource successfully shared
 
         """
+        if isinstance(target_team_id, Team):
+            target_team_id = target_team_id.uid
         resource_access = resource.access_control_dict()
         payload = {
             "resource_type": resource_access["type"],
@@ -198,15 +257,17 @@ class Team(Resource['Team']):
                                   version=self._api_version, json=payload)
         return True
 
-    def un_share(self, *, resource: Resource, target_team_id: Union[str, UUID]) -> bool:
+    def un_share(self, *, resource: Resource, target_team_id: Union[str, UUID, "Team"]) -> bool:
         """
         Revoke the share of a particular resource to a secondary team.
+
+        Requires SHARE action.
 
         Parameters
         ----------
         resource: Resource
             The resource owned by this team, which will be un-shared
-        target_team_id: Union[str, UUID]
+        target_team_id: Union[str, UUID, Team]
             The id of the team which should not have access to the resource
 
         Returns
@@ -215,6 +276,8 @@ class Team(Resource['Team']):
             Returns ``True`` if resource successfully un-shared
 
         """
+        if isinstance(target_team_id, Team):
+            target_team_id = target_team_id.uid
         resource_type = resource.access_control_dict()["type"]
         resource_id = resource.access_control_dict()["id"]
         self.session.checked_delete(
