@@ -40,9 +40,9 @@ class SearchFileFilterTypeEnum(BaseEnumeration):
 
     """
 
-    SEARCH_BY_NAME = "search_by_name"
-    SEARCH_BY_VERSION_ID = "search_by_version_id"
-    SEARCH_BY_DATASET_FILE_ID = "search_by_dataset_file_id"
+    NAME_SEARCH = "search_by_name"
+    VERSION_ID_SEARCH = "search_by_version_id"
+    DATASET_FILE_ID_SEARCH = "search_by_dataset_file_id"
 
 
 class _Uploader:
@@ -401,51 +401,37 @@ class FileCollection(Collection[FileLink]):
             raise TypeError(f"Version can only be resolved from str, int or UUID."
                             f"Instead got {type(uid)} {uid}.")
 
-        try:  # Check if the uid string is actually a UUID
-            if isinstance(uid, str):
+        if isinstance(uid, str):
+            try:  # Check if the uid string is actually a UUID
                 uid = UUID(uid)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually a UUID
-            if isinstance(version, str):
-                version = UUID(version)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually an int / version number
-            if isinstance(version, str):
-                version = int(version)
-        except ValueError:
-            pass
+            except ValueError:
+                pass
 
         if isinstance(version, str):
-            raise ValueError(
-                f"Version {version} could not be converted to either an int or a UUID"
-            )
+            try:  # Check if the version string is actually a UUID
+                version = UUID(version)
+            except ValueError:
+                try:  # Check if the version string is actually an int / version number
+                    version = int(version)
+                except ValueError:
+                    raise ValueError(
+                        f"Version {version} could not be converted to either an int or a UUID"
+                    )
 
         if isinstance(uid, str):
             # Assume it's the filename on platform;
-            file = None
             if version is None or isinstance(version, int):
-                file = self._search_by_file_name(dset_id=self.dataset_id, file_name=uid, file_version_number=version)
-            elif isinstance(version, UUID):
                 file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
-            if file is None:
-                raise NotFound(f"Found no file named {uid}")
-            else:
-                return file
-        elif isinstance(uid, UUID):
-            file = None
-            if version is None or isinstance(version, int):
+            else:  # We did our type checks earlier; version is an int or None
+                file = self._search_by_file_name(dset_id=self.dataset_id, file_name=uid, file_version_number=version)
+        else:  # We did our type checks earlier; uid is a UUID
+            if isinstance(version, UUID):
+                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
+            else:  # We did our type checks earlier; version is an int or None
                 file = self._search_by_dataset_file_id(dataset_file_id=uid, dset_id=self.dataset_id,
                                                        file_version_number=version)
-            elif isinstance(version, UUID):
-                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
-            if file is None:
-                raise NotFound(f"Found no file named {uid}")
-            else:
-                return file
+
+        return file
 
     def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
         """
@@ -565,22 +551,18 @@ class FileCollection(Collection[FileLink]):
         path = self._get_path() + "/search"
 
         search_json = {
-            'fileSearchFilter': [
+            'fileSearchFilter':
                 {
-                    'type': SearchFileFilterTypeEnum.SEARCH_BY_NAME,
-                    'datasetId': dset_id,
+                    'type': SearchFileFilterTypeEnum.SEARCH_BY_NAME.value,
+                    'datasetId': str(dset_id),
                     'fileName': file_name,
                     'fileVersionNumber': file_version_number
                 }
-            ]
         }
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        if data:
-            return self.build(self._as_dict_from_resource(data[0]))
-        else:
-            return None
+        return self.build(self._as_dict_from_resource(data[0]))
 
     def _search_by_file_version_id(self,
                                    file_version_id: UUID
@@ -588,20 +570,15 @@ class FileCollection(Collection[FileLink]):
         path = self._get_path() + "/search"
 
         search_json = {
-            'fileSearchFilter': [
-                {
-                    'type': SearchFileFilterTypeEnum.SEARCH_BY_VERSION_ID,
-                    'fileVersionUuid': file_version_id
-                }
-            ]
+            'fileSearchFilter': {
+                'type': SearchFileFilterTypeEnum.SEARCH_BY_VERSION_ID.value,
+                'fileVersionUuid': str(file_version_id)
+            }
         }
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        if data:
-            return self.build(self._as_dict_from_resource(data[0]))
-        else:
-            return None
+        return self.build(self._as_dict_from_resource(data[0]))
 
     def _search_by_dataset_file_id(self,
                                    dataset_file_id: UUID,
@@ -611,22 +588,17 @@ class FileCollection(Collection[FileLink]):
         path = self._get_path() + "/search"
 
         search_json = {
-            'fileSearchFilter': [
-                {
-                    'type': SearchFileFilterTypeEnum.SEARCH_BY_DATASET_FILE_ID,
-                    'datasetId': dset_id,
-                    'datasetFileId': dataset_file_id,
-                    'fileVersionNumber': file_version_number
-                }
-            ]
+            'fileSearchFilter': {
+                'type': SearchFileFilterTypeEnum.SEARCH_BY_DATASET_FILE_ID.value,
+                'datasetId': set(dset_id),
+                'datasetFileId': str(dataset_file_id),
+                'fileVersionNumber': file_version_number
+            }
         }
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        if data:
-            return self.build(self._as_dict_from_resource(data[0]))
-        else:
-            return None
+        return self.build(self._as_dict_from_resource(data[0]))
 
     @staticmethod
     def _mime_type(file_path: Path):
