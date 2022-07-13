@@ -1,10 +1,11 @@
 """Tests for citrine.builders.design_spaces."""
 import pytest
-import warnings
 import numpy as np
+import logging
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
+from citrine.builders import design_spaces
 from citrine.builders.design_spaces import enumerate_cartesian_product, \
     enumerate_formulation_grid, cartesian_join_design_spaces, enumerated_to_data_source, migrate_enumerated_design_space
 from tests.utils.fakes.fake_dataset_collection import FakeDataset
@@ -104,6 +105,23 @@ def large_joint_design_space(
         description='',
     )
     return joint_space
+
+
+class ExceptionRaiser(logging.Filter):
+    """Filter that raises an exception on the first warning."""
+    def filter(self, record):
+        if record.levelno == logging.WARNING:
+            raise Exception(record.msg)
+        return True
+
+
+@pytest.fixture
+def warnings_as_exceptions():
+    except_filter = ExceptionRaiser()
+    lib_logger = logging.getLogger(design_spaces.__name__)
+    lib_logger.addFilter(except_filter)
+    yield
+    lib_logger.removeFilter(except_filter)
 
 
 def test_cartesian(basic_cartesian_space):
@@ -210,34 +228,12 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         )
 
 
-def test_formulation_oversize_warnings():
-    """Test that oversized formulation grid warnings are raised"""
-    with pytest.raises(UserWarning, match="1562500000"):
-        # Fail on warning (so code stops running)
-        with warnings.catch_warnings():
-            warnings.simplefilter('error')
-            too_big_formulation_grid = {
-                'ing_F': np.linspace(0, 1, 50),
-                'ing_G': np.linspace(0, 1, 50),
-                'ing_H': np.linspace(0, 1, 50),
-                'ing_I': np.linspace(0, 1, 50),
-                'ing_J': np.linspace(0, 1, 50),
-                'ing_K': np.linspace(0, 1, 50)
-            }
-            enumerate_formulation_grid(
-                formulation_grid=too_big_formulation_grid,
-                balance_ingredient='ing_K',
-                name='too big mixture space',
-                description=''
-            )
-
-
-def test_enumerated_oversize_warnings():
+def test_enumerated_oversize_warnings(caplog, warnings_as_exceptions):
     """Test that oversized enumerated space warnings are raised"""
-    with pytest.raises(UserWarning, match="648000000"):
+    with pytest.raises(Exception, match="648000000"):
         # Fail on warning (so code stops running)
-        with warnings.catch_warnings():
-            warnings.simplefilter('error')
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
             delta = RealDescriptor('delta', lower_bound=0, upper_bound=100, units="")
             epsilon = RealDescriptor('epsilon', lower_bound=0, upper_bound=100, units="")
             zeta = RealDescriptor('zeta', lower_bound=0, upper_bound=100, units="")
@@ -254,12 +250,33 @@ def test_enumerated_oversize_warnings():
             )
 
 
-def test_joined_oversize_warnings(large_joint_design_space):
+def test_formulation_oversize_warnings(caplog, warnings_as_exceptions):
+    """Test that oversized formulation grid warnings are raised"""
+    # We need to raise an exception to make this test run in reasonable time
+    with pytest.raises(Exception, match="1562500000"):
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            too_big_formulation_grid = {
+                'ing_F': np.linspace(0, 1, 50),
+                'ing_G': np.linspace(0, 1, 50),
+                'ing_H': np.linspace(0, 1, 50),
+                'ing_I': np.linspace(0, 1, 50),
+                'ing_J': np.linspace(0, 1, 50),
+                'ing_K': np.linspace(0, 1, 50)
+            }
+            enumerate_formulation_grid(
+                formulation_grid=too_big_formulation_grid,
+                balance_ingredient='ing_K',
+                name='too big mixture space',
+                description=''
+            )
+
+
+def test_joined_oversize_warnings(caplog, warnings_as_exceptions, large_joint_design_space):
     """Test that oversized joined space warnings are raised"""
-    with pytest.raises(UserWarning, match="239203125"):
-        # Fail on warning (so code stops running)
-        with warnings.catch_warnings():
-            warnings.simplefilter('error')
+    with pytest.raises(Exception, match="239203125"):
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
 
             delta = RealDescriptor('delta', lower_bound=0, upper_bound=100, units="")
             epsilon = RealDescriptor('epsilon', lower_bound=0, upper_bound=100, units="")
@@ -318,7 +335,7 @@ def test_enumerated_to_data_source(basic_cartesian_space, to_clean):
     assert {x for x in result.data_source.column_definitions.keys()} == expected_keys
 
 
-def test_migrate_enumerated(basic_cartesian_space, to_clean):
+def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
     """Test migrate_enumerated_design_space with fakes."""
     fname = "foo.csv"  # not to conflict with the above test
     to_clean.append(fname)
@@ -345,6 +362,7 @@ def test_migrate_enumerated(basic_cartesian_space, to_clean):
     # test that it works for a design space that cannot be archived because it is in use
     old_in_use = project.design_spaces.register(basic_cartesian_space)
     project.design_spaces.in_use[old_in_use.uid] = True
-    with pytest.warns(UserWarning) as caught:
+    with caplog.at_level(logging.WARNING):
         migrate_enumerated_design_space(
             project=project, uid=old_in_use.uid, dataset=dataset, filename=fname)
+        assert any(r.levelno == logging.WARNING for r in caplog.records)

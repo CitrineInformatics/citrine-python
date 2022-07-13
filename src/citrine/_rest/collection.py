@@ -1,4 +1,3 @@
-import warnings
 from abc import abstractmethod
 from logging import getLogger
 from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator
@@ -137,5 +136,5 @@ class Collection(Generic[ResourceType], Pageable):
             except(KeyError, ValueError) as e:
                 # TODO(PLA-9109): This is a patch to handle deprecated predictors client side
                 # Remove when predictors are migrated
-                warnings.warn(f"Building element skipped due to error: {e}", UserWarning)
+                logger.warning(f"Building element skipped due to error: {e}")
                 pass
