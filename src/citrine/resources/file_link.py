@@ -289,7 +289,7 @@ class FileCollection(Collection[FileLink]):
         }
         return file_dict
 
-    def get(self,
+    def get2(self,
             uid: Union[UUID, str],
             *,
             version: Optional[Union[UUID, str, int]] = None) -> FileLink:
@@ -372,7 +372,7 @@ class FileCollection(Collection[FileLink]):
 
         raise NotFound(f"Found file, but no version {version}")
 
-    def get2(self,
+    def get(self,
              uid: Union[UUID, str],
              *,
              version: Optional[Union[UUID, str, int]] = None) -> FileLink:
@@ -421,12 +421,12 @@ class FileCollection(Collection[FileLink]):
         if isinstance(uid, str):
             # Assume it's the filename on platform;
             if version is None or isinstance(version, int):
-                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
+                file = self._search_by_file_version_id(file_version_id=version)
             else:  # We did our type checks earlier; version is an int or None
                 file = self._search_by_file_name(dset_id=self.dataset_id, file_name=uid, file_version_number=version)
         else:  # We did our type checks earlier; uid is a UUID
             if isinstance(version, UUID):
-                file = self._search_by_file_version_id(dset_id=self.dataset_id, file_version_id=version)
+                file = self._search_by_file_version_id(file_version_id=version)
             else:  # We did our type checks earlier; version is an int or None
                 file = self._search_by_dataset_file_id(dataset_file_id=uid, dset_id=self.dataset_id,
                                                        file_version_number=version)
@@ -536,7 +536,78 @@ class FileCollection(Collection[FileLink]):
         Parameters
         ----------
         file_name: str
-            A filter type that indicates the strategy for the search.
+            The name of the file.
+        dset_id: UUID
+            UUID that represents a dataset.
+        file_version_number: Optional[int]
+            As optional, you can send a specific version number.
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter':
+                {
+                    'type': SearchFileFilterTypeEnum.NAME_SEARCH.value,
+                    'datasetId': str(dset_id),
+                    'fileName': file_name,
+                    'fileVersionNumber': file_version_number
+                }
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        return self.build(self._as_dict_from_resource(data[0]))
+
+    def _search_by_file_version_id(self,
+                                   file_version_id: UUID
+                                   ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by file version id.
+
+        Parameters
+        ----------
+        file_version_id: UUID
+            UUID that represents a file version id.
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': {
+                'type': SearchFileFilterTypeEnum.VERSION_ID_SEARCH.value,
+                'fileVersionUuid': str(file_version_id)
+            }
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        return self.build(self._as_dict_from_resource(data))
+
+    def _search_by_dataset_file_id(self,
+                                   dataset_file_id: UUID,
+                                   dset_id: UUID,
+                                   file_version_number: Optional[int] = None
+                                   ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by dataset file id
+        Note that you can specify a version number, in case you don't, it will
+        return the last version by default.
+
+        Parameters
+        ----------
+        dataset_file_id: UUID
+            UUID that represents a dataset file id.
         dset_id: UUID
             UUID that represents a dataset.
         file_version_number: Optional[int]
@@ -551,46 +622,9 @@ class FileCollection(Collection[FileLink]):
         path = self._get_path() + "/search"
 
         search_json = {
-            'fileSearchFilter':
-                {
-                    'type': SearchFileFilterTypeEnum.SEARCH_BY_NAME.value,
-                    'datasetId': str(dset_id),
-                    'fileName': file_name,
-                    'fileVersionNumber': file_version_number
-                }
-        }
-
-        data = self.session.post_resource(path=path, json=search_json)
-
-        return self.build(self._as_dict_from_resource(data[0]))
-
-    def _search_by_file_version_id(self,
-                                   file_version_id: UUID
-                                   ) -> Optional[FileLink]:
-        path = self._get_path() + "/search"
-
-        search_json = {
             'fileSearchFilter': {
-                'type': SearchFileFilterTypeEnum.SEARCH_BY_VERSION_ID.value,
-                'fileVersionUuid': str(file_version_id)
-            }
-        }
-
-        data = self.session.post_resource(path=path, json=search_json)
-
-        return self.build(self._as_dict_from_resource(data[0]))
-
-    def _search_by_dataset_file_id(self,
-                                   dataset_file_id: UUID,
-                                   dset_id: UUID,
-                                   file_version_number: Optional[int] = None
-                                   ) -> Optional[FileLink]:
-        path = self._get_path() + "/search"
-
-        search_json = {
-            'fileSearchFilter': {
-                'type': SearchFileFilterTypeEnum.SEARCH_BY_DATASET_FILE_ID.value,
-                'datasetId': set(dset_id),
+                'type': SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH.value,
+                'datasetId': str(dset_id),
                 'datasetFileId': str(dataset_file_id),
                 'fileVersionNumber': file_version_number
             }
@@ -598,7 +632,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data[0]))
+        return self.build(self._as_dict_from_resource(data))
 
     @staticmethod
     def _mime_type(file_path: Path):
