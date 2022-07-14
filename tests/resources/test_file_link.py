@@ -5,12 +5,14 @@ import pytest
 from uuid import uuid4, UUID
 
 import requests_mock
+
+from citrine.resources.api_error import ValidationError
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader, \
     FileProcessingType
 from citrine.exceptions import NotFound
 
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
-from tests.utils.session import FakeSession, FakeS3Client, FakeCall
+from tests.utils.session import FakeSession, FakeS3Client, FakeCall, FakeRequestResponseApiError
 
 
 @pytest.fixture
@@ -692,8 +694,9 @@ def test_get(collection: FileCollection, session):
     })
     assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version_number']) == file1
 
-    session.set_responses(
-        {'files': []}
+    validation_error = ValidationError(failure_message="file not found", failure_id="failure_id")
+    session.set_response(
+        NotFound("path", FakeRequestResponseApiError(400, "Not found", [validation_error]))
     )
     with pytest.raises(NotFound):
         collection.get(uid=raw_files[1]['filename'], version=4)
