@@ -1,4 +1,6 @@
 """Tests for citrine.informatics.reports serialization."""
+import logging
+
 import pytest
 from copy import deepcopy
 import warnings
@@ -57,16 +59,16 @@ def test_empty_report_build():
     Report.build(dict(id='7c2dda5d-675a-41b6-829c-e485163f0e43', status='PENDING', report=dict()))
 
 
-def test_bad_predictor_report_build(valid_predictor_report_data):
+def test_bad_predictor_report_build(caplog, valid_predictor_report_data):
     """Modify the predictor report to be non-ideal and check the behavior."""
     too_many_descriptors = deepcopy(valid_predictor_report_data)
     # Multiple descriptors with the same key
     other_x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     too_many_descriptors['report']['descriptors'].append(other_x.dump())
-    with warnings.catch_warnings(record=True) as w:
+    with caplog.at_level(logging.WARNING):
+        caplog.clear()
         Report.build(too_many_descriptors)
-        assert len(w) == 1
-        assert issubclass(w[-1].category, RuntimeWarning)
+        assert len([r for r in caplog.records if r.levelno == logging.WARNING])
 
     # A key that appears in inputs and/or outputs, but there is no corresponding descriptor.
     # This is done twice for coverage, once to catch a missing input and once for a missing output.
