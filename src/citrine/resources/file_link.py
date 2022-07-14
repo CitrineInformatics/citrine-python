@@ -278,9 +278,9 @@ class FileCollection(Collection[FileLink]):
         # FIXME  While the 'id' field is supposed to be the file ID, it contains the version
         #  for some reason.  Needs to be fixed on back end.  PLA-9482
         filename = file['filename']
-        # file_id = file['id']
-        # version_id = file['version']
-        file_id, version_id = self._get_ids_from_url(file['versioned_url'])
+        file_id = file['id']
+        version_id = file['version']
+        #file_id, version_id = self._get_ids_from_url(file['versioned_url'])
 
         file_dict = {
             'url': self._get_path(uid=file_id, version=version_id),
@@ -562,7 +562,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data[0]))
+        return self.build(self._as_dict_from_resource(data['files'][0]))
 
     def _search_by_file_version_id(self,
                                    file_version_id: UUID
@@ -592,7 +592,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data))
+        return self.build(self._as_dict_from_resource(data['files'][0]))
 
     def _search_by_dataset_file_id(self,
                                    dataset_file_id: UUID,
@@ -632,7 +632,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data))
+        return self.build(self._as_dict_from_resource(data['files'][0]))
 
     @staticmethod
     def _mime_type(file_path: Path):

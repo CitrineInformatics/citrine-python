@@ -674,25 +674,26 @@ def test_get(collection: FileCollection, session):
     for f1 in file1_versions:
         f1['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}"
         f1['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}/versions/{f1['version']}"
+    file0 = FileLink.build(collection._as_dict_from_resource(raw_files[0]))
     file1 = FileLink.build(collection._as_dict_from_resource(raw_files[1]))
 
-    session.set_response(raw_files[1])
+    session.set_response({
+        'files': [raw_files[1]]
+    })
     assert collection.get(uid=raw_files[1]['id'], version=raw_files[1]['version']) == file1
 
     session.set_response({
-        'files': file1_versions
+        'files': [raw_files[0]]
     })
-    assert collection.get(uid=raw_files[1]['id'], version=raw_files[1]['version_number']) == file1
+    assert collection.get(uid=raw_files[0]['id'], version=raw_files[0]['version_number']) == file0
 
-    session.set_responses(
-        {'files': raw_files},
-        {'files': file1_versions}
-    )
+    session.set_response({
+        'files': [raw_files[1]]
+    })
     assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version_number']) == file1
 
     session.set_responses(
-        {'files': raw_files},
-        {'files': file1_versions}
+        {'files': []}
     )
     with pytest.raises(NotFound):
         collection.get(uid=raw_files[1]['filename'], version=4)
