@@ -303,3 +303,45 @@ def test_un_share(team, other_team, session):
     )
     assert expect_call == session.last_call
     assert share_response is True
+
+
+@pytest.mark.parametrize("resource_type,method",
+    [
+        (ResourceTypeEnum.DATASET, "dataset_ids"),
+        (ResourceTypeEnum.MODULE, "module_ids"),
+        (ResourceTypeEnum.TABLE, "table_ids"),
+        (ResourceTypeEnum.TABLE_DEFINITION, "table_definition_ids")
+    ])
+def test_list_resource_ids(team, session, resource_type, method):
+    # Given
+    read_response = {'ids': [uuid.uuid4(), uuid.uuid4()]}
+    write_response = {'ids': [uuid.uuid4(), uuid.uuid4()]}
+    share_response = {'ids': [uuid.uuid4(), uuid.uuid4()]}
+
+    # When
+    # This is equivalent to team.dataset_ids, team.module_ids, etc.
+    resource_listing = getattr(team, method)
+    session.set_response(read_response)
+    readable_ids = resource_listing.list_readable()
+    session.set_response(write_response)
+    writeable_ids = resource_listing.list_writeable()
+    session.set_response(share_response)
+    shareable_ids = resource_listing.list_shareable()
+
+    with pytest.raises(AttributeError):
+        setattr(team, method, [])
+
+    # Then
+    assert session.num_calls == 3
+    assert session.calls[0] == FakeCall(method='GET',
+                                        path=f'/{resource_type.value}/authorized-ids',
+                                        params={"domain": f"/teams/{team.uid}", "action": READ})
+    assert session.calls[1] == FakeCall(method='GET',
+                                        path=f'/{resource_type.value}/authorized-ids',
+                                        params={"domain": f"/teams/{team.uid}", "action": WRITE})
+    assert session.calls[2] == FakeCall(method='GET',
+                                        path=f'/{resource_type.value}/authorized-ids',
+                                        params={"domain": f"/teams/{team.uid}", "action": SHARE})
+    assert readable_ids == read_response['ids']
+    assert writeable_ids == write_response['ids']
+    assert shareable_ids == share_response['ids']

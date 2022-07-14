@@ -33,6 +33,79 @@ class TeamMember:
             .format(self.user.screen_name, self.actions, self.team.name)
 
 
+class TeamResourceIDs:
+    """
+    A Citrine Team Resource IDs class.
+
+    This class is used to list the unique IDs for specific resource
+    types published in a single team and therefore available to be pulled
+    in by all projects.
+
+    Parameters
+    ----------
+    team_id: str or uuid
+        ID of the team.
+    resource_type: str
+        The resource type to list, one of DATASET/MODULE/TABLE/TABLE_DEFINITION
+
+    """
+
+    _api_version = "v3"
+
+    def __init__(self,
+                 session: Session,
+                 team_id: Union[str, UUID],
+                 resource_type: str) -> None:
+        self.session = session
+        self.team_id = team_id
+        self.resource_type = resource_type
+
+    def _path(self) -> str:
+        return format_escaped_url(f'/teams/{self.team_id}')
+
+    def _list_ids(self, action: str) -> List[str]:
+        query_params = {"domain": self._path(), "action": action}
+        return self.session.get_resource(f"/{self.resource_type}/authorized-ids",
+                                         params=query_params,
+                                         version=self._api_version)['ids']
+
+    def list_readable(self):
+        """
+        List IDs of the published resources with READ access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
+        return self._list_ids(action=READ)
+
+    def list_writeable(self):
+        """
+        List IDs of the published resources with WRITE access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
+        return self._list_ids(action=WRITE)
+
+    def list_shareable(self):
+        """
+        List IDs of the published resources with SHARE access.
+
+        Returns
+        -------
+        List[str]
+            Returns a list of string UUIDs for each resource
+
+        """
+        return self._list_ids(action=SHARE)
+
+
 class Team(Resource['Team']):
     """
     A Citrine Team.
@@ -291,6 +364,34 @@ class Team(Resource['Team']):
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects in this team."""
         return ProjectCollection(self.session, team_id=self.uid)
+
+    @property
+    def dataset_ids(self) -> TeamResourceIDs:
+        """Return a TeamResourceIDs instance for listing published dataset IDs."""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.DATASET.value)
+
+    @property
+    def module_ids(self) -> TeamResourceIDs:
+        """Return a TeamResourceIDs instance for listing published module IDs."""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.MODULE.value)
+
+    @property
+    def table_ids(self) -> TeamResourceIDs:
+        """Return a TeamResourceIDs instance for listing published table IDs."""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.TABLE.value)
+
+    @property
+    def table_definition_ids(self) -> TeamResourceIDs:
+        """Return a TeamResourceIDs instance for listing published table definition IDs."""
+        return TeamResourceIDs(session=self.session,
+                               team_id=self.uid,
+                               resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
 
 
 class TeamCollection(Collection[Team]):
