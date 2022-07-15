@@ -21,7 +21,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, format_escaped_url
-from citrine.exceptions import NotFound
+
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -34,9 +34,13 @@ logger = getLogger(__name__)
 class SearchFileFilterTypeEnum(BaseEnumeration):
     """The type of the filter used to search for files
 
-    * SEARCH_BY_NAME Search a file by name in a specific dataset, returns by default the last version or a specific one
-    * SEARCH_BY_VERSION_ID Search by a specific file version id
-    * SEARCH_BY_DATASET_FILE_ID Search either the last version or a specific version number for a specific dataset file id
+    * SEARCH_BY_NAME:
+        Search a file by name in a specific dataset,
+        returns by default the last version or a specific one
+    * SEARCH_BY_VERSION_ID:
+        Search by a specific file version id
+    * SEARCH_BY_DATASET_FILE_ID:
+        Search either the last version or a specific version number for a specific dataset file id
 
     """
 
@@ -214,7 +218,7 @@ class FileCollection(Collection[FileLink]):
         # Use this sessions project/dataset credentials and the URL's file / version
         file_id, version_id = self._get_ids_from_url(file_link.url)
         if file_id is None:
-            raise ValueError(f"FileLink did not contain a Citrine platform file URL.")
+            raise ValueError("FileLink did not contain a Citrine platform file URL.")
         return self._get_path(uid=file_id, version=version_id, action=action)
 
     def build(self, data: dict) -> FileLink:
@@ -280,7 +284,7 @@ class FileCollection(Collection[FileLink]):
         filename = file['filename']
         file_id = file['id']
         version_id = file['version']
-        #file_id, version_id = self._get_ids_from_url(file['versioned_url'])
+        #  file_id, version_id = self._get_ids_from_url(file['versioned_url'])
 
         file_dict = {
             'url': self._get_path(uid=file_id, version=version_id),
@@ -289,93 +293,10 @@ class FileCollection(Collection[FileLink]):
         }
         return file_dict
 
-    def get2(self,
+    def get(self,
             uid: Union[UUID, str],
             *,
             version: Optional[Union[UUID, str, int]] = None) -> FileLink:
-        """
-        Get an element of the collection by its id.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str]
-            A representation of the FileLink (Citrine id or file name)
-        version: Optional[UUID, str, int]
-            The version, as a UUID or str(UUID) of the version_id or an int or
-            str(int) of the version number.  If None, returns the file with the
-            highest version number (most recent).
-
-        Returns
-        -------
-        ResourceType
-            An object with specified scope and uid
-
-        """
-        if not isinstance(uid, (str, UUID)):
-            raise TypeError(f"File Link can only be resolved from str or UUID."
-                            f"Instead got {type(uid)} {uid}.")
-        if version is not None and not isinstance(version, (str, UUID, int)):
-            raise TypeError(f"Version can only be resolved from str, int or UUID."
-                            f"Instead got {type(uid)} {uid}.")
-
-        try:  # Check if the uid string is actually a UUID
-            if isinstance(uid, str):
-                uid = UUID(uid)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually a UUID
-            if isinstance(version, str):
-                version = UUID(version)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually an int / version number
-            if isinstance(version, str):
-                version = int(version)
-        except ValueError:
-            pass
-
-        if isinstance(version, str):
-            raise ValueError(
-                f"Version {version} could not be converted to either an int or a UUID"
-            )
-
-        if isinstance(uid, str):
-            # Assume it's the filename on platform; resolve to UUID
-            match = next((f for f in self.list() if uid == f.filename), None)
-            if match is None:
-                raise NotFound(f"Found no file named {uid}")
-            match_file, match_version = self._get_ids_from_url(match.url)
-            if version is None or version == match_version:
-                # Done; the list endpoint always returns the most recent version
-                return match
-
-            # Stash the now-resolved UUID to match with a version
-            uid = match_file
-
-        if isinstance(version, UUID):
-            # Can only return 0 or 1 result
-            path = self._get_path(uid=uid, version=version)
-            data = self.session.get_resource(path, version=self._api_version)
-            return self.build(self._as_dict_from_resource(data))
-
-        # version is an int / version number
-        path = self._get_path(uid=uid)
-        data = self.session.get_resource(path, version=self._api_version)['files']
-        if version is None:
-            recent = max(data, key=lambda x: x['version_number'])
-            return self.build(self._as_dict_from_resource(recent))
-        for result in data:
-            if result['version_number'] == version:
-                return self.build(self._as_dict_from_resource(result))
-
-        raise NotFound(f"Found file, but no version {version}")
-
-    def get(self,
-             uid: Union[UUID, str],
-             *,
-             version: Optional[Union[UUID, str, int]] = None) -> FileLink:
         """
         Get an element of the collection by its id.
 
@@ -423,12 +344,15 @@ class FileCollection(Collection[FileLink]):
             if version is None or isinstance(version, int):
                 file = self._search_by_file_version_id(file_version_id=version)
             else:  # We did our type checks earlier; version is an int or None
-                file = self._search_by_file_name(dset_id=self.dataset_id, file_name=uid, file_version_number=version)
+                file = self._search_by_file_name(dset_id=self.dataset_id,
+                                                 file_name=uid,
+                                                 file_version_number=version)
         else:  # We did our type checks earlier; uid is a UUID
             if isinstance(version, UUID):
                 file = self._search_by_file_version_id(file_version_id=version)
             else:  # We did our type checks earlier; version is an int or None
-                file = self._search_by_dataset_file_id(dataset_file_id=uid, dset_id=self.dataset_id,
+                file = self._search_by_dataset_file_id(dataset_file_id=uid,
+                                                       dset_id=self.dataset_id,
                                                        file_version_number=version)
 
         return file

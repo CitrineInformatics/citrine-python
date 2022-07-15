@@ -505,7 +505,7 @@ class Project(Resource['Project']):
         return result["table_definition_ids"]
 
     @use_teams("team.list_members", deprecated=True)
-    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:
+    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
         """
         List all of the members in the current project.
 
