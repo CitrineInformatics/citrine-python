@@ -562,16 +562,14 @@ def test_resolve_file_link(collection: FileCollection, session):
     assert session.num_calls == 0, "No-op still hit server"
 
     session.set_response({
-        'files': file1_versions
+        'files': [raw_files[1]]
     })
-
     assert collection._resolve_file_link(UUID(raw_files[1]['id'])) == file1, "UUID didn't resolve"
     assert session.num_calls == 1
 
     session.set_response({
-        'files': raw_files
+        'files': [raw_files[1]]
     })
-
     assert collection._resolve_file_link(raw_files[1]['id']) == file1, "String UUID didn't resolve"
     assert session.num_calls == 2
 
@@ -582,13 +580,15 @@ def test_resolve_file_link(collection: FileCollection, session):
     assert collection._resolve_file_link(abs_link).filename == "web.pdf"
     assert collection._resolve_file_link(abs_link).url == abs_link
 
-    session.set_response(raw_files[1])
-
+    session.set_response({
+        'files': [raw_files[1]]
+    })
     assert collection._resolve_file_link(file1.url) == file1, "Relative path didn't resolve"
     assert session.num_calls == 4
 
-    session.set_response({"files": raw_files})
-
+    session.set_response({
+        'files': [raw_files[1]]
+    })
     assert collection._resolve_file_link(file1.filename) == file1, "Filename didn't resolve"
     assert session.num_calls == 5
 
@@ -694,6 +694,11 @@ def test_get(collection: FileCollection, session):
     })
     assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version_number']) == file1
 
+    session.set_response({
+        'files': [raw_files[1]]
+    })
+    assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version']) == file1
+
     validation_error = ValidationError(failure_message="file not found", failure_id="failure_id")
     session.set_response(
         NotFound("path", FakeRequestResponseApiError(400, "Not found", [validation_error]))
@@ -716,8 +721,9 @@ def test_exceptions(collection: FileCollection, session):
     with pytest.raises(ValueError):
         collection.get(uid=uuid4(), version="Words!")
 
-    session.set_response({
-        'files': []
-    })
+    validation_error = ValidationError(failure_message="file not found", failure_id="failure_id")
+    session.set_response(
+        NotFound("path", FakeRequestResponseApiError(400, "Not found", [validation_error]))
+    )
     with pytest.raises(NotFound):
         collection.get(uid="name")
