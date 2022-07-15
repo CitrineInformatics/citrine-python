@@ -32,7 +32,8 @@ logger = getLogger(__name__)
 
 
 class SearchFileFilterTypeEnum(BaseEnumeration):
-    """The type of the filter used to search for files
+    """
+    The type of the filter used to search for files.
 
     * SEARCH_BY_NAME:
         Search a file by name in a specific dataset,
@@ -454,6 +455,7 @@ class FileCollection(Collection[FileLink]):
                              ) -> Optional[FileLink]:
         """
         Make a request to the backend to search a file by name.
+
         Note that you can specify a version number, in case you don't, it will
         return the last version by default.
 
@@ -524,7 +526,8 @@ class FileCollection(Collection[FileLink]):
                                    file_version_number: Optional[int] = None
                                    ) -> Optional[FileLink]:
         """
-        Make a request to the backend to search a file by dataset file id
+        Make a request to the backend to search a file by dataset file id.
+
         Note that you can specify a version number, in case you don't, it will
         return the last version by default.
 
