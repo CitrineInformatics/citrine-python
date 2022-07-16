@@ -285,7 +285,6 @@ class FileCollection(Collection[FileLink]):
         filename = file['filename']
         file_id = file['id']
         version_id = file['version']
-        #  file_id, version_id = self._get_ids_from_url(file['versioned_url'])
 
         file_dict = {
             'url': self._get_path(uid=file_id, version=version_id),
