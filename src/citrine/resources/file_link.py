@@ -342,11 +342,11 @@ class FileCollection(Collection[FileLink]):
         if isinstance(uid, str):
             # Assume it's the filename on platform;
             if version is None or isinstance(version, int):
-                file = self._search_by_file_version_id(file_version_id=version)
-            else:  # We did our type checks earlier; version is an int or None
                 file = self._search_by_file_name(dset_id=self.dataset_id,
                                                  file_name=uid,
                                                  file_version_number=version)
+            else:  # We did our type checks earlier; version is an UUID
+                file = self._search_by_file_version_id(file_version_id=version)
         else:  # We did our type checks earlier; uid is a UUID
             if isinstance(version, UUID):
                 file = self._search_by_file_version_id(file_version_id=version)
