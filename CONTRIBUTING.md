@@ -207,7 +207,7 @@ if [ "`git rev-parse --abbrev-ref HEAD`" == "main" ];
      exit 1;
 fi                                 &&
 scripts/validate-version-bump.sh   &&
-flake8 gemd                        &&
+flake8 src                         &&
 pytest --quiet --cov=src --cov-report term-missing:skip-covered   \
   --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100 -x tests
 ```
