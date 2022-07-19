@@ -190,10 +190,28 @@ A passing build requires the following:
 * All tests pass
 * The linter finds no violations of PEP8 style
 * Every line of code is executed by a test (100% coverage)
+* The version, as found in `src/citrine/__version__.py`, has increased
 
 PR descriptions should describe the motivation and context of the code changes in the PR,
 both for the reviewer and also for future developers.
 If there's a JIRA ticket or Github issue, the PR should be linked to the ticket/issue to provide that context.
+
+Check out the [.travis.yml](.travis.yml) file for the exact testing procedure.
+
+As it can be easy to forget to verify these prior to pushing, it's possible to use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to enforce compliance during normal workflows.
+Consider editing `.git/hooks/pre-commit` or `.git/hooks/pre-push` (or adding them and marking them as executable: `chmod +x <file>`).
+For example, you could set your local `.git/hooks/pre-commit` to be
+```shell
+if [ "`git rev-parse --abbrev-ref HEAD`" == "main" ];
+     then echo "On main branch";
+     exit 1;
+fi                                 &&
+scripts/validate-version-bump.sh   &&
+flake8 gemd                        &&
+pytest --quiet --cov=src --cov-report term-missing:skip-covered   \
+  --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100 -x tests
+```
+to make sure you're not on the `main` branch, you've incremented the package version, you pass the linter and you have complete, passing tests.
 
 ## Documentation<a name="documentation"></a>
 
