@@ -1,17 +1,20 @@
+import warnings
 from copy import deepcopy
 from logging import getLogger
-from deprecation import deprecated
+from typing import TypeVar, Optional, Callable
 
 from citrine.exceptions import NotFound
-from citrine.resources import ProjectCollection
-from citrine.resources.dataset import Dataset
+from citrine.resources.team import TeamCollection, Team
+from citrine.resources.project import ProjectCollection, Project
+from citrine.resources.dataset import DatasetCollection, Dataset
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine._rest.collection import CreationType, Collection
 
 logger = getLogger(__name__)
+T = TypeVar('T')
 
 
-def find_collection(*, collection, name):
+def find_collection(*, collection: Collection[T], name: str) -> Optional[T]:
     """
     Looks through the pages of a collection for a resource with the specified name.
 
@@ -45,7 +48,10 @@ def find_collection(*, collection, name):
         return None
 
 
-def get_by_name_or_create(*, collection, name, default_provider):
+def get_by_name_or_create(*,
+                          collection: Collection[T],
+                          name: str,
+                          default_provider: Callable[..., T]) -> T:
     """
     Tries to find a collection by its name (returns first hit).
 
@@ -59,7 +65,7 @@ def get_by_name_or_create(*, collection, name, default_provider):
         return default_provider()
 
 
-def get_by_name_or_raise_error(*, collection, name):
+def get_by_name_or_raise_error(*, collection: Collection[T], name: str) -> T:
     """
     Tries to find a collection by its name (returns first hit).
 
@@ -72,14 +78,20 @@ def get_by_name_or_raise_error(*, collection, name):
         raise ValueError("Did not find resource with the given name: {}".format(name))
 
 
-@deprecated(deprecated_in="1.33.1", removed_in="2.0.0", details="This method will be unreliable "
-            "once Teams are released, at which point you should use find_or_create_team.")
-def find_or_create_project(*, project_collection, project_name, raise_error=False):
+def find_or_create_project(*,
+                           project_collection: ProjectCollection,
+                           project_name: str,
+                           raise_error: bool = False) -> Project:
     """
     Tries to find a project by name (returns first hit).
 
     If not found, creates a new project with the given name
     """
+    if project_collection.team_id is None:
+        # @deprecated(deprecated_in="1.33.1", removed_in="2.0.0", ...)
+        warnings.warn("This method will be unreliable once Teams are released, "
+                      "at which point you should use find_or_create_team.",
+                      DeprecationWarning)
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:
@@ -91,7 +103,10 @@ def find_or_create_project(*, project_collection, project_name, raise_error=Fals
     return project
 
 
-def find_or_create_team(*, team_collection, team_name, raise_error=False):
+def find_or_create_team(*,
+                        team_collection: TeamCollection,
+                        team_name: str,
+                        raise_error: bool = False) -> Team:
     """
     Tries to find a team by name (returns first hit).
 
@@ -108,7 +123,10 @@ def find_or_create_team(*, team_collection, team_name, raise_error=False):
     return team
 
 
-def find_or_create_dataset(*, dataset_collection, dataset_name, raise_error=False):
+def find_or_create_dataset(*,
+                           dataset_collection: DatasetCollection,
+                           dataset_name: str,
+                           raise_error: bool = False) -> Dataset:
     """
     Tries to find a dataset by name (returns first hit).
 
@@ -127,8 +145,9 @@ def find_or_create_dataset(*, dataset_collection, dataset_name, raise_error=Fals
     return dataset
 
 
-def create_or_update(*, collection: Collection[CreationType], resource: CreationType)\
-        -> CreationType:
+def create_or_update(*,
+                     collection: Collection[CreationType],
+                     resource: CreationType) -> CreationType:
     """
     Update a resource of a given name belonging to a collection.
 
