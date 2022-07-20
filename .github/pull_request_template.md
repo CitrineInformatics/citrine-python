@@ -15,4 +15,4 @@ and its links (e.g. JIRA tickets).
 - [ ] I have added tests for 100% coverage
 - [ ] I have written Numpy-style docstrings for every method and class.
 - [ ] I have communicated the downstream consequences of the PR to others.
-- [ ] I have bumped the version in setup.py
+- [ ] I have bumped the version in __version\__.py
