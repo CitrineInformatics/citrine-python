@@ -108,7 +108,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         """
         path = f'projects/{self.project_id}/design-spaces/default'
         payload = {
-            "predictor_id": predictor_id,
+            "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
             "include_label_fraction_constraints": include_label_fraction_constraints,
             "include_label_count_constraints": include_label_count_constraints
