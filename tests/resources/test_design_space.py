@@ -127,7 +127,7 @@ def test_create_default(valid_product_design_space_data,
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
         json={
-            "predictor_id": predictor_id,
+            "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": False,
             "include_label_fraction_constraints": False,
             "include_label_count_constraints": False
@@ -166,7 +166,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
         json={
-            "predictor_id": predictor_id,
+            "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": ingredient_fractions,
             "include_label_fraction_constraints": label_fractions,
             "include_label_count_constraints": label_count
