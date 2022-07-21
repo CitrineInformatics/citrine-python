@@ -121,8 +121,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         set_uuids(models, scope=scope)
 
         resources = list()
-        batch_size = 20
-        print(f"Batch size: {batch_size}")
+        batch_size = 50
         result_index = dict()
         if dry_run:
             batcher = Batcher.by_dependency()
