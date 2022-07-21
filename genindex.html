@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Citrine Python 1.34.0 documentation</title>
+  <title>Index &mdash; Citrine Python 1.36.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -30,7 +30,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.34.0
+                1.36.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -2393,6 +2393,10 @@
       </ul></li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset">Dataset (class in citrine.resources.dataset)</a>
 </li>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH">DATASET_FILE_ID_SEARCH (citrine.resources.file_link.SearchFileFilterTypeEnum attribute)</a>
+</li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.dataset_ids">dataset_ids (citrine.resources.team.Team property)</a>
+</li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.DatasetCollection">DatasetCollection (class in citrine.resources.dataset)</a>
 </li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.datasets">datasets (citrine.resources.project.Project property)</a>
@@ -2627,10 +2631,10 @@
 </li>
       <li><a href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow.design_space_id">design_space_id (citrine.informatics.workflows.design_workflow.DesignWorkflow attribute)</a>
 </li>
-      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.DESIGN_SPACE_INVALID">DESIGN_SPACE_INVALID (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.DESIGN_SPACE_INVALID">DESIGN_SPACE_INVALID (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
+</li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.design_spaces">design_spaces (citrine.resources.project.Project property)</a>
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.design_workflow">design_workflow (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
@@ -3563,6 +3567,8 @@
         <li><a href="reference/citrine.resources.templates.html#citrine.resources.templates.Template.get_json_support">(citrine.resources.templates.Template class method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.get_member">get_member() (citrine.resources.team.Team method)</a>
+</li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.Column.get_type">get_type() (citrine.gemtables.columns.Column class method)</a>
 
       <ul>
@@ -4407,8 +4413,6 @@
         <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.list_archived">(citrine.resources.predictor.PredictorCollection method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds">list_by_attribute_bounds() (citrine.resources.data_objects.DataObjectCollection method)</a>
 
       <ul>
@@ -4433,6 +4437,8 @@
         <li><a href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpecCollection.list_by_attribute_bounds">(citrine.resources.process_spec.ProcessSpecCollection method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_by_config">list_by_config() (citrine.resources.gemtables.GemTableCollection method)</a>
 </li>
       <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_material">list_by_material() (citrine.resources.ingredient_run.IngredientRunCollection method)</a>
@@ -4567,7 +4573,13 @@
         <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.list_members">(citrine.resources.team.Team method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs.list_readable">list_readable() (citrine.resources.team.TeamResourceIDs method)</a>
+</li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs.list_shareable">list_shareable() (citrine.resources.team.TeamResourceIDs method)</a>
+</li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_versions">list_versions() (citrine.resources.gemtables.GemTableCollection method)</a>
+</li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs.list_writeable">list_writeable() (citrine.resources.team.TeamResourceIDs method)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">lower_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
 
@@ -4657,8 +4669,12 @@
         <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.MonteCarloProcessor.max_candidates">(citrine.informatics.processors.MonteCarloProcessor attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.resources.user.html#citrine.resources.user.UserCollection.me">me() (citrine.resources.user.UserCollection method)</a>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.me">me() (citrine.resources.team.Team method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.user.html#citrine.resources.user.UserCollection.me">(citrine.resources.user.UserCollection method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.MeanAndStd.mean">mean (citrine.informatics.design_candidate.MeanAndStd attribute)</a>
 
       <ul>
@@ -4978,6 +4994,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.modules.html#citrine.informatics.modules.Module">Module (class in citrine.informatics.modules)</a>
 </li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.module_ids">module_ids (citrine.resources.team.Team property)</a>
+</li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.module_type">module_type (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace attribute)</a>
 
       <ul>
@@ -5198,6 +5216,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum.NAME_SEARCH">NAME_SEARCH (citrine.resources.file_link.SearchFileFilterTypeEnum attribute)</a>
+</li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.NDME">NDME (class in citrine.informatics.predictor_evaluation_metrics)</a>
 </li>
       <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.NoEquivalentDescriptorError">NoEquivalentDescriptorError</a>
@@ -5942,6 +5962,8 @@
 </li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection.search_all">search_all() (citrine.resources.project.ProjectCollection method)</a>
 </li>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum">SearchFileFilterTypeEnum (class in citrine.resources.file_link)</a>
+</li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.share">share() (citrine.resources.project.Project method)</a>
 
       <ul>
@@ -6242,7 +6264,11 @@
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.TABLE_CREATED">TABLE_CREATED (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
 </li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.table_definition_ids">table_definition_ids (citrine.resources.team.Team property)</a>
+</li>
       <li><a href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource.table_id">table_id (citrine.informatics.data_sources.GemTableDataSource attribute)</a>
+</li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.table_ids">table_ids (citrine.resources.team.Team property)</a>
 </li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.table_type">table_type (citrine.resources.gemtables.GemTableCollection attribute)</a>
 </li>
@@ -6309,6 +6335,8 @@
       <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamCollection">TeamCollection (class in citrine.resources.team)</a>
 </li>
       <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamMember">TeamMember (class in citrine.resources.team)</a>
+</li>
+      <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs">TeamResourceIDs (class in citrine.resources.team)</a>
 </li>
       <li><a href="reference/citrine.citrine.html#citrine.citrine.Citrine.teams">teams (citrine.citrine.Citrine property)</a>
 </li>
@@ -7117,6 +7145,8 @@
 </li>
       </ul></li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.version">version (citrine.resources.gemtables.GemTable attribute)</a>
+</li>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum.VERSION_ID_SEARCH">VERSION_ID_SEARCH (citrine.resources.file_link.SearchFileFilterTypeEnum attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.version_number">version_number (citrine.informatics.executions.design_execution.DesignExecution attribute)</a>
 

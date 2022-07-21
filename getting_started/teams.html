@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1.4. Teams &mdash; Citrine Python 1.34.0 documentation</title>
+  <title>1.4. Teams &mdash; Citrine Python 1.36.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.34.0
+                1.36.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -55,6 +55,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#add-user-to-a-team">1.4.2.2. Add User to a Team</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#remove-user-from-a-team">1.4.2.3. Remove User from a Team</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#update-user-s-actions-in-a-team">1.4.2.4. Update User’s Actions in a Team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#listing-publish-resources-in-a-team">1.4.2.5. Listing Publish Resources in a Team</a></li>
 </ul>
 </li>
 </ul>
@@ -197,6 +198,31 @@ is accomplished with the <a class="reference internal" href="../reference/citrin
 
 <span class="c1"># Make the user a member with read and write access</span>
 <span class="n">team</span><span class="o">.</span><span class="n">update_user_actions</span><span class="p">(</span><span class="n">user_uid</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">READ</span><span class="p">,</span> <span class="n">WRITE</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="listing-publish-resources-in-a-team">
+<h3><span class="section-number">1.4.2.5. </span>Listing Publish Resources in a Team<a class="headerlink" href="#listing-publish-resources-in-a-team" title="Permalink to this headline"></a></h3>
+<p>Teams can list the published IDs for datasets, modules, tables and table
+definitions available in a team.  Using the <cite>list_readable</cite>,
+<cite>list_writeable</cite>, or <cite>list_shareable</cite> methods to list IDs with these
+permissions.  Note: these calls return a list of string uids, not the
+complete resource objects.</p>
+<p><a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.dataset_ids" title="citrine.resources.team.Team.dataset_ids"><code class="xref py py-func docutils literal notranslate"><span class="pre">dataset_ids()</span></code></a>,
+<a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.module_ids" title="citrine.resources.team.Team.module_ids"><code class="xref py py-func docutils literal notranslate"><span class="pre">module_ids()</span></code></a>,
+<a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.table_ids" title="citrine.resources.team.Team.table_ids"><code class="xref py py-func docutils literal notranslate"><span class="pre">table_ids()</span></code></a>,
+<a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team.table_definition_ids" title="citrine.resources.team.Team.table_definition_ids"><code class="xref py py-func docutils literal notranslate"><span class="pre">table_definition_ids()</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">team</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+<span class="n">project1</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;8ad2f784-5c49-45ad-b525-6af859651acf&quot;</span><span class="p">)</span>
+
+<span class="n">dataset_ids</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">dataset_ids</span><span class="o">.</span><span class="n">list_readable</span><span class="p">()</span>
+
+<span class="c1"># Use one of the IDs to get a handle to the resource from it&#39;s origin project:</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">project1</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Pull this published resource into another project:</span>
+<span class="n">project2</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;9ecb5610-6f69-4175-a1f8-bbfd7d711826&quot;</span><span class="p">)</span>
+<span class="n">project2</span><span class="o">.</span><span class="n">pull_in_resource</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

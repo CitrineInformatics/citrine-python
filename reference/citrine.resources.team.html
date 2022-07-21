@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.team module &mdash; Citrine Python 1.34.0 documentation</title>
+  <title>citrine.resources.team module &mdash; Citrine Python 1.36.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.34.0
+                1.36.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -144,14 +144,15 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.add_user">
-<span class="sig-name descname"><span class="pre">add_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SHARE</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.add_user" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><span class="pre">citrine.resources.user.User</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SHARE</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.add_user" title="Permalink to this definition"></a></dt>
 <dd><p>Add a User to a Team.</p>
+<p>Requires admin privileges.</p>
 <p>If no actions are specified, adds User with <code class="docutils literal notranslate"><span class="pre">READ</span></code> action to the Team.</p>
 <p>Use the <cite>update_user_action</cite> method to change a User’s actions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>user_id</strong> (<em>str</em><em> or </em><em>uuid</em>) – The id of the user to add to the team</p></li>
+<li><p><strong>user_id</strong> (<a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><em>User</em></a><em>, </em><em>str</em><em> or </em><em>uuid</em>) – The id of the user to add to the team</p></li>
 <li><p><strong>actions</strong> (<em>list of TEAM_ACTIONS</em>) – The actions to give the new user in this team
 The options are: WRITE, READ, SHARE
 defaults to READ</p></li>
@@ -179,9 +180,28 @@ defaults to READ</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.get_member">
+<span class="sig-name descname"><span class="pre">get_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><span class="pre">citrine.resources.user.User</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember"><span class="pre">citrine.resources.team.TeamMember</span></a></span></span><a class="headerlink" href="#citrine.resources.team.Team.get_member" title="Permalink to this definition"></a></dt>
+<dd><p>Get a particular member in the current team.</p>
+<p>May require admin privileges depending on which user is being requested.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em><em> or </em><em>uuid</em>) – The id of the user to remove from the team</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The requested team member</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember">TeamMember</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.list_members">
 <span class="sig-name descname"><span class="pre">list_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember"><span class="pre">citrine.resources.team.TeamMember</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.team.Team.list_members" title="Permalink to this definition"></a></dt>
 <dd><p>List all of the members in the current team.</p>
+<p>Requires admin privileges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The members of the current team</p>
@@ -193,12 +213,27 @@ defaults to READ</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.me">
+<span class="sig-name descname"><span class="pre">me</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember"><span class="pre">citrine.resources.team.TeamMember</span></a></span></span><a class="headerlink" href="#citrine.resources.team.Team.me" title="Permalink to this definition"></a></dt>
+<dd><p>Get the member for the current user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The TeamMember object representing the current user</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#citrine.resources.team.TeamMember" title="citrine.resources.team.TeamMember">TeamMember</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.remove_user">
-<span class="sig-name descname"><span class="pre">remove_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.remove_user" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">remove_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><span class="pre">citrine.resources.user.User</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.remove_user" title="Permalink to this definition"></a></dt>
 <dd><p>Remove a User from a Team.</p>
+<p>Requires admin privileges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em><em> or </em><em>uuid</em>) – The id of the user to remove from the team</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><em>User</em></a><em>, </em><em>str</em><em> or </em><em>uuid</em>) – The id of the user to remove from the team</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user successfully removed</p>
@@ -211,13 +246,14 @@ defaults to READ</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.share">
-<span class="sig-name descname"><span class="pre">share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_team_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.share" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_team_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.Team" title="citrine.resources.team.Team"><span class="pre">citrine.resources.team.Team</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.share" title="Permalink to this definition"></a></dt>
 <dd><p>Share a resource with another team.</p>
+<p>Requires SHARE action.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this team, which will be shared</p></li>
-<li><p><strong>target_team_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>]</em>) – The id of the team with which to share the resource</p></li>
+<li><p><strong>target_team_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>, </em><a class="reference internal" href="#citrine.resources.team.Team" title="citrine.resources.team.Team"><em>Team</em></a><em>]</em>) – The id of the team with which to share the resource</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -231,13 +267,14 @@ defaults to READ</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.un_share">
-<span class="sig-name descname"><span class="pre">un_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_team_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.un_share" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">un_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_team_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.Team" title="citrine.resources.team.Team"><span class="pre">citrine.resources.team.Team</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.un_share" title="Permalink to this definition"></a></dt>
 <dd><p>Revoke the share of a particular resource to a secondary team.</p>
+<p>Requires SHARE action.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this team, which will be un-shared</p></li>
-<li><p><strong>target_team_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>]</em>) – The id of the team which should not have access to the resource</p></li>
+<li><p><strong>target_team_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>, </em><a class="reference internal" href="#citrine.resources.team.Team" title="citrine.resources.team.Team"><em>Team</em></a><em>]</em>) – The id of the team which should not have access to the resource</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -251,12 +288,13 @@ defaults to READ</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.team.Team.update_user_action">
-<span class="sig-name descname"><span class="pre">update_user_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SHARE</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.update_user_action" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_user_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><span class="pre">citrine.resources.user.User</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SHARE</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.team.Team.update_user_action" title="Permalink to this definition"></a></dt>
 <dd><p>Overwrites a User’s action permissions in the Team.</p>
+<p>Requires admin privileges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>user_id</strong> (<em>str</em><em> or </em><em>uuid</em>) – The id of the user to add to the team</p></li>
+<li><p><strong>user_id</strong> (<a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><em>User</em></a><em>, </em><em>str</em><em> or </em><em>uuid</em>) – The id of the user to add to the team</p></li>
 <li><p><strong>actions</strong> (<em>list of TEAM_ACTIONS</em>) – The actions to give the new user in this team
 The options are: WRITE, READ, SHARE</p></li>
 </ul>
@@ -275,10 +313,22 @@ The options are: WRITE, READ, SHARE</p></li>
 <span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.dataset_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataset_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.TeamResourceIDs" title="citrine.resources.team.TeamResourceIDs"><span class="pre">citrine.resources.team.TeamResourceIDs</span></a></em><a class="headerlink" href="#citrine.resources.team.Team.dataset_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Return a TeamResourceIDs instance for listing published dataset IDs.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id1">
 <span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.module_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.TeamResourceIDs" title="citrine.resources.team.TeamResourceIDs"><span class="pre">citrine.resources.team.TeamResourceIDs</span></a></em><a class="headerlink" href="#citrine.resources.team.Team.module_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Return a TeamResourceIDs instance for listing published module IDs.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id2">
@@ -289,6 +339,18 @@ The options are: WRITE, READ, SHARE</p></li>
 <dt class="sig sig-object py" id="citrine.resources.team.Team.projects">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">projects</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.ProjectCollection" title="citrine.resources.project.ProjectCollection"><span class="pre">citrine.resources.project.ProjectCollection</span></a></em><a class="headerlink" href="#citrine.resources.team.Team.projects" title="Permalink to this definition"></a></dt>
 <dd><p>Return a resource representing all visible projects in this team.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.table_definition_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_definition_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.TeamResourceIDs" title="citrine.resources.team.TeamResourceIDs"><span class="pre">citrine.resources.team.TeamResourceIDs</span></a></em><a class="headerlink" href="#citrine.resources.team.Team.table_definition_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Return a TeamResourceIDs instance for listing published table definition IDs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.team.Team.table_ids">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.team.TeamResourceIDs" title="citrine.resources.team.TeamResourceIDs"><span class="pre">citrine.resources.team.TeamResourceIDs</span></a></em><a class="headerlink" href="#citrine.resources.team.Team.table_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Return a TeamResourceIDs instance for listing published table IDs.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -394,6 +456,66 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.team.</span></span><span class="sig-name descname"><span class="pre">TeamMember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User"><span class="pre">citrine.resources.user.User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">team</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.team.Team" title="citrine.resources.team.Team"><span class="pre">citrine.resources.team.Team</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SHARE</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.team.TeamMember" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Member of a Team.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.team.TeamResourceIDs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.team.</span></span><span class="sig-name descname"><span class="pre">TeamResourceIDs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._session.Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">team_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.team.TeamResourceIDs" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Citrine Team Resource IDs class.</p>
+<p>This class is used to list the unique IDs for specific resource
+types published in a single team and therefore available to be pulled
+in by all projects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_id</strong> (<em>str</em><em> or </em><em>uuid</em>) – ID of the team.</p></li>
+<li><p><strong>resource_type</strong> (<em>str</em>) – The resource type to list, one of DATASET/MODULE/TABLE/TABLE_DEFINITION</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.team.TeamResourceIDs.list_readable">
+<span class="sig-name descname"><span class="pre">list_readable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.team.TeamResourceIDs.list_readable" title="Permalink to this definition"></a></dt>
+<dd><p>List IDs of the published resources with READ access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns a list of string UUIDs for each resource</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.team.TeamResourceIDs.list_shareable">
+<span class="sig-name descname"><span class="pre">list_shareable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.team.TeamResourceIDs.list_shareable" title="Permalink to this definition"></a></dt>
+<dd><p>List IDs of the published resources with SHARE access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns a list of string UUIDs for each resource</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.team.TeamResourceIDs.list_writeable">
+<span class="sig-name descname"><span class="pre">list_writeable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.team.TeamResourceIDs.list_writeable" title="Permalink to this definition"></a></dt>
+<dd><p>List IDs of the published resources with WRITE access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns a list of string UUIDs for each resource</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 1.34.0 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 1.36.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.34.0
+                1.36.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -467,6 +467,46 @@ a new version of the existing file.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileProcessingType.VALIDATE_CSV">
 <span class="sig-name descname"><span class="pre">VALIDATE_CSV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'VALIDATE_CSV'</span></em><a class="headerlink" href="#citrine.resources.file_link.FileProcessingType.VALIDATE_CSV" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.file_link.SearchFileFilterTypeEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.file_link.</span></span><span class="sig-name descname"><span class="pre">SearchFileFilterTypeEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.SearchFileFilterTypeEnum" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>The type of the filter used to search for files.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>SEARCH_BY_NAME:</dt><dd><p>Search a file by name in a specific dataset,
+returns by default the last version or a specific one</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SEARCH_BY_VERSION_ID:</dt><dd><p>Search by a specific file version id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SEARCH_BY_DATASET_FILE_ID:</dt><dd><p>Search either the last version or a specific version number for a specific dataset file id</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH">
+<span class="sig-name descname"><span class="pre">DATASET_FILE_ID_SEARCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'search_by_dataset_file_id'</span></em><a class="headerlink" href="#citrine.resources.file_link.SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.SearchFileFilterTypeEnum.NAME_SEARCH">
+<span class="sig-name descname"><span class="pre">NAME_SEARCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'search_by_name'</span></em><a class="headerlink" href="#citrine.resources.file_link.SearchFileFilterTypeEnum.NAME_SEARCH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.SearchFileFilterTypeEnum.VERSION_ID_SEARCH">
+<span class="sig-name descname"><span class="pre">VERSION_ID_SEARCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'search_by_version_id'</span></em><a class="headerlink" href="#citrine.resources.file_link.SearchFileFilterTypeEnum.VERSION_ID_SEARCH" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
