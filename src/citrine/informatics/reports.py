@@ -9,6 +9,7 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.predictor_evaluation_result import ResponseMetrics
 
 SelfType = TypeVar('SelfType', bound='Report')
 
@@ -62,6 +63,35 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
         return "<FeatureImportanceReport {!r}>".format(self.output_key)  # pragma: no cover
 
 
+class ModelEvaluationSummary(Serializable["ModelEvaluationSummary"]):
+    """
+    """
+    model_settings = properties.Raw('settings')
+    metrics = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
+                                           "response_metrics")
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+    def __str__(self):
+        return '<ModelEvaluationSummary>'  # pragma: no cover
+
+
+class ModelSelectionReport(Serializable["ModelSelectionReport"]):
+    """
+    """
+
+    n_folds = properties.Integer('n_folds')
+    evaluation_summaries = properties.List(properties.Object(ModelEvaluationSummary),
+                                           "evaluation_results")
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+    def __str__(self):
+        return '<ModelSelectionReport>'  # pragma: no cover
+
+
 class ModelSummary(Serializable['ModelSummary']):
     """[ALPHA] Summary of information about a single model in a predictor.
 
@@ -93,6 +123,8 @@ class ModelSummary(Serializable['ModelSummary']):
     """:Optional[UUID]: the unique Citrine id of the predictor that created this model"""
     training_data_count = properties.Optional(properties.Integer, "training_data_count")
     """:int: Number of rows in the training data for the model, if applicable."""
+    selection_summary = properties.Optional(properties.Object(ModelSelectionReport),
+                                            "selection_summary")
 
     def __init__(self):
         pass  # pragma: no cover
