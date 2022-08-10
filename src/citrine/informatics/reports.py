@@ -66,7 +66,7 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
     """[ALPHA] Settings and evaluation metrics for a single algorithm from AutoML model selection.
 
-    ModelEvaluationResults are included in a ModelSelectionReport
+    ModelEvaluationResult objects are included in a ModelSelectionReport
     and should not be user-instantiated.
     """
 
