@@ -317,7 +317,7 @@ def valid_expression_predictor_data():
 
 
 @pytest.fixture
-def valid_predictor_report_data():
+def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metrics):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", lower_bound=0, upper_bound=1, units="")
@@ -355,6 +355,32 @@ def valid_predictor_report_data():
                             top_features=5
                         )
                     ],
+                    selection_summary=dict(
+                        n_folds=4,
+                        evaluation_results=[
+                            dict(
+                                model_settings=[
+                                    dict(
+                                        name='Algorithm',
+                                        value='Ensemble of non-linear estimators',
+                                        children=[
+                                            dict(name='Number of estimators', value=64, children=[]),
+                                            dict(name='Leaf model', value='Mean', children=[]),
+                                            dict(name='Use jackknife', value=True, children=[])
+                                        ]
+                                    )
+                                ],
+                                response_results=dict(
+                                    response_name=dict(
+                                        metrics=dict(
+                                            predicted_vs_actual=example_categorical_pva_metrics,
+                                            f1=example_f1_metrics
+                                        )
+                                    )
+                                )
+                            )
+                        ]
+                    ),
                     predictor_configuration_name="Predict y from x with ML"
                 ),
                 dict(

@@ -64,7 +64,7 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 
 
 class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
-    """[ALPHA] Evaluation metrics for a single algorithm from AutoML model selection.
+    """[ALPHA] Settings and evaluation metrics for a single algorithm from AutoML model selection.
 
     ModelEvaluationResults are included in a ModelSelectionReport
     and should not be user-instantiated.
@@ -96,15 +96,16 @@ class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
 
 
 class ModelSelectionReport(Serializable["ModelSelectionReport"]):
-    """[ALPHA] Summary of model performance from AutoML model selection.
+    """[ALPHA] Summary of selection settings and model performance from AutoML model selection.
 
-    ModelSelectionReports are included in a ModelSummary when present
-    and should not be user-instantiated.
+    ModelSelectionReport objects are constructed from saved models and
+    should not be user-instantiated.
     """
 
     n_folds = properties.Integer('n_folds')
     evaluation_results = properties.List(
-        properties.Object(ModelEvaluationResult), "evaluation_results"
+        properties.Object(ModelEvaluationResult),
+        "evaluation_results"
     )
 
     def __init__(self):
@@ -142,7 +143,7 @@ class ModelSummary(Serializable['ModelSummary']):
     selection_summary = properties.Optional(
         properties.Object(ModelSelectionReport), "selection_summary"
     )
-    """:Optional[ModelSelectionReport]: optional results of internal model selection"""
+    """:Optional[ModelSelectionReport]: optional results of AutoML model selection"""
     predictor_name = properties.String('predictor_configuration_name', default='')
     """:str: the name of the predictor that created this model"""
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
