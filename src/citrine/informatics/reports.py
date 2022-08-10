@@ -1,5 +1,5 @@
 """Tools for working with reports."""
-from typing import Type, Dict, TypeVar, Iterable
+from typing import Type, Dict, TypeVar, Iterable, Any, Set
 from abc import abstractmethod
 from itertools import groupby
 from logging import getLogger
@@ -63,18 +63,33 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
         return "<FeatureImportanceReport {!r}>".format(self.output_key)  # pragma: no cover
 
 
-class ModelEvaluationSummary(Serializable["ModelEvaluationSummary"]):
+class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
     """
     """
-    model_settings = properties.Raw('settings')
-    metrics = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
-                                           "response_metrics")
+
+    model_settings = properties.Raw('model_settings')
+    _response_results = properties.Mapping(
+        properties.String,
+        properties.Object(ResponseMetrics),
+        "response_results"
+    )
 
     def __init__(self):
         pass  # pragma: no cover
 
     def __str__(self):
-        return '<ModelEvaluationSummary>'  # pragma: no cover
+        return '<ModelEvaluationResult>'  # pragma: no cover
+
+    def __getitem__(self, item):
+        return self._response_results[item]
+
+    def __iter__(self):
+        return iter(self.responses)
+
+    @property
+    def responses(self) -> Set[str]:
+        """Responses the model was evaluated on."""
+        return set(self._response_results.keys())
 
 
 class ModelSelectionReport(Serializable["ModelSelectionReport"]):
@@ -82,8 +97,9 @@ class ModelSelectionReport(Serializable["ModelSelectionReport"]):
     """
 
     n_folds = properties.Integer('n_folds')
-    evaluation_summaries = properties.List(properties.Object(ModelEvaluationSummary),
-                                           "evaluation_results")
+    evaluation_results = properties.List(
+        properties.Object(ModelEvaluationResult), "evaluation_results"
+    )
 
     def __init__(self):
         pass  # pragma: no cover
@@ -117,14 +133,16 @@ class ModelSummary(Serializable['ModelSummary']):
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
     """:List[FeatureImportanceReport]: feature importance reports for each output"""
+    selection_summary = properties.Optional(
+        properties.Object(ModelSelectionReport), "selection_summary"
+    )
+    """:Optional[ModelSelectionReport]: optional results of internal model selection"""
     predictor_name = properties.String('predictor_configuration_name', default='')
     """:str: the name of the predictor that created this model"""
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
     """:Optional[UUID]: the unique Citrine id of the predictor that created this model"""
     training_data_count = properties.Optional(properties.Integer, "training_data_count")
     """:int: Number of rows in the training data for the model, if applicable."""
-    selection_summary = properties.Optional(properties.Object(ModelSelectionReport),
-                                            "selection_summary")
 
     def __init__(self):
         pass  # pragma: no cover
@@ -158,8 +176,13 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     def post_build(self):
         """Modify a PredictorReport object in-place after deserialization."""
         self._fill_out_descriptors()
-        for _, model in enumerate(self.model_summaries):
-            self._collapse_model_settings(model)
+        for _, summary in enumerate(self.model_summaries):
+            # Collapse settings on final trained model
+            summary.model_settings = self._collapse_model_settings(summary.model_settings)
+            if summary.selection_summary is not None:
+                # Collapse settings on any child model evaluation results
+                for result in summary.selection_summary.evaluation_results:
+                    result.model_settings = self._collapse_model_settings(result.model_settings)
 
     def _fill_out_descriptors(self):
         """Replace descriptor keys in `model_summaries` with full Descriptor objects."""
@@ -178,7 +201,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
                     model.outputs[j] = descriptor_map[output_key]
                 except KeyError:
                     raise RuntimeError("Model {} contains output \'{}\', but no descriptor found "
-                                       "with that key".format(model.name, input_key))
+                                       "with that key".format(model.name, output_key))
 
     @staticmethod
     def _get_sole_descriptor(it: Iterable):
@@ -202,7 +225,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         return as_list[0]
 
     @staticmethod
-    def _collapse_model_settings(model: ModelSummary):
+    def _collapse_model_settings(raw_settings: Dict[str, Any]):
         """Collapse a model's settings into a flat dictionary.
 
         Model settings are returned as a dictionary with a "name" field, a "value" field,
@@ -219,6 +242,6 @@ class PredictorReport(Serializable['PredictorReport'], Report):
                 settings[list_or_dict['name']] = list_or_dict['value']
                 _recurse_model_settings(settings, list_or_dict['children'])
 
-        settings = dict()
-        _recurse_model_settings(settings, model.model_settings)
-        model.model_settings = settings
+        collapsed = dict()
+        _recurse_model_settings(collapsed, raw_settings)
+        return collapsed

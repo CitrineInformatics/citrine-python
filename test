@@ -1,0 +1,5 @@
+import os
+from citrine import Citrine
+
+client = Citrine(api_key=os.environ["CITRINE_DEV_API_KEY"], host=os.environ["CITRINE_DEV_HOST"])
+print(client)
