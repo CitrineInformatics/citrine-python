@@ -64,7 +64,10 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 
 
 class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
-    """
+    """[ALPHA] Evaluation metrics for a single algorithm from AutoML model selection.
+
+    ModelEvaluationResults are included in a ModelSelectionReport
+    and should not be user-instantiated.
     """
 
     model_settings = properties.Raw('model_settings')
@@ -93,7 +96,10 @@ class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
 
 
 class ModelSelectionReport(Serializable["ModelSelectionReport"]):
-    """
+    """[ALPHA] Summary of model performance from AutoML model selection.
+
+    ModelSelectionReports are included in a ModelSummary when present
+    and should not be user-instantiated.
     """
 
     n_folds = properties.Integer('n_folds')
