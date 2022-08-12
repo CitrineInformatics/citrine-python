@@ -16,6 +16,8 @@ from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 
+BATCH_SIZE = 50
+
 
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
@@ -121,7 +123,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         set_uuids(models, scope=scope)
 
         resources = list()
-        batch_size = 50
         result_index = dict()
         if dry_run:
             batcher = Batcher.by_dependency()
@@ -130,9 +131,9 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         if status_bar:
             desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
-            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
+            iterator = tqdm(batcher.batch(models, BATCH_SIZE), leave=False, desc=desc)
         else:
-            iterator = batcher.batch(models, batch_size)
+            iterator = batcher.batch(models, BATCH_SIZE)
 
         for batch in iterator:
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
