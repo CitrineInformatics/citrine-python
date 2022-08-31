@@ -238,28 +238,6 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
 
 
 @pytest.fixture
-def failed_auto_ml_predictor_data(valid_gem_data_source_dict):
-    """Produce valid shaped data but with a failed status used for tests."""
-    from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
-    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    instance = dict(
-        type='AutoML',
-        name='Failed AutoML Predictor',
-        description='AutoML predictor with an INVALID status.',
-        inputs=[x.dump()],
-        outputs=[z.dump()],
-        estimators={AutoMLEstimator.RANDOM_FOREST.value},
-        training_data=[valid_gem_data_source_dict]
-    )
-    status = StatusDataFactory(name='INVALID', info=['Something is wrong', 'Very wrong'])
-    return PredictorEntityDataFactory(
-        data=PredictorDataDataFactory(instance=instance),
-        meatadata=PredictorMetadataDataFactory(status=status)
-    )
-
-
-@pytest.fixture
 def valid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
