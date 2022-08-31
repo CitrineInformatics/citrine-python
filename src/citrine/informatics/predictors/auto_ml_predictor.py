@@ -18,11 +18,11 @@ class AutoMLEstimator(BaseEnumeration):
     * LINEAR corresponds to a linear regression estimator
         (valid for single-task regression problems)
     * RANDOM_FOREST corresponds to a random forest estimator
-        (valid for single-task and multi-task regression and classification)
+        (valid for single-task and multi-task regression and classification problems)
     * GAUSSIAN_PROCESS corresponds to a Gaussian process estimator
-        (valid for single-task regression and classification)
+        (valid for single-task regression and classification problems)
     * SUPPORT_VECTOR_MACHINE corresponds to an support machine estimator
-        (valid for single-task classification)
+        (valid for single-task classification problems)
     * ALL combines all estimator choices (valid for all learning tasks)
     """
 
@@ -93,7 +93,7 @@ class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
-        self.estimators = estimators or {AutoMLEstimator.RANDOM_FOREST}
+        self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.training_data: List[DataSource] = training_data or []
 
         if output is not None:

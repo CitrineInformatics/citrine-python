@@ -63,6 +63,7 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
     restored_predictor = pc.restore(uuid.uuid4())
     assert not restored_predictor.is_archived
 
+
 def test_archive(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -247,6 +248,22 @@ def test_update(valid_label_fractions_predictor_data):
 
     assert session.num_calls == len(expected_calls)
     assert session.calls == expected_calls
+
+
+def test_register_update_checks_status(
+        valid_auto_ml_predictor_data, failed_auto_ml_predictor_data
+):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    failed_entity = deepcopy(failed_auto_ml_predictor_data)
+    valid_entity = deepcopy(valid_auto_ml_predictor_data)
+    session.set_responses(failed_entity, valid_entity)
+
+    input_predictor = pc.build(valid_entity)
+    updated_predictor = pc.update(input_predictor)
+
+    print(updated_predictor.status_info)
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,

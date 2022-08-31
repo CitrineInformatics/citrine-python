@@ -63,16 +63,22 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """Register and train a Predictor."""
         created_predictor = super().register(predictor)
 
-        # We never exposed saving a model without training, so we should1
-        # continue to do it automatically.
-        return self._train(created_predictor.uid)
+        # If the initial response is invalid, just return it
+        # If not, kick off training since we never exposed saving a model without training
+        # so we should continue to do it automatically
+        if created_predictor.failed():
+            return created_predictor
+        else:
+            return self._train(created_predictor.uid)
 
     def update(self, predictor: Predictor) -> Predictor:
         """Update and train a Predictor."""
-        super().update(predictor)
+        updated_predictor = super().update(predictor)
+
+        print(updated_predictor.dump())
 
         # The /api/v3/predictors endpoint switched (un)archive from a field on the update payload
-        # to their own endpoints. To maintain backwards compatibilty, all predictors have an
+        # to their own endpoints. To maintain backwards compatibility, all predictors have an
         # _archived field set by the archived property. It will be archived if True, and restored
         # if False. It defaults to None, which does nothing. The value is reset afterwards.
         if predictor._archived is True:
@@ -81,9 +87,13 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             self.restore(predictor.uid)
         predictor._archived = None
 
-        # We never exposed saving a model without training, so we should
-        # continue to do it automatically.
-        return self._train(predictor.uid)
+        # If the initial response is invalid, just return it
+        # If not, kick off training since we never exposed saving a model without training
+        # so we should continue to do it automatically
+        if updated_predictor.failed():
+            return updated_predictor
+        else:
+            return self._train(updated_predictor.uid)
 
     def _train(self, uid: Union[UUID, str]):
         path = self._predictors_path("train", uid)
