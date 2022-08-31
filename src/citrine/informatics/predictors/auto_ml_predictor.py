@@ -1,5 +1,7 @@
 import warnings
-from typing import List, Optional
+from typing import List, Optional, Set
+
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties as _properties
@@ -7,7 +9,28 @@ from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
 
-__all__ = ['AutoMLPredictor']
+__all__ = ['AutoMLPredictor', 'AutoMLEstimator']
+
+
+class AutoMLEstimator(BaseEnumeration):
+    """[ALPHA] Algorithms to be used during AutoML model selection.
+
+    * LINEAR corresponds to a linear regression estimator
+        (valid for single-task regression problems)
+    * RANDOM_FOREST corresponds to a random forest estimator
+        (valid for single-task and multi-task regression and classification)
+    * GAUSSIAN_PROCESS corresponds to a Gaussian process estimator
+        (valid for single-task regression and classification)
+    * SUPPORT_VECTOR_MACHINE corresponds to an support machine estimator
+        (valid for single-task classification)
+    * ALL combines all estimator choices (valid for all learning tasks)
+    """
+
+    LINEAR = "LINEAR"
+    RANDOM_FOREST = "RANDOM_FOREST"
+    GAUSSIAN_PROCESS = "GAUSSIAN_PROCESS"
+    SUPPORT_VECTOR_MACHINE = "SUPPORT_VECTOR_MACHINE"
+    ALL = "ALL"
 
 
 class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
@@ -30,6 +53,9 @@ class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
     outputs: list[Descriptor]
         Descriptors that represents the output(s) of the model.
         Currently, only one output Descriptor is supported.
+    estimators: Optional[Set[AutoMLEstimator]]
+        Set of estimators to consider during during AutoML model selection.
+        If None is provided, defaults to AutoMLEstimator.RANDOM_FOREST.
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
@@ -42,8 +68,16 @@ class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
 
     inputs = _properties.List(_properties.Object(Descriptor), 'data.instance.inputs')
     outputs = _properties.List(_properties.Object(Descriptor), 'data.instance.outputs')
-    training_data = _properties.List(_properties.Object(DataSource),
-                                     'data.instance.training_data', default=[])
+    estimators = _properties.Set(
+        _properties.Enumeration(AutoMLEstimator),
+        'data.instance.estimators',
+        default={AutoMLEstimator.RANDOM_FOREST}
+    )
+    training_data = _properties.List(
+        _properties.Object(DataSource),
+        'data.instance.training_data',
+        default=[]
+    )
 
     typ = _properties.String('data.instance.type', default='AutoML', deserializable=False)
 
@@ -54,10 +88,12 @@ class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
                  output: Descriptor = None,
                  outputs: List[Descriptor] = None,
                  inputs: List[Descriptor],
+                 estimators: Optional[Set[AutoMLEstimator]] = None,
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
+        self.estimators = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.training_data: List[DataSource] = training_data or []
 
         if output is not None:
