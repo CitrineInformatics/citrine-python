@@ -75,8 +75,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """Update and train a Predictor."""
         updated_predictor = super().update(predictor)
 
-        print(updated_predictor.dump())
-
         # The /api/v3/predictors endpoint switched (un)archive from a field on the update payload
         # to their own endpoints. To maintain backwards compatibility, all predictors have an
         # _archived field set by the archived property. It will be archived if True, and restored

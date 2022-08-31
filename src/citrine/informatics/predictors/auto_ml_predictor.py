@@ -93,8 +93,10 @@ class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
-        self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.training_data: List[DataSource] = training_data or []
+
+        self.estimators: Set[AutoMLEstimator] = set(estimators) if estimators \
+            else {AutoMLEstimator.RANDOM_FOREST}
 
         if output is not None:
             msg = ('The "output" parameter is deprecated as of 1.24.0 and will be removed in '

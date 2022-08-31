@@ -16,6 +16,7 @@ from citrine.informatics.predictors import (
     SimpleMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
+from tests.conftest import build_predictor_entity
 from tests.utils.session import (
     FakeCall,
     FakeRequest,
@@ -250,20 +251,34 @@ def test_update(valid_label_fractions_predictor_data):
     assert session.calls == expected_calls
 
 
-def test_register_update_checks_status(
-        valid_auto_ml_predictor_data, failed_auto_ml_predictor_data
-):
+def test_register_update_checks_status(valid_auto_ml_predictor_data):
+    # PredictorCollection.register/update makes two calls internally
+    # The first creates/updates the resource, the second kicks off training
+    # Test if create/update returns an INVALID status, we don't make the training call
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
 
-    failed_entity = deepcopy(failed_auto_ml_predictor_data)
-    valid_entity = deepcopy(valid_auto_ml_predictor_data)
-    session.set_responses(failed_entity, valid_entity)
+    instance = deepcopy(valid_auto_ml_predictor_data)["data"]["instance"]
+    valid_entity = build_predictor_entity(instance)
+    invalid_entity = build_predictor_entity(
+        instance,
+        status_name="INVALID",
+        status_info=["AHH IT BURNSSSSS!!!!"]
+    )
 
-    input_predictor = pc.build(valid_entity)
-    updated_predictor = pc.update(input_predictor)
+    # Register returns first (invalid) response if failed
+    session.set_responses(invalid_entity, valid_entity)
+    register_input = pc.build(valid_entity)
+    register_output = pc.register(register_input)
+    assert register_output.failed()
+    assert session.num_calls == 1
 
-    print(updated_predictor.status_info)
+    # Update returns first (invalid) response if failed
+    session.set_responses(invalid_entity, valid_entity)
+    update_input = pc.build(valid_entity)
+    update_output = pc.update(update_input)
+    assert update_output.failed()
+    assert session.num_calls == 2
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
