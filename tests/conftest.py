@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import pytest
 
+from citrine.informatics.predictors import AutoMLEstimator
 from tests.utils.factories import (PredictorEntityDataFactory, PredictorDataDataFactory,
                                    PredictorMetadataDataFactory, StatusDataFactory)
 
@@ -230,6 +231,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
         description='Predicts z from input x',
         inputs=[x.dump()],
         outputs=[z.dump()],
+        estimators=[AutoMLEstimator.RANDOM_FOREST.value],
         training_data=[valid_gem_data_source_dict]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))

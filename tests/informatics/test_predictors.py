@@ -339,6 +339,28 @@ def test_auto_ml_no_outputs(auto_ml_no_outputs):
         assert built.output is None
 
 
+def test_auto_ml_estimators():
+    # Check an empty set is coerced to RF default
+    empty_aml = AutoMLPredictor(
+        name="",
+        description="",
+        inputs=[x],
+        outputs=[y],
+        estimators={}
+    )
+    assert empty_aml.estimators == {AutoMLEstimator.RANDOM_FOREST}
+
+    # Check passing invalid strings leads to an error
+    with pytest.raises(ValueError):
+        AutoMLPredictor(
+            name="",
+            description="",
+            inputs=[x],
+            outputs=[y],
+            estimators={"pancakes"}
+        )
+
+
 def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
     assert auto_ml_multiple_outputs.outputs == [z, y]
     assert auto_ml_multiple_outputs.dump()['instance']['outputs'] == [z.dump(), y.dump()]
