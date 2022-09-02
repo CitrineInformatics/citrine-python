@@ -48,7 +48,7 @@ def test_data_source_args():
     terminal_name = "terminal name"
     var = TerminalMaterialInfo(name=terminal_name,
                                headers=[terminal_name],
-                               field='NAME'
+                               field='name'
                                )
     IdentityColumn(data_source=terminal_name)
     IdentityColumn(data_source=var)

@@ -90,6 +90,17 @@ class Variable(PolymorphicSerializable['Variable']):
 
         return res
 
+class TerminalMaterialInfoField(BaseEnumeration):
+    """[ALPHA] Allowed Keywords for type kwarg of TerminalMaterialInfo.
+
+    * ``NAME`` is the material name
+    * ``TAGS`` is a list of tags associated with the Material
+    * ``SAMPLE_TYPE`` is a list of tags associated with the Material
+    """
+
+    NAME = "name"
+    TAGS = "tags"
+    SAMPLE_TYPE = "sample_type"
 
 class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
     """[ALPHA] Metadata from the terminal material of the material history.
@@ -100,7 +111,7 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    field: str
+    field: TerminalMaterialInfoField
         name of the field to assign the variable to, for example, "sample_type" would
         assign the sample type of the terminal material run
 
@@ -108,7 +119,7 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    field = properties.String('field')
+    field = properties.Enumeration(TerminalMaterialInfoField, 'field')
     typ = properties.String('type', default="root_info", deserializable=False)
 
     def _attrs(self) -> List[str]:
@@ -117,7 +128,7 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
     def __init__(self,
                  name: str, *,
                  headers: List[str],
-                 field: str):
+                 field: TerminalMaterialInfoField):
         self.name = name
         self.headers = headers
         self.field = field

@@ -1,4 +1,5 @@
 """Tests for citrine.informatics.variables."""
+from email import header
 import pytest
 from gemd.entity.bounds.real_bounds import RealBounds
 
@@ -8,6 +9,7 @@ from gemd.entity.link_by_uid import LinkByUID
 
 @pytest.fixture(params=[
     TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"),
+    TerminalMaterialInfo(name="terminal tags", headers=["Root", "Tags"], field="tags"),
     XOR(name="terminal name or sample_type", headers=["Root", "Info"], variables=[TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"), TerminalMaterialInfo(name="terminal name", headers=["Root", "Sample Type"], field="sample_type")]),
     AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
     AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
@@ -61,10 +63,14 @@ def test_quantity_dimension_serializes_to_string():
     variable_data = variable.dump()
     assert variable_data["quantity_dimension"] == "number"
 
+def test_terminal_material_info_field():
+    with pytest.raises(ValueError):
+        TerminalMaterialInfo(name= "terminal mat", headers = [], field = "foo")
+    TerminalMaterialInfo(name= "terminal mat", headers = [], field = "name")
 
 def test_deprecated_variables():
     with pytest.warns(DeprecationWarning):
-        variable = RootInfo(name="name", headers=["headers"], field="foo")
+        variable = RootInfo(name="name", headers=["headers"], field="name")
     assert isinstance(variable, TerminalMaterialInfo)
     assert variable.name == "name"
     with pytest.warns(DeprecationWarning):
