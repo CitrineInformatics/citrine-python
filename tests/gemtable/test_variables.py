@@ -63,11 +63,6 @@ def test_quantity_dimension_serializes_to_string():
     variable_data = variable.dump()
     assert variable_data["quantity_dimension"] == "number"
 
-def test_terminal_material_info_field():
-    with pytest.raises(ValueError):
-        TerminalMaterialInfo(name= "terminal mat", headers = [], field = "foo")
-    TerminalMaterialInfo(name= "terminal mat", headers = [], field = "name")
-
 def test_deprecated_variables():
     with pytest.warns(DeprecationWarning):
         variable = RootInfo(name="name", headers=["headers"], field="name")
