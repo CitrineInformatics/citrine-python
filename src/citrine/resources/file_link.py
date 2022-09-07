@@ -21,13 +21,33 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, format_escaped_url
-from citrine.exceptions import NotFound
+
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 logger = getLogger(__name__)
+
+
+class SearchFileFilterTypeEnum(BaseEnumeration):
+    """
+    The type of the filter used to search for files.
+
+    * SEARCH_BY_NAME:
+        Search a file by name in a specific dataset,
+        returns by default the last version or a specific one
+    * SEARCH_BY_VERSION_ID:
+        Search by a specific file version id
+    * SEARCH_BY_DATASET_FILE_ID:
+        Search either the last version or a specific version number for a specific dataset file id
+
+    """
+
+    NAME_SEARCH = "search_by_name"
+    VERSION_ID_SEARCH = "search_by_version_id"
+    DATASET_FILE_ID_SEARCH = "search_by_dataset_file_id"
 
 
 class _Uploader:
@@ -199,7 +219,7 @@ class FileCollection(Collection[FileLink]):
         # Use this sessions project/dataset credentials and the URL's file / version
         file_id, version_id = self._get_ids_from_url(file_link.url)
         if file_id is None:
-            raise ValueError(f"FileLink did not contain a Citrine platform file URL.")
+            raise ValueError("FileLink did not contain a Citrine platform file URL.")
         return self._get_path(uid=file_id, version=version_id, action=action)
 
     def build(self, data: dict) -> FileLink:
@@ -263,9 +283,8 @@ class FileCollection(Collection[FileLink]):
         # FIXME  While the 'id' field is supposed to be the file ID, it contains the version
         #  for some reason.  Needs to be fixed on back end.  PLA-9482
         filename = file['filename']
-        # file_id = file['id']
-        # version_id = file['version']
-        file_id, version_id = self._get_ids_from_url(file['versioned_url'])
+        file_id = file['id']
+        version_id = file['version']
 
         file_dict = {
             'url': self._get_path(uid=file_id, version=version_id),
@@ -303,59 +322,40 @@ class FileCollection(Collection[FileLink]):
             raise TypeError(f"Version can only be resolved from str, int or UUID."
                             f"Instead got {type(uid)} {uid}.")
 
-        try:  # Check if the uid string is actually a UUID
-            if isinstance(uid, str):
+        if isinstance(uid, str):
+            try:  # Check if the uid string is actually a UUID
                 uid = UUID(uid)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually a UUID
-            if isinstance(version, str):
-                version = UUID(version)
-        except ValueError:
-            pass
-
-        try:  # Check if the version string is actually an int / version number
-            if isinstance(version, str):
-                version = int(version)
-        except ValueError:
-            pass
+            except ValueError:
+                pass
 
         if isinstance(version, str):
-            raise ValueError(
-                f"Version {version} could not be converted to either an int or a UUID"
-            )
+            try:  # Check if the version string is actually a UUID
+                version = UUID(version)
+            except ValueError:
+                try:  # Check if the version string is actually an int / version number
+                    version = int(version)
+                except ValueError:
+                    raise ValueError(
+                        f"Version {version} could not be converted to either an int or a UUID"
+                    )
 
         if isinstance(uid, str):
-            # Assume it's the filename on platform; resolve to UUID
-            match = next((f for f in self.list() if uid == f.filename), None)
-            if match is None:
-                raise NotFound(f"Found no file named {uid}")
-            match_file, match_version = self._get_ids_from_url(match.url)
-            if version is None or version == match_version:
-                # Done; the list endpoint always returns the most recent version
-                return match
+            # Assume it's the filename on platform;
+            if version is None or isinstance(version, int):
+                file = self._search_by_file_name(dset_id=self.dataset_id,
+                                                 file_name=uid,
+                                                 file_version_number=version)
+            else:  # We did our type checks earlier; version is an UUID
+                file = self._search_by_file_version_id(file_version_id=version)
+        else:  # We did our type checks earlier; uid is a UUID
+            if isinstance(version, UUID):
+                file = self._search_by_file_version_id(file_version_id=version)
+            else:  # We did our type checks earlier; version is an int or None
+                file = self._search_by_dataset_file_id(dataset_file_id=uid,
+                                                       dset_id=self.dataset_id,
+                                                       file_version_number=version)
 
-            # Stash the now-resolved UUID to match with a version
-            uid = match_file
-
-        if isinstance(version, UUID):
-            # Can only return 0 or 1 result
-            path = self._get_path(uid=uid, version=version)
-            data = self.session.get_resource(path, version=self._api_version)
-            return self.build(self._as_dict_from_resource(data))
-
-        # version is an int / version number
-        path = self._get_path(uid=uid)
-        data = self.session.get_resource(path, version=self._api_version)['files']
-        if version is None:
-            recent = max(data, key=lambda x: x['version_number'])
-            return self.build(self._as_dict_from_resource(recent))
-        for result in data:
-            if result['version_number'] == version:
-                return self.build(self._as_dict_from_resource(result))
-
-        raise NotFound(f"Found file, but no version {version}")
+        return file
 
     def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
         """
@@ -446,6 +446,119 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
         return uploader
+
+    def _search_by_file_name(self,
+                             file_name: str,
+                             dset_id: UUID,
+                             file_version_number: Optional[int] = None
+                             ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by name.
+
+        Note that you can specify a version number, in case you don't, it will
+        return the last version by default.
+
+        Parameters
+        ----------
+        file_name: str
+            The name of the file.
+        dset_id: UUID
+            UUID that represents a dataset.
+        file_version_number: Optional[int]
+            As optional, you can send a specific version number.
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter':
+                {
+                    'type': SearchFileFilterTypeEnum.NAME_SEARCH.value,
+                    'datasetId': str(dset_id),
+                    'fileName': file_name,
+                    'fileVersionNumber': file_version_number
+                }
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        return self.build(self._as_dict_from_resource(data['files'][0]))
+
+    def _search_by_file_version_id(self,
+                                   file_version_id: UUID
+                                   ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by file version id.
+
+        Parameters
+        ----------
+        file_version_id: UUID
+            UUID that represents a file version id.
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': {
+                'type': SearchFileFilterTypeEnum.VERSION_ID_SEARCH.value,
+                'fileVersionUuid': str(file_version_id)
+            }
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        return self.build(self._as_dict_from_resource(data['files'][0]))
+
+    def _search_by_dataset_file_id(self,
+                                   dataset_file_id: UUID,
+                                   dset_id: UUID,
+                                   file_version_number: Optional[int] = None
+                                   ) -> Optional[FileLink]:
+        """
+        Make a request to the backend to search a file by dataset file id.
+
+        Note that you can specify a version number, in case you don't, it will
+        return the last version by default.
+
+        Parameters
+        ----------
+        dataset_file_id: UUID
+            UUID that represents a dataset file id.
+        dset_id: UUID
+            UUID that represents a dataset.
+        file_version_number: Optional[int]
+            As optional, you can send a specific version number
+
+        Returns
+        -------
+        FileLink
+            All the data needed for a file.
+
+        """
+        path = self._get_path() + "/search"
+
+        search_json = {
+            'fileSearchFilter': {
+                'type': SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH.value,
+                'datasetId': str(dset_id),
+                'datasetFileId': str(dataset_file_id),
+                'fileVersionNumber': file_version_number
+            }
+        }
+
+        data = self.session.post_resource(path=path, json=search_json)
+
+        return self.build(self._as_dict_from_resource(data['files'][0]))
 
     @staticmethod
     def _mime_type(file_path: Path):

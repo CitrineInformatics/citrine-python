@@ -1,6 +1,6 @@
+from logging import getLogger
 from math import isclose
 from typing import Type, Union, List
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -15,6 +15,8 @@ __all__ = ['PredictorEvaluationMetric',
            'F1',
            'AreaUnderROC',
            'CoverageProbability']
+
+logger = getLogger(__name__)
 
 
 class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetric"]):
@@ -191,7 +193,7 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
             raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
         _level_float = round(raw_float, 3)
         if not isclose(_level_float, raw_float):
-            warn(
+            logger.warning(
                 "Coverage level can only be specified to 3 decimal places."
                 "Requested level '{requested_level}' will be rounded "
                 "to {rounded_level}.".format(

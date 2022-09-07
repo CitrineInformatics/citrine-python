@@ -1,16 +1,19 @@
 """Tools for working with reports."""
-from typing import Type, Dict, TypeVar, Iterable
+from typing import Type, Dict, TypeVar, Iterable, Any, Set
 from abc import abstractmethod
 from itertools import groupby
-import warnings
+from logging import getLogger
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.predictor_evaluation_result import ResponseMetrics
 
 SelfType = TypeVar('SelfType', bound='Report')
+
+logger = getLogger(__name__)
 
 
 class Report(PolymorphicSerializable['Report'], AsynchronousObject):
@@ -60,6 +63,58 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
         return "<FeatureImportanceReport {!r}>".format(self.output_key)  # pragma: no cover
 
 
+class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
+    """[ALPHA] Settings and evaluation metrics for a single algorithm from AutoML model selection.
+
+    ModelEvaluationResult objects are included in a ModelSelectionReport
+    and should not be user-instantiated.
+    """
+
+    model_settings = properties.Raw('model_settings')
+    _response_results = properties.Mapping(
+        properties.String,
+        properties.Object(ResponseMetrics),
+        "response_results"
+    )
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+    def __str__(self):
+        return '<ModelEvaluationResult>'  # pragma: no cover
+
+    def __getitem__(self, item):
+        return self._response_results[item]
+
+    def __iter__(self):
+        return iter(self.responses)
+
+    @property
+    def responses(self) -> Set[str]:
+        """Responses the model was evaluated on."""
+        return set(self._response_results.keys())
+
+
+class ModelSelectionReport(Serializable["ModelSelectionReport"]):
+    """[ALPHA] Summary of selection settings and model performance from AutoML model selection.
+
+    ModelSelectionReport objects are constructed from saved models and
+    should not be user-instantiated.
+    """
+
+    n_folds = properties.Integer('n_folds')
+    evaluation_results = properties.List(
+        properties.Object(ModelEvaluationResult),
+        "evaluation_results"
+    )
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+    def __str__(self):
+        return '<ModelSelectionReport>'  # pragma: no cover
+
+
 class ModelSummary(Serializable['ModelSummary']):
     """[ALPHA] Summary of information about a single model in a predictor.
 
@@ -85,6 +140,10 @@ class ModelSummary(Serializable['ModelSummary']):
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
     """:List[FeatureImportanceReport]: feature importance reports for each output"""
+    selection_summary = properties.Optional(
+        properties.Object(ModelSelectionReport), "selection_summary"
+    )
+    """:Optional[ModelSelectionReport]: optional results of AutoML model selection"""
     predictor_name = properties.String('predictor_configuration_name', default='')
     """:str: the name of the predictor that created this model"""
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
@@ -124,8 +183,13 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     def post_build(self):
         """Modify a PredictorReport object in-place after deserialization."""
         self._fill_out_descriptors()
-        for _, model in enumerate(self.model_summaries):
-            self._collapse_model_settings(model)
+        for _, summary in enumerate(self.model_summaries):
+            # Collapse settings on final trained model
+            summary.model_settings = self._collapse_model_settings(summary.model_settings)
+            if summary.selection_summary is not None:
+                # Collapse settings on any child model evaluation results
+                for result in summary.selection_summary.evaluation_results:
+                    result.model_settings = self._collapse_model_settings(result.model_settings)
 
     def _fill_out_descriptors(self):
         """Replace descriptor keys in `model_summaries` with full Descriptor objects."""
@@ -144,7 +208,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
                     model.outputs[j] = descriptor_map[output_key]
                 except KeyError:
                     raise RuntimeError("Model {} contains output \'{}\', but no descriptor found "
-                                       "with that key".format(model.name, input_key))
+                                       "with that key".format(model.name, output_key))
 
     @staticmethod
     def _get_sole_descriptor(it: Iterable):
@@ -162,13 +226,13 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         as_list = list(it)
         if len(as_list) > 1:
             serialized_descriptors = [d.dump() for d in as_list]
-            warnings.warn("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
-                          "selecting the first one. The descriptors are: {}"
-                          .format(as_list[0].key, serialized_descriptors), RuntimeWarning)
+            logger.warning("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
+                           "selecting the first one. The descriptors are: {}"
+                           .format(as_list[0].key, serialized_descriptors))
         return as_list[0]
 
     @staticmethod
-    def _collapse_model_settings(model: ModelSummary):
+    def _collapse_model_settings(raw_settings: Dict[str, Any]):
         """Collapse a model's settings into a flat dictionary.
 
         Model settings are returned as a dictionary with a "name" field, a "value" field,
@@ -185,6 +249,6 @@ class PredictorReport(Serializable['PredictorReport'], Report):
                 settings[list_or_dict['name']] = list_or_dict['value']
                 _recurse_model_settings(settings, list_or_dict['children'])
 
-        settings = dict()
-        _recurse_model_settings(settings, model.model_settings)
-        model.model_settings = settings
+        collapsed = dict()
+        _recurse_model_settings(collapsed, raw_settings)
+        return collapsed

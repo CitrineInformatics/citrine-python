@@ -1,5 +1,5 @@
 import uuid
-from logging import getLogger
+from logging import getLogger, WARNING
 from unittest import mock
 
 import pytest
@@ -512,18 +512,16 @@ def test_failed_register_v3():
     session.post_resource.side_effect = NotFound(f'/teams/{team_id}/projects',
                                                  FakeRequestResponse(400))
     project_collection = ProjectCollection(session=session, team_id=team_id)
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ModuleRegistrationFailedException) as e:
-            project_collection.register("Project")
+    with pytest.raises(ModuleRegistrationFailedException) as e:
+        project_collection.register("Project")
     assert 'The "Project" failed to register.' in str(e.value)
     assert f'/teams/{team_id}/projects' in str(e.value)
 
 
 def test_failed_register_v3_no_team(session_v3):
     project_collection = ProjectCollection(session=session_v3)
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(NotImplementedError):
-            project_collection.register("Project")
+    with pytest.raises(NotImplementedError):
+        project_collection.register("Project")
 
 
 def test_project_registration(collection: ProjectCollection, session):
@@ -568,8 +566,7 @@ def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
     team_id = collection_v3.team_id
 
     # When
-    with pytest.warns(DeprecationWarning):
-        created_project = collection_v3.register('testing')
+    created_project = collection_v3.register('testing')
 
     # Then
     assert 1 == session_v3.num_calls
@@ -648,15 +645,17 @@ def test_list_v3_no_team(session_v3):
     assert 5 == len(projects)
 
 
-def test_list_projects_filters_non_projects(collection, session):
+def test_list_projects_filters_non_projects(collection, session, caplog):
     # Given
     projects_data = ProjectDataFactory.create_batch(5)
     projects_data.append({'foo': 'not a project'})
     session.set_response({'projects': projects_data})
 
     # Then
-    with pytest.warns(UserWarning):
+    with caplog.at_level(WARNING):
+        caplog.clear()
         assert len(list(collection.list())) == 5 # Skip the bad one
+        assert any(r.levelno == WARNING for r in caplog.records)
 
 
 def test_list_projects_with_page_params(collection, session):

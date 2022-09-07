@@ -505,7 +505,7 @@ class Project(Resource['Project']):
         return result["table_definition_ids"]
 
     @use_teams("team.list_members", deprecated=True)
-    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:
+    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
         """
         List all of the members in the current project.
 
@@ -671,20 +671,11 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    def _register_in_team(self, name: str, *, description: Optional[str] = None):
-        if self.team_id is None:
-            raise NotImplementedError("Please use team.projects")
-        path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
-        project = Project(name, description=description)
-        try:
-            data = self.session.post_resource(path, project.dump(), version=self._api_version)
-            data = data[self._individual_key]
-            return self.build(data)
-        except NonRetryableException as e:
-            raise ModuleRegistrationFailedException(project.__class__.__name__, e)
+    @use_teams("team.projects.register", deprecated=False)
+    def _old_register(self, name: str, *, description: Optional[str] = None) -> Project:
+        return super().register(Project(name, description=description))
 
-    @use_teams("team.projects.register", deprecated=True)
-    def register(self, name: str, *, description: Optional[str] = None) -> Project:
+    def register(self, name: str, *, description: Optional[str] = None):
         """
         Create and upload new project.
 
@@ -696,10 +687,16 @@ class ProjectCollection(Collection[Project]):
             Long-form description of the project to be created.
 
         """
-        if self.session._accounts_service_v3:
-            return self._register_in_team(name, description=description)
-        else:
-            return super().register(Project(name, description=description))
+        if self.team_id is None:
+            return self._old_register(name=name, description=description)
+        path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
+        project = Project(name, description=description)
+        try:
+            data = self.session.post_resource(path, project.dump(), version=self._api_version)
+            data = data[self._individual_key]
+            return self.build(data)
+        except NonRetryableException as e:
+            raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
     def list(self, *,
              page: Optional[int] = None,

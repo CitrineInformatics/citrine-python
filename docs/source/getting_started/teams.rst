@@ -125,3 +125,32 @@ A user's actions in a team can be updated. The method
 
     # Make the user a member with read and write access
     team.update_user_actions(user_uid=user_id, actions=[READ, WRITE])
+
+
+Listing Publish Resources in a Team
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Teams can list the published IDs for datasets, modules, tables and table
+definitions available in a team.  Using the `list_readable`,
+`list_writeable`, or `list_shareable` methods to list IDs with these
+permissions.  Note: these calls return a list of string uids, not the
+complete resource objects.
+
+:func:`~citrine.resources.team.Team.dataset_ids`,
+:func:`~citrine.resources.team.Team.module_ids`,
+:func:`~citrine.resources.team.Team.table_ids`,
+:func:`~citrine.resources.team.Team.table_definition_ids`.
+
+
+.. code-block:: python
+
+    team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
+    project1 = team.projects.get("8ad2f784-5c49-45ad-b525-6af859651acf")
+
+    dataset_ids = team.dataset_ids.list_readable()
+
+    # Use one of the IDs to get a handle to the resource from it's origin project:
+    dataset = project1.datasets.get(dataset_ids[0])
+
+    # Pull this published resource into another project:
+    project2 = team.projects.get("9ecb5610-6f69-4175-a1f8-bbfd7d711826")
+    project2.pull_in_resource(resource=dataset)

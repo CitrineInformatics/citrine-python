@@ -1,7 +1,5 @@
 """Tests for Schema classes."""
 
-from citrine.informatics.predictors import Predictor
-
 
 def valid_serialization_output(valid_data):
     return {x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
@@ -20,7 +18,8 @@ def module_serialization_check(data, moduleClass):
     serialized['id'] = data['id']
     assert serialized == valid_serialization_output(data)
 
-def predictor_serialization_check(json, moduleClass):
-    module = moduleClass.build(json)
+
+def predictor_serialization_check(json, module_class):
+    module = module_class.build(json)
     serialized = module.dump()
     assert serialized == dict(json["data"].items())

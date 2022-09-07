@@ -16,6 +16,7 @@ from citrine.informatics.predictors import (
     SimpleMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
+from tests.conftest import build_predictor_entity
 from tests.utils.session import (
     FakeCall,
     FakeRequest,
@@ -62,6 +63,7 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
     session.put_resource.return_value = entity
     restored_predictor = pc.restore(uuid.uuid4())
     assert not restored_predictor.is_archived
+
 
 def test_archive(valid_label_fractions_predictor_data):
     session = FakeSession()
@@ -247,6 +249,36 @@ def test_update(valid_label_fractions_predictor_data):
 
     assert session.num_calls == len(expected_calls)
     assert session.calls == expected_calls
+
+
+def test_register_update_checks_status(valid_auto_ml_predictor_data):
+    # PredictorCollection.register/update makes two calls internally
+    # The first creates/updates the resource, the second kicks off training
+    # Test if create/update returns an INVALID status, we don't make the training call
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    instance = deepcopy(valid_auto_ml_predictor_data)["data"]["instance"]
+    valid_entity = build_predictor_entity(instance)
+    invalid_entity = build_predictor_entity(
+        instance,
+        status_name="INVALID",
+        status_info=["AHH IT BURNSSSSS!!!!"]
+    )
+
+    # Register returns first (invalid) response if failed
+    session.set_responses(invalid_entity, valid_entity)
+    register_input = pc.build(valid_entity)
+    register_output = pc.register(register_input)
+    assert register_output.failed()
+    assert session.num_calls == 1
+
+    # Update returns first (invalid) response if failed
+    session.set_responses(invalid_entity, valid_entity)
+    update_input = pc.build(valid_entity)
+    update_output = pc.update(update_input)
+    assert update_output.failed()
+    assert session.num_calls == 2
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
