@@ -54,10 +54,10 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
         return format_escaped_url(path_template, project_id=self.project_id)
 
-    # Until we expose predictor versions in the SDK, and thus expose the
+    # TODO: Until we expose predictor versions in the SDK, and thus expose the
     # difference between archving a predictor root and version, we should
     # report the root's archive status.
-    def _inject_archive_info(self, predictor, is_archived=None):
+    def _inject_archive_info(self, predictor: Predictor, is_archived: bool = None) -> Predictor:
         # Allows specifying the root predictor archive status, or auto-detecting it.
         archived = self.root_is_archived(predictor.uid) if is_archived is None else is_archived
         if archived:
@@ -68,15 +68,16 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             predictor.archive_time = None
         return predictor
 
-    # Same as above
-    def _build_collection_elements(self, collection, is_archived=None):
+    # TODO: Same as above
+    def _build_collection_elements(self, collection: Iterable[dict], is_archived: bool = None) \
+            -> Iterable[Predictor]:
         for pred in super()._build_collection_elements(collection):
             yield self._inject_archive_info(pred, is_archived)
 
-    def _build_archived_collection(self, collection):
+    def _build_archived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
         return self._build_collection_elements(collection, True)
 
-    def _build_unarchived_collection(self, collection):
+    def _build_unarchived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
         return self._build_collection_elements(collection, False)
 
     def build(self, data: dict) -> Predictor:
@@ -157,7 +158,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         uid: Union[UUID, str]
             Unique identifier of the predictor to check.
         """
-        return any(uid == archived_pred.uid for archived_pred in self.list_archived())
+        uid = str(uid)
+        return any(uid == str(archived_pred.uid) for archived_pred in self.list_archived())
 
     @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
                 details="archive() is deprecated in favor of archive_root().")

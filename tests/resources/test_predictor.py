@@ -82,13 +82,15 @@ def test_archive(valid_label_fractions_predictor_data):
     session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
 
     with pytest.deprecated_call():
-        archived_design_space = pc.archive(pred_id)
+        archived_predictor = pc.archive(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={}),
         FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
         FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
     ]
+
+    assert archived_predictor.is_archived
 
 
 def test_restore(valid_label_fractions_predictor_data):
@@ -100,13 +102,15 @@ def test_restore(valid_label_fractions_predictor_data):
     session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
 
     with pytest.deprecated_call():
-        archived_design_space = pc.restore(pred_id)
+        restored_predictor = pc.restore(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
         FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
         FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
     ]
+    
+    assert not restored_predictor.is_archived
 
 
 def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
@@ -174,6 +178,49 @@ def test_deprecated_archived_property(valid_label_fractions_predictor_data):
         predictor.archived = True
     
     assert predictor._archived is True
+
+
+def test_archive_root(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    pred_id = valid_label_fractions_predictor_data["id"]
+
+    session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
+
+    pc.archive_root(pred_id)
+
+    assert session.calls == [FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={})]
+
+
+def test_restore_root(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    pred_id = valid_label_fractions_predictor_data["id"]
+
+    session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
+
+    pc.restore_root(pred_id)
+
+    assert session.calls == [FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={})]
+
+
+def test_root_is_archived(valid_label_fractions_predictor_data):
+    predictor_id = uuid.UUID(valid_label_fractions_predictor_data["id"])
+
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    session.set_response(paging_response(valid_label_fractions_predictor_data))
+
+    assert pc.root_is_archived(predictor_id)
+    assert pc.root_is_archived(str(predictor_id))
+    assert not pc.root_is_archived(uuid.uuid4())
+    assert not pc.root_is_archived(str(uuid.uuid4()))
+
+    session.set_response(paging_response())
+
+    assert not pc.root_is_archived(predictor_id)
 
 
 def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
