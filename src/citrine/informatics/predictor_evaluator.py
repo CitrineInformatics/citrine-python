@@ -157,6 +157,7 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
         return ["typ", "name", "responses", "data_source", "metrics"]
 
     name = properties.String("name")
+    description = properties.String("description")
     _responses = properties.Set(properties.String, "responses")
     data_source = properties.Object(DataSource, "data_source")
     _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
@@ -165,10 +166,12 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
 
     def __init__(self,
                  name: str, *,
+                 description: str = "",
                  responses: Set[str],
                  data_source: DataSource,
                  metrics: Optional[Set[PredictorEvaluationMetric]] = None):
         self.name: str = name
+        self.description: str = description
         self._responses: Set[str] = responses
         self.data_source = data_source
         self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
