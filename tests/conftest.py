@@ -592,6 +592,7 @@ def example_holdout_evaluator_dict(valid_gem_data_source_dict):
     return {
         "type": "HoldoutSetEvaluator",
         "name": "Example holdout evaluator",
+        "description": "",
         "responses": ["sweetness"],
         "data_source": valid_gem_data_source_dict,
         "metrics": [{"type": "RMSE"}]
