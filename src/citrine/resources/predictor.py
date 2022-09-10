@@ -1,16 +1,18 @@
 """Resources that represent collections of predictors."""
 from functools import partial
-from uuid import UUID
 from typing import Iterable, TypeVar, Optional, Union
+from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.exceptions import Conflict
-from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
+from citrine.resources.module import AbstractModuleCollection
+
+from deprecation import deprecated
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -48,9 +50,35 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         self.project_id = project_id
         self.session: Session = session
 
-    def _predictors_path(self, subpath: str, uid: Union[UUID, str] = None):
+    def _predictors_path(self, subpath: str, uid: Union[UUID, str] = None) -> str:
         path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
         return format_escaped_url(path_template, project_id=self.project_id)
+
+    # TODO: Until we expose predictor versions in the SDK, and thus expose the
+    # difference between archving a predictor root and version, we should
+    # report the root's archive status.
+    def _inject_archive_info(self, predictor: Predictor, is_archived: bool = None) -> Predictor:
+        # Allows specifying the root predictor archive status, or auto-detecting it.
+        archived = self.root_is_archived(predictor.uid) if is_archived is None else is_archived
+        if archived:
+            predictor.archived_by = predictor.updated_by
+            predictor.archive_time = predictor.update_time
+        else:
+            predictor.archived_by = None
+            predictor.archive_time = None
+        return predictor
+
+    # TODO: Same as above
+    def _build_collection_elements(self, collection: Iterable[dict], is_archived: bool = None) \
+            -> Iterable[Predictor]:
+        for pred in super()._build_collection_elements(collection):
+            yield self._inject_archive_info(pred, is_archived)
+
+    def _build_archived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
+        return self._build_collection_elements(collection, True)
+
+    def _build_unarchived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
+        return self._build_collection_elements(collection, False)
 
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
@@ -59,13 +87,18 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         predictor._project_id = self.project_id
         return predictor
 
+    def get(self, uid: Union[UUID, str]) -> Predictor:
+        """Get a particular element of the collection."""
+        predictor = super().get(uid)
+        return self._inject_archive_info(predictor)
+
     def register(self, predictor: Predictor) -> Predictor:
         """Register and train a Predictor."""
         created_predictor = super().register(predictor)
 
-        # If the initial response is invalid, just return it
-        # If not, kick off training since we never exposed saving a model without training
-        # so we should continue to do it automatically
+        # If the initial response is invalid, just return it.
+        # If not, kick off training since we never exposed saving a model without it,
+        # so we should continue to do it automatically.
         if created_predictor.failed():
             return created_predictor
         else:
@@ -80,9 +113,9 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         # _archived field set by the archived property. It will be archived if True, and restored
         # if False. It defaults to None, which does nothing. The value is reset afterwards.
         if predictor._archived is True:
-            self.archive(predictor.uid)
+            self.archive_root(predictor.uid)
         elif predictor._archived is False:
-            self.restore(predictor.uid)
+            self.restore_root(predictor.uid)
         predictor._archived = None
 
         # If the initial response is invalid, just return it
@@ -93,32 +126,63 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         else:
             return self._train(updated_predictor.uid)
 
-    def _train(self, uid: Union[UUID, str]):
+    def _train(self, uid: Union[UUID, str]) -> Predictor:
         path = self._predictors_path("train", uid)
         entity = self.session.put_resource(path, {}, version=self._api_version)
-        return self.build(entity)
+        predictor = self.build(entity)
+        return self._inject_archive_info(predictor)
 
-    def archive(self, uid: Union[UUID, str]):
-        """Archive a predictor.
+    def archive_root(self, uid: Union[UUID, str]):
+        """Archive a root predictor.
 
         uid: Union[UUID, str]
             Unique identifier of the predictor to archive.
 
         """
         path = self._predictors_path("archive", uid)
-        entity = self.session.put_resource(path, {}, version=self._api_version)
-        return self.build(entity)
+        self.session.put_resource(path, {}, version=self._api_version)
 
-    def restore(self, uid: Union[UUID, str]):
-        """Restore an archived predictor.
+    def restore_root(self, uid: Union[UUID, str]):
+        """Restore an archived root predictor.
 
         uid: Union[UUID, str]
             Unique identifier of the predictor to restore.
 
         """
         path = self._predictors_path("restore", uid)
-        entity = self.session.put_resource(path, {}, version=self._api_version)
-        return self.build(entity)
+        self.session.put_resource(path, {}, version=self._api_version)
+
+    def root_is_archived(self, uid: Union[UUID, str]) -> bool:
+        """Determine if the predictor root is archived.
+
+        uid: Union[UUID, str]
+            Unique identifier of the predictor to check.
+        """
+        uid = str(uid)
+        return any(uid == str(archived_pred.uid) for archived_pred in self.list_archived())
+
+    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
+                details="archive() is deprecated in favor of archive_root().")
+    def archive(self, uid: Union[UUID, str]) -> Predictor:
+        """[DEPRECATED] Archive a root predictor."""
+        self.archive_root(uid)
+        return self.get(uid)
+
+    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
+                details="restore() is deprecated in favor of restore_root().")
+    def restore(self, uid: Union[UUID, str]) -> Predictor:
+        """[DEPRECATED] Restore a root predictor."""
+        self.restore_root(uid)
+        return self.get(uid)
+
+    def list(self, *,
+             page: Optional[int] = None,
+             per_page: int = 100) -> Iterable[Predictor]:
+        """List non-archived Predictors."""
+        return self._paginator.paginate(page_fetcher=self._fetch_page,
+                                        collection_builder=self._build_unarchived_collection,
+                                        page=page,
+                                        per_page=per_page)
 
     def list_archived(self,
                       *,
@@ -126,8 +190,9 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                       per_page: int = 20) -> Iterable[Predictor]:
         """List archived Predictors."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
+
         return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
+                                        collection_builder=self._build_archived_collection,
                                         page=page,
                                         per_page=per_page)
 
@@ -161,12 +226,15 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         if update_data["updatable"]:
             built = Predictor.build(update_data)
             built.uid = uid
-            return built
+            return self._inject_archive_info(built)
         else:
             return None
 
-    def auto_configure(self, *, training_data: DataSource,
-                       pattern=AutoConfigureMode.INFER, prefer_valid=True) -> Predictor:
+    def auto_configure(self,
+                       *,
+                       training_data: DataSource,
+                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                       prefer_valid: bool = True) -> Predictor:
         """[ALPHA] Create a default predictor for some training data.
 
         This method will return an unregistered predictor generated by inspecting the
@@ -214,9 +282,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         body = {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
-        return self.build(Predictor.wrap_instance(data["instance"]))
+        predictor = self.build(Predictor.wrap_instance(data["instance"]))
+        return self._inject_archive_info(predictor)
 
-    def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False):
+    def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
+            -> Predictor:
         """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
 
         Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
@@ -254,15 +324,18 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         path = self._predictors_path("convert", uid)
         try:
             entity = self.session.get_resource(path, version=self._api_version)
-            return self.build(entity)
         except Conflict as exc:
             if retrain_if_needed:
-                self.update(self.get(uid))
+                # Invokes super.get to avoid an extra call to _inject_archive_info.
+                self.update(super().get(uid))
                 return None
             else:
                 raise exc
+        predictor = self.build(entity)
+        return self._inject_archive_info(predictor)
 
-    def convert_and_update(self, uid: Union[UUID, str], retrain_if_needed: bool = False):
+    def convert_and_update(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
+            -> Predictor:
         """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
 
         See `PredictorCollection.convert_to_graph` for more detail.
