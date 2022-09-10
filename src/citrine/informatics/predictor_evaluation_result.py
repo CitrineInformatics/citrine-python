@@ -4,7 +4,8 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
-from citrine.informatics.predictor_evaluator import *
+from citrine.informatics.predictor_evaluator import PredictorEvaluator, HoldoutSetEvaluator,\
+    CrossValidationEvaluator
 
 __all__ = ['MetricValue',
            'RealMetricValue',
