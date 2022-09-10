@@ -4,8 +4,7 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
-from citrine.informatics.predictor_evaluator import PredictorEvaluator
-
+from citrine.informatics.predictor_evaluator import *
 
 __all__ = ['MetricValue',
            'RealMetricValue',
@@ -196,7 +195,7 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
 
     """
 
-    _evaluator = properties.Object(PredictorEvaluator, "evaluator")
+    _evaluator = properties.Object(CrossValidationEvaluator, "evaluator")
     _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
                                            "response_results")
     typ = properties.String('type', default='CrossValidationResult', deserializable=False)
@@ -208,7 +207,7 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
         return iter(self.responses)
 
     @property
-    def evaluator(self) -> PredictorEvaluator:
+    def evaluator(self) -> CrossValidationEvaluator:
         """:PredictorEvaluator: Evaluator that produced this result."""
         return self._evaluator
 
@@ -234,7 +233,7 @@ class HoldoutSetResult(Serializable["HoldoutSetResult"], PredictorEvaluationResu
 
     """
 
-    _evaluator = properties.Object(PredictorEvaluator, "evaluator")
+    _evaluator = properties.Object(HoldoutSetEvaluator, "evaluator")
     _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
                                            "response_results")
     typ = properties.String('type', default='HoldoutSetResult', deserializable=False)
@@ -246,7 +245,7 @@ class HoldoutSetResult(Serializable["HoldoutSetResult"], PredictorEvaluationResu
         return iter(self.responses)
 
     @property
-    def evaluator(self) -> PredictorEvaluator:
+    def evaluator(self) -> HoldoutSetEvaluator:
         """:PredictorEvaluator: Evaluator that produced this result."""
         return self._evaluator
 

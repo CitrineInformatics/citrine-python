@@ -7,7 +7,9 @@ from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluation
 from citrine.informatics.data_sources import DataSource
 
 __all__ = ['PredictorEvaluator',
-           'CrossValidationEvaluator']
+           'CrossValidationEvaluator',
+           'HoldoutSetEvaluator'
+           ]
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
