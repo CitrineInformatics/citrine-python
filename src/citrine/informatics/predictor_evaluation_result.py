@@ -4,8 +4,8 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
-from citrine.informatics.predictor_evaluator import PredictorEvaluator
-
+from citrine.informatics.predictor_evaluator import PredictorEvaluator, HoldoutSetEvaluator,\
+    CrossValidationEvaluator
 
 __all__ = ['MetricValue',
            'RealMetricValue',
@@ -166,6 +166,7 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         """Return the subtype."""
         return {
             "CrossValidationResult": CrossValidationResult,
+            "HoldoutSetResult": HoldoutSetResult
         }[data["type"]]
 
     @property
@@ -191,11 +192,11 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
     where ``cvResult`` is a
     :class:`citrine.informatics.predictor_evaluation_result.CrossValidationResult`
     and ``'response_name'`` is a response analyzed by a
-    :class:`citrine.informatics.predictor_evaluator.PredictorEvaluator`.
+    :class:`citrine.informatics.predictor_evaluator.CrossValidationEvaluator`.
 
     """
 
-    _evaluator = properties.Object(PredictorEvaluator, "evaluator")
+    _evaluator = properties.Object(CrossValidationEvaluator, "evaluator")
     _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
                                            "response_results")
     typ = properties.String('type', default='CrossValidationResult', deserializable=False)
@@ -207,7 +208,45 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
         return iter(self.responses)
 
     @property
-    def evaluator(self) -> PredictorEvaluator:
+    def evaluator(self) -> CrossValidationEvaluator:
+        """:PredictorEvaluator: Evaluator that produced this result."""
+        return self._evaluator
+
+    @property
+    def responses(self) -> Set[str]:
+        """Responses for which results are present."""
+        return set(self._response_results.keys())
+
+    @property
+    def metrics(self) -> Set[PredictorEvaluationMetric]:
+        """:Set[PredictorEvaluationMetric]: Metrics for which results are present."""
+        return self._evaluator.metrics
+
+
+class HoldoutSetResult(Serializable["HoldoutSetResult"], PredictorEvaluationResult):
+    """Result of performing holdout evaluation on a predictor.
+
+    Results held-out response can be accessed via ``result['response_name']``,
+    where ``result`` is a
+    :class:`citrine.informatics.predictor_evaluation_result.HoldoutSetResult`
+    and ``'response_name'`` is a response analyzed by a
+    :class:`citrine.informatics.predictor_evaluator.HoldoutSetEvaluator`.
+
+    """
+
+    _evaluator = properties.Object(HoldoutSetEvaluator, "evaluator")
+    _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
+                                           "response_results")
+    typ = properties.String('type', default='HoldoutSetResult', deserializable=False)
+
+    def __getitem__(self, item):
+        return self._response_results[item]
+
+    def __iter__(self):
+        return iter(self.responses)
+
+    @property
+    def evaluator(self) -> HoldoutSetEvaluator:
         """:PredictorEvaluator: Evaluator that produced this result."""
         return self._evaluator
 

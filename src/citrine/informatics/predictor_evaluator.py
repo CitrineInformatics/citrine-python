@@ -4,9 +4,12 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
+from citrine.informatics.data_sources import DataSource
 
 __all__ = ['PredictorEvaluator',
-           'CrossValidationEvaluator']
+           'CrossValidationEvaluator',
+           'HoldoutSetEvaluator'
+           ]
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
@@ -17,6 +20,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         """Return the subtype."""
         return {
             "CrossValidationEvaluator": CrossValidationEvaluator,
+            "HoldoutSetEvaluator": HoldoutSetEvaluator
         }[data["type"]]
 
     def _attrs(self) -> List[str]:
@@ -128,4 +132,58 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Set of metrics computed during cross-validation."""
+        return self._metrics
+
+
+class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluator):
+    """Evaluate a predictor using a holdout set.
+
+    For each response, the actual values are masked off and the predictor makes predictions.
+    These predictions are compared with the ground-truth values in the holdout set using
+    specified metrics.
+
+    Parameters
+    ----------
+    name: str
+        Name of the evaluator
+    responses: Set[str]
+        Set of descriptor keys to evaluate
+    data_source: DataSource
+        Source of holdout data
+    metrics: Optional[Set[PredictorEvaluationMetric]]
+        Optional set of metrics to compute for each response. Default is all metrics.
+
+    """
+
+    def _attrs(self) -> List[str]:
+        return ["typ", "name", "responses", "data_source", "metrics"]
+
+    name = properties.String("name")
+    description = properties.String("description")
+    _responses = properties.Set(properties.String, "responses")
+    data_source = properties.Object(DataSource, "data_source")
+    _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
+                                   "metrics")
+    typ = properties.String("type", default="HoldoutSetEvaluator", deserializable=False)
+
+    def __init__(self,
+                 name: str, *,
+                 description: str = "",
+                 responses: Set[str],
+                 data_source: DataSource,
+                 metrics: Optional[Set[PredictorEvaluationMetric]] = None):
+        self.name: str = name
+        self.description: str = description
+        self._responses: Set[str] = responses
+        self.data_source = data_source
+        self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
+
+    @property
+    def responses(self) -> Set[str]:
+        """Set of responses to predict and compare against the ground-truth values."""
+        return self._responses
+
+    @property
+    def metrics(self) -> Set[PredictorEvaluationMetric]:
+        """Set of metrics computed on the predictions."""
         return self._metrics
