@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictors.auto_ml_predictor module &mdash; Citrine Python 1.37.1 documentation</title>
+  <title>citrine.informatics.predictors.auto_ml_predictor module &mdash; Citrine Python 1.40.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.37.1
+                1.40.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -77,8 +77,63 @@
   <section id="module-citrine.informatics.predictors.auto_ml_predictor">
 <span id="citrine-informatics-predictors-auto-ml-predictor-module"></span><h1>citrine.informatics.predictors.auto_ml_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.auto_ml_predictor" title="Permalink to this headline"></a></h1>
 <dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.auto_ml_predictor.</span></span><span class="sig-name descname"><span class="pre">AutoMLEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] Algorithms to be used during AutoML model selection.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>LINEAR corresponds to a linear regression estimator</dt><dd><p>(valid for single-task regression problems)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>RANDOM_FOREST corresponds to a random forest estimator</dt><dd><p>(valid for single-task and multi-task regression and classification problems)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>GAUSSIAN_PROCESS corresponds to a Gaussian process estimator</dt><dd><p>(valid for single-task regression and classification problems)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SUPPORT_VECTOR_MACHINE corresponds to an support machine estimator</dt><dd><p>(valid for single-task classification problems)</p>
+</dd>
+</dl>
+</li>
+<li><p>ALL combines all estimator choices (valid for all learning tasks)</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.ALL">
+<span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ALL'</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.ALL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.GAUSSIAN_PROCESS">
+<span class="sig-name descname"><span class="pre">GAUSSIAN_PROCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GAUSSIAN_PROCESS'</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.GAUSSIAN_PROCESS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LINEAR'</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.LINEAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.RANDOM_FOREST">
+<span class="sig-name descname"><span class="pre">RANDOM_FOREST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RANDOM_FOREST'</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.RANDOM_FOREST" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.SUPPORT_VECTOR_MACHINE">
+<span class="sig-name descname"><span class="pre">SUPPORT_VECTOR_MACHINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SUPPORT_VECTOR_MACHINE'</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.SUPPORT_VECTOR_MACHINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.auto_ml_predictor.</span></span><span class="sig-name descname"><span class="pre">AutoMLPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.auto_ml_predictor.</span></span><span class="sig-name descname"><span class="pre">AutoMLPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator"><span class="pre">citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.engine_resource.EngineResource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code>], <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>A predictor interface that builds a single ML model.</p>
 <p>The model uses the set of inputs to predict the output(s).
@@ -93,6 +148,8 @@ Only one machine learning model is built.</p>
 A single Descriptor that represents the output of the model</p></li>
 <li><p><strong>outputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represents the output(s) of the model.
 Currently, only one output Descriptor is supported.</p></li>
+<li><p><strong>estimators</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><a class="reference internal" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator"><em>AutoMLEstimator</em></a><em>]</em><em>]</em>) – Set of estimators to consider during during AutoML model selection.
+If None is provided, defaults to AutoMLEstimator.RANDOM_FOREST.</p></li>
 <li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
 multiple data sources will be combined into a flattened list and de-duplicated by uid and
 identifiers. De-duplication is performed if a uid or identifier is shared between two or
@@ -208,6 +265,11 @@ if it has been archived</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.description">
 <span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.estimators">
+<span class="sig-name descname"><span class="pre">estimators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator"><span class="pre">AutoMLEstimator</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{AutoMLEstimator.RANDOM_FOREST}</span></em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.estimators" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">

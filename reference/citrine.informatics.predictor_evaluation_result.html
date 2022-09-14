@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictor_evaluation_result module &mdash; Citrine Python 1.37.1 documentation</title>
+  <title>citrine.informatics.predictor_evaluation_result module &mdash; Citrine Python 1.40.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.37.1
+                1.40.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -128,7 +128,7 @@ trials and folds.</p>
 where <code class="docutils literal notranslate"><span class="pre">cvResult</span></code> is a
 <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult" title="citrine.informatics.predictor_evaluation_result.CrossValidationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.CrossValidationResult</span></code></a>
 and <code class="docutils literal notranslate"><span class="pre">'response_name'</span></code> is a response analyzed by a
-<a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></code></a>.</p>
+<a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluator.CrossValidationEvaluator</span></code></a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.predictor_evaluation_result.CrossValidationResult.build">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult.build" title="Permalink to this definition"></a></dt>
@@ -149,7 +149,7 @@ and <code class="docutils literal notranslate"><span class="pre">'response_name'
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictor_evaluation_result.CrossValidationResult.evaluator">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></a></em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult.evaluator" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><span class="pre">citrine.informatics.predictor_evaluator.CrossValidationEvaluator</span></a></em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult.evaluator" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluator that produced this result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>

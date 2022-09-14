@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictor_evaluator module &mdash; Citrine Python 1.37.1 documentation</title>
+  <title>citrine.informatics.predictor_evaluator module &mdash; Citrine Python 1.40.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.37.1
+                1.40.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -165,6 +165,76 @@ for all other descriptors will be in the same group.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.typ">
 <span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CrossValidationEvaluator'</span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.typ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictor_evaluator.</span></span><span class="sig-name descname"><span class="pre">HoldoutSetEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">HoldoutSetEvaluator</span></code>], <a class="reference internal" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></code></a></p>
+<p>Evaluate a predictor using a holdout set.</p>
+<p>For each response, the actual values are masked off and the predictor makes predictions.
+These predictions are compared with the ground-truth values in the holdout set using
+specified metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the evaluator</p></li>
+<li><p><strong>responses</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – Set of descriptor keys to evaluate</p></li>
+<li><p><strong>data_source</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of holdout data</p></li>
+<li><p><strong>metrics</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><a class="reference internal" href="citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><em>PredictorEvaluationMetric</em></a><em>]</em><em>]</em>) – Optional set of metrics to compute for each response. Default is all metrics.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.data_source">
+<span class="sig-name descname"><span class="pre">data_source</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.data_source" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.metrics">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Set of metrics computed on the predictions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.responses">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">responses</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.responses" title="Permalink to this definition"></a></dt>
+<dd><p>Set of responses to predict and compare against the ground-truth values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'HoldoutSetEvaluator'</span></em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.typ" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
