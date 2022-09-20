@@ -21,7 +21,7 @@ Clone from github:
 git clone git@github.com:CitrineInformatics/citrine-python
 ```
 
-Create a virtual environment using Python >= 3.6.
+Create a virtual environment using Python >= 3.7.
 One option is to use conda, but it is not required.
 
 ```bash
