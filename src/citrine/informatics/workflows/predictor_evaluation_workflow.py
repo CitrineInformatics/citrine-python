@@ -1,6 +1,7 @@
 from typing import List
 
 from citrine._rest.resource import Resource
+from citrine._rest import ResourceTypeEnum
 from citrine._serialization import properties
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.workflows.workflow import Workflow
@@ -30,6 +31,8 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
     typ = properties.String('type', default='PredictorEvaluationWorkflow', deserializable=False)
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     def __init__(self,
                  name: str,
