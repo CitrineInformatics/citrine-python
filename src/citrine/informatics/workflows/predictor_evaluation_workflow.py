@@ -1,7 +1,6 @@
 from typing import List
 
-from citrine._rest.resource import Resource
-from citrine._rest import ResourceTypeEnum
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.workflows.workflow import Workflow
