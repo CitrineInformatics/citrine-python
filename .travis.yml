@@ -1,12 +1,10 @@
 language: python
 dist: bionic
 python:
-- '3.6'
-- '3.7.13'
-- '3.8.13'
+- '3.7'
+- '3.8'
 - '3.9'
-- '3.10.0'
-- '3.10.1'
+- '3.10'
 install:
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
@@ -30,7 +28,7 @@ deploy:
   local_dir: "./docs/_build/html/"
   on:
     tags: true
-    python: '3.6' # only need this to run once
+    python: '3.10' # only need this to run once
 - provider: pypi
   user: CitrineInformatics
   password: "$PYPI_PASSWORD"
