@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.gemtables.rows module &mdash; Citrine Python 1.40.0 documentation</title>
+  <title>citrine.gemtables.rows module &mdash; Citrine Python 1.41.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.40.0
+                1.41.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -80,7 +80,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.MaterialRunByTemplate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.gemtables.rows.</span></span><span class="sig-name descname"><span class="pre">MaterialRunByTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><span class="pre">gemd.entity.template.material_template.MaterialTemplate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code>], <a class="reference internal" href="#citrine.gemtables.rows.Row" title="citrine.gemtables.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.rows.Row</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.gemtables.rows.MaterialRunByTemplate" title="citrine.gemtables.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a>], <a class="reference internal" href="#citrine.gemtables.rows.Row" title="citrine.gemtables.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.rows.Row</span></code></a></p>
 <p>[ALPHA] Rows corresponding to MaterialRuns, marked by their template.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -93,7 +93,7 @@ contain any of the tags it will be filtered out.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.MaterialRunByTemplate.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.build" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.build" title="Permalink to this definition"></a></dt>
 <dd><p>Build an instance of this object from given data.</p>
 </dd></dl>
 
@@ -116,8 +116,9 @@ contain any of the tags it will be filtered out.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.MaterialRunByTemplate.template_type">
-<span class="sig-name descname"><span class="pre">template_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">typing.Union[uuid.UUID,</span> <span class="pre">str,</span> <span class="pre">gemd.entity.link_by_uid.LinkByUID,</span> <span class="pre">gemd.entity.template.material_template.MaterialTemplate]</span></em><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.template_type" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">template_type</span></span><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.template_type" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">uuid.UUID</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></code></a>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.template.material_template.MaterialTemplate</span></code></a>]</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.MaterialRunByTemplate.templates">
@@ -133,13 +134,13 @@ contain any of the tags it will be filtered out.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.Row">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.gemtables.rows.</span></span><span class="sig-name descname"><span class="pre">Row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.rows.Row" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Row</span></code>]</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.gemtables.rows.</span></span><span class="sig-name descname"><span class="pre">Row</span></span><a class="headerlink" href="#citrine.gemtables.rows.Row" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<a class="reference internal" href="#citrine.gemtables.rows.Row" title="citrine.gemtables.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a>]</p>
 <p>[ALPHA] A rule for defining rows in a GEM Table.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.gemtables.rows.Row.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SelfType</span></span></span><a class="headerlink" href="#citrine.gemtables.rows.Row.build" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.polymorphic_serializable.SelfType</span></span></span><a class="headerlink" href="#citrine.gemtables.rows.Row.build" title="Permalink to this definition"></a></dt>
 <dd><p>Build the underlying type.</p>
 </dd></dl>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.modules module &mdash; Citrine Python 1.40.0 documentation</title>
+  <title>citrine.informatics.modules module &mdash; Citrine Python 1.41.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.40.0
+                1.41.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -79,15 +79,15 @@
 <p>Tools for working with module resources.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.modules.Module">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.modules.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.modules.Module" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Module</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.modules.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><a class="headerlink" href="#citrine.informatics.modules.Module" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<a class="reference internal" href="#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
 <p>A Citrine Module is a reusable computational tool used to construct a workflow.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <p>All modules must inherit AIResourceMetadata, and hence have a <code class="docutils literal notranslate"><span class="pre">status</span></code> field.
 Possible statuses are CREATED, VALIDATING, INVALID, ERROR, and READY.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.modules.Module.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SelfType</span></span></span><a class="headerlink" href="#citrine.informatics.modules.Module.build" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.polymorphic_serializable.SelfType</span></span></span><a class="headerlink" href="#citrine.informatics.modules.Module.build" title="Permalink to this definition"></a></dt>
 <dd><p>Build the underlying type.</p>
 </dd></dl>
 
