@@ -3,7 +3,7 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
@@ -12,7 +12,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(EngineResource['MolecularStructureFeaturizer'], Predictor):
+class MolecularStructureFeaturizer(VersionedEngineResource['MolecularStructureFeaturizer'], Predictor):
     """
     A featurizer for molecular structures, powered by CDK.
 

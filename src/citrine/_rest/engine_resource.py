@@ -3,15 +3,15 @@ from typing import List, TypeVar
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-
+from citrine._serialization.include_parent_properties import IncludeParentProperties
 
 Self = TypeVar('Self', bound='Resource')
 
 
-# This class is the base type for the new module endpoints. Currently, it only covers predictors,
-# but should be applicable for others as they're written.
+# This class is the base type for the new module endpoints which do not support versions. If/once
+# they support versioning, they should be switched to inherit from VersionedEngineResource.
 class EngineResource(Resource[Self]):
-    """Base resource for predictors, including metadata representation."""
+    """Base resource for metadata from stand-alone AI Engine modules."""
 
     created_by = properties.Optional(properties.UUID, 'metadata.created.user', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
@@ -86,3 +86,18 @@ class EngineResource(Resource[Self]):
         data["instance"]["name"] = data["name"]
         data["instance"]["description"] = data["description"]
         return data
+
+
+class VersionedEngineResource(EngineResource[Self], IncludeParentProperties[Self]):
+    """Base resource for metadata from stand-alone AI Engine modules which support versioning."""
+
+    """:Integer: The version number of the resource."""
+    version = properties.Optional(properties.Integer, 'metadata.version', serializable=False)
+
+    """:Boolean: The draft status of the resource."""
+    draft = properties.Optional(properties.Boolean, 'metadata.draft', serializable=False)
+
+    @classmethod
+    def build(cls, data: dict):
+        """Build an instance of this object from given data."""
+        return super().build_with_parent(data, __class__)

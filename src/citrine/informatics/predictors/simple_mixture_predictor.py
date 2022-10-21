@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -10,7 +10,7 @@ __all__ = ['SimpleMixturePredictor']
 
 
 class SimpleMixturePredictor(
-        EngineResource['SimpleMixturePredictor'], Predictor):
+        VersionedEngineResource['SimpleMixturePredictor'], Predictor):
     """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters

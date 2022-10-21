@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
@@ -9,7 +9,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(EngineResource['GraphPredictor'], Predictor):
+class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
     """A predictor interface that stitches other predictors together.
 
     Parameters

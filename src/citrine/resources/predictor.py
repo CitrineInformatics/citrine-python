@@ -1,10 +1,11 @@
 """Resources that represent collections of predictors."""
 from functools import partial
-from typing import Iterable, TypeVar, Optional, Union
+from typing import Any, Iterable, Optional, TypeVar, Union
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
+from citrine._rest.paginator import Paginator
 from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.exceptions import Conflict
@@ -30,6 +31,123 @@ class AutoConfigureMode(BaseEnumeration):
     INFER = 'INFER'
 
 
+class _PredictorVersionPaginator(Paginator):
+    def _comparison_fields(self, entity: Predictor) -> Any:
+        return (entity.uid, entity.version)
+
+    def paginate(self, *args, **kwargs) -> Iterable[Predictor]:
+        # Since predictor versions have the same uid, and the paginate method uses uid alone to
+        # dedup, we have to disable deduplication in order to use it.
+        kwargs["deduplicate"] = False
+        return super().paginate(*args, **kwargs)
+
+
+class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
+    _api_version = 'v3'
+    _path_template = '/projects/{project_id}/predictors/{uid}/versions'
+    _individual_key = None
+    _resource = Predictor
+    _collection_key = 'response'
+    _paginator: Paginator = _PredictorVersionPaginator()
+
+    _SPECIAL_VERSIONS = ["latest"]
+
+    def __init__(self, project_id: UUID, session: Session):
+        self.project_id = project_id
+        self.session: Session = session
+
+    def _construct_path(self,
+                        uid: Union[UUID, str],
+                        version: Optional[Union[int, str]] = None,
+                        action: str = None) -> str:
+        path = self._path_template.format(project_id=self.project_id, uid=str(uid))
+        if version is not None:
+            version_str = str(version)
+            if version_str not in self._SPECIAL_VERSIONS \
+                    and (not version_str.isdecimal() or int(version_str) <= 0):
+                raise ValueError("A predictor version must either be a positive integer, or "
+                                 "\"latest\".")
+
+            path += f"/{version_str}"
+            path += f"/{action}" if action else ""
+        return path
+
+    def _page_fetcher(self, *, uid: Union[UUID, str], **additional_params):
+        fetcher_params = {
+            "path": self._construct_path(uid),
+            "additional_params": additional_params
+        }
+        return partial(self._fetch_page, **fetcher_params)
+
+    def _train(self, uid: Union[UUID, str], version: Union[int, str]) -> Predictor:
+        path = self._construct_path(uid, version, "train")
+        params = {"create_version": True}
+        entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
+        return self.build(entity)
+
+    def build(self, data: dict) -> Predictor:
+        """Build an individual Predictor."""
+        predictor: Predictor = Predictor.build(data)
+        predictor._session = self.session
+        predictor._project_id = self.project_id
+        return predictor
+
+    def get(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        path = self._construct_path(uid, version)
+        entity = self.session.get_resource(path, version=self._api_version)
+        return self.build(entity)
+
+    def list(self,
+             uid: Union[UUID, str],
+             *,
+             page: Optional[int] = None,
+             per_page: int = 100) -> Iterable[Predictor]:
+        """List non-archived versions of the given predictor."""
+        page_fetcher = self._page_fetcher(uid=uid)
+        return self._paginator.paginate(page_fetcher=page_fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
+
+    def list_archived(self,
+                      uid: Union[UUID, str],
+                      *,
+                      page: Optional[int] = None,
+                      per_page: int = 20) -> Iterable[Predictor]:
+        """List archived versions of the given predictor."""
+        page_fetcher = self._page_fetcher(uid=uid, filter="archived eq 'true'")
+        return self._paginator.paginate(page_fetcher=page_fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
+
+    def archive(self, uid: Union[UUID, str], *, version: Union[int, str]):
+        url = self._construct_path(uid, version, "archive")
+        entity = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(entity)
+
+    def restore(self, uid: Union[UUID, str], *, version: Union[int, str]):
+        url = self._construct_path(uid, version, "restore")
+        entity = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(entity)
+
+    def convert_to_graph(self,
+                         uid: Union[UUID, str],
+                         *,
+                         version: Union[int, str],
+                         retrain_if_needed: bool = False) -> Predictor:
+        path = self._construct_path(uid, version, "convert")
+        try:
+            entity = self.session.get_resource(path, version=self._api_version)
+        except Conflict as exc:
+            if retrain_if_needed:
+                self._train(uid, version)
+                return None
+            else:
+                raise exc
+        return self.build(entity)
+
+
 class PredictorCollection(AbstractModuleCollection[Predictor]):
     """Represents the collection of all predictors for a project.
 
@@ -49,6 +167,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
+        self._versions_collection = _PredictorVersionCollection(project_id, session)
 
     def _predictors_path(self, subpath: str, uid: Union[UUID, str] = None) -> str:
         path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
@@ -97,7 +216,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
     def _train(self, uid: Union[UUID, str]) -> Predictor:
         path = self._predictors_path("train", uid)
-        entity = self.session.put_resource(path, {}, version=self._api_version)
+        params = {"create_version": True}
+        entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
         return self.build(entity)
 
     def archive_root(self, uid: Union[UUID, str]):
@@ -149,7 +269,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                       per_page: int = 20) -> Iterable[Predictor]:
         """List archived Predictors."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
-
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         page=page,
@@ -298,4 +417,57 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         See `PredictorCollection.convert_to_graph` for more detail.
         """
         new_pred = self.convert_to_graph(uid, retrain_if_needed)
+        return self.update(new_pred) if new_pred else None
+
+    def get_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Get a specific version of the predictor."""
+        return self._versions_collection.get(uid=uid, version=version)
+
+    def archive_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Archive a predictor version."""
+        return self._versions_collection.archive(uid, version=version)
+
+    def restore_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Restore a predictor version."""
+        return self._versions_collection.restore(uid, version=version)
+
+    def list_versions(self,
+                      uid: Union[UUID, str] = None,
+                      *,
+                      per_page: int = 100) -> Iterable[Predictor]:
+        """List all non-archived versions of the given Predictor."""
+        return self._versions_collection.list(uid, per_page=per_page)
+
+    def list_archived_versions(self,
+                               uid: Union[UUID, str] = None,
+                               *,
+                               per_page: int = 20) -> Iterable[Predictor]:
+        """List all archived versions of the given Predictor."""
+        return self._versions_collection.list_archived(uid, per_page=per_page)
+
+    def convert_version_to_graph(self,
+                                 uid: Union[UUID, str],
+                                 *,
+                                 version: Union[int, str],
+                                 retrain_if_needed: bool = False) -> Predictor:
+        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
+
+        See `PredictorCollection.convert_to_graph` for more detail.
+        """
+        return self._versions_collection.convert_to_graph(uid,
+                                                          version=version,
+                                                          retrain_if_needed=retrain_if_needed)
+
+    def convert_version_and_update(self,
+                                   uid: Union[UUID, str],
+                                   *,
+                                   version: Union[int, str],
+                                   retrain_if_needed: bool = False) -> Predictor:
+        """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
+
+        See `PredictorCollection.convert_to_graph` for more detail.
+        """
+        new_pred = self.convert_version_to_graph(uid,
+                                                 version=version,
+                                                 retrain_if_needed=retrain_if_needed)
         return self.update(new_pred) if new_pred else None
