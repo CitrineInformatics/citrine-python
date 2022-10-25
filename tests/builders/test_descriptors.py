@@ -166,6 +166,12 @@ def test_invalid_template_conversions():
         def contains(self, bounds):
             return False
 
+        def union(self, *others):
+            return self
+
+        def update(self):
+            pass
+
     with pytest.raises(ValueError):
         template_to_descriptor(
             ParameterTemplate("dummy", bounds=DummyBounds())
