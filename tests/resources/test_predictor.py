@@ -643,7 +643,7 @@ def test_predictor_list_archived(valid_graph_predictor_data):
     assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20})
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 def test_get_version(valid_graph_predictor_data, version):
     # Given
     session = FakeSession()
@@ -670,7 +670,7 @@ def test_get_invalid_version(valid_graph_predictor_data, version):
         pc.get_version(uuid.uuid4(), version=version)
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 def test_archive_version(valid_label_fractions_predictor_data, version):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -685,7 +685,7 @@ def test_archive_version(valid_label_fractions_predictor_data, version):
     assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{version}/archive", json={})]
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 def test_restore_version(valid_label_fractions_predictor_data, version):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -770,7 +770,7 @@ def test_list_archived_versions(valid_expression_predictor_data):
 
 
 @pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 def test_convert_version_to_graph(predictor_data, version, request):
     predictor_data = request.getfixturevalue(predictor_data)
 
@@ -797,7 +797,7 @@ def test_convert_version_to_graph(predictor_data, version, request):
 
 
 @pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 def test_convert_version_and_update(predictor_data_fixture, version, request):
     predictor_data = request.getfixturevalue(predictor_data_fixture)
 
@@ -835,7 +835,7 @@ def test_convert_version_and_update(predictor_data_fixture, version, request):
     assert response.dump() == predictor.dump()
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 @pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
 @pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
 def test_convert_version_and_update_errors(version, error_args, method_name):
@@ -862,7 +862,7 @@ def test_convert_version_and_update_errors(version, error_args, method_name):
     assert session.last_call == expected_call_convert
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 @pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
 def test_convert_version_auto_retrain(version, valid_graph_predictor_data, method_name):
     # Given

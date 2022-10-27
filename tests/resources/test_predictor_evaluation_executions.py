@@ -1,7 +1,9 @@
+import random
 import uuid
 
 import pytest
 
+from citrine._rest.resource import PredictorRef
 from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
@@ -95,23 +97,45 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json={"module_uid": str(predictor_id)},
+        json=PredictorRef(predictor_id).dump(),
         params={"random_state": random_state}
     )
 
 
-def test_list(collection: PredictorEvaluationExecutionCollection, session):
+def test_trigger_workflow_execution_with_version(collection: PredictorEvaluationExecutionCollection, predictor_evaluation_execution_dict, session):
+    # Given
+    predictor_id = uuid.uuid4()
+    predictor_version = random.randint(1, 10)
+    session.set_response(predictor_evaluation_execution_dict)
+
+    # When
+    actual_execution = collection.trigger(predictor_id, predictor_version=predictor_version)
+
+    # Then
+    assert str(actual_execution.uid) == predictor_evaluation_execution_dict["id"]
+    expected_path = '/projects/{}/predictor-evaluation-workflows/{}/executions'.format(
+        collection.project_id,
+        collection.workflow_id,
+    )
+    assert session.last_call == FakeCall(
+        method='POST',
+        path=expected_path,
+        json=PredictorRef(predictor_id, predictor_version).dump()
+    )
+
+
+@pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
+def test_list(collection: PredictorEvaluationExecutionCollection, session, predictor_version):
     session.set_response({"page": 1, "per_page": 4, "next": "", "response": []})
     predictor_id = uuid.uuid4()
-    lst = list(collection.list(per_page=4, predictor_id=predictor_id))
-    assert len(lst) == 0
+    lst = list(collection.list(per_page=4, predictor_id=predictor_id, predictor_version=predictor_version))
+    assert not lst
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
-    assert session.last_call == FakeCall(
-        method='GET',
-        path=expected_path,
-        params={"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
-    )
+    expected_payload = {"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
+    if predictor_version is not None:
+        expected_payload["predictor_version"] = predictor_version
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params=expected_payload)
 
 
 def test_archive(workflow_execution, collection):

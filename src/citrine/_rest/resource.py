@@ -54,3 +54,17 @@ class ResourceRef(Serializable['ResourceRef']):
 
     def __init__(self, uid: Union[UUID, str]):
         self.uid = uid
+
+
+class PredictorRef(Serializable['PredictorRef']):
+    """A reference to a resource by UID."""
+
+    uid = properties.UUID('predictor_id')
+    version = properties.Optional(
+        properties.Union([properties.Integer(), properties.String()]),
+        'predictor_version'
+    )
+
+    def __init__(self, uid: Union[UUID, str], version: Optional[Union[int, str]] = None):
+        self.uid = uid
+        self.version = version

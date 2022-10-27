@@ -48,10 +48,12 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     @property
     def report(self):
         """Fetch the predictor report."""
-        if self.uid is None or self._session is None or self._project_id is None:
+        if self.uid is None or self._session is None or self._project_id is None \
+                or getattr(self, "version", None) is None:
             msg = "Cannot get the report for a predictor that wasn't read from the platform"
             raise ValueError(msg)
-        return ReportResource(self._project_id, self._session).get(self.uid)
+        report_resource = ReportResource(self._project_id, self._session)
+        return report_resource.get_version(self.uid, predictor_version=self.version)
 
     @staticmethod
     def wrap_instance(predictor_data: dict) -> dict:

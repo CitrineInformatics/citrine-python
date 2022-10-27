@@ -50,7 +50,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     _collection_key = 'response'
     _paginator: Paginator = _PredictorVersionPaginator()
 
-    _SPECIAL_VERSIONS = ["latest"]
+    _SPECIAL_VERSIONS = ["latest", "most_recent"]
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -65,8 +65,8 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
             version_str = str(version)
             if version_str not in self._SPECIAL_VERSIONS \
                     and (not version_str.isdecimal() or int(version_str) <= 0):
-                raise ValueError("A predictor version must either be a positive integer, or "
-                                 "\"latest\".")
+                raise ValueError("A predictor version must either be a positive integer,"
+                                 "\"latest\", or \"most_recent\".")
 
             path += f"/{version_str}"
             path += f"/{action}" if action else ""
