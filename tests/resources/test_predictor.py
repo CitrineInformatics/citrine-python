@@ -79,18 +79,15 @@ def test_archive(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
+    session.set_responses(None, valid_label_fractions_predictor_data)
 
     with pytest.deprecated_call():
         archived_predictor = pc.archive(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
     ]
-
-    assert archived_predictor.is_archived
 
 
 def test_restore(valid_label_fractions_predictor_data):
@@ -99,18 +96,15 @@ def test_restore(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
+    session.set_responses(None, valid_label_fractions_predictor_data)
 
     with pytest.deprecated_call():
         restored_predictor = pc.restore(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
     ]
-    
-    assert not restored_predictor.is_archived
 
 
 def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
@@ -118,7 +112,7 @@ def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
     entity["metadata"]["archived"] = entity["metadata"]["created"]
-    session.set_responses(entity, None, entity, paging_response(entity), entity)
+    session.set_responses(entity, None, entity)
 
     predictor = pc.build(entity)
     with pytest.deprecated_call():
@@ -129,8 +123,7 @@ def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
         FakeCall(method="PUT", path=f"{entity_path}/archive", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", json={})
     ]
 
     archived_predictor = pc.update(predictor)
@@ -143,7 +136,7 @@ def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, None, entity, paging_response(), entity)
+    session.set_responses(entity, None, entity)
 
     predictor = pc.build(entity)
     with pytest.deprecated_call():
@@ -154,8 +147,7 @@ def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
         FakeCall(method="PUT", path=f"{entity_path}/restore", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", json={})
     ]
 
     restored_predictor = pc.update(predictor)
@@ -186,7 +178,7 @@ def test_archive_root(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
+    session.set_response(None)
 
     pc.archive_root(pred_id)
 
@@ -199,7 +191,7 @@ def test_restore_root(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
+    session.set_response(None)
 
     pc.restore_root(pred_id)
 
@@ -247,15 +239,14 @@ def test_register(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, entity, paging_response(entity))
+    session.set_response(entity)
 
     predictor = pc.build(entity)
 
     predictors_path = f"/projects/{pc.project_id}/predictors"
     expected_calls = [
         FakeCall(method="POST", path=predictors_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", json={})
     ]
 
     updated_predictor = pc.register(predictor)
@@ -308,7 +299,7 @@ def test_update(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, entity, paging_response(entity))
+    session.set_response(entity)
 
     predictor = pc.build(entity)
 
@@ -316,8 +307,7 @@ def test_update(valid_label_fractions_predictor_data):
     entity_path = f"{predictors_path}/{entity['id']}"
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", json={})
     ]
 
     updated_predictor = pc.update(predictor)
@@ -503,13 +493,12 @@ def test_convert_to_graph(predictor_data, request):
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
-    session.set_responses(deepcopy(predictor_data), paging_response(predictor_data))
+    session.set_response(deepcopy(predictor_data))
     
     predictors_path = PredictorCollection._path_template.format(project_id=project_id)
     entity_path = f"{predictors_path}/{predictor_id}"
     expected_calls = [
-        FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="GET", path=f"{entity_path}/convert")
     ]
 
     # When
@@ -534,22 +523,14 @@ def test_convert_and_update(predictor_data_fixture, request):
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
-    session.set_responses(
-            deepcopy(predictor_data),
-            paging_response(predictor_data),
-            deepcopy(predictor_data),
-            deepcopy(predictor_data),
-            paging_response(predictor_data)
-    )
+    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data), deepcopy(predictor_data))
 
     predictors_path = PredictorCollection._path_template.format(project_id=project_id)
     entity_path = f"{predictors_path}/{predictor_id}"
     expected_calls = [
         FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20}),
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", json={})
     ]
 
     # When
@@ -609,8 +590,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
             Conflict(convert_path, response),
             deepcopy(valid_graph_predictor_data),
             deepcopy(valid_graph_predictor_data),
-            deepcopy(valid_graph_predictor_data),
-            paging_response(valid_graph_predictor_data)
+            deepcopy(valid_graph_predictor_data)
     )
 
     # When
@@ -622,8 +602,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
         FakeCall(method="GET", path=convert_path),
         FakeCall(method="GET", path=entity_path),
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=train_path, json={}),
-        FakeCall(method='GET', path=predictors_path, params={"per_page": 20, "filter": "archived eq 'true'"}),
+        FakeCall(method="PUT", path=train_path, json={})
     ]
     assert session.calls == expected_calls
     assert response is None

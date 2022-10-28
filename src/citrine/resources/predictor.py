@@ -54,43 +54,12 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
         return format_escaped_url(path_template, project_id=self.project_id)
 
-    # TODO: Until we expose predictor versions in the SDK, and thus expose the
-    # difference between archving a predictor root and version, we should
-    # report the root's archive status.
-    def _inject_archive_info(self, predictor: Predictor, is_archived: bool = None) -> Predictor:
-        # Allows specifying the root predictor archive status, or auto-detecting it.
-        archived = self.root_is_archived(predictor.uid) if is_archived is None else is_archived
-        if archived:
-            predictor.archived_by = predictor.updated_by
-            predictor.archive_time = predictor.update_time
-        else:
-            predictor.archived_by = None
-            predictor.archive_time = None
-        return predictor
-
-    # TODO: Same as above
-    def _build_collection_elements(self, collection: Iterable[dict], is_archived: bool = None) \
-            -> Iterable[Predictor]:
-        for pred in super()._build_collection_elements(collection):
-            yield self._inject_archive_info(pred, is_archived)
-
-    def _build_archived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
-        return self._build_collection_elements(collection, True)
-
-    def _build_unarchived_collection(self, collection: Iterable[dict]) -> Iterable[Predictor]:
-        return self._build_collection_elements(collection, False)
-
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
         predictor: Predictor = Predictor.build(data)
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
-
-    def get(self, uid: Union[UUID, str]) -> Predictor:
-        """Get a particular element of the collection."""
-        predictor = super().get(uid)
-        return self._inject_archive_info(predictor)
 
     def register(self, predictor: Predictor) -> Predictor:
         """Register and train a Predictor."""
@@ -129,8 +98,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     def _train(self, uid: Union[UUID, str]) -> Predictor:
         path = self._predictors_path("train", uid)
         entity = self.session.put_resource(path, {}, version=self._api_version)
-        predictor = self.build(entity)
-        return self._inject_archive_info(predictor)
+        return self.build(entity)
 
     def archive_root(self, uid: Union[UUID, str]):
         """Archive a root predictor.
@@ -175,15 +143,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         self.restore_root(uid)
         return self.get(uid)
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[Predictor]:
-        """List non-archived Predictors."""
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_unarchived_collection,
-                                        page=page,
-                                        per_page=per_page)
-
     def list_archived(self,
                       *,
                       page: Optional[int] = None,
@@ -192,7 +151,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
 
         return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_archived_collection,
+                                        collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)
 
@@ -226,7 +185,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         if update_data["updatable"]:
             built = Predictor.build(update_data)
             built.uid = uid
-            return self._inject_archive_info(built)
+            return built
         else:
             return None
 
@@ -282,8 +241,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         body = {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
-        predictor = self.build(Predictor.wrap_instance(data["instance"]))
-        return self._inject_archive_info(predictor)
+        return self.build(Predictor.wrap_instance(data["instance"]))
 
     def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
             -> Predictor:
@@ -331,8 +289,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 return None
             else:
                 raise exc
-        predictor = self.build(entity)
-        return self._inject_archive_info(predictor)
+        return self.build(entity)
 
     def convert_and_update(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
             -> Predictor:
