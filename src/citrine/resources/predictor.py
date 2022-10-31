@@ -181,7 +181,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         return predictor
 
     def register(self, predictor: Predictor) -> Predictor:
-        """Register and train a Predictor."""
+        """Register and train a Predictor.
+
+        This predctor will be version 1, and its `draft` flag will be `True`. If training completes
+        successfully, the `draft` flag will be set to `False`. Otherwise, it will remain `False`.
+        """
         created_predictor = super().register(predictor)
 
         # If the initial response is invalid, just return it.
@@ -193,7 +197,13 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             return self._train(created_predictor.uid)
 
     def update(self, predictor: Predictor) -> Predictor:
-        """Update and train a Predictor."""
+        """Update and train a Predictor.
+
+        If the predictor is a draft, this will overwrite its contents, then begin training. If it's
+        not a draft, a new version will be created with the update, and then training will begin.
+
+        In either case, if training completes successfully, it will no longer be a draft.
+        """
         updated_predictor = super().update(predictor)
 
         # The /api/v3/predictors endpoint switched (un)archive from a field on the update payload
