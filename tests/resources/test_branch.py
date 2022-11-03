@@ -8,7 +8,7 @@ from dateutil import tz
 from citrine._rest.resource import ResourceTypeEnum
 from citrine.resources.dataset import Dataset
 from citrine.resources.branch import Branch, BranchCollection
-from tests.utils.factories import BranchDataFactory
+from tests.utils.factories import BranchDataFactory, CandidateExperimentSnapshotDataFactory, ExperimentDataSourceDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 logger = getLogger(__name__)
@@ -206,3 +206,42 @@ def test_branch_list_archived(session, collection, branch_path):
     # Then
     assert session.num_calls == 1
     assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20})
+
+
+def test_experiment_datasource(session, collection):
+    # Given
+    erds_path = f'projects/{collection.project_id}/candidate-experiment-datasources'
+
+    erds = ExperimentDataSourceDataFactory()
+    erds['data']['experiments'] = [CandidateExperimentSnapshotDataFactory()]
+
+    branch = collection.build(BranchDataFactory())
+    session.set_response({'response': [erds]})
+
+
+    # When / Then
+    assert branch.experiment_datasource is not None
+    assert session.calls == [
+        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100})
+    ]
+
+
+def test_no_experiment_datasource(session, collection):
+    # Given
+    erds_path = f'projects/{collection.project_id}/candidate-experiment-datasources'
+    branch = collection.build(BranchDataFactory())
+    session.set_response({'response': []})
+
+    # When / Then
+    assert branch.experiment_datasource is None
+    assert session.calls == [
+        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100})
+    ]
+
+
+def test_experiment_data_source_no_project_id(session):
+    branch = BranchCollection(None, session).build(BranchDataFactory())
+    with pytest.raises(AttributeError):
+        branch.experiment_datasource
+
+    assert not session.calls

@@ -11,7 +11,8 @@ from citrine.resources.file_link import FileLink
 
 __all__ = ['DataSource',
            'CSVDataSource',
-           'GemTableDataSource']
+           'GemTableDataSource',
+           'ExperimentDataSourceRef']
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
@@ -40,7 +41,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            CSVDataSource, GemTableDataSource
+            CSVDataSource, GemTableDataSource, ExperimentDataSourceRef
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -122,3 +123,23 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         self.table_id: UUID = table_id
         self.table_version: Union[int, str] = table_version
         self.formulation_descriptor: Optional[FormulationDescriptor] = formulation_descriptor
+
+
+class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):
+    """A reference to a data source based on an experiment result hosted on the data platform.
+
+    Parameters
+    ----------
+    datasource_id: UUID
+        Unique identifier for the Experiment Data Source
+
+    """
+
+    typ = properties.String('type', default='experiments_data_source', deserializable=False)
+    datasource_id = properties.UUID("datasource_id")
+
+    def _attrs(self) -> List[str]:
+        return ["datasource_id", "typ"]
+
+    def __init__(self, *, datasource_id: UUID):
+        self.datasource_id: UUID = datasource_id
