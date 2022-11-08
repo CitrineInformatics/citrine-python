@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Dict, Type
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -104,7 +104,7 @@ class MixtureExperimentValue(Serializable['MixtureExperimentValue'], ExperimentV
     value = properties.Mapping(properties.String, properties.Float, 'value')
     typ = properties.String('type', default='MixtureValue', deserializable=False)
 
-    def __init__(self, value: dict[str, float]):
+    def __init__(self, value: Dict[str, float]):
         self.value = value
 
 

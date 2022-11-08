@@ -2,7 +2,7 @@ import csv
 import json
 from functools import partial
 from io import StringIO
-from typing import Union, Iterator, Optional
+from typing import Dict, Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -36,7 +36,7 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
         """Candidate experiment snapshots are not directly instantiated by the user."""
         pass  # pragma: no cover
 
-    def _overrides_json(self) -> dict[str, str]:
+    def _overrides_json(self) -> Dict[str, str]:
         return {name: json.dumps(expt_value.value) for name, expt_value in self.overrides.items()}
 
 
