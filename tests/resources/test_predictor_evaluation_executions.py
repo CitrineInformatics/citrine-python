@@ -2,7 +2,6 @@ import uuid
 
 import pytest
 
-from citrine._rest.resource import ResourceRef
 from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
@@ -81,10 +80,11 @@ def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecu
 def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionCollection, predictor_evaluation_execution_dict, session):
     # Given
     predictor_id = uuid.uuid4()
+    random_state = 9325
     session.set_response(predictor_evaluation_execution_dict)
 
     # When
-    actual_execution = collection.trigger(predictor_id)
+    actual_execution = collection.trigger(predictor_id, random_state=random_state)
 
     # Then
     assert str(actual_execution.uid) == predictor_evaluation_execution_dict["id"]
@@ -95,7 +95,7 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json=ResourceRef(predictor_id).dump()
+        json={"module_uid": str(predictor_id), "random_state": random_state}
     )
 
 
