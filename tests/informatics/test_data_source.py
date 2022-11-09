@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 
-from citrine.informatics.data_sources import DataSource, CSVDataSource, GemTableDataSource
+from citrine.informatics.data_sources import DataSource, CSVDataSource, ExperimentDataSourceRef, GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
 
@@ -15,6 +15,7 @@ from citrine.resources.file_link import FileLink
     GemTableDataSource(table_id=uuid.uuid4(), table_version=1),
     GemTableDataSource(table_id=uuid.uuid4(), table_version="2"),
     GemTableDataSource(table_id=uuid.uuid4(), table_version="2", formulation_descriptor=FormulationDescriptor("formulation")),
+    ExperimentDataSourceRef(datasource_id=uuid.uuid4())
 ])
 def data_source(request):
     return request.param

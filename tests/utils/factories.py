@@ -4,7 +4,7 @@
 # Naming convention here is to use "*DataFactory" for dictionaries used as API input/out, and
 # <ModelName>Factory for the domain objects themselves
 
-from random import randrange
+from random import randrange, random
 
 import factory
 from citrine.informatics.scores import LIScore
@@ -338,3 +338,68 @@ class ProcessTemplateFactory(factory.Factory):
     description = factory.Faker('catch_phrase')
     conditions = []
     parameters = []
+
+
+class ExperimentDataSourceDataDataFactory(factory.DictFactory):
+    experiments = []
+
+
+class ExperimentDataSourceMetadataDataFactory(factory.DictFactory):
+    branch_root_id = factory.Faker('uuid4')
+    version = randrange(1, 10)
+    created = factory.SubFactory(UserTimestampDataFactory)
+
+
+class ExperimentDataSourceDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    data = factory.SubFactory(ExperimentDataSourceDataDataFactory)
+    metadata = factory.SubFactory(ExperimentDataSourceMetadataDataFactory)
+
+    def __init__(*, experiments=[], **kwargs):
+        kwargs.pop("data", None)
+        data = ExperimentDataSourceDataDataFactory(experiments=experiments)
+
+        print(data)
+
+        super().__init__(data=data, **kwargs)
+
+
+class CandidateExperimentSnapshotDataFactory(factory.DictFactory):
+    experiment_id = factory.Faker('uuid4')
+    candidate_id = factory.Faker('uuid4')
+    workflow_id = factory.Faker('uuid4')
+    name = factory.Faker('company')
+    description = factory.Faker('company')
+    updated_time = factory.Faker("iso8601")
+
+    overrides = {}
+
+
+class CategoricalExperimentValueDataFactory(factory.DictFactory):
+    type = "CategoricalValue"
+    value = factory.Faker('company')
+
+
+class ChemicalFormulaExperimentValueDataFactory(factory.DictFactory):
+    type = "OrganicValue"
+    value = factory.Faker('company')
+
+
+class IntegerExperimentValueDataFactory(factory.DictFactory):
+    type = "IntegerValue"
+    value = randrange(1, 100)
+
+
+class MixtureExperimentValueDataFactory(factory.DictFactory):
+    type = "MixtureValue"
+    value = {}
+
+
+class MolecularStructureExperimentValueDataFactory(factory.DictFactory):
+    type = "InorganicValue"
+    value = factory.Faker('company')
+
+
+class RealExperimentValueDataFactory(factory.DictFactory):
+    type = "RealValue"
+    value = randrange(1, 100) * random()

@@ -8,6 +8,8 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.design_workflow import DesignWorkflowCollection
+from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
+                                                     ExperimentDataSource)
 
 
 class Branch(Resource['Branch']):
@@ -43,6 +45,15 @@ class Branch(Resource['Branch']):
         return DesignWorkflowCollection(project_id=self.project_id,
                                         session=self.session,
                                         branch_id=self.uid)
+
+    @property
+    def experiment_datasource(self) -> Optional[ExperimentDataSource]:
+        """Return this branch's experiment data source, or None if one doesn't exist."""
+        if getattr(self, 'project_id', None) is None:
+            raise AttributeError('Cannot retrieve datasource without project reference!')
+        erds = ExperimentDataSourceCollection(project_id=self.project_id, session=self.session)
+        branch_erds_iter = erds.list(branch_id=self.uid, version="latest")
+        return next(branch_erds_iter, None)
 
 
 class BranchCollection(Collection[Branch]):
