@@ -63,9 +63,10 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             workflow_id=self.workflow_id
         )
         json = ResourceRef(predictor_id).dump()
+        params = dict()
         if random_state is not None:
-            json["random_state"] = random_state
-        data = self.session.post_resource(path, json)
+            params["random_state"] = random_state
+        data = self.session.post_resource(path, json, params=params)
         return self.build(data)
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:

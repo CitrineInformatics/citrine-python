@@ -95,7 +95,8 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json={"module_uid": str(predictor_id), "random_state": random_state}
+        json={"module_uid": str(predictor_id)},
+        params={"random_state": random_state}
     )
 
 
