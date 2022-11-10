@@ -41,8 +41,17 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, predictor_id: UUID):
-        """Trigger a predictor evaluation execution against a predictor, by id."""
+    def trigger(self, predictor_id: UUID, *, random_state: Optional[int] = None):
+        """Trigger a predictor evaluation execution against a predictor.
+
+        Parameters
+        -----------
+        predictor_id: UUID
+            ID of the predictor to evaluate.
+        random_state: int, optional
+            Seeds the evaluators' random number generator so that the results are repeatable.
+
+        """
         if self.workflow_id is None:
             msg = "Cannot trigger a predictor evaluation execution without knowing the " \
                   "predictor evaluation workflow. Use workflow.executions.trigger instead of " \
@@ -53,7 +62,11 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             project_id=self.project_id,
             workflow_id=self.workflow_id
         )
-        data = self.session.post_resource(path, ResourceRef(predictor_id).dump())
+        json = ResourceRef(predictor_id).dump()
+        params = dict()
+        if random_state is not None:
+            params["random_state"] = random_state
+        data = self.session.post_resource(path, json, params=params)
         return self.build(data)
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
