@@ -69,7 +69,8 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                        predictor_id: UUID,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
-                       include_label_count_constraints: bool = False) -> DesignSpace:
+                       include_label_count_constraints: bool = False,
+                       include_parameter_constraints: bool = False) -> DesignSpace:
         """[ALPHA] Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
@@ -100,6 +101,10 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
             Whether to include constraints on labeled ingredient counts based on the training data.
             Defaults to False.
 
+        include_parameter_constraints: bool
+            Whether to include constraints on all other inputs based on the training data.
+            Defaults to False.
+
         Returns
         -------
         DesignSpace
@@ -111,7 +116,8 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
             "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
             "include_label_fraction_constraints": include_label_fraction_constraints,
-            "include_label_count_constraints": include_label_count_constraints
+            "include_label_count_constraints": include_label_count_constraints,
+            "include_parameter_constraints": include_parameter_constraints
         }
         data = self.session.post_resource(path, json=payload, version="v2")
         if 'instance' in data:

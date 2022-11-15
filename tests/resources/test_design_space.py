@@ -130,7 +130,8 @@ def test_create_default(valid_product_design_space_data,
             "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": False,
             "include_label_fraction_constraints": False,
-            "include_label_count_constraints": False
+            "include_label_count_constraints": False,
+            "include_parameter_constraints": False
         },
         version="v2"
     )
@@ -146,8 +147,9 @@ def test_create_default(valid_product_design_space_data,
 @pytest.mark.parametrize("ingredient_fractions", (True, False))
 @pytest.mark.parametrize("label_fractions", (True, False))
 @pytest.mark.parametrize("label_count", (True, False))
+@pytest.mark.parametrize("parameters", (True, False))
 def test_create_default_with_config(valid_product_design_space_data, valid_product_design_space,
-                                    ingredient_fractions, label_fractions, label_count):
+                                    ingredient_fractions, label_fractions, label_count, parameters):
     # The instance field isn't renamed to config in objects returned from this route
     # This renames the config key to instance to match the data we get from the API
     data_with_instance = deepcopy(valid_product_design_space_data)
@@ -169,16 +171,18 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
             "predictor_id": str(predictor_id),
             "include_ingredient_fraction_constraints": ingredient_fractions,
             "include_label_fraction_constraints": label_fractions,
-            "include_label_count_constraints": label_count
+            "include_label_count_constraints": label_count,
+            "include_parameter_constraints": parameters
         },
         version="v2"
     )
-    
+
     default_design_space = collection.create_default(
         predictor_id=predictor_id,
         include_ingredient_fraction_constraints=ingredient_fractions,
         include_label_fraction_constraints=label_fractions,
-        include_label_count_constraints=label_count
+        include_label_count_constraints=label_count,
+        include_parameter_constraints=parameters
     )
 
     assert session.num_calls == 1
