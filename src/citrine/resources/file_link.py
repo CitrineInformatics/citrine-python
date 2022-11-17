@@ -686,6 +686,32 @@ class FileCollection(Collection[FileLink]):
 
         download_response = requests.get(final_url)
         write_file_locally(download_response.content, final_path)
+    
+    def read(self, *, file_link: Union[str, UUID, FileLink]):
+        """
+        Read the file associated with a given FileLink.
+
+        Parameters
+        ----------
+        file_link: FileLink, str, UUID
+            Resource referencing the file.
+        """
+        file_link = self._resolve_file_link(file_link)
+
+        if self._is_external_url(file_link.url):  # Pull it from where ever it lives
+            final_url = file_link.url
+        elif self._validate_local_url(file_link.url):
+            # The "/content-link" route returns a pre-signed url to download the file.
+            content_link = self._get_path_from_file_link(file_link, action='content-link')
+            content_link_response = self.session.get_resource(content_link)
+            pre_signed_url = content_link_response['pre_signed_read_link']
+            final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
+        else:  # Unrecognized
+            raise ValueError(f"URL was malformed for a local file resource ({file_link.url}).")
+
+        download_response = requests.get(final_url)
+        return download_response.content
+
 
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
