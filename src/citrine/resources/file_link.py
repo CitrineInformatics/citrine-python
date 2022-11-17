@@ -686,7 +686,7 @@ class FileCollection(Collection[FileLink]):
 
         download_response = requests.get(final_url)
         write_file_locally(download_response.content, final_path)
-    
+
     def read(self, *, file_link: Union[str, UUID, FileLink]):
         """
         Read the file associated with a given FileLink.
@@ -695,6 +695,12 @@ class FileCollection(Collection[FileLink]):
         ----------
         file_link: FileLink, str, UUID
             Resource referencing the file.
+
+        Returns
+        -------
+        I/O stream
+            The contents of the file.
+
         """
         file_link = self._resolve_file_link(file_link)
 
@@ -711,7 +717,6 @@ class FileCollection(Collection[FileLink]):
 
         download_response = requests.get(final_url)
         return download_response.content
-
 
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
