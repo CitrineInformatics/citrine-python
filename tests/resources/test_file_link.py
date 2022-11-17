@@ -410,6 +410,63 @@ def test_file_download(collection: FileCollection, session, tmpdir):
     with pytest.raises(ValueError, match="malformed"):
         collection.download(file_link=bad_file, local_path=target_dir)
 
+def test_read(collection: FileCollection, session):
+    """
+    Test that reading a file works as expected.
+
+    """
+    # Given
+    filename = 'diagram.pdf'
+    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{uuid4()}/versions/{uuid4()}"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+    pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
+    session.set_response({
+        'pre_signed_read_link': pre_signed_url,
+    })
+   
+    with requests_mock.mock() as mock_get:
+        mock_get.get(pre_signed_url, text="lorem ipsum")
+        # When
+        io = collection.read(file_link=file)
+        assert io.decode('UTF-8') == 'lorem ipsum'
+        # When
+        assert mock_get.call_count == 1
+        expected_call = FakeCall(
+            method='GET',
+            path=url + '/content-link'
+        )
+        assert expected_call == session.last_call
+
+
+
+    bad_url = f"bin/uuid3/versions/uuid4"
+    bad_file = FileLink.build(FileLinkDataFactory(url=bad_url, filename=filename))
+    with pytest.raises(ValueError, match="malformed"):
+        collection.read(file_link=bad_file)
+
+
+def test_external_file_read(collection: FileCollection, session):
+    """
+    Test that reading a file works as expected for external files.
+
+    """
+    # Given
+    filename = 'spreadsheet.xlsx'
+    url = "http://customer.com/data-lake/files/123/versions/456"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+
+
+    with requests_mock.mock() as mock_get:
+        mock_get.get(url, text='010111011')
+
+        # When
+        io = collection.read(file_link=file)
+        assert io.decode('UTF-8') == '010111011'
+
+        # When
+        assert mock_get.call_count == 1
+
+    # assert local_path.read_text() == '010111011'
 
 def test_external_file_download(collection: FileCollection, session, tmpdir):
     """
