@@ -9,6 +9,7 @@ from citrine.exceptions import NotFound
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.session import FakeCall, FakeRequestResponse, FakeSession
 
 @pytest.fixture
@@ -17,41 +18,34 @@ def valid_product_design_space(valid_product_design_space_data) -> ProductDesign
     return DesignSpace.build(data)
 
 
-def test_design_space_build():
+def test_design_space_build(valid_product_design_space_data):
     # Given
     collection = DesignSpaceCollection(uuid.uuid4(), None)
-    design_space_id = uuid.uuid4()
-
-    # TODO:  At some point we should create data factories for this
-    design_space_data = {
-        'id': str(design_space_id),
-        'config': {
-            'type': 'Univariate',
-            'name': 'My Design Space',
-            'description': 'For testing',
-            'dimensions': [{
-                'type': 'ContinuousDimension',
-                'descriptor': {
-                    'type': 'RealDescriptor',
-                    'descriptor_key': 'foo',
-                    'lower_bound': 0.0,
-                    'upper_bound': 1.0,
-                    'units': ""
-                },
-                'lower_bound': 0.0,
-                'upper_bound': 1.0,
-            }],
-        },
-        'status': '',
-    }
+    design_space_id = valid_product_design_space_data["id"]
 
     # When
-    design_space = collection.build(design_space_data)
+    design_space = collection.build(valid_product_design_space_data)
 
     # Then
-    assert design_space.uid == design_space_id
-    assert design_space.name == 'My Design Space'
-    assert design_space.dimensions[0].descriptor.key == 'foo'
+    assert str(design_space.uid) == design_space_id
+    assert design_space.name == valid_product_design_space_data["config"]["name"]
+    assert design_space.dimensions[0].descriptor.key == valid_product_design_space_data["config"]["dimensions"][0]["descriptor"]["descriptor_key"]
+
+
+def test_design_space_build_with_status_detail(valid_product_design_space_data):
+    # Given
+    collection = DesignSpaceCollection(uuid.uuid4(), None)
+
+    status_detail_data = {("Info", "info_msg"), ("Warning", "warning msg"), ("Error", "error msg")}
+    data = deepcopy(valid_product_design_space_data)
+    data["status_detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
+
+    # When
+    design_space = collection.build(data)
+
+    # Then
+    status_detail_tuples = {(detail.level, detail.msg) for detail in design_space.status_detail}
+    assert status_detail_tuples == status_detail_data
 
 
 def test_formulation_build(valid_formulation_design_space_data):
@@ -255,6 +249,7 @@ def test_archive(valid_formulation_design_space_data):
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
     del expected_payload["status_info"]
+    del expected_payload["status_detail"]
     del expected_payload["id"]
 
     archived_design_space = dsc.archive(ds_id)
@@ -278,6 +273,7 @@ def test_restore(valid_formulation_design_space_data):
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
     del expected_payload["status_info"]
+    del expected_payload["status_detail"]
     del expected_payload["id"]
 
     archived_design_space = dsc.restore(ds_id)

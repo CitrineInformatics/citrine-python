@@ -297,7 +297,7 @@ class AutoConfigureWorkflow():
             return
 
         if self.design_space is not None:
-            self._status_info = self.design_space.status_info
+            self._status_info = [detail.msg for detail in self.predictor.status_detail]
             if self.design_space.failed():
                 self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID
             else:
@@ -313,7 +313,7 @@ class AutoConfigureWorkflow():
             return
 
         if self.predictor is not None:
-            self._status_info = self.predictor.status_info
+            self._status_info = [detail.msg for detail in self.predictor.status_detail]
             if self.predictor.failed():
                 self._status = AutoConfigureStatus.PREDICTOR_INVALID
             else:
@@ -615,7 +615,7 @@ class AutoConfigureWorkflow():
 
         self._predictor = predictor
         self._status = AutoConfigureStatus.PREDICTOR_CREATED
-        self._status_info = predictor.status_info
+        self._status_info = [detail.msg for detail in predictor.status_detail]
 
         if predictor.failed():
             self._status = AutoConfigureStatus.PREDICTOR_INVALID
@@ -693,7 +693,7 @@ class AutoConfigureWorkflow():
 
         self._design_space = design_space
         self._status = AutoConfigureStatus.DESIGN_SPACE_CREATED
-        self._status_info = design_space.status_info
+        self._status_info = [detail.msg for detail in design_space.status_detail]
 
         if design_space.failed():
             self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID

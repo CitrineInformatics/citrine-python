@@ -39,12 +39,29 @@ def basic_predictor_report_data():
 
 
 def test_build(valid_simple_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    session.get_resource.return_value = basic_predictor_report_data
+    session = FakeSession()
+    session.set_response(basic_predictor_report_data)
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = pc.build(valid_simple_ml_predictor_data)
     assert predictor.name == 'ML predictor'
     assert predictor.description == 'Predicts z from input x and latent variable y'
+
+
+def test_build_with_status(valid_simple_ml_predictor_data, basic_predictor_report_data):
+    session = FakeSession()
+    session.set_response(basic_predictor_report_data)
+
+    status_detail_data = {("Info", "info_msg"), ("Warning", "warning msg"), ("Error", "error msg")}
+    data = deepcopy(valid_simple_ml_predictor_data)
+    data["metadata"]["status"]["detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
+
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = pc.build(data)
+
+    status_detail_tuples = {(detail.level, detail.msg) for detail in predictor.status_detail}
+    assert status_detail_tuples == status_detail_data
+    with pytest.deprecated_call():
+        assert set(predictor.status_info) == {msg for _, msg in status_detail_data}
 
 
 def test_delete():
@@ -327,7 +344,7 @@ def test_register_update_checks_status(valid_auto_ml_predictor_data):
     invalid_entity = build_predictor_entity(
         instance,
         status_name="INVALID",
-        status_info=["AHH IT BURNSSSSS!!!!"]
+        status_detail=[{"level": "Error", "msg": "AHH IT BURNSSSSS!!!!"}]
     )
 
     # Register returns first (invalid) response if failed

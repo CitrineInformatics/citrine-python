@@ -2,7 +2,8 @@
 
 
 def valid_serialization_output(valid_data):
-    return {x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
+    exclude_fields = ['status', 'status_info', 'status_detail']
+    return {x: y for x, y in valid_data.items() if x not in exclude_fields}
 
 
 def module_serialization_check(data, moduleClass):
