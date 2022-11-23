@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>citrine.resources.experiment_datasource module &mdash; Citrine Python 1.44.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.44.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>citrine.resources.experiment_datasource module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/citrine.resources.experiment_datasource.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-citrine.resources.experiment_datasource">
+<span id="citrine-resources-experiment-datasource-module"></span><h1>citrine.resources.experiment_datasource module<a class="headerlink" href="#module-citrine.resources.experiment_datasource" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.experiment_datasource.</span></span><span class="sig-name descname"><span class="pre">CandidateExperimentSnapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot" title="citrine.resources.experiment_datasource.CandidateExperimentSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">CandidateExperimentSnapshot</span></code></a>]</p>
+<p>The contents of a candidate experiment within an experiment data source.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.candidate_id">
+<span class="sig-name descname"><span class="pre">candidate_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.candidate_id" title="Permalink to this definition"></a></dt>
+<dd><p>unique Citrine id of the candidate associated with this experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.description" title="Permalink to this definition"></a></dt>
+<dd><p>description of the experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.name" title="Permalink to this definition"></a></dt>
+<dd><p>name of the experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.overrides">
+<span class="sig-name descname"><span class="pre">overrides</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.overrides" title="Permalink to this definition"></a></dt>
+<dd><p>dictionary of candidate material variable overrides</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict[str, <a class="reference internal" href="citrine.informatics.experiment_values.html#citrine.informatics.experiment_values.ExperimentValue" title="citrine.informatics.experiment_values.ExperimentValue">ExperimentValue</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.uid" title="Permalink to this definition"></a></dt>
+<dd><p>unique Citrine id of this experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.updated_time">
+<span class="sig-name descname"><span class="pre">updated_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.updated_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which the experiment was updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.CandidateExperimentSnapshot.workflow_id">
+<span class="sig-name descname"><span class="pre">workflow_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.workflow_id" title="Permalink to this definition"></a></dt>
+<dd><p>unique Citrine id of the design workflow which produced the associated candidate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.experiment_datasource.</span></span><span class="sig-name descname"><span class="pre">ExperimentDataSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentDataSource</span></code></a>]</p>
+<p>An experiment data source.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.read" title="Permalink to this definition"></a></dt>
+<dd><p>Read this experiment data source into a CSV.</p>
+<p>Each row will be a single experiement from this data source, and each column is a variable
+which is overriden in any of the experiements in this data source. If an experiement did
+not override a variable, its cell will be left empty.</p>
+<p>All cells can be deserialized as JSON. Most of them will simply be strings or numbers. But
+if present,the “Formulation” cell will contain an escaped JSON string, which will
+deserialize into a mapping from ingredient names to floating-point values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.branch_root_id">
+<span class="sig-name descname"><span class="pre">branch_root_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.branch_root_id" title="Permalink to this definition"></a></dt>
+<dd><p>unique Citrine id of the branch root this data source is associated with</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.create_time">
+<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.create_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which this data source was created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.created_by">
+<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.created_by" title="Permalink to this definition"></a></dt>
+<dd><p>id of the user who created this data source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.experiments">
+<span class="sig-name descname"><span class="pre">experiments</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.experiments" title="Permalink to this definition"></a></dt>
+<dd><p>list of experiment data in this data source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="#citrine.resources.experiment_datasource.CandidateExperimentSnapshot" title="citrine.resources.experiment_datasource.CandidateExperimentSnapshot">CandidateExperimentSnapshot</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.uid" title="Permalink to this definition"></a></dt>
+<dd><p>unique Citrine id of this experiment data source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSource.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSource.version" title="Permalink to this definition"></a></dt>
+<dd><p>version of this data source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.experiment_datasource.</span></span><span class="sig-name descname"><span class="pre">ExperimentDataSourceCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.experiment_datasource.ExperimentDataSource</span></code></a>]</p>
+<p>Represents the collection of all experiment data sources associated with a project.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><span class="pre">citrine.resources.experiment_datasource.ExperimentDataSource</span></a></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an individual experiment result from a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.resources.response.html#citrine.resources.response.Response" title="citrine.resources.response.Response"><span class="pre">citrine.resources.response.Response</span></a></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Delete a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.collection.ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><span class="pre">citrine.resources.experiment_datasource.ExperimentDataSource</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.list" title="Permalink to this definition"></a></dt>
+<dd><p>Paginate over the experiment data sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+<li><p><strong>branch_id</strong> (<em>UUID</em><em>, </em><em>optional</em>) – Filter the list by the root branch ID.</p></li>
+<li><p><strong>version</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Filter the list by the data source version. Also accepts “latest”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator that can be used to loop over all matching experiment data sources.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource">ExperimentDataSource</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><span class="pre">citrine.resources.experiment_datasource.ExperimentDataSource</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.read" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the provided experiment data source into a CSV.</p>
+<p>If a UUID or str is provided, it’s first retrieved from the platform.</p>
+<p>For details on the CSV format, see
+<a class="reference internal" href="#citrine.resources.experiment_datasource.ExperimentDataSource.read" title="citrine.resources.experiment_datasource.ExperimentDataSource.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.experiment_datasource.ExperimentDataSource.read()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.collection.CreationType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.collection.CreationType</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.register" title="Permalink to this definition"></a></dt>
+<dd><p>Create a new element of the collection by registering an existing resource.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.experiment_datasource.ExperimentDataSourceCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.collection.CreationType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.collection.CreationType</span></span></span><a class="headerlink" href="#citrine.resources.experiment_datasource.ExperimentDataSourceCollection.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update a particular element of the collection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

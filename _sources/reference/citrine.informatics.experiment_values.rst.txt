@@ -1,0 +1,8 @@
+citrine.informatics.experiment\_values module
+=============================================
+
+.. automodule:: citrine.informatics.experiment_values
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

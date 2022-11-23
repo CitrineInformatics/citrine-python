@@ -20,6 +20,7 @@ Submodules
    citrine.resources.design_execution
    citrine.resources.design_space
    citrine.resources.design_workflow
+   citrine.resources.experiment_datasource
    citrine.resources.file_link
    citrine.resources.gemd_resource
    citrine.resources.gemtables

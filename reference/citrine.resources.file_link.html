@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 1.41.1 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 1.44.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.41.1
+                1.44.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -320,6 +320,23 @@ it will return None to indicate the job was successful.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse">JobSubmissionResponse</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.read" title="Permalink to this definition"></a></dt>
+<dd><p>Read the file associated with a given FileLink.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_link</strong> (<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>, </em><em>str</em><em>, </em><em>UUID</em>) – Resource referencing the file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The contents of the file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>I/O stream</p>
 </dd>
 </dl>
 </dd></dl>

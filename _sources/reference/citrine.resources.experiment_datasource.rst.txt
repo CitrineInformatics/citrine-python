@@ -1,0 +1,8 @@
+citrine.resources.experiment\_datasource module
+===============================================
+
+.. automodule:: citrine.resources.experiment_datasource
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

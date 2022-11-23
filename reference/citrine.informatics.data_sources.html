@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.data_sources module &mdash; Citrine Python 1.41.1 documentation</title>
+  <title>citrine.informatics.data_sources module &mdash; Citrine Python 1.44.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.41.1
+                1.44.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -152,6 +152,46 @@ training data for predictors and the input data for some design spaces.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.data_sources.DataSource.get_type" title="Permalink to this definition"></a></dt>
 <dd><p>Return the subtype.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.data_sources.</span></span><span class="sig-name descname"><span class="pre">ExperimentDataSourceRef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasource_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.data_sources.ExperimentDataSourceRef" title="citrine.informatics.data_sources.ExperimentDataSourceRef"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentDataSourceRef</span></code></a>], <a class="reference internal" href="#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.data_sources.DataSource</span></code></a></p>
+<p>A reference to a data source based on an experiment result hosted on the data platform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datasource_id</strong> (<em>UUID</em>) – Unique identifier for the Experiment Data Source</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef.datasource_id">
+<span class="sig-name descname"><span class="pre">datasource_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef.datasource_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.data_sources.ExperimentDataSourceRef.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'experiments_data_source'</span></em><a class="headerlink" href="#citrine.informatics.data_sources.ExperimentDataSourceRef.typ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
