@@ -5,11 +5,6 @@ Teams
 Teams were introduced to simplify securely sharing your assets across projects. All assets are
 owned by teams, including projects.
 
-.. warning::
-    Teams are not available on all Citrine Platform deployments.
-
-    Please contact support for more information.
-
 Basic Team Use
 -----------------
 
