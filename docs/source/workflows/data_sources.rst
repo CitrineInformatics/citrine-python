@@ -197,9 +197,8 @@ The `.read()` method will return a string in a CSV-friendly format for convenien
 .. code:: python
 
     # Write to CSV:
-    f = open("experiment_datasource.csv", "w")
-    f.write(eds.read())
-    f.close()
+    with open('experiment_datasource.csv', 'w') as f:
+        f.write(eds.read())
 
     # Convert to a Pandas DataFrame
     import pandas as pd
