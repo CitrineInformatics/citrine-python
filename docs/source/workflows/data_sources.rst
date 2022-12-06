@@ -177,3 +177,33 @@ The example below assumes that the uuid and the version of the desired GEM Table
 Note that the descriptor keys above are the headers of the *variable* not the column in the table.
 The last term in the column header is a suffix associated with the specific column definition rather than the variable.
 It should be omitted from the descriptor key.
+
+Experiment Data Source
+----------------------
+
+An :class:`~citrine.resources.experiment_datasource.ExperimentDataSource` references a snapshot of the Experiment Results in a Branch that are fit for training.
+This snapshot is created when one updates the data on a Branch and chooses to include Experiment Results in the training data via the web application.
+There is only one Experiment Data Source per Branch, though it is versioned.
+The version increments everytime a new or updated Experiment Result is chosen as training data via the web application.
+
+One can reference an Experiment Data Source from a branch:
+
+.. code:: python
+
+    eds = branch.experiment_datasource
+
+The `.read()` method will return a string in a CSV-friendly format for convenient export or further analysis:
+
+.. code:: python
+
+    # Write to CSV:
+    f = open("experiment_datasource.csv", "w")
+    f.write(eds.read())
+    f.close()
+
+    # Convert to a Pandas DataFrame
+    import pandas as pd
+    from io import StringIO
+
+    eds_io = StringIO(eds.read())
+    eds_dataframe = pd.read_csv(eds_io.read()))
