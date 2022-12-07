@@ -7,9 +7,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class DataVersionUpdate(Serializable['DataVersionUpdate']):
-    """
-    Container for data updates
-    """
+    """ Container for data updates. """
     current = _properties.String('current')
     latest = _properties.String('latest')
 
@@ -23,9 +21,7 @@ class DataVersionUpdate(Serializable['DataVersionUpdate']):
 
 
 class BranchDataUpdate(Resource['BranchDataUpdate']):
-    """
-    Branch data updates with predictors using the versions indicated that are in READY status
-    """
+    """ Branch data updates with predictors using the versions indicated that are in READY status. """
     data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
     predictors = _properties.List(_properties.Object(PredictorRef), "predictors")
 
@@ -39,11 +35,14 @@ class BranchDataUpdate(Resource['BranchDataUpdate']):
 class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
     """
     Instructions for how the next version of a branch should handle its predictors when the
-    workflows are cloned.  data_updates contains the list of data source versions to upgrade
+    workflows are cloned.
+
+    data_updates contains the list of data source versions to upgrade
     (current->latest), and use_predictors will wither have a <predictor_id>:latest to indicate
     the workflow should use a new version of the predictor.  Or <predictor_id>:<version #> to
     indicate that the workflow should use an existing predictor version.
     """
+
     data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
     use_predictors = _properties.List(_properties.Object(PredictorRef), "use_predictors")
 

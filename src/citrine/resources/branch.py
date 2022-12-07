@@ -175,7 +175,7 @@ class BranchCollection(Collection[Branch]):
 
     def data_updates(self, uid: Union[UUID, str]) -> BranchDataUpdate:
         """
-        Get data updates for a branch
+        Get data updates for a branch.
 
         Parameters
         ----------
