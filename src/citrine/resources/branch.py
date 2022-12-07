@@ -2,13 +2,11 @@ import functools
 from typing import Iterator, Optional, Union
 from uuid import UUID
 
-from citrine._rest.collection import Collection, CreationType
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
@@ -25,8 +23,10 @@ class Branch(Resource['Branch']):
     name = properties.String('data.name')
     uid = properties.Optional(properties.UUID(), 'id')
     archived = properties.Boolean('metadata.archived', serializable=False)
-    created_at = properties.Optional(properties.Datetime(), 'metadata.created.time', serializable=False)
-    updated_at = properties.Optional(properties.Datetime(), 'metadata.updated.time', serializable=False)
+    created_at = properties.Optional(properties.Datetime(), 'metadata.created.time',
+                                     serializable=False)
+    updated_at = properties.Optional(properties.Datetime(), 'metadata.updated.time',
+                                     serializable=False)
     # added in v2
     root_id = properties.UUID('metadata.root_id', serializable=False)
     version = properties.Integer('metadata.version', serializable=False)
@@ -188,7 +188,8 @@ class BranchCollection(Collection[Branch]):
             A list of data updates and compatible predictors
 
         """
-        path_template = '/projects/{project_id}/branches/{branch_id}/data-version-updates-predictor'
+        path_template = '/projects/{project_id}/branches/{branch_id}/' + \
+                        'data-version-updates-predictor'
         path = format_escaped_url(path_template, project_id=self.project_id, branch_id=uid)
         data = self.session.get_resource(path, version=self._api_version)
         return BranchDataUpdate.build(data)
@@ -206,14 +207,16 @@ class BranchCollection(Collection[Branch]):
             Unique identifier of the branch root to advance to next version
 
         branch_instructions: NextBranchVersionRequest
-            Instructions for how the next version of a branch should handle its predictors when the workflows are
-            cloned.  data_updates contains the list of data source versions to upgrade (current->latest), and
-            use_predictors will either have a <predictor_id>:latest to indicate the workflow should use a new version
-            of the predictor.  Or <predictor_id>:<version #> to indicate that the workflow should use an existing
-            predictor version.
+            Instructions for how the next version of a branch should handle its predictors
+            when the workflows are cloned.  data_updates contains the list of data source
+            versions to upgrade (current->latest), and use_predictors will either have a
+            <predictor_id>:latest to indicate the workflow should use a new version of
+            the predictor.  Or <predictor_id>:<version #> to indicate that the workflow
+            should use an existing predictor version.
 
         retrain_models: bool
-            If true, when new versions of models are created, they are automatically scheduled for training
+            If true, when new versions of models are created, they are automatically
+            scheduled for training
 
         Returns
         -------
@@ -224,7 +227,9 @@ class BranchCollection(Collection[Branch]):
 
         path_template = '/projects/{project_id}/branches/next-version-predictor'
         path = format_escaped_url(path_template, project_id=self.project_id)
-        data = self.session.post_resource(path, branch_instructions.dump(), version=self._api_version, params={
-            'root': str(branch_root_id),
-            'retrain_models': retrain_models})
+        data = self.session.post_resource(path, branch_instructions.dump(),
+                                          version=self._api_version,
+                                          params={
+                                              'root': str(branch_root_id),
+                                              'retrain_models': retrain_models})
         return self.build(data)

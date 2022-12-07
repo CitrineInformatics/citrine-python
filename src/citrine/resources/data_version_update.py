@@ -4,7 +4,6 @@ from typing import List
 from citrine._rest.resource import PredictorRef, Resource
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
-from citrine.informatics.data_sources import DataSource
 
 
 class DataVersionUpdate(Serializable['DataVersionUpdate']):
@@ -39,10 +38,11 @@ class BranchDataUpdate(Resource['BranchDataUpdate']):
 
 class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
     """
-    Instructions for how the next version of a branch should handle its predictors when the workflows are
-    cloned.  data_updates contains the list of data source versions to upgrade (current->latest), and use_predictors
-    will wither have a <predictor_id>:latest to indicate the workflow should use a new version of the predictor.  Or
-    <predictor_id>:<version #> to indicate that the workflow should use an existing predictor version.
+    Instructions for how the next version of a branch should handle its predictors when the
+    workflows are cloned.  data_updates contains the list of data source versions to upgrade
+    (current->latest), and use_predictors will wither have a <predictor_id>:latest to indicate
+    the workflow should use a new version of the predictor.  Or <predictor_id>:<version #> to
+    indicate that the workflow should use an existing predictor version.
     """
     data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
     use_predictors = _properties.List(_properties.Object(PredictorRef), "use_predictors")
