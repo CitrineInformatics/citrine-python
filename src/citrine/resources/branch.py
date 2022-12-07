@@ -2,11 +2,14 @@ import functools
 from typing import Iterator, Optional, Union
 from uuid import UUID
 
-from citrine._rest.collection import Collection
+from citrine._rest.collection import Collection, CreationType
+from citrine._rest.engine_resource import EngineResource
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
+from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
                                                      ExperimentDataSource)
@@ -19,11 +22,14 @@ class Branch(Resource['Branch']):
     A branch is a container for design workflows.
     """
 
-    name = properties.String('name')
+    name = properties.String('data.name')
     uid = properties.Optional(properties.UUID(), 'id')
-    archived = properties.Boolean('archived', serializable=False)
-    created_at = properties.Optional(properties.Datetime(), 'created_at', serializable=False)
-    updated_at = properties.Optional(properties.Datetime(), 'updated_at', serializable=False)
+    archived = properties.Boolean('metadata.archived', serializable=False)
+    created_at = properties.Optional(properties.Datetime(), 'metadata.created.time', serializable=False)
+    updated_at = properties.Optional(properties.Datetime(), 'metadata.updated.time', serializable=False)
+    # added in v2
+    root_id = properties.UUID('metadata.root_id', serializable=False)
+    version = properties.Integer('metadata.version', serializable=False)
 
     project_id: Optional[UUID] = None
 
@@ -55,14 +61,20 @@ class Branch(Resource['Branch']):
         branch_erds_iter = erds.list(branch_id=self.uid, version="latest")
         return next(branch_erds_iter, None)
 
+    def _post_dump(self, data: dict) -> dict:
+        # Only the data portion of an entity is sent to the server.
+        data = data["data"]
+        return data
+
 
 class BranchCollection(Collection[Branch]):
     """A collection of Branches."""
 
-    _path_template = '/projects/{project_id}/design-workflow-branches'
+    _path_template = '/projects/{project_id}/branches'
     _individual_key = None
     _collection_key = 'response'
     _resource = Branch
+    _api_version = 'v2'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id: UUID = project_id
@@ -159,4 +171,60 @@ class BranchCollection(Collection[Branch]):
         restore_path_template = f'{self._get_path(uid)}/restore'
         url = format_escaped_url(restore_path_template, project_id=self.project_id, branch_id=uid)
         data = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(data)
+
+    def data_updates(self, uid: Union[UUID, str]) -> BranchDataUpdate:
+        """
+        Get data updates for a branch
+
+        Parameters
+        ----------
+        uid:  Union[UUID, str]
+            Unique identifier of the branch to get data updates for
+
+        Returns
+        -------
+        BranchDataUpdate
+            A list of data updates and compatible predictors
+
+        """
+        path_template = '/projects/{project_id}/branches/{branch_id}/data-version-updates-predictor'
+        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=uid)
+        data = self.session.get_resource(path, version=self._api_version)
+        return BranchDataUpdate.build(data)
+
+    def next_version(self,
+                     branch_root_id: Union[UUID, str],
+                     branch_instructions: NextBranchVersionRequest,
+                     retrain_models: bool = True):
+        """
+        Move a branch to the next version
+
+        Parameters
+        ----------
+        branch_root_id:  Union[UUID, str]
+            Unique identifier of the branch root to advance to next version
+
+        branch_instructions: NextBranchVersionRequest
+            Instructions for how the next version of a branch should handle its predictors when the workflows are
+            cloned.  data_updates contains the list of data source versions to upgrade (current->latest), and
+            use_predictors will either have a <predictor_id>:latest to indicate the workflow should use a new version
+            of the predictor.  Or <predictor_id>:<version #> to indicate that the workflow should use an existing
+            predictor version.
+
+        retrain_models: bool
+            If true, when new versions of models are created, they are automatically scheduled for training
+
+        Returns
+        -------
+        Branch
+            The new branch record after version update
+
+        """
+
+        path_template = '/projects/{project_id}/branches/next-version-predictor'
+        path = format_escaped_url(path_template, project_id=self.project_id)
+        data = self.session.post_resource(path, branch_instructions.dump(), version=self._api_version, params={
+            'root': str(branch_root_id),
+            'retrain_models': retrain_models})
         return self.build(data)

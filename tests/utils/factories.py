@@ -36,12 +36,42 @@ class ProjectDataFactory(factory.DictFactory):
     created_at = None
 
 
+class DataVersionUpdateFactory(factory.DictFactory):
+    current = "gemd::48e5e2f3-d447-458b-a8ea-d9cdb782b86e::1"
+    latest = "gemd::48e5e2f3-d447-458b-a8ea-d9cdb782b86e::2"
+
+
+class PredictorRefFactory(factory.DictFactory):
+    predictor_id = factory.Faker('uuid4')
+    version = randrange(10)
+
+
+class BranchDataUpdateFactory(factory.DictFactory):
+    data_updates = [DataVersionUpdateFactory()]
+    predictors = [PredictorRefFactory()]
+
+
+class NextBranchVersionFactory(factory.DictFactory):
+    data_updates = [DataVersionUpdateFactory()]
+    predictors = [PredictorRefFactory()]
+
+
+class BranchDataFieldFactory(factory.DictFactory):
+    name = factory.Faker('company')
+
+
+class BranchMetadataFieldFactory(factory.DictFactory):
+    root_id = factory.Faker('uuid4')
+    archived = factory.Faker('boolean')
+    version = randrange(10)
+    created = None
+    updated = None
+
+
 class BranchDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
-    name = factory.Faker('company')
-    archived = factory.Faker('boolean')
-    created_at = None
-    updated_at = None
+    data = factory.SubFactory(BranchDataFieldFactory)
+    metadata = factory.SubFactory(BranchMetadataFieldFactory)
 
 
 class UserDataFactory(factory.DictFactory):
