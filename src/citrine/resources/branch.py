@@ -199,7 +199,7 @@ class BranchCollection(Collection[Branch]):
                      branch_instructions: NextBranchVersionRequest,
                      retrain_models: bool = True):
         """
-        Move a branch to the next version
+        Move a branch to the next version.
 
         Parameters
         ----------
@@ -224,7 +224,6 @@ class BranchCollection(Collection[Branch]):
             The new branch record after version update
 
         """
-
         path_template = '/projects/{project_id}/branches/next-version-predictor'
         path = format_escaped_url(path_template, project_id=self.project_id)
         data = self.session.post_resource(path, branch_instructions.dump(),

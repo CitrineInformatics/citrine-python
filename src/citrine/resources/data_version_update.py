@@ -8,6 +8,7 @@ from citrine._serialization.serializable import Serializable
 
 class DataVersionUpdate(Serializable['DataVersionUpdate']):
     """ Container for data updates. """
+
     current = _properties.String('current')
     latest = _properties.String('latest')
 
@@ -21,7 +22,11 @@ class DataVersionUpdate(Serializable['DataVersionUpdate']):
 
 
 class BranchDataUpdate(Resource['BranchDataUpdate']):
-    """ Branch data updates with predictors using the versions indicated that are in READY status. """
+    """
+    Branch data updates with predictors using the versions indicated that
+    are in READY status.
+    """
+
     data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
     predictors = _properties.List(_properties.Object(PredictorRef), "predictors")
 
