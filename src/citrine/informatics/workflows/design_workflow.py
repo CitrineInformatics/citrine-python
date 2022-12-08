@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -24,6 +24,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         if none is provided, one matching your design space will be automatically generated
     predictor_id: Optional[UUID]
         the UUID corresponding to the predictor to use
+    predictor_version: Optional[Union[int, str]]
+        the version of the predictor to use
     description: Optional[str]
         a description of the workflow
 
@@ -32,6 +34,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     design_space_id = properties.Optional(properties.UUID, 'design_space_id')
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.Optional(properties.UUID, 'predictor_id')
+    predictor_version = properties.Optional(
+        properties.Union([properties.Integer(), properties.String()]), 'predictor_version')
     branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id')
     """:Optional[UUID]: Unique ID of the branch that contains this workflow."""
 
@@ -45,11 +49,13 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                  design_space_id: Optional[UUID] = None,
                  processor_id: Optional[UUID] = None,
                  predictor_id: Optional[UUID] = None,
+                 predictor_version: Optional[Union[int, str]] = None,
                  description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id
         self.processor_id = processor_id
         self.predictor_id = predictor_id
+        self.predictor_version = predictor_version
         self.description = description
 
     def __str__(self):

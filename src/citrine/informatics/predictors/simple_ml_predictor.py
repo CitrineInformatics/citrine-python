@@ -1,7 +1,7 @@
 from typing import List, Optional
 from warnings import warn
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
@@ -10,7 +10,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['SimpleMLPredictor']
 
 
-class SimpleMLPredictor(EngineResource['SimplePredictor'], Predictor):
+class SimpleMLPredictor(VersionedEngineResource['SimplePredictor'], Predictor):
     """[DEPRECATED] A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.

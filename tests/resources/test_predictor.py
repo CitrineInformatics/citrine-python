@@ -15,7 +15,7 @@ from citrine.informatics.predictors import (
     Predictor,
     SimpleMLPredictor
 )
-from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
+from citrine.resources.predictor import PredictorCollection, _PredictorVersionCollection, AutoConfigureMode
 from tests.conftest import build_predictor_entity
 from tests.utils.session import (
     FakeCall,
@@ -79,18 +79,15 @@ def test_archive(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
+    session.set_responses(None, valid_label_fractions_predictor_data)
 
     with pytest.deprecated_call():
         archived_predictor = pc.archive(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
     ]
-
-    assert archived_predictor.is_archived
 
 
 def test_restore(valid_label_fractions_predictor_data):
@@ -99,18 +96,15 @@ def test_restore(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
+    session.set_responses(None, valid_label_fractions_predictor_data)
 
     with pytest.deprecated_call():
         restored_predictor = pc.restore(pred_id)
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
     ]
-    
-    assert not restored_predictor.is_archived
 
 
 def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
@@ -118,7 +112,7 @@ def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
     entity["metadata"]["archived"] = entity["metadata"]["created"]
-    session.set_responses(entity, None, entity, paging_response(entity), entity)
+    session.set_responses(entity, None, entity)
 
     predictor = pc.build(entity)
     with pytest.deprecated_call():
@@ -129,8 +123,7 @@ def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
         FakeCall(method="PUT", path=f"{entity_path}/archive", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
     ]
 
     archived_predictor = pc.update(predictor)
@@ -143,7 +136,7 @@ def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, None, entity, paging_response(), entity)
+    session.set_responses(entity, None, entity)
 
     predictor = pc.build(entity)
     with pytest.deprecated_call():
@@ -154,8 +147,7 @@ def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
         FakeCall(method="PUT", path=f"{entity_path}/restore", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
     ]
 
     restored_predictor = pc.update(predictor)
@@ -186,7 +178,7 @@ def test_archive_root(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response(valid_label_fractions_predictor_data))
+    session.set_response(None)
 
     pc.archive_root(pred_id)
 
@@ -199,7 +191,7 @@ def test_restore_root(valid_label_fractions_predictor_data):
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
 
-    session.set_responses(None, valid_label_fractions_predictor_data, paging_response())
+    session.set_response(None)
 
     pc.restore_root(pred_id)
 
@@ -247,15 +239,14 @@ def test_register(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, entity, paging_response(entity))
+    session.set_response(entity)
 
     predictor = pc.build(entity)
 
     predictors_path = f"/projects/{pc.project_id}/predictors"
     expected_calls = [
         FakeCall(method="POST", path=predictors_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", params={"create_version": True}, json={}),
     ]
 
     updated_predictor = pc.register(predictor)
@@ -308,7 +299,7 @@ def test_update(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, entity, paging_response(entity))
+    session.set_response(entity)
 
     predictor = pc.build(entity)
 
@@ -316,8 +307,7 @@ def test_update(valid_label_fractions_predictor_data):
     entity_path = f"{predictors_path}/{entity['id']}"
     expected_calls = [
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
     ]
 
     updated_predictor = pc.update(predictor)
@@ -503,13 +493,12 @@ def test_convert_to_graph(predictor_data, request):
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
-    session.set_responses(deepcopy(predictor_data), paging_response(predictor_data))
+    session.set_response(deepcopy(predictor_data))
     
     predictors_path = PredictorCollection._path_template.format(project_id=project_id)
     entity_path = f"{predictors_path}/{predictor_id}"
     expected_calls = [
-        FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="GET", path=f"{entity_path}/convert")
     ]
 
     # When
@@ -534,22 +523,14 @@ def test_convert_and_update(predictor_data_fixture, request):
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
     predictor = collection.build(deepcopy(predictor_data))
 
-    session.set_responses(
-            deepcopy(predictor_data),
-            paging_response(predictor_data),
-            deepcopy(predictor_data),
-            deepcopy(predictor_data),
-            paging_response(predictor_data)
-    )
+    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data), deepcopy(predictor_data))
 
     predictors_path = PredictorCollection._path_template.format(project_id=project_id)
     entity_path = f"{predictors_path}/{predictor_id}"
     expected_calls = [
         FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20}),
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", json={}),
-        FakeCall(method='GET', path=predictors_path, params={"filter": "archived eq 'true'", 'per_page': 20})
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
     ]
 
     # When
@@ -609,8 +590,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
             Conflict(convert_path, response),
             deepcopy(valid_graph_predictor_data),
             deepcopy(valid_graph_predictor_data),
-            deepcopy(valid_graph_predictor_data),
-            paging_response(valid_graph_predictor_data)
+            deepcopy(valid_graph_predictor_data)
     )
 
     # When
@@ -622,8 +602,7 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
         FakeCall(method="GET", path=convert_path),
         FakeCall(method="GET", path=entity_path),
         FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=train_path, json={}),
-        FakeCall(method='GET', path=predictors_path, params={"per_page": 20, "filter": "archived eq 'true'"}),
+        FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={}),
     ]
     assert session.calls == expected_calls
     assert response is None
@@ -662,3 +641,260 @@ def test_predictor_list_archived(valid_graph_predictor_data):
     # Then
     assert session.num_calls == 1
     assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20})
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_get_version(valid_graph_predictor_data, version):
+    # Given
+    session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_graph_predictor_data["id"]
+    
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    # When
+    pc.get_version(pred_id, version=version)
+
+    # Then
+    assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{version}")]
+
+
+@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
+def test_get_invalid_version(valid_graph_predictor_data, version):
+    session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError):
+        pc.get_version(uuid.uuid4(), version=version)
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_archive_version(valid_label_fractions_predictor_data, version):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_label_fractions_predictor_data["id"]
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    session.set_response(valid_label_fractions_predictor_data)
+
+    pc.archive_version(pred_id, version=version)
+
+    assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{version}/archive", json={})]
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_restore_version(valid_label_fractions_predictor_data, version):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_label_fractions_predictor_data["id"]
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    session.set_response(valid_label_fractions_predictor_data)
+
+    pc.restore_version(pred_id, version=version)
+
+    assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{version}/restore", json={})]
+
+
+@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
+def test_archive_invalid_version(valid_graph_predictor_data, version):
+    session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError):
+        pc.archive_version(uuid.uuid4(), version=version)
+
+
+@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
+def test_restore_invalid_version(valid_graph_predictor_data, version):
+    session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError):
+        pc.restore_version(uuid.uuid4(), version=version)
+
+
+def test_list_versions(valid_expression_predictor_data):
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_expression_predictor_data["id"]
+
+    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1["metadata"]["draft"] = False
+
+    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2["metadata"]["version"] = 2
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    session.set_response(paging_response(predictor_v1, predictor_v2))
+
+    # When
+    listed_predictors = list(pc.list_versions(pred_id, per_page=20))
+
+    # Then
+    assert session.calls == [FakeCall(method='GET', path=versions_path, params={'per_page': 20})]
+    assert len(listed_predictors) == 2
+
+
+def test_list_archived_versions(valid_expression_predictor_data):
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_expression_predictor_data["id"]
+
+    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1["metadata"]["draft"] = False
+
+    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2["metadata"]["version"] = 2
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    session.set_response(paging_response(predictor_v1, predictor_v2))
+
+    # When
+    listed_predictors = list(pc.list_archived_versions(pred_id, per_page=20))
+
+    # Then
+    expected_params = {'per_page': 20, "filter": "archived eq 'true'", 'per_page': 20}
+    assert session.calls == [FakeCall(method='GET', path=versions_path, params=expected_params)]
+    assert len(listed_predictors) == 2
+
+
+@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_convert_version_to_graph(predictor_data, version, request):
+    predictor_data = request.getfixturevalue(predictor_data)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    pc = PredictorCollection(project_id, session)
+
+    # Building a predictor may modify the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = pc.build(deepcopy(predictor_data))
+
+    session.set_response(deepcopy(predictor_data))
+    
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=predictor_id)
+
+    # When
+    response = pc.convert_version_to_graph(predictor.uid, version=version)
+
+    # Then
+    assert session.calls == [FakeCall(method="GET", path=f"{versions_path}/{version}/convert")]
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_convert_version_and_update(predictor_data_fixture, version, request):
+    predictor_data = request.getfixturevalue(predictor_data_fixture)
+
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = predictor_data["id"]
+    session = FakeSession()
+    pc = PredictorCollection(project_id, session)
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = pc.build(deepcopy(predictor_data))
+
+    session.set_responses(
+            deepcopy(predictor_data),
+            deepcopy(predictor_data),
+            deepcopy(predictor_data),
+            paging_response(predictor_data)
+    )
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=predictor_id)
+    predictors_path = PredictorCollection._path_template.format(project_id=project_id)
+    entity_path = f"{predictors_path}/{predictor_id}"
+    expected_calls = [
+        FakeCall(method="GET", path=f"{versions_path}/{version}/convert"),
+        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={})
+    ]
+
+    # When
+    response = pc.convert_version_and_update(predictor.uid, version=version)
+
+    # Then
+    assert session.calls == expected_calls
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
+@pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
+def test_convert_version_and_update_errors(version, error_args, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = uuid.uuid4()
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/versions/{version}/convert"
+
+    error_code, error_cls = error_args[:]
+    response = FakeRequestResponse(error_code)
+    response.request.method = "GET"
+    session.set_response(error_cls(convert_path, response))
+
+    # When
+    method = getattr(collection, method_name)
+    with pytest.raises(error_cls):
+        method(predictor_id, version=version)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(method="GET", path=convert_path)
+    assert session.last_call == expected_call_convert
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+@pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
+def test_convert_version_auto_retrain(version, valid_graph_predictor_data, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_graph_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    predictors_path = collection._path_template.format(project_id=project_id)
+    version_path = f"{predictors_path}/{predictor_id}/versions/{version}"
+    convert_path = f"{version_path}/convert"
+    train_path = f"{version_path}/train"
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+
+    response = FakeRequestResponse(409)
+    response.request.method = "GET"
+
+    session.set_responses(
+            Conflict(convert_path, response),
+            deepcopy(valid_graph_predictor_data)
+    )
+
+    # When
+    method = getattr(collection, method_name)
+    response = method(predictor_id, version=version, retrain_if_needed=True)
+
+    # Then
+    expected_calls = [
+        FakeCall(method="GET", path=convert_path),
+        FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={})
+    ]
+    assert session.calls == expected_calls
+    assert response is None

@@ -1,6 +1,6 @@
 from typing import Mapping
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import Predictor
@@ -8,7 +8,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['ExpressionPredictor']
 
 
-class ExpressionPredictor(EngineResource['ExpressionPredictor'], Predictor):
+class ExpressionPredictor(VersionedEngineResource['ExpressionPredictor'], Predictor):
     """A predictor that computes an output from an expression and set of bounded inputs.
 
     For a discussion of expression syntax and a list of allowed symbols,

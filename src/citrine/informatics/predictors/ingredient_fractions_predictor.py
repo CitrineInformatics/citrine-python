@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -8,7 +8,8 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['IngredientFractionsPredictor']
 
 
-class IngredientFractionsPredictor(EngineResource["IngredientFractionsPredictor"], Predictor):
+class IngredientFractionsPredictor(
+        VersionedEngineResource["IngredientFractionsPredictor"], Predictor):
     """A predictor interface that computes ingredient fractions.
 
     Parameters

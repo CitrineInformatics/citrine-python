@@ -149,6 +149,8 @@ class PredictorMetadataDataFactory(factory.DictFactory):
     status = factory.SubFactory(StatusDataFactory)
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
+    version = 1
+    draft = True
 
 
 class PredictorInstanceDataFactory(factory.DictFactory):

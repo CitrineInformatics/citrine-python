@@ -5,7 +5,7 @@ from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import ResourceRef
+from citrine._rest.resource import PredictorRef
 from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument, shadow_classes_in_module, \
     format_escaped_url
@@ -41,13 +41,19 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, predictor_id: UUID, *, random_state: Optional[int] = None):
+    def trigger(self,
+                predictor_id: UUID,
+                *,
+                predictor_version: Optional[Union[int, str]] = None,
+                random_state: Optional[int] = None):
         """Trigger a predictor evaluation execution against a predictor.
 
         Parameters
         -----------
         predictor_id: UUID
             ID of the predictor to evaluate.
+        predictor_version: Union[int, str], optional
+            The version of the predictor to evaluate.
         random_state: int, optional
             Seeds the evaluators' random number generator so that the results are repeatable.
 
@@ -62,11 +68,14 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             project_id=self.project_id,
             workflow_id=self.workflow_id
         )
-        json = ResourceRef(predictor_id).dump()
+
         params = dict()
         if random_state is not None:
             params["random_state"] = random_state
-        data = self.session.post_resource(path, json, params=params)
+
+        payload = PredictorRef(predictor_id, predictor_version).dump()
+        data = self.session.post_resource(path, payload, params=params, version='v2')
+
         return self.build(data)
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
@@ -109,7 +118,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
              *,
              page: Optional[int] = None,
              per_page: int = 100,
-             predictor_id: Optional[UUID] = None
+             predictor_id: Optional[UUID] = None,
+             predictor_version: Optional[Union[int, str]] = None
              ) -> Iterator[PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
@@ -128,16 +138,20 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             is specified it limits the maximum number of elements in the response.
         predictor_id: uuid, optional
             list executions that targeted the predictor with this id
+        predictor_version: Union[int, str], optional
+            list executions that targeted the predictor with this version
 
         Returns
         -------
-        Iterator[ResourceType]
-            Resources in this collection.
+        Iterator[PredictorEvaluationExecution]
+            The matching predictor evaluation executions.
 
         """
         params = {}
         if predictor_id is not None:
             params["predictor_id"] = str(predictor_id)
+        if predictor_version is not None:
+            params["predictor_version"] = predictor_version
         if self.workflow_id is not None:
             params["workflow_id"] = str(self.workflow_id)
 

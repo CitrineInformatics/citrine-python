@@ -1,3 +1,4 @@
+import random
 import uuid
 from copy import deepcopy
 
@@ -746,6 +747,7 @@ def predictor_evaluation_execution_dict(generic_entity):
     ret.update({
         "workflow_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
+        "predictor_version": random.randint(1, 10),
         "evaluator_names": ["Example evaluator"]
     })
     return ret
@@ -789,5 +791,6 @@ def design_workflow_dict(generic_entity):
         "processor_id": str(uuid.uuid4()),
         "design_space_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
+        "predictor_version": random.randint(1, 10),
     })
     return ret

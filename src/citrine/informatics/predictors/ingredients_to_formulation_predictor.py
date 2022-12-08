@@ -1,6 +1,6 @@
 from typing import Set, Mapping
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
@@ -9,7 +9,7 @@ __all__ = ['IngredientsToFormulationPredictor']
 
 
 class IngredientsToFormulationPredictor(
-        EngineResource['IngredientsToFormulationPredictor'], Predictor):
+        VersionedEngineResource['IngredientsToFormulationPredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a formulation from ingredient quantities.
 
     Parameters
