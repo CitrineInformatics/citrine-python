@@ -1,10 +1,10 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
 
-from citrine._serialization import properties
 from citrine._rest.resource import ResourceTypeEnum, Resource
-from citrine.informatics.modules import Module
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
+from citrine._serialization import properties
+from citrine.informatics.modules import Module
 
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProcessor']

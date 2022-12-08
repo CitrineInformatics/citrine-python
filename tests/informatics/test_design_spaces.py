@@ -56,7 +56,6 @@ def test_data_source_build(valid_data_source_design_space_dict):
     assert ds.name == valid_data_source_design_space_dict["config"]["name"]
     assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["config"]["data_source"])
 
-
 def test_data_source_create():
     ds = DataSourceDesignSpace(
         name="Test",

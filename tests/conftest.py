@@ -5,11 +5,12 @@ from copy import deepcopy
 import pytest
 
 from citrine.informatics.predictors import AutoMLEstimator
+from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.factories import (PredictorEntityDataFactory, PredictorDataDataFactory,
                                    PredictorMetadataDataFactory, StatusDataFactory)
 
 
-def build_predictor_entity(instance, status_name="READY", status_info=[]):
+def build_predictor_entity(instance, status_name="READY", status_info=[], status_detail=[]):
     user = str(uuid.uuid4())
     time = '2020-04-23T15:46:26Z'
     return dict(
@@ -22,7 +23,8 @@ def build_predictor_entity(instance, status_name="READY", status_info=[]):
         metadata=dict(
             status=dict(
                 name=status_name,
-                info=status_info
+                info=status_info,
+                detail=status_detail
             ),
             created=dict(
                 user=user,
@@ -43,7 +45,8 @@ def valid_product_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=None,
+        status_info=[],
+        status_detail=[],
         archived=False,
         display_name='my design space',
         id=str(uuid.uuid4()),
@@ -55,6 +58,8 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='READY',
+                    status_info=[],
+                    status_detail=[],
                     id=str(uuid.uuid4()),
                     archived=False,
                     name='first subspace',
@@ -72,6 +77,8 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='CREATED',
+                    status_info=[],
+                    status_detail=[],
                     id=None,
                     archived=False,
                     name='second subspace',
@@ -129,7 +136,8 @@ def valid_enumerated_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=None,
+        status_info=[],
+        status_detail=[],
         archived=True,
         display_name='my enumerated design space',
         id=str(uuid.uuid4()),
@@ -174,7 +182,8 @@ def valid_formulation_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=None,
+        status_info=[],
+        status_detail=[],
         archived=True,
         display_name='formulation design space',
         id=str(uuid.uuid4()),
@@ -528,7 +537,11 @@ def invalid_predictor_data():
         inputs=[x.dump(), y.dump()],
         output=z.dump()
     )
-    status = StatusDataFactory(name='INVALID', info=['Something is wrong', 'Very wrong'])
+    detail = [
+        StatusDetail(level=StatusLevelEnum.WARNING, msg='Something is wrong'),
+        StatusDetail(level="Error", msg='Very wrong')
+    ]
+    status = StatusDataFactory(name='INVALID', detail=detail)
     return PredictorEntityDataFactory(
         data=PredictorDataDataFactory(instance=instance),
         meatadata=PredictorMetadataDataFactory(status=status)
@@ -542,6 +555,7 @@ def valid_grid_processor_data():
         module_type='PROCESSOR',
         status='READY',
         status_info=['Things are looking good'],
+        status_detail=[{'level': 'INFO', 'msg': 'Things are looking good'}],
         archived=False,
         display_name='my processor',
         id=str(uuid.uuid4()),

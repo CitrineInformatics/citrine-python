@@ -143,6 +143,7 @@ class UserTimestampDataFactory(factory.DictFactory):
 class StatusDataFactory(factory.DictFactory):
     name = "READY"
     info = []
+    detail = []
 
 
 class PredictorMetadataDataFactory(factory.DictFactory):
@@ -204,6 +205,7 @@ class DesignSpaceDataFactory(factory.DictFactory):
     module_type = "DESIGN_SPACE"
     status = "READY"
     status_info = []
+    status_detail = []
 
 
 class DesignWorkflowDataFactory(factory.DictFactory):

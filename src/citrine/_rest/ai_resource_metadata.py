@@ -1,6 +1,7 @@
 from deprecation import deprecated
 from typing import List
 
+from citrine.resources.status_detail import StatusDetail
 from citrine._serialization import properties
 
 
@@ -34,7 +35,11 @@ class AIResourceMetadata():
         'status_info',
         serializable=False
     )
+
     """:Optional[List[str]]: human-readable explanations of the status"""
+    status_detail = properties.List(properties.Object(StatusDetail), 'status_detail', default=[],
+                                    serializable=False)
+    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
     @property
     @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")

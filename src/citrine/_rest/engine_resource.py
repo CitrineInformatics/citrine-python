@@ -4,6 +4,7 @@ from typing import List, TypeVar
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.include_parent_properties import IncludeParentProperties
+from citrine.resources.status_detail import StatusDetail
 
 Self = TypeVar('Self', bound='Resource')
 
@@ -38,8 +39,9 @@ class EngineResource(Resource[Self]):
 
     status = properties.Optional(properties.String(), 'metadata.status.name', serializable=False)
     """:Optional[str]: short description of the resource's status"""
-    status_info = properties.Optional(properties.List(properties.String()), 'metadata.status.info',
-                                      serializable=False)
+    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
+                                    default=[], serializable=False)
+    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
     # Due to the way object construction is done at present, __init__ is not executed on Resource
     # objects, so initializing _archived doesn't work.
@@ -52,6 +54,13 @@ class EngineResource(Resource[Self]):
     def is_archived(self):
         """:bool: whether the resource is archived (hidden but not deleted)."""
         return self.archived_by is not None
+
+    @property
+    @deprecated(deprecated_in="1.46.0", removed_in="2.0.0",
+                details="Please use the 'status_detail' property instead.'")
+    def status_info(self):
+        """[DEPRECATED] :list[str]: human-readable explanations of the status."""
+        return [detail.msg for detail in self.status_detail]
 
     @property
     @deprecated(deprecated_in="1.31.0", removed_in="2.0.0",
