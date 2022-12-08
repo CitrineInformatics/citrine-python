@@ -5,13 +5,11 @@ from logging import getLogger
 import pytest
 from dateutil import tz
 
-from citrine._rest.resource import ResourceTypeEnum, PredictorRef
+from citrine._rest.resource import PredictorRef
 from citrine.resources.data_version_update import NextBranchVersionRequest, DataVersionUpdate, BranchDataUpdate
-from citrine.resources.dataset import Dataset
 from citrine.resources.branch import Branch, BranchCollection
 from tests.utils.factories import BranchDataFactory, CandidateExperimentSnapshotDataFactory, \
-    ExperimentDataSourceDataFactory, BranchDataFieldFactory, BranchMetadataFieldFactory, BranchDataUpdateFactory, \
-    PredictorRefFactory, NextBranchVersionFactory
+    ExperimentDataSourceDataFactory, BranchDataFieldFactory, BranchMetadataFieldFactory, BranchDataUpdateFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 logger = getLogger(__name__)
@@ -218,10 +216,10 @@ def test_branch_list_archived(session, collection, branch_path):
 
 # Needed for coverage checks
 def test_brach_data_update_inits():
-    data_updates = [DataVersionUpdate("gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
-                                      "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
+    data_updates = [DataVersionUpdate(current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
+                                      latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
     predictors = [PredictorRef("aa971886-d17c-43b4-b602-5af7b44fcd5a", 2)]
-    branch_update = BranchDataUpdate(data_updates, predictors)
+    branch_update = BranchDataUpdate(data_updates=data_updates, predictors=predictors)
     assert branch_update.data_updates[0].current == "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1"
 
 
@@ -249,13 +247,13 @@ def test_branch_next_version(session, collection, branch_path):
     branch_data = BranchDataFactory()
     root_branch_id = branch_data['metadata']['root_id']
     session.set_response(branch_data)
-    data_updates = [DataVersionUpdate("gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
-                                      "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
+    data_updates = [DataVersionUpdate(current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
+                                      latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
     predictors = [PredictorRef("aa971886-d17c-43b4-b602-5af7b44fcd5a", 2)]
-    req = NextBranchVersionRequest(data_updates, predictors)
+    req = NextBranchVersionRequest(data_updates=data_updates, use_predictors=predictors)
 
     # When
-    branchv2 = collection.next_version(root_branch_id, req, False)
+    branchv2 = collection.next_version(root_branch_id, branch_instructions=req, retrain_models=False)
 
     # Then
     expected_path = f'{branch_path}/next-version-predictor'

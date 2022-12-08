@@ -188,14 +188,14 @@ class BranchCollection(Collection[Branch]):
             A list of data updates and compatible predictors
 
         """
-        path_template = '/projects/{project_id}/branches/{branch_id}/' + \
-                        'data-version-updates-predictor'
+        path_template = f'{self._path_template}/{{branch_id}}/data-version-updates-predictor'
         path = format_escaped_url(path_template, project_id=self.project_id, branch_id=uid)
         data = self.session.get_resource(path, version=self._api_version)
         return BranchDataUpdate.build(data)
 
     def next_version(self,
                      branch_root_id: Union[UUID, str],
+                     *,
                      branch_instructions: NextBranchVersionRequest,
                      retrain_models: bool = True):
         """
@@ -224,7 +224,8 @@ class BranchCollection(Collection[Branch]):
             The new branch record after version update
 
         """
-        path_template = '/projects/{project_id}/branches/next-version-predictor'
+        path_template = f'{self._path_template}/next-version-predictor'
+
         path = format_escaped_url(path_template, project_id=self.project_id)
         data = self.session.post_resource(path, branch_instructions.dump(),
                                           version=self._api_version,

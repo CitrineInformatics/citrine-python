@@ -2,32 +2,34 @@
 from typing import List
 
 from citrine._rest.resource import PredictorRef, Resource
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties as properties
 from citrine._serialization.serializable import Serializable
 
 
 class DataVersionUpdate(Serializable['DataVersionUpdate']):
     """Container for data updates."""
 
-    current = _properties.String('current')
-    latest = _properties.String('latest')
+    current = properties.String('current')
+    latest = properties.String('latest')
 
     def __init__(self,
+                 *,
                  current: str,
                  latest: str):
         self.current = current
         self.latest = latest
 
-    typ = _properties.String('type', default='DataVersionUpdate')
+    typ = properties.String('type', default='DataVersionUpdate')
 
 
 class BranchDataUpdate(Resource['BranchDataUpdate']):
     """Branch data updates with predictors using the versions indicated."""
 
-    data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
-    predictors = _properties.List(_properties.Object(PredictorRef), "predictors")
+    data_updates = properties.List(properties.Object(DataVersionUpdate), "data_updates")
+    predictors = properties.List(properties.Object(PredictorRef), "predictors")
 
     def __init__(self,
+                 *,
                  data_updates: List[DataVersionUpdate],
                  predictors: List[PredictorRef]):
         self.data_updates = data_updates
@@ -44,10 +46,11 @@ class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
     indicate that the workflow should use an existing predictor version.
     """
 
-    data_updates = _properties.List(_properties.Object(DataVersionUpdate), "data_updates")
-    use_predictors = _properties.List(_properties.Object(PredictorRef), "use_predictors")
+    data_updates = properties.List(properties.Object(DataVersionUpdate), "data_updates")
+    use_predictors = properties.List(properties.Object(PredictorRef), "use_predictors")
 
     def __init__(self,
+                 *,
                  data_updates: List[DataVersionUpdate],
                  use_predictors: List[PredictorRef]):
         self.data_updates = data_updates
