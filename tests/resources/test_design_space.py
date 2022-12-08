@@ -1,6 +1,6 @@
 import uuid
 from copy import deepcopy
-from random import random
+import random
 
 import mock
 import pytest
@@ -77,14 +77,14 @@ def test_design_space_limits():
         "foo",
         description="bar",
         descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2001)]
+        data=[{"R-{}".format(i): random.random() for i in range(128)} for _ in range(2001)]
     )
 
     just_right = EnumeratedDesignSpace(
         "foo",
         description="bar",
         descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
+        data=[{"R-{}".format(i): random.random() for i in range(128)} for _ in range(2000)]
     )
 
     # create mock post response by setting the status
@@ -107,8 +107,8 @@ def test_design_space_limits():
     collection.update(just_right)
 
 
-def test_create_default(valid_product_design_space_data,
-                        valid_product_design_space):
+@pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
+def test_create_default(predictor_version, valid_product_design_space_data, valid_product_design_space):
     # The instance field isn't renamed to config in objects returned from this route
     # This renames the config key to instance to match the data we get from the API
     data_with_instance = deepcopy(valid_product_design_space_data)
@@ -123,20 +123,24 @@ def test_create_default(valid_product_design_space_data,
         session=session
     )
 
+    expected_payload ={
+        "predictor_id": str(predictor_id),
+        "include_ingredient_fraction_constraints": False,
+        "include_label_fraction_constraints": False,
+        "include_label_count_constraints": False,
+        "include_parameter_constraints": False
+    }
+    if predictor_version is not None:
+        expected_payload["predictor_version"] = predictor_version
+
     expected_call = FakeCall(
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
-        json={
-            "predictor_id": str(predictor_id),
-            "include_ingredient_fraction_constraints": False,
-            "include_label_fraction_constraints": False,
-            "include_label_count_constraints": False,
-            "include_parameter_constraints": False
-        },
+        json=expected_payload,
         version="v2"
     )
     
-    default_design_space = collection.create_default(predictor_id=predictor_id)
+    default_design_space = collection.create_default(predictor_id=predictor_id, predictor_version=predictor_version)
 
     assert session.num_calls == 1
     assert session.last_call == expected_call
@@ -159,6 +163,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
     session.set_response(data_with_instance)
     
     predictor_id = uuid.uuid4()
+    predictor_version = random.randint(1, 10)
     collection = DesignSpaceCollection(
         project_id=uuid.uuid4(),
         session=session
@@ -169,6 +174,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
         path=f"projects/{collection.project_id}/design-spaces/default",
         json={
             "predictor_id": str(predictor_id),
+            "predictor_version": predictor_version,
             "include_ingredient_fraction_constraints": ingredient_fractions,
             "include_label_fraction_constraints": label_fractions,
             "include_label_count_constraints": label_count,
@@ -179,6 +185,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
 
     default_design_space = collection.create_default(
         predictor_id=predictor_id,
+        predictor_version=predictor_version,
         include_ingredient_fraction_constraints=ingredient_fractions,
         include_label_fraction_constraints=label_fractions,
         include_label_count_constraints=label_count,

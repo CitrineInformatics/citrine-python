@@ -1,6 +1,6 @@
 from typing import List, Optional, Mapping, Union
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
@@ -12,7 +12,7 @@ __all__ = ['MeanPropertyPredictor']
 
 
 class MeanPropertyPredictor(
-        EngineResource['MeanPropertyPredictor'], Predictor):
+        VersionedEngineResource['MeanPropertyPredictor'], Predictor):
     """A predictor that computes a component-weighted mean of real or categorical properties.
 
     Each component in a formulation contributes to the mean property

@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
@@ -8,7 +8,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['ChemicalFormulaFeaturizer']
 
 
-class ChemicalFormulaFeaturizer(EngineResource['ChemicalFormulaFeaturizer'], Predictor):
+class ChemicalFormulaFeaturizer(VersionedEngineResource['ChemicalFormulaFeaturizer'], Predictor):
     """
     A featurizer for chemical formulae. Inspired by Magpie.
 

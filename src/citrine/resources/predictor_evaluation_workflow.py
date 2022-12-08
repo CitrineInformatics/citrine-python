@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of workflow executions."""
-from typing import Union
+from typing import Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -61,7 +61,11 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
-    def create_default(self, *, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+    def create_default(self,
+                       *,
+                       predictor_id: UUID,
+                       predictor_version: Optional[Union[int, str]] = None) \
+            -> PredictorEvaluationWorkflow:
         """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
@@ -83,6 +87,8 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         ----------
         predictor_id: UUID
             Unique identifier of the predictor used to create a default workflow
+        predictor_version: Option[Union[int, str]]
+            The version of the predictor used to create a default workflow
 
         Returns
         -------
@@ -92,5 +98,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """  # noqa: E501,W505
         url = self._get_path('default')
         payload = {'predictor_id': str(predictor_id)}
+        if predictor_version:
+            payload['predictor_version'] = predictor_version
         data = self.session.post_resource(url, payload)
         return self.build(data)

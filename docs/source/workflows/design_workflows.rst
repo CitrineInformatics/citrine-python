@@ -20,6 +20,7 @@ The following example demonstrates how to use the Citrine Python client to regis
         DesignWorkflow(
             name='Example workflow',
             predictor_id=predictor.uid,
+            predictor_version=predictor.version,
             processor_id=processor.uid,
             design_space_id=design_space.uid
         )
@@ -169,6 +170,7 @@ You can still list all design workflows on the project as before.
         DesignWorkflow(
             name='Example workflow',
             predictor_id=predictor.uid,
+            predictor_version=predictor.version,
             processor_id=processor.uid,
             design_space_id=design_space.uid
         )

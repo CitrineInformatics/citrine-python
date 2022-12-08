@@ -1,7 +1,7 @@
 from typing import Set, Mapping
 from warnings import warn
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
@@ -10,7 +10,7 @@ __all__ = ['IngredientsToSimpleMixturePredictor']
 
 
 class IngredientsToSimpleMixturePredictor(
-        EngineResource['IngredientsToSimpleMixturePredictor'], Predictor):
+        VersionedEngineResource['IngredientsToSimpleMixturePredictor'], Predictor):
     """[DEPRECATED] Constructs a simple mixture from ingredient quantities.
 
     This predictor has been renamed. Please use

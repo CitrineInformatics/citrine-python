@@ -245,6 +245,7 @@ def test_simple_report(simple_predictor):
     simple_predictor._session = session
     simple_predictor._project_id = uuid.uuid4()
     simple_predictor.uid = uuid.uuid4()
+    simple_predictor.version = 2
     assert simple_predictor.report is not None
     assert session.get_resource.call_count == 1
     assert simple_predictor.report.status == 'OK'

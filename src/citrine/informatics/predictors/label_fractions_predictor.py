@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -9,7 +9,7 @@ __all__ = ['LabelFractionsPredictor']
 
 
 class LabelFractionsPredictor(
-        EngineResource['LabelFractionsPredictor'], Predictor):
+        VersionedEngineResource['LabelFractionsPredictor'], Predictor):
     """A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters

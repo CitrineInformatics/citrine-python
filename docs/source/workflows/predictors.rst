@@ -9,6 +9,15 @@ Types of predictors include machine learning models, featurizers, and analytic e
 
 A predictor must be registered to a project to be used in a :doc:`design workflow <design_workflows>`.
 
+Versioning
+------------------------
+
+All predictors have a version number. When you create a new predictor, it will be version 1, and its `draft` flag will be `True`.
+While `draft` is True, any edits will overwrite the current version.
+Once the predictor trains successfully, `draft` will be set to `False`. Any further edits will apply to the next version.
+If training fails, `draft` will remain `True`.
+To act on a specific version of the predictor (where allowed), use the function which accepts a `version` argument.
+Any which don't accept a version act on the most recent version of the predictor. For example, `get()` vs. `get_version()`.
 
 Auto ML predictor
 -------------------------

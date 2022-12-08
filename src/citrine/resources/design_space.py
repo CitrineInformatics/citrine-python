@@ -1,6 +1,6 @@
 """Resources that represent collections of design spaces."""
+from typing import Optional, TypeVar, Union
 from uuid import UUID
-from typing import TypeVar
 
 from citrine._session import Session
 from citrine.resources.module import AbstractModuleCollection
@@ -67,6 +67,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
     def create_default(self,
                        *,
                        predictor_id: UUID,
+                       predictor_version: Optional[Union[int, str]] = None,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
                        include_label_count_constraints: bool = False,
@@ -88,6 +89,9 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         ----------
         predictor_id: UUID
             UUID of the predictor used to construct the design space
+
+        predictor_version: Optional[Union[int, str]]
+            Version of the predictor used to construct the design space
 
         include_ingredient_fraction_constraints: bool
             Whether to include constraints on ingredient fractions based on the training data.
@@ -119,6 +123,9 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
             "include_label_count_constraints": include_label_count_constraints,
             "include_parameter_constraints": include_parameter_constraints
         }
+        if predictor_version:
+            payload["predictor_version"] = predictor_version
+
         data = self.session.post_resource(path, json=payload, version="v2")
         if 'instance' in data:
             data['config'] = data.pop('instance')

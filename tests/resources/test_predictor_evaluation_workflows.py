@@ -1,3 +1,4 @@
+from typing import Optional, Union
 import uuid
 
 import pytest
@@ -50,13 +51,25 @@ def test_delete(collection):
         collection.delete(uuid.uuid4())
 
 
+@pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
 def test_create_default(predictor_evaluation_workflow_dict: dict,
+                        predictor_version: Optional[Union[int, str]],
                         workflow: PredictorEvaluationWorkflow):
+    project_id = uuid.uuid4()
+    predictor_id = uuid.uuid4()
+
     session = FakeSession()
     session.set_response(predictor_evaluation_workflow_dict)
     collection = PredictorEvaluationWorkflowCollection(
-        project_id=uuid.uuid4(),
+        project_id=project_id,
         session=session
     )
-    default_workflow = collection.create_default(predictor_id=uuid.uuid4())
+    default_workflow = collection.create_default(predictor_id=predictor_id, predictor_version=predictor_version)
+
+    url = f'/projects/{collection.project_id}/predictor-evaluation-workflows/default'
+
+    expected_payload = {"predictor_id": str(predictor_id)}
+    if predictor_version is not None:
+        expected_payload["predictor_version"] = predictor_version
+    assert session.calls == [FakeCall(method="POST", path=url, json=expected_payload)]
     assert default_workflow.dump() == workflow.dump()

@@ -1,4 +1,5 @@
 import itertools
+import random
 import uuid
 
 import pytest
@@ -8,8 +9,11 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from tests.utils.session import FakeSession, FakeCall
 
 
-PARTIAL_DW_ARGS = ("predictor_id", "design_space_id")
-OPTIONAL_ARGS = PARTIAL_DW_ARGS + ("processor_id",)
+PARTIAL_DW_ARGS = (("predictor_id", uuid.uuid4), ("design_space_id", uuid.uuid4))
+OPTIONAL_ARGS = PARTIAL_DW_ARGS + (
+    ("processor_id", uuid.uuid4),
+    ("predictor_version", lambda: random.randint(1, 10))
+)
 
 
 @pytest.fixture
@@ -45,6 +49,7 @@ def workflow(collection, design_workflow_dict) -> DesignWorkflow:
 def workflow_minimal(collection, workflow) -> DesignWorkflow:
     workflow.processor_id = None
     workflow.predictor_id = None
+    workflow.predictor_version = None
     workflow.design_space_id = None
     return workflow
 
@@ -67,6 +72,7 @@ def assert_workflow(actual, expected, *, include_branch=False):
     assert actual.design_space_id == expected.design_space_id
     assert actual.processor_id == expected.processor_id
     assert actual.predictor_id == expected.predictor_id
+    assert actual.predictor_version == expected.predictor_version
     assert actual.project_id == expected.project_id
     if include_branch:
         assert actual.branch_id == expected.branch_id
@@ -81,9 +87,9 @@ def test_basic_methods(workflow, collection, design_workflow_dict):
 def test_register(session, workflow_minimal, collection, optional_args):
     workflow = workflow_minimal
 
-    # Set a random UUID for all optional args selected for this run.
-    for arg in optional_args:
-        setattr(workflow, arg, uuid.uuid4())
+    # Set a random value for all optional args selected for this run.
+    for name, factory in optional_args:
+        setattr(workflow, name, factory())
 
     # Given
     post_dict = {**workflow.dump(), "branch_id": str(collection.branch_id)}
@@ -195,9 +201,9 @@ def test_deprecated_register_only_model_has_branch(session, workflow, collection
 def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch, partial_args):
     workflow = workflow_minimal
 
-    # Set a random UUID for all optional args selected for this run.
-    for arg in partial_args:
-        setattr(workflow, arg, uuid.uuid4())
+    # Set a random value for all optional args selected for this run.
+    for name, factory in partial_args:
+        setattr(workflow, name, factory())
 
     with pytest.raises(ValueError):
         collection_without_branch.register(workflow)
@@ -241,6 +247,7 @@ def test_missing_project(design_workflow_dict):
         name=design_workflow_dict["name"],
         processor_id=design_workflow_dict["processor_id"],
         predictor_id=design_workflow_dict["predictor_id"],
+        predictor_version=design_workflow_dict["predictor_version"],
         design_space_id=design_workflow_dict["design_space_id"]
     )
 

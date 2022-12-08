@@ -34,6 +34,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     workflow_id = properties.UUID('workflow_id', serializable=False)
     """:UUID: Unique identifier of the workflow that was executed"""
     predictor_id = properties.UUID('predictor_id', serializable=False)
+    predictor_version = properties.Integer('predictor_version', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
     """:Optional[str]: short description of the execution's status"""
     status_info = properties.Optional(

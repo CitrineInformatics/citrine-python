@@ -3,7 +3,7 @@ from typing import List, Optional, Set
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
@@ -33,7 +33,7 @@ class AutoMLEstimator(BaseEnumeration):
     ALL = "ALL"
 
 
-class AutoMLPredictor(EngineResource['AutoMLPredictor'], Predictor):
+class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
     """A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output(s).
