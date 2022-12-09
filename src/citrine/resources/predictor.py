@@ -318,7 +318,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         else:
             return None
 
-    def auto_configure(self,
+    def create_default(self,
                        *,
                        training_data: DataSource,
                        pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
@@ -371,6 +371,17 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
         return self.build(Predictor.wrap_instance(data["instance"]))
+
+    @deprecated(deprecated_in="1.47.0", removed_in="2.0.0",
+                details="auto_configure is an alias for create_default.")
+    def auto_configure(self,
+                       *,
+                       training_data: DataSource,
+                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                       prefer_valid: bool = True) -> Predictor:
+        """[DEPRECATED] Alias for PredictorCollection.create_default."""
+        return self.create_default(training_data=training_data, pattern=pattern,
+                                   prefer_valid=prefer_valid)
 
     def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
             -> Predictor:
