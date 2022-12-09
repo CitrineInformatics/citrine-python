@@ -451,10 +451,10 @@ def test_unexpected_pattern():
 
     # Then
     with pytest.raises(ValueError):
-        pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
+        pc.create_default(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
-def test_auto_configure_mode_pattern(valid_graph_predictor_data):
+def test_create_default_mode_pattern(valid_graph_predictor_data):
     """Check that using AutoConfigureMode doesn't result in an error"""
     # Given
 
@@ -466,7 +466,7 @@ def test_auto_configure_mode_pattern(valid_graph_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
-    pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern=AutoConfigureMode.INFER)
+    pc.create_default(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern=AutoConfigureMode.INFER)
 
     # Then
     assert (session.calls[0].json['pattern'] == "INFER")
@@ -474,7 +474,7 @@ def test_auto_configure_mode_pattern(valid_graph_predictor_data):
 
 
 def test_returned_predictor(valid_graph_predictor_data):
-    """Check that auto_configure works on the happy path."""
+    """Check that create_default works on the happy path."""
     # Given
     session = FakeSession()
 
@@ -485,7 +485,7 @@ def test_returned_predictor(valid_graph_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
-    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
+    result = pc.create_default(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
     # Then the response is parsed in a predictor
     assert result.name == valid_graph_predictor_data["data"]["name"]
@@ -494,6 +494,21 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
+
+
+def test_auto_configure_deprecated(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+
+    # Setup a response that includes instance instead of config
+    response = deepcopy(valid_graph_predictor_data)["data"]
+    session.set_responses(response, paging_response(response))
+    
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    with pytest.deprecated_call():
+        pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
 
 @pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))

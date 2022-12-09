@@ -482,7 +482,7 @@ class AutoConfigureWorkflow():
 
         # Get default predictor, pass to next stage for registration
         data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
-        predictor = self.project.predictors.auto_configure(
+        predictor = self.project.predictors.create_default(
             training_data=data_source, pattern=mode.value,  # Uses same string pattern
             prefer_valid=prefer_valid
         )
