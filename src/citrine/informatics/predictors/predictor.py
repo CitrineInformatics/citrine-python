@@ -53,7 +53,7 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
             msg = "Cannot get the report for a predictor that wasn't read from the platform"
             raise ValueError(msg)
         report_resource = ReportResource(self._project_id, self._session)
-        return report_resource.get_version(self.uid, predictor_version=self.version)
+        return report_resource.get(predictor_id=self.uid, predictor_version=self.version)
 
     @staticmethod
     def wrap_instance(predictor_data: dict) -> dict:
