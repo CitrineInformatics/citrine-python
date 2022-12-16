@@ -18,6 +18,9 @@ from deprecation import deprecated
 CreationType = TypeVar('CreationType', bound=Predictor)
 
 
+MOST_RECENT_VER = "most_recent"
+
+
 class AutoConfigureMode(BaseEnumeration):
     """[ALPHA] The format to use in building auto-configured assets.
 
@@ -50,7 +53,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     _collection_key = 'response'
     _paginator: Paginator = _PredictorVersionPaginator()
 
-    _SPECIAL_VERSIONS = ["latest", "most_recent"]
+    _SPECIAL_VERSIONS = ["latest", MOST_RECENT_VER]
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -65,8 +68,8 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
             version_str = str(version)
             if version_str not in self._SPECIAL_VERSIONS \
                     and (not version_str.isdecimal() or int(version_str) <= 0):
-                raise ValueError("A predictor version must either be a positive integer,"
-                                 "\"latest\", or \"most_recent\".")
+                raise ValueError("A predictor version must either be a positive integer, "
+                                 f"\"latest\", or \"{MOST_RECENT_VER}\".")
 
             path += f"/{version_str}"
             path += f"/{action}" if action else ""
@@ -92,7 +95,10 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
         predictor._project_id = self.project_id
         return predictor
 
-    def get(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+    def get(self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
         path = self._construct_path(uid, version)
         entity = self.session.get_resource(path, version=self._api_version)
         return self.build(entity)
@@ -121,12 +127,12 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
                                         page=page,
                                         per_page=per_page)
 
-    def archive(self, uid: Union[UUID, str], *, version: Union[int, str]):
+    def archive(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         url = self._construct_path(uid, version, "archive")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def restore(self, uid: Union[UUID, str], *, version: Union[int, str]):
+    def restore(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
@@ -134,7 +140,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def convert_to_graph(self,
                          uid: Union[UUID, str],
                          *,
-                         version: Union[int, str],
+                         version: Union[int, str] = MOST_RECENT_VER,
                          retrain_if_needed: bool = False) -> Predictor:
         path = self._construct_path(uid, version, "convert")
         try:
@@ -179,6 +185,18 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
+
+    def get(self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+        """Get a predictor by ID and (optionally) version.
+
+        If version is omitted, the most recent version will be retrieved.
+        """
+        if uid is None:
+            raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
+        return self._versions_collection.get(uid=uid, version=version)
 
     def register(self, predictor: Predictor) -> Predictor:
         """Register and train a Predictor.
@@ -230,6 +248,14 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
         return self.build(entity)
 
+    def archive_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Archive a predictor version."""
+        return self._versions_collection.archive(uid, version=version)
+
+    def restore_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Restore a predictor version."""
+        return self._versions_collection.restore(uid, version=version)
+
     def archive_root(self, uid: Union[UUID, str]):
         """Archive a root predictor.
 
@@ -259,19 +285,12 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         uid = str(uid)
         return any(uid == str(archived_pred.uid) for archived_pred in self.list_archived())
 
-    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
-                details="archive() is deprecated in favor of archive_root().")
-    def archive(self, uid: Union[UUID, str]) -> Predictor:
-        """[DEPRECATED] Archive a root predictor."""
-        self.archive_root(uid)
-        return self.get(uid)
-
-    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
-                details="restore() is deprecated in favor of restore_root().")
-    def restore(self, uid: Union[UUID, str]) -> Predictor:
-        """[DEPRECATED] Restore a root predictor."""
-        self.restore_root(uid)
-        return self.get(uid)
+    def list_versions(self,
+                      uid: Union[UUID, str] = None,
+                      *,
+                      per_page: int = 100) -> Iterable[Predictor]:
+        """List all non-archived versions of the given Predictor."""
+        return self._versions_collection.list(uid, per_page=per_page)
 
     def list_archived(self,
                       *,
@@ -283,6 +302,13 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                                         collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)
+
+    def list_archived_versions(self,
+                               uid: Union[UUID, str] = None,
+                               *,
+                               per_page: int = 20) -> Iterable[Predictor]:
+        """List all archived versions of the given Predictor."""
+        return self._versions_collection.list_archived(uid, per_page=per_page)
 
     def check_for_update(self, uid: Union[UUID, str] = None,
                          predictor_id: Union[UUID, str] = None) -> Optional[Predictor]:
@@ -372,19 +398,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         data = self.session.post_resource(path, json=body, version=self._api_version)
         return self.build(Predictor.wrap_instance(data["instance"]))
 
-    @deprecated(deprecated_in="1.47.0", removed_in="2.0.0",
-                details="auto_configure is an alias for create_default.")
-    def auto_configure(self,
-                       *,
-                       training_data: DataSource,
-                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
-                       prefer_valid: bool = True) -> Predictor:
-        """[DEPRECATED] Alias for PredictorCollection.create_default."""
-        return self.create_default(training_data=training_data, pattern=pattern,
-                                   prefer_valid=prefer_valid)
-
-    def convert_to_graph(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
-            -> Predictor:
+    def convert_to_graph(self,
+                         uid: Union[UUID, str],
+                         retrain_if_needed: bool = False,
+                         *,
+                         version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
         """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
 
         Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
@@ -419,76 +437,75 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 wait_while_validating(collection=project.predictors, module=predictor)
                 converted = project.predictors.convert_and_update(pred.uid)
         """
-        path = self._predictors_path("convert", uid)
-        try:
-            entity = self.session.get_resource(path, version=self._api_version)
-        except Conflict as exc:
-            if retrain_if_needed:
-                # Invokes super.get to avoid an extra call to _inject_archive_info.
-                self.update(super().get(uid))
-                return None
-            else:
-                raise exc
-        return self.build(entity)
+        return self._versions_collection.convert_to_graph(uid,
+                                                          version=version,
+                                                          retrain_if_needed=retrain_if_needed)
 
-    def convert_and_update(self, uid: Union[UUID, str], retrain_if_needed: bool = False) \
-            -> Predictor:
+    def convert_and_update(self,
+                           uid: Union[UUID, str],
+                           retrain_if_needed: bool = False,
+                           *,
+                           version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
         """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
 
         See `PredictorCollection.convert_to_graph` for more detail.
         """
-        new_pred = self.convert_to_graph(uid, retrain_if_needed)
+        new_pred = self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
         return self.update(new_pred) if new_pred else None
 
+    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
+                details="Use PredictorCollection.get() instead.")
     def get_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
-        """Get a specific version of the predictor."""
-        return self._versions_collection.get(uid=uid, version=version)
+        """[DEPRECATED] Get a specific version of the predictor."""
+        return self.get(uid=uid, version=version)
 
-    def archive_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
-        """Archive a predictor version."""
-        return self._versions_collection.archive(uid, version=version)
+    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
+                details="archive() is deprecated in favor of archive_root().")
+    def archive(self, uid: Union[UUID, str]) -> Predictor:
+        """[DEPRECATED] Archive a root predictor."""
+        self.archive_root(uid)
+        return self.get(uid)
 
-    def restore_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
-        """Restore a predictor version."""
-        return self._versions_collection.restore(uid, version=version)
+    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
+                details="restore() is deprecated in favor of restore_root().")
+    def restore(self, uid: Union[UUID, str]) -> Predictor:
+        """[DEPRECATED] Restore a root predictor."""
+        self.restore_root(uid)
+        return self.get(uid)
 
-    def list_versions(self,
-                      uid: Union[UUID, str] = None,
-                      *,
-                      per_page: int = 100) -> Iterable[Predictor]:
-        """List all non-archived versions of the given Predictor."""
-        return self._versions_collection.list(uid, per_page=per_page)
+    @deprecated(deprecated_in="1.47.0", removed_in="2.0.0",
+                details="auto_configure is an alias for create_default.")
+    def auto_configure(self,
+                       *,
+                       training_data: DataSource,
+                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                       prefer_valid: bool = True) -> Predictor:
+        """[DEPRECATED] Alias for PredictorCollection.create_default."""
+        return self.create_default(training_data=training_data, pattern=pattern,
+                                   prefer_valid=prefer_valid)
 
-    def list_archived_versions(self,
-                               uid: Union[UUID, str] = None,
-                               *,
-                               per_page: int = 20) -> Iterable[Predictor]:
-        """List all archived versions of the given Predictor."""
-        return self._versions_collection.list_archived(uid, per_page=per_page)
-
+    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
+                details="Use PredictorCollection.convert_to_graph() instead.")
     def convert_version_to_graph(self,
                                  uid: Union[UUID, str],
                                  *,
                                  version: Union[int, str],
                                  retrain_if_needed: bool = False) -> Predictor:
-        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
+        """[DEPRECATED] Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
 
         See `PredictorCollection.convert_to_graph` for more detail.
         """
-        return self._versions_collection.convert_to_graph(uid,
-                                                          version=version,
-                                                          retrain_if_needed=retrain_if_needed)
+        return self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
 
+    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
+                details="Use PredictorCollection.convert_and_update() instead.")
     def convert_version_and_update(self,
                                    uid: Union[UUID, str],
                                    *,
                                    version: Union[int, str],
                                    retrain_if_needed: bool = False) -> Predictor:
-        """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
+        """[DEPRECATED] Overwrite a SimpleML or Graph predictor with an equivalent Graph predictor.
 
         See `PredictorCollection.convert_to_graph` for more detail.
         """
-        new_pred = self.convert_version_to_graph(uid,
-                                                 version=version,
-                                                 retrain_if_needed=retrain_if_needed)
-        return self.update(new_pred) if new_pred else None
+        return self.convert_and_update(uid, version=version, retrain_if_needed=retrain_if_needed)

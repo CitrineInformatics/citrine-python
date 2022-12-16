@@ -298,3 +298,13 @@ def test_archive_restore_not_found():
 
     with pytest.raises(RuntimeError):
         dsc.restore(uuid.uuid4())
+
+
+def test_get_none():
+    """Trying to get a design space with uid=None should result in an informative error."""
+    dsc = DesignSpaceCollection(uuid.uuid4(), FakeSession())
+
+    with pytest.raises(ValueError) as excinfo:
+        dsc.get(uid=None)
+
+    assert "uid=None" in str(excinfo.value)

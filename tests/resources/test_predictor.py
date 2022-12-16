@@ -93,8 +93,9 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
 def test_archive(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
     session.set_responses(None, valid_label_fractions_predictor_data)
 
@@ -103,15 +104,16 @@ def test_archive(valid_label_fractions_predictor_data):
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
+        FakeCall(method='GET', path=f"{versions_path}/most_recent")
     ]
 
 
 def test_restore(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     pred_id = valid_label_fractions_predictor_data["id"]
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
     session.set_responses(None, valid_label_fractions_predictor_data)
 
@@ -120,7 +122,7 @@ def test_restore(valid_label_fractions_predictor_data):
 
     assert session.calls == [
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
-        FakeCall(method='GET', path=f"{predictors_path}/{pred_id}")
+        FakeCall(method='GET', path=f"{versions_path}/most_recent")
     ]
 
 
@@ -388,10 +390,8 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
 
 
 def test_get_none():
-    """Test that trying to get a predictor with uid=None results in an informative error."""
-    session = mock.Mock()
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
+    """Trying to get a predictor with uid=None should result in an informative error."""
+    pc = PredictorCollection(uuid.uuid4(), FakeSession())
 
     with pytest.raises(ValueError) as excinfo:
         pc.get(uid=None)
@@ -512,7 +512,8 @@ def test_auto_configure_deprecated(valid_graph_predictor_data):
 
 
 @pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-def test_convert_to_graph(predictor_data, request):
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+def test_convert_to_graph(predictor_data, version, request):
     predictor_data = request.getfixturevalue(predictor_data)
 
     # Given
@@ -527,22 +528,21 @@ def test_convert_to_graph(predictor_data, request):
 
     session.set_response(deepcopy(predictor_data))
     
-    predictors_path = PredictorCollection._path_template.format(project_id=project_id)
-    entity_path = f"{predictors_path}/{predictor_id}"
-    expected_calls = [
-        FakeCall(method="GET", path=f"{entity_path}/convert")
-    ]
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
+    entity_path = f"{versions_path}/{version or 'most_recent'}"
 
     # When
-    response = collection.convert_to_graph(predictor.uid)
+    kwargs = {"version": version} if version is not None else {}
+    response = collection.convert_to_graph(predictor.uid, **kwargs)
 
     # Then
-    assert session.calls == expected_calls
+    assert session.calls == [FakeCall(method="GET", path=f"{entity_path}/convert")]
     assert response.dump() == predictor.dump()
 
 
 @pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-def test_convert_and_update(predictor_data_fixture, request):
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+def test_convert_and_update(predictor_data_fixture, version, request):
     predictor_data = request.getfixturevalue(predictor_data_fixture)
 
     # Given
@@ -558,30 +558,34 @@ def test_convert_and_update(predictor_data_fixture, request):
     session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data), deepcopy(predictor_data))
 
     predictors_path = PredictorCollection._path_template.format(project_id=project_id)
-    entity_path = f"{predictors_path}/{predictor_id}"
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
+    root_path = f"{predictors_path}/{predictor_id}"
+    entity_path = f"{versions_path}/{version or 'most_recent'}"
     expected_calls = [
         FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
+        FakeCall(method="PUT", path=root_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{root_path}/train", params={"create_version": True}, json={}),
     ]
 
     # When
-    response = collection.convert_and_update(predictor.uid)
+    kwargs = {"version": version} if version is not None else {}
+    response = collection.convert_and_update(predictor.uid, **kwargs)
 
     # Then
     assert session.calls == expected_calls
     assert response.dump() == predictor.dump()
 
 
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
 @pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
 @pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
-def test_convert_and_update_errors(error_args, method_name):
+def test_convert_and_update_errors(version, error_args, method_name):
     # Given
     project_id = uuid.uuid4()
     predictor_id = uuid.uuid4()
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
-    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/convert"
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/versions/{version or 'most_recent'}/convert"
 
     error_code, error_cls = error_args[:]
     response = FakeRequestResponse(error_code)
@@ -589,9 +593,10 @@ def test_convert_and_update_errors(error_args, method_name):
     session.set_response(error_cls(convert_path, response))
 
     # When
+    kwargs = {"version": version} if version is not None else {}
     method = getattr(collection, method_name)
     with pytest.raises(error_cls):
-        method(predictor_id)
+        method(predictor_id, **kwargs)
 
     # Then
     assert session.num_calls == 1
@@ -599,17 +604,18 @@ def test_convert_and_update_errors(error_args, method_name):
     assert session.last_call == expected_call_convert
 
 
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
 @pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
-def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
+def test_convert_auto_retrain(valid_graph_predictor_data, version, method_name):
     # Given
     project_id = uuid.uuid4()
     predictor_id = valid_graph_predictor_data["id"]
     session = FakeSession()
     collection = PredictorCollection(project_id, session)
     predictors_path = collection._path_template.format(project_id=project_id)
-    entity_path = f"{predictors_path}/{predictor_id}"
-    convert_path = f"{entity_path}/convert"
-    train_path = f"{entity_path}/train"
+    version_path = f"{predictors_path}/{predictor_id}/versions/{version or 'most_recent'}"
+    convert_path = f"{version_path}/convert"
+    train_path = f"{version_path}/train"
 
     # Building a graph predictor modifies the input data object, which interferes with the test
     # input later in the test. By making a copy, we don't need to care if the input is mutated.
@@ -619,21 +625,18 @@ def test_convert_auto_retrain(valid_graph_predictor_data, method_name):
     response.request.method = "GET"
 
     session.set_responses(
-            Conflict(convert_path, response),
-            deepcopy(valid_graph_predictor_data),
-            deepcopy(valid_graph_predictor_data),
-            deepcopy(valid_graph_predictor_data)
+        Conflict(convert_path, response),
+        deepcopy(valid_graph_predictor_data)
     )
 
     # When
     method = getattr(collection, method_name)
-    response = method(predictor_id, retrain_if_needed=True)
+    kwargs = {"version": version} if version is not None else {}
+    response = method(predictor_id, retrain_if_needed=True, **kwargs)
 
     # Then
     expected_calls = [
         FakeCall(method="GET", path=convert_path),
-        FakeCall(method="GET", path=entity_path),
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
         FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={}),
     ]
     assert session.calls == expected_calls
@@ -661,6 +664,7 @@ def test_experimental_deprecated(valid_auto_ml_predictor_data):
     with pytest.deprecated_call():
         assert registered.experimental_reasons == []
 
+
 def test_predictor_list_archived(valid_graph_predictor_data):
     # Given
     session = FakeSession()
@@ -675,31 +679,53 @@ def test_predictor_list_archived(valid_graph_predictor_data):
     assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20})
 
 
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_get_version(valid_graph_predictor_data, version):
+def test_list_versions(valid_expression_predictor_data):
     # Given
     session = FakeSession()
-    session.set_response(valid_graph_predictor_data)
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_graph_predictor_data["id"]
-    
+    pred_id = valid_expression_predictor_data["id"]
+
+    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1["metadata"]["draft"] = False
+
+    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2["metadata"]["version"] = 2
+
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
+    session.set_response(paging_response(predictor_v1, predictor_v2))
+
     # When
-    pc.get_version(pred_id, version=version)
+    listed_predictors = list(pc.list_versions(pred_id, per_page=20))
 
     # Then
-    assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{version}")]
+    assert session.calls == [FakeCall(method='GET', path=versions_path, params={'per_page': 20})]
+    assert len(listed_predictors) == 2
 
 
-@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
-def test_get_invalid_version(valid_graph_predictor_data, version):
+def test_list_archived_versions(valid_expression_predictor_data):
+    # Given
     session = FakeSession()
-    session.set_response(valid_graph_predictor_data)
     pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_expression_predictor_data["id"]
 
-    with pytest.raises(ValueError):
-        pc.get_version(uuid.uuid4(), version=version)
+    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1["metadata"]["draft"] = False
+
+    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2["metadata"]["version"] = 2
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+
+    session.set_response(paging_response(predictor_v1, predictor_v2))
+
+    # When
+    listed_predictors = list(pc.list_archived_versions(pred_id, per_page=20))
+
+    # Then
+    expected_params = {'per_page': 20, "filter": "archived eq 'true'", 'per_page': 20}
+    assert session.calls == [FakeCall(method='GET', path=versions_path, params=expected_params)]
+    assert len(listed_predictors) == 2
 
 
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
@@ -752,58 +778,38 @@ def test_restore_invalid_version(valid_graph_predictor_data, version):
         pc.restore_version(uuid.uuid4(), version=version)
 
 
-def test_list_versions(valid_expression_predictor_data):
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
+def test_deprecated_get_version(valid_graph_predictor_data, version):
     # Given
     session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_expression_predictor_data["id"]
-
-    predictor_v1 = deepcopy(valid_expression_predictor_data)
-    predictor_v1["metadata"]["draft"] = False
-
-    predictor_v2 = deepcopy(valid_expression_predictor_data)
-    predictor_v2["metadata"]["version"] = 2
-
+    pred_id = valid_graph_predictor_data["id"]
+    
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
-    session.set_response(paging_response(predictor_v1, predictor_v2))
-
     # When
-    listed_predictors = list(pc.list_versions(pred_id, per_page=20))
+    with pytest.deprecated_call():
+        pc.get_version(pred_id, version=version)
 
     # Then
-    assert session.calls == [FakeCall(method='GET', path=versions_path, params={'per_page': 20})]
-    assert len(listed_predictors) == 2
+    assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{version}")]
 
 
-def test_list_archived_versions(valid_expression_predictor_data):
-    # Given
+@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
+def test_deprecated_get_invalid_version(valid_graph_predictor_data, version):
     session = FakeSession()
+    session.set_response(valid_graph_predictor_data)
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_expression_predictor_data["id"]
 
-    predictor_v1 = deepcopy(valid_expression_predictor_data)
-    predictor_v1["metadata"]["draft"] = False
-
-    predictor_v2 = deepcopy(valid_expression_predictor_data)
-    predictor_v2["metadata"]["version"] = 2
-
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
-
-    session.set_response(paging_response(predictor_v1, predictor_v2))
-
-    # When
-    listed_predictors = list(pc.list_archived_versions(pred_id, per_page=20))
-
-    # Then
-    expected_params = {'per_page': 20, "filter": "archived eq 'true'", 'per_page': 20}
-    assert session.calls == [FakeCall(method='GET', path=versions_path, params=expected_params)]
-    assert len(listed_predictors) == 2
+    with pytest.deprecated_call():
+        with pytest.raises(ValueError):
+            pc.get_version(uuid.uuid4(), version=version)
 
 
 @pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_convert_version_to_graph(predictor_data, version, request):
+def test_deprecated_convert_version_to_graph(predictor_data, version, request):
     predictor_data = request.getfixturevalue(predictor_data)
 
     # Given
@@ -821,7 +827,8 @@ def test_convert_version_to_graph(predictor_data, version, request):
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=predictor_id)
 
     # When
-    response = pc.convert_version_to_graph(predictor.uid, version=version)
+    with pytest.deprecated_call():
+        response = pc.convert_version_to_graph(predictor.uid, version=version)
 
     # Then
     assert session.calls == [FakeCall(method="GET", path=f"{versions_path}/{version}/convert")]
@@ -830,7 +837,7 @@ def test_convert_version_to_graph(predictor_data, version, request):
 
 @pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_convert_version_and_update(predictor_data_fixture, version, request):
+def test_deprecated_convert_version_and_update(predictor_data_fixture, version, request):
     predictor_data = request.getfixturevalue(predictor_data_fixture)
 
     # Given
@@ -860,7 +867,8 @@ def test_convert_version_and_update(predictor_data_fixture, version, request):
     ]
 
     # When
-    response = pc.convert_version_and_update(predictor.uid, version=version)
+    with pytest.deprecated_call():
+        response = pc.convert_version_and_update(predictor.uid, version=version)
 
     # Then
     assert session.calls == expected_calls
@@ -870,7 +878,7 @@ def test_convert_version_and_update(predictor_data_fixture, version, request):
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 @pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
 @pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
-def test_convert_version_and_update_errors(version, error_args, method_name):
+def test_deprecated_convert_version_and_update_errors(version, error_args, method_name):
     # Given
     project_id = uuid.uuid4()
     predictor_id = uuid.uuid4()
@@ -885,8 +893,9 @@ def test_convert_version_and_update_errors(version, error_args, method_name):
 
     # When
     method = getattr(collection, method_name)
-    with pytest.raises(error_cls):
-        method(predictor_id, version=version)
+    with pytest.deprecated_call():
+        with pytest.raises(error_cls):
+            method(predictor_id, version=version)
 
     # Then
     assert session.num_calls == 1
@@ -896,7 +905,7 @@ def test_convert_version_and_update_errors(version, error_args, method_name):
 
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
 @pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
-def test_convert_version_auto_retrain(version, valid_graph_predictor_data, method_name):
+def test_deprecated_convert_version_auto_retrain(version, valid_graph_predictor_data, method_name):
     # Given
     project_id = uuid.uuid4()
     predictor_id = valid_graph_predictor_data["id"]
@@ -918,15 +927,16 @@ def test_convert_version_auto_retrain(version, valid_graph_predictor_data, metho
             Conflict(convert_path, response),
             deepcopy(valid_graph_predictor_data)
     )
-
-    # When
-    method = getattr(collection, method_name)
-    response = method(predictor_id, version=version, retrain_if_needed=True)
-
-    # Then
     expected_calls = [
         FakeCall(method="GET", path=convert_path),
         FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={})
     ]
+
+    # When
+    method = getattr(collection, method_name)
+    with pytest.deprecated_call():
+        response = method(predictor_id, version=version, retrain_if_needed=True)
+
+    # Then
     assert session.calls == expected_calls
     assert response is None
