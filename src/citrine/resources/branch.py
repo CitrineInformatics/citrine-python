@@ -1,9 +1,9 @@
 import functools
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Union, List
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, PredictorRef
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
@@ -60,6 +60,63 @@ class Branch(Resource['Branch']):
         erds = ExperimentDataSourceCollection(project_id=self.project_id, session=self.session)
         branch_erds_iter = erds.list(branch_id=self.uid, version="latest")
         return next(branch_erds_iter, None)
+
+    def data_updates(self):
+        """
+        Get data updates for a branch.
+
+        Returns
+        -------
+        BranchDataUpdate
+            A list of data updates and compatible predictors
+
+        """
+        path_template = f'{self._path_template}/{{branch_id}}/data-version-updates-predictor'
+        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=self.uid)
+        data = self.session.get_resource(path, version=self._api_version)
+        return BranchDataUpdate.build(data)
+
+    def next_version(self,
+                     *,
+                     data_updates: List[BranchDataUpdate],
+                     use_predictors: List[PredictorRef],
+                     retrain_models: bool = True):
+        """
+        Move a branch to the next version.
+
+        Parameters
+        ----------
+        data_updates: List[BranchDataUpdate]
+            contains the list of data source versions to upgrade (current->latest)
+
+        use_predictors: List[PredictorRef]
+            use_predictors will either have a <predictor_id>:latest to indicate the workflow should use a new
+            version of the predictor or <predictor_id>:<version #> to indicate that the workflow should use an
+            existing predictor version.
+
+        retrain_models: bool
+            If true, when new versions of models are created, they are automatically
+            scheduled for training
+
+        Returns
+        -------
+        Branch
+            The new branch record after version update
+
+        """
+        path_template = f'{self._path_template}/next-version-predictor'
+
+        branch_instructions = NextBranchVersionRequest(data_updates, use_predictors)
+        path = format_escaped_url(path_template, project_id=self.project_id)
+        data = self.session.post_resource(path, branch_instructions.dump(),
+                                          version=self._api_version,
+                                          params={
+                                              'root': str(self.root_id),
+                                              'retrain_models': retrain_models})
+        branch = self.build(data)
+        branch.session = self.session
+        branch.project_id = self.project_id
+        return branch
 
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.
