@@ -212,3 +212,33 @@ Thus, archiving all the design workflows contained within a branch will result i
 
     # Restore the branch to active status.
     my_branch = project.branches.restore(my_branch.uid)  # my_branch.archived == False
+
+You can also update the data on a branch similarly to the web application.
+To do so, first grab the available updates to a branch:
+
+.. code:: python
+
+    # Retrieve any available data updates for a specific branch
+    update = project.branches.data_updates(my_branch.uid)
+
+Then construct an object of "instructions" for a branch using a :class:`~citrine.resources.data_version_update.NextBranchVersionRequest`:
+
+.. code:: python
+
+    # Create a request that describes which predictors to use.
+    # Leaving predictors empty will create new version of all predictors in that branch.
+    from citrine.resources.data_version_update import NextBranchVersionRequest
+
+    request = NextBranchVersionRequest(
+        data_updates=update.data_updates,
+        use_predictors=[]
+    )
+
+Finally, create the next version of the branch with `next_version`:
+
+.. code:: python
+
+    my_updated_branch = project.branches.next_version(
+        branch_root_id = my_branch.root_id,
+        branch_instructions=request
+    )
