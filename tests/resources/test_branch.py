@@ -288,12 +288,11 @@ def test_branch_data_updates_normal(session, collection, branch_path):
     session.set_response(branch_data)
 
     branch = collection.get(branch_data['id'])
-    print(branch)
 
     data_updates = BranchDataUpdateFactory()
     v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
     session.set_responses(data_updates, v2branch_data)
-    v2branch = branch.update_data()
+    v2branch = collection.update_data(branch)
 
     # Then
     expected_path = f'{branch_path}/next-version-predictor'
@@ -333,7 +332,7 @@ def test_branch_data_updates_latest(session, collection, branch_path):
     data_updates = BranchDataUpdateFactory()
     v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
     session.set_responses(data_updates, v2branch_data)
-    v2branch = branch.update_data(use_existing=False, retrain_models=True)
+    v2branch = collection.update_data(branch, use_existing=False, retrain_models=True)
 
     # Then
     expected_path = f'{branch_path}/next-version-predictor'
@@ -365,10 +364,10 @@ def test_branch_data_updates_nochange(session, collection, branch_path):
     print(branch)
 
     data_updates = BranchDataUpdateFactory(data_updates=[], predictors=[])
-    session.set_response(data_updates)
-    v2branch = branch.update_data()
+    session.set_responses(branch_data, data_updates)
+    v2branch = collection.update_data(branch.uid)
 
-    assert v2branch == branch
+    assert v2branch == None
 
 
 def test_experiment_datasource(session, collection):

@@ -61,49 +61,6 @@ class Branch(Resource['Branch']):
         branch_erds_iter = erds.list(branch_id=self.uid, version="latest")
         return next(branch_erds_iter, None)
 
-    def update_data(self,
-                    *,
-                    use_existing: bool = True,
-                    retrain_models: bool = False):
-        """
-        Automatically advance the branch to the next version.
-
-        If there are no newer versions of data sources used by this branch this method returns
-        without doing anything
-
-        Parameters
-        ----------
-        use_existing: bool
-            If true the workflows in this branch will use existing predictors that are using
-            the latest versions of the data sources and are ready to use.
-
-        retrain_models: bool
-            If true, when new versions of models are created, they are automatically
-            scheduled for training.
-
-        Returns
-        -------
-        Branch
-            The new branch record after version update
-
-        """
-        collection = BranchCollection(self.project_id, self.session)
-
-        version_updates = collection.data_updates(self.uid)
-        # If no new data sources, then exit, nothing to do
-        if len(version_updates.data_updates) == 0:
-            return self
-
-        use_predictors = []
-        if use_existing:
-            use_predictors = version_updates.predictors
-
-        branch_instructions = NextBranchVersionRequest(data_updates=version_updates.data_updates,
-                                                       use_predictors=use_predictors)
-        branch = collection.next_version(self.root_id, branch_instructions=branch_instructions,
-                                         retrain_models=retrain_models)
-        return branch
-
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.
         data = data["data"]
@@ -215,6 +172,54 @@ class BranchCollection(Collection[Branch]):
         url = format_escaped_url(restore_path_template, project_id=self.project_id, branch_id=uid)
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
+
+    def update_data(self,
+                    branch: Union[UUID, str, Branch],
+                    *,
+                    use_existing: bool = True,
+                    retrain_models: bool = False) -> Optional[Branch]:
+        """
+        Automatically advance the branch to the next version.
+
+        If there are no newer versions of data sources used by this branch this method returns
+        without doing anything
+
+        Parameters
+        ----------
+        branch: Union[UUID, str, Branch]
+            Branch Identifier or Branch object
+
+        use_existing: bool
+            If true the workflows in this branch will use existing predictors that are using
+            the latest versions of the data sources and are ready to use.
+
+        retrain_models: bool
+            If true, when new versions of models are created, they are automatically
+            scheduled for training.
+
+        Returns
+        -------
+        Branch
+            The new branch record after version update or None if no update
+
+        """
+        if not isinstance(branch, Branch):
+            branch = self.get(branch)
+        version_updates = self.data_updates(branch.uid)
+        # If no new data sources, then exit, nothing to do
+        if len(version_updates.data_updates) == 0:
+            return None
+
+        use_predictors = []
+        if use_existing:
+            use_predictors = version_updates.predictors
+
+        branch_instructions = NextBranchVersionRequest(data_updates=version_updates.data_updates,
+                                                       use_predictors=use_predictors)
+        branch = self.next_version(branch.root_id,
+                                   branch_instructions=branch_instructions,
+                                   retrain_models=retrain_models)
+        return branch
 
     def data_updates(self, uid: Union[UUID, str]) -> BranchDataUpdate:
         """
