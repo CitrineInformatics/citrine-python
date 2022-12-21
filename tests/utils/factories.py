@@ -43,7 +43,7 @@ class DataVersionUpdateFactory(factory.DictFactory):
 
 class PredictorRefFactory(factory.DictFactory):
     predictor_id = factory.Faker('uuid4')
-    version = randrange(10)
+    predictor_version = randrange(10)
 
 
 class BranchDataUpdateFactory(factory.DictFactory):

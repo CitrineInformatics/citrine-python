@@ -1,9 +1,9 @@
 import functools
-from typing import Iterator, Optional, Union, List
+from typing import Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource, PredictorRef
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
@@ -61,42 +61,25 @@ class Branch(Resource['Branch']):
         branch_erds_iter = erds.list(branch_id=self.uid, version="latest")
         return next(branch_erds_iter, None)
 
-    def data_updates(self):
+    def update_data(self,
+                    *,
+                    use_existing=True,
+                    retrain_models=False):
         """
-        Get data updates for a branch.
+        Automatically advance the branch to the next version.
 
-        Returns
-        -------
-        BranchDataUpdate
-            A list of data updates and compatible predictors
-
-        """
-        path_template = f'{self._path_template}/{{branch_id}}/data-version-updates-predictor'
-        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=self.uid)
-        data = self.session.get_resource(path, version=self._api_version)
-        return BranchDataUpdate.build(data)
-
-    def next_version(self,
-                     *,
-                     data_updates: List[BranchDataUpdate],
-                     use_predictors: List[PredictorRef],
-                     retrain_models: bool = True):
-        """
-        Move a branch to the next version.
+        If there are no newer versions of data sources used by this branch this method returns
+        without doing anything
 
         Parameters
         ----------
-        data_updates: List[BranchDataUpdate]
-            contains the list of data source versions to upgrade (current->latest)
-
-        use_predictors: List[PredictorRef]
-            use_predictors will either have a <predictor_id>:latest to indicate the workflow should use a new
-            version of the predictor or <predictor_id>:<version #> to indicate that the workflow should use an
-            existing predictor version.
+        use_existing: bool
+            If true the workflows in this branch will use existing predictors that are using
+            the latest versions of the data sources and are ready to use.
 
         retrain_models: bool
             If true, when new versions of models are created, they are automatically
-            scheduled for training
+            scheduled for training.
 
         Returns
         -------
@@ -104,12 +87,25 @@ class Branch(Resource['Branch']):
             The new branch record after version update
 
         """
-        path_template = f'{self._path_template}/next-version-predictor'
+        path_template = (f'/projects/{{project_id}}/branches/'
+                         f'{{branch_id}}/data-version-updates-predictor')
+        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=self.uid)
+        data = self.session.get_resource(path, version="v2")
+        version_updates = BranchDataUpdate.build(data)
+        # If no new data sources, then exit, nothing to do
+        if len(version_updates.data_updates) == 0:
+            return self
 
-        branch_instructions = NextBranchVersionRequest(data_updates, use_predictors)
+        path_template = f'/projects/{{project_id}}/branches/next-version-predictor'
+        use_predictors = []
+        if use_existing:
+            use_predictors = version_updates.predictors
+
+        branch_instructions = NextBranchVersionRequest(data_updates=version_updates.data_updates,
+                                                       use_predictors=use_predictors)
         path = format_escaped_url(path_template, project_id=self.project_id)
         data = self.session.post_resource(path, branch_instructions.dump(),
-                                          version=self._api_version,
+                                          version='v2',
                                           params={
                                               'root': str(self.root_id),
                                               'retrain_models': retrain_models})
