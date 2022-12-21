@@ -63,8 +63,8 @@ class Branch(Resource['Branch']):
 
     def update_data(self,
                     *,
-                    use_existing=True,
-                    retrain_models=False):
+                    use_existing: bool = True,
+                    retrain_models: bool = False):
         """
         Automatically advance the branch to the next version.
 
@@ -87,31 +87,21 @@ class Branch(Resource['Branch']):
             The new branch record after version update
 
         """
-        path_template = (f'/projects/{{project_id}}/branches/'
-                         f'{{branch_id}}/data-version-updates-predictor')
-        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=self.uid)
-        data = self.session.get_resource(path, version="v2")
-        version_updates = BranchDataUpdate.build(data)
+        collection = BranchCollection(self.project_id, self.session)
+
+        version_updates = collection.data_updates(self.uid)
         # If no new data sources, then exit, nothing to do
         if len(version_updates.data_updates) == 0:
             return self
 
-        path_template = f'/projects/{{project_id}}/branches/next-version-predictor'
         use_predictors = []
         if use_existing:
             use_predictors = version_updates.predictors
 
         branch_instructions = NextBranchVersionRequest(data_updates=version_updates.data_updates,
                                                        use_predictors=use_predictors)
-        path = format_escaped_url(path_template, project_id=self.project_id)
-        data = self.session.post_resource(path, branch_instructions.dump(),
-                                          version='v2',
-                                          params={
-                                              'root': str(self.root_id),
-                                              'retrain_models': retrain_models})
-        branch = self.build(data)
-        branch.session = self.session
-        branch.project_id = self.project_id
+        branch = collection.next_version(self.root_id, branch_instructions=branch_instructions,
+                                         retrain_models=retrain_models)
         return branch
 
     def _post_dump(self, data: dict) -> dict:
