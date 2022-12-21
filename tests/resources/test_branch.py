@@ -215,7 +215,7 @@ def test_branch_list_archived(session, collection, branch_path):
 
 
 # Needed for coverage checks
-def test_brach_data_update_inits():
+def test_branch_data_update_inits():
     data_updates = [DataVersionUpdate(current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
                                       latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
     predictors = [PredictorRef("aa971886-d17c-43b4-b602-5af7b44fcd5a", 2)]
@@ -279,6 +279,95 @@ def test_branch_next_version(session, collection, branch_path):
                              version='v2')
     assert session.last_call == expected_call
     assert str(branchv2.root_id) == root_branch_id
+
+
+def test_branch_data_updates_normal(session, collection, branch_path):
+    # Given
+    branch_data = BranchDataFactory()
+    root_branch_id = branch_data['metadata']['root_id']
+    session.set_response(branch_data)
+
+    branch = collection.get(branch_data['id'])
+
+    data_updates = BranchDataUpdateFactory()
+    v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
+    session.set_responses(data_updates, v2branch_data)
+    v2branch = collection.update_data(branch)
+
+    # Then
+    expected_path = f'{branch_path}/next-version-predictor'
+    expected_call = FakeCall(method='POST',
+                             path=expected_path,
+                             params={'root': str(root_branch_id),
+                                     'retrain_models': False},
+                             json={
+                                 'data_updates': [
+                                     {
+                                         'current': data_updates['data_updates'][0]['current'],
+                                         'latest': data_updates['data_updates'][0]['latest'],
+                                         'type': 'DataVersionUpdate'
+                                     }
+                                 ],
+                                 'use_predictors': [
+                                     {
+                                         'predictor_id': data_updates['predictors'][0]['predictor_id'],
+                                         'predictor_version': data_updates['predictors'][0]['predictor_version']
+                                     }
+                                 ]
+                             },
+                             version='v2')
+    assert session.last_call == expected_call
+    assert str(v2branch.root_id) == root_branch_id
+
+
+def test_branch_data_updates_latest(session, collection, branch_path):
+    # Given
+    branch_data = BranchDataFactory()
+    root_branch_id = branch_data['metadata']['root_id']
+    session.set_response(branch_data)
+
+    branch = collection.get(branch_data['id'])
+    print(branch)
+
+    data_updates = BranchDataUpdateFactory()
+    v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
+    session.set_responses(data_updates, v2branch_data)
+    v2branch = collection.update_data(branch, use_existing=False, retrain_models=True)
+
+    # Then
+    expected_path = f'{branch_path}/next-version-predictor'
+    expected_call = FakeCall(method='POST',
+                             path=expected_path,
+                             params={'root': str(root_branch_id),
+                                     'retrain_models': True},
+                             json={
+                                 'data_updates': [
+                                     {
+                                         'current': data_updates['data_updates'][0]['current'],
+                                         'latest': data_updates['data_updates'][0]['latest'],
+                                         'type': 'DataVersionUpdate'
+                                     }
+                                 ],
+                                 'use_predictors': []
+                             },
+                             version='v2')
+    assert session.last_call == expected_call
+    assert str(v2branch.root_id) == root_branch_id
+
+
+def test_branch_data_updates_nochange(session, collection, branch_path):
+    # Given
+    branch_data = BranchDataFactory()
+    session.set_response(branch_data)
+
+    branch = collection.get(branch_data['id'])
+    print(branch)
+
+    data_updates = BranchDataUpdateFactory(data_updates=[], predictors=[])
+    session.set_responses(branch_data, data_updates)
+    v2branch = collection.update_data(branch.uid)
+
+    assert v2branch == None
 
 
 def test_experiment_datasource(session, collection):
