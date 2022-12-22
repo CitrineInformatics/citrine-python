@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.predictor module &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>citrine.resources.predictor module &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -134,8 +134,113 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.archive_version">
+<span class="sig-name descname"><span class="pre">archive_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.archive_version" title="Permalink to this definition"></a></dt>
+<dd><p>Archive a predictor version.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.auto_configure">
 <span class="sig-name descname"><span class="pre">auto_configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.predictor.AutoConfigureMode" title="citrine.resources.predictor.AutoConfigureMode"><span class="pre">citrine.resources.predictor.AutoConfigureMode</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">AutoConfigureMode.INFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefer_valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.auto_configure" title="Permalink to this definition"></a></dt>
+<dd><p>[DEPRECATED] Alias for PredictorCollection.create_default.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.47.0: </span>This will be removed in 2.0.0. auto_configure is an alias for create_default.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an individual Predictor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.check_for_update">
+<span class="sig-name descname"><span class="pre">check_for_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.check_for_update" title="Permalink to this definition"></a></dt>
+<dd><p>Check if there are updates available for a predictor.</p>
+<p>Typically these are updates to the training data. For example, a GEM Table may have
+been re-built to include additional rows.</p>
+<p>This check does not update the predictor; it just returns the update that is available.
+To perform the update, the response should then be used to call PredictorCollection.update</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – Unique identifier of the predictor to check</p></li>
+<li><p><strong>predictor_id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – [DEPRECATED] please use uid instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The update, if an update is available; None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor">Predictor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_and_update">
+<span class="sig-name descname"><span class="pre">convert_and_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'most_recent'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_and_update" title="Permalink to this definition"></a></dt>
+<dd><p>Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.</p>
+<p>See <cite>PredictorCollection.convert_to_graph</cite> for more detail.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_to_graph">
+<span class="sig-name descname"><span class="pre">convert_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'most_recent'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_to_graph" title="Permalink to this definition"></a></dt>
+<dd><p>Given a SimpleML or Graph predictor, get an equivalent Graph predictor.</p>
+<p>Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
+predictor. If it’s not a SimpleML or Graph predictor, or it’s not in the READY state, an
+error is raised. SimpleML predictors are deprecated, so this is to aid in your migration.</p>
+<p>Note this conversion is not performed in place! That is, the predictor returned is not
+persisted on the platform. To persist it, pass the converted predictor to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.project.PredictorCollection.update()</span></code>. Or you can do this in
+one step with <code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.project.PredictorCollection.convert_and_update()</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_to_graph</span><span class="p">(</span><span class="n">predictor_uid</span><span class="p">)</span>
+<span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
+
+<span class="c1"># is equivalent to</span>
+
+<span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">predictor_uid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If a predictor needs to be retrained before conversion, it will raise an HTTP 409 Conflict
+error. This may occur when the Citrine Platform has been updated since your predictor was
+last trained. If <cite>retrain_if_needed</cite> is <cite>True</cite>, retraining will automatically begin, and
+the method will return <a href="#id1"><span class="problematic" id="id2">`</span></a>None. Once retraining completes, call this method again to get the
+converted predictor. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">retrain_if_needed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">converted</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">)</span>
+    <span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_version_and_update">
+<span class="sig-name descname"><span class="pre">convert_version_and_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_version_and_update" title="Permalink to this definition"></a></dt>
+<dd><p>[DEPRECATED] Overwrite a SimpleML or Graph predictor with an equivalent Graph predictor.</p>
+<p>See <cite>PredictorCollection.convert_to_graph</cite> for more detail.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.50.0: </span>This will be removed in 2.0.0. Use PredictorCollection.convert_and_update() instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_version_to_graph">
+<span class="sig-name descname"><span class="pre">convert_version_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_version_to_graph" title="Permalink to this definition"></a></dt>
+<dd><p>[DEPRECATED] Given a SimpleML or Graph predictor, get an equivalent Graph predictor.</p>
+<p>See <cite>PredictorCollection.convert_to_graph</cite> for more detail.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.50.0: </span>This will be removed in 2.0.0. Use PredictorCollection.convert_to_graph() instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.create_default">
+<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.predictor.AutoConfigureMode" title="citrine.resources.predictor.AutoConfigureMode"><span class="pre">citrine.resources.predictor.AutoConfigureMode</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">AutoConfigureMode.INFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefer_valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.create_default" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Create a default predictor for some training data.</p>
 <p>This method will return an unregistered predictor generated by inspecting the
 training data and attempting to automatically configure the predictor.</p>
@@ -174,76 +279,6 @@ Default: True.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.build" title="Permalink to this definition"></a></dt>
-<dd><p>Build an individual Predictor.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.check_for_update">
-<span class="sig-name descname"><span class="pre">check_for_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.check_for_update" title="Permalink to this definition"></a></dt>
-<dd><p>Check if there are updates available for a predictor.</p>
-<p>Typically these are updates to the training data. For example, a GEM Table may have
-been re-built to include additional rows.</p>
-<p>This check does not update the predictor; it just returns the update that is available.
-To perform the update, the response should then be used to call PredictorCollection.update</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – Unique identifier of the predictor to check</p></li>
-<li><p><strong>predictor_id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – [DEPRECATED] please use uid instead</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The update, if an update is available; None otherwise.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Optional[<a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor">Predictor</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_and_update">
-<span class="sig-name descname"><span class="pre">convert_and_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_and_update" title="Permalink to this definition"></a></dt>
-<dd><p>Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.</p>
-<p>See <cite>PredictorCollection.convert_to_graph</cite> for more detail.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.convert_to_graph">
-<span class="sig-name descname"><span class="pre">convert_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_if_needed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.convert_to_graph" title="Permalink to this definition"></a></dt>
-<dd><p>Given a SimpleML or Graph predictor, get an equivalent Graph predictor.</p>
-<p>Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
-predictor. If it’s not a SimpleML or Graph predictor, or it’s not in the READY state, an
-error is raised. SimpleML predictors are deprecated, so this is to aid in your migration.</p>
-<p>Note this conversion is not performed in place! That is, the predictor returned is not
-persisted on the platform. To persist it, pass the converted predictor to
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.project.PredictorCollection.update()</span></code>. Or you can do this in
-one step with <code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.project.PredictorCollection.convert_and_update()</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_to_graph</span><span class="p">(</span><span class="n">predictor_uid</span><span class="p">)</span>
-<span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">converted</span><span class="p">)</span>
-
-<span class="c1"># is equivalent to</span>
-
-<span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">predictor_uid</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>If a predictor needs to be retrained before conversion, it will raise an HTTP 409 Conflict
-error. This may occur when the Citrine Platform has been updated since your predictor was
-last trained. If <cite>retrain_if_needed</cite> is <cite>True</cite>, retraining will automatically begin, and
-the method will return <a href="#id1"><span class="problematic" id="id2">`</span></a>None. Once retraining completes, call this method again to get the
-converted predictor. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">retrain_if_needed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">converted</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-    <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">)</span>
-    <span class="n">converted</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">convert_and_update</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.delete" title="Permalink to this definition"></a></dt>
 <dd><p>Modules cannot be deleted at this time.</p>
@@ -251,14 +286,44 @@ converted predictor. For example:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.get" title="Permalink to this definition"></a></dt>
-<dd><p>Get a particular element of the collection.</p>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'most_recent'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get a predictor by ID and (optionally) version.</p>
+<p>If version is omitted, the most recent version will be retrieved.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.get_version" title="Permalink to this definition"></a></dt>
+<dd><p>[DEPRECATED] Get a specific version of the predictor.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.50.0: </span>This will be removed in 2.0.0. Use PredictorCollection.get() instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.list" title="Permalink to this definition"></a></dt>
-<dd><p>List non-archived Predictors.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._rest.collection.ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.list" title="Permalink to this definition"></a></dt>
+<dd><p>Paginate over the elements of the collection.</p>
+<p>Leaving page and per_page as default values will yield all elements in the
+collection, paginating over all available pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and yield
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator that can be used to loop over all of the resources in this collection.
+Use list() to force evaluation of all results into an in-memory list.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -268,9 +333,23 @@ converted predictor. For example:</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.list_archived_versions">
+<span class="sig-name descname"><span class="pre">list_archived_versions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.list_archived_versions" title="Permalink to this definition"></a></dt>
+<dd><p>List all archived versions of the given Predictor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.list_versions">
+<span class="sig-name descname"><span class="pre">list_versions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.list_versions" title="Permalink to this definition"></a></dt>
+<dd><p>List all non-archived versions of the given Predictor.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.register">
 <span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.register" title="Permalink to this definition"></a></dt>
 <dd><p>Register and train a Predictor.</p>
+<p>This predctor will be version 1, and its <cite>draft</cite> flag will be <cite>True</cite>. If training completes
+successfully, the <cite>draft</cite> flag will be set to <cite>False</cite>. Otherwise, it will remain <cite>False</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -293,6 +372,12 @@ converted predictor. For example:</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.restore_version">
+<span class="sig-name descname"><span class="pre">restore_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.restore_version" title="Permalink to this definition"></a></dt>
+<dd><p>Restore a predictor version.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.root_is_archived">
 <span class="sig-name descname"><span class="pre">root_is_archived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.root_is_archived" title="Permalink to this definition"></a></dt>
 <dd><p>Determine if the predictor root is archived.</p>
@@ -306,6 +391,9 @@ converted predictor. For example:</p>
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update and train a Predictor.</p>
+<p>If the predictor is a draft, this will overwrite its contents, then begin training. If it’s
+not a draft, a new version will be created with the update, and then training will begin.</p>
+<p>In either case, if training completes successfully, it will no longer be a draft.</p>
 </dd></dl>
 
 </dd></dl>

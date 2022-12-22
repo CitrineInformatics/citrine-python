@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>Index &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -30,7 +30,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -175,6 +175,10 @@
         <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.Branch.access_control_dict">(citrine.resources.branch.Branch method)</a>
 </li>
         <li><a href="reference/citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplate.access_control_dict">(citrine.resources.condition_template.ConditionTemplate method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate.access_control_dict">(citrine.resources.data_version_update.BranchDataUpdate method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest.access_control_dict">(citrine.resources.data_version_update.NextBranchVersionRequest method)</a>
 </li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.access_control_dict">(citrine.resources.dataset.Dataset method)</a>
 </li>
@@ -377,6 +381,8 @@
         <li><a href="reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow.archive_time">(citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.archive_version">archive_version() (citrine.resources.predictor.PredictorCollection method)</a>
+</li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.archived">archived (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace attribute)</a>
 
       <ul>
@@ -735,6 +741,8 @@
 </li>
       <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.BranchCollection">BranchCollection (class in citrine.resources.branch)</a>
 </li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate">BranchDataUpdate (class in citrine.resources.data_version_update)</a>
+</li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.branches">branches (citrine.resources.project.Project property)</a>
 </li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.Column.build">build() (citrine.gemtables.columns.Column class method)</a>
@@ -1024,6 +1032,12 @@
 </li>
         <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.build">(citrine.resources.data_objects.DataObjectCollection method)</a>
 </li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate.build">(citrine.resources.data_version_update.BranchDataUpdate class method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate.build">(citrine.resources.data_version_update.DataVersionUpdate class method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest.build">(citrine.resources.data_version_update.NextBranchVersionRequest class method)</a>
+</li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.build">(citrine.resources.dataset.Dataset class method)</a>
 </li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.DatasetCollection.build">(citrine.resources.dataset.DatasetCollection method)</a>
@@ -1136,6 +1150,8 @@
 </li>
         <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource.build">(citrine.resources.report.ReportResource class method)</a>
 </li>
+        <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail.build">(citrine.resources.status_detail.StatusDetail class method)</a>
+</li>
         <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.build">(citrine.resources.table_config.TableConfig class method)</a>
 </li>
         <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfigCollection.build">(citrine.resources.table_config.TableConfigCollection method)</a>
@@ -1161,6 +1177,32 @@
 </li>
       <li><a href="reference/citrine.builders.predictors.html#citrine.builders.predictors.build_simple_ml">build_simple_ml() (in module citrine.builders.predictors)</a>
 </li>
+      <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.build_with_parent">build_with_parent() (citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor class method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.build_with_parent">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.build_with_parent">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.build_with_parent">(citrine.informatics.predictors.graph_predictor.GraphPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.build_with_parent">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.build_with_parent">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.build_with_parent">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.build_with_parent">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.build_with_parent">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.build_with_parent">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build_with_parent">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.build_with_parent">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor class method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1704,6 +1746,13 @@
 </li>
       </ul></li>
       <li>
+    citrine.resources.data_version_update
+
+      <ul>
+        <li><a href="reference/citrine.resources.data_version_update.html#module-citrine.resources.data_version_update">module</a>
+</li>
+      </ul></li>
+      <li>
     citrine.resources.dataset
 
       <ul>
@@ -1864,8 +1913,6 @@
         <li><a href="reference/citrine.resources.object_templates.html#module-citrine.resources.object_templates">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     citrine.resources.parameter_template
 
@@ -1873,6 +1920,8 @@
         <li><a href="reference/citrine.resources.parameter_template.html#module-citrine.resources.parameter_template">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     citrine.resources.predictor
 
@@ -1962,6 +2011,13 @@
 
       <ul>
         <li><a href="reference/citrine.resources.response.html#module-citrine.resources.response">module</a>
+</li>
+      </ul></li>
+      <li>
+    citrine.resources.status_detail
+
+      <ul>
+        <li><a href="reference/citrine.resources.status_detail.html#module-citrine.resources.status_detail">module</a>
 </li>
       </ul></li>
       <li>
@@ -2225,11 +2281,17 @@
 </li>
       <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.convert_to_graph">convert_to_graph() (citrine.resources.predictor.PredictorCollection method)</a>
 </li>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.convert_version_and_update">convert_version_and_update() (citrine.resources.predictor.PredictorCollection method)</a>
+</li>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.convert_version_to_graph">convert_version_to_graph() (citrine.resources.predictor.PredictorCollection method)</a>
+</li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.CoverageProbability">CoverageProbability (class in citrine.informatics.predictor_evaluation_metrics)</a>
 </li>
       <li><a href="reference/citrine.resources.design_space.html#citrine.resources.design_space.DesignSpaceCollection.create_default">create_default() (citrine.resources.design_space.DesignSpaceCollection method)</a>
 
       <ul>
+        <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.create_default">(citrine.resources.predictor.PredictorCollection method)</a>
+</li>
         <li><a href="reference/citrine.resources.predictor_evaluation_workflow.html#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default">(citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection method)</a>
 </li>
       </ul></li>
@@ -2361,6 +2423,8 @@
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvValidationData">CsvValidationData (class in citrine.resources.file_link)</a>
 </li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate.current">current (citrine.resources.data_version_update.DataVersionUpdate attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -2401,6 +2465,14 @@
         <li><a href="reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.HoldoutSetEvaluator.data_source">(citrine.informatics.predictor_evaluator.HoldoutSetEvaluator attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate.data_updates">data_updates (citrine.resources.data_version_update.BranchDataUpdate attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest.data_updates">(citrine.resources.data_version_update.NextBranchVersionRequest attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.BranchCollection.data_updates">data_updates() (citrine.resources.branch.BranchCollection method)</a>
+</li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts">DataConcepts (class in citrine.resources.data_concepts)</a>
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection">DataConceptsCollection (class in citrine.resources.data_concepts)</a>
@@ -2474,6 +2546,8 @@
       <li><a href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.ExperimentDataSourceRef.datasource_id">datasource_id (citrine.informatics.data_sources.ExperimentDataSourceRef attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace">DataSourceDesignSpace (class in citrine.informatics.design_spaces.data_source_design_space)</a>
+</li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate">DataVersionUpdate (class in citrine.resources.data_version_update)</a>
 </li>
       <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfigCollection.default_for_material">default_for_material() (citrine.resources.table_config.TableConfigCollection method)</a>
 </li>
@@ -2709,8 +2783,6 @@
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.design_workflow">design_workflow (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.DESIGN_WORKFLOW_CREATED">DESIGN_WORKFLOW_CREATED (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.DESIGN_WORKFLOW_FAILED">DESIGN_WORKFLOW_FAILED (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
@@ -2725,6 +2797,8 @@
 </li>
       <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution">DesignExecution (class in citrine.informatics.executions.design_execution)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.design_execution.html#citrine.resources.design_execution.DesignExecutionCollection">DesignExecutionCollection (class in citrine.resources.design_execution)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignMaterial">DesignMaterial (class in citrine.informatics.design_candidate)</a>
@@ -2747,6 +2821,32 @@
 </li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.download_url">download_url (citrine.resources.gemtables.GemTable attribute)</a>
 </li>
+      <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.draft">draft (citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.draft">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.draft">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.draft">(citrine.informatics.predictors.graph_predictor.GraphPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.draft">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.draft">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.draft">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.draft">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.draft">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.draft">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.draft">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.draft">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.ComponentQuantityColumn.dump">dump() (citrine.gemtables.columns.ComponentQuantityColumn method)</a>
 
       <ul>
@@ -2984,6 +3084,12 @@
 </li>
         <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObject.dump">(citrine.resources.data_objects.DataObject method)</a>
 </li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate.dump">(citrine.resources.data_version_update.BranchDataUpdate method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate.dump">(citrine.resources.data_version_update.DataVersionUpdate method)</a>
+</li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest.dump">(citrine.resources.data_version_update.NextBranchVersionRequest method)</a>
+</li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.dump">(citrine.resources.dataset.Dataset method)</a>
 </li>
         <li><a href="reference/citrine.resources.experiment_datasource.html#citrine.resources.experiment_datasource.CandidateExperimentSnapshot.dump">(citrine.resources.experiment_datasource.CandidateExperimentSnapshot method)</a>
@@ -3034,6 +3140,8 @@
 </li>
         <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource.dump">(citrine.resources.report.ReportResource method)</a>
 </li>
+        <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail.dump">(citrine.resources.status_detail.StatusDetail method)</a>
+</li>
         <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.dump">(citrine.resources.table_config.TableConfig method)</a>
 </li>
         <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.dump">(citrine.resources.team.Team method)</a>
@@ -3064,6 +3172,8 @@
       <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension">EnumeratedDimension (class in citrine.informatics.dimensions)</a>
 </li>
       <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor">EnumeratedProcessor (class in citrine.informatics.processors)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusLevelEnum.ERROR">ERROR (citrine.resources.status_detail.StatusLevelEnum attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.estimators">estimators (citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor attribute)</a>
 </li>
@@ -4003,6 +4113,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.get_version">get_version() (citrine.resources.predictor.PredictorCollection method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource.get_version">(citrine.resources.report.ReportResource method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfigCollection.get_with_version">get_with_version() (citrine.resources.table_config.TableConfigCollection method)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor">GraphPredictor (class in citrine.informatics.predictors.graph_predictor)</a>
@@ -4150,6 +4266,8 @@
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.ChemicalDisplayFormat.INCHI">INCHI (citrine.gemtables.columns.ChemicalDisplayFormat attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.AutoConfigureMode.INFER">INFER (citrine.resources.predictor.AutoConfigureMode attribute)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusLevelEnum.INFO">INFO (citrine.resources.status_detail.StatusLevelEnum attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint.ingredient">ingredient (citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint attribute)</a>
 </li>
@@ -4417,6 +4535,10 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.latent_variables">latent_variables (citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor attribute)</a>
 </li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate.latest">latest (citrine.resources.data_version_update.DataVersionUpdate attribute)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail.level">level (citrine.resources.status_detail.StatusDetail attribute)</a>
+</li>
       <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.LINEAR">LINEAR (citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore">LIScore (class in citrine.informatics.scores)</a>
@@ -4559,6 +4681,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.list_archived_versions">list_archived_versions() (citrine.resources.predictor.PredictorCollection method)</a>
+</li>
       <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds">list_by_attribute_bounds() (citrine.resources.data_objects.DataObjectCollection method)</a>
 
       <ul>
@@ -4722,7 +4846,11 @@
       <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs.list_shareable">list_shareable() (citrine.resources.team.TeamResourceIDs method)</a>
 </li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_versions">list_versions() (citrine.resources.gemtables.GemTableCollection method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.list_versions">(citrine.resources.predictor.PredictorCollection method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.resources.team.html#citrine.resources.team.TeamResourceIDs.list_writeable">list_writeable() (citrine.resources.team.TeamResourceIDs method)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">lower_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
@@ -5061,6 +5189,8 @@
 </li>
         <li><a href="reference/citrine.resources.data_objects.html#module-citrine.resources.data_objects">citrine.resources.data_objects</a>
 </li>
+        <li><a href="reference/citrine.resources.data_version_update.html#module-citrine.resources.data_version_update">citrine.resources.data_version_update</a>
+</li>
         <li><a href="reference/citrine.resources.dataset.html#module-citrine.resources.dataset">citrine.resources.dataset</a>
 </li>
         <li><a href="reference/citrine.resources.delete.html#module-citrine.resources.delete">citrine.resources.delete</a>
@@ -5134,6 +5264,8 @@
         <li><a href="reference/citrine.resources.report.html#module-citrine.resources.report">citrine.resources.report</a>
 </li>
         <li><a href="reference/citrine.resources.response.html#module-citrine.resources.response">citrine.resources.response</a>
+</li>
+        <li><a href="reference/citrine.resources.status_detail.html#module-citrine.resources.status_detail">citrine.resources.status_detail</a>
 </li>
         <li><a href="reference/citrine.resources.table_config.html#module-citrine.resources.table_config">citrine.resources.table_config</a>
 </li>
@@ -5219,6 +5351,8 @@
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.MostLikelyCategoryColumn">MostLikelyCategoryColumn (class in citrine.gemtables.columns)</a>
 </li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.MostLikelyProbabilityColumn">MostLikelyProbabilityColumn (class in citrine.gemtables.columns)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail.msg">msg (citrine.resources.status_detail.StatusDetail attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -5389,6 +5523,10 @@
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum.NAME_SEARCH">NAME_SEARCH (citrine.resources.file_link.SearchFileFilterTypeEnum attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.NDME">NDME (class in citrine.informatics.predictor_evaluation_metrics)</a>
+</li>
+      <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.BranchCollection.next_version">next_version() (citrine.resources.branch.BranchCollection method)</a>
+</li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest">NextBranchVersionRequest (class in citrine.resources.data_version_update)</a>
 </li>
       <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.NoEquivalentDescriptorError">NoEquivalentDescriptorError</a>
 </li>
@@ -5650,6 +5788,12 @@
 </li>
       <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.ModelSummary.predictor_uid">predictor_uid (citrine.informatics.reports.ModelSummary attribute)</a>
 </li>
+      <li><a href="reference/citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution.predictor_version">predictor_version (citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow.predictor_version">(citrine.informatics.workflows.design_workflow.DesignWorkflow attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection">PredictorCollection (class in citrine.resources.predictor)</a>
 </li>
       <li><a href="reference/citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution">PredictorEvaluationExecution (class in citrine.informatics.executions.predictor_evaluation_execution)</a>
@@ -5671,6 +5815,8 @@
       <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.predictors">predictors (citrine.informatics.predictors.graph_predictor.GraphPredictor attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate.predictors">(citrine.resources.data_version_update.BranchDataUpdate attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.predictors">(citrine.resources.project.Project property)</a>
 </li>
       </ul></li>
@@ -6100,11 +6246,15 @@
       </ul></li>
       <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.restore_root">restore_root() (citrine.resources.predictor.PredictorCollection method)</a>
 </li>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.restore_version">restore_version() (citrine.resources.predictor.PredictorCollection method)</a>
+</li>
       <li><a href="reference/citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution.results">results() (citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution method)</a>
 </li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.RetryableException">RetryableException</a>
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RMSE">RMSE (class in citrine.informatics.predictor_evaluation_metrics)</a>
+</li>
+      <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.Branch.root_id">root_id (citrine.resources.branch.Branch attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.root_is_archived">root_is_archived() (citrine.resources.predictor.PredictorCollection method)</a>
 </li>
@@ -6324,6 +6474,50 @@
         <li><a href="reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow.status_description">(citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.status_detail">status_detail (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.design_spaces.enumerated_design_space.html#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.status_detail">(citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace.status_detail">(citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.design_spaces.product_design_space.html#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.status_detail">(citrine.informatics.design_spaces.product_design_space.ProductDesignSpace attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.status_detail">(citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.status_detail">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.status_detail">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.status_detail">(citrine.informatics.predictors.graph_predictor.GraphPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.status_detail">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.status_detail">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.status_detail">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.status_detail">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.status_detail">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.status_detail">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_detail">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.status_detail">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor.status_detail">(citrine.informatics.processors.EnumeratedProcessor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor.status_detail">(citrine.informatics.processors.GridProcessor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.MonteCarloProcessor.status_detail">(citrine.informatics.processors.MonteCarloProcessor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow.status_detail">(citrine.informatics.workflows.design_workflow.DesignWorkflow attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow.status_detail">(citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.status_info">status_info (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
 
       <ul>
@@ -6339,29 +6533,29 @@
 </li>
         <li><a href="reference/citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution.status_info">(citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.status_info">(citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.status_info">(citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.status_info">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.status_info">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.status_info">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.status_info">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.status_info">(citrine.informatics.predictors.graph_predictor.GraphPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.status_info">(citrine.informatics.predictors.graph_predictor.GraphPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.status_info">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.status_info">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.status_info">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.status_info">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.status_info">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.status_info">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.status_info">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.status_info">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.status_info">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.status_info">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.status_info">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.status_info">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_info">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_info">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor property)</a>
 </li>
-        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.status_info">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor attribute)</a>
+        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.status_info">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor property)</a>
 </li>
         <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor.status_info">(citrine.informatics.processors.EnumeratedProcessor attribute)</a>
 </li>
@@ -6374,6 +6568,10 @@
         <li><a href="reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow.status_info">(citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail">StatusDetail (class in citrine.resources.status_detail)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusLevelEnum">StatusLevelEnum (class in citrine.resources.status_detail)</a>
+</li>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.MeanAndStd.std">std (citrine.informatics.design_candidate.MeanAndStd attribute)</a>
 </li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.StdDevColumn">StdDevColumn (class in citrine.gemtables.columns)</a>
@@ -6827,6 +7025,8 @@
 </li>
         <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObject.typ">(citrine.resources.data_objects.DataObject attribute)</a>
 </li>
+        <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.DataVersionUpdate.typ">(citrine.resources.data_version_update.DataVersionUpdate attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.typ">(citrine.resources.file_link.FileLink attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun.typ">(citrine.resources.ingredient_run.IngredientRun attribute)</a>
@@ -7064,6 +7264,8 @@
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.units">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusLevelEnum.UNKOWN">UNKOWN (citrine.resources.status_detail.StatusLevelEnum attribute)</a>
+</li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.update">update() (citrine.builders.auto_configure.AutoConfigureWorkflow method)</a>
 
       <ul>
@@ -7152,6 +7354,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.BranchCollection.update_data">update_data() (citrine.resources.branch.BranchCollection method)</a>
+</li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.update_time">update_time (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace attribute)</a>
 
       <ul>
@@ -7278,6 +7482,8 @@
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.url">url (citrine.resources.file_link.FileLink attribute)</a>
 </li>
+      <li><a href="reference/citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest.use_predictors">use_predictors (citrine.resources.data_version_update.NextBranchVersionRequest attribute)</a>
+</li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User">User (class in citrine.resources.user)</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.UserCollection">UserCollection (class in citrine.resources.user)</a>
@@ -7378,9 +7584,35 @@
         <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.variables">(citrine.resources.table_config.TableConfig attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.resources.experiment_datasource.html#citrine.resources.experiment_datasource.ExperimentDataSource.version">version (citrine.resources.experiment_datasource.ExperimentDataSource attribute)</a>
+      <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.version">version (citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.version">(citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.version">(citrine.informatics.predictors.expression_predictor.ExpressionPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor.version">(citrine.informatics.predictors.graph_predictor.GraphPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor.version">(citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor.version">(citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor.version">(citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor.version">(citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.version">(citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer.version">(citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.version">(citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor.version">(citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor attribute)</a>
+</li>
+        <li><a href="reference/citrine.resources.branch.html#citrine.resources.branch.Branch.version">(citrine.resources.branch.Branch attribute)</a>
+</li>
+        <li><a href="reference/citrine.resources.experiment_datasource.html#citrine.resources.experiment_datasource.ExperimentDataSource.version">(citrine.resources.experiment_datasource.ExperimentDataSource attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.version">(citrine.resources.gemtables.GemTable attribute)</a>
 </li>
       </ul></li>
@@ -7413,6 +7645,8 @@
       <li><a href="reference/citrine.jobs.waiting.html#citrine.jobs.waiting.wait_while_executing">wait_while_executing() (in module citrine.jobs.waiting)</a>
 </li>
       <li><a href="reference/citrine.jobs.waiting.html#citrine.jobs.waiting.wait_while_validating">wait_while_validating() (in module citrine.jobs.waiting)</a>
+</li>
+      <li><a href="reference/citrine.resources.status_detail.html#citrine.resources.status_detail.StatusLevelEnum.WARNING">WARNING (citrine.resources.status_detail.StatusLevelEnum attribute)</a>
 </li>
       <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.NoEquivalentDescriptorError.with_traceback">with_traceback() (citrine.builders.descriptors.NoEquivalentDescriptorError method)</a>
 

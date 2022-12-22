@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -307,7 +307,7 @@ Training data is provided by a <a class="reference internal" href="../reference/
 Then wait for the results to be ready:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_executing</span>
 
-<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor_version</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
 <span class="n">wait_while_executing</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictor_evaluation_executions</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="n">execution</span><span class="p">,</span> <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.branch module &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>citrine.resources.branch module &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -133,6 +133,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.branch.Branch.root_id">
+<span class="sig-name descname"><span class="pre">root_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.branch.Branch.root_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.branch.Branch.uid">
 <span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.branch.Branch.uid" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -140,6 +145,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.branch.Branch.updated_at">
 <span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.branch.Branch.updated_at" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.branch.Branch.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.branch.Branch.version" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -173,6 +183,23 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch">Branch</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.branch.BranchCollection.data_updates">
+<span class="sig-name descname"><span class="pre">data_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate" title="citrine.resources.data_version_update.BranchDataUpdate"><span class="pre">citrine.resources.data_version_update.BranchDataUpdate</span></a></span></span><a class="headerlink" href="#citrine.resources.branch.BranchCollection.data_updates" title="Permalink to this definition"></a></dt>
+<dd><p>Get data updates for a branch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – Unique identifier of the branch to get data updates for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of data updates and compatible predictors</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.data_version_update.html#citrine.resources.data_version_update.BranchDataUpdate" title="citrine.resources.data_version_update.BranchDataUpdate">BranchDataUpdate</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -228,6 +255,33 @@ making requests to the backend service.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.branch.BranchCollection.next_version">
+<span class="sig-name descname"><span class="pre">next_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch_root_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch_instructions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest" title="citrine.resources.data_version_update.NextBranchVersionRequest"><span class="pre">citrine.resources.data_version_update.NextBranchVersionRequest</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.branch.BranchCollection.next_version" title="Permalink to this definition"></a></dt>
+<dd><p>Move a branch to the next version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>branch_root_id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – Unique identifier of the branch root to advance to next version</p></li>
+<li><p><strong>branch_instructions</strong> (<a class="reference internal" href="citrine.resources.data_version_update.html#citrine.resources.data_version_update.NextBranchVersionRequest" title="citrine.resources.data_version_update.NextBranchVersionRequest"><em>NextBranchVersionRequest</em></a>) – Instructions for how the next version of a branch should handle its predictors
+when the workflows are cloned.  data_updates contains the list of data source
+versions to upgrade (current-&gt;latest), and use_predictors will either have a
+&lt;predictor_id&gt;:latest to indicate the workflow should use a new version of
+the predictor.  Or &lt;predictor_id&gt;:&lt;version #&gt; to indicate that the workflow
+should use an existing predictor version.</p></li>
+<li><p><strong>retrain_models</strong> (<em>bool</em>) – If true, when new versions of models are created, they are automatically
+scheduled for training</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The new branch record after version update</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch">Branch</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.branch.BranchCollection.register">
 <span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.collection.CreationType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.collection.CreationType</span></span></span><a class="headerlink" href="#citrine.resources.branch.BranchCollection.register" title="Permalink to this definition"></a></dt>
 <dd><p>Create a new element of the collection by registering an existing resource.</p>
@@ -248,6 +302,31 @@ making requests to the backend service.</p>
 <dt class="sig sig-object py" id="citrine.resources.branch.BranchCollection.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.collection.CreationType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.collection.CreationType</span></span></span><a class="headerlink" href="#citrine.resources.branch.BranchCollection.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.branch.BranchCollection.update_data">
+<span class="sig-name descname"><span class="pre">update_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch"><span class="pre">citrine.resources.branch.Branch</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_existing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrain_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch"><span class="pre">citrine.resources.branch.Branch</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.branch.BranchCollection.update_data" title="Permalink to this definition"></a></dt>
+<dd><p>Automatically advance the branch to the next version.</p>
+<p>If there are no newer versions of data sources used by this branch this method returns
+without doing anything</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>branch</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch"><em>Branch</em></a><em>]</em>) – Branch Identifier or Branch object</p></li>
+<li><p><strong>use_existing</strong> (<em>bool</em>) – If true the workflows in this branch will use existing predictors that are using
+the latest versions of the data sources and are ready to use.</p></li>
+<li><p><strong>retrain_models</strong> (<em>bool</em>) – If true, when new versions of models are created, they are automatically
+scheduled for training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The new branch record after version update or None if no update</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.branch.Branch" title="citrine.resources.branch.Branch">Branch</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

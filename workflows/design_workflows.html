@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.7. Design Workflows &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>4.7. Design Workflows &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -114,6 +114,7 @@ This workflow is comprised of three modules:</p>
     <span class="n">DesignWorkflow</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example workflow&#39;</span><span class="p">,</span>
         <span class="n">predictor_id</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="n">predictor_version</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
         <span class="n">processor_id</span><span class="o">=</span><span class="n">processor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
         <span class="n">design_space_id</span><span class="o">=</span><span class="n">design_space</span><span class="o">.</span><span class="n">uid</span>
     <span class="p">)</span>
@@ -247,6 +248,7 @@ You can still list all design workflows on the project as before.</p>
     <span class="n">DesignWorkflow</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example workflow&#39;</span><span class="p">,</span>
         <span class="n">predictor_id</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="n">predictor_version</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
         <span class="n">processor_id</span><span class="o">=</span><span class="n">processor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
         <span class="n">design_space_id</span><span class="o">=</span><span class="n">design_space</span><span class="o">.</span><span class="n">uid</span>
     <span class="p">)</span>
@@ -283,6 +285,11 @@ Thus, archiving all the design workflows contained within a branch will result i
 
 <span class="c1"># Restore the branch to active status.</span>
 <span class="n">my_branch</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">my_branch</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>  <span class="c1"># my_branch.archived == False</span>
+</pre></div>
+</div>
+<p>You can also update the data on a branch similarly to the web application by using the <code class="docutils literal notranslate"><span class="pre">update_data</span></code> method on a <a class="reference internal" href="../reference/citrine.resources.branch.html#citrine.resources.branch.BranchCollection" title="citrine.resources.branch.BranchCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">BranchCollection</span></code></a> with the desired arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update the data on my_branch</span>
+<span class="n">my_updated_branch</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">update_data</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">my_branch</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

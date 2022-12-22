@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.predictor_evaluation_workflow module &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>citrine.resources.predictor_evaluation_workflow module &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -104,7 +104,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default">
-<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><span class="pre">citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><span class="pre">citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.</p>
 <p>The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
 on all valid predictor responses. Valid responses are those that are <strong>not</strong> produced by the
@@ -122,7 +122,10 @@ following predictors:</p>
 <p>If there are no valid responses, a default workflow is not created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>predictor_id</strong> (<em>UUID</em>) – Unique identifier of the predictor used to create a default workflow</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predictor_id</strong> (<em>UUID</em>) – Unique identifier of the predictor used to create a default workflow</p></li>
+<li><p><strong>predictor_version</strong> (<em>Option</em><em>[</em><em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>]</em>) – The version of the predictor used to create a default workflow</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Default workflow</p>

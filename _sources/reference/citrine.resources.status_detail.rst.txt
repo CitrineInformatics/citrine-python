@@ -1,0 +1,8 @@
+citrine.resources.status\_detail module
+=======================================
+
+.. automodule:: citrine.resources.status_detail
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

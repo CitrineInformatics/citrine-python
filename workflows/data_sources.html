@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.9. Data Sources &mdash; Citrine Python 1.44.1 documentation</title>
+  <title>4.9. Data Sources &mdash; Citrine Python 1.51.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.44.1
+                1.51.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -59,6 +59,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.9. Data Sources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#csv-data-source">4.9.1. CSV Data Source</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gem-table-data-source">4.9.2. GEM Table Data Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#experiment-data-source">4.9.3. Experiment Data Source</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
@@ -281,6 +282,30 @@ The example below assumes that the uuid and the version of the desired GEM Table
 <p>Note that the descriptor keys above are the headers of the <em>variable</em> not the column in the table.
 The last term in the column header is a suffix associated with the specific column definition rather than the variable.
 It should be omitted from the descriptor key.</p>
+</section>
+<section id="experiment-data-source">
+<h2><span class="section-number">4.9.3. </span>Experiment Data Source<a class="headerlink" href="#experiment-data-source" title="Permalink to this headline"></a></h2>
+<p>An <a class="reference internal" href="../reference/citrine.resources.experiment_datasource.html#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentDataSource</span></code></a> references a snapshot of the Experiment Results in a Branch that are fit for training.
+This snapshot is created when one updates the data on a Branch and chooses to include Experiment Results in the training data via the web application.
+There is only one Experiment Data Source per Branch, though it is versioned.
+The version increments everytime a new or updated Experiment Result is chosen as training data via the web application.</p>
+<p>One can reference an Experiment Data Source from a branch:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eds</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">experiment_datasource</span>
+</pre></div>
+</div>
+<p>The <cite>.read()</cite> method will return a string in a CSV-friendly format for convenient export or further analysis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write to CSV:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;experiment_datasource.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eds</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+<span class="c1"># Convert to a Pandas DataFrame</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+
+<span class="n">eds_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">eds</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">eds_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">eds_io</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+</pre></div>
+</div>
 </section>
 </section>
 

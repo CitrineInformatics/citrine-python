@@ -1,0 +1,8 @@
+citrine.resources.data\_version\_update module
+==============================================
+
+.. automodule:: citrine.resources.data_version_update
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
