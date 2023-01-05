@@ -557,17 +557,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             return self.register(model, dry_run=False)
         except BadRequest:
             # If register() cannot be used because an asynchronous check is required
-            return self.async_update(model, dry_run=False,
-                                     wait_for_response=True, return_model=True)
+            return self._async_update(model, dry_run=False,
+                                      wait_for_response=True, return_model=True)
 
-    def async_update(self, model: ResourceType, *,
-                     dry_run: bool = False,
-                     wait_for_response: bool = True,
-                     timeout: float = 2 * 60,
-                     polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
+    def _async_update(self, model: ResourceType, *,
+                      dry_run: bool = False,
+                      wait_for_response: bool = True,
+                      timeout: float = 2 * 60,
+                      polling_delay: float = 1.0,
+                      return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
         """
-        [ALPHA] Update a particular element of the collection with data validation.
+        Update a particular element of the collection with data validation.
 
         Update a particular element of the collection, doing a deeper check to ensure that
         the dependent data objects are still with the (potentially) changed constraints
@@ -621,7 +621,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                                "a data model object with data validation.")
 
         url = self._get_path() + \
-            "/" + scope + "/" + id + "/async"
+              "/" + scope + "/" + id + "/async"
 
         response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
 
@@ -698,7 +698,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         link = _make_link_by_uid(uid, scope)
         path = self._get_path(ignore_dataset=self.dataset_id is None) \
-            + format_escaped_url("/{}/{}", link.scope, link.id)
+               + format_escaped_url("/{}/{}", link.scope, link.id)
         data = self.session.get_resource(path)
         return self.build(data)
 
