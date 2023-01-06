@@ -260,13 +260,36 @@ def test_update(session, workflow, collection_without_branch):
     workflow.branch_id = uuid.uuid4()
 
     post_dict = workflow.dump()
-    session.set_response({**post_dict, 'status_description': 'status'})
+    session.set_responses(
+        {"per_page": 1, "next": "", "response": []},
+        {**post_dict, 'status_description': 'status'})
 
     # When
     new_workflow = collection_without_branch.update(workflow)
 
     # Then
-    assert session.num_calls == 1
+    assert session.num_calls == 2
+    expected_call = FakeCall(
+        method='PUT',
+        path=workflow_path(collection_without_branch, workflow),
+        json=post_dict)
+    assert session.last_call == expected_call
+    assert_workflow(new_workflow, workflow)
+
+
+def test_update_warning(session, workflow, collection_without_branch, design_execution_dict):
+    # Given
+    workflow.branch_id = uuid.uuid4()
+    post_dict = workflow.dump()
+    session.set_responses(
+        {"per_page": 1, "next": "", "response": [design_execution_dict]},
+        {**post_dict, 'status_description': 'status'})
+
+    # When
+    new_workflow = collection_without_branch.update(workflow)
+
+    # Then
+    assert session.num_calls == 2
     expected_call = FakeCall(
         method='PUT',
         path=workflow_path(collection_without_branch, workflow),
@@ -280,13 +303,15 @@ def test_update_with_matching_branch_ids(session, workflow, collection):
     workflow.branch_id = collection.branch_id
 
     post_dict = workflow.dump()
-    session.set_response({**post_dict, 'status_description': 'status'})
+    session.set_responses(
+        {"per_page": 1, "next": "", "response": []},
+        {**post_dict, 'status_description': 'status'})
 
     # When
     new_workflow = collection.update(workflow)
 
     # Then
-    assert session.num_calls == 1
+    assert session.num_calls == 2
     expected_call = FakeCall(
         method='PUT',
         path=workflow_path(collection, workflow),
