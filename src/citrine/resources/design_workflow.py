@@ -125,8 +125,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         # If executions have already been done, warn about future behavior change
         executions = model.design_executions.list(per_page=1)
         if next(executions, None) is not None:
-            warnings.warn("Updating a design workflow after candidate generation will soon "
-                          "be deprecated, please create a new DesignWorkflow instead "
+            warnings.warn("Updating a design workflow after candidate generation is "
+                          "deprecated, please create a new DesignWorkflow instead "
                           "(e.g. branch.design_workflows.register())",
                           DeprecationWarning)
 

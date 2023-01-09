@@ -286,7 +286,8 @@ def test_update_warning(session, workflow, collection_without_branch, design_exe
         {**post_dict, 'status_description': 'status'})
 
     # When
-    new_workflow = collection_without_branch.update(workflow)
+    with pytest.deprecated_call():
+        new_workflow = collection_without_branch.update(workflow)
 
     # Then
     assert session.num_calls == 2
