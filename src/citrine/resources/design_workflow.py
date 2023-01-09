@@ -122,6 +122,14 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         if model.branch_id is None:
             raise ValueError('Cannot update a design workflow unless its branch_id is set.')
 
+        # If executions have already been done, warn about future behavior change
+        executions = model.design_executions.list(per_page=1)
+        if next(executions, None) is not None:
+            warnings.warn("Updating a design workflow after candidate generation is "
+                          "deprecated, please create a new DesignWorkflow instead "
+                          "(e.g. branch.design_workflows.register())",
+                          DeprecationWarning)
+
         return super().update(model)
 
     def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
