@@ -18,7 +18,7 @@ To create a local resource, initialize it as you would any other Python object. 
 
 .. code-block:: python
 
-    from citrine.resources.process_spec import ProcessSpec
+    from gemd import ProcessSpec
     buy_electrolyte_spec = ProcessSpec("Buy ammonium chloride")
 
 creates a process spec with the display name "Buy ammonium chloride" and no other information.

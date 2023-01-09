@@ -18,8 +18,10 @@ Identifying Data Model Objects
 
 After registering a data model object, you will probably want to be able to find that object again.
 The easiest way to get an existing object is by one of its unique identifiers.
-Every data model object on the Citrine Platform has a platform-issued identifier, often referred to as the "Citrine Identifier" or "CitrineId".
+Every data model object on the Citrine Platform has a `platform-issued identifier`__, often referred to as the "Citrine Identifier" or "CitrineId".
 These identifiers are UUID4_, which are extremely robust but also not especially human readable.
+
+__ https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#citrine-id
 
 `Alternative identifiers`__ are an easier way to recall data objects.
 To create an alternative identifier, simply add key-value pairs to the ``uids`` dictionary in the data model object.
@@ -39,11 +41,29 @@ For example:
 
     dataset.process_specs.register(ProcessSpec(...))
 
+Equivalent behavior is available through the type-agnostic ``gemd`` collection and directly from a dataset object:
+
+.. code-block:: python
+
+    dataset.gemd.register(ProcessSpec(...))
+    dataset.register(ProcessSpec(...))
+
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
 
+If you are registering several objects at the same time, you can use the ``register_all`` method that is available via the same objects:
+
+.. code-block:: python
+
+    dataset.process_specs.register_all(ProcessSpec(...), ProcessRun(...))
+    dataset.gemd.register_all(ProcessSpec(...), ProcessRun(...))
+    dataset.register_all(ProcessSpec(...), ProcessRun(...))
+
+``register`` and ``register_all`` will work with any data model object type.
+``register_all`` will sort objects so that interdependent models (e.g., a whole `material history`__) can be passed in one call.
 If you have GEMD_ objects, e.g., :class:`~gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python client.
 
+__ https://citrineinformatics.github.io/gemd-docs/specification/objects/#material-history
 
 Finding Data Model Objects
 ---------------------------------
@@ -53,7 +73,14 @@ For example:
 
 .. code-block:: python
 
-    project.process_templates.get(scope="standard-templates", id="milling")
+    project.process_templates.get(LinkByUID(scope="standard-templates", id="milling"))
+
+If you know the CitrineID, you do not need to specify a scope:
+
+.. code-block:: python
+
+    project.process_templates.get(CitrineID)
+
 
 If you don't know any of the data model object's unique identifiers, then you can list the data model objects and find your object in that list:
 
@@ -99,10 +126,14 @@ The measurements of a material can be located with
 
 Updating Data Model Objects
 ---------------------------
-Runs and specs can be quickly modified in-place and persisted with ``upload``, but templates require more care.
+Runs and specs can be quickly modified in-place and persisted with ``register`` or ``register_all``, but templates require more care.
 In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
+If there is no risk that an update could invalidate data (e.g., changing an object name), the template can be updated as per runs and specs.
+
+If such a risk exists (e.g., making bounds more restrictive), ``register`` and ``register_all`` will raise exceptions.
 To attempt such a template update, use :meth:`~citrine.resources.data_concepts.DataConceptsCollection.async_update`.
 If the update is invalid, then the reasons for failure are logged.
+As a convenience, the ``update`` method will first try ``register`` and then will fall-back to ``async_update`` with convenient arguments.
 
 Referencing Data Model Objects
 ------------------------------
@@ -123,6 +154,13 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 .. _ProcessSpec: https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec
 .. _gemd-python: https://github.com/CitrineInformatics/gemd-python
 .. _UUID4: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
+
+LinkByUIDs can also be useful for retrieving referenced objects:
+
+.. code-block:: python
+
+    template = dataset.gemd.get(process_spec.template.to_link())
+
 
 Material History
 ----------------

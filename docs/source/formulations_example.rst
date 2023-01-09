@@ -142,9 +142,7 @@ Make sure to set the bounds wide enough to encompass all anticipated use cases o
 
 .. code-block:: python
 
-    from citrine.resources.parameter_template import ParameterTemplate
-    from citrine.resources.property_template import PropertyTemplate
-    from gemd.entity.bounds import RealBounds
+    from gemd import ParameterTemplate, PropertyTemplate, RealBounds
 
     # Assume we have already created a project and dataset, named "project" and "dataset."
     # We give the templates ids with a custom scope so that they can be easily retrieved.
@@ -187,7 +185,7 @@ The template includes a comprehensive list of all allowed names and labels.
 
 .. code-block:: python
 
-    from citrine.resources.process_template import ProcessTemplate
+    from gemd import ProcessTemplate
 
     mix_template = dataset.process_templates.register(
         ProcessTemplate(
@@ -218,11 +216,7 @@ This assumes that the material specs for the atomic materials and the simple syr
 
 .. code-block:: python
 
-    from citrine.resources.process_spec import ProcessSpec
-    from citrine.resources.ingredient_spec import IngredientSpec
-    from citrine.resources.material_spec import MaterialSpec
-    from gemd.entity.value import NominalReal
-    from gemd.entity.link_by_uid import LinkByUID
+    from gemd import ProcessSpec, IngredientSpec, MaterialSpec, NominalReal, LinkByUID
 
     mix_margarita_spec = dataset.process_specs.register(
         ProcessSpec("mix margarita B", template=LinkByUID("margaritas-id", "mix template"))
