@@ -2,7 +2,7 @@
 from abc import abstractmethod, ABC
 import re
 from warnings import warn
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
+from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable, Sequence
 from uuid import UUID, uuid4
 import deprecation
 
@@ -872,3 +872,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params,
             version='v1')
         return (self.build(raw) for raw in raw_objects)
+
+    def list_by_id(self) -> Sequence:
+        raise NotImplementedError
