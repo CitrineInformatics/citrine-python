@@ -131,9 +131,8 @@ In particular, changing the bounds or allowed names/labels of a template could i
 If there is no risk that an update could invalidate data (e.g., changing an object name), the template can be updated as per runs and specs.
 
 If such a risk exists (e.g., making bounds more restrictive), ``register`` and ``register_all`` will raise exceptions.
-To attempt such a template update, use :meth:`~citrine.resources.data_concepts.DataConceptsCollection.async_update`.
+To attempt such a template update, use :meth:`~citrine.resources.data_concepts.DataConceptsCollection.update`.
 If the update is invalid, then the reasons for failure are logged.
-As a convenience, the ``update`` method will first try ``register`` and then will fall-back to ``async_update`` with convenient arguments.
 
 Referencing Data Model Objects
 ------------------------------
