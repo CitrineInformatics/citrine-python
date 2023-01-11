@@ -720,6 +720,7 @@ def example_candidates():
         "page": 2,
         "per_page": 4,
         "response": [{
+            "id": str(uuid.uuid4()),
             "material_id": str(uuid.uuid4()),
             "identifiers": [],
             "primary_score": 0,
