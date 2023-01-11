@@ -117,8 +117,10 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     This class represents the candidate computed by a design execution.
     """
 
+    candidate_id = properties.UUID('id')
+    """:UUID: unique external Citrine id of the material"""
     material_id = properties.UUID('material_id')
-    """:UUID: unique Citrine id of the material"""
+    """:UUID: unique internal Citrine id of the material"""
     identifiers = properties.List(properties.String(), 'identifiers')
     """:List[str]: globally unique identifiers assigned to the material"""
     primary_score = properties.Float('primary_score')
