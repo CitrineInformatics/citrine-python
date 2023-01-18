@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.material_spec module &mdash; Citrine Python 1.51.1 documentation</title>
+  <title>citrine.resources.material_spec module &mdash; Citrine Python 1.53.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.51.1
+                1.53.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -361,7 +361,7 @@ This method will also work if data is a deserialized GEMD object.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.material_spec.MaterialSpecCollection.async_update">
 <span class="sig-name descname"><span class="pre">async_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine.resources.data_concepts.ResourceType</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">citrine.resources.data_concepts.ResourceType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.async_update" title="Permalink to this definition"></a></dt>
-<dd><p>[ALPHA] Update a particular element of the collection with data validation.</p>
+<dd><p>Update a particular element of the collection with data validation.</p>
 <p>Update a particular element of the collection, doing a deeper check to ensure that
 the dependent data objects are still with the (potentially) changed constraints
 of this change. This will allow you to make bounds and allowed named/labels changes
@@ -776,6 +776,13 @@ registration. Requires installing the optional tqdm module. Default: false</p></
 <dt class="sig sig-object py" id="citrine.resources.material_spec.MaterialSpecCollection.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine.resources.data_concepts.ResourceType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine.resources.data_concepts.ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.update" title="Permalink to this definition"></a></dt>
 <dd><p>Update a data object model.</p>
+<p>Update a particular element of the collection,
+first attempting a simple update using register and falling back to async_update
+if the changes require it (e.g., updating template bounds).</p>
+<dl class="simple">
+<dt>model: ResourceType</dt><dd><p>The DataConcepts object.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

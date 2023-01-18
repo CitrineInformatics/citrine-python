@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. GEMD Data Model &mdash; Citrine Python 1.51.1 documentation</title>
+  <title>2. GEMD Data Model &mdash; Citrine Python 1.53.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.51.1
+                1.53.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -104,7 +104,7 @@ Any method that accepts the Citrine Python client’s implementations of data mo
 <h2><span class="section-number">2.2. </span>Identifying Data Model Objects<a class="headerlink" href="#identifying-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>After registering a data model object, you will probably want to be able to find that object again.
 The easiest way to get an existing object is by one of its unique identifiers.
-Every data model object on the Citrine Platform has a platform-issued identifier, often referred to as the “Citrine Identifier” or “CitrineId”.
+Every data model object on the Citrine Platform has a <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#citrine-id">platform-issued identifier</a>, often referred to as the “Citrine Identifier” or “CitrineId”.
 These identifiers are <a class="reference external" href="https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)">UUID4</a>, which are extremely robust but also not especially human readable.</p>
 <p><a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids">Alternative identifiers</a> are an easier way to recall data objects.
 To create an alternative identifier, simply add key-value pairs to the <code class="docutils literal notranslate"><span class="pre">uids</span></code> dictionary in the data model object.
@@ -119,15 +119,32 @@ For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>Equivalent behavior is available through the type-agnostic <code class="docutils literal notranslate"><span class="pre">gemd</span></code> collection and directly from a dataset object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">gemd</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as <cite>project.process_specs</cite>) are read-only and will throw an error if their register method is called.</p>
-<p>If you have <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> objects, e.g., <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python client.</p>
+<p>If you are registering several objects at the same time, you can use the <code class="docutils literal notranslate"><span class="pre">register_all</span></code> method that is available via the same objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register_all</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">gemd</span><span class="o">.</span><span class="n">register_all</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">register_all</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">register</span></code> and <code class="docutils literal notranslate"><span class="pre">register_all</span></code> will work with any data model object type.
+<code class="docutils literal notranslate"><span class="pre">register_all</span></code> will sort objects so that interdependent models (e.g., a whole <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/objects/#material-history">material history</a>) can be passed in one call.
+If you have <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> objects, e.g., <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python client.</p>
 </section>
 <section id="finding-data-model-objects">
 <h2><span class="section-number">2.4. </span>Finding Data Model Objects<a class="headerlink" href="#finding-data-model-objects" title="Permalink to this headline"></a></h2>
 <p>If you know any a data model object’s unique identifiers, then you can get that object by its unique identifier.
 For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;standard-templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;milling&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;standard-templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;milling&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If you know the CitrineID, you do not need to specify a scope:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CitrineID</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you don’t know any of the data model object’s unique identifiers, then you can list the data model objects and find your object in that list:</p>
@@ -164,9 +181,11 @@ or <a class="reference internal" href="reference/citrine.resources.ingredient_sp
 </section>
 <section id="updating-data-model-objects">
 <h2><span class="section-number">2.5. </span>Updating Data Model Objects<a class="headerlink" href="#updating-data-model-objects" title="Permalink to this headline"></a></h2>
-<p>Runs and specs can be quickly modified in-place and persisted with <code class="docutils literal notranslate"><span class="pre">upload</span></code>, but templates require more care.
+<p>Runs and specs can be quickly modified in-place and persisted with <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">register_all</span></code>, but templates require more care.
 In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
-To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="citrine.resources.data_concepts.DataConceptsCollection.async_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">async_update()</span></code></a>.
+If there is no risk that an update could invalidate data (e.g., changing an object name), the template can be updated as per runs and specs.</p>
+<p>If such a risk exists (e.g., making bounds more restrictive), <code class="docutils literal notranslate"><span class="pre">register</span></code> and <code class="docutils literal notranslate"><span class="pre">register_all</span></code> will raise exceptions.
+To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.update" title="citrine.resources.data_concepts.DataConceptsCollection.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>.
 If the update is invalid, then the reasons for failure are logged.</p>
 </section>
 <section id="referencing-data-model-objects">
@@ -179,6 +198,10 @@ These links are created with the <a class="reference external" href="https://cit
 <span class="n">link</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;my namespace&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;my_process&quot;</span><span class="p">)</span>
 <span class="n">material</span> <span class="o">=</span> <span class="n">MaterialSpec</span><span class="p">(</span><span class="s2">&quot;my material&quot;</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">link</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">material</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>LinkByUIDs can also be useful for retrieving referenced objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">gemd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">process_spec</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">to_link</span><span class="p">())</span>
 </pre></div>
 </div>
 </section>

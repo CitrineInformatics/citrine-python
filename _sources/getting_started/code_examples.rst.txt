@@ -87,16 +87,8 @@ a parameter template ``wavelength_template``, and a property template ``refracti
 
 .. code-block:: python
 
-    from gemd.entity.attribute import Condition, Parameter, Property
-    from gemd.entity.value.nominal_real import NominalReal
-    from citrine.resources.ingredient_run import IngredientRun
-    from citrine.resources.ingredient_spec import IngredientSpec
-    from citrine.resources.material_run import MaterialRun
-    from citrine.resources.material_spec import MaterialSpec
-    from citrine.resources.measurement_run import MeasurementRun
-    from citrine.resources.measurement_spec import MeasurementSpec
-    from citrine.resources.process_run import ProcessRun
-    from citrine.resources.process_spec import ProcessSpec
+    from gemd import Condition, Parameter, Property, NominalReal, IngredientRun, IngredientSpec, \
+        MaterialRun, MaterialSpec, MeasurementRun, MeasurementSpec, ProcessRun, ProcessSpec
 
     buy_toluene_spec = solvents_dataset.process_specs.register(
         ProcessSpec("Buy toluene", template=purchase_template))
@@ -133,8 +125,7 @@ Continuing the above example, the following code would retrieve the material his
 .. code-block:: python
 
     scope = 'id'
-    uid = toluene.uids[scope]
-    toluene_history = solvents_dataset.material_runs.get_history(scope=scope, id=uid)
+    toluene_history = solvents_dataset.material_runs.get_history(id=toluene.to_link(scope))
 
 `toluene_history` is a MaterialRun that can be traced back to see its spec, the measurement performed on it,
 that measurement's spec, the process that created it, and that process's spec.

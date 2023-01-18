@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Formulations Example &mdash; Citrine Python 1.51.1 documentation</title>
+  <title>5. Formulations Example &mdash; Citrine Python 1.53.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.51.1
+                1.53.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -264,9 +264,7 @@ For the “price” template, we therefore use units of 1/kg instead of $/kg.</p
 <p>In the code examples that follow, imports are assumed to be cumulative.
 Once an import has been demonstrated, we do not include it in subsequent code blocks.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.parameter_template</span> <span class="kn">import</span> <span class="n">ParameterTemplate</span>
-<span class="kn">from</span> <span class="nn">citrine.resources.property_template</span> <span class="kn">import</span> <span class="n">PropertyTemplate</span>
-<span class="kn">from</span> <span class="nn">gemd.entity.bounds</span> <span class="kn">import</span> <span class="n">RealBounds</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gemd</span> <span class="kn">import</span> <span class="n">ParameterTemplate</span><span class="p">,</span> <span class="n">PropertyTemplate</span><span class="p">,</span> <span class="n">RealBounds</span>
 
 <span class="c1"># Assume we have already created a project and dataset, named &quot;project&quot; and &quot;dataset.&quot;</span>
 <span class="c1"># We give the templates ids with a custom scope so that they can be easily retrieved.</span>
@@ -306,7 +304,7 @@ For example, the process template to represent blending should include <code cla
 These will be used to convert GEMD data into formulations.
 It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
 The template includes a comprehensive list of all allowed names and labels.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_template</span> <span class="kn">import</span> <span class="n">ProcessTemplate</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gemd</span> <span class="kn">import</span> <span class="n">ProcessTemplate</span>
 
 <span class="n">mix_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
     <span class="n">ProcessTemplate</span><span class="p">(</span>
@@ -336,11 +334,7 @@ This assumes that the material specs for the atomic materials and the simple syr
 <p class="admonition-title">Attention</p>
 <p>It is important to assign human-readable uids to the Material Runs, as these will be the unique identifiers in the resulting table.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
-<span class="kn">from</span> <span class="nn">citrine.resources.ingredient_spec</span> <span class="kn">import</span> <span class="n">IngredientSpec</span>
-<span class="kn">from</span> <span class="nn">citrine.resources.material_spec</span> <span class="kn">import</span> <span class="n">MaterialSpec</span>
-<span class="kn">from</span> <span class="nn">gemd.entity.value</span> <span class="kn">import</span> <span class="n">NominalReal</span>
-<span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gemd</span> <span class="kn">import</span> <span class="n">ProcessSpec</span><span class="p">,</span> <span class="n">IngredientSpec</span><span class="p">,</span> <span class="n">MaterialSpec</span><span class="p">,</span> <span class="n">NominalReal</span><span class="p">,</span> <span class="n">LinkByUID</span>
 
 <span class="n">mix_margarita_spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
     <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;mix margarita B&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">,</span> <span class="s2">&quot;mix template&quot;</span><span class="p">))</span>
