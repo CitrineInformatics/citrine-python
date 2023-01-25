@@ -5,6 +5,7 @@ from typing import Union
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.executions.design_execution import DesignExecution
+from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.informatics.executions import PredictorEvaluationExecution
 from citrine.informatics.modules import Module
 
@@ -126,14 +127,19 @@ def wait_while_validating(
                                         interval=interval)
 
 
+# Might need to add GenerativeDesignExecution here.
 def wait_while_executing(
     *,
-    collection: Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]],
-    execution: Union[PredictorEvaluationExecution, DesignExecution],
+    collection: Union[
+        Collection[PredictorEvaluationExecution],
+        Collection[DesignExecution],
+        Collection[GenerativeDesignExecution]
+    ],
+    execution: Union[PredictorEvaluationExecution, DesignExecution, GenerativeDesignExecution],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-) -> Union[PredictorEvaluationExecution, DesignExecution]:
+) -> Union[PredictorEvaluationExecution, DesignExecution, GenerativeDesignExecution]:
     """
     Wait until execution is finished.
 

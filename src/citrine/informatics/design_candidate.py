@@ -131,3 +131,22 @@ class DesignCandidate(Serializable["DesignCandidate"]):
 
     def __init__(self):
         pass  # pragma: no cover
+
+
+class GenerationResult(Serializable["GenerationResult"]):
+    """A Citrine Generation Design Result.
+
+    This class represents the molecule greated by a generative design execution.
+    """
+
+    seed = properties.String('seed')
+    """The seed used to generate the molecule."""
+    mutated = properties.String("mutated")
+    """The mutated molecule."""
+    fingerprint_similarity = properties.Float("fingerprint_similarity")
+    """The fingerprint similarity between the seed and the mutated molecule."""
+    fingerprint_type = properties.String("fingerprint_type")
+    """The fingerprint type used to calculate the fingerprint similarity."""
+
+    def __init__(self):
+        pass  # pragma: no cover
