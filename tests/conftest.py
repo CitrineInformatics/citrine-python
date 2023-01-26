@@ -788,6 +788,12 @@ def design_execution_dict(generic_entity):
 
 
 @pytest.fixture
+def generative_design_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    return ret
+
+
+@pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict, example_holdout_evaluator_dict):
     ret = deepcopy(generic_entity)
     ret.update({

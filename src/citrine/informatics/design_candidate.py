@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, List
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -150,3 +150,30 @@ class GenerationResult(Serializable["GenerationResult"]):
 
     def __init__(self):
         pass  # pragma: no cover
+
+
+class GenerativeDesignExecutionInput(Serializable['GenerativeDesignExecutionInput']):
+    """A Citrine Generative Design Execution Input.
+    See:
+        private val generativeDesignExecutionRequestExample = ExecuteGenerativeDesign(
+            seeds = Seq("CC(O)=O"),
+            fingerprint_type = OrionFingerprintType.ECFP4,
+            min_fingerprint_similarity = 0.5,
+            mutation_per_seed = 2
+  )"""
+    seeds = properties.List(properties.String(), 'seeds')
+    fingerprint_type = properties.String("fingerprint_type")
+    min_fingerprint_similarity = properties.Float("min_fingerprint_similarity")
+    mutation_per_seed = properties.Integer("mutation_per_seed")
+
+    def __init__(
+        self, *,
+        seeds: List[str],
+        fingerprint_type: str,
+        min_fingerprint_similarity: float,
+        mutation_per_seed: int
+    ):
+        self.seeds: List[str] = seeds
+        self.fingerprint_type: str = fingerprint_type
+        self.min_fingerprint_similarity: float = min_fingerprint_similarity
+        self.mutation_per_seed: int = mutation_per_seed

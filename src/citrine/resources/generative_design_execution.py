@@ -6,15 +6,18 @@ from uuid import UUID
 from citrine._rest.collection import Collection
 from citrine._utils.functions import shadow_classes_in_module
 from citrine._session import Session
-import citrine.informatics.executions.design_execution
+import citrine.informatics.executions.generative_design_execution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.scores import Score
+from citrine.informatics.design_candidate import GenerativeDesignExecutionInput
 from citrine.resources.response import Response
 
 
-shadow_classes_in_module(citrine.informatics.executions.design_execution, sys.modules[__name__])
+shadow_classes_in_module(
+    citrine.informatics.executions.generative_design_execution, sys.modules[__name__]
+)
 
 
+# TODO: Double check the path.
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):
     """A collection of GenerativeDesignExecutions."""
 
@@ -29,17 +32,16 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
 
     def build(self, data: dict) -> GenerativeDesignExecution:
         """Build an individual GenerativeDesignExecution."""
-        execution = GenerativeDesignExecution.build(data)  # this is inherited [Serialization]
+        execution = GenerativeDesignExecution.build(data)
         execution._session = self.session
         execution.project_id = self.project_id
         return execution
 
-    # TODO: The execution_input should be a DesignExecutionInput(?), not a Score
-    def trigger(self, execution_input: Score):
+    def trigger(self, generative_design_execution_input: GenerativeDesignExecutionInput):
         """Trigger a Generative Design execution given a score."""
         path = self._get_path()
-        # TODO: The dict needs to be updated with correct key-values.
-        data = self.session.post_resource(path, {'score': execution_input.dump()})
+        request_dict = generative_design_execution_input.dump()
+        data = self.session.post_resource(path, request_dict)
         return self.build(data)
 
     def register(self, model: GenerativeDesignExecution) -> GenerativeDesignExecution:
