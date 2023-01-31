@@ -10,7 +10,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_candidate import GenerationResult
+from citrine.informatics.design_candidate import GenerationExecutionResult
 
 
 class GenerativeDesignExecution(
@@ -64,23 +64,27 @@ class GenerativeDesignExecution(
 
     def _path(self):
         return format_escaped_url(
-            '/projects/{project_id}/generative-design-execution/',
+            # TODO: Check this path once the backend is ready
+            '/projects/{project_id}/generative-design/',
             project_id=self.project_id,
         )
 
     @classmethod
-    def _build_results(cls, subset_collection: Iterable[dict]) -> Iterable[GenerationResult]:
-        for candidate in subset_collection:
-            yield GenerationResult.build(candidate)
+    def _build_results(
+        cls, subset_collection: Iterable[dict]
+    ) -> Iterable[GenerationExecutionResult]:
+        for generation_result in subset_collection:
+            yield GenerationExecutionResult.build(generation_result)
 
-    def generation_results(
+    def results(
         self,
         *,
         page: Optional[int] = None,
         per_page: int = 100,
-    ) -> Iterable[GenerationResult]:
+    ) -> Iterable[GenerationExecutionResult]:
         """Fetch the Design Candidates for the particular execution, paginated."""
-        path = self._path() + '/candidates'
+        # TODO: Check this path once the backend is ready
+        path = self._path() + '/results'
 
         fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
 
@@ -88,3 +92,20 @@ class GenerativeDesignExecution(
                                         collection_builder=self._build_results,
                                         page=page,
                                         per_page=per_page)
+
+
+    # def result(
+    #     self,
+    #     *,
+    #     result_id: UUID,
+    # ) -> GenerationExecutionResult:
+    #     """Fetch the Design Candidates for the particular execution, paginated."""
+    #     # TODO: Check this path once the backend is ready
+    #     path = self._path() + '/results/' +
+
+    #     fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
+
+    #     return self._paginator.paginate(page_fetcher=fetcher,
+    #                                     collection_builder=self._build_results,
+    #                                     page=page,
+    #                                     per_page=per_page)

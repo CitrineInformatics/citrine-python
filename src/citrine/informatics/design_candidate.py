@@ -139,7 +139,7 @@ class GenerationResult(Serializable["GenerationResult"]):
     This class represents the molecule greated by a generative design execution.
     """
 
-    seed = properties.String('seed')
+    seed = properties.String("seed")
     """The seed used to generate the molecule."""
     mutated = properties.String("mutated")
     """The mutated molecule."""
@@ -147,6 +147,20 @@ class GenerationResult(Serializable["GenerationResult"]):
     """The fingerprint similarity between the seed and the mutated molecule."""
     fingerprint_type = properties.String("fingerprint_type")
     """The fingerprint type used to calculate the fingerprint similarity."""
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+
+class GenerationExecutionResult(Serializable["GenerationExecutionResult"]):
+    """A Citrine Generation Design Execution Result.
+
+    This class represents the result of a generative design execution.
+    """
+
+    uid = properties.UUID('id')
+    execution_id = properties.UUID('execution_id')
+    result = properties.Object(GenerationResult, 'result')
 
     def __init__(self):
         pass  # pragma: no cover

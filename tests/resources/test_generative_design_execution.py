@@ -87,4 +87,37 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
     )
 
 
+def test_workflow_execution_results(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
+    # Given
+    session.set_response(example_generation_results)
+
+    # When
+    list(generative_design_execution.results(per_page=4))
+
+    # Then
+    # TODO: Double check the path.
+    expected_path = '/projects/{}/generative-design/executions/{}/results'.format(
+        generative_design_execution.project_id,
+        generative_design_execution.uid,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
+
+
+
+def test_list(collection: GenerativeDesignExecutionCollection, session):
+    session.set_response({"per_page": 4, "next": "", "response": []})
+    lst = list(collection.list(per_page=4))
+    assert len(lst) == 0
+
+    expected_path = '/projects/{}/generative-design/executions'.format(collection.project_id)
+    assert session.last_call == FakeCall(
+        method='GET',
+        path=expected_path,
+        params={"per_page": 4}
+    )
+
+
+def test_delete(collection):
+    with pytest.raises(NotImplementedError):
+        collection.delete(uuid.uuid4())
 

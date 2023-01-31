@@ -794,6 +794,25 @@ def generative_design_execution_dict(generic_entity):
 
 
 @pytest.fixture
+def example_generation_results():
+    return {
+        "page": 2,
+        "per_page": 4,
+        "response": [{
+            "id": str(uuid.uuid4()),
+            "execution_id": str(uuid.uuid4()),
+            "result": {
+                "seed": str,
+                "mutated": str,
+                "fingerprint_similarity": float,
+                "fingerprint_type": str,
+            }
+        }]
+    }
+
+
+
+@pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict, example_holdout_evaluator_dict):
     ret = deepcopy(generic_entity)
     ret.update({
