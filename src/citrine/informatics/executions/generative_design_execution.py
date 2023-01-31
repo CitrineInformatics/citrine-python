@@ -56,7 +56,7 @@ class GenerativeDesignExecution(
     if it has been updated"""
 
     def __init__(self):
-        """GenerativeDesign executions are not directly instantiated by the user."""
+        """The GenerativeDesign executions are not directly instantiated by the user."""
         pass  # pragma: no cover
 
     def __str__(self):
@@ -88,7 +88,6 @@ class GenerativeDesignExecution(
                                         collection_builder=self._build_results,
                                         page=page,
                                         per_page=per_page)
-
 
     def result(
         self,

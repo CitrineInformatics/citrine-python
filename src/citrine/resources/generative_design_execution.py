@@ -20,7 +20,6 @@ shadow_classes_in_module(
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):
     """A collection of GenerativeDesignExecutions."""
 
-    # TODO: Double check the path.
     _path_template = '/projects/{project_id}/generative-design/executions'
     _individual_key = None
     _collection_key = 'response'
@@ -37,8 +36,10 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, generative_design_execution_input: GenerativeDesignInput) -> GenerativeDesignExecution:
-        """Trigger a Generative Design execution given a score."""
+    def trigger(
+        self, generative_design_execution_input: GenerativeDesignInput
+    ) -> GenerativeDesignExecution:
+        """Trigger a Generative Design execution."""
         path = self._get_path()
         request_dict = generative_design_execution_input.dump()
         data = self.session.post_resource(path, request_dict)
