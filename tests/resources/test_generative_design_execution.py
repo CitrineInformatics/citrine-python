@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.design_candidate import GenerativeDesignExecutionInput
+from citrine.informatics.generative_result import GenerativeDesignExecutionInput
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -33,12 +33,6 @@ def test_basic_methods(generative_design_execution, collection):
 
     with pytest.raises(NotImplementedError):
         collection.update(generative_design_execution)
-
-    with pytest.raises(NotImplementedError):
-        collection.archive(generative_design_execution)
-
-    with pytest.raises(NotImplementedError):
-        collection.restore(generative_design_execution)
 
 
 def test_build_new_execution(collection, generative_design_execution_dict):
@@ -87,7 +81,7 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
     )
 
 
-def test_workflow_execution_results(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
+def test_generative_design_execution_results(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
     # Given
     session.set_response(example_generation_results)
 
@@ -101,7 +95,6 @@ def test_workflow_execution_results(generative_design_execution: GenerativeDesig
         generative_design_execution.uid,
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
-
 
 
 def test_list(collection: GenerativeDesignExecutionCollection, session):

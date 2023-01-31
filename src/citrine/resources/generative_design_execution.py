@@ -8,7 +8,7 @@ from citrine._utils.functions import shadow_classes_in_module
 from citrine._session import Session
 import citrine.informatics.executions.generative_design_execution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.design_candidate import GenerativeDesignExecutionInput
+from citrine.informatics.generative_result import GenerativeDesignExecutionInput
 from citrine.resources.response import Response
 
 
@@ -17,10 +17,10 @@ shadow_classes_in_module(
 )
 
 
-# TODO: Double check the path.
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):
     """A collection of GenerativeDesignExecutions."""
 
+    # TODO: Double check the path.
     _path_template = '/projects/{project_id}/generative-design/executions'
     _individual_key = None
     _collection_key = 'response'
@@ -37,7 +37,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, generative_design_execution_input: GenerativeDesignExecutionInput):
+    def trigger(self, generative_design_execution_input: GenerativeDesignExecutionInput) -> GenerativeDesignExecution:
         """Trigger a Generative Design execution given a score."""
         path = self._get_path()
         request_dict = generative_design_execution_input.dump()
@@ -51,30 +51,6 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
     def update(self, model: GenerativeDesignExecution) -> GenerativeDesignExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a GenerativeDesignExecution.")
-
-    def archive(self, uid: Union[UUID, str]):
-        """Archive a Generative Design execution.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str]
-            Unique identifier of the execution to archive
-
-        """
-        raise NotImplementedError(
-            "Generative Design Executions cannot be archived")
-
-    def restore(self, uid: UUID):
-        """Restore an archived Generative Design execution.
-
-        Parameters
-        ----------
-        uid: UUID
-            Unique identifier of the execution to restore
-
-        """
-        raise NotImplementedError(
-            "Generative Design Executions cannot be restored")
 
     def list(self, *,
              page: Optional[int] = None,

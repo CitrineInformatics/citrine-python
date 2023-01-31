@@ -10,7 +10,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_candidate import GenerationExecutionResult
+from citrine.informatics.generative_result import GenerationExecutionResult
 
 
 class GenerativeDesignExecution(
@@ -65,7 +65,7 @@ class GenerativeDesignExecution(
     def _path(self):
         return format_escaped_url(
             # TODO: Check this path once the backend is ready
-            '/projects/{project_id}/generative-design/',
+            '/projects/{project_id}/generative-design/executions/',
             project_id=self.project_id,
         )
 
@@ -84,7 +84,9 @@ class GenerativeDesignExecution(
     ) -> Iterable[GenerationExecutionResult]:
         """Fetch the Design Candidates for the particular execution, paginated."""
         # TODO: Check this path once the backend is ready
-        path = self._path() + '/results'
+        path = self._path() + f'{self.uid}/results'
+        # SHOULDN"T THE ID BE A PROPERTY OF THE OBJECT ALREADY?
+        # path = self._path() + '/results'
 
         fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
 
@@ -101,11 +103,11 @@ class GenerativeDesignExecution(
     # ) -> GenerationExecutionResult:
     #     """Fetch the Design Candidates for the particular execution, paginated."""
     #     # TODO: Check this path once the backend is ready
-    #     path = self._path() + '/results/' +
+    #     path = self._path() + f'/results/{result_id}'
+    #     ### SOMETHING HERE
+    #     # fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
 
-    #     fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
-
-    #     return self._paginator.paginate(page_fetcher=fetcher,
-    #                                     collection_builder=self._build_results,
-    #                                     page=page,
-    #                                     per_page=per_page)
+    #     # return self._paginator.paginate(page_fetcher=fetcher,
+    #     #                                 collection_builder=self._build_results,
+    #     #                                 page=page,
+    #     #                                 per_page=per_page)

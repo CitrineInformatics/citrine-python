@@ -802,10 +802,10 @@ def example_generation_results():
             "id": str(uuid.uuid4()),
             "execution_id": str(uuid.uuid4()),
             "result": {
-                "seed": str,
-                "mutated": str,
-                "fingerprint_similarity": float,
-                "fingerprint_type": str,
+                "seed": "CCCCO",
+                "mutated": "CCCN",
+                "fingerprint_similarity": 0.41,
+                "fingerprint_type": "ECFP4",
             }
         }]
     }
