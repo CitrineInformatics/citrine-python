@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.generative_result import GenerativeDesignExecutionInput
+from citrine.informatics.generative_result import GenerativeDesignInput
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -50,11 +50,11 @@ def test_build_new_execution(collection, generative_design_execution_dict):
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
 
-# TODO: Double check the path.
+
 def test_trigger_execution(collection: GenerativeDesignExecutionCollection, generative_design_execution_dict, session):
     # Given
     session.set_response(generative_design_execution_dict)
-    design_execuption_input = GenerativeDesignExecutionInput(
+    design_execuption_input = GenerativeDesignInput(
         seeds = ["CC(O)=O"],
         fingerprint_type = "ECFP4",
         min_fingerprint_similarity = 0.5,
@@ -89,12 +89,28 @@ def test_generative_design_execution_results(generative_design_execution: Genera
     list(generative_design_execution.results(per_page=4))
 
     # Then
-    # TODO: Double check the path.
     expected_path = '/projects/{}/generative-design/executions/{}/results'.format(
         generative_design_execution.project_id,
         generative_design_execution.uid,
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
+
+
+def test_generative_design_execution_result(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
+    # Given
+    session.set_response(example_generation_results)
+
+    # When
+    result_id=example_generation_results["response"][0]["id"]
+    list(generative_design_execution.result(result_id=result_id))
+
+    # Then
+    expected_path = '/projects/{}/generative-design/executions/{}/results/{}'.format(
+        generative_design_execution.project_id,
+        generative_design_execution.uid,
+        result_id,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path)
 
 
 def test_list(collection: GenerativeDesignExecutionCollection, session):

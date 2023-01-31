@@ -8,7 +8,7 @@ from citrine._utils.functions import shadow_classes_in_module
 from citrine._session import Session
 import citrine.informatics.executions.generative_design_execution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.generative_result import GenerativeDesignExecutionInput
+from citrine.informatics.generative_result import GenerativeDesignInput
 from citrine.resources.response import Response
 
 
@@ -37,7 +37,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, generative_design_execution_input: GenerativeDesignExecutionInput) -> GenerativeDesignExecution:
+    def trigger(self, generative_design_execution_input: GenerativeDesignInput) -> GenerativeDesignExecution:
         """Trigger a Generative Design execution given a score."""
         path = self._get_path()
         request_dict = generative_design_execution_input.dump()

@@ -36,7 +36,7 @@ class GenerationExecutionResult(Serializable["GenerationExecutionResult"]):
         pass  # pragma: no cover
 
 
-class GenerativeDesignExecutionInput(Serializable['GenerativeDesignExecutionInput']):
+class GenerativeDesignInput(Serializable['GenerativeDesignExecutionInput']):
     """A Citrine Generative Design Execution Input.
     See:
         private val generativeDesignExecutionRequestExample = ExecuteGenerativeDesign(
