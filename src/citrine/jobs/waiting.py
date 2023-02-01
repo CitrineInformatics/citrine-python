@@ -127,7 +127,6 @@ def wait_while_validating(
                                         interval=interval)
 
 
-# Might need to add GenerativeDesignExecution here.
 def wait_while_executing(
     *,
     collection: Union[

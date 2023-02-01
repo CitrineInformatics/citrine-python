@@ -8,7 +8,7 @@ from citrine._utils.functions import shadow_classes_in_module
 from citrine._session import Session
 import citrine.informatics.executions.generative_design_execution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.generative_result import GenerativeDesignInput
+from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.resources.response import Response
 
 
@@ -55,7 +55,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
 
     def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 100,
+             per_page: int = 10,
              ) -> Iterator[GenerativeDesignExecution]:
         """
         Paginate over the elements of the collection.

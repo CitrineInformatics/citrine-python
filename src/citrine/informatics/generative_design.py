@@ -36,7 +36,7 @@ class GenerationExecutionResult(Serializable["GenerationExecutionResult"]):
         pass  # pragma: no cover
 
 
-class GenerativeDesignInput(Serializable['GenerativeDesignExecutionInput']):
+class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
     """A Citrine Generative Design Execution Input."""
 
     seeds = properties.List(properties.String(), 'seeds')

@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.generative_result import GenerativeDesignInput
+from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from tests.utils.session import FakeSession, FakeCall

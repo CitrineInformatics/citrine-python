@@ -10,7 +10,21 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.generative_result import GenerationExecutionResult
+from citrine.informatics.generative_design import GenerationExecutionResult
+
+
+# TODO: This is not pretty, but I needed something to hold the status
+# When we build the GenerativeDesignExecution.
+# This and GenerationResult at `generative_design.py` are the same situation.
+# Is there a way to avoid this?
+class GenerativeExecutionStatus:
+    """A class to represent the status of a generation execution result."""
+
+    minor = properties.String('minor')
+    info = properties.List(properties.String(), 'info')
+
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class GenerativeDesignExecution(
@@ -32,8 +46,8 @@ class GenerativeDesignExecution(
     project_id: Optional[UUID] = None
 
     uid: UUID = properties.UUID('id', serializable=False)
-    """:UUID: Unique identifier of the workflow execution"""
-    status = properties.Optional(properties.String(), 'status', serializable=False)
+    """:UUID: Unique identifier of the execution"""
+    status = properties.Object(GenerativeExecutionStatus, 'status', serializable=False)
     """:Optional[str]: short description of the execution's status"""
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)
