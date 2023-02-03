@@ -10,21 +10,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.generative_design import GenerationExecutionResult
-
-
-# TODO: This is not pretty, but I needed something to hold the status
-# When we build the GenerativeDesignExecution.
-# This and GenerationResult at `generative_design.py` are the same situation.
-# Is there a way to avoid this?
-class GenerativeExecutionStatus:
-    """A class to represent the status of a generation execution result."""
-
-    minor = properties.String('minor')
-    info = properties.List(properties.String(), 'info')
-
-    def __init__(self):
-        pass  # pragma: no cover
+from citrine.informatics.generative_design import GenerativeDesignResult
 
 
 class GenerativeDesignExecution(
@@ -47,7 +33,7 @@ class GenerativeDesignExecution(
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the execution"""
-    status = properties.Object(GenerativeExecutionStatus, 'status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     """:Optional[str]: short description of the execution's status"""
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)
@@ -57,6 +43,7 @@ class GenerativeDesignExecution(
         'status_info',
         serializable=False
     )
+
     """:Optional[List[str]]: human-readable explanations of the status"""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
@@ -85,16 +72,16 @@ class GenerativeDesignExecution(
     @classmethod
     def _build_results(
         cls, subset_collection: Iterable[dict]
-    ) -> Iterable[GenerationExecutionResult]:
+    ) -> Iterable[GenerativeDesignResult]:
         for generation_result in subset_collection:
-            yield GenerationExecutionResult.build(generation_result)
+            yield GenerativeDesignResult.build(generation_result)
 
     def results(
         self,
         *,
         page: Optional[int] = None,
         per_page: int = 100,
-    ) -> Iterable[GenerationExecutionResult]:
+    ) -> Iterable[GenerativeDesignResult]:
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + f'{self.uid}/results'
         fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
@@ -107,7 +94,7 @@ class GenerativeDesignExecution(
         self,
         *,
         result_id: UUID,
-    ) -> GenerationExecutionResult:
+    ) -> GenerativeDesignResult:
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + f'{self.uid}/results/{result_id}'
         data = self._session.get_resource(path, version=self._api_version)
