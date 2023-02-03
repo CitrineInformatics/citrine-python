@@ -1,5 +1,5 @@
 """Collection class for generic GEMD objects and templates."""
-from typing import Type, Union, Optional, List, Tuple, Iterable
+from typing import Type, Union, List, Tuple, Iterable
 from uuid import UUID, uuid4
 import re
 from tqdm.auto import tqdm
@@ -174,64 +174,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             recursive_foreach(list(models) + list(resources),
                               lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
         return resources
-
-    def async_update(self, model: DataConcepts, *,
-                     dry_run: bool = False,
-                     wait_for_response: bool = True,
-                     timeout: float = 2 * 60,
-                     polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, DataConcepts]]:
-        """
-        [ALPHA] Update a particular element of the collection with data validation.
-
-        Update a particular element of the collection, doing a deeper check to ensure that
-        the dependent data objects are still with the (potentially) changed constraints
-        of this change. This will allow you to make bounds and allowed named/labels changes
-        to templates.
-
-        Parameters
-        ----------
-        model: DataConcepts
-            The DataConcepts object.
-        dry_run: bool
-            Whether to actually update the item or run a dry run of the update operation.
-            Dry run is intended to be used for validation. Default: false
-        wait_for_response: bool
-            Whether to poll for the eventual response. This changes the return type (see
-            below).
-        timeout: float
-            How long to poll for the result before giving up. This is expressed in
-            (fractional) seconds.
-        polling_delay: float
-            How long to delay between each polling retry attempt.
-        return_model: bool
-            Whether or not to return an updated version of the resource
-            If wait_for_response is False, then this argument has no effect
-
-        Returns
-        -------
-        Optional[UUID]
-            If wait_for_response if True, then this call will poll the backend, waiting
-            for the eventual job result. In the case of successful validation/update,
-            a return value of None is provided unless return_model is True, in which case
-            the updated resource is fetched and returned. In the case of a failure
-            validating or processing the update, an exception (JobFailureError) is raised
-            and an error message is logged with the underlying reason of the failure.
-
-            If wait_for_response if False, A job ID (of type UUID) is returned that one
-            can use to poll for the job completion and result with the
-            :func:`~citrine.resources.DataConceptsCollection.poll_async_update_job`
-            method.
-
-        """
-        return self._collection_for(model).async_update(
-            model,
-            dry_run=dry_run,
-            wait_for_response=wait_for_response,
-            timeout=timeout,
-            polling_delay=polling_delay,
-            return_model=return_model
-        )
 
     def batch_delete(
             self,

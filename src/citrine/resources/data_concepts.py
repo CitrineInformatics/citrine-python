@@ -552,7 +552,16 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
 
     def update(self, model: ResourceType) -> ResourceType:
-        """Update a data object model."""
+        """
+        Update a data object model.
+
+        Update a particular element of the collection,
+        first attempting a simple update using register and falling back to async_update
+        if the changes require it (e.g., updating template bounds).
+
+        model: ResourceType
+            The DataConcepts object.
+        """
         try:
             return self.register(model, dry_run=False)
         except BadRequest:
@@ -567,7 +576,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      polling_delay: float = 1.0,
                      return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
         """
-        [ALPHA] Update a particular element of the collection with data validation.
+        Update a particular element of the collection with data validation.
 
         Update a particular element of the collection, doing a deeper check to ensure that
         the dependent data objects are still with the (potentially) changed constraints
