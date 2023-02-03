@@ -58,9 +58,6 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
     fingerprint_type = properties.String("fingerprint_type")
     """The fingerprint type used to calculate the fingerprint similarity."""
 
-    def __init__(self):
-        pass  # pragma: no cover
-
 
 class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
     """A Citrine Generative Design Execution Input."""
