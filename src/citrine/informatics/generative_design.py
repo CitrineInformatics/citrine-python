@@ -43,7 +43,7 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
     def _pre_build(cls, data: dict) -> dict:
         """Run data modification before building."""
         result = data.pop("result")
-        data = data | result
+        data.update(result)
         return data
 
     uid = properties.UUID('id')
@@ -59,7 +59,7 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
     """The fingerprint type used to calculate the fingerprint similarity."""
 
     def __init__(self):
-        pass
+        pass # pragma: no cover
 
 
 class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
