@@ -67,7 +67,7 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     max_candidates = 150
 
     # When
-    actual_execution = collection.trigger(score, max_candidates)
+    actual_execution = collection.trigger(score, max_candidates=max_candidates)
 
     # Then
     assert str(actual_execution.uid) == design_execution_dict["id"]
