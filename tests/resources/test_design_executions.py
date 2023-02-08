@@ -64,9 +64,10 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     # Given
     session.set_response(design_execution_dict)
     score = MLIScoreFactory()
+    max_candidates = 150
 
     # When
-    actual_execution = collection.trigger(score)
+    actual_execution = collection.trigger(score, max_candidates)
 
     # Then
     assert str(actual_execution.uid) == design_execution_dict["id"]
@@ -77,7 +78,7 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json={'score': score.dump()}
+        json={'score': score.dump(), 'max_candidates': max_candidates}
     )
 
 

@@ -59,8 +59,7 @@ def default_resources(name):
     workflow = FakeDesignWorkflow(
         name=f"{name}: Auto Configure Design Workflow",
         predictor_id=uuid4(),
-        design_space_id=uuid4(),
-        processor_id=uuid4()
+        design_space_id=uuid4()
     )
     return {
         "table_config": table_config,

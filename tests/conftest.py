@@ -549,26 +549,6 @@ def invalid_predictor_data():
 
 
 @pytest.fixture
-def valid_grid_processor_data():
-    """Valid GridProcessor data."""
-    return dict(
-        module_type='PROCESSOR',
-        status='READY',
-        status_info=['Things are looking good'],
-        status_detail=[{'level': 'INFO', 'msg': 'Things are looking good'}],
-        archived=False,
-        display_name='my processor',
-        id=str(uuid.uuid4()),
-        config=dict(
-            type='Grid',
-            name='my processor',
-            description='does some things',
-            grid_dimensions=dict(x=5, y=10),
-        )
-    )
-
-
-@pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
@@ -803,7 +783,6 @@ def design_workflow_dict(generic_entity):
     ret.update({
         "name": "Example Design Workflow",
         "description": "A description! Of the Design Workflow! So you know what it's for!",
-        "processor_id": str(uuid.uuid4()),
         "design_space_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
         "predictor_version": random.randint(1, 10),
