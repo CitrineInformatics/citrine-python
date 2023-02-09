@@ -214,28 +214,6 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
     assert len(design_spaces) == 2
 
 
-def test_experimental_deprecated(valid_formulation_design_space_data):
-    # Given
-    session = FakeSession()
-    response = deepcopy(valid_formulation_design_space_data)
-    response["experimental"] = True
-    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-
-    session.set_response(response)
-
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    design_space = DesignSpace.build(valid_formulation_design_space_data)
-
-    # When
-    registered = dsc.register(design_space)
-
-    # Then
-    with pytest.deprecated_call():
-        assert registered.experimental is False
-    with pytest.deprecated_call():
-        assert registered.experimental_reasons == []
-
-
 def test_archive(valid_formulation_design_space_data):
     session = FakeSession()
     dsc = DesignSpaceCollection(uuid.uuid4(), session)

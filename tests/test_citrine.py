@@ -57,19 +57,6 @@ def test_citrine_signature(monkeypatch):
         Citrine()
 
 
-def test_deprecated_positional():
-    with requests_mock.Mocker() as m:
-        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
-
-        with pytest.warns(DeprecationWarning):
-            assert '1234' == Citrine('1234', 'ftp', 'citrine-testing.fake', "8080").session.refresh_token
-
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            Citrine('1234', 'ftp', scheme='ftp')
-
-
 def test_citrine_project_session():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)

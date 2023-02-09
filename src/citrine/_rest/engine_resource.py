@@ -1,5 +1,4 @@
-from deprecation import deprecated
-from typing import List, TypeVar
+from typing import TypeVar
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
@@ -54,38 +53,6 @@ class EngineResource(Resource[Self]):
     def is_archived(self):
         """:bool: whether the resource is archived (hidden but not deleted)."""
         return self.archived_by is not None
-
-    @property
-    @deprecated(deprecated_in="1.46.0", removed_in="2.0.0",
-                details="Please use the 'status_detail' property instead.'")
-    def status_info(self):
-        """[DEPRECATED] :list[str]: human-readable explanations of the status."""
-        return [detail.msg for detail in self.status_detail]
-
-    @property
-    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0",
-                details="Please use the 'is_archived' property instead.'")
-    def archived(self):
-        """[DEPRECATED] whether the resource is archived."""
-        return self.is_archived
-
-    @archived.setter
-    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0",
-                details="Please use archive() and restore() on PredictorCollection instead.")
-    def archived(self, value):
-        self._archived = value
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental(self) -> bool:
-        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
-        return False
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental_reasons(self) -> List[str]:
-        """[DEPRECATED] human-readable reasons why the execution is experimental."""
-        return []
 
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.

@@ -457,9 +457,7 @@ class DatasetCollection(Collection[Dataset]):
         full_model.project_id = self.project_id
         return full_model
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 1000) -> Iterator[Dataset]:
+    def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -468,9 +466,6 @@ class DatasetCollection(Collection[Dataset]):
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 1000.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -482,7 +477,7 @@ class DatasetCollection(Collection[Dataset]):
             Datasets in this collection.
 
         """
-        return super().list(page=page, per_page=per_page)
+        return super().list(per_page=per_page)
 
     def get_by_unique_name(self, unique_name: str) -> Dataset:
         """Get a Dataset with the given unique name."""

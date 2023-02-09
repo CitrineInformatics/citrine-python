@@ -106,13 +106,11 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def list(self,
              uid: Union[UUID, str],
              *,
-             page: Optional[int] = None,
              per_page: int = 100) -> Iterable[Predictor]:
         """List non-archived versions of the given predictor."""
         page_fetcher = self._page_fetcher(uid=uid)
         return self._paginator.paginate(page_fetcher=page_fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def list_archived(self,

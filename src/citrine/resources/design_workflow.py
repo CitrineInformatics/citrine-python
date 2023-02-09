@@ -169,15 +169,11 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
 
-    def list_archived(self,
-                      *,
-                      page: Optional[int] = None,
-                      per_page: int = 500) -> Iterable[DesignWorkflow]:
+    def list_archived(self, *, per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def _fetch_page(self,

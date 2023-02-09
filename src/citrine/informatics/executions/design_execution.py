@@ -87,10 +87,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    def candidates(self, *,
-                   page: Optional[int] = None,
-                   per_page: int = 100,
-                   ) -> Iterable[DesignCandidate]:
+    def candidates(self, *, per_page: int = 100) -> Iterable[DesignCandidate]:
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + '/candidates'
 
@@ -98,7 +95,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_candidates,
-                                        page=page,
                                         per_page=per_page)
 
     @property

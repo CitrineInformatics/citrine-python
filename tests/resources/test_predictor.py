@@ -60,8 +60,6 @@ def test_build_with_status(valid_simple_ml_predictor_data, basic_predictor_repor
 
     status_detail_tuples = {(detail.level, detail.msg) for detail in predictor.status_detail}
     assert status_detail_tuples == status_detail_data
-    with pytest.deprecated_call():
-        assert set(predictor.status_info) == {msg for _, msg in status_detail_data}
 
 
 def test_delete():
@@ -124,71 +122,6 @@ def test_restore(valid_label_fractions_predictor_data):
         FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
         FakeCall(method='GET', path=f"{versions_path}/most_recent")
     ]
-
-
-def test_deprecated_archive_via_update(valid_label_fractions_predictor_data):
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    entity = deepcopy(valid_label_fractions_predictor_data)
-    entity["metadata"]["archived"] = entity["metadata"]["created"]
-    session.set_responses(entity, None, entity)
-
-    predictor = pc.build(entity)
-    with pytest.deprecated_call():
-        predictor.archived = True
-
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    entity_path = f"{predictors_path}/{entity['id']}"
-    expected_calls = [
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/archive", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
-    ]
-
-    archived_predictor = pc.update(predictor)
-
-    assert session.calls == expected_calls
-    assert archived_predictor.is_archived is True
-    assert archived_predictor._archived is None
-
-def test_deprecated_restore_via_update(valid_label_fractions_predictor_data):
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    entity = deepcopy(valid_label_fractions_predictor_data)
-    session.set_responses(entity, None, entity)
-
-    predictor = pc.build(entity)
-    with pytest.deprecated_call():
-        predictor.archived = False
-
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    entity_path = f"{predictors_path}/{entity['id']}"
-    expected_calls = [
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/restore", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
-    ]
-
-    restored_predictor = pc.update(predictor)
-
-    assert session.calls == expected_calls
-    assert restored_predictor.is_archived is False
-    assert restored_predictor._archived is None
-
-
-def test_deprecated_archived_property(valid_label_fractions_predictor_data):
-    session = mock.Mock()
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    predictor = pc.build(valid_label_fractions_predictor_data)
-
-    with pytest.deprecated_call():
-        assert predictor.archived == predictor.is_archived
-
-    with pytest.deprecated_call():
-        predictor.archived = True
-    
-    assert predictor._archived is True
 
 
 def test_archive_root(valid_label_fractions_predictor_data):

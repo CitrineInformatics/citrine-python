@@ -113,7 +113,6 @@ class GemTableCollection(Collection[GemTable]):
     def list_versions(self,
                       uid: UUID,
                       *,
-                      page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[GemTable]:
         """
         List the versions of a table given a specific Table UID.
@@ -122,7 +121,6 @@ class GemTableCollection(Collection[GemTable]):
 
 
         :param uid: The Table UID.
-        :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
@@ -138,7 +136,7 @@ class GemTableCollection(Collection[GemTable]):
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            _fetch_versions, _build_versions, page, per_page, deduplicate=False)
+            _fetch_versions, _build_versions, per_page, deduplicate=False)
 
     def list_by_config(self,
                        table_config_uid: UUID,
