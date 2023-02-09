@@ -17,7 +17,7 @@ logger = getLogger(__name__)
 
 
 class Report(PolymorphicSerializable['Report'], AsynchronousObject):
-    """[ALPHA] A Citrine Report contains information related to a module.
+    """A Citrine Report contains information related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -44,7 +44,7 @@ class Report(PolymorphicSerializable['Report'], AsynchronousObject):
 
 
 class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
-    """[ALPHA] Feature importances for a specific model response.
+    """Feature importances for a specific model response.
 
     FeatureImportanceReport objects are constructed from saved models and
     should not be user-instantiated.
@@ -64,7 +64,7 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 
 
 class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
-    """[ALPHA] Settings and evaluation metrics for a single algorithm from AutoML model selection.
+    """Settings and evaluation metrics for a single algorithm from AutoML model selection.
 
     ModelEvaluationResult objects are included in a ModelSelectionReport
     and should not be user-instantiated.
@@ -96,7 +96,7 @@ class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
 
 
 class ModelSelectionReport(Serializable["ModelSelectionReport"]):
-    """[ALPHA] Summary of selection settings and model performance from AutoML model selection.
+    """Summary of selection settings and model performance from AutoML model selection.
 
     ModelSelectionReport objects are constructed from saved models and
     should not be user-instantiated.
@@ -116,7 +116,7 @@ class ModelSelectionReport(Serializable["ModelSelectionReport"]):
 
 
 class ModelSummary(Serializable['ModelSummary']):
-    """[ALPHA] Summary of information about a single model in a predictor.
+    """Summary of information about a single model in a predictor.
 
     ModelSummary objects are constructed from saved models and should not be user-instantiated.
     """
@@ -159,7 +159,7 @@ class ModelSummary(Serializable['ModelSummary']):
 
 
 class PredictorReport(Serializable['PredictorReport'], Report):
-    """[ALPHA] The performance metrics corresponding to a predictor.
+    """The performance metrics corresponding to a predictor.
 
     PredictorReport objects are constructed from saved models and should not be user-instantiated.
     """

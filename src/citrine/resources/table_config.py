@@ -24,7 +24,7 @@ from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessT
 
 
 class TableBuildAlgorithm(BaseEnumeration):
-    """[ALPHA] The algorithm to use in automatically building a Table Configuration.
+    """The algorithm to use in automatically building a Table Configuration.
 
     * SINGLE_ROW corresponds one row per material history
     * FORMULATIONS corresponds to one row per ingredient, intermediate, or terminal
@@ -37,7 +37,7 @@ class TableBuildAlgorithm(BaseEnumeration):
 
 class TableConfig(Resource["TableConfig"]):
     """
-    [ALPHA] The Table Configuration used to build GEM Tables.
+    The Table Configuration used to build GEM Tables.
 
     Parameters
     ----------
@@ -124,7 +124,7 @@ class TableConfig(Resource["TableConfig"]):
                     name: Optional[str] = None,
                     description: Optional[str] = None
                     ) -> 'TableConfig':
-        """[ALPHA] Add a variable and one or more columns to this TableConfig (out-of-place).
+        """Add a variable and one or more columns to this TableConfig (out-of-place).
 
         This method checks that the variable name is not already in use and that the columns
         only reference that variable.  It is *not* able to check if the columns and the variable
@@ -170,7 +170,7 @@ class TableConfig(Resource["TableConfig"]):
                             scope: str = CITRINE_SCOPE,
                             unit: Optional[str] = None
                             ):
-        """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
+        """Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the id of
         the ingredient, id for ingredient labels, and a column for the quantity of the ingredient.
@@ -266,7 +266,7 @@ class TableConfig(Resource["TableConfig"]):
                                       scope: str = CITRINE_SCOPE,
                                       unit: Optional[str] = None
                                       ):
-        """[ALPHA] Add variables and columns for all possible ingredients in a list of processes.
+        """Add variables and columns for all possible ingredients in a list of processes.
 
         For each allowed ingredient name in the union of all passed process templates there is a
         column for the id of the ingredient and a column for the quantity of the ingredient.
@@ -362,7 +362,7 @@ class TableConfig(Resource["TableConfig"]):
 
 
 class TableConfigCollection(Collection[TableConfig]):
-    """[ALPHA] Represents the collection of all Table Configs associated with a project."""
+    """Represents the collection of all Table Configs associated with a project."""
 
     # FIXME (DML): use newly named properties when they're available
     _path_template = 'projects/{project_id}/ara-definitions'
@@ -378,7 +378,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.session: Session = session
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
-        """[ALPHA] Get a table config.
+        """Get a table config.
 
         If no version is specified, then the most recent version is returned.
 
@@ -418,7 +418,7 @@ class TableConfigCollection(Collection[TableConfig]):
         return self.build(data)
 
     def build(self, data: dict) -> TableConfig:
-        """[ALPHA] Build an individual Table Config from a dictionary."""
+        """Build an individual Table Config from a dictionary."""
         version_data = data['version']
         table_config = TableConfig.build(version_data['ara_definition'])
         table_config.version_number = version_data['version_number']
@@ -436,7 +436,7 @@ class TableConfigCollection(Collection[TableConfig]):
             algorithm: Optional[TableBuildAlgorithm] = None
     ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         """
-        [ALPHA] Build best-guess default table config for provided terminal material's history.
+        Build best-guess default table config for provided terminal material's history.
 
         Currently generates variables for each templated attribute in the material history in
         either AttributeByTemplate, or if possible AttributeByTemplateAndObjectTemplate.
@@ -492,7 +492,7 @@ class TableConfigCollection(Collection[TableConfig]):
                 table_config: TableConfig,
                 preview_materials: List[LinkByUID] = None
                 ) -> dict:
-        """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
+        """Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
@@ -510,7 +510,7 @@ class TableConfigCollection(Collection[TableConfig]):
         return self.session.post_resource(path, body)
 
     def register(self, table_config: TableConfig) -> TableConfig:
-        """[ALPHA] Register a Table Config.
+        """Register a Table Config.
 
         If the provided TableConfig does not have a definition_uid, create a new element of the
         TableConfigCollection by registering the provided TableConfig. If the provided
@@ -544,7 +544,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def update(self, table_config: TableConfig) -> TableConfig:
         """
-        [ALPHA] Update a Table Config.
+        Update a Table Config.
 
         If the provided Table Config does have a uid, update (replace) the Table Config at that
         uid with the provided TableConfig.

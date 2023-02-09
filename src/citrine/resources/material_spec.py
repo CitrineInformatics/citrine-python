@@ -101,7 +101,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
                          ) -> Iterator[MaterialSpec]:
         """
-        [ALPHA] Get the material specs using the specified material template.
+        Get the material specs using the specified material template.
 
         Parameters
         ----------
@@ -121,7 +121,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
                        ) -> Optional[MaterialSpec]:
         """
-        [ALPHA] Get output material of a process.
+        Get output material of a process.
 
         Parameters
         ----------

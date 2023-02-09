@@ -98,7 +98,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
                          uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
                          ) -> Iterator[MeasurementSpec]:
         """
-        [ALPHA] Get the measurement specs using the specified measurement template.
+        Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------

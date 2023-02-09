@@ -123,7 +123,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
                         uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
                         ) -> Iterator[IngredientSpec]:
         """
-        [ALPHA] Get ingredients to a process.
+        Get ingredients to a process.
 
         Parameters
         ----------
@@ -143,7 +143,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
                          ) -> Iterator[IngredientSpec]:
         """
-        [ALPHA] Get ingredients using the specified material.
+        Get ingredients using the specified material.
 
         Parameters
         ----------

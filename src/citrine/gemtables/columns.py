@@ -11,7 +11,7 @@ from citrine.gemtables.variables import Variable
 
 
 class CompositionSortOrder(BaseEnumeration):
-    """[ALPHA] Order to use when sorting the components in a composition.
+    """Order to use when sorting the components in a composition.
 
     * ``ALPHABETICAL`` is alpha-numeric order by the component name
     * ``QUANTITY`` is ordered from the largest to smallest quantity, with ties
@@ -23,7 +23,7 @@ class CompositionSortOrder(BaseEnumeration):
 
 
 class ChemicalDisplayFormat(BaseEnumeration):
-    """[ALPHA] Format to use when rendering a molecular structure.
+    """Format to use when rendering a molecular structure.
 
     * ``SMILES`` Simplified molecular-input line-entry system
     * ``INCHI`` International Chemical Identifier
@@ -52,7 +52,7 @@ def _make_data_source(variable_rep: Union[str, Variable]) -> str:
 
 
 class Column(PolymorphicSerializable['Column']):
-    """[ALPHA] A column in the GEM Table, defined as some operation on a variable.
+    """A column in the GEM Table, defined as some operation on a variable.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -89,7 +89,7 @@ class Column(PolymorphicSerializable['Column']):
 
 
 class MeanColumn(Serializable['MeanColumn'], Column):
-    """[ALPHA] Column containing the mean of a real-valued variable.
+    """Column containing the mean of a real-valued variable.
 
     Parameters
     ----------
@@ -119,7 +119,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
 
 
 class StdDevColumn(Serializable["StdDevColumn"], Column):
-    """[ALPHA] Column containing the standard deviation of a real-valued variable.
+    """Column containing the standard deviation of a real-valued variable.
 
     Parameters
     ----------
@@ -149,7 +149,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
 
 
 class QuantileColumn(Serializable["QuantileColumn"], Column):
-    """[ALPHA] Column containing a quantile of the variable.
+    """Column containing a quantile of the variable.
 
     The column is populated with the quantile function of the distribution evaluated at "quantile".
     For example, for a uniform distribution parameterized by a lower and upper bound, the value
@@ -198,7 +198,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
 
 
 class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
-    """[ALPHA] Column containing the units as entered in the source data.
+    """Column containing the units as entered in the source data.
 
     Parameters
     ----------
@@ -218,7 +218,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
 
 
 class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column):
-    """[ALPHA] Column containing the most likely category.
+    """Column containing the most likely category.
 
     Parameters
     ----------
@@ -238,7 +238,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
 
 
 class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], Column):
-    """[ALPHA] Column containing the probability of the most likely category.
+    """Column containing the probability of the most likely category.
 
     Parameters
     ----------
@@ -258,7 +258,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
 
 
 class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
-    """[ALPHA] Column that flattens the composition into a string of names and quantities.
+    """Column that flattens the composition into a string of names and quantities.
 
     The numeric formatting tries to be human readable. For example, if all of the quantities
     are round numbers like ``{"spam": 4.0, "eggs": 1.0}`` then the result omit the decimal points
@@ -288,7 +288,7 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
 
 
 class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
-    """[ALPHA] Column that extracts the quantity of a given component.
+    """Column that extracts the quantity of a given component.
 
     If the component is not present in the composition, then the value in the column will be 0.0.
 
@@ -321,7 +321,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
 
 
 class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
-    """[ALPHA] Name of the Nth biggest component.
+    """Name of the Nth biggest component.
 
     If there are fewer than N components in the composition, then this column will be empty.
 
@@ -349,7 +349,7 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
 
 
 class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantityColumn"], Column):
-    """[ALPHA] Quantity of the Nth biggest component.
+    """Quantity of the Nth biggest component.
 
     If there are fewer than N components in the composition, then this column will be empty.
 
@@ -383,7 +383,7 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
 
 
 class IdentityColumn(Serializable['IdentityColumn'], Column):
-    """[ALPHA] Column containing the value of a string-valued variable.
+    """Column containing the value of a string-valued variable.
 
     Parameters
     ----------
@@ -403,7 +403,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
 
 
 class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column):
-    """[ALPHA] Column containing a representation of a molecular structure.
+    """Column containing a representation of a molecular structure.
 
     Parameters
     ----------
@@ -427,7 +427,7 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
 
 
 class ConcatColumn(Serializable['ConcatColumn'], Column):
-    """[ALPHA] Column that concatenates multiple values produced by a list- or set-valued variable.
+    """Column that concatenates multiple values produced by a list- or set-valued variable.
 
     The input subcolumn need not exist elsewhere in the table config, and its parameters have
     no bearing on how the table is constructed. Only the type of column is relevant. That a

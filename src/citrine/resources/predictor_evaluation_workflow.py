@@ -59,7 +59,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
                        predictor_id: UUID,
                        predictor_version: Optional[Union[int, str]] = None) \
             -> PredictorEvaluationWorkflow:
-        """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
+        """Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
         on all valid predictor responses. Valid responses are those that are **not** produced by the

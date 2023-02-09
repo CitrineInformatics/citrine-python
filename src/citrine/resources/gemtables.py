@@ -175,7 +175,7 @@ class GemTableCollection(Collection[GemTable]):
     def initiate_build(self, config: Union[TableConfig, str, UUID], *,
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:
         """
-        [ALPHA] Initiates tables build with provided config.
+        Initiates tables build with provided config.
 
         This method does not wait for job completion. If you do not need to build
         multiple tables in parallel, using build_from_config is preferable to using
@@ -230,7 +230,7 @@ class GemTableCollection(Collection[GemTable]):
     def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
                          timeout: float = 15 * 60) -> GemTable:
         """
-        [ALPHA] Gets table by build job, waiting for it to complete if necessary.
+        Gets table by build job, waiting for it to complete if necessary.
 
         Parameters
         ----------
@@ -269,7 +269,7 @@ class GemTableCollection(Collection[GemTable]):
                           version: Union[str, int] = None,
                           timeout: float = 15 * 60) -> GemTable:
         """
-        [ALPHA] Builds table from table config, waiting for build job to complete.
+        Builds table from table config, waiting for build job to complete.
 
         Parameters
         ----------

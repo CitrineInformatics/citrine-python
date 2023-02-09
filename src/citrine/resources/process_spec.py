@@ -109,7 +109,7 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
                          uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
                          ) -> Iterator[ProcessSpec]:
         """
-        [ALPHA] Get the process specs using the specified process template.
+        Get the process specs using the specified process template.
 
         Parameters
         ----------

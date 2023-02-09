@@ -115,7 +115,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
                      uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
                      ) -> Iterator[MeasurementRun]:
         """
-        [ALPHA] Get the measurement runs using the specified measurement spec.
+        Get the measurement runs using the specified measurement spec.
 
         Parameters
         ----------
@@ -135,7 +135,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
                          ) -> Iterator[MeasurementRun]:
         """
-        [ALPHA] Get measurements of the specified material.
+        Get measurements of the specified material.
 
         Parameters
         ----------

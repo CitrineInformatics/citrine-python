@@ -97,7 +97,7 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
 
     @property
     def dataset(self) -> Optional[UUID]:
-        """[ALPHA] Get the dataset of this object, if it was returned by the backend."""
+        """Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
 
     @classmethod
@@ -643,7 +643,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
     def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
                               polling_delay: float = 1.0) -> None:
         """
-        [ALPHA] Poll for the result of the async_update call.
+        Poll for the result of the async_update call.
 
         This call will poll the backend given the Job ID that came from a call to
         :func:`~citrine.resources.DataConceptsCollection.async_update`,

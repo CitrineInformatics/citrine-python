@@ -72,7 +72,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                        include_label_fraction_constraints: bool = False,
                        include_label_count_constraints: bool = False,
                        include_parameter_constraints: bool = False) -> DesignSpace:
-        """[ALPHA] Create a default design space for a predictor.
+        """Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
         that are not responses of the predictor. The design space will contain a

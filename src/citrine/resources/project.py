@@ -833,7 +833,7 @@ class ProjectCollection(Collection[Project]):
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """
-        [ALPHA] Delete a particular project.
+        Delete a particular project.
 
         Only empty projects can be deleted.
         If the project is not empty, then the Response will contain a list of all of the project's

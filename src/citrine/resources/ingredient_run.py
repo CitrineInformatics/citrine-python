@@ -121,7 +121,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
                      uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
                      ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get the ingredient runs using the specified ingredient spec.
+        Get the ingredient runs using the specified ingredient spec.
 
         Parameters
         ----------
@@ -141,7 +141,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
                         uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
                         ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get ingredients to a process.
+        Get ingredients to a process.
 
         Parameters
         ----------
@@ -161,7 +161,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
                          ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get ingredients using the specified material.
+        Get ingredients using the specified material.
 
         Parameters
         ----------

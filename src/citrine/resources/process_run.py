@@ -113,7 +113,7 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
                      uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
                      ) -> Iterator[ProcessRun]:
         """
-        [ALPHA] Get the process runs using the specified process spec.
+        Get the process runs using the specified process spec.
 
         Parameters
         ----------

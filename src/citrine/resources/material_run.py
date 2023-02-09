@@ -154,7 +154,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
                        ) -> Optional[MaterialRun]:
         """
-        [ALPHA] Get output material of a process.
+        Get output material of a process.
 
         Parameters
         ----------
@@ -177,7 +177,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
                      uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
                      ) -> Iterator[MaterialRun]:
         """
-        [ALPHA] Get the material runs using the specified material spec.
+        Get the material runs using the specified material spec.
 
         Parameters
         ----------
@@ -197,7 +197,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
                          ) -> Iterator[MaterialRun]:
         """
-        [ALPHA] Get the material runs using the specified material template.
+        Get the material runs using the specified material template.
 
         Parameters
         ----------
