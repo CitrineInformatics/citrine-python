@@ -101,20 +101,18 @@ def predictor_collection() -> PredictorCollection:
 
     #Adding a few predictors in the collection to have something to update
     for i in range(0, 5):
-        with pytest.deprecated_call():
-            predictors.register(AutoMLPredictor(name="resource " + str(i),
-                                                description='',
-                                                inputs=[],
-                                                outputs=[]))
+        predictors.register(AutoMLPredictor(name="resource " + str(i),
+                                            description='',
+                                            inputs=[],
+                                            outputs=[]))
 
     #Adding a few predictors with the same name ("resource {0,1}" were made above)
     # this is used to test behavior if there are duplicates
     for i in range(0, 2):
-        with pytest.deprecated_call():
-            predictors.register(AutoMLPredictor(name="resource " + str(i),
-                                                description='',
-                                                inputs=[],
-                                                outputs=[]))
+        predictors.register(AutoMLPredictor(name="resource " + str(i),
+                                            description='',
+                                            inputs=[],
+                                            outputs=[]))
     return predictors
 
 
