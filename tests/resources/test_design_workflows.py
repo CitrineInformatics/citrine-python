@@ -214,6 +214,17 @@ def test_update(session, workflow, collection_without_branch):
     assert_workflow(new_workflow, workflow)
 
 
+def test_update_failure_with_existing_execution(session, workflow, collection_without_branch, design_execution_dict):
+    workflow.branch_id = uuid.uuid4()
+    post_dict = workflow.dump()
+    session.set_responses(
+        {"per_page": 1, "next": "", "response": [design_execution_dict]},
+        {**post_dict, 'status_description': 'status'})
+
+    with pytest.raises(RuntimeError):
+        collection_without_branch.update(workflow)
+
+
 def test_update_with_matching_branch_ids(session, workflow, collection):
     # Given
     workflow.branch_id = collection.branch_id

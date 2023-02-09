@@ -1,6 +1,7 @@
 """Tests for citrine.informatics.predictors."""
 import uuid
 import pytest
+import mock
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
@@ -206,6 +207,22 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
         input_descriptor=formulation,
         ingredients={"Green Paste", "Blue Paste"}
     )
+
+
+def test_simple_report(auto_ml):
+    """Ensures we get a report from a simple predictor post_build call"""
+    with pytest.raises(ValueError):
+        # without a project or session, this should error
+        assert auto_ml.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
+    auto_ml._session = session
+    auto_ml._project_id = uuid.uuid4()
+    auto_ml.uid = uuid.uuid4()
+    auto_ml.version = 2
+    assert auto_ml.report is not None
+    assert session.get_resource.call_count == 1
+    assert auto_ml.report.status == 'OK'
 
 
 def test_graph_initialization(graph_predictor):

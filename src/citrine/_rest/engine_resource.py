@@ -49,11 +49,6 @@ class EngineResource(Resource[Self]):
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    @property
-    def is_archived(self):
-        """:bool: whether the resource is archived (hidden but not deleted)."""
-        return self.archived_by is not None
-
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.
         data = data["data"]
