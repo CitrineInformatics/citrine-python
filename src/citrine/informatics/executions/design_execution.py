@@ -1,6 +1,5 @@
-from deprecation import deprecated
 from functools import partial
-from typing import Iterable, List, Optional
+from typing import Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -96,15 +95,3 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_candidates,
                                         per_page=per_page)
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental(self) -> bool:
-        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
-        return False
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental_reasons(self) -> List[str]:
-        """[DEPRECATED] human-readable reasons why the execution is experimental."""
-        return []

@@ -438,8 +438,7 @@ def test_deprecated_delete_contents(dataset):
     session.set_responses(job_resp, failed_job_resp)
 
     # When
-    with pytest.warns(DeprecationWarning):
-        del_resp = dataset.delete_contents()
+    del_resp = dataset.delete_contents(prompt_to_confirm=False)
 
     # Then
     assert len(del_resp) == 0

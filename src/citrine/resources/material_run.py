@@ -109,8 +109,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, *, id: Union[str, UUID, LinkByUID, MaterialRun],
-                    scope: Optional[str] = None) -> Type[MaterialRun]:
+    def get_history(self, *, id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
         """
         Get the history associated with a terminal material.
 
@@ -122,10 +121,6 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         ----------
         id: Union[UUID, str, LinkByUID, MaterialRun]
             A representation of the material whose history is to be retrieved
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid. The lookup will be most efficient if you use the Citrine ID
-            of the material, which is the default if scope=None.
 
         Returns
         -------
@@ -135,7 +130,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             of the object.
 
         """
-        link = _make_link_by_uid(id, scope)
+        link = _make_link_by_uid(id)
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
         path = base_path + format_escaped_url("/material-history/{}/{}", link.scope, link.id)
         data = self.session.get_resource(path)
@@ -156,8 +151,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             json.dumps(blob, cls=GEMDEncoder, sort_keys=True))
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun], *,
-                       scope: Optional[str] = None) -> Optional[MaterialRun]:
+                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+                       ) -> Optional[MaterialRun]:
         """
         [ALPHA] Get output material of a process.
 
@@ -165,9 +160,6 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
             A representation of the process whose output is to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -175,15 +167,15 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return next(
             self._get_relation(relation='process-runs', uid=link, per_page=1),
             None
         )
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec], *,
-                     scope: Optional[str] = None) -> Iterator[MaterialRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+                     ) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material spec.
 
@@ -191,9 +183,6 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
             A representation of the material spec whose material run usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -201,11 +190,12 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The material runs using the specified material spec.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('material-specs', uid=link)
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate], *,
-                         scope: Optional[str] = None) -> Iterator[MaterialRun]:
+    def list_by_template(self,
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+                         ) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material template.
 
@@ -213,9 +203,6 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
             A representation of the material template whose material run usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -224,6 +211,6 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
-        specs = spec_collection.list_by_template(uid=_make_link_by_uid(uid, scope))
+        specs = spec_collection.list_by_template(uid=_make_link_by_uid(uid))
         return (run for runs in (self.list_by_spec(spec) for spec in specs)
                 for run in runs)

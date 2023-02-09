@@ -112,8 +112,8 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         return MeasurementRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec], *,
-                     scope: Optional[str] = None) -> Iterator[MeasurementRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
+                     ) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
@@ -121,9 +121,6 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
             A representation of the measurement spec whose measurement run usages are to be located
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -131,12 +128,12 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurement runs using the specified measurement spec.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('measurement-specs', uid=link)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
-                         scope: Optional[str] = None) -> Iterator[MeasurementRun]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+                         ) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 
@@ -144,9 +141,6 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
             A representation of the material whose measurements are to be queried.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -154,5 +148,5 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurements of the specified material
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='material-runs', uid=link)

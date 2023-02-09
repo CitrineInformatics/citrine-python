@@ -110,8 +110,8 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         return ProcessRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
-                     scope: Optional[str] = None) -> Iterator[ProcessRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                     ) -> Iterator[ProcessRun]:
         """
         [ALPHA] Get the process runs using the specified process spec.
 
@@ -119,9 +119,6 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
             A representation of the process spec whose process run usages are to be located.
-        scope: Optional[str]
-           [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -129,5 +126,5 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
             The process runs using the specified process spec.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('process-specs', uid=link)

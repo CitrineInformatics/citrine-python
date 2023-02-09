@@ -4,22 +4,19 @@ import pytest
 import uuid
 from copy import deepcopy
 
-from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedException, NotFound
+from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
     AutoMLPredictor,
     ExpressionPredictor,
-    LabelFractionsPredictor,
     GraphPredictor,
     Predictor,
-    SimpleMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection, _PredictorVersionCollection, AutoConfigureMode
 from tests.conftest import build_predictor_entity
 from tests.utils.session import (
     FakeCall,
-    FakeRequest,
     FakeRequestResponse,
     FakeSession
 )
@@ -38,21 +35,21 @@ def basic_predictor_report_data():
     }
 
 
-def test_build(valid_simple_ml_predictor_data, basic_predictor_report_data):
+def test_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
     session = FakeSession()
     session.set_response(basic_predictor_report_data)
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = pc.build(valid_simple_ml_predictor_data)
-    assert predictor.name == 'ML predictor'
-    assert predictor.description == 'Predicts z from input x and latent variable y'
+    predictor = pc.build(valid_auto_ml_predictor_data)
+    assert predictor.name == 'AutoML predictor'
+    assert predictor.description == 'Predicts z from input x'
 
 
-def test_build_with_status(valid_simple_ml_predictor_data, basic_predictor_report_data):
+def test_build_with_status(valid_auto_ml_predictor_data, basic_predictor_report_data):
     session = FakeSession()
     session.set_response(basic_predictor_report_data)
 
     status_detail_data = {("Info", "info_msg"), ("Warning", "warning msg"), ("Error", "error msg")}
-    data = deepcopy(valid_simple_ml_predictor_data)
+    data = deepcopy(valid_auto_ml_predictor_data)
     data["metadata"]["status"]["detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
 
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -235,15 +232,15 @@ def test_graph_register(valid_graph_predictor_data, valid_graph_predictor_data_r
     assert registered.name == 'Graph predictor'
 
 
-def test_failed_register(valid_simple_ml_predictor_data):
+def test_failed_register(valid_auto_ml_predictor_data):
     session = mock.Mock()
     session.post_resource.side_effect = NotFound("/projects/uuid/not_found",
                                                  FakeRequestResponse(400))
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
+    predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
     with pytest.raises(ModuleRegistrationFailedException) as e:
         pc.register(predictor)
-    assert 'The "SimpleMLPredictor" failed to register.' in str(e.value)
+    assert 'The "AutoMLPredictor" failed to register.' in str(e.value)
     assert '/projects/uuid/not_found' in str(e.value)
 
 
@@ -297,14 +294,14 @@ def test_register_update_checks_status(valid_auto_ml_predictor_data):
     assert session.num_calls == 2
 
 
-def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
+def test_list_predictors(valid_auto_ml_predictor_data, valid_expression_predictor_data,
                          basic_predictor_report_data):
     # Given
     session = FakeSession()
     collection = PredictorCollection(uuid.uuid4(), session)
     session.set_responses(
         {
-            'response': [valid_simple_ml_predictor_data, valid_expression_predictor_data],
+            'response': [valid_auto_ml_predictor_data, valid_expression_predictor_data],
             'next': ''
         },
         basic_predictor_report_data,
@@ -442,138 +439,6 @@ def test_auto_configure_deprecated(valid_graph_predictor_data):
     # When
     with pytest.deprecated_call():
         pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
-
-
-@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
-def test_convert_to_graph(predictor_data, version, request):
-    predictor_data = request.getfixturevalue(predictor_data)
-
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = predictor_data["id"]
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-
-    # Building a predictor may modify the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = collection.build(deepcopy(predictor_data))
-
-    session.set_response(deepcopy(predictor_data))
-    
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
-    entity_path = f"{versions_path}/{version or 'most_recent'}"
-
-    # When
-    kwargs = {"version": version} if version is not None else {}
-    response = collection.convert_to_graph(predictor.uid, **kwargs)
-
-    # Then
-    assert session.calls == [FakeCall(method="GET", path=f"{entity_path}/convert")]
-    assert response.dump() == predictor.dump()
-
-
-@pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
-def test_convert_and_update(predictor_data_fixture, version, request):
-    predictor_data = request.getfixturevalue(predictor_data_fixture)
-
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = predictor_data["id"]
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-
-    # Building a graph predictor modifies the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = collection.build(deepcopy(predictor_data))
-
-    session.set_responses(deepcopy(predictor_data), deepcopy(predictor_data), deepcopy(predictor_data))
-
-    predictors_path = PredictorCollection._path_template.format(project_id=project_id)
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
-    root_path = f"{predictors_path}/{predictor_id}"
-    entity_path = f"{versions_path}/{version or 'most_recent'}"
-    expected_calls = [
-        FakeCall(method="GET", path=f"{entity_path}/convert"),
-        FakeCall(method="PUT", path=root_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{root_path}/train", params={"create_version": True}, json={}),
-    ]
-
-    # When
-    kwargs = {"version": version} if version is not None else {}
-    response = collection.convert_and_update(predictor.uid, **kwargs)
-
-    # Then
-    assert session.calls == expected_calls
-    assert response.dump() == predictor.dump()
-
-
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
-@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
-@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
-def test_convert_and_update_errors(version, error_args, method_name):
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = uuid.uuid4()
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/versions/{version or 'most_recent'}/convert"
-
-    error_code, error_cls = error_args[:]
-    response = FakeRequestResponse(error_code)
-    response.request.method = "GET"
-    session.set_response(error_cls(convert_path, response))
-
-    # When
-    kwargs = {"version": version} if version is not None else {}
-    method = getattr(collection, method_name)
-    with pytest.raises(error_cls):
-        method(predictor_id, **kwargs)
-
-    # Then
-    assert session.num_calls == 1
-    expected_call_convert = FakeCall(method="GET", path=convert_path)
-    assert session.last_call == expected_call_convert
-
-
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
-@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
-def test_convert_auto_retrain(valid_graph_predictor_data, version, method_name):
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = valid_graph_predictor_data["id"]
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-    predictors_path = collection._path_template.format(project_id=project_id)
-    version_path = f"{predictors_path}/{predictor_id}/versions/{version or 'most_recent'}"
-    convert_path = f"{version_path}/convert"
-    train_path = f"{version_path}/train"
-
-    # Building a graph predictor modifies the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = collection.build(deepcopy(valid_graph_predictor_data))
-
-    response = FakeRequestResponse(409)
-    response.request.method = "GET"
-
-    session.set_responses(
-        Conflict(convert_path, response),
-        deepcopy(valid_graph_predictor_data)
-    )
-
-    # When
-    method = getattr(collection, method_name)
-    kwargs = {"version": version} if version is not None else {}
-    response = method(predictor_id, retrain_if_needed=True, **kwargs)
-
-    # Then
-    expected_calls = [
-        FakeCall(method="GET", path=convert_path),
-        FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={}),
-    ]
-    assert session.calls == expected_calls
-    assert response is None
 
 
 def test_predictor_list_archived(valid_graph_predictor_data):
@@ -716,138 +581,3 @@ def test_deprecated_get_invalid_version(valid_graph_predictor_data, version):
     with pytest.deprecated_call():
         with pytest.raises(ValueError):
             pc.get_version(uuid.uuid4(), version=version)
-
-
-@pytest.mark.parametrize("predictor_data", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_deprecated_convert_version_to_graph(predictor_data, version, request):
-    predictor_data = request.getfixturevalue(predictor_data)
-
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = predictor_data["id"]
-    session = FakeSession()
-    pc = PredictorCollection(project_id, session)
-
-    # Building a predictor may modify the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = pc.build(deepcopy(predictor_data))
-
-    session.set_response(deepcopy(predictor_data))
-    
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=predictor_id)
-
-    # When
-    with pytest.deprecated_call():
-        response = pc.convert_version_to_graph(predictor.uid, version=version)
-
-    # Then
-    assert session.calls == [FakeCall(method="GET", path=f"{versions_path}/{version}/convert")]
-    assert response.dump() == predictor.dump()
-
-
-@pytest.mark.parametrize("predictor_data_fixture", ("valid_graph_predictor_data", "valid_simple_ml_predictor_data"))
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_deprecated_convert_version_and_update(predictor_data_fixture, version, request):
-    predictor_data = request.getfixturevalue(predictor_data_fixture)
-
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = predictor_data["id"]
-    session = FakeSession()
-    pc = PredictorCollection(project_id, session)
-
-    # Building a graph predictor modifies the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = pc.build(deepcopy(predictor_data))
-
-    session.set_responses(
-            deepcopy(predictor_data),
-            deepcopy(predictor_data),
-            deepcopy(predictor_data),
-            paging_response(predictor_data)
-    )
-
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=predictor_id)
-    predictors_path = PredictorCollection._path_template.format(project_id=project_id)
-    entity_path = f"{predictors_path}/{predictor_id}"
-    expected_calls = [
-        FakeCall(method="GET", path=f"{versions_path}/{version}/convert"),
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={})
-    ]
-
-    # When
-    with pytest.deprecated_call():
-        response = pc.convert_version_and_update(predictor.uid, version=version)
-
-    # Then
-    assert session.calls == expected_calls
-    assert response.dump() == predictor.dump()
-
-
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
-@pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
-def test_deprecated_convert_version_and_update_errors(version, error_args, method_name):
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = uuid.uuid4()
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/versions/{version}/convert"
-
-    error_code, error_cls = error_args[:]
-    response = FakeRequestResponse(error_code)
-    response.request.method = "GET"
-    session.set_response(error_cls(convert_path, response))
-
-    # When
-    method = getattr(collection, method_name)
-    with pytest.deprecated_call():
-        with pytest.raises(error_cls):
-            method(predictor_id, version=version)
-
-    # Then
-    assert session.num_calls == 1
-    expected_call_convert = FakeCall(method="GET", path=convert_path)
-    assert session.last_call == expected_call_convert
-
-
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-@pytest.mark.parametrize("method_name", ("convert_version_to_graph", "convert_version_and_update"))
-def test_deprecated_convert_version_auto_retrain(version, valid_graph_predictor_data, method_name):
-    # Given
-    project_id = uuid.uuid4()
-    predictor_id = valid_graph_predictor_data["id"]
-    session = FakeSession()
-    collection = PredictorCollection(project_id, session)
-    predictors_path = collection._path_template.format(project_id=project_id)
-    version_path = f"{predictors_path}/{predictor_id}/versions/{version}"
-    convert_path = f"{version_path}/convert"
-    train_path = f"{version_path}/train"
-
-    # Building a graph predictor modifies the input data object, which interferes with the test
-    # input later in the test. By making a copy, we don't need to care if the input is mutated.
-    predictor = collection.build(deepcopy(valid_graph_predictor_data))
-
-    response = FakeRequestResponse(409)
-    response.request.method = "GET"
-
-    session.set_responses(
-            Conflict(convert_path, response),
-            deepcopy(valid_graph_predictor_data)
-    )
-    expected_calls = [
-        FakeCall(method="GET", path=convert_path),
-        FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={})
-    ]
-
-    # When
-    method = getattr(collection, method_name)
-    with pytest.deprecated_call():
-        response = method(predictor_id, version=version, retrain_if_needed=True)
-
-    # Then
-    assert session.calls == expected_calls
-    assert response is None

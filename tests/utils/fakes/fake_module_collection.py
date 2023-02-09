@@ -24,11 +24,10 @@ class FakeModuleCollection(FakeCollection[ModuleType], AbstractModuleCollection[
         self.session: Session = session
         self.in_use = {}
 
-    def archive(self, uid: Union[UUID, str] = None,
-                module_id: Union[UUID, str] = None) -> ModuleType:
+    def archive(self, uid: Union[UUID, str]) -> ModuleType:
         if self.in_use.get(normalize_uid(uid), False):
             raise BadRequest("")
-        return AbstractModuleCollection.archive(self, uid, module_id)
+        return AbstractModuleCollection.archive(self, uid)
 
 
 class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCollection):

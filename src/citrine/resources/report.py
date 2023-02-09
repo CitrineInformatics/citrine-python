@@ -2,12 +2,9 @@
 from typing import Optional, Union
 from uuid import UUID
 
-from deprecation import deprecated
-
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.reports import Report
 
 
@@ -29,13 +26,10 @@ class ReportResource(Resource['ReportResource']):
         self.session = session
 
     def get(self,
-            module_id: UUID = None,
-            *,
             predictor_id: Union[UUID, str] = None,
+            *,
             predictor_version: Optional[Union[int, str]] = None) -> Report:
         """Gets a single report keyed on the predictor ID and (optionally) version."""
-        predictor_id = migrate_deprecated_argument(predictor_id, "predictor_id",
-                                                   module_id, "module_id")
         version = predictor_version or "most_recent"
 
         url_path = format_escaped_url(self._path_template,
@@ -47,10 +41,3 @@ class ReportResource(Resource['ReportResource']):
         report = Report.build(data)
         report.session = self.session
         return report
-
-    @deprecated(deprecated_in="1.49.0", removed_in="2.0.0",
-                details="Please use ReportResource.get() instead.")
-    def get_version(self, predictor_id: Union[UUID, str], *, predictor_version: Union[int, str]) \
-            -> Report:
-        """Gets a single report keyed on the predictor ID and version."""
-        return self.get(predictor_id=predictor_id, predictor_version=predictor_version)

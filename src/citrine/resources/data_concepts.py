@@ -1,10 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
 import re
-from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
-import deprecation
 
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
@@ -325,18 +323,14 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         return base
 
 
-def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
-                      scope: Optional[str] = None) -> LinkByUID:
-    if scope is not None:
-        warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
-             "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
+def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) -> LinkByUID:
     if isinstance(gemd_object_rep, BaseEntity):
         return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
     elif isinstance(gemd_object_rep, (str, UUID)):
         uid = str(gemd_object_rep)
-        scope = scope or CITRINE_SCOPE
+        scope = CITRINE_SCOPE
         return LinkByUID(scope, uid)
     else:
         raise TypeError("Link can only be created from a GEMD object, LinkByUID, str, or UUID."
@@ -394,7 +388,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return self.get_type().build(data)
 
     def list(self, *,
-             page: Optional[int] = None,
              per_page: Optional[int] = 100,
              forward: bool = True) -> Iterator[ResourceType]:
         """
@@ -405,8 +398,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Parameters
         ---------
-        page: int, optional
-            [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.
         per_page: int, optional
             Max number of results to return per page. It is very unlikely that
             setting this parameter to something other than the default is useful.
@@ -686,8 +677,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-            scope: Optional[str] = None) -> ResourceType:
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> ResourceType:
         """
         Get an element of the collection by its id.
 
@@ -695,9 +685,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         uid: Union[UUID, str, LinkByUID, BaseEntity]
             A representation of the object (Citrine id, LinkByUID, or the object itself)
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
         -------
@@ -705,7 +692,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             An object with specified scope and uid
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         path = self._get_path(ignore_dataset=self.dataset_id is None) \
             + format_escaped_url("/{}/{}", link.scope, link.id)
         data = self.session.get_resource(path)
@@ -747,32 +734,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             per_page=per_page,
             params=params)
         return (self.build(raw) for raw in raw_objects)
-
-    @deprecation.deprecated(deprecated_in="0.133.0", removed_in="1.0.0",
-                            details="Please use list instead of list_all")
-    def list_all(self, *, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
-        """
-        Get all objects in the collection.
-
-        The order of results should not be relied upon, but for now they are sorted by
-        dataset, object type, and creation time (in that order of priority).
-
-        Parameters
-        ----------
-        forward: bool
-            Set to False to reverse the order of results (i.e., return in descending order).
-        per_page: int
-            Controls the number of results fetched with each http request to the backend.
-            Typically, this is set to a sensible default and should not be modified. Consider
-            modifying this value only if you find this method is unacceptably latent.
-
-        Returns
-        -------
-        Iterator[ResourceType]
-            Every object in this collection.
-
-        """
-        return self.list(forward=forward, per_page=per_page)  # pragma: no cover
 
     def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
         """
@@ -819,23 +780,19 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         uid: Union[UUID, str, LinkByUID, BaseEntity]
             A representation of the object (Citrine id, LinkByUID, or the object itself)
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
     def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
-                      scope: Optional[str] = None, forward: bool = True, per_page: int = 100
-                      ) -> Iterator[ResourceType]:
+                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.
 
@@ -847,9 +804,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         uid
             A representation of the object upon which this search is based, e.g., a
             Citrine ID of a process template whose process spec usages are being located.
-        scope
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of `uid`
         forward
             Whether to pages results in ascending order. Typically this is an
             unnecessary parameter.
@@ -866,7 +820,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             format_escaped_url('projects/{}/{}/{}/{}/{}',

@@ -5,7 +5,6 @@ from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
 
@@ -69,7 +68,7 @@ class MolecularStructureFeaturizer(VersionedEngineResource['MolecularStructureFe
         name of the configuration
     description: str
         the description of the predictor
-    descriptor: MolecularStructureDescriptor
+    input_descriptor: MolecularStructureDescriptor
         the descriptor to featurize
     features: List[str]
         the list of features to compute, either by name or by group alias.
@@ -89,15 +88,11 @@ class MolecularStructureFeaturizer(VersionedEngineResource['MolecularStructureFe
                  name: str,
                  *,
                  description: str,
-                 input_descriptor: MolecularStructureDescriptor = None,
+                 input_descriptor: MolecularStructureDescriptor,
                  features: Optional[List[str]] = None,
-                 excludes: Optional[List[str]] = None,
-                 descriptor: MolecularStructureDescriptor = None):
+                 excludes: Optional[List[str]] = None):
         self.name: str = name
         self.description: str = description
-        input_descriptor = migrate_deprecated_argument(
-            input_descriptor, "input_descriptor", descriptor, "descriptor"
-        )
         self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []

@@ -105,8 +105,9 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate], *,
-                         scope: Optional[str] = None) -> Iterator[ProcessSpec]:
+    def list_by_template(self,
+                         uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
+                         ) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 
@@ -114,9 +115,6 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
             A representation of the process template whose process spec usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -124,5 +122,5 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
             The process specs using the specified process template
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('process-templates', uid=link)

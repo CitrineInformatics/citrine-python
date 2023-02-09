@@ -2,7 +2,6 @@
 from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
-from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -318,10 +317,8 @@ class Project(Resource['Project']):
 
     @use_teams("team.share")
     def share(self, *,
-              resource: Optional[Resource] = None,
-              project_id: Optional[Union[str, UUID]] = None,
-              resource_type: Optional[str] = None,
-              resource_id: Optional[str] = None
+              resource: Optional[Resource],
+              project_id: Optional[Union[str, UUID]] = None
               ) -> Dict[str, str]:
         """Share a resource with another project.
 
@@ -331,27 +328,9 @@ class Project(Resource['Project']):
             The resource owned by this project, which will be shared
         project_id: Union[str, UUID]
             The id of the project with which to share the resource
-        resource_type: Optional[str]
-            [DEPRECATED] Please use ``resource`` instead
-            The type of the resource to share. Must be one of DATASET, MODULE, USER,
-            TABLE, OR TABLE_DEFINITION
-        resource_id: Optional[str]
-            [DEPRECATED] Please use ``resource`` instead
-            The id of the resource to share
 
         """
-        resource_dict = None
-        if resource is not None:
-            resource_dict = resource.access_control_dict()
-        if resource_type is not None and resource_id is not None:
-            warn("Asset sharing through resource_type and resource_id is deprecated. Please pass "
-                 "the resource to share instead.", DeprecationWarning)
-            if resource_dict is not None:
-                raise ValueError("Cannot specify resource to share and also specify the "
-                                 "resource type and id")
-            resource_dict = {"type": resource_type, "id": resource_id}
-        if resource_dict is None:
-            raise ValueError("Must specify resource to share or specify the resource type and id")
+        resource_dict = resource.access_control_dict()
         return self.session.post_resource(f"{self._path()}/share", {
             "project_id": str(project_id),
             "resource": resource_dict

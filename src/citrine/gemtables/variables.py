@@ -3,8 +3,6 @@ from abc import abstractmethod
 from typing import Type, Optional, List, Union
 from uuid import UUID
 
-from deprecation import deprecated
-
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template import ProcessTemplate
@@ -123,13 +121,6 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
         self.name = name
         self.headers = headers
         self.field = field
-
-
-@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
-            details="RootInfo is deprecated in favor of TerminalMaterialInfo")
-def RootInfo(name: str, *, headers: List[str], field: str) -> TerminalMaterialInfo:
-    """[DEPRECATED] Use TerminalMaterialInfo instead."""
-    return TerminalMaterialInfo(name=name, headers=headers, field=field)
 
 
 class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
@@ -570,15 +561,6 @@ class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Var
         self.name = name
         self.headers = headers
         self.scope = scope
-
-
-@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
-            details="RootIdentifier is deprecated in favor of TerminalMaterialIdentifier")
-def RootIdentifier(name: str, *,
-                   headers: List[str],
-                   scope: str = CITRINE_SCOPE) -> TerminalMaterialIdentifier:
-    """[DEPRECATED] Use TerminalMaterialIdentifier instead."""
-    return TerminalMaterialIdentifier(name=name, headers=headers, scope=scope)
 
 
 class AttributeInOutput(Serializable['AttributeInOutput'], Variable):

@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -28,32 +27,26 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to archive
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         return self._put_resource_ref('archive', uid)
 
-    def restore(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def restore(self, uid: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to restore
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         return self._put_resource_ref('restore', uid)
 
     def delete(self, uid: Union[UUID, str]) -> Response:

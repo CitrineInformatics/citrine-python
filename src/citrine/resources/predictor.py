@@ -7,13 +7,11 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.paginator import Paginator
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
-from citrine.exceptions import Conflict
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
 from citrine.resources.module import AbstractModuleCollection
 
-from deprecation import deprecated
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -131,22 +129,6 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def restore(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
-        return self.build(entity)
-
-    def convert_to_graph(self,
-                         uid: Union[UUID, str],
-                         *,
-                         version: Union[int, str] = MOST_RECENT_VER,
-                         retrain_if_needed: bool = False) -> Predictor:
-        path = self._construct_path(uid, version, "convert")
-        try:
-            entity = self.session.get_resource(path, version=self._api_version)
-        except Conflict as exc:
-            if retrain_if_needed:
-                self._train(uid, version)
-                return None
-            else:
-                raise exc
         return self.build(entity)
 
 
@@ -302,8 +284,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """List all archived versions of the given Predictor."""
         return self._versions_collection.list_archived(uid, per_page=per_page)
 
-    def check_for_update(self, uid: Union[UUID, str] = None,
-                         predictor_id: Union[UUID, str] = None) -> Optional[Predictor]:
+    def check_for_update(self, uid: Union[UUID, str]) -> Optional[Predictor]:
         """
         Check if there are updates available for a predictor.
 
@@ -317,8 +298,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         ----------
         uid: Union[UUID, str]
             Unique identifier of the predictor to check
-        predictor_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         Returns
         -------
@@ -326,7 +305,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             The update, if an update is available; None otherwise.
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", predictor_id, "predictor_id")
         path = self._predictors_path("update-check", uid)
         update_data = self.session.get_resource(path, version=self._api_version)
         if update_data["updatable"]:
@@ -389,115 +367,3 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
         return self.build(Predictor.wrap_instance(data["instance"]))
-
-    def convert_to_graph(self,
-                         uid: Union[UUID, str],
-                         retrain_if_needed: bool = False,
-                         *,
-                         version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
-        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
-
-        Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
-        predictor. If it's not a SimpleML or Graph predictor, or it's not in the READY state, an
-        error is raised. SimpleML predictors are deprecated, so this is to aid in your migration.
-
-        Note this conversion is not performed in place! That is, the predictor returned is not
-        persisted on the platform. To persist it, pass the converted predictor to
-        :py:meth:`citrine.resources.project.PredictorCollection.update`. Or you can do this in
-        one step with :py:meth:`citrine.resources.project.PredictorCollection.convert_and_update`.
-
-        .. code:: python
-
-            converted = project.predictors.convert_to_graph(predictor_uid)
-            project.predictors.update(converted)
-
-            # is equivalent to
-
-            converted = project.predictors.convert_and_update(predictor_uid)
-
-        If a predictor needs to be retrained before conversion, it will raise an HTTP 409 Conflict
-        error. This may occur when the Citrine Platform has been updated since your predictor was
-        last trained. If `retrain_if_needed` is `True`, retraining will automatically begin, and
-        the method will return `None. Once retraining completes, call this method again to get the
-        converted predictor. For example:
-
-        .. code:: python
-
-            converted = project.predictors.convert_and_update(pred.uid, retrain_if_needed=True)
-            if converted is None:
-                predictor = project.predictors.get(pred.uid)
-                wait_while_validating(collection=project.predictors, module=predictor)
-                converted = project.predictors.convert_and_update(pred.uid)
-        """
-        return self._versions_collection.convert_to_graph(uid,
-                                                          version=version,
-                                                          retrain_if_needed=retrain_if_needed)
-
-    def convert_and_update(self,
-                           uid: Union[UUID, str],
-                           retrain_if_needed: bool = False,
-                           *,
-                           version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
-        """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
-
-        See `PredictorCollection.convert_to_graph` for more detail.
-        """
-        new_pred = self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
-        return self.update(new_pred) if new_pred else None
-
-    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
-                details="Use PredictorCollection.get() instead.")
-    def get_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
-        """[DEPRECATED] Get a specific version of the predictor."""
-        return self.get(uid=uid, version=version)
-
-    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
-                details="archive() is deprecated in favor of archive_root().")
-    def archive(self, uid: Union[UUID, str]) -> Predictor:
-        """[DEPRECATED] Archive a root predictor."""
-        self.archive_root(uid)
-        return self.get(uid)
-
-    @deprecated(deprecated_in="1.39.0", removed_in="2.0.0",
-                details="restore() is deprecated in favor of restore_root().")
-    def restore(self, uid: Union[UUID, str]) -> Predictor:
-        """[DEPRECATED] Restore a root predictor."""
-        self.restore_root(uid)
-        return self.get(uid)
-
-    @deprecated(deprecated_in="1.47.0", removed_in="2.0.0",
-                details="auto_configure is an alias for create_default.")
-    def auto_configure(self,
-                       *,
-                       training_data: DataSource,
-                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
-                       prefer_valid: bool = True) -> Predictor:
-        """[DEPRECATED] Alias for PredictorCollection.create_default."""
-        return self.create_default(training_data=training_data, pattern=pattern,
-                                   prefer_valid=prefer_valid)
-
-    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
-                details="Use PredictorCollection.convert_to_graph() instead.")
-    def convert_version_to_graph(self,
-                                 uid: Union[UUID, str],
-                                 *,
-                                 version: Union[int, str],
-                                 retrain_if_needed: bool = False) -> Predictor:
-        """[DEPRECATED] Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
-
-        See `PredictorCollection.convert_to_graph` for more detail.
-        """
-        return self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
-
-    @deprecated(deprecated_in="1.50.0", removed_in="2.0.0",
-                details="Use PredictorCollection.convert_and_update() instead.")
-    def convert_version_and_update(self,
-                                   uid: Union[UUID, str],
-                                   *,
-                                   version: Union[int, str],
-                                   retrain_if_needed: bool = False) -> Predictor:
-        """[DEPRECATED] Overwrite a SimpleML or Graph predictor with an equivalent Graph predictor.
-
-        See `PredictorCollection.convert_to_graph` for more detail.
-        """
-        return self.convert_and_update(uid, version=version, retrain_if_needed=retrain_if_needed)

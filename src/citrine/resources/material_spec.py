@@ -98,8 +98,8 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         return MaterialSpec
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate], *,
-                         scope: Optional[str] = None) -> Iterator[MaterialSpec]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+                         ) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get the material specs using the specified material template.
 
@@ -107,9 +107,6 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
             A representation of the material template whose material spec usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -117,12 +114,12 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             The material specs using the specified material template.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('material-templates', uid=link)
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
-                       scope: Optional[str] = None) -> Optional[MaterialSpec]:
+                       uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                       ) -> Optional[MaterialSpec]:
         """
         [ALPHA] Get output material of a process.
 
@@ -130,9 +127,6 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
             A representation of the process whose output is to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -140,7 +134,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return next(
             self._get_relation(
                 relation='process-specs',

@@ -120,8 +120,8 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         return IngredientSpec
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
-                        scope: Optional[str] = None) -> Iterator[IngredientSpec]:
+                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                        ) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -129,9 +129,6 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
             A representation of the process spec whose ingredients are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -139,12 +136,12 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
             The ingredients to the specified process.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='process-specs', uid=link)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec], *,
-                         scope: Optional[str] = None) -> Iterator[IngredientSpec]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+                         ) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients using the specified material.
 
@@ -152,9 +149,6 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
             A representation of the material spec whose ingredient usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -162,5 +156,5 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
             The ingredients using the specified material
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='material-specs', uid=link)

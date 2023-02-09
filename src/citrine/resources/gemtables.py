@@ -2,7 +2,6 @@ import json
 from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
-from warnings import warn
 
 import requests
 
@@ -315,7 +314,6 @@ class GemTableCollection(Collection[GemTable]):
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
     table_type = Union[GemTable, UUID, str]
-    obsolete_table_type = Union[table_type, Tuple[Union[str, UUID], Union[str, int]]]
 
     def _read_raw(self, table: table_type) -> requests.Response:
         """
@@ -362,7 +360,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         return self._read_raw(table).text
 
-    def read(self, *, table: obsolete_table_type, local_path: str):
+    def read(self, *, table: table_type, local_path: str):
         """
         Read the Table file from S3 to your local system.
 
@@ -379,10 +377,5 @@ class GemTableCollection(Collection[GemTable]):
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
-        if isinstance(table, (Tuple, list)):
-            warn("A tuple as a means of referring to a GEM Table is deprecated.  "
-                 "Please pass a GemTable object.", DeprecationWarning)
-            table = self.get(uid=table[0], version=table[1])
-
         response = self._read_raw(table)
         write_file_locally(response.content, local_path)
