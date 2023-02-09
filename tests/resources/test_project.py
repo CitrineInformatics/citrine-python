@@ -96,6 +96,7 @@ def test_share_post_content(project, session):
     # Given
     dataset = Dataset(name="foo", summary="", description="")
     dataset_id = str(uuid.uuid4())
+    dataset.uid = dataset_id
 
     # When
     project.share(resource=dataset, project_id=project.uid)

@@ -70,14 +70,14 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
     entity = deepcopy(valid_label_fractions_predictor_data)
     entity["metadata"]["archived"] = entity["metadata"]["created"]
-    session.set_responses(None, entity, paging_response(entity))
+    session.set_responses(entity, paging_response(entity))
 
     with pytest.deprecated_call():
         archived_predictor = pc.archive(uuid.uuid4())
     assert archived_predictor.is_archived
 
     del entity["metadata"]["archived"]
-    session.set_responses(None, entity, paging_response())
+    session.set_responses(entity, paging_response())
     
     with pytest.deprecated_call():
         restored_predictor = pc.restore(uuid.uuid4())

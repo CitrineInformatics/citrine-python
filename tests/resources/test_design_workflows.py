@@ -109,35 +109,6 @@ def test_register(session, workflow_minimal, collection, optional_args):
     assert_workflow(new_workflow, workflow)
 
 
-def test_deprecated_register_without_branch(session, workflow, collection_without_branch):
-    # Given
-    new_branch_id = uuid.uuid4()
-    post_dict = workflow.dump()
-    session.set_responses(
-        {**post_dict, 'id': str(workflow.uid), 'status_description': 'status'},
-        {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
-
-    # When
-    # Future design workflow creation will require a branch.
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.register(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call_create = FakeCall(
-        method='POST',
-        path=workflow_path(collection_without_branch),
-        json=post_dict)
-    expected_call_get_branch = FakeCall(
-        method='GET',
-        path=workflow_path(collection_without_branch, workflow))
-    assert session.calls == [expected_call_create, expected_call_get_branch]
-    assert collection_without_branch.branch_id is None
-    assert workflow.branch_id is None
-    assert new_workflow.branch_id == new_branch_id
-    assert_workflow(new_workflow, workflow)
-
-
 def test_register_conflicting_branches(session, workflow, collection):
     # Given
     old_branch_id = uuid.uuid4()
@@ -159,40 +130,6 @@ def test_register_conflicting_branches(session, workflow, collection):
     assert session.last_call == expected_call
     assert workflow.branch_id == old_branch_id
     assert new_workflow.branch_id == collection.branch_id
-    assert_workflow(new_workflow, workflow)
-
-
-def test_deprecated_register_only_model_has_branch(session, workflow, collection_without_branch):
-    ### This situation should be handled the same way as when neither has a branch ID
-
-    # Given
-    new_branch_id = uuid.uuid4()
-    old_branch_id = uuid.uuid4()
-    
-    workflow.branch_id = old_branch_id
-    post_dict = workflow.dump()
-    session.set_responses(
-        {**post_dict, 'id': str(workflow.uid), 'status_description': 'status'},
-        {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
-
-    # When
-    # Future design workflow creation will require a branch ID.
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.register(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call_create = FakeCall(
-        method='POST',
-        path=workflow_path(collection_without_branch),
-        json=post_dict)
-    expected_call_get_branch = FakeCall(
-        method='GET',
-        path=workflow_path(collection_without_branch, workflow))
-    assert session.calls == [expected_call_create, expected_call_get_branch]
-    assert collection_without_branch.branch_id is None
-    assert workflow.branch_id == old_branch_id
-    assert new_workflow.branch_id == new_branch_id
     assert_workflow(new_workflow, workflow)
 
 
@@ -266,28 +203,6 @@ def test_update(session, workflow, collection_without_branch):
 
     # When
     new_workflow = collection_without_branch.update(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call = FakeCall(
-        method='PUT',
-        path=workflow_path(collection_without_branch, workflow),
-        json=post_dict)
-    assert session.last_call == expected_call
-    assert_workflow(new_workflow, workflow)
-
-
-def test_update_warning(session, workflow, collection_without_branch, design_execution_dict):
-    # Given
-    workflow.branch_id = uuid.uuid4()
-    post_dict = workflow.dump()
-    session.set_responses(
-        {"per_page": 1, "next": "", "response": [design_execution_dict]},
-        {**post_dict, 'status_description': 'status'})
-
-    # When
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.update(workflow)
 
     # Then
     assert session.num_calls == 2
