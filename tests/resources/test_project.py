@@ -94,12 +94,11 @@ def test_share_post_content_v3(project_v3):
 
 def test_share_post_content(project, session):
     # Given
+    dataset = Dataset(name="foo", summary="", description="")
     dataset_id = str(uuid.uuid4())
 
     # When
-    # Share using resource type/id, which is deprecated
-    with pytest.warns(DeprecationWarning):
-        project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+    project.share(resource=dataset, project_id=project.uid)
 
     # Then
     assert 1 == session.num_calls
@@ -109,54 +108,6 @@ def test_share_post_content(project, session):
         json={
             'project_id': str(project.uid),
             'resource': {'type': 'DATASET', 'id': dataset_id}
-        }
-    )
-    assert expected_call == session.last_call
-
-    # Share by resource
-    # When
-    dataset = Dataset(name="foo", summary="", description="")
-    dataset.uid = str(uuid.uuid4())
-
-    with pytest.warns(DeprecationWarning):
-        project.share(resource=dataset, project_id=project.uid)
-
-    # Then
-    assert 2 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/share'.format(project.uid),
-        json={
-            'project_id': str(project.uid),
-            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
-        }
-    )
-    assert expected_call == session.last_call
-
-    # providing both the resource and the type/id is an error
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
-
-    # Providing neither the resource nor the type/id is an error
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            project.share(project_id=project.uid)
-
-
-def test_share_deprecation_warning(project, session):
-    dataset = Dataset(name="foo", summary="", description="")
-
-    with pytest.warns(DeprecationWarning):
-        project.share(resource=dataset, project_id=project.uid)
-
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/share'.format(project.uid),
-        json={
-            'project_id': str(project.uid),
-            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
         }
     )
     assert expected_call == session.last_call
