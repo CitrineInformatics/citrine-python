@@ -208,7 +208,7 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
 
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
-            params={'per_page': 20, 'module_type': "DESIGN_SPACE"})
+            params={'per_page': 20, 'module_type': "DESIGN_SPACE", 'page': 1})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(design_spaces) == 2

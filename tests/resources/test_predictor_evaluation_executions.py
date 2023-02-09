@@ -132,7 +132,7 @@ def test_list(collection: PredictorEvaluationExecutionCollection, session, predi
     assert not lst
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
-    expected_payload = {"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
+    expected_payload = {"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id), 'page': 1}
     if predictor_version is not None:
         expected_payload["predictor_version"] = predictor_version
     assert session.last_call == FakeCall(method='GET', path=expected_path, params=expected_payload)

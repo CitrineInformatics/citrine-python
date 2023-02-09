@@ -612,7 +612,7 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -627,7 +627,7 @@ def test_list_projects_v3(collection_v3, session_v3):
 
     # Then
     assert 1 == session_v3.num_calls
-    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session_v3.last_call
     assert 5 == len(projects)
 
@@ -640,7 +640,7 @@ def test_list_v3_no_team(session_v3):
     projects = list(project_collection.list())
 
     assert 1 == session_v3.num_calls
-    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session_v3.last_call
     assert 5 == len(projects)
 
@@ -668,7 +668,7 @@ def test_list_projects_with_page_params(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10, 'page': 1})
     assert expected_call == session.last_call
 
 
@@ -769,6 +769,7 @@ def test_search_projects_v3_no_search_params(collection_v3: ProjectCollection):
     assert expected_call == collection_v3.session.last_call
     assert len(projects_data)== len(collection)
 
+
 def test_search_projects(collection: ProjectCollection, session):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
@@ -789,7 +790,7 @@ def test_search_projects(collection: ProjectCollection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                             params={'per_page': 1000}, json={'search_params': search_params})
+                             params={'per_page': 1000, 'page': 1}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
@@ -815,7 +816,7 @@ def test_search_projects_with_pagination(paginated_collection: ProjectCollection
     # Then
     assert 4 == paginated_session.num_calls
     expected_first_call = FakeCall(method='POST', path='/projects/search', 
-                                   params={'per_page': per_page}, json={'search_params': search_params})
+                                   params={'page': 1, 'per_page': per_page}, json={'search_params': search_params})
     expected_last_call = FakeCall(method='POST', path='/projects/search', 
                                   params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
 

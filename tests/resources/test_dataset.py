@@ -188,7 +188,7 @@ def test_list_datasets(paginated_collection, paginated_session):
     # Then
     assert 3 == paginated_session.num_calls
     expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
-                                   params={'per_page': 20})
+                                   params={'per_page': 20, 'page': 1})
     expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
                                   params={'page': 3, 'per_page': 20})
     assert expected_first_call == paginated_session.calls[0]
@@ -214,7 +214,7 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
     expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
-                                   params={'per_page': batch_size})
+                                   params={'per_page': batch_size, 'page': 1})
     expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
                                   params={'page': 2, 'per_page': batch_size})
     assert expected_first_call == paginated_session.calls[0]

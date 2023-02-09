@@ -235,7 +235,7 @@ def test_list_archived(workflow, collection: DesignWorkflowCollection):
     assert collection.session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={'per_page': 10, 'filter': "archived eq 'true'", 'branch': collection.branch_id},
+        params={'per_page': 10, 'filter': "archived eq 'true'", 'branch': collection.branch_id, 'page': 1},
         json=None
     )
 

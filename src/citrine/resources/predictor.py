@@ -116,13 +116,11 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def list_archived(self,
                       uid: Union[UUID, str],
                       *,
-                      page: Optional[int] = None,
                       per_page: int = 20) -> Iterable[Predictor]:
         """List archived versions of the given predictor."""
         page_fetcher = self._page_fetcher(uid=uid, filter="archived eq 'true'")
         return self._paginator.paginate(page_fetcher=page_fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def archive(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
@@ -290,15 +288,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """List all non-archived versions of the given Predictor."""
         return self._versions_collection.list(uid, per_page=per_page)
 
-    def list_archived(self,
-                      *,
-                      page: Optional[int] = None,
-                      per_page: int = 20) -> Iterable[Predictor]:
+    def list_archived(self, *, per_page: int = 20) -> Iterable[Predictor]:
         """List archived Predictors."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def list_archived_versions(self,

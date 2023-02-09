@@ -316,7 +316,7 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
 
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/predictors'.format(collection.project_id),
-                                   params={'per_page': 20})
+                                   params={'per_page': 20, 'page': 1})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
@@ -576,28 +576,6 @@ def test_convert_auto_retrain(valid_graph_predictor_data, version, method_name):
     assert response is None
 
 
-def test_experimental_deprecated(valid_auto_ml_predictor_data):
-    # Given
-    session = FakeSession()
-    response = valid_auto_ml_predictor_data
-    response["experimental"] = True
-    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-
-    session.set_responses(response, response, paging_response(response))
-
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = Predictor.build(valid_auto_ml_predictor_data)
-
-    # When
-    registered = pc.register(predictor)
-
-    # Then
-    with pytest.deprecated_call():
-        assert registered.experimental is False
-    with pytest.deprecated_call():
-        assert registered.experimental_reasons == []
-
-
 def test_predictor_list_archived(valid_graph_predictor_data):
     # Given
     session = FakeSession()
@@ -609,7 +587,7 @@ def test_predictor_list_archived(valid_graph_predictor_data):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20})
+    assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20, 'page': 1})
 
 
 def test_list_versions(valid_expression_predictor_data):
@@ -632,7 +610,7 @@ def test_list_versions(valid_expression_predictor_data):
     listed_predictors = list(pc.list_versions(pred_id, per_page=20))
 
     # Then
-    assert session.calls == [FakeCall(method='GET', path=versions_path, params={'per_page': 20})]
+    assert session.calls == [FakeCall(method='GET', path=versions_path, params={'per_page': 20, 'page': 1})]
     assert len(listed_predictors) == 2
 
 
@@ -656,7 +634,7 @@ def test_list_archived_versions(valid_expression_predictor_data):
     listed_predictors = list(pc.list_archived_versions(pred_id, per_page=20))
 
     # Then
-    expected_params = {'per_page': 20, "filter": "archived eq 'true'", 'per_page': 20}
+    expected_params = {'per_page': 20, "filter": "archived eq 'true'", 'page': 1}
     assert session.calls == [FakeCall(method='GET', path=versions_path, params=expected_params)]
     assert len(listed_predictors) == 2
 

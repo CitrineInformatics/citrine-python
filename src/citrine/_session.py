@@ -40,7 +40,7 @@ class Session(requests.Session):
         super().__init__()
         if refresh_token is None:
             refresh_token = environ.get('CITRINE_API_KEY')
-        elif scheme is None:
+        if scheme is None:
             scheme = 'https'
         if host is None:
             host = environ.get('CITRINE_API_HOST')

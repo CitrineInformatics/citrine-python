@@ -94,7 +94,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
 
 
 def test_list(collection: DesignExecutionCollection, session):
@@ -106,7 +106,7 @@ def test_list(collection: DesignExecutionCollection, session):
     assert session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={"per_page": 4}
+        params={"per_page": 4, 'page': 1}
     )
 
 
