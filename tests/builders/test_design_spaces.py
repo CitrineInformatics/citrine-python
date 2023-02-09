@@ -349,7 +349,7 @@ def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
         project=project, uid=old.uid, dataset=dataset, filename=fname)
     assert new.name == old.name
     # the other equality logic is tested in test_enumerated_to_data_source
-    assert project.design_spaces.get(old.uid).is_archived
+    assert project.design_spaces.get(old.uid).archived
 
     # test that it doesn't work when it shouldn't
     with pytest.raises(ValueError):
@@ -357,7 +357,7 @@ def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
             project=project, uid=new.uid, dataset=dataset, filename=fname)
 
     # it failed, so it shouldn't have archived the old one
-    assert not project.design_spaces.get(new.uid).is_archived
+    assert not project.design_spaces.get(new.uid).archived
 
     # test that it works for a design space that cannot be archived because it is in use
     old_in_use = project.design_spaces.register(basic_cartesian_space)
