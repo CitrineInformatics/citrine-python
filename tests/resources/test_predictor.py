@@ -65,62 +65,6 @@ def test_delete():
         pc.delete(uuid.uuid4())
 
 
-def test_archive_and_restore(valid_label_fractions_predictor_data):
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    entity = deepcopy(valid_label_fractions_predictor_data)
-    entity["metadata"]["archived"] = entity["metadata"]["created"]
-    session.set_responses(entity, paging_response(entity))
-
-    with pytest.deprecated_call():
-        archived_predictor = pc.archive(uuid.uuid4())
-    assert archived_predictor.is_archived
-
-    del entity["metadata"]["archived"]
-    session.set_responses(entity, paging_response())
-    
-    with pytest.deprecated_call():
-        restored_predictor = pc.restore(uuid.uuid4())
-
-    assert not restored_predictor.is_archived
-
-
-def test_archive(valid_label_fractions_predictor_data):
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_label_fractions_predictor_data["id"]
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
-
-    session.set_responses(None, valid_label_fractions_predictor_data)
-
-    with pytest.deprecated_call():
-        archived_predictor = pc.archive(pred_id)
-
-    assert session.calls == [
-        FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={}),
-        FakeCall(method='GET', path=f"{versions_path}/most_recent")
-    ]
-
-
-def test_restore(valid_label_fractions_predictor_data):
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_label_fractions_predictor_data["id"]
-    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
-
-    session.set_responses(None, valid_label_fractions_predictor_data)
-
-    with pytest.deprecated_call():
-        restored_predictor = pc.restore(pred_id)
-
-    assert session.calls == [
-        FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={}),
-        FakeCall(method='GET', path=f"{versions_path}/most_recent")
-    ]
-
-
 def test_archive_root(valid_label_fractions_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -426,21 +370,6 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert isinstance(result.predictors[1], ExpressionPredictor)
 
 
-def test_auto_configure_deprecated(valid_graph_predictor_data):
-    # Given
-    session = FakeSession()
-
-    # Setup a response that includes instance instead of config
-    response = deepcopy(valid_graph_predictor_data)["data"]
-    session.set_responses(response, paging_response(response))
-    
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    # When
-    with pytest.deprecated_call():
-        pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
-
-
 def test_predictor_list_archived(valid_graph_predictor_data):
     # Given
     session = FakeSession()
@@ -552,32 +481,3 @@ def test_restore_invalid_version(valid_graph_predictor_data, version):
 
     with pytest.raises(ValueError):
         pc.restore_version(uuid.uuid4(), version=version)
-
-
-@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_deprecated_get_version(valid_graph_predictor_data, version):
-    # Given
-    session = FakeSession()
-    session.set_response(valid_graph_predictor_data)
-    pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_graph_predictor_data["id"]
-    
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
-
-    # When
-    with pytest.deprecated_call():
-        pc.get_version(pred_id, version=version)
-
-    # Then
-    assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{version}")]
-
-
-@pytest.mark.parametrize("version", (-2, 0, "1.5", "draft"))
-def test_deprecated_get_invalid_version(valid_graph_predictor_data, version):
-    session = FakeSession()
-    session.set_response(valid_graph_predictor_data)
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    with pytest.deprecated_call():
-        with pytest.raises(ValueError):
-            pc.get_version(uuid.uuid4(), version=version)
