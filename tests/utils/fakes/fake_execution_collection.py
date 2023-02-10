@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Optional
 
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
 from citrine.informatics.scores import Score
@@ -9,7 +10,7 @@ from citrine.resources.predictor_evaluation_execution import PredictorEvaluation
 
 class FakeDesignExecutionCollection(DesignExecutionCollection):
 
-    def trigger(self, execution_input: Score) -> DesignExecution:
+    def trigger(self, execution_input: Score, max_candidates: Optional[int] = None) -> DesignExecution:
         execution = DesignExecution()
         execution.score = execution_input
         execution.descriptors = []
