@@ -13,7 +13,6 @@ class FakeDesignExecutionCollection(DesignExecutionCollection):
     def trigger(self, execution_input: Score, max_candidates: Optional[int] = None) -> DesignExecution:
         execution = DesignExecution()
         execution.score = execution_input
-        execution.max_candidates = max_candidates
         execution.descriptors = []
         return execution
 
