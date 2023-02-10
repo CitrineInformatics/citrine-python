@@ -263,6 +263,28 @@ def test_list_predictors(valid_auto_ml_predictor_data, valid_expression_predicto
     assert len(predictors) == 2
 
 
+def test_get(valid_label_fractions_predictor_data):
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = valid_label_fractions_predictor_data
+    session.set_responses(entity)
+    id = uuid.uuid4()
+    version = 4
+
+    # When
+    pc.get(id, version=version)
+
+    # Then
+    expected_call = FakeCall(
+        method='GET',
+        path=f'/projects/{pc.project_id}/predictors/{id}/versions/{version}',
+        params={}
+    )
+    assert session.num_calls == 1
+    assert expected_call == session.last_call
+
+
 def test_get_none():
     """Trying to get a predictor with uid=None should result in an informative error."""
     pc = PredictorCollection(uuid.uuid4(), FakeSession())
