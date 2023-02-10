@@ -682,7 +682,6 @@ We define an :class:`~citrine.informatics.scores.LIScore` with this objective an
         design_space_id=design_space.uid,
         predictor_id=graph_predictor.uid,
         predictor_version=graph_predictor.version,
-        processor_id=None  # we use the default continuous search processor
     )
     design_workflow = project.design_workflows.register(design_workflow)
 

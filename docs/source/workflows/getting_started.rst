@@ -20,11 +20,12 @@ Design Workflow
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
 This workflow generates scored candidates for Sequential Learning.
-To run, it requires one of each of the modules listed below and executes in the following manner:
+It executes in the following manner:
 
 -  Material candidates are pulled from the design space.
 -  The predictor adds additional information to the candidates.
--  Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.
+-  Enriched candidates are scored
+-  The Citrine Platform selects the next batch of candidates to pull from the design space.
 
 After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
@@ -49,13 +50,11 @@ Modules Overview
 
 Modules are re-usable computational tools used to construct workflows.
 The modules dictate how the platform utilizes research data to generate computational results.
-There are 3 types of modules on the platform:
+There are 2 types of modules on the platform:
 
 -  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
 -  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
     A predictor can be composed of machine-learned models, featurizers, and analytical relations.
--  :doc:`Processors <processors>` define the method used to search the design space.
-   The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
 .. _archiving_label:
 
