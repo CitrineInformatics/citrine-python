@@ -16,6 +16,7 @@ from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedEx
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.data_objects import DataObject
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
@@ -625,6 +626,12 @@ class Project(Resource['Project']):
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
 
+    def filter_by_id(self, id_search_string: str) -> Iterator[DataObject]:
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"
+        )
+        return (self.build(raw) for raw in raw_objects)
 
 class ProjectCollection(Collection[Project]):
     """

@@ -188,3 +188,10 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             if e.api_error is not None and e.api_error.validation_errors:
                 return e.api_error.validation_errors
             raise e
+
+    def filter_by_id(self, id_search_string) -> Iterator[DataObject]:
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"
+        )
+        return (self.build(raw) for raw in raw_objects)
