@@ -59,7 +59,7 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
     """The fingerprint type used to calculate the fingerprint similarity."""
 
     def __init__(self):
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
 
 class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
