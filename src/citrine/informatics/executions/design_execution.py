@@ -104,7 +104,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     def predict(self,
                 predict_request: PredictRequest) -> DesignCandidate:
-        """Invoke a prediction on a design candidate"""
+        """Invoke a prediction on a design candidate."""
         path = self._path() + '/predict'
 
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
