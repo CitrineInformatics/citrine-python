@@ -12,6 +12,7 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_candidate import DesignCandidate
+from citrine.informatics.predict_request import PredictRequest
 from citrine.informatics.scores import Score
 
 
@@ -100,6 +101,15 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
                                         collection_builder=self._build_candidates,
                                         page=page,
                                         per_page=per_page)
+
+    def predict(self,
+                predict_request: PredictRequest) -> DesignCandidate:
+        """Invoke a prediction on a design candidate"""
+
+        path = self._path() + '/predict'
+
+        res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
+        return DesignCandidate.build(res)
 
     @property
     @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")

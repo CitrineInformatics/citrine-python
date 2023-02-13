@@ -1,4 +1,5 @@
 from typing import Type
+
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -48,8 +49,12 @@ class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
     """:float: mean of the continuous distribution"""
     std = properties.Float('s')
     """:float: standard deviation of the continuous distribution"""
+    typ = properties.String('type', default='R', deserializable=False)
+    """:str: polymorphic type code"""
 
-    def __init__(self):
+    def __init__(self, *, mean: float, std: float):
+        self.mean = mean
+        self.std = std
         pass  # pragma: no cover
 
 
@@ -62,8 +67,11 @@ class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
 
     probabilities = properties.Mapping(properties.String, properties.Float, 'cp')
     """:Dict[str, float]: mapping from category names to their probabilities"""
+    typ = properties.String('type', default='C', deserializable=False)
+    """:str: polymorphic type code"""
 
-    def __init__(self):
+    def __init__(self, *, probabilities: dict):
+        self.probabilities = probabilities
         pass  # pragma: no cover
 
 
@@ -76,8 +84,11 @@ class Mixture(Serializable["Mixture"], DesignVariable):
 
     quantities = properties.Mapping(properties.String, properties.Float, 'q')
     """:Dict[str, float]: mapping from ingredient identifiers to their quantities"""
+    typ = properties.String('type', default='M', deserializable=False)
+    """:str: polymorphic type code"""
 
-    def __init__(self):
+    def __init__(self, *, quantities: dict):
+        self.quantities = quantities
         pass  # pragma: no cover
 
 
@@ -86,8 +97,11 @@ class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
 
     formula = properties.String('f')
     """:str: chemical formula"""
+    typ = properties.String('type', default='F', deserializable=False)
+    """:str: polymorphic type code"""
 
-    def __init__(self):
+    def __init__(self, *, formula: str):
+        self.formula = formula
         pass  # pragma: no cover
 
 
@@ -96,8 +110,11 @@ class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
 
     smiles = properties.String('s')
     """:str: SMILES string"""
+    typ = properties.String('type', default='S', deserializable=False)
+    """:str: polymorphic type code"""
 
-    def __init__(self):
+    def __init__(self, *, smiles: str):
+        self.smiles = smiles
         pass  # pragma: no cover
 
 
@@ -107,8 +124,9 @@ class DesignMaterial(Serializable["DesignMaterial"]):
     values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
     """:Dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
-    def __init__(self):
-        pass  # pragma: no cover
+    def __init__(self, *, values: dict):
+        self.values = values
+        pass
 
 
 class DesignCandidate(Serializable["DesignCandidate"]):
