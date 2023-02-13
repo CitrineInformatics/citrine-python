@@ -81,8 +81,10 @@ class Variable(PolymorphicSerializable['Variable']):
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientLabelsSetByProcessAndName,
             IngredientQuantityByProcessAndName,
-            TerminalMaterialIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
-            IngredientLabelsSetInOutput, IngredientQuantityInOutput, XOR
+            TerminalMaterialIdentifier, AttributeInOutput,
+            IngredientIdentifierInOutput, IngredientLabelsSetInOutput, IngredientQuantityInOutput,
+            LocalIngredientIdentifier, LocalIngredientLabelsSet, LocalIngredientQuantity,
+            XOR,
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -886,6 +888,165 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         self.headers = headers
         self.ingredient_name = ingredient_name
         self.process_templates = [_make_link_by_uid(x) for x in process_templates]
+        self.type_selector = type_selector
+
+        # Cast to make sure the string is valid
+        if not isinstance(quantity_dimension, IngredientQuantityDimension):
+            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
+        self.quantity_dimension = quantity_dimension
+
+        if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
+            if unit is None:
+                raise ValueError("Absolute Quantity variables require that 'unit' is set")
+        else:
+            if unit is not None and unit != "":
+                raise ValueError("Fractional variables cannot take a 'unit'")
+        self.unit = unit
+
+
+class LocalIngredientIdentifier(Serializable['LocalIngredientIdentifier'], Variable):
+    """[ALPHA] Ingredient identifier for the root process of a material history tree.
+
+    Get ingredient identifier by name. Stop traversal when encountering any ingredient.
+    This class exists because we began seeing a common pattern of using
+    `IngredientIdentifierInOutput` variableDefinitions with the process_templates list populated
+    with every single process template. This class has the same terminating behavior without the
+    need to populate the tableconfig with a huge list of redundant process template ids.
+
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    ingredient_name: str
+        Name of the ingredient to search for
+    scope: str
+        scope of the identifier (default: the Citrine scope)
+    type_selector: DataObjectTypeSelector
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    ingredient_name = properties.String('ingredient_name')
+    scope = properties.String('scope')
+    type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
+    typ = properties.String('type', default="local_ing_id", deserializable=False)
+
+    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "ingredient_name", "scope", "type_selector", "typ"]
+
+    def __init__(self,
+                 name: str, *,
+                 headers: List[str],
+                 ingredient_name: str,
+                 scope: str = CITRINE_SCOPE,
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
+        self.name = name
+        self.headers = headers
+        self.ingredient_name = ingredient_name
+        self.scope = scope
+        self.type_selector = type_selector
+
+
+class LocalIngredientLabelsSet(Serializable['LocalIngredientLabelsSet'], Variable):
+    """[ALPHA] The set of labels on an ingredient for the root process of a material history tree.
+
+    Define a variable contains the set of labels that is present on the ingredient
+
+    For example, the labels might be "solvent" and "alcohol for the variable "what roles is the
+    ethanol playing?". Many such columns would then support the downstream analysis "get the
+    volumetric average density of the solvents".
+
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    ingredient_name: str
+        name of ingredient
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    ingredient_name = properties.String('ingredient_name')
+    typ = properties.String('type', default="local_ing_label_set", deserializable=False)
+
+    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "ingredient_name", "typ"]
+
+    def __init__(self,
+                 name: str, *,
+                 headers: List[str],
+                 ingredient_name: str):
+        self.name = name
+        self.headers = headers
+        self.ingredient_name = ingredient_name
+
+
+class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable):
+    """[ALPHA] The quantity of an ingredient for the root process of a material history tree.
+
+    Get ingredient quantity by name. Stop traversal when encountering any ingredient.
+    This class exists because we began seeing a common pattern of using
+    `IngredientQuantityInOutput` with the process_templates list populated with every single
+    process template in a dataset. This class has the same terminating behavior without the
+    need to populate the tableconfig with a huge list of redundant process template ids.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    ingredient_name: str
+        Name of the ingredient to search for
+    quantity_dimension: IngredientQuantityDimension
+        Dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+        Valid options are defined by
+        :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
+    type_selector: DataObjectTypeSelector
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+    unit: str
+        an optional unit: only ingredient quantities that are convertible to this unit will be
+        matched. note that this parameter is mandatory when quantity_dimension is
+        IngredientQuantityDimension.ABSOLUTE.
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    ingredient_name = properties.String('ingredient_name')
+    quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity_dimension')
+    type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
+    unit = properties.Optional(properties.String, "unit")
+    typ = properties.String('type', default="local_ing_quantity", deserializable=False)
+
+    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "ingredient_name", "type_selector", "unit", "typ"]
+
+    def __init__(self,
+                 name: str, *,
+                 headers: List[str],
+                 ingredient_name: str,
+                 quantity_dimension: IngredientQuantityDimension,
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
+                 unit: Optional[str] = None):
+        self.name = name
+        self.headers = headers
+        self.ingredient_name = ingredient_name
         self.type_selector = type_selector
 
         # Cast to make sure the string is valid
