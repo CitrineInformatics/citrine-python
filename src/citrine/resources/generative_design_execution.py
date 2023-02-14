@@ -1,20 +1,12 @@
 """Resources that represent both individual and collections of design workflow executions."""
-import sys
 from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._utils.functions import shadow_classes_in_module
 from citrine._session import Session
-import citrine.informatics.executions.generative_design_execution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.resources.response import Response
-
-
-shadow_classes_in_module(
-    citrine.informatics.executions.generative_design_execution, sys.modules[__name__]
-)
 
 
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):

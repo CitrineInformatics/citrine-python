@@ -37,16 +37,9 @@ def test_basic_methods(generative_design_execution, collection):
 
 
 def test_build_new_execution(collection, generative_design_execution_dict):
-    # Given
-    generative_design_execution_id = uuid.uuid4()
-    build_data = generative_design_execution_dict.copy()
-    build_data["id"] = str(generative_design_execution_id)
+    execution: GenerativeDesignExecution = collection.build(generative_design_execution_dict)
 
-    # When
-    execution: GenerativeDesignExecution = collection.build(build_data)
-
-    # Then
-    assert execution.uid == generative_design_execution_id
+    assert str(execution.uid) == generative_design_execution_dict["id"]
     assert execution.project_id == collection.project_id
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
@@ -56,10 +49,10 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
     # Given
     session.set_response(generative_design_execution_dict)
     design_execuption_input = GenerativeDesignInput(
-        seeds = ["CC(O)=O"],
-        fingerprint_type = FingerprintType.ECFP4,
-        min_fingerprint_similarity = 0.5,
-        mutation_per_seed = 2
+        seeds=["CC(O)=O"],
+        fingerprint_type=FingerprintType.ECFP4,
+        min_fingerprint_similarity=0.5,
+        mutation_per_seed=2
     )
 
     # When

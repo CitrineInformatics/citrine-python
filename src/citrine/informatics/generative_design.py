@@ -1,11 +1,7 @@
-from typing import List, TypeVar
+from typing import List
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from gemd.enumeration.base_enumeration import BaseEnumeration
-
-
-Self = TypeVar('Self', bound='Serializable')
-__all__ = ['FingerprintType']
 
 
 class FingerprintType(BaseEnumeration):

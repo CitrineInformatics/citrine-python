@@ -82,7 +82,7 @@ class GenerativeDesignExecution(
         page: Optional[int] = None,
         per_page: int = 100,
     ) -> Iterable[GenerativeDesignResult]:
-        """Fetch the Design Candidates for the particular execution, paginated."""
+        """Fetch the Generative Design Results for the particular execution, paginated."""
         path = self._path() + f'{self.uid}/results'
         fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
         return self._paginator.paginate(page_fetcher=fetcher,
@@ -95,7 +95,7 @@ class GenerativeDesignExecution(
         *,
         result_id: UUID,
     ) -> GenerativeDesignResult:
-        """Fetch the Design Candidates for the particular execution, paginated."""
+        """Fetch a Generative Design Result for the particular UID."""
         path = self._path() + f'{self.uid}/results/{result_id}'
         data = self._session.get_resource(path, version=self._api_version)
         return data
