@@ -92,11 +92,11 @@ def test_generative_design_execution_results(generative_design_execution: Genera
 
 def test_generative_design_execution_result(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
     # Given
-    session.set_response(example_generation_results)
+    session.set_response(example_generation_results["response"][0])
 
     # When
     result_id=example_generation_results["response"][0]["id"]
-    list(generative_design_execution.result(result_id=result_id))
+    generative_design_execution.result(result_id=result_id)
 
     # Then
     expected_path = '/projects/{}/generative-design/executions/{}/results/{}'.format(

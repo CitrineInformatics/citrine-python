@@ -98,4 +98,5 @@ class GenerativeDesignExecution(
         """Fetch a Generative Design Result for the particular UID."""
         path = self._path() + f'{self.uid}/results/{result_id}'
         data = self._session.get_resource(path, version=self._api_version)
-        return data
+        result = GenerativeDesignResult.build(data)
+        return result
