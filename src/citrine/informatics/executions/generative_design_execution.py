@@ -1,4 +1,3 @@
-# from deprecation import deprecated
 from functools import partial
 from typing import Optional, Iterable
 from uuid import UUID

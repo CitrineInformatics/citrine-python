@@ -7,13 +7,13 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 class FingerprintType(BaseEnumeration):
     """[ALPHA] Fingerprint type used in Generative Design.
 
-    * AP is the Atom Pairs fingerprint.
-    * PHCO is the Path-Length Connectivity fingerprint.
-    * BPF is the Binary Path fingerprint.
-    * BTF is the Bit-String Topological fingerprint.
-    * PATH is the Paths of Atoms of Heteroatoms fingerprint.
-    * ECFP4 is the Extended Connectivity fingerprint with radius 4.
-    * ECFP6 is the Extended Connectivity fingerprint with radius 6.
+    * AP is the Atom Pairs Fingerprint.
+    * PHCO is the Path-Length Connectivity Fingerprint.
+    * BPF is the Binary Path Fingerprint.
+    * BTF is the Bit-String Topological Fingerprint.
+    * PATH is the Paths of Atoms of Heteroatoms Fingerprint.
+    * ECFP4 is the Extended Connectivity Fingerprint with radius 4.
+    * ECFP6 is the Extended Connectivity Fingerprint with radius 6.
     * FCFP4 is the Focused Connectivity Fingerprint with radius 4.
     * FCFP6 is the Focused Connectivity Fingerprint with radius 6.
     """
