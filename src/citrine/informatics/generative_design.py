@@ -60,7 +60,7 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
 
 class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
     """A Citrine Generative Design Execution Input.
-    
+
     Parameters
     ----------
     seeds: List[str]
@@ -73,6 +73,7 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         The number of initial mutations that will be attempted per seed.
         IMPORTANT, the total number of molecules generated will likely be lower than this value.
         Some mutations may be duplicates or may not meet the fingerprint similarity threshold.
+
     """
 
     seeds = properties.List(properties.String(), 'seeds')
