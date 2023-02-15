@@ -757,7 +757,7 @@ def generative_design_execution_dict(generic_entity):
 @pytest.fixture
 def example_generation_results():
     return {
-        "page": 2,
+        "page": 1,
         "per_page": 4,
         "response": [{
             "id": str(uuid.uuid4()),

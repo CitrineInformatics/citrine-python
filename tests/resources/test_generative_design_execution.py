@@ -87,7 +87,7 @@ def test_generative_design_execution_results(generative_design_execution: Genera
         generative_design_execution.project_id,
         generative_design_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, "page": 1})
 
 
 def test_generative_design_execution_result(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
@@ -108,7 +108,7 @@ def test_generative_design_execution_result(generative_design_execution: Generat
 
 
 def test_list(collection: GenerativeDesignExecutionCollection, session):
-    session.set_response({"per_page": 4, "next": "", "response": []})
+    session.set_response({"page": 1, "per_page": 4, "next": "", "response": []})
     lst = list(collection.list(per_page=4))
     assert len(lst) == 0
 
@@ -116,7 +116,7 @@ def test_list(collection: GenerativeDesignExecutionCollection, session):
     assert session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={"per_page": 4}
+        params={"page": 1, "per_page": 4}
     )
 
 
