@@ -22,7 +22,7 @@ setup(name='citrine',
       packages=find_packages(where='src'),
       install_requires=[
           "requests>=2.25.1,<3",
-          "pyjwt>=1.7.1,<2",
+          "pyjwt>=2,<3",
           "arrow>=0.15.4,<0.16",
           "gemd>=1.9.0,<2",
           "boto3>=1.17.93,<2",
