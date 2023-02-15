@@ -30,8 +30,6 @@ class Module(PolymorphicSerializable['Module'], AsynchronousObject):
     def get_type(cls, data) -> Type['Module']:
         """Return the subtype."""
         from citrine.informatics.design_spaces import DesignSpace
-        from citrine.informatics.processors import Processor
         return {
             'DESIGN_SPACE': DesignSpace,
-            'PROCESSOR': Processor
         }[data['module_type']].get_type(data)

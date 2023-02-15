@@ -38,10 +38,11 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, execution_input: Score):
-        """Trigger a Design Workflow execution given a score."""
+    def trigger(self, execution_input: Score, *, max_candidates: Optional[int] = None):
+        """Trigger a Design Workflow execution given a score and a maximum number of candidates."""
         path = self._get_path()
-        data = self.session.post_resource(path, {'score': execution_input.dump()})
+        json = {'score': execution_input.dump(), "max_candidates": max_candidates}
+        data = self.session.post_resource(path, json)
         return self.build(data)
 
     def register(self, model: DesignExecution) -> DesignExecution:

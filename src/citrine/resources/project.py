@@ -37,10 +37,11 @@ from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
+from citrine.resources.generative_design_execution import \
+    GenerativeDesignExecutionCollection
 from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.processor import ProcessorCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
@@ -122,11 +123,6 @@ class Project(Resource['Project']):
         return DesignSpaceCollection(self.uid, self.session)
 
     @property
-    def processors(self) -> ProcessorCollection:
-        """Return a resource representing all visible processors."""
-        return ProcessorCollection(self.uid, self.session)
-
-    @property
     def predictors(self) -> PredictorCollection:
         """Return a resource representing all visible predictors."""
         return PredictorCollection(self.uid, self.session)
@@ -150,6 +146,11 @@ class Project(Resource['Project']):
     def design_workflows(self) -> DesignWorkflowCollection:
         """Return a collection representing all visible design workflows."""
         return DesignWorkflowCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def generative_design_executions(self) -> GenerativeDesignExecutionCollection:
+        """Return a collection representing all visible generative design executions."""
+        return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:

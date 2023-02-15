@@ -530,26 +530,6 @@ def invalid_predictor_data():
 
 
 @pytest.fixture
-def valid_grid_processor_data():
-    """Valid GridProcessor data."""
-    return dict(
-        module_type='PROCESSOR',
-        status='READY',
-        status_info=['Things are looking good'],
-        status_detail=[{'level': 'INFO', 'msg': 'Things are looking good'}],
-        archived=False,
-        display_name='my processor',
-        id=str(uuid.uuid4()),
-        config=dict(
-            type='Grid',
-            name='my processor',
-            description='does some things',
-            grid_dimensions=dict(x=5, y=10),
-        )
-    )
-
-
-@pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
@@ -769,6 +749,31 @@ def design_execution_dict(generic_entity):
 
 
 @pytest.fixture
+def generative_design_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    return ret
+
+
+@pytest.fixture
+def example_generation_results():
+    return {
+        "page": 2,
+        "per_page": 4,
+        "response": [{
+            "id": str(uuid.uuid4()),
+            "execution_id": str(uuid.uuid4()),
+            "result": {
+                "seed": "CCCCO",
+                "mutated": "CCCN",
+                "fingerprint_similarity": 0.41,
+                "fingerprint_type": "ECFP4",
+            }
+        }]
+    }
+
+
+
+@pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict, example_holdout_evaluator_dict):
     ret = deepcopy(generic_entity)
     ret.update({
@@ -784,7 +789,6 @@ def design_workflow_dict(generic_entity):
     ret.update({
         "name": "Example Design Workflow",
         "description": "A description! Of the Design Workflow! So you know what it's for!",
-        "processor_id": str(uuid.uuid4()),
         "design_space_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
         "predictor_version": random.randint(1, 10),

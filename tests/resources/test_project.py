@@ -388,10 +388,6 @@ def test_descriptors_get_project_id(project):
     assert project.uid == project.descriptors.project_id
 
 
-def test_processors_get_project_id(project):
-    assert project.uid == project.processors.project_id
-
-
 def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
 
@@ -413,6 +409,10 @@ def test_design_workflows_get_project_id(project):
 
 def test_design_workflows_get_branch_id(project):
     assert None is project.design_workflows.branch_id
+
+
+def test_generative_design_executions_get_project_id(project):
+    assert project.uid == project.generative_design_executions.project_id
 
 
 def test_branches_get_project_id(project):

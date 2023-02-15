@@ -2,13 +2,12 @@ Design Workflows
 ========================
 
 A :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow` ranks materials according to a :doc:`score <scores>`.
-This workflow is comprised of three modules:
+This workflow is comprised of two modules:
 
 -  :doc:`Design space <design_spaces>` defines all possible materials that can be generated.
 -  :doc:`Predictor <predictors>` adds information to a material using predictions from a machine-learned model.
--  :doc:`Processor <processors>` defines how to pick the “next” material.
 
-The following example demonstrates how to use the Citrine Python client to register a workflow (assuming a design space, predictor and processor were registered previously), wait for validation to complete and check the final status:
+The following example demonstrates how to use the Citrine Python client to register a workflow (assuming a design space and predictor were registered previously), wait for validation to complete and check the final status:
 
 .. code:: python
 
@@ -21,7 +20,6 @@ The following example demonstrates how to use the Citrine Python client to regis
             name='Example workflow',
             predictor_id=predictor.uid,
             predictor_version=predictor.version,
-            processor_id=processor.uid,
             design_space_id=design_space.uid
         )
     )
@@ -40,7 +38,7 @@ The following example demonstrates how to use the Citrine Python client to regis
 Execution and results
 ---------------------
 
-When a design workflow is executed, the processor will search the design space for optimal materials using additional information provided by the predictor.
+When a design workflow is executed, the Citrine Platform will search the design space for optimal materials using additional information provided by the predictor.
 The result is a list of scored and ranked materials.
 Materials at the head of the list are the best materials found from searching the design space.
 
@@ -171,7 +169,6 @@ You can still list all design workflows on the project as before.
             name='Example workflow',
             predictor_id=predictor.uid,
             predictor_version=predictor.version,
-            processor_id=processor.uid,
             design_space_id=design_space.uid
         )
     )

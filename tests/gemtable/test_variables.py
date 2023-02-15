@@ -13,6 +13,7 @@ from gemd.entity.link_by_uid import LinkByUID
     AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
     AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), object_template=LinkByUID(scope="template", id="object")),
     AttributeInOutput(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_templates=[LinkByUID(scope="template", id="object")]),
+    LocalAttribute(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
     IngredientIdentifierByProcessTemplateAndName(name="ingredient id", headers=["density"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", scope="scope"),
     IngredientIdentifierInOutput(name="ingredient id", headers=["ingredient id"], ingredient_name="ingredient", process_templates=[LinkByUID(scope="template", id="object")], scope="scope"),
     LocalIngredientIdentifier(name="ingredient id", headers=["ingredient id"], ingredient_name="ingredient", scope="scope"),
