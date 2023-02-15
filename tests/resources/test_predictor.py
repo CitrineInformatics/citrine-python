@@ -4,7 +4,7 @@ import pytest
 import uuid
 from copy import deepcopy
 
-from citrine.exceptions import ModuleRegistrationFailedException, NotFound
+from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
@@ -390,6 +390,131 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+def test_convert_to_graph(valid_graph_predictor_data, version):
+    # Given
+    project_id = uuid.uuid4()
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a predictor may modify the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+
+    session.set_response(deepcopy(valid_graph_predictor_data))
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
+    entity_path = f"{versions_path}/{version or 'most_recent'}"
+
+    # When
+    kwargs = {"version": version} if version is not None else {}
+    response = collection.convert_to_graph(predictor.uid, **kwargs)
+
+    # Then
+    assert session.calls == [FakeCall(method="GET", path=f"{entity_path}/convert")]
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+def test_convert_and_update(valid_graph_predictor_data, version):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_graph_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+
+    session.set_responses(deepcopy(valid_graph_predictor_data), deepcopy(valid_graph_predictor_data), deepcopy(valid_graph_predictor_data))
+
+    predictors_path = PredictorCollection._path_template.format(project_id=project_id)
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=collection.project_id, uid=predictor.uid)
+    root_path = f"{predictors_path}/{predictor_id}"
+    entity_path = f"{versions_path}/{version or 'most_recent'}"
+    expected_calls = [
+        FakeCall(method="GET", path=f"{entity_path}/convert"),
+        FakeCall(method="PUT", path=root_path, json=predictor.dump()),
+        FakeCall(method="PUT", path=f"{root_path}/train", params={"create_version": True}, json={}),
+    ]
+
+    # When
+    kwargs = {"version": version} if version is not None else {}
+    response = collection.convert_and_update(predictor.uid, **kwargs)
+
+    # Then
+    assert session.calls == expected_calls
+    assert response.dump() == predictor.dump()
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+@pytest.mark.parametrize("error_args", ((400, BadRequest), (409, Conflict)))
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_and_update_errors(version, error_args, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = uuid.uuid4()
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    convert_path = f"/projects/{project_id}/predictors/{predictor_id}/versions/{version or 'most_recent'}/convert"
+
+    error_code, error_cls = error_args[:]
+    response = FakeRequestResponse(error_code)
+    response.request.method = "GET"
+    session.set_response(error_cls(convert_path, response))
+
+    # When
+    kwargs = {"version": version} if version is not None else {}
+    method = getattr(collection, method_name)
+    with pytest.raises(error_cls):
+        method(predictor_id, **kwargs)
+
+    # Then
+    assert session.num_calls == 1
+    expected_call_convert = FakeCall(method="GET", path=convert_path)
+    assert session.last_call == expected_call_convert
+
+
+@pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
+@pytest.mark.parametrize("method_name", ("convert_to_graph", "convert_and_update"))
+def test_convert_auto_retrain(valid_graph_predictor_data, version, method_name):
+    # Given
+    project_id = uuid.uuid4()
+    predictor_id = valid_graph_predictor_data["id"]
+    session = FakeSession()
+    collection = PredictorCollection(project_id, session)
+    predictors_path = collection._path_template.format(project_id=project_id)
+    version_path = f"{predictors_path}/{predictor_id}/versions/{version or 'most_recent'}"
+    convert_path = f"{version_path}/convert"
+    train_path = f"{version_path}/train"
+
+    # Building a graph predictor modifies the input data object, which interferes with the test
+    # input later in the test. By making a copy, we don't need to care if the input is mutated.
+    predictor = collection.build(deepcopy(valid_graph_predictor_data))
+
+    response = FakeRequestResponse(409)
+    response.request.method = "GET"
+
+    session.set_responses(
+        Conflict(convert_path, response),
+        deepcopy(valid_graph_predictor_data)
+    )
+
+    # When
+    method = getattr(collection, method_name)
+    kwargs = {"version": version} if version is not None else {}
+    response = method(predictor_id, retrain_if_needed=True, **kwargs)
+
+    # Then
+    expected_calls = [
+        FakeCall(method="GET", path=convert_path),
+        FakeCall(method="PUT", path=train_path, params={"create_version": True}, json={}),
+    ]
+    assert session.calls == expected_calls
+    assert response is None
 
 
 def test_predictor_list_archived(valid_graph_predictor_data):

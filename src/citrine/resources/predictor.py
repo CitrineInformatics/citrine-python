@@ -8,6 +8,7 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from citrine._rest.paginator import Paginator
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
 from citrine.resources.module import AbstractModuleCollection
@@ -129,6 +130,22 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def restore(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(entity)
+
+    def convert_to_graph(self,
+                         uid: Union[UUID, str],
+                         *,
+                         version: Union[int, str] = MOST_RECENT_VER,
+                         retrain_if_needed: bool = False) -> Predictor:
+        path = self._construct_path(uid, version, "convert")
+        try:
+            entity = self.session.get_resource(path, version=self._api_version)
+        except Conflict as exc:
+            if retrain_if_needed:
+                self._train(uid, version)
+                return None
+            else:
+                raise exc
         return self.build(entity)
 
 
@@ -357,3 +374,50 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
         return self.build(Predictor.wrap_instance(data["instance"]))
+
+    def convert_to_graph(self,
+                         uid: Union[UUID, str],
+                         retrain_if_needed: bool = False,
+                         *,
+                         version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
+
+        Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
+        predictor. If it's not a SimpleML or Graph predictor, or it's not in the READY state, an
+        error is raised. SimpleML predictors are deprecated, so this is to aid in your migration.
+        Note this conversion is not performed in place! That is, the predictor returned is not
+        persisted on the platform. To persist it, pass the converted predictor to
+        :py:meth:`citrine.resources.project.PredictorCollection.update`. Or you can do this in
+        one step with :py:meth:`citrine.resources.project.PredictorCollection.convert_and_update`.
+        .. code:: python
+            converted = project.predictors.convert_to_graph(predictor_uid)
+            project.predictors.update(converted)
+            # is equivalent to
+            converted = project.predictors.convert_and_update(predictor_uid)
+        If a predictor needs to be retrained before conversion, it will raise an HTTP 409 Conflict
+        error. This may occur when the Citrine Platform has been updated since your predictor was
+        last trained. If `retrain_if_needed` is `True`, retraining will automatically begin, and
+        the method will return `None. Once retraining completes, call this method again to get the
+        converted predictor. For example:
+        .. code:: python
+            converted = project.predictors.convert_and_update(pred.uid, retrain_if_needed=True)
+            if converted is None:
+                predictor = project.predictors.get(pred.uid)
+                wait_while_validating(collection=project.predictors, module=predictor)
+                converted = project.predictors.convert_and_update(pred.uid)
+        """
+        return self._versions_collection.convert_to_graph(uid,
+                                                          version=version,
+                                                          retrain_if_needed=retrain_if_needed)
+
+    def convert_and_update(self,
+                           uid: Union[UUID, str],
+                           retrain_if_needed: bool = False,
+                           *,
+                           version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+        """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
+
+        See `PredictorCollection.convert_to_graph` for more detail.
+        """
+        new_pred = self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
+        return self.update(new_pred) if new_pred else None
