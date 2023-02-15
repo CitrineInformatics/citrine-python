@@ -128,37 +128,10 @@ def test_register_conflicting_branches(session, workflow, collection):
     assert_workflow(new_workflow, workflow)
 
 
-@pytest.mark.parametrize("partial_args",
-                         all_combination_lengths(PARTIAL_DW_ARGS, len(PARTIAL_DW_ARGS) - 1))
-def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch, partial_args):
+def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch):
     workflow = workflow_minimal
-
-    # Set a random value for all optional args selected for this run.
-    for name, factory in partial_args:
-        setattr(workflow, name, factory())
-
-    new_branch_id = uuid.uuid4()
-    branch_response = BranchDataFactory(id=str(new_branch_id))
-    branch_response["data"]["name"] = workflow.name
-    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
-    session.set_responses(
-        branch_response,
-        {**post_dict, 'status_description': 'status'})
-
-    with pytest.deprecated_call():
+    with pytest.raises(RuntimeError):
         collection_without_branch.register(workflow)
-    
-    assert session.calls == [
-        FakeCall(
-            method='POST',
-            path=f'/projects/{collection_without_branch.project_id}/branches',
-            json={"name": workflow.name}),
-        FakeCall(
-            method='POST',
-            path=workflow_path(collection_without_branch),
-            json=post_dict,
-            version="v2")
-    ]
 
 
 def test_archive(workflow, collection):
