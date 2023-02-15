@@ -131,7 +131,9 @@ class Session(requests.Session):
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
         self.access_token_expiration = datetime.utcfromtimestamp(
-            jwt.decode(self.access_token, options={"verify_signature": False}, algorithms=["HS256"])['exp']
+            jwt.decode(self.access_token,
+                       options={"verify_signature": False},
+                       algorithms=["HS256"])['exp']
         )
 
         # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.
