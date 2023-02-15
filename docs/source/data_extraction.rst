@@ -233,6 +233,7 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.gemtables.variables.AttributeInOutput`: for when attributes occur both in a process output and one or more of its inputs
   * :class:`~citrine.gemtables.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
   * :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`: for the quantity of an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
+  * :class:`~citrine.gemtables.variables.LocalAttribute`: for retrieving the attribute from the terminal material or its attached process or measurements (useful for attributes found on multiple materials)
   * :class:`~citrine.gemtables.variables.LocalIngredientQuantity`: for the quantity of an ingredient used in the process creating the terminal material (useful for ingredients used in multiple processes)
 
 * Identifiers
