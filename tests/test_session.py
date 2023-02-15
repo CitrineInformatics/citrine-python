@@ -70,7 +70,7 @@ def test_session_signature(monkeypatch):
         m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Session().refresh_token
-        assert patched_key == Session(patched_key).refresh_token
+        assert patched_key == Session(refresh_token=patched_key).refresh_token
         monkeypatch.delenv("CITRINE_API_KEY")
         assert Session().refresh_token is None
 

@@ -273,23 +273,23 @@ class Dataset(Resource['Dataset']):
     def delete_contents(
             self,
             *,
+            prompt_to_confirm: bool,
             timeout: float = 2 * 60,
-            polling_delay: float = 1.0,
-            prompt_to_confirm: bool = True,
+            polling_delay: float = 1.0
     ):
         """
         Delete all the GEMD objects from within a single Dataset.
 
         Parameters
         ----------
+        prompt_to_confirm: bool
+            If True, prompt for user confirmation before triggering delete.
         timeout: float
             Amount of time to wait on the job (in seconds) before giving up.
             Note that this number has no effect on the underlying job itself,
             which can also time out server-side.
         polling_delay: float
             How long to delay between each polling retry attempt.
-        prompt_to_confirm: bool
-            If True, prompt for user confirmation before triggering delete.
         Returns
         -------
         List[Tuple[LinkByUID, ApiError]]

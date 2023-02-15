@@ -48,7 +48,7 @@ def test_citrine_signature(monkeypatch):
         m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Citrine().session.refresh_token
-        assert patched_key == Citrine(patched_key).session.refresh_token
+        assert patched_key == Citrine(api_key=patched_key).session.refresh_token
         monkeypatch.delenv("CITRINE_API_KEY")
         assert Citrine().session.refresh_token is None
 

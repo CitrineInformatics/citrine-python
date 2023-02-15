@@ -26,8 +26,8 @@ class ReportResource(Resource['ReportResource']):
         self.session = session
 
     def get(self,
-            predictor_id: Union[UUID, str] = None,
             *,
+            predictor_id: Union[UUID, str],
             predictor_version: Optional[Union[int, str]] = None) -> Report:
         """Gets a single report keyed on the predictor ID and (optionally) version."""
         version = predictor_version or "most_recent"
