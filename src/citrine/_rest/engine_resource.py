@@ -42,11 +42,6 @@ class EngineResource(Resource[Self]):
                                     default=[], serializable=False)
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
-    # Due to the way object construction is done at present, __init__ is not executed on Resource
-    # objects, so initializing _archived doesn't work.
-    _archived = properties.Optional(properties.Boolean(), '', default=None, serializable=False,
-                                    deserializable=False)
-
     _resource_type = ResourceTypeEnum.MODULE
 
     def _post_dump(self, data: dict) -> dict:

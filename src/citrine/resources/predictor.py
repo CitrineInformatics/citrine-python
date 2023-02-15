@@ -202,16 +202,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """
         updated_predictor = super().update(predictor)
 
-        # The /api/v3/predictors endpoint switched (un)archive from a field on the update payload
-        # to their own endpoints. To maintain backwards compatibility, all predictors have an
-        # _archived field set by the archived property. It will be archived if True, and restored
-        # if False. It defaults to None, which does nothing. The value is reset afterwards.
-        if predictor._archived is True:
-            self.archive_root(predictor.uid)
-        elif predictor._archived is False:
-            self.restore_root(predictor.uid)
-        predictor._archived = None
-
         # If the initial response is invalid, just return it
         # If not, kick off training since we never exposed saving a model without training
         # so we should continue to do it automatically
