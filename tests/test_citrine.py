@@ -14,7 +14,7 @@ def refresh_token(expiration: datetime = None) -> dict:
         payload={'exp': expiration.timestamp()},
         key='garbage'
     )
-    return {'access_token': token.decode('utf-8')}
+    return {'access_token': token}
 
 
 token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
