@@ -1,6 +1,5 @@
 gemd==1.11.1
 requests==2.25.1
-pyjwt==1.7.1
 arrow==0.15.4
 sphinx==4.3.0
 sphinxcontrib-apidoc==0.3.0
