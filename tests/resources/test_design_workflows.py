@@ -6,8 +6,8 @@ import pytest
 
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
+from tests.utils.factories import BranchDataFactory
 from tests.utils.session import FakeSession, FakeCall
-
 
 PARTIAL_DW_ARGS = (("predictor_id", uuid.uuid4), ("design_space_id", uuid.uuid4))
 OPTIONAL_ARGS = PARTIAL_DW_ARGS + (
@@ -112,10 +112,12 @@ def test_register(session, workflow_minimal, collection, optional_args):
 def test_deprecated_register_without_branch(session, workflow, collection_without_branch):
     # Given
     new_branch_id = uuid.uuid4()
-    post_dict = workflow.dump()
+    branch_response = BranchDataFactory(id=str(new_branch_id))
+    branch_response["data"]["name"] = workflow.name
+    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
     session.set_responses(
-        {**post_dict, 'id': str(workflow.uid), 'status_description': 'status'},
-        {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
+        branch_response,
+        {**post_dict, 'status_description': 'status'})
 
     # When
     # Future design workflow creation will require a branch.
@@ -124,14 +126,16 @@ def test_deprecated_register_without_branch(session, workflow, collection_withou
 
     # Then
     assert session.num_calls == 2
-    expected_call_create = FakeCall(
+    expected_call_create_branch = FakeCall(
+        method='POST',
+        path=f'/projects/{collection_without_branch.project_id}/branches',
+        json={"name": workflow.name})
+    expected_call_create_workflow = FakeCall(
         method='POST',
         path=workflow_path(collection_without_branch),
-        json=post_dict)
-    expected_call_get_branch = FakeCall(
-        method='GET',
-        path=workflow_path(collection_without_branch, workflow))
-    assert session.calls == [expected_call_create, expected_call_get_branch]
+        json=post_dict,
+        version="v2")
+    assert session.calls == [expected_call_create_branch, expected_call_create_workflow]
     assert collection_without_branch.branch_id is None
     assert workflow.branch_id is None
     assert new_workflow.branch_id == new_branch_id
@@ -170,10 +174,13 @@ def test_deprecated_register_only_model_has_branch(session, workflow, collection
     old_branch_id = uuid.uuid4()
     
     workflow.branch_id = old_branch_id
-    post_dict = workflow.dump()
+    branch_response = BranchDataFactory(id=str(new_branch_id))
+    branch_response["data"]["name"] = workflow.name
+    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
     session.set_responses(
-        {**post_dict, 'id': str(workflow.uid), 'status_description': 'status'},
-        {**post_dict, 'branch_id': str(new_branch_id), 'status_description': 'status'})
+        branch_response,
+        {**post_dict, 'status_description': 'status'})
+
 
     # When
     # Future design workflow creation will require a branch ID.
@@ -182,14 +189,16 @@ def test_deprecated_register_only_model_has_branch(session, workflow, collection
 
     # Then
     assert session.num_calls == 2
-    expected_call_create = FakeCall(
+    expected_call_create_branch = FakeCall(
+        method='POST',
+        path=f'/projects/{collection_without_branch.project_id}/branches',
+        json={"name": workflow.name})
+    expected_call_create_workflow = FakeCall(
         method='POST',
         path=workflow_path(collection_without_branch),
-        json=post_dict)
-    expected_call_get_branch = FakeCall(
-        method='GET',
-        path=workflow_path(collection_without_branch, workflow))
-    assert session.calls == [expected_call_create, expected_call_get_branch]
+        json=post_dict,
+        version="v2")
+    assert session.calls == [expected_call_create_branch, expected_call_create_workflow]
     assert collection_without_branch.branch_id is None
     assert workflow.branch_id == old_branch_id
     assert new_workflow.branch_id == new_branch_id
@@ -205,8 +214,28 @@ def test_register_partial_workflow_without_branch(session, workflow_minimal, col
     for name, factory in partial_args:
         setattr(workflow, name, factory())
 
-    with pytest.raises(ValueError):
+    new_branch_id = uuid.uuid4()
+    branch_response = BranchDataFactory(id=str(new_branch_id))
+    branch_response["data"]["name"] = workflow.name
+    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
+    session.set_responses(
+        branch_response,
+        {**post_dict, 'status_description': 'status'})
+
+    with pytest.deprecated_call():
         collection_without_branch.register(workflow)
+    
+    assert session.calls == [
+        FakeCall(
+            method='POST',
+            path=f'/projects/{collection_without_branch.project_id}/branches',
+            json={"name": workflow.name}),
+        FakeCall(
+            method='POST',
+            path=workflow_path(collection_without_branch),
+            json=post_dict,
+            version="v2")
+    ]
 
 
 def test_archive(workflow, collection):

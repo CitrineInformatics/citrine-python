@@ -30,8 +30,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         Upload a new design workflow.
 
         The model's branch ID is ignored in favor of this collection's. If this
-        collection has a null branch ID, then the model is uploaded to the v1
-        endpoint and retrieved separately, to ensure all details are included.
+        collection has a null branch ID, then a branch is first created, then
+        the design workflow is created on it.
 
         Parameters
         ----------
@@ -44,13 +44,10 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             The newly created design workflow.
 
         """
-        if self.branch_id is None:
-            # Prior to the introduction of branches, partial design workflows were not supported
-            # at all. As such, their use without a branch continues to be an error.
-            if model.predictor_id is None or model.design_space_id is None:
-                raise ValueError("A design workflow without a predictor ID and/or a design space "
-                                 "ID must be registered to a specific branch.")
+        # Importing locally to avoid circular dependency
+        from citrine.resources.branch import Branch, BranchCollection
 
+        if self.branch_id is None:
             # There are a number of contexts in which hitting design workflow endpoints without a
             # branch ID is valid, so only this particular usage is deprecated.
             msg = ('Creating a design workflow without a branch is deprecated as of 1.19.0 and '
@@ -59,12 +56,15 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                    'https://citrineinformatics.github.io/citrine-python/workflows/design_workflows.html#branches')  # noqa
             warnings.warn(msg, category=DeprecationWarning)
 
-            # To create a design workflow without providing a branch ID, we need to hit the v1
-            # API, then do a GET to grab the ID of the branch that was created automatically.
-            v1 = _DesignWorkflowCollectionV1(self.project_id, self.session)
-            # Passing in the subclass instance as self avoids infinite recursion.
-            created_dw = super(DesignWorkflowCollection, v1).register(model)
-            return super().get(created_dw.uid)
+            # To create a design workflow without providing a branch ID, we need to create the
+            # branch, then register the design workflow with that branch ID.
+            branch = BranchCollection(self.project_id, self.session).register(Branch(model.name))
+
+            # To avoid modifying the parameter, and to ensure the only change is the branch_id, we
+            # deepcopy, modify, then register it.
+            model_copy = deepcopy(model)
+            model_copy.branch_id = branch.uid
+            return super().register(model_copy)
         else:
             # branch_id is in the body of design workflow endpoints, so it must be serialized.
             # This means the collection branch_id might not match the workflow branch_id. The
@@ -196,9 +196,3 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                                    per_page=per_page,
                                    json_body=json_body,
                                    additional_params=params)
-
-
-class _DesignWorkflowCollectionV1(DesignWorkflowCollection):
-    """A small proxy class to direct all calls to the v1 endpoints."""
-
-    _api_version = "v1"
