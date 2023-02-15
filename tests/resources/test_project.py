@@ -436,10 +436,6 @@ def test_descriptors_get_project_id(project):
     assert project.uid == project.descriptors.project_id
 
 
-def test_processors_get_project_id(project):
-    assert project.uid == project.processors.project_id
-
-
 def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
 

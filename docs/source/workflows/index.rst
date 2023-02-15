@@ -11,7 +11,6 @@ AI Engine
     descriptors
     predictors
     design_spaces
-    processors
     design_workflows
     scores
     data_sources

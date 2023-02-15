@@ -10,10 +10,7 @@ from tests.utils.factories import BranchDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 PARTIAL_DW_ARGS = (("predictor_id", uuid.uuid4), ("design_space_id", uuid.uuid4))
-OPTIONAL_ARGS = PARTIAL_DW_ARGS + (
-    ("processor_id", uuid.uuid4),
-    ("predictor_version", lambda: random.randint(1, 10))
-)
+OPTIONAL_ARGS = PARTIAL_DW_ARGS + (("predictor_version", lambda: random.randint(1, 10)),)
 
 
 @pytest.fixture
@@ -47,7 +44,6 @@ def workflow(collection, design_workflow_dict) -> DesignWorkflow:
 
 @pytest.fixture
 def workflow_minimal(collection, workflow) -> DesignWorkflow:
-    workflow.processor_id = None
     workflow.predictor_id = None
     workflow.predictor_version = None
     workflow.design_space_id = None
@@ -70,7 +66,6 @@ def assert_workflow(actual, expected, *, include_branch=False):
     assert actual.description == expected.description
     assert actual.archived == expected.archived
     assert actual.design_space_id == expected.design_space_id
-    assert actual.processor_id == expected.processor_id
     assert actual.predictor_id == expected.predictor_id
     assert actual.predictor_version == expected.predictor_version
     assert actual.project_id == expected.project_id
@@ -274,7 +269,6 @@ def test_missing_project(design_workflow_dict):
 
     workflow = DesignWorkflow(
         name=design_workflow_dict["name"],
-        processor_id=design_workflow_dict["processor_id"],
         predictor_id=design_workflow_dict["predictor_id"],
         predictor_version=design_workflow_dict["predictor_version"],
         design_space_id=design_workflow_dict["design_space_id"]

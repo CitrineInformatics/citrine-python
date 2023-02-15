@@ -43,7 +43,6 @@ from citrine.resources.generative_design_execution import \
 from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.processor import ProcessorCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
@@ -123,11 +122,6 @@ class Project(Resource['Project']):
     def design_spaces(self) -> DesignSpaceCollection:
         """Return a resource representing all visible design spaces."""
         return DesignSpaceCollection(self.uid, self.session)
-
-    @property
-    def processors(self) -> ProcessorCollection:
-        """Return a resource representing all visible processors."""
-        return ProcessorCollection(self.uid, self.session)
 
     @property
     def predictors(self) -> PredictorCollection:

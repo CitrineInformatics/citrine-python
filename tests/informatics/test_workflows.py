@@ -56,7 +56,6 @@ def test_workflow_executions_without_project():
     workflow = DesignWorkflow(
         name="workflow",
         design_space_id=uuid4(),
-        processor_id=uuid4(),
         predictor_id=uuid4()
     )
     with pytest.raises(AttributeError):
