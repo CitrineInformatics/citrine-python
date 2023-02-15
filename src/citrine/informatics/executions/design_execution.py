@@ -1,6 +1,5 @@
-from deprecation import deprecated
 from functools import partial
-from typing import Iterable, List, Optional
+from typing import Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -88,10 +87,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    def candidates(self, *,
-                   page: Optional[int] = None,
-                   per_page: int = 100,
-                   ) -> Iterable[DesignCandidate]:
+    def candidates(self, *, per_page: int = 100) -> Iterable[DesignCandidate]:
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + '/candidates'
 
@@ -99,7 +95,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_candidates,
-                                        page=page,
                                         per_page=per_page)
 
     def predict(self,
@@ -109,15 +104,3 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
         return DesignCandidate.build(res)
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental(self) -> bool:
-        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
-        return False
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental_reasons(self) -> List[str]:
-        """[DEPRECATED] human-readable reasons why the execution is experimental."""
-        return []

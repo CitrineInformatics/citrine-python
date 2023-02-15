@@ -104,39 +104,6 @@ def test_register(session, workflow_minimal, collection, optional_args):
     assert_workflow(new_workflow, workflow)
 
 
-def test_deprecated_register_without_branch(session, workflow, collection_without_branch):
-    # Given
-    new_branch_id = uuid.uuid4()
-    branch_response = BranchDataFactory(id=str(new_branch_id))
-    branch_response["data"]["name"] = workflow.name
-    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
-    session.set_responses(
-        branch_response,
-        {**post_dict, 'status_description': 'status'})
-
-    # When
-    # Future design workflow creation will require a branch.
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.register(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call_create_branch = FakeCall(
-        method='POST',
-        path=f'/projects/{collection_without_branch.project_id}/branches',
-        json={"name": workflow.name})
-    expected_call_create_workflow = FakeCall(
-        method='POST',
-        path=workflow_path(collection_without_branch),
-        json=post_dict,
-        version="v2")
-    assert session.calls == [expected_call_create_branch, expected_call_create_workflow]
-    assert collection_without_branch.branch_id is None
-    assert workflow.branch_id is None
-    assert new_workflow.branch_id == new_branch_id
-    assert_workflow(new_workflow, workflow)
-
-
 def test_register_conflicting_branches(session, workflow, collection):
     # Given
     old_branch_id = uuid.uuid4()
@@ -161,76 +128,10 @@ def test_register_conflicting_branches(session, workflow, collection):
     assert_workflow(new_workflow, workflow)
 
 
-def test_deprecated_register_only_model_has_branch(session, workflow, collection_without_branch):
-    ### This situation should be handled the same way as when neither has a branch ID
-
-    # Given
-    new_branch_id = uuid.uuid4()
-    old_branch_id = uuid.uuid4()
-    
-    workflow.branch_id = old_branch_id
-    branch_response = BranchDataFactory(id=str(new_branch_id))
-    branch_response["data"]["name"] = workflow.name
-    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
-    session.set_responses(
-        branch_response,
-        {**post_dict, 'status_description': 'status'})
-
-
-    # When
-    # Future design workflow creation will require a branch ID.
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.register(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call_create_branch = FakeCall(
-        method='POST',
-        path=f'/projects/{collection_without_branch.project_id}/branches',
-        json={"name": workflow.name})
-    expected_call_create_workflow = FakeCall(
-        method='POST',
-        path=workflow_path(collection_without_branch),
-        json=post_dict,
-        version="v2")
-    assert session.calls == [expected_call_create_branch, expected_call_create_workflow]
-    assert collection_without_branch.branch_id is None
-    assert workflow.branch_id == old_branch_id
-    assert new_workflow.branch_id == new_branch_id
-    assert_workflow(new_workflow, workflow)
-
-
-@pytest.mark.parametrize("partial_args",
-                         all_combination_lengths(PARTIAL_DW_ARGS, len(PARTIAL_DW_ARGS) - 1))
-def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch, partial_args):
+def test_register_partial_workflow_without_branch(session, workflow_minimal, collection_without_branch):
     workflow = workflow_minimal
-
-    # Set a random value for all optional args selected for this run.
-    for name, factory in partial_args:
-        setattr(workflow, name, factory())
-
-    new_branch_id = uuid.uuid4()
-    branch_response = BranchDataFactory(id=str(new_branch_id))
-    branch_response["data"]["name"] = workflow.name
-    post_dict = {**workflow.dump(), 'branch_id': str(new_branch_id)}
-    session.set_responses(
-        branch_response,
-        {**post_dict, 'status_description': 'status'})
-
-    with pytest.deprecated_call():
+    with pytest.raises(RuntimeError):
         collection_without_branch.register(workflow)
-    
-    assert session.calls == [
-        FakeCall(
-            method='POST',
-            path=f'/projects/{collection_without_branch.project_id}/branches',
-            json={"name": workflow.name}),
-        FakeCall(
-            method='POST',
-            path=workflow_path(collection_without_branch),
-            json=post_dict,
-            version="v2")
-    ]
 
 
 def test_archive(workflow, collection):
@@ -259,7 +160,7 @@ def test_list_archived(workflow, collection: DesignWorkflowCollection):
     assert collection.session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={'per_page': 10, 'filter': "archived eq 'true'", 'branch': collection.branch_id},
+        params={'per_page': 10, 'filter': "archived eq 'true'", 'branch': collection.branch_id, 'page': 1},
         json=None
     )
 
@@ -300,26 +201,15 @@ def test_update(session, workflow, collection_without_branch):
     assert_workflow(new_workflow, workflow)
 
 
-def test_update_warning(session, workflow, collection_without_branch, design_execution_dict):
-    # Given
+def test_update_failure_with_existing_execution(session, workflow, collection_without_branch, design_execution_dict):
     workflow.branch_id = uuid.uuid4()
     post_dict = workflow.dump()
     session.set_responses(
         {"per_page": 1, "next": "", "response": [design_execution_dict]},
         {**post_dict, 'status_description': 'status'})
 
-    # When
-    with pytest.deprecated_call():
-        new_workflow = collection_without_branch.update(workflow)
-
-    # Then
-    assert session.num_calls == 2
-    expected_call = FakeCall(
-        method='PUT',
-        path=workflow_path(collection_without_branch, workflow),
-        json=post_dict)
-    assert session.last_call == expected_call
-    assert_workflow(new_workflow, workflow)
+    with pytest.raises(RuntimeError):
+        collection_without_branch.update(workflow)
 
 
 def test_update_with_matching_branch_ids(session, workflow, collection):

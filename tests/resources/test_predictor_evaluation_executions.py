@@ -132,7 +132,7 @@ def test_list(collection: PredictorEvaluationExecutionCollection, session, predi
     assert not lst
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
-    expected_payload = {"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
+    expected_payload = {"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id), 'page': 1}
     if predictor_version is not None:
         expected_payload["predictor_version"] = predictor_version
     assert session.last_call == FakeCall(method='GET', path=expected_path, params=expected_payload)
@@ -153,20 +153,3 @@ def test_restore(workflow_execution, collection):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
-
-
-def test_experimental_deprecated(collection, predictor_evaluation_execution_dict):
-    # Given
-    workflow_execution_id = uuid.uuid4()
-    build_data = predictor_evaluation_execution_dict.copy()
-    build_data["id"] = str(workflow_execution_id)
-    build_data["workflow_id"] = str(collection.workflow_id)
-    
-    # When
-    execution = collection.build(build_data)
-
-    # Then
-    with pytest.deprecated_call():
-        assert execution.experimental is False
-    with pytest.deprecated_call():
-        assert execution.experimental_reasons == []

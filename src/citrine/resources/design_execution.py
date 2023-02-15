@@ -77,10 +77,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         raise NotImplementedError(
             "Design Executions cannot be restored")
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 100,
-             ) -> Iterator[DesignExecution]:
+    def list(self, *, per_page: int = 100) -> Iterator[DesignExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -89,15 +86,10 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
-        predictor_id: uuid, optional
-            list executions that targeted the predictor with this id
 
         Returns
         -------
@@ -107,7 +99,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:

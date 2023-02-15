@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -28,32 +27,26 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to archive
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         return self._put_resource_ref('archive', uid)
 
-    def restore(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def restore(self, uid: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to restore
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         return self._put_resource_ref('restore', uid)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
@@ -66,7 +59,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
                        predictor_id: UUID,
                        predictor_version: Optional[Union[int, str]] = None) \
             -> PredictorEvaluationWorkflow:
-        """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
+        """Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
         on all valid predictor responses. Valid responses are those that are **not** produced by the

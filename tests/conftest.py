@@ -211,25 +211,6 @@ def valid_gem_data_source_dict():
 
 
 @pytest.fixture
-def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
-    """Produce valid data used for tests."""
-    from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
-    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
-    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    instance = dict(
-        type='Simple',
-        name='ML predictor',
-        description='Predicts z from input x and latent variable y',
-        inputs=[x.dump()],
-        outputs=[z.dump()],
-        latent_variables=[y.dump()],
-        training_data=[valid_gem_data_source_dict]
-    )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
-
-
-@pytest.fixture
 def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
@@ -776,7 +757,7 @@ def generative_design_execution_dict(generic_entity):
 @pytest.fixture
 def example_generation_results():
     return {
-        "page": 2,
+        "page": 1,
         "per_page": 4,
         "response": [{
             "id": str(uuid.uuid4()),

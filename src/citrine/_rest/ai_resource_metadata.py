@@ -1,6 +1,3 @@
-from deprecation import deprecated
-from typing import List
-
 from citrine.resources.status_detail import StatusDetail
 from citrine._serialization import properties
 
@@ -40,15 +37,3 @@ class AIResourceMetadata():
     status_detail = properties.List(properties.Object(StatusDetail), 'status_detail', default=[],
                                     serializable=False)
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental(self) -> bool:
-        """[DEPRECATED] whether the execution is experimental (newer, less well-tested)."""  # noqa - insisting this docstring is a signature
-        return False
-
-    @property
-    @deprecated(deprecated_in="1.25.0", removed_in="2.0.0")
-    def experimental_reasons(self) -> List[str]:
-        """[DEPRECATED] human-readable reasons why the execution is experimental."""
-        return []

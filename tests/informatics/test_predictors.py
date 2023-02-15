@@ -1,7 +1,7 @@
 """Tests for citrine.informatics.predictors."""
 import uuid
-import mock
 import pytest
+import mock
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
@@ -58,18 +58,6 @@ def build_predictor_entity(data):
             )
         )
     )
-
-
-@pytest.fixture
-def simple_predictor() -> SimpleMLPredictor:
-    """Build a SimpleMLPredictor for testing."""
-    with pytest.deprecated_call():
-        return SimpleMLPredictor(name='ML predictor',
-                                 description='Predicts z from input x and latent variable y',
-                                 inputs=[x],
-                                 outputs=[z],
-                                 latent_variables=[y],
-                                 training_data=[data_source])
 
 
 @pytest.fixture
@@ -221,34 +209,20 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     )
 
 
-def test_simple_initialization(simple_predictor):
-    """Make sure the correct fields go to the correct places for a simple predictor."""
-    assert simple_predictor.name == 'ML predictor'
-    assert simple_predictor.description == 'Predicts z from input x and latent variable y'
-    assert len(simple_predictor.inputs) == 1
-    assert simple_predictor.inputs[0] == x
-    assert len(simple_predictor.outputs) == 1
-    assert simple_predictor.outputs[0] == z
-    assert len(simple_predictor.latent_variables) == 1
-    assert simple_predictor.latent_variables[0] == y
-    assert simple_predictor.training_data[0].table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
-    assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
-
-
-def test_simple_report(simple_predictor):
+def test_simple_report(auto_ml):
     """Ensures we get a report from a simple predictor post_build call"""
     with pytest.raises(ValueError):
         # without a project or session, this should error
-        assert simple_predictor.report is None
+        assert auto_ml.report is None
     session = mock.Mock()
     session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
-    simple_predictor._session = session
-    simple_predictor._project_id = uuid.uuid4()
-    simple_predictor.uid = uuid.uuid4()
-    simple_predictor.version = 2
-    assert simple_predictor.report is not None
+    auto_ml._session = session
+    auto_ml._project_id = uuid.uuid4()
+    auto_ml.uid = uuid.uuid4()
+    auto_ml.version = 2
+    assert auto_ml.report is not None
     assert session.get_resource.call_count == 1
-    assert simple_predictor.report.status == 'OK'
+    assert auto_ml.report.status == 'OK'
 
 
 def test_graph_initialization(graph_predictor):
@@ -315,29 +289,21 @@ def test_auto_ml(auto_ml):
     assert auto_ml.inputs == [w, x]
     assert auto_ml.training_data == [data_source]
     assert auto_ml.dump()['instance']['outputs'] == [z.dump()]
-    with pytest.deprecated_call():
-        assert auto_ml.output == z
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
     built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml.dump()))
     assert built.outputs == [z]
     assert built.dump()['instance']['outputs'] == [z.dump()]
-    with pytest.deprecated_call():
-        assert built.output == z
 
 
 def test_auto_ml_no_outputs(auto_ml_no_outputs):
     assert auto_ml_no_outputs.outputs == []
     assert auto_ml_no_outputs.dump()['instance']['outputs'] == []
-    with pytest.deprecated_call():
-        assert auto_ml_no_outputs.output is None
 
     built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_no_outputs.dump()))
     assert built.outputs == []
     assert built.dump()['instance']['outputs'] == []
-    with pytest.deprecated_call():
-        assert built.output is None
 
 
 def test_auto_ml_estimators():
@@ -365,62 +331,10 @@ def test_auto_ml_estimators():
 def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
     assert auto_ml_multiple_outputs.outputs == [z, y]
     assert auto_ml_multiple_outputs.dump()['instance']['outputs'] == [z.dump(), y.dump()]
-    with pytest.deprecated_call():
-        assert auto_ml_multiple_outputs.output == z
 
     built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_multiple_outputs.dump()))
     assert built.outputs == [z, y]
     assert built.dump()['instance']['outputs'] == [z.dump(), y.dump()]
-    with pytest.deprecated_call():
-        assert built.output == z
-
-
-def test_auto_ml_assign_to_deprecated_output(auto_ml):
-    with pytest.deprecated_call():
-        auto_ml.output = y
-
-    with pytest.deprecated_call():
-        assert auto_ml.output == y
-    assert auto_ml.outputs == [y]
-
-    with pytest.raises(ValueError):
-        with pytest.deprecated_call():
-            auto_ml.output = None
-
-
-def test_auto_ml_create_with_deprecated_output():
-    # Set output in the constructor
-    with pytest.deprecated_call():
-        new_predictor = AutoMLPredictor(
-            name='AutoML Predictor',
-            description='test',
-            inputs=[x],
-            output=y,
-            training_data=[data_source])
-    with pytest.deprecated_call():
-        assert new_predictor.output == y
-    assert new_predictor.outputs == [y]
-
-    # Omit both output and outputs
-    new_predictor = AutoMLPredictor(
-        name='AutoML Predictor',
-        description='test',
-        inputs=[x],
-        training_data=[data_source])
-    with pytest.deprecated_call():
-        assert new_predictor.output is None
-    assert new_predictor.outputs == []
-
-    # Pass both output and outputs
-    with pytest.raises(ValueError):
-        with pytest.deprecated_call():
-            new_predictor = AutoMLPredictor(
-                name='AutoML Predictor',
-                description='test',
-                inputs=[x],
-                output=y,
-                outputs=[z],
-                training_data=[data_source])
 
 
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
@@ -458,20 +372,6 @@ def test_mean_property_round_robin(mean_property_predictor):
     assert len(cat_props) == 1
 
 
-def test_deprecated_ingredients_to_simple_mixture():
-    """make sure deprecation warnings are issued."""
-    with pytest.warns(DeprecationWarning):
-        i2sm = IngredientsToSimpleMixturePredictor(
-            name="deprecated",
-            description="",
-            output=FormulationDescriptor("formulation"),
-            id_to_quantity={"quantity 1": RealDescriptor("foo", lower_bound=0, upper_bound=1, units="")},
-            labels={"label": {"foo"}}
-        )
-        assert i2sm.name == "deprecated"
-        assert i2sm.labels == {"label": {"foo"}}
-
-
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
@@ -507,11 +407,3 @@ def test_status(valid_label_fractions_predictor_data, auto_ml):
     # A deserialized predictor should have the correct status
     predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
-
-
-def test_deprecated_module_type(auto_ml):
-    with pytest.deprecated_call():
-        auto_ml.module_type = "foo"
-
-    with pytest.deprecated_call():
-        assert auto_ml.module_type == "PREDICTOR"

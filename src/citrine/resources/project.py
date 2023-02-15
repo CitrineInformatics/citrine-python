@@ -2,7 +2,6 @@
 from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
-from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -319,10 +318,8 @@ class Project(Resource['Project']):
 
     @use_teams("team.share")
     def share(self, *,
-              resource: Optional[Resource] = None,
-              project_id: Optional[Union[str, UUID]] = None,
-              resource_type: Optional[str] = None,
-              resource_id: Optional[str] = None
+              resource: Optional[Resource],
+              project_id: Optional[Union[str, UUID]] = None
               ) -> Dict[str, str]:
         """Share a resource with another project.
 
@@ -332,27 +329,9 @@ class Project(Resource['Project']):
             The resource owned by this project, which will be shared
         project_id: Union[str, UUID]
             The id of the project with which to share the resource
-        resource_type: Optional[str]
-            [DEPRECATED] Please use ``resource`` instead
-            The type of the resource to share. Must be one of DATASET, MODULE, USER,
-            TABLE, OR TABLE_DEFINITION
-        resource_id: Optional[str]
-            [DEPRECATED] Please use ``resource`` instead
-            The id of the resource to share
 
         """
-        resource_dict = None
-        if resource is not None:
-            resource_dict = resource.access_control_dict()
-        if resource_type is not None and resource_id is not None:
-            warn("Asset sharing through resource_type and resource_id is deprecated. Please pass "
-                 "the resource to share instead.", DeprecationWarning)
-            if resource_dict is not None:
-                raise ValueError("Cannot specify resource to share and also specify the "
-                                 "resource type and id")
-            resource_dict = {"type": resource_type, "id": resource_id}
-        if resource_dict is None:
-            raise ValueError("Must specify resource to share or specify the resource type and id")
+        resource_dict = resource.access_control_dict()
         return self.session.post_resource(f"{self._path()}/share", {
             "project_id": str(project_id),
             "resource": resource_dict
@@ -699,20 +678,12 @@ class ProjectCollection(Collection[Project]):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 1000) -> Iterator[Project]:
+    def list(self, *, per_page: int = 1000) -> Iterator[Project]:
         """
         List projects using pagination.
 
-        Leaving page and per_page as default values will yield all elements in the
-        collection, paginating over all available pages.
-
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 1000.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -725,11 +696,11 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.session._accounts_service_v3:
-            return self._list_v3(page=page, per_page=per_page)
+            return self._list_v3(per_page=per_page)
         else:
-            return super().list(page=page, per_page=per_page)
+            return super().list(per_page=per_page)
 
-    def _list_v3(self, *, page: Optional[int] = None, per_page: int = 1000) -> Iterator[Project]:
+    def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
         if self.team_id is None:
             path = '/projects'
         else:
@@ -738,7 +709,6 @@ class ProjectCollection(Collection[Project]):
         fetcher = partial(self._fetch_page, path=path)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
@@ -864,7 +834,7 @@ class ProjectCollection(Collection[Project]):
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """
-        [ALPHA] Delete a particular project.
+        Delete a particular project.
 
         Only empty projects can be deleted.
         If the project is not empty, then the Response will contain a list of all of the project's

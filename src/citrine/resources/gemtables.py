@@ -2,7 +2,6 @@ import json
 from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
-from warnings import warn
 
 import requests
 
@@ -113,7 +112,6 @@ class GemTableCollection(Collection[GemTable]):
     def list_versions(self,
                       uid: UUID,
                       *,
-                      page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[GemTable]:
         """
         List the versions of a table given a specific Table UID.
@@ -122,7 +120,6 @@ class GemTableCollection(Collection[GemTable]):
 
 
         :param uid: The Table UID.
-        :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
@@ -138,12 +135,11 @@ class GemTableCollection(Collection[GemTable]):
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            _fetch_versions, _build_versions, page, per_page, deduplicate=False)
+            _fetch_versions, _build_versions, per_page, deduplicate=False)
 
     def list_by_config(self,
                        table_config_uid: UUID,
                        *,
-                       page: Optional[int] = None,
                        per_page: int = 100) -> Iterable[GemTable]:
         """
         List the versions of a table associated with a given Table Config UID.
@@ -152,7 +148,6 @@ class GemTableCollection(Collection[GemTable]):
 
 
         :param table_config_uid: The Table Config UID.
-        :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
@@ -175,12 +170,12 @@ class GemTableCollection(Collection[GemTable]):
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            _fetch_versions, _build_versions, page, per_page, deduplicate=False)
+            _fetch_versions, _build_versions, per_page, deduplicate=False)
 
     def initiate_build(self, config: Union[TableConfig, str, UUID], *,
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:
         """
-        [ALPHA] Initiates tables build with provided config.
+        Initiates tables build with provided config.
 
         This method does not wait for job completion. If you do not need to build
         multiple tables in parallel, using build_from_config is preferable to using
@@ -235,7 +230,7 @@ class GemTableCollection(Collection[GemTable]):
     def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
                          timeout: float = 15 * 60) -> GemTable:
         """
-        [ALPHA] Gets table by build job, waiting for it to complete if necessary.
+        Gets table by build job, waiting for it to complete if necessary.
 
         Parameters
         ----------
@@ -274,7 +269,7 @@ class GemTableCollection(Collection[GemTable]):
                           version: Union[str, int] = None,
                           timeout: float = 15 * 60) -> GemTable:
         """
-        [ALPHA] Builds table from table config, waiting for build job to complete.
+        Builds table from table config, waiting for build job to complete.
 
         Parameters
         ----------
@@ -319,7 +314,6 @@ class GemTableCollection(Collection[GemTable]):
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
     table_type = Union[GemTable, UUID, str]
-    obsolete_table_type = Union[table_type, Tuple[Union[str, UUID], Union[str, int]]]
 
     def _read_raw(self, table: table_type) -> requests.Response:
         """
@@ -366,7 +360,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         return self._read_raw(table).text
 
-    def read(self, *, table: obsolete_table_type, local_path: str):
+    def read(self, *, table: table_type, local_path: str):
         """
         Read the Table file from S3 to your local system.
 
@@ -383,10 +377,5 @@ class GemTableCollection(Collection[GemTable]):
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
-        if isinstance(table, (Tuple, list)):
-            warn("A tuple as a means of referring to a GEM Table is deprecated.  "
-                 "Please pass a GemTable object.", DeprecationWarning)
-            table = self.get(uid=table[0], version=table[1])
-
         response = self._read_raw(table)
         write_file_locally(response.content, local_path)

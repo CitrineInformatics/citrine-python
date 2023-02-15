@@ -14,7 +14,7 @@ from citrine.resources.data_concepts import _make_link_by_uid
 
 
 class Row(PolymorphicSerializable['Row']):
-    """[ALPHA] A rule for defining rows in a GEM Table.
+    """A rule for defining rows in a GEM Table.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -46,7 +46,7 @@ class Row(PolymorphicSerializable['Row']):
 
 
 class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
-    """[ALPHA] Rows corresponding to MaterialRuns, marked by their template.
+    """Rows corresponding to MaterialRuns, marked by their template.
 
     Parameters
     ----------

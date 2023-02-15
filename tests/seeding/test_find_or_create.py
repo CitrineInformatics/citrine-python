@@ -6,9 +6,9 @@ from citrine._rest.collection import Collection
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.predictor import PredictorCollection
-from citrine.informatics.predictors import SimpleMLPredictor
 from citrine.resources.project import ProjectCollection
 from citrine.resources.team import TeamCollection
+from citrine.informatics.predictors import AutoMLPredictor
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create,
                                             get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
@@ -101,22 +101,18 @@ def predictor_collection() -> PredictorCollection:
 
     #Adding a few predictors in the collection to have something to update
     for i in range(0, 5):
-        with pytest.deprecated_call():
-            predictors.register(SimpleMLPredictor(name = "resource " + str(i),
-                                                description = '',
-                                                inputs = [],
-                                                outputs = [],
-                                                latent_variables =[]))
+        predictors.register(AutoMLPredictor(name="resource " + str(i),
+                                            description='',
+                                            inputs=[],
+                                            outputs=[]))
 
     #Adding a few predictors with the same name ("resource {0,1}" were made above)
     # this is used to test behavior if there are duplicates
     for i in range(0, 2):
-        with pytest.deprecated_call():
-            predictors.register(SimpleMLPredictor(name = "resource " + str(i),
-                                                description = '',
-                                                inputs = [],
-                                                outputs = [],
-                                                latent_variables =[]))
+        predictors.register(AutoMLPredictor(name="resource " + str(i),
+                                            description='',
+                                            inputs=[],
+                                            outputs=[]))
     return predictors
 
 
@@ -306,15 +302,11 @@ def test_find_or_create_dataset_raise_error_exist_multiple(dataset_collection):
     with pytest.raises(ValueError):
         find_or_create_dataset(dataset_collection=dataset_collection, dataset_name=duplicate_name, raise_error=True)
 
+
 def test_create_or_update_none_found(predictor_collection):
     # test when resource doesn't exist with listed name and check if new one is created
     assert not [r for r in list(predictor_collection.list()) if r.name == absent_name]
-    with pytest.deprecated_call():
-        pred = SimpleMLPredictor(name=absent_name,
-                                description = '',
-                                inputs = [],
-                                outputs = [],
-                                latent_variables = [])
+    pred = AutoMLPredictor(name=absent_name, description='', inputs=[], outputs=[])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.uid == pred.uid
@@ -323,14 +315,13 @@ def test_create_or_update_none_found(predictor_collection):
     #verify that the collection is also updated
     assert any([r for r in list(predictor_collection.list()) if r.name == absent_name])
 
+
 def test_create_or_update_unique_found(predictor_collection):
     # test when there is a single unique resource that exists with the listed name and update
-    with pytest.deprecated_call():
-        pred = SimpleMLPredictor(name="resource 4", #this is a unique name in the collection
-                                description = 'I am updated!',
-                                inputs = [],
-                                outputs = [],
-                                latent_variables = [])
+    pred = AutoMLPredictor(name="resource 4", #this is a unique name in the collection
+                            description='I am updated!',
+                            inputs=[],
+                            outputs=[])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.name == pred.name
@@ -341,11 +332,9 @@ def test_create_or_update_unique_found(predictor_collection):
 
 def test_create_or_update_raise_error_multiple_found(predictor_collection):
     # test when there are multiple resources that exists with the same listed name and raise error
-    with pytest.deprecated_call():
-        pred = SimpleMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
-                                description = 'I am updated!',
-                                inputs = [],
-                                outputs = [],
-                                latent_variables = [])
+    pred = AutoMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
+                            description='I am updated!',
+                            inputs=[],
+                            outputs=[])
     with pytest.raises(ValueError):
         create_or_update(collection=predictor_collection, resource=pred)

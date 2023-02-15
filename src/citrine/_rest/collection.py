@@ -70,9 +70,7 @@ class Collection(Generic[ResourceType], Pageable):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 100) -> Iterator[ResourceType]:
+    def list(self, *, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Paginate over the elements of the collection.
 
@@ -81,9 +79,6 @@ class Collection(Generic[ResourceType], Pageable):
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -92,13 +87,12 @@ class Collection(Generic[ResourceType], Pageable):
         Returns
         -------
         Iterator[ResourceType]
-            An iterator that can be used to loop over all of the resources in this collection.
+            An iterator that can be used to loop over all the resources in this collection.
             Use list() to force evaluation of all results into an in-memory list.
 
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def update(self, model: CreationType) -> CreationType:

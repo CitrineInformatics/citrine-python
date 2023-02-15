@@ -138,22 +138,17 @@ class FakeGemTableCollection(GemTableCollection):
 
     def list_by_config(self, table_config_uid: UUID,
                        *,
-                       page: Optional[int] = None,
                        per_page: int = 100) -> Iterable[GemTable]:
         config_uid = normalize_uid(table_config_uid)
         if config_uid not in self._config_map:
             return iter([])
         else:
             table_id = self._config_map[config_uid]
-            return self.list_versions(table_id, page=page, per_page=per_page)
+            return self.list_versions(table_id, per_page=per_page)
 
     def list_versions(self,
                       uid: UUID,
                       *,
-                      page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[GemTable]:
         tables = self._table_storage.list_by_uid(uid)
-        if page is None:
-            return iter(tables)
-        else:
-            return iter(tables[(page - 1)*per_page:page*per_page])
+        return iter(tables)

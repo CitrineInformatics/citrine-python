@@ -75,18 +75,12 @@ class GenerativeDesignExecution(
         for generation_result in subset_collection:
             yield GenerativeDesignResult.build(generation_result)
 
-    def results(
-        self,
-        *,
-        page: Optional[int] = None,
-        per_page: int = 100,
-    ) -> Iterable[GenerativeDesignResult]:
+    def results(self, *, per_page: int = 100) -> Iterable[GenerativeDesignResult]:
         """Fetch the Generative Design Results for the particular execution, paginated."""
         path = self._path() + f'{self.uid}/results'
         fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_results,
-                                        page=page,
                                         per_page=per_page)
 
     def result(

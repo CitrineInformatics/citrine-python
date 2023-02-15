@@ -1,4 +1,3 @@
-import warnings
 from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Iterator
 from uuid import uuid4
 
@@ -16,7 +15,6 @@ class Paginator(Generic[ResourceType]):
     def paginate(self,
                  page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
                  collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
-                 page: Optional[int] = None,
                  per_page: int = 100,
                  search_params: Optional[dict] = None,
                  deduplicate: bool = True) -> Iterator[ResourceType]:
@@ -35,9 +33,6 @@ class Paginator(Generic[ResourceType]):
             Fetches the next page of elements
         collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]]
             Builds each element in the collection into the appropriate resource
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -48,8 +43,7 @@ class Paginator(Generic[ResourceType]):
             pass a request body to the target endpoint. If no search_params are supplied,
             no search_params argument will get passed to the page_fetcher function.
         deduplicate: bool, optional
-            Whether or not to deduplicate the yielded resources by their uid.  The default
-            is true.
+            Whether to deduplicate the yielded resources by their uid.  The default is true.
 
         Returns
         -------
@@ -61,12 +55,8 @@ class Paginator(Generic[ResourceType]):
         # making 'search_params' key of outermost dict for keyword expansion by page_fetcher func
         search_params = {} if search_params is None else {'search_params': search_params}
 
-        if page is not None:
-            warnings.warn("The page parameter is deprecated, default is automatic pagination",
-                          DeprecationWarning)
-
         first_entity = None
-        page_idx = page
+        page_idx = 1
         uids = set()
 
         while True:
@@ -104,18 +94,11 @@ class Paginator(Generic[ResourceType]):
 
                 count += 1
 
-            # If the page number is specified we exit to disable auto-paginating
-            if page is not None:
-                break
-
             # Handle the case where we get an unexpected number of results (i.e., the last page)
             if next_uri == "" and count < per_page:
                 break
 
-            if page_idx is None:
-                page_idx = 2
-            else:
-                page_idx += 1
+            page_idx += 1
 
     def _comparison_fields(self, entity: ResourceType) -> Any:
         """

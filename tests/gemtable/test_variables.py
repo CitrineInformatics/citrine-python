@@ -66,17 +66,6 @@ def test_quantity_dimension_serializes_to_string():
     assert variable_data["quantity_dimension"] == "number"
 
 
-def test_deprecated_variables():
-    with pytest.warns(DeprecationWarning):
-        variable = RootInfo(name="name", headers=["headers"], field="foo")
-    assert isinstance(variable, TerminalMaterialInfo)
-    assert variable.name == "name"
-    with pytest.warns(DeprecationWarning):
-        variable = RootIdentifier(name="name", headers=["headers"], scope="scope")
-    assert isinstance(variable, TerminalMaterialIdentifier)
-    assert variable.name == "name"
-
-
 def test_absolute_units():
     IngredientQuantityByProcessAndName(
         name="This should be fine",
