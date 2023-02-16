@@ -8,7 +8,7 @@ The Citrine Python client provides methods to trigger a generative design execut
 
 The following example shows how to run a generative design execution on the Citrine Platform using the Citrine Python client.
 
-.. code:: python
+.. code-block:: python
 
     import os
     from citrine import Citrine
