@@ -24,8 +24,10 @@ Submodules
    citrine.informatics.design_candidate
    citrine.informatics.dimensions
    citrine.informatics.experiment_values
+   citrine.informatics.generative_design
    citrine.informatics.modules
    citrine.informatics.objectives
+   citrine.informatics.predict_request
    citrine.informatics.predictor_evaluation_metrics
    citrine.informatics.predictor_evaluation_result
    citrine.informatics.predictor_evaluator

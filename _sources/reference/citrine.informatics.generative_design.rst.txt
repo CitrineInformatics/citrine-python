@@ -1,0 +1,8 @@
+citrine.informatics.generative\_design module
+=============================================
+
+.. automodule:: citrine.informatics.generative_design
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

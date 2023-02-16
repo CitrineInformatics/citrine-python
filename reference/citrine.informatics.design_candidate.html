@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.design_candidate module &mdash; Citrine Python 1.53.1 documentation</title>
+  <title>citrine.informatics.design_candidate module &mdash; Citrine Python 1.58.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.53.1
+                1.58.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -78,7 +78,7 @@
 <span id="citrine-informatics-design-candidate-module"></span><h1>citrine.informatics.design_candidate module<a class="headerlink" href="#module-citrine.informatics.design_candidate" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.ChemicalFormula">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">ChemicalFormula</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.ChemicalFormula" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">ChemicalFormula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.ChemicalFormula" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_candidate.ChemicalFormula" title="citrine.informatics.design_candidate.ChemicalFormula"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormula</span></code></a>], <a class="reference internal" href="#citrine.informatics.design_candidate.DesignVariable" title="citrine.informatics.design_candidate.DesignVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_candidate.DesignVariable</span></code></a></p>
 <p>Chemical formula as a string.</p>
 <dl class="py method">
@@ -103,6 +103,17 @@
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.ChemicalFormula.formula">
 <span class="sig-name descname"><span class="pre">formula</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.ChemicalFormula.formula" title="Permalink to this definition"></a></dt>
 <dd><p>chemical formula</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_candidate.ChemicalFormula.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'F'</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.ChemicalFormula.typ" title="Permalink to this definition"></a></dt>
+<dd><p>polymorphic type code</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>str</p>
@@ -190,7 +201,7 @@ and constraints (higher is better)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.DesignMaterial">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">DesignMaterial</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.DesignMaterial" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">DesignMaterial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.DesignMaterial" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_candidate.DesignMaterial" title="citrine.informatics.design_candidate.DesignMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignMaterial</span></code></a>]</p>
 <p>Description of the material that was designed, as a set of DesignVariables.</p>
 <dl class="py method">
@@ -241,7 +252,7 @@ these are simplified representations of the values.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.MeanAndStd">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">MeanAndStd</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.MeanAndStd" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">MeanAndStd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.MeanAndStd" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_candidate.MeanAndStd" title="citrine.informatics.design_candidate.MeanAndStd"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanAndStd</span></code></a>], <a class="reference internal" href="#citrine.informatics.design_candidate.DesignVariable" title="citrine.informatics.design_candidate.DesignVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_candidate.DesignVariable</span></code></a></p>
 <p>The mean and standard deviation of a continuous distribution.</p>
 <p>This does not imply that the distribution is Normal.</p>
@@ -285,11 +296,22 @@ these are simplified representations of the values.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_candidate.MeanAndStd.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'R'</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.MeanAndStd.typ" title="Permalink to this definition"></a></dt>
+<dd><p>polymorphic type code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.Mixture">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">Mixture</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.Mixture" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">Mixture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.Mixture" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_candidate.Mixture" title="citrine.informatics.design_candidate.Mixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mixture</span></code></a>], <a class="reference internal" href="#citrine.informatics.design_candidate.DesignVariable" title="citrine.informatics.design_candidate.DesignVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_candidate.DesignVariable</span></code></a></p>
 <p>Most likely quantity values for all of the components in a mixture.</p>
 <p>This is a complete list of components with non-zero quantities; there is no
@@ -323,11 +345,22 @@ truncation (but there may be rounding).</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_candidate.Mixture.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'M'</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.Mixture.typ" title="Permalink to this definition"></a></dt>
+<dd><p>polymorphic type code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.MolecularStructure">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">MolecularStructure</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.MolecularStructure" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">MolecularStructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.MolecularStructure" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_candidate.MolecularStructure" title="citrine.informatics.design_candidate.MolecularStructure"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructure</span></code></a>], <a class="reference internal" href="#citrine.informatics.design_candidate.DesignVariable" title="citrine.informatics.design_candidate.DesignVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_candidate.DesignVariable</span></code></a></p>
 <p>SMILES string representation of a molecular structure.</p>
 <dl class="py method">
@@ -359,11 +392,22 @@ truncation (but there may be rounding).</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_candidate.MolecularStructure.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'S'</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.MolecularStructure.typ" title="Permalink to this definition"></a></dt>
+<dd><p>polymorphic type code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_candidate.TopCategories">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">TopCategories</span></span><a class="headerlink" href="#citrine.informatics.design_candidate.TopCategories" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_candidate.</span></span><span class="sig-name descname"><span class="pre">TopCategories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probabilities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_candidate.TopCategories" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">CategoriesAndProbabilities</span></code>], <a class="reference internal" href="#citrine.informatics.design_candidate.DesignVariable" title="citrine.informatics.design_candidate.DesignVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_candidate.DesignVariable</span></code></a></p>
 <p>The category names and probabilities for the most probable categories.</p>
 <p>This list is truncated: these are the most probable categories but other categories
@@ -393,6 +437,17 @@ may have non-zero probabilities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>Dict[str, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_candidate.TopCategories.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'C'</span></em><a class="headerlink" href="#citrine.informatics.design_candidate.TopCategories.typ" title="Permalink to this definition"></a></dt>
+<dd><p>polymorphic type code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>

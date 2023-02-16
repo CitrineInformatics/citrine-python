@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 1.53.1 documentation</title>
+  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 1.58.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.53.1
+                1.58.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -280,6 +280,8 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.AttributeInOutput" title="citrine.gemtables.variables.AttributeInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeInOutput</span></code></a>: for when attributes occur both in a process output and one or more of its inputs</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityByProcessAndName" title="citrine.gemtables.variables.IngredientQuantityByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessAndName</span></code></a>: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityInOutput" title="citrine.gemtables.variables.IngredientQuantityInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityInOutput</span></code></a>: for the quantity of an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalAttribute" title="citrine.gemtables.variables.LocalAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalAttribute</span></code></a>: for retrieving the attribute from the terminal material or its attached process or measurements (useful for attributes found on multiple materials)</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientQuantity" title="citrine.gemtables.variables.LocalIngredientQuantity"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalIngredientQuantity</span></code></a>: for the quantity of an ingredient used in the process creating the terminal material (useful for ingredients used in multiple processes)</p></li>
 </ul>
 </li>
 <li><p>Identifiers</p>
@@ -288,9 +290,11 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.TerminalMaterialIdentifier" title="citrine.gemtables.variables.TerminalMaterialIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">TerminalMaterialIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a>: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierInOutput" title="citrine.gemtables.variables.IngredientIdentifierInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierInOutput</span></code></a>: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientIdentifier" title="citrine.gemtables.variables.LocalIngredientIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalIngredientIdentifier</span></code></a>: for the id of a material used in an ingredient used in the process creating the terminal material (useful for ingredients used in multiple processes)</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelByProcessAndName" title="citrine.gemtables.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a Boolean that indicates whether an ingredient is assigned a given label</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetByProcessAndName</span></code></a>: for the set of labels belonging to an ingredient in a process</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelsSetInOutput" title="citrine.gemtables.variables.IngredientLabelsSetInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetInOutput</span></code></a>: for the set of labels belonging to an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientLabelsSet" title="citrine.gemtables.variables.LocalIngredientLabelsSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalIngredientLabelsSet</span></code></a>: for the set of labels belonging to an ingredient used in the process creating the terminal material (useful for ingredients used in multiple processes)</p></li>
 </ul>
 </li>
 <li><p>Compound Variables</p>

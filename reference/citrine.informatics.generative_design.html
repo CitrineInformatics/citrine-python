@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>citrine.informatics.generative_design module &mdash; Citrine Python 1.58.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.58.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>citrine.informatics.generative_design module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/citrine.informatics.generative_design.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-citrine.informatics.generative_design">
+<span id="citrine-informatics-generative-design-module"></span><h1>citrine.informatics.generative_design module<a class="headerlink" href="#module-citrine.informatics.generative_design" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">FingerprintType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] Fingerprint type used in Generative Design.</p>
+<ul class="simple">
+<li><p>AP is the Atom Pairs Fingerprint.</p></li>
+<li><p>PHCO is the Path-Length Connectivity Fingerprint.</p></li>
+<li><p>BPF is the Binary Path Fingerprint.</p></li>
+<li><p>BTF is the Bit-String Topological Fingerprint.</p></li>
+<li><p>PATH is the Paths of Atoms of Heteroatoms Fingerprint.</p></li>
+<li><p>ECFP4 is the Extended Connectivity Fingerprint with radius 4.</p></li>
+<li><p>ECFP6 is the Extended Connectivity Fingerprint with radius 6.</p></li>
+<li><p>FCFP4 is the Focused Connectivity Fingerprint with radius 4.</p></li>
+<li><p>FCFP6 is the Focused Connectivity Fingerprint with radius 6.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.AP">
+<span class="sig-name descname"><span class="pre">AP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'AP'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.AP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.BPF">
+<span class="sig-name descname"><span class="pre">BPF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BPF'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.BPF" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.BTF">
+<span class="sig-name descname"><span class="pre">BTF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BTF'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.BTF" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.ECFP4">
+<span class="sig-name descname"><span class="pre">ECFP4</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ECFP4'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.ECFP4" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.ECFP6">
+<span class="sig-name descname"><span class="pre">ECFP6</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ECFP6'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.ECFP6" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.FCFP4">
+<span class="sig-name descname"><span class="pre">FCFP4</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FCFP4'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.FCFP4" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.FCFP6">
+<span class="sig-name descname"><span class="pre">FCFP6</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FCFP6'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.FCFP6" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.PATH">
+<span class="sig-name descname"><span class="pre">PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PATH'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.PATH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.FingerprintType.PHCO">
+<span class="sig-name descname"><span class="pre">PHCO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PHCO'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.FingerprintType.PHCO" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">GenerativeDesignInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fingerprint_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><span class="pre">citrine.informatics.generative_design.FingerprintType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_fingerprint_similarity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation_per_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.generative_design.GenerativeDesignInput" title="citrine.informatics.generative_design.GenerativeDesignInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignInput</span></code></a>]</p>
+<p>A Citrine Generative Design Execution Input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seeds</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The seeds used to generate the molecules.</p></li>
+<li><p><strong>fingerprint_type</strong> (<a class="reference internal" href="#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><em>FingerprintType</em></a>) – The fingerprint type used to calculate the fingerprint similarity.</p></li>
+<li><p><strong>min_fingerprint_similarity</strong> (<em>float</em>) – The minimum fingerprint similarity between the seed and the mutated molecule.</p></li>
+<li><p><strong>mutation_per_seed</strong> (<em>int</em>) – The number of initial mutations that will be attempted per seed.
+IMPORTANT, the total number of molecules generated will likely be lower than this value.
+Some mutations may be duplicates or may not meet the fingerprint similarity threshold.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.fingerprint_type">
+<span class="sig-name descname"><span class="pre">fingerprint_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><span class="pre">citrine.informatics.generative_design.FingerprintType</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.fingerprint_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.min_fingerprint_similarity">
+<span class="sig-name descname"><span class="pre">min_fingerprint_similarity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.min_fingerprint_similarity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.mutation_per_seed">
+<span class="sig-name descname"><span class="pre">mutation_per_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.mutation_per_seed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.seeds">
+<span class="sig-name descname"><span class="pre">seeds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.seeds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">GenerativeDesignResult</span></span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.generative_design.GenerativeDesignResult" title="citrine.informatics.generative_design.GenerativeDesignResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignResult</span></code></a>]</p>
+<p>A Citrine Generation Design Execution Result.</p>
+<p>This class represents the result of a generative design execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.execution_id">
+<span class="sig-name descname"><span class="pre">execution_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.execution_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.fingerprint_similarity">
+<span class="sig-name descname"><span class="pre">fingerprint_similarity</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.fingerprint_similarity" title="Permalink to this definition"></a></dt>
+<dd><p>The fingerprint similarity between the seed and the mutated molecule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.fingerprint_type">
+<span class="sig-name descname"><span class="pre">fingerprint_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.fingerprint_type" title="Permalink to this definition"></a></dt>
+<dd><p>The fingerprint type used to calculate the fingerprint similarity.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.mutated">
+<span class="sig-name descname"><span class="pre">mutated</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.mutated" title="Permalink to this definition"></a></dt>
+<dd><p>The mutated molecule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.seed" title="Permalink to this definition"></a></dt>
+<dd><p>The seed used to generate the molecule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.uid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

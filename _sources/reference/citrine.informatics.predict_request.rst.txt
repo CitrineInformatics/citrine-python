@@ -1,0 +1,8 @@
+citrine.informatics.predict\_request module
+===========================================
+
+.. automodule:: citrine.informatics.predict_request
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

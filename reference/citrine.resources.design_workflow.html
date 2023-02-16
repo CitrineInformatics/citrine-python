@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.design_workflow module &mdash; Citrine Python 1.53.1 documentation</title>
+  <title>citrine.resources.design_workflow module &mdash; Citrine Python 1.58.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.53.1
+                1.58.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -161,8 +161,8 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 <span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><span class="pre">citrine.informatics.workflows.design_workflow.DesignWorkflow</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><span class="pre">citrine.informatics.workflows.design_workflow.DesignWorkflow</span></a></span></span><a class="headerlink" href="#citrine.resources.design_workflow.DesignWorkflowCollection.register" title="Permalink to this definition"></a></dt>
 <dd><p>Upload a new design workflow.</p>
 <p>The model’s branch ID is ignored in favor of this collection’s. If this
-collection has a null branch ID, then the model is uploaded to the v1
-endpoint and retrieved separately, to ensure all details are included.</p>
+collection has a null branch ID, then a branch is first created, then
+the design workflow is created on it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><em>DesignWorkflow</em></a>) – The design workflow to be uploaded.</p>
