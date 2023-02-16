@@ -54,7 +54,5 @@ The following example shows how to run a generative design execution on the Citr
     generated = execution.results()
     mutations = [(gen.seed, gen.mutated) for gen in generated]
 
-Notes
------
 To execute the code, you will need to replace the placeholders `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` with valid UIDs from your Citrine environment.
 Additionally, make sure that the API key, scheme, host, and port are correctly specified in the `Citrine` initialization.
