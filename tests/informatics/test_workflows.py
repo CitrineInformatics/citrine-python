@@ -131,7 +131,8 @@ def test_predict(design_workflow, design_execution, example_candidates):
                     }
                 }
             },
-            'created_from_id': str(candidate.uid)
+            'created_from_id': str(candidate.uid),
+            'random_seed': None
         },
         version="v1"
     )
