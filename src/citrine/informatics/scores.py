@@ -17,6 +17,9 @@ class Score(PolymorphicSerializable['Score']):
 
     """
 
+    _name = properties.String('name', deserializable=False)
+    _description = properties.String('description', deserializable=False)
+
     @classmethod
     def get_type(cls, data):
         """Return the subtype."""
@@ -55,6 +58,8 @@ class LIScore(Serializable['LIScore'], Score):
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
+        self._name = "Likelihood of Improvement"
+        self._description = ""
 
     def __str__(self):
         return '<LIScore>'
@@ -88,6 +93,8 @@ class EIScore(Serializable['EIScore'], Score):
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
+        self._name = "Expected Improvement"
+        self._description = ""
 
     def __str__(self):
         return '<EIScore>'
@@ -118,6 +125,8 @@ class EVScore(Serializable['EVScore'], Score):
                  constraints: Optional[List[Constraint]] = None):
         self.objectives: List[Objective] = objectives
         self.constraints: List[Constraint] = constraints or []
+        self._name = "Expected Value"
+        self._description = ""
 
     def __str__(self):
         return '<EVScore>'
