@@ -17,8 +17,8 @@ class Score(PolymorphicSerializable['Score']):
 
     """
 
-    _name = properties.String('name')
-    _description = properties.String('description')
+    _name = properties.String('name', deserializable=False)
+    _description = properties.String('description', deserializable=False)
 
     @classmethod
     def get_type(cls, data):
