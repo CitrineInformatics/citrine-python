@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -16,12 +16,16 @@ class PredictRequest(Serializable["PredictRequest"]):
     identifiers = properties.List(properties.String(), 'identifiers')
     material = properties.Object(DesignMaterial, 'material')
     created_from_id = properties.UUID('created_from_id')
+    random_seed = properties.Optional(properties.Integer, 'random_seed')
 
     def __init__(self, material_id: UUID,
                  identifiers: List[str],
                  material: DesignMaterial,
-                 created_from_id: UUID):
+                 created_from_id: UUID,
+                 *,
+                 random_seed: Optional[int] = None):
         self.material_id = material_id
         self.identifiers = identifiers
         self.material = material
         self.created_from_id = created_from_id
+        self.random_seed = random_seed
