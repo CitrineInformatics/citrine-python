@@ -24,7 +24,7 @@ It executes in the following manner:
 
 -  Material candidates are pulled from the design space.
 -  The predictor adds additional information to the candidates.
--  Enriched candidates are scored
+-  Enriched candidates are scored.
 -  The Citrine Platform selects the next batch of candidates to pull from the design space.
 
 After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
