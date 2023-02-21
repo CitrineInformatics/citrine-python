@@ -12,7 +12,7 @@ class ResourceTypeEnum(BaseEnumeration):
     * TEAM is a Team
     * PROJECT is a Project
     * DATASET is a Dataset
-    * MODULE is a Module: a Predictor, Design Space, or Processor
+    * MODULE is a Module: a Predictor or Design Space
     * USER is a user
     * TABLE is a GemTable
     * TABLE_DEFINITION is a TableConfig

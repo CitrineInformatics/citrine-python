@@ -28,11 +28,6 @@ Design Spaces
 
 :doc:`Design Spaces <../workflows/design_spaces>` define the set of materials of interest.
 
-Processors
-^^^^^^^^^^
-
-:doc:`Processors <../workflows/processors>` define the method used to search a Design Space.
-
 Workflows
 ---------
 
@@ -40,7 +35,7 @@ Design Workflow
 ^^^^^^^^^^^^^^^
 
 :doc:`Design Workflows <../workflows/design_workflows>` generate proposals for materials that are expected to meet some goal.
-A Design Workflow combines a Design Space to define to materials of interest, a Predictor to predict material properties, and a Processor to explore the space.
+A Design Workflow combines a Design Space to define the materials of interest and a Predictor to predict material properties.
 They also include a :doc:`Score <../workflows/scores>` which codifies goals of the project.
 
 Predictor Evaluation Workflow

@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
-from typing import Optional, Union, Iterator
+from typing import Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -45,10 +45,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a GenerativeDesignExecution.")
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 10,
-             ) -> Iterator[GenerativeDesignExecution]:
+    def list(self, *, per_page: int = 10) -> Iterator[GenerativeDesignExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -57,9 +54,6 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -73,7 +67,6 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:

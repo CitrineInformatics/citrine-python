@@ -1,8 +1,6 @@
 from typing import Optional, Type
 from uuid import UUID
 
-from deprecation import deprecated
-
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -34,18 +32,6 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     _failed_statuses = ["INVALID", "ERROR"]
 
     @property
-    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0",
-                details="Please use `isinstance` or `issubclass` instead.")
-    def module_type(self):
-        """The type of module."""
-        return "PREDICTOR"
-
-    @module_type.setter
-    @deprecated(deprecated_in="1.31.0", removed_in="2.0.0")
-    def module_type(self, value):
-        pass
-
-    @property
     def report(self):
         """Fetch the predictor report."""
         if self.uid is None or self._session is None or self._project_id is None \
@@ -72,7 +58,6 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:
         """Return the subtype."""
-        from .simple_ml_predictor import SimpleMLPredictor
         from .graph_predictor import GraphPredictor
         from .expression_predictor import ExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
@@ -84,7 +69,6 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
         from .mean_property_predictor import MeanPropertyPredictor
         from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
         type_dict = {
-            "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,

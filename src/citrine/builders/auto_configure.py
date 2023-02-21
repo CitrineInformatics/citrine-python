@@ -711,12 +711,10 @@ class AutoConfigureWorkflow():
         """Create a design workflow, and optionally trigger a design execution."""
         self._print_status("Configuring design workflow...")
 
-        processor_id = self.design_workflow.processor_id if self.design_workflow else None
         workflow = DesignWorkflow(
             name=self._default_asset_names["DESIGN_WORKFLOW"],
             predictor_id=predictor.uid,
-            design_space_id=design_space.uid,
-            processor_id=processor_id
+            design_space_id=design_space.uid
         )
         workflow = create_or_update(
             collection=self.project.design_workflows,

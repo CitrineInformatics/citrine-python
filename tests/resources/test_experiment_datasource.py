@@ -104,12 +104,12 @@ def test_list(session, collection, erds_base_path):
     list(collection.list(branch_id=branch_id, version="latest"))
 
     assert session.calls == [
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": 4}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": "latest"}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": 12}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": "latest"})
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": 4, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": "latest", 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": 12, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": "latest", 'page': 1})
     ]
 
 

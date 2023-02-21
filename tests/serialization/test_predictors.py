@@ -9,39 +9,35 @@ from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import *
 
 
-def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
+def test_simple_legacy_deserialization(valid_auto_ml_predictor_data):
     """Ensure that a deserialized SimplePredictor looks sane."""
-    predictor: SimpleMLPredictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    assert predictor.name == 'ML predictor'
-    assert predictor.description == 'Predicts z from input x and latent variable y'
+    predictor: AutoMLPredictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    assert predictor.name == 'AutoML predictor'
+    assert predictor.description == 'Predicts z from input x'
     assert len(predictor.inputs) == 1
     assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
     assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    assert len(predictor.latent_variables) == 1
-    assert predictor.latent_variables[0] == RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
-def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
+def test_polymorphic_legacy_deserialization(valid_auto_ml_predictor_data):
     """Ensure that a polymorphically deserialized SimplePredictor looks sane."""
-    predictor: SimpleMLPredictor = Predictor.build(valid_simple_ml_predictor_data)
-    assert predictor.name == 'ML predictor'
-    assert predictor.description == 'Predicts z from input x and latent variable y'
+    predictor: AutoMLPredictor = Predictor.build(valid_auto_ml_predictor_data)
+    assert predictor.name == 'AutoML predictor'
+    assert predictor.description == 'Predicts z from input x'
     assert len(predictor.inputs) == 1
     assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
     assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    assert len(predictor.latent_variables) == 1
-    assert predictor.latent_variables[0] == RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
-def test_legacy_serialization(valid_simple_ml_predictor_data):
+def test_legacy_serialization(valid_auto_ml_predictor_data):
     """Ensure that a serialized SimplePredictor looks sane."""
-    predictor_serialization_check(valid_simple_ml_predictor_data, SimpleMLPredictor)
+    predictor_serialization_check(valid_auto_ml_predictor_data, AutoMLPredictor)
 
 
 def test_graph_serialization(valid_graph_predictor_data):

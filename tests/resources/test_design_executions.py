@@ -64,9 +64,10 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     # Given
     session.set_response(design_execution_dict)
     score = MLIScoreFactory()
+    max_candidates = 150
 
     # When
-    actual_execution = collection.trigger(score)
+    actual_execution = collection.trigger(score, max_candidates=max_candidates)
 
     # Then
     assert str(actual_execution.uid) == design_execution_dict["id"]
@@ -77,7 +78,7 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json={'score': score.dump()}
+        json={'score': score.dump(), 'max_candidates': max_candidates}
     )
 
 
@@ -94,7 +95,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
 
 
 def test_list(collection: DesignExecutionCollection, session):
@@ -106,27 +107,10 @@ def test_list(collection: DesignExecutionCollection, session):
     assert session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={"per_page": 4}
+        params={"per_page": 4, 'page': 1}
     )
 
 
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
-
-
-def test_experimental_deprecated(collection, design_execution_dict):
-    # Given
-    workflow_execution_id = uuid.uuid4()
-    build_data = design_execution_dict.copy()
-    build_data["id"] = str(workflow_execution_id)
-    build_data["workflow_id"] = str(collection.workflow_id)
-    
-    # When
-    execution = collection.build(build_data)
-
-    # Then
-    with pytest.deprecated_call():
-        assert execution.experimental is False
-    with pytest.deprecated_call():
-        assert execution.experimental_reasons == []

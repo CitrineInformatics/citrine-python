@@ -19,9 +19,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         the name of the workflow
     design_space_id: Optional[UUID]
         the UUID corresponding to the design space to use
-    processor_id: Optional[UUID]
-        the UUID corresponding to the processor to use
-        if none is provided, one matching your design space will be automatically generated
     predictor_id: Optional[UUID]
         the UUID corresponding to the predictor to use
     predictor_version: Optional[Union[int, str]]
@@ -32,7 +29,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     """
 
     design_space_id = properties.Optional(properties.UUID, 'design_space_id')
-    processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.Optional(properties.UUID, 'predictor_id')
     predictor_version = properties.Optional(
         properties.Union([properties.Integer(), properties.String()]), 'predictor_version')
@@ -47,13 +43,11 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                  name: str,
                  *,
                  design_space_id: Optional[UUID] = None,
-                 processor_id: Optional[UUID] = None,
                  predictor_id: Optional[UUID] = None,
                  predictor_version: Optional[Union[int, str]] = None,
                  description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id
-        self.processor_id = processor_id
         self.predictor_id = predictor_id
         self.predictor_version = predictor_version
         self.description = description

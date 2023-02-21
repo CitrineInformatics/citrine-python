@@ -94,12 +94,12 @@ def test_share_post_content_v3(project_v3):
 
 def test_share_post_content(project, session):
     # Given
+    dataset = Dataset(name="foo", summary="", description="")
     dataset_id = str(uuid.uuid4())
+    dataset.uid = dataset_id
 
     # When
-    # Share using resource type/id, which is deprecated
-    with pytest.warns(DeprecationWarning):
-        project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+    project.share(resource=dataset, project_id=project.uid)
 
     # Then
     assert 1 == session.num_calls
@@ -109,54 +109,6 @@ def test_share_post_content(project, session):
         json={
             'project_id': str(project.uid),
             'resource': {'type': 'DATASET', 'id': dataset_id}
-        }
-    )
-    assert expected_call == session.last_call
-
-    # Share by resource
-    # When
-    dataset = Dataset(name="foo", summary="", description="")
-    dataset.uid = str(uuid.uuid4())
-
-    with pytest.warns(DeprecationWarning):
-        project.share(resource=dataset, project_id=project.uid)
-
-    # Then
-    assert 2 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/share'.format(project.uid),
-        json={
-            'project_id': str(project.uid),
-            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
-        }
-    )
-    assert expected_call == session.last_call
-
-    # providing both the resource and the type/id is an error
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
-
-    # Providing neither the resource nor the type/id is an error
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            project.share(project_id=project.uid)
-
-
-def test_share_deprecation_warning(project, session):
-    dataset = Dataset(name="foo", summary="", description="")
-
-    with pytest.warns(DeprecationWarning):
-        project.share(resource=dataset, project_id=project.uid)
-
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/share'.format(project.uid),
-        json={
-            'project_id': str(project.uid),
-            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
         }
     )
     assert expected_call == session.last_call
@@ -436,10 +388,6 @@ def test_descriptors_get_project_id(project):
     assert project.uid == project.descriptors.project_id
 
 
-def test_processors_get_project_id(project):
-    assert project.uid == project.processors.project_id
-
-
 def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
 
@@ -616,7 +564,7 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -631,7 +579,7 @@ def test_list_projects_v3(collection_v3, session_v3):
 
     # Then
     assert 1 == session_v3.num_calls
-    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session_v3.last_call
     assert 5 == len(projects)
 
@@ -644,7 +592,7 @@ def test_list_v3_no_team(session_v3):
     projects = list(project_collection.list())
 
     assert 1 == session_v3.num_calls
-    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session_v3.last_call
     assert 5 == len(projects)
 
@@ -672,7 +620,7 @@ def test_list_projects_with_page_params(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10, 'page': 1})
     assert expected_call == session.last_call
 
 
@@ -773,6 +721,7 @@ def test_search_projects_v3_no_search_params(collection_v3: ProjectCollection):
     assert expected_call == collection_v3.session.last_call
     assert len(projects_data)== len(collection)
 
+
 def test_search_projects(collection: ProjectCollection, session):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
@@ -793,7 +742,7 @@ def test_search_projects(collection: ProjectCollection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                             params={'per_page': 1000}, json={'search_params': search_params})
+                             params={'per_page': 1000, 'page': 1}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
@@ -819,7 +768,7 @@ def test_search_projects_with_pagination(paginated_collection: ProjectCollection
     # Then
     assert 4 == paginated_session.num_calls
     expected_first_call = FakeCall(method='POST', path='/projects/search', 
-                                   params={'per_page': per_page}, json={'search_params': search_params})
+                                   params={'page': 1, 'per_page': per_page}, json={'search_params': search_params})
     expected_last_call = FakeCall(method='POST', path='/projects/search', 
                                   params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
 

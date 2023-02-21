@@ -214,7 +214,6 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     description = factory.Faker("catch_phrase")
     archived = False
     design_space_id = factory.Faker("uuid4")
-    processor_id = factory.Faker("uuid4")
     predictor_id = factory.Faker("uuid4")
     status = "SUCCEEDED"
     status_description = "READY"

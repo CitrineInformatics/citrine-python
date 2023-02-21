@@ -2,7 +2,6 @@ from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
-from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -12,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn, \
@@ -25,7 +24,7 @@ from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessT
 
 
 class TableBuildAlgorithm(BaseEnumeration):
-    """[ALPHA] The algorithm to use in automatically building a Table Configuration.
+    """The algorithm to use in automatically building a Table Configuration.
 
     * SINGLE_ROW corresponds one row per material history
     * FORMULATIONS corresponds to one row per ingredient, intermediate, or terminal
@@ -38,7 +37,7 @@ class TableBuildAlgorithm(BaseEnumeration):
 
 class TableConfig(Resource["TableConfig"]):
     """
-    [ALPHA] The Table Configuration used to build GEM Tables.
+    The Table Configuration used to build GEM Tables.
 
     Parameters
     ----------
@@ -125,7 +124,7 @@ class TableConfig(Resource["TableConfig"]):
                     name: Optional[str] = None,
                     description: Optional[str] = None
                     ) -> 'TableConfig':
-        """[ALPHA] Add a variable and one or more columns to this TableConfig (out-of-place).
+        """Add a variable and one or more columns to this TableConfig (out-of-place).
 
         This method checks that the variable name is not already in use and that the columns
         only reference that variable.  It is *not* able to check if the columns and the variable
@@ -171,7 +170,7 @@ class TableConfig(Resource["TableConfig"]):
                             scope: str = CITRINE_SCOPE,
                             unit: Optional[str] = None
                             ):
-        """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
+        """Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the id of
         the ingredient, id for ingredient labels, and a column for the quantity of the ingredient.
@@ -267,7 +266,7 @@ class TableConfig(Resource["TableConfig"]):
                                       scope: str = CITRINE_SCOPE,
                                       unit: Optional[str] = None
                                       ):
-        """[ALPHA] Add variables and columns for all possible ingredients in a list of processes.
+        """Add variables and columns for all possible ingredients in a list of processes.
 
         For each allowed ingredient name in the union of all passed process templates there is a
         column for the id of the ingredient and a column for the quantity of the ingredient.
@@ -363,7 +362,7 @@ class TableConfig(Resource["TableConfig"]):
 
 
 class TableConfigCollection(Collection[TableConfig]):
-    """[ALPHA] Represents the collection of all Table Configs associated with a project."""
+    """Represents the collection of all Table Configs associated with a project."""
 
     # FIXME (DML): use newly named properties when they're available
     _path_template = 'projects/{project_id}/ara-definitions'
@@ -379,7 +378,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.session: Session = session
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
-        """[ALPHA] Get a table config.
+        """Get a table config.
 
         If no version is specified, then the most recent version is returned.
 
@@ -418,15 +417,8 @@ class TableConfigCollection(Collection[TableConfig]):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    @deprecated(deprecated_in="0.124.0", removed_in="2.0.0",
-                details="get_with_version() is deprecated in favor of get()")
-    def get_with_version(self, *, table_config_uid: Union[UUID, str],
-                         version_number: int) -> TableConfig:
-        """[ALPHA] Get a Table Config at a specific version."""
-        return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover
-
     def build(self, data: dict) -> TableConfig:
-        """[ALPHA] Build an individual Table Config from a dictionary."""
+        """Build an individual Table Config from a dictionary."""
         version_data = data['version']
         table_config = TableConfig.build(version_data['ara_definition'])
         table_config.version_number = version_data['version_number']
@@ -441,11 +433,10 @@ class TableConfigCollection(Collection[TableConfig]):
             material: Union[MaterialRun, LinkByUID, str, UUID],
             name: str,
             description: str = None,
-            algorithm: Optional[TableBuildAlgorithm] = None,
-            scope: str = None
+            algorithm: Optional[TableBuildAlgorithm] = None
     ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         """
-        [ALPHA] Build best-guess default table config for provided terminal material's history.
+        Build best-guess default table config for provided terminal material's history.
 
         Currently generates variables for each templated attribute in the material history in
         either AttributeByTemplate, or if possible AttributeByTemplateAndObjectTemplate.
@@ -467,10 +458,6 @@ class TableConfigCollection(Collection[TableConfig]):
         algorithm: TableBuildAlgorithm, optional
             The algorithm to use in generating a Table Configuration from the sample material
             history.  If unspecified, uses the webservice's default.
-        scope: str, optional
-            [DEPRECATED] Use a LinkByUID instead.
-            The scope of the material id. If a uid is provided and scope is not specified,
-            then the uid is assumed to be a Citrine ID.
 
         Returns
         -------
@@ -480,7 +467,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
 
         """
-        link = _make_link_by_uid(material, scope)
+        link = _make_link_by_uid(material)
         params = {
             'id': link.id,
             'scope': link.scope,
@@ -503,10 +490,9 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def preview(self, *,
                 table_config: TableConfig,
-                preview_materials: List[LinkByUID] = None,
-                preview_roots: List[LinkByUID] = None
+                preview_materials: List[LinkByUID] = None
                 ) -> dict:
-        """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
+        """Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
@@ -514,12 +500,8 @@ class TableConfigCollection(Collection[TableConfig]):
             Table Config to preview
         preview_materials: List[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
-        preview_roots: List[LinkByUID]
-            [DEPRECATED] Use preview_materials instead
 
         """
-        preview_materials = migrate_deprecated_argument(preview_materials, "preview_materials",
-                                                        preview_roots, "preview_roots")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
@@ -528,7 +510,7 @@ class TableConfigCollection(Collection[TableConfig]):
         return self.session.post_resource(path, body)
 
     def register(self, table_config: TableConfig) -> TableConfig:
-        """[ALPHA] Register a Table Config.
+        """Register a Table Config.
 
         If the provided TableConfig does not have a definition_uid, create a new element of the
         TableConfigCollection by registering the provided TableConfig. If the provided
@@ -562,7 +544,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def update(self, table_config: TableConfig) -> TableConfig:
         """
-        [ALPHA] Update a Table Config.
+        Update a Table Config.
 
         If the provided Table Config does have a uid, update (replace) the Table Config at that
         uid with the provided TableConfig.

@@ -1,7 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from typing import List, Optional, Union, Tuple, Iterator, Iterable
 from uuid import UUID
-import warnings
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -274,23 +273,23 @@ class Dataset(Resource['Dataset']):
     def delete_contents(
             self,
             *,
+            prompt_to_confirm: bool,
             timeout: float = 2 * 60,
-            polling_delay: float = 1.0,
-            prompt_to_confirm: bool = None,
+            polling_delay: float = 1.0
     ):
         """
         Delete all the GEMD objects from within a single Dataset.
 
         Parameters
         ----------
+        prompt_to_confirm: bool
+            If True, prompt for user confirmation before triggering delete.
         timeout: float
             Amount of time to wait on the job (in seconds) before giving up.
             Note that this number has no effect on the underlying job itself,
             which can also time out server-side.
         polling_delay: float
             How long to delay between each polling retry attempt.
-        prompt_to_confirm: bool
-            If True, prompt for user confirmation before triggering delete.
         Returns
         -------
         List[Tuple[LinkByUID, ApiError]]
@@ -303,9 +302,6 @@ class Dataset(Resource['Dataset']):
                                   dataset_uid=self.uid,
                                   project_id=self.project_id
                                   )
-        if prompt_to_confirm is None:
-            warnings.warn("Calling delete_contents without the prompt_to_confirm argument is"
-                          "deprecated.  Please explicitly pass True or False", DeprecationWarning)
 
         while prompt_to_confirm:
             print(f"Confirm you want to delete the contents of "
@@ -457,9 +453,7 @@ class DatasetCollection(Collection[Dataset]):
         full_model.project_id = self.project_id
         return full_model
 
-    def list(self, *,
-             page: Optional[int] = None,
-             per_page: int = 1000) -> Iterator[Dataset]:
+    def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -468,9 +462,6 @@ class DatasetCollection(Collection[Dataset]):
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 1000.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -482,7 +473,7 @@ class DatasetCollection(Collection[Dataset]):
             Datasets in this collection.
 
         """
-        return super().list(page=page, per_page=per_page)
+        return super().list(per_page=per_page)
 
     def get_by_unique_name(self, unique_name: str) -> Dataset:
         """Get a Dataset with the given unique name."""

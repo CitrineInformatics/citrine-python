@@ -1,4 +1,3 @@
-import warnings
 from typing import List, Optional, Set
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -47,9 +46,6 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
         the description of the predictor
     inputs: list[Descriptor]
         Descriptors that represent inputs to the model
-    output: Descriptor
-        [DEPRECATED] Please use ``outputs`` instead
-        A single Descriptor that represents the output of the model
     outputs: list[Descriptor]
         Descriptors that represents the output(s) of the model.
         Currently, only one output Descriptor is supported.
@@ -85,8 +81,7 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
                  name: str,
                  *,
                  description: str,
-                 output: Descriptor = None,
-                 outputs: List[Descriptor] = None,
+                 outputs: List[Descriptor],
                  inputs: List[Descriptor],
                  estimators: Optional[Set[AutoMLEstimator]] = None,
                  training_data: Optional[List[DataSource]] = None):
@@ -95,40 +90,7 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.training_data: List[DataSource] = training_data or []
-
-        if output is not None:
-            msg = ('The "output" parameter is deprecated as of 1.24.0 and will be removed in '
-                   '2.0.0. Please use the "outputs" field instead.')
-            warnings.warn(msg, category=DeprecationWarning)
-            if outputs is not None:
-                raise ValueError('Found values for "outputs" and the deprecated "output". Please '
-                                 'provide only "outputs".')
-
-        self.outputs: List[Descriptor] = []
-        if outputs is not None:
-            self.outputs = outputs
-        elif output is not None:
-            self.outputs = [output]
-
-    @property
-    def output(self) -> Optional[Descriptor]:
-        """[DEPRECATED] Get the first output descriptor."""
-        msg = ('The "output" field is deprecated as of 1.24.0 and will be removed in 2.0.0. '
-               'Please use the "outputs" field instead.')
-        warnings.warn(msg, category=DeprecationWarning)
-        return self.outputs[0] if self.outputs else None
-
-    @output.setter
-    def output(self, value):
-        """[DEPRECATED] Set the output descriptor."""
-        msg = ('The "output" field is deprecated as of 1.24.0 and will be removed in 2.0.0. '
-               'Please use the "outputs" field instead.')
-        warnings.warn(msg, category=DeprecationWarning)
-        if not isinstance(value, Descriptor):
-            # Mirroring the error emited by serialization.
-            raise ValueError(f"{value} is not one of valid types: <class 'Descriptor'> for output")
-
-        self.outputs = [value]
+        self.outputs = outputs
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)
