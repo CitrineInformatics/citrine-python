@@ -109,7 +109,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, *, id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
+    def get_history(self, id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
         """
         Get the history associated with a terminal material.
 

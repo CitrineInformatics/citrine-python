@@ -33,8 +33,8 @@ class Session(requests.Session):
     """Wrapper around requests.Session that is both refresh-token and schema aware."""
 
     def __init__(self,
-                 *,
                  refresh_token: str = None,
+                 *,
                  scheme: str = None,
                  host: str = None,
                  port: Optional[str] = None):

@@ -27,8 +27,8 @@ class Citrine:
     """
 
     def __init__(self,
-                 *,
                  api_key: str = None,
+                 *,
                  scheme: str = None,
                  host: str = None,
                  port: Optional[str] = None):
