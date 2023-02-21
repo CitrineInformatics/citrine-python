@@ -1,7 +1,7 @@
 .. data_extraction:
 
-[ALPHA] Data Extraction
-=======================
+Data Extraction
+===============
 
 GEM Tables are a component of the Citrine Platform data service that extracts data from GEMD's complex and expressive graphical representations into a tabular structure (like a CSV file) that is easier to consume in analytical contexts.
 A GEM Table is defined on a set of material histories, and the rows in the resulting GEM Table are in 1-to-1 correspondence with those material histories.

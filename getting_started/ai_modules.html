@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1.8. AI Engine Overview &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>1.8. AI Engine Overview &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -57,7 +57,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#modules">1.8.2. Modules</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#predictors">1.8.2.1. Predictors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#design-spaces">1.8.2.2. Design Spaces</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#processors">1.8.2.3. Processors</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#workflows">1.8.3. Workflows</a><ul>
@@ -71,10 +70,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -125,17 +125,13 @@ Several Predictors can be combined into a graphical model that expresses your do
 <h3><span class="section-number">1.8.2.2. </span>Design Spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline"></a></h3>
 <p><a class="reference internal" href="../workflows/design_spaces.html"><span class="doc">Design Spaces</span></a> define the set of materials of interest.</p>
 </section>
-<section id="processors">
-<h3><span class="section-number">1.8.2.3. </span>Processors<a class="headerlink" href="#processors" title="Permalink to this headline"></a></h3>
-<p><a class="reference internal" href="../workflows/processors.html"><span class="doc">Processors</span></a> define the method used to search a Design Space.</p>
-</section>
 </section>
 <section id="workflows">
 <h2><span class="section-number">1.8.3. </span>Workflows<a class="headerlink" href="#workflows" title="Permalink to this headline"></a></h2>
 <section id="design-workflow">
 <h3><span class="section-number">1.8.3.1. </span>Design Workflow<a class="headerlink" href="#design-workflow" title="Permalink to this headline"></a></h3>
 <p><a class="reference internal" href="../workflows/design_workflows.html"><span class="doc">Design Workflows</span></a> generate proposals for materials that are expected to meet some goal.
-A Design Workflow combines a Design Space to define to materials of interest, a Predictor to predict material properties, and a Processor to explore the space.
+A Design Workflow combines a Design Space to define the materials of interest and a Predictor to predict material properties.
 They also include a <a class="reference internal" href="../workflows/scores.html"><span class="doc">Score</span></a> which codifies goals of the project.</p>
 </section>
 <section id="predictor-evaluation-workflow">

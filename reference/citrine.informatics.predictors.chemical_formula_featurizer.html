@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictors.chemical_formula_featurizer module &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>citrine.informatics.predictors.chemical_formula_featurizer module &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,10 +44,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -260,15 +261,6 @@ if it has been archived</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.archived">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archived</span></span><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.archived" title="Permalink to this definition"></a></dt>
-<dd><p>[DEPRECATED] whether the resource is archived.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.31.0: </span>This will be removed in 2.0.0. Please use the ‘is_archived’ property instead.’</p>
-</div>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.archived_by">
 <span class="sig-name descname"><span class="pre">archived_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.archived_by" title="Permalink to this definition"></a></dt>
@@ -317,24 +309,6 @@ if it has been archived</p>
 <span class="sig-name descname"><span class="pre">excludes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.excludes" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.experimental">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">experimental</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.experimental" title="Permalink to this definition"></a></dt>
-<dd><p>[DEPRECATED] whether the execution is experimental (newer, less well-tested).</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.25.0: </span>This will be removed in 2.0.0.</p>
-</div>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.experimental_reasons">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">experimental_reasons</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.experimental_reasons" title="Permalink to this definition"></a></dt>
-<dd><p>[DEPRECATED] human-readable reasons why the execution is experimental.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.25.0: </span>This will be removed in 2.0.0.</p>
-</div>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.features">
 <span class="sig-name descname"><span class="pre">features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.features" title="Permalink to this definition"></a></dt>
@@ -344,26 +318,6 @@ if it has been archived</p>
 <dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.input_descriptor">
 <span class="sig-name descname"><span class="pre">input_descriptor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.input_descriptor" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.is_archived">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_archived</span></span><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.is_archived" title="Permalink to this definition"></a></dt>
-<dd><p>whether the resource is archived (hidden but not deleted).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.module_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">module_type</span></span><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.module_type" title="Permalink to this definition"></a></dt>
-<dd><p>The type of module.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.31.0: </span>This will be removed in 2.0.0. Please use <cite>isinstance</cite> or <cite>issubclass</cite> instead.</p>
-</div>
-</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.name">
@@ -399,23 +353,6 @@ if it has been archived</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail">StatusDetail</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.status_info">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status_info</span></span><a class="headerlink" href="#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer.status_info" title="Permalink to this definition"></a></dt>
-<dd><p>human-readable explanations of the status.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 1.46.0: </span>This will be removed in 2.0.0. Please use the ‘status_detail’ property instead.’</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>[DEPRECATED]</p>
-</dd>
-<dt class="field-even">Type</dt>
-<dd class="field-even"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>

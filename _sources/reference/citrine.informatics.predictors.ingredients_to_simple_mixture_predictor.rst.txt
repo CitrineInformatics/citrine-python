@@ -1,8 +1,0 @@
-citrine.informatics.predictors.ingredients\_to\_simple\_mixture\_predictor module
-=================================================================================
-
-.. automodule:: citrine.informatics.predictors.ingredients_to_simple_mixture_predictor
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. AI Engine &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>4. AI Engine &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.1. Getting Started" href="getting_started.html" />
-    <link rel="prev" title="3. [ALPHA] Data Extraction" href="../data_extraction.html" /> 
+    <link rel="prev" title="3. Data Extraction" href="../data_extraction.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -46,24 +46,24 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.7. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -134,41 +134,35 @@
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html#formulation-design-space">4.5.4. Formulation Design Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="processors.html">4.6. Processors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#enumerated-processor">4.6.1. Enumerated processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#grid-processor">4.6.2. Grid processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#monte-carlo-processor">4.6.3. Monte Carlo processor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">4.6.1. Execution and results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#design-candidate">4.6.2. Design Candidate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#branches">4.6.3. Branches</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">4.7.1. Execution and results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#design-candidate">4.7.2. Design Candidate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#branches">4.7.3. Branches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scores.html">4.7. Scores</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#expected-improvement">4.7.1. Expected improvement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#likelihood-of-improvement">4.7.2. Likelihood of improvement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#expected-value">4.7.3. Expected value</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="scores.html">4.8. Scores</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#expected-improvement">4.8.1. Expected improvement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#likelihood-of-improvement">4.8.2. Likelihood of improvement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#expected-value">4.8.3. Expected value</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html#csv-data-source">4.8.1. CSV Data Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html#gem-table-data-source">4.8.2. GEM Table Data Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html#experiment-data-source">4.8.3. Experiment Data Source</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html#csv-data-source">4.9.1. CSV Data Source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html#gem-table-data-source">4.9.2. GEM Table Data Source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html#experiment-data-source">4.9.3. Experiment Data Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#predictor-evaluators">4.10.1. Predictor evaluators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#predictor-evaluation-metrics">4.10.2. Predictor evaluation metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#execution-and-results">4.10.3. Execution and results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#example">4.10.4. Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#archive-and-restore">4.10.5. Archive and restore</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#predictor-evaluators">4.11.1. Predictor evaluators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#predictor-evaluation-metrics">4.11.2. Predictor evaluation metrics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#execution-and-results">4.11.3. Execution and results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#example">4.11.4. Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html#archive-and-restore">4.11.5. Archive and restore</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html#example-preprocessing-and-postprocessing-in-a-graphpredictor">4.12.1. Example: preprocessing and postprocessing in a GraphPredictor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html#example-preprocessing-and-postprocessing-in-a-graphpredictor">4.11.1. Example: preprocessing and postprocessing in a GraphPredictor</a></li>
 </ul>
 </li>
 </ul>
@@ -179,7 +173,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../data_extraction.html" class="btn btn-neutral float-left" title="3. [ALPHA] Data Extraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../data_extraction.html" class="btn btn-neutral float-left" title="3. Data Extraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="getting_started.html" class="btn btn-neutral float-right" title="4.1. Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

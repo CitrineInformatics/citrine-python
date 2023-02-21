@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Formulations Example &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>5. Formulations Example &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="6. FAQ" href="FAQ/index.html" />
-    <link rel="prev" title="4.12. AI Engine Code Examples" href="workflows/code_examples.html" /> 
+    <link rel="next" title="6. [ALPHA] Generative Design Execution" href="molecular_generation.html" />
+    <link rel="prev" title="4.11. AI Engine Code Examples" href="workflows/code_examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,7 +46,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">5. Formulations Example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#example-raw-data">5.1. Example Raw Data</a></li>
@@ -57,7 +57,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -766,7 +767,6 @@ We define an <a class="reference internal" href="reference/citrine.informatics.s
     <span class="n">design_space_id</span><span class="o">=</span><span class="n">design_space</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
     <span class="n">predictor_id</span><span class="o">=</span><span class="n">graph_predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
     <span class="n">predictor_version</span><span class="o">=</span><span class="n">graph_predictor</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
-    <span class="n">processor_id</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># we use the default continuous search processor</span>
 <span class="p">)</span>
 <span class="n">design_workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_workflows</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_workflow</span><span class="p">)</span>
 
@@ -783,8 +783,8 @@ Well, that depends on the training data.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="workflows/code_examples.html" class="btn btn-neutral float-left" title="4.12. AI Engine Code Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="FAQ/index.html" class="btn btn-neutral float-right" title="6. FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="workflows/code_examples.html" class="btn btn-neutral float-left" title="4.11. AI Engine Code Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="molecular_generation.html" class="btn btn-neutral float-right" title="6. [ALPHA] Generative Design Execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

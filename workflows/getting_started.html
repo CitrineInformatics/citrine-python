@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.1. Getting Started &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>4.1. Getting Started &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -46,7 +46,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. Getting Started</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#workflows-overview">4.1.1. Workflows Overview</a><ul>
@@ -68,17 +68,17 @@
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.7. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -121,11 +121,12 @@ There are three different types of modules, and these are discussed in greater d
 <h3><span class="section-number">4.1.1.1. </span>Design Workflow<a class="headerlink" href="#design-workflow" title="Permalink to this headline"></a></h3>
 <p>The <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> is the core AI workflow on the platform.
 This workflow generates scored candidates for Sequential Learning.
-To run, it requires one of each of the modules listed below and executes in the following manner:</p>
+It executes in the following manner:</p>
 <ul class="simple">
 <li><p>Material candidates are pulled from the design space.</p></li>
 <li><p>The predictor adds additional information to the candidates.</p></li>
-<li><p>Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.</p></li>
+<li><p>Enriched candidates are scored.</p></li>
+<li><p>The Citrine Platform selects the next batch of candidates to pull from the design space.</p></li>
 </ul>
 <p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
@@ -147,7 +148,7 @@ These outcomes are captured in a series of response metrics.</p>
 <h2><span class="section-number">4.1.2. </span>Modules Overview<a class="headerlink" href="#modules-overview" title="Permalink to this headline"></a></h2>
 <p>Modules are re-usable computational tools used to construct workflows.
 The modules dictate how the platform utilizes research data to generate computational results.
-There are 3 types of modules on the platform:</p>
+There are 2 types of modules on the platform:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="design_spaces.html"><span class="doc">Design Spaces</span></a> define the domain of controllable experimental parameters, their allowable values and relevant bounds.</p></li>
 <li><dl class="simple">
@@ -155,8 +156,6 @@ There are 3 types of modules on the platform:</p>
 </dd>
 </dl>
 </li>
-<li><p><a class="reference internal" href="processors.html"><span class="doc">Processors</span></a> define the method used to search the design space.
-The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
 </ul>
 <section id="archiving">
 <span id="archiving-label"></span><h3><span class="section-number">4.1.2.1. </span>Archiving<a class="headerlink" href="#archiving" title="Permalink to this headline"></a></h3>

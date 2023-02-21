@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6.2. Teams User Management Migration &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>7.2. Teams User Management Migration &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="6.1. Prohibited Data Patterns" href="prohibited_data_patterns.html" /> 
+    <link rel="prev" title="7.1. Prohibited Data Patterns" href="prohibited_data_patterns.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +32,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -45,20 +45,21 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. FAQ</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. Teams User Management Migration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#summary">6.2.1. Summary</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#what-s-new">6.2.2. What’s new?</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#teams">6.2.2.1. Teams</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#projects">6.2.2.2. Projects</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#user-management">6.2.2.3. User Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. FAQ</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prohibited_data_patterns.html">7.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.2. Teams User Management Migration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#summary">7.2.1. Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-s-new">7.2.2. What’s new?</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#teams">7.2.2.1. Teams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#projects">7.2.2.2. Projects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user-management">7.2.2.3. User Management</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#how-does-this-change-my-code">6.2.3. How does this change my code?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-does-this-change-my-code">7.2.3. How does this change my code?</a></li>
 </ul>
 </li>
 </ul>
@@ -79,8 +80,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html"><span class="section-number">6. </span>FAQ</a> &raquo;</li>
-      <li><span class="section-number">6.2. </span>Teams User Management Migration</li>
+          <li><a href="index.html"><span class="section-number">7. </span>FAQ</a> &raquo;</li>
+      <li><span class="section-number">7.2. </span>Teams User Management Migration</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/FAQ/team_management_migration.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -91,35 +92,35 @@
            <div itemprop="articleBody">
              
   <section id="teams-user-management-migration">
-<h1><span class="section-number">6.2. </span>Teams User Management Migration<a class="headerlink" href="#teams-user-management-migration" title="Permalink to this headline"></a></h1>
+<h1><span class="section-number">7.2. </span>Teams User Management Migration<a class="headerlink" href="#teams-user-management-migration" title="Permalink to this headline"></a></h1>
 <section id="summary">
-<h2><span class="section-number">6.2.1. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">7.2.1. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline"></a></h2>
 <p>This is an FAQ about migrating your code to the <a class="reference internal" href="../reference/citrine.resources.team.html#citrine.resources.team.Team" title="citrine.resources.team.Team"><code class="xref py py-class docutils literal notranslate"><span class="pre">Team</span></code></a> version of
 the Citrine Platform.</p>
 </section>
 <section id="what-s-new">
-<h2><span class="section-number">6.2.2. </span>What’s new?<a class="headerlink" href="#what-s-new" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">7.2.2. </span>What’s new?<a class="headerlink" href="#what-s-new" title="Permalink to this headline"></a></h2>
 <section id="teams">
-<h3><span class="section-number">6.2.2.1. </span>Teams<a class="headerlink" href="#teams" title="Permalink to this headline"></a></h3>
+<h3><span class="section-number">7.2.2.1. </span>Teams<a class="headerlink" href="#teams" title="Permalink to this headline"></a></h3>
 <p>The biggest change is the introduction of teams for access control. After this update, all projects
 and assets will be owned by teams that include one or more users on the platform. This concept was
 introduced to make it easier for Citrine Platform users to securely share assets across projects.</p>
 </section>
 <section id="projects">
-<h3><span class="section-number">6.2.2.2. </span>Projects<a class="headerlink" href="#projects" title="Permalink to this headline"></a></h3>
+<h3><span class="section-number">7.2.2.2. </span>Projects<a class="headerlink" href="#projects" title="Permalink to this headline"></a></h3>
 <p>Projects are now available as <code class="docutils literal notranslate"><span class="pre">Team</span></code> assets. Project methods related to asset sharing and user
 management will direct you to the corresponding <code class="docutils literal notranslate"><span class="pre">Team</span></code> methods. Other methods will continue to work
 as before.</p>
 </section>
 <section id="user-management">
-<h3><span class="section-number">6.2.2.3. </span>User Management<a class="headerlink" href="#user-management" title="Permalink to this headline"></a></h3>
+<h3><span class="section-number">7.2.2.3. </span>User Management<a class="headerlink" href="#user-management" title="Permalink to this headline"></a></h3>
 <p>Many user management actions that were previously available on projects are now only available on
 teams. Attempting to use them on a <code class="docutils literal notranslate"><span class="pre">Project</span></code> will raise an error directing you to the equivalent
 <code class="docutils literal notranslate"><span class="pre">Team</span></code> method.</p>
 </section>
 </section>
 <section id="how-does-this-change-my-code">
-<h2><span class="section-number">6.2.3. </span>How does this change my code?<a class="headerlink" href="#how-does-this-change-my-code" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">7.2.3. </span>How does this change my code?<a class="headerlink" href="#how-does-this-change-my-code" title="Permalink to this headline"></a></h2>
 <p>The main change is retrieving a <code class="docutils literal notranslate"><span class="pre">Project</span></code> from the encompassing <code class="docutils literal notranslate"><span class="pre">Team</span></code> rather than the
 <code class="docutils literal notranslate"><span class="pre">Citrine</span></code> client.</p>
 <p>Previously:</p>
@@ -200,7 +201,7 @@ the project’s parent team.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="prohibited_data_patterns.html" class="btn btn-neutral float-left" title="6.1. Prohibited Data Patterns" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="prohibited_data_patterns.html" class="btn btn-neutral float-left" title="7.1. Prohibited Data Patterns" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

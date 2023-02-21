@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.9. Data Sources &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>4.8. Data Sources &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.10. Predictor Reports" href="predictor_reports.html" />
-    <link rel="prev" title="4.8. Scores" href="scores.html" /> 
+    <link rel="next" title="4.9. Predictor Reports" href="predictor_reports.html" />
+    <link rel="prev" title="4.7. Scores" href="scores.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -46,29 +46,29 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.9. Data Sources</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#csv-data-source">4.9.1. CSV Data Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#gem-table-data-source">4.9.2. GEM Table Data Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#experiment-data-source">4.9.3. Experiment Data Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.7. Scores</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. Data Sources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#csv-data-source">4.8.1. CSV Data Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gem-table-data-source">4.8.2. GEM Table Data Source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#experiment-data-source">4.8.3. Experiment Data Source</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -86,7 +86,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html"><span class="section-number">4. </span>AI Engine</a> &raquo;</li>
-      <li><span class="section-number">4.9. </span>Data Sources</li>
+      <li><span class="section-number">4.8. </span>Data Sources</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/workflows/data_sources.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -97,11 +97,11 @@
            <div itemprop="articleBody">
              
   <section id="data-sources">
-<span id="id1"></span><h1><span class="section-number">4.9. </span>Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1><span class="section-number">4.8. </span>Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline"></a></h1>
 <p>Data sources are used by modules to pull data from outside of the AI engine.
 For example, a <a class="reference internal" href="predictors.html"><span class="doc">predictor</span></a> may need to define external training data.</p>
 <section id="csv-data-source">
-<h2><span class="section-number">4.9.1. </span>CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.8.1. </span>CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource" title="citrine.informatics.data_sources.CSVDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVDataSource</span></code></a> draws data from a CSV file stored on the data platform and annotates it by mapping each column name to a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 The file is referenced via a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>.
 Each FileLink references an explicit version of the CSV file.
@@ -250,7 +250,7 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 </div>
 </section>
 <section id="gem-table-data-source">
-<h2><span class="section-number">4.9.2. </span>GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.8.2. </span>GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline"></a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> references a GEM Table.
 As explained more in the <a class="reference internal" href="../data_extraction.html"><span class="doc">documentation</span></a>, GEM Tables provide a structured version of on-platform data.
 GEM Tables are specified by the display table uuid, version number, and optional formulation descriptor.
@@ -284,7 +284,7 @@ The last term in the column header is a suffix associated with the specific colu
 It should be omitted from the descriptor key.</p>
 </section>
 <section id="experiment-data-source">
-<h2><span class="section-number">4.9.3. </span>Experiment Data Source<a class="headerlink" href="#experiment-data-source" title="Permalink to this headline"></a></h2>
+<h2><span class="section-number">4.8.3. </span>Experiment Data Source<a class="headerlink" href="#experiment-data-source" title="Permalink to this headline"></a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.resources.experiment_datasource.html#citrine.resources.experiment_datasource.ExperimentDataSource" title="citrine.resources.experiment_datasource.ExperimentDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExperimentDataSource</span></code></a> references a snapshot of the Experiment Results in a Branch that are fit for training.
 This snapshot is created when one updates the data on a Branch and chooses to include Experiment Results in the training data via the web application.
 There is only one Experiment Data Source per Branch, though it is versioned.
@@ -313,8 +313,8 @@ The version increments everytime a new or updated Experiment Result is chosen as
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scores.html" class="btn btn-neutral float-left" title="4.8. Scores" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="predictor_reports.html" class="btn btn-neutral float-right" title="4.10. Predictor Reports" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scores.html" class="btn btn-neutral float-left" title="4.7. Scores" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="predictor_reports.html" class="btn btn-neutral float-right" title="4.9. Predictor Reports" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

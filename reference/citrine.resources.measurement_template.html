@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.measurement_template module &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>citrine.resources.measurement_template module &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,10 +44,11 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -316,7 +317,7 @@ This method will also work if data is a deserialized GEMD object.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.resources.measurement_template.MeasurementTemplate.dataset">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplate.dataset" title="Permalink to this definition"></a></dt>
-<dd><p>[ALPHA] Get the dataset of this object, if it was returned by the backend.</p>
+<dd><p>Get the dataset of this object, if it was returned by the backend.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -446,8 +447,6 @@ method.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><em>BaseEntity</em><em>]</em>) – A representation of the object (Citrine id, LinkByUID, or the object itself)</p></li>
-<li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] use a LinkByUID to specify a custom scope
-The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
@@ -457,15 +456,11 @@ Dry run is intended to be used for validation. Default: false</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.measurement_template.MeasurementTemplateCollection.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine.resources.data_concepts.ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.get" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine.resources.data_concepts.ResourceType</span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.get" title="Permalink to this definition"></a></dt>
 <dd><p>Get an element of the collection by its id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><em>BaseEntity</em><em>]</em>) – A representation of the object (Citrine id, LinkByUID, or the object itself)</p></li>
-<li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] use a LinkByUID to specify a custom scope
-The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><em>BaseEntity</em><em>]</em>) – A representation of the object (Citrine id, LinkByUID, or the object itself)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An object with specified scope and uid</p>
@@ -484,14 +479,13 @@ The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.measurement_template.MeasurementTemplateCollection.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine.resources.data_concepts.ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.list" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine.resources.data_concepts.ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.list" title="Permalink to this definition"></a></dt>
 <dd><p>Get all visible elements of the collection.</p>
 <p>The order of results should not be relied upon, but for now they are sorted by
 dataset, object type, and creation time (in that order of priority).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.</p></li>
 <li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. It is very unlikely that
 setting this parameter to something other than the default is useful.
 It exists for rare situations where the client is bandwidth constrained
@@ -506,33 +500,6 @@ or experiencing latency from large payload sizes.</p></li>
 <dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.measurement_template.MeasurementTemplateCollection.list_all">
-<span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine.resources.data_concepts.ResourceType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.list_all" title="Permalink to this definition"></a></dt>
-<dd><p>Get all objects in the collection.</p>
-<p>The order of results should not be relied upon, but for now they are sorted by
-dataset, object type, and creation time (in that order of priority).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
-<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
-Typically, this is set to a sensible default and should not be modified. Consider
-modifying this value only if you find this method is unacceptably latent.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Every object in this collection.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[ResourceType]</p>
-</dd>
-</dl>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 0.133.0: </span>This will be removed in 1.0.0. Please use list instead of list_all</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -591,7 +558,7 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.measurement_template.MeasurementTemplateCollection.poll_async_update_job">
 <span class="sig-name descname"><span class="pre">poll_async_update_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#citrine.resources.measurement_template.MeasurementTemplateCollection.poll_async_update_job" title="Permalink to this definition"></a></dt>
-<dd><p>[ALPHA] Poll for the result of the async_update call.</p>
+<dd><p>Poll for the result of the async_update call.</p>
 <p>This call will poll the backend given the Job ID that came from a call to
 <code class="xref py py-func docutils literal notranslate"><span class="pre">async_update()</span></code>,
 waiting for the eventual job result. In the case of successful validation/update,

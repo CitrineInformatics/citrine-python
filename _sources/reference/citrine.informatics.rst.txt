@@ -31,7 +31,6 @@ Submodules
    citrine.informatics.predictor_evaluation_metrics
    citrine.informatics.predictor_evaluation_result
    citrine.informatics.predictor_evaluator
-   citrine.informatics.processors
    citrine.informatics.reports
    citrine.informatics.scores
 

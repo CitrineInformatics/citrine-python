@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 1.58.1 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.58.1
+                2.0.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -47,7 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
@@ -70,17 +70,17 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.7. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
 </ul>
 
         </div>
@@ -779,7 +779,7 @@ For analogous behavior use the build_simple_ml method to construct a Graph Predi
 Use the convert_and_update (<a class="reference external" href="https://github.com/CitrineInformatics/citrine-python/blob/main/src/citrine/resources/predictor.py#L193">source</a>).
 method to convert existing Simple ML Predictors to Graph Predictors.</p>
 </div>
-<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code> predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.
 Outputs are the properties that you would like the model to predict.
@@ -789,7 +789,7 @@ If defined, latent variables are used to build hierarchical models.
 One model is trained from inputs to latent variables, and another is trained from inputs and latent variables to outputs.
 Thus, all inputs and latent variables are used to predict outputs.</p>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
-<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
+<p>The following example demonstrates how to use the python SDK to create a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code>, register the predictor to a project and wait for validation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
 <span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_or_create_project</span><span class="p">,</span>
                                             <span class="n">create_or_update</span>
@@ -831,9 +831,9 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
                                  <span class="p">)</span>
 </pre></div>
 </div>
-<p>Often, a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> will include outputs from other predictors as inputs to its model.
+<p>Often, a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code> will include outputs from other predictors as inputs to its model.
 Instead of entering these manually, outputs from a predictor can be retrieved programmatically using <code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">project.descriptors.from_predictor_responses(predictor,</span> <span class="pre">inputs)</span></code>, where <code class="docutils literal notranslate"><span class="pre">outputs</span></code> is the list of descriptors returned by the <code class="docutils literal notranslate"><span class="pre">predictor</span></code> given a list of descriptors as <code class="docutils literal notranslate"><span class="pre">inputs</span></code>.</p>
-<p>The following demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> and use its outputs as inputs to a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>.</p>
+<p>The following demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> and use its outputs as inputs to a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
 <span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_project</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
