@@ -139,6 +139,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             raise e
 
     def filter_by_id(self, id_search_string) -> Iterator[DataObject]:
+        """FIXME docstring."""
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"

@@ -607,11 +607,13 @@ class Project(Resource['Project']):
                                         timeout=timeout, polling_delay=polling_delay)
 
     def filter_by_id(self, id_search_string: str) -> Iterator[DataObject]:
+        """FIXME docstring."""
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"
         )
         return (self.build(raw) for raw in raw_objects)
+
 
 class ProjectCollection(Collection[Project]):
     """
