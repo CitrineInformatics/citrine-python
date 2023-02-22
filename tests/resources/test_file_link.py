@@ -330,7 +330,8 @@ def test_list_file_links(collection: FileCollection, session, valid_data):
         method='GET',
         path=collection._get_path(),
         params={
-            'per_page': 15
+            'per_page': 15,
+            'page': 1
         }
     )
     assert expected_call == session.last_call
@@ -340,22 +341,6 @@ def test_list_file_links(collection: FileCollection, session, valid_data):
     )
     expected_file = FileLinkDataFactory(url=expected_url, filename=filename)
     assert files[0].dump() == FileLink.build(expected_file).dump()
-
-    # And test paging for coverage's sake
-    listed_data = {
-        'id': file_id,
-        'version': version,
-        'filename': filename,
-    }
-    listed_data["unversioned_url"] = f"http://test.domain.net:8002/api/v1/files/{listed_data['id']}"
-    listed_data["versioned_url"] = f"http://test.domain.net:8002/api/v1/files/" \
-                                   f"{listed_data['id']}/versions/{listed_data['version']}"
-    session.set_response({
-        'files': [listed_data]
-    })
-    with pytest.warns(DeprecationWarning):
-        files_iterator = collection.list(page=1, per_page=15)
-        assert FileLink.build(collection._as_dict_from_resource(listed_data)) in [file for file in files_iterator]
 
 
 def test_file_download(collection: FileCollection, session, tmpdir):

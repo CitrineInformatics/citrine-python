@@ -143,7 +143,7 @@ def test_list_teams(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/teams', params={'per_page': 100})
+    expected_call = FakeCall(method='GET', path='/teams', params={'per_page': 100, 'page': 1})
     assert expected_call == session.last_call
     assert 5 == len(teams)
 

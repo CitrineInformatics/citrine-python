@@ -4,7 +4,6 @@ from typing import TypeVar, Union
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.exceptions import CitrineException
 from citrine.informatics.modules import Module
 
@@ -47,44 +46,36 @@ class AbstractModuleCollection(Collection[ModuleType]):
         msg = "Modules cannot be deleted at this time. Use 'archive' instead."
         raise NotImplementedError(msg)
 
-    def archive(self, uid: Union[UUID, str] = None,
-                module_id: Union[UUID, str] = None) -> ModuleType:
+    def archive(self, uid: Union[UUID, str]) -> ModuleType:
         """Archiving a module removes it from view, but is not a hard delete.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the module to archive
-        module_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", module_id, "module_id")
         try:
             module = self.get(uid)
         except CitrineException:
-            raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
+            raise RuntimeError(f"{self._module_type} with id {uid} was not found, "
                                f"and hence cannot be archived.")
         module.archived = True
         return self.update(module)
 
-    def restore(self, uid: Union[UUID, str] = None,
-                module_id: Union[UUID, str] = None) -> ModuleType:
+    def restore(self, uid: Union[UUID, str]) -> ModuleType:
         """Restore an archived module.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the module to restore
-        module_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", module_id, "module_id")
         try:
             module = self.get(uid)
         except CitrineException:
-            raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
+            raise RuntimeError(f"{self._module_type} with id {uid} was not found, "
                                f"and hence cannot be restored.")
         module.archived = False
         return self.update(module)

@@ -10,7 +10,7 @@ __all__ = ['IngredientsToFormulationPredictor']
 
 class IngredientsToFormulationPredictor(
         VersionedEngineResource['IngredientsToFormulationPredictor'], Predictor):
-    """[ALPHA] A predictor interface that constructs a formulation from ingredient quantities.
+    """A predictor interface that constructs a formulation from ingredient quantities.
 
     Parameters
     ----------

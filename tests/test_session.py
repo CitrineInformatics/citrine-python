@@ -27,7 +27,7 @@ def refresh_token(expiration: datetime = None) -> dict:
         payload={'exp': expiration.timestamp()},
         key='garbage'
     )
-    return {'access_token': token.decode('utf-8')}
+    return {'access_token': token}
 
 
 @pytest.fixture
@@ -70,27 +70,13 @@ def test_session_signature(monkeypatch):
         m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Session().refresh_token
-        assert patched_key == Session(patched_key).refresh_token
+        assert patched_key == Session(refresh_token=patched_key).refresh_token
         monkeypatch.delenv("CITRINE_API_KEY")
         assert Session().refresh_token is None
 
     monkeypatch.delenv("CITRINE_API_HOST")
     with pytest.raises(ValueError):
         Session()
-
-
-def test_deprecated_positional():
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
-    with requests_mock.Mocker() as m:
-        m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
-
-        with pytest.warns(DeprecationWarning):
-            assert '1234' == Session('1234', 'ftp', 'citrine-testing.fake', "8080").refresh_token
-
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            Session('1234', 'ftp', scheme='ftp')
 
 
 def test_get_refreshes_token(session: Session):

@@ -114,7 +114,7 @@ def test_branch_list(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'per_page': 20})
+    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'page': 1, 'per_page': 20})
     assert len(branches) == branch_count
 
 
@@ -211,7 +211,7 @@ def test_branch_list_archived(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20})
+    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20, 'page': 1})
 
 
 # Needed for coverage checks
@@ -383,7 +383,7 @@ def test_experiment_datasource(session, collection):
     # When / Then
     assert branch.experiment_datasource is not None
     assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100})
+        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100, 'page': 1})
     ]
 
 
@@ -396,7 +396,7 @@ def test_no_experiment_datasource(session, collection):
     # When / Then
     assert branch.experiment_datasource is None
     assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100})
+        FakeCall(method='GET', path=erds_path, params={'branch': branch.uid, 'version': 'latest', 'per_page': 100, 'page': 1})
     ]
 
 

@@ -2,7 +2,6 @@
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 from uuid import uuid4
-from deprecation import deprecated
 
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
@@ -31,56 +30,6 @@ DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
 
 class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
-
-    @deprecated(deprecated_in="0.130.0", removed_in="2.0.0",
-                details="For performance reasons, please use list_by_attribute_bounds instead")
-    def filter_by_attribute_bounds(
-            self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
-            page: Optional[int] = None, per_page: Optional[int] = None) -> List[DataObject]:
-        """
-        Get all objects in the collection with attributes within certain bounds.
-
-        Currently only one attribute and one bounds on that attribute is supported.
-
-        Parameters
-        ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
-        :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
-            A dictionary from attributes to the bounds on that attribute.
-            Currently only real and integer bounds are supported.
-            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
-            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
-            but in either case there must be a uid and it must correspond to an
-            AttributeTemplate that exists in the database.
-            Only the uid is passed, so if you would like to update an attribute template you
-            must register that change to the database before you can use it to filter.
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e., the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[DataObject]
-            List of all objects in this collection that both have the specified attribute
-            and have values within the specified bounds.
-
-        """
-        body = self._get_attribute_bounds_search_body(attribute_bounds)
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        response = self.session.post_resource(
-            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body, params=params)
-        return [self.build(content) for content in response["contents"]]
 
     def list_by_attribute_bounds(
             self,

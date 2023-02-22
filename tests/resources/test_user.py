@@ -91,7 +91,7 @@ def test_list_users(collection, session):
     expected_call = FakeCall(
         method='GET',
         path='/users',
-        params={'per_page': 100}
+        params={'per_page': 100, 'page': 1}
     )
 
     assert expected_call == session.last_call

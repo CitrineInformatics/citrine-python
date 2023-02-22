@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 
 
 class JobSubmissionResponse(Resource['AraJobStatus']):
-    """[ALPHA] a response to a submit-job request for the job submission framework.
+    """A response to a submit-job request for the job submission framework.
 
     This is returned as a successful response from the remote service.
     """
@@ -28,7 +28,7 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
 
 
 class TaskNode(Resource['TaskNode']):
-    """[ALPHA] individual task status.
+    """Individual task status.
 
     The TaskNode describes a component of an overall job.
     """
@@ -50,7 +50,7 @@ class TaskNode(Resource['TaskNode']):
 
 
 class JobStatusResponse(Resource['JobStatusResponse']):
-    """[ALPHA] a response to a job status check.
+    """A response to a job status check.
 
     The JobStatusResponse summarizes the status for the entire job.
     """

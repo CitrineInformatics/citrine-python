@@ -17,7 +17,6 @@ def valid_data():
         status_info=['Things are looking good'],
         archived=False,
         design_space_id=str(uuid4()),
-        processor_id=str(uuid4()),
         predictor_id=str(uuid4()),
         created_by=str(uuid4()),
         create_time=datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T")
@@ -34,23 +33,7 @@ def test_simple_deserialization(valid_data):
     """Ensure a deserialized DesignWorkflow looks sane."""
     workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
     assert workflow.design_space_id == UUID(valid_data['design_space_id'])
-    assert workflow.processor_id == UUID(valid_data['processor_id'])
     assert workflow.predictor_id == UUID(valid_data['predictor_id'])
-
-
-def test_roundtrip_without_processor(valid_data, valid_serialization_output):
-    """Ensure a deserialized DesignWorkflow without a processor looks sane."""
-    valid_data['processor_id'] = None
-    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
-    assert workflow.design_space_id == UUID(valid_data['design_space_id'])
-    assert workflow.processor_id is None
-    assert workflow.predictor_id == UUID(valid_data['predictor_id'])
-    serialized = workflow.dump()
-    serialized['id'] = valid_data['id']
-    valid_serialization_output['processor_id'] = None
-    # we can have extra fields to support forward/backward compatibility
-    for k in valid_serialization_output:
-        assert serialized[k] == valid_serialization_output[k]
 
 
 def test_deserialization_missing_created_by(valid_data):

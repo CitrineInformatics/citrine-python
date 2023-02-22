@@ -1,9 +1,7 @@
 """Variable definitions for GEM Tables."""
 from abc import abstractmethod
-from typing import Type, Optional, List, Union
+from typing import Type, Optional, List, Union, Tuple
 from uuid import UUID
-
-from deprecation import deprecated
 
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
@@ -19,7 +17,7 @@ from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 
 
 class IngredientQuantityDimension(BaseEnumeration):
-    """[ALPHA] The dimension of an ingredient quantity.
+    """The dimension of an ingredient quantity.
 
     * ABSOLUTE corresponds to the absolute quantity
     * MASS corresponds to the mass fraction
@@ -34,7 +32,7 @@ class IngredientQuantityDimension(BaseEnumeration):
 
 
 class DataObjectTypeSelector(BaseEnumeration):
-    """[ALPHA] The strategy for selecting types to consider for variable matching.
+    """The strategy for selecting types to consider for variable matching.
 
     Variables can potentially match many objects in a material history, creating
     ambiguity around which value should be assigned. In particular, associated
@@ -57,7 +55,7 @@ class DataObjectTypeSelector(BaseEnumeration):
 
 
 class Variable(PolymorphicSerializable['Variable']):
-    """[ALPHA] A variable that can be assigned values present in material histories.
+    """A variable that can be assigned values present in material histories.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -78,9 +76,9 @@ class Variable(PolymorphicSerializable['Variable']):
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
             TerminalMaterialInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
-            AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
-            IngredientLabelByProcessAndName, IngredientLabelsSetByProcessAndName,
-            IngredientQuantityByProcessAndName,
+            AttributeByTemplateAndObjectTemplate, LocalAttribute,
+            IngredientIdentifierByProcessTemplateAndName, IngredientLabelByProcessAndName,
+            IngredientLabelsSetByProcessAndName, IngredientQuantityByProcessAndName,
             TerminalMaterialIdentifier, AttributeInOutput,
             IngredientIdentifierInOutput, IngredientLabelsSetInOutput, IngredientQuantityInOutput,
             LocalIngredientIdentifier, LocalIngredientLabelsSet, LocalIngredientQuantity,
@@ -94,7 +92,7 @@ class Variable(PolymorphicSerializable['Variable']):
 
 
 class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
-    """[ALPHA] Metadata from the terminal material of the material history.
+    """Metadata from the terminal material of the material history.
 
     Parameters
     ----------
@@ -125,15 +123,8 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
         self.field = field
 
 
-@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
-            details="RootInfo is deprecated in favor of TerminalMaterialInfo")
-def RootInfo(name: str, *, headers: List[str], field: str) -> TerminalMaterialInfo:
-    """[DEPRECATED] Use TerminalMaterialInfo instead."""
-    return TerminalMaterialInfo(name=name, headers=headers, field=field)
-
-
 class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
-    """[ALPHA] Attribute marked by an attribute template.
+    """Attribute marked by an attribute template.
 
     Parameters
     ----------
@@ -143,7 +134,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         sequence of column headers
     template: Union[UUID, str, LinkByUID, AttributeTemplate]
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: list[list[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -166,7 +157,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    constraint_type = Union[attribute_type, BaseBounds]
+    constraint_type = Tuple[attribute_type, BaseBounds]
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "template", "attribute_constraints", "type_selector", "typ"]
@@ -176,7 +167,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
                  *,
                  headers: List[str],
                  template: attribute_type,
-                 attribute_constraints: Optional[List[List[constraint_type]]] = None,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -188,7 +179,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 class AttributeByTemplateAfterProcessTemplate(
         Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
-    """[ALPHA] Attribute of an object marked by an attribute template and a parent process template.
+    """Attribute of an object marked by an attribute template and a parent process template.
 
     Parameters
     ---------
@@ -200,7 +191,7 @@ class AttributeByTemplateAfterProcessTemplate(
         attribute template that identifies the attribute to assign to the variable
     process_template: Union[UUID, str, LinkByUID, ProcessTemplate]
         process template that identifies the originating process
-    attribute_constraints: list[list[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -225,7 +216,7 @@ class AttributeByTemplateAfterProcessTemplate(
 
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-    constraint_type = Union[attribute_type, BaseBounds]
+    constraint_type = Tuple[attribute_type, BaseBounds]
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "attribute_template", "process_template",
@@ -237,7 +228,7 @@ class AttributeByTemplateAfterProcessTemplate(
                  headers: List[str],
                  attribute_template: attribute_type,
                  process_template: process_type,
-                 attribute_constraints: Optional[List[List[constraint_type]]] = None,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -250,7 +241,7 @@ class AttributeByTemplateAfterProcessTemplate(
 
 class AttributeByTemplateAndObjectTemplate(
         Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
-    """[ALPHA] Attribute marked by an attribute template and an object template.
+    """Attribute marked by an attribute template and an object template.
 
     For example, one property may be measured by two different measurement techniques.  In this
     case, that property would have the same attribute template.  Filtering by measurement
@@ -267,7 +258,7 @@ class AttributeByTemplateAndObjectTemplate(
         attribute template that identifies the attribute to assign to the variable
     object_template: Union[UUID, str, LinkByUID, BaseTemplate]
         template that identifies the associated object
-    attribute_constraints: list[list[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -292,7 +283,7 @@ class AttributeByTemplateAndObjectTemplate(
 
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     object_type = Union[UUID, str, LinkByUID, BaseTemplate]
-    constraint_type = Union[attribute_type, BaseBounds]
+    constraint_type = Tuple[attribute_type, BaseBounds]
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "attribute_template", "object_template",
@@ -304,7 +295,7 @@ class AttributeByTemplateAndObjectTemplate(
                  headers: List[str],
                  attribute_template: attribute_type,
                  object_template: object_type,
-                 attribute_constraints: Optional[List[List[constraint_type]]] = None,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -315,9 +306,63 @@ class AttributeByTemplateAndObjectTemplate(
         self.type_selector = type_selector
 
 
+class LocalAttribute(Serializable['LocalAttribute'], Variable):
+    """[ALPHA] Attribute marked by an attribute template for the root of a material history tree.
+
+    Parameters
+    ----------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    template: Union[UUID, str, LinkByUID, AttributeTemplate]
+        attribute template that identifies the attribute to assign to the variable
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+        Optional
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
+        variable is being set to may be the target of a constraint as well.
+    type_selector: DataObjectTypeSelector
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    template = properties.Object(LinkByUID, 'template')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
+        ), 'attribute_constraints')
+    type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
+    typ = properties.String('type', default="local_attribute", deserializable=False)
+
+    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
+    constraint_type = Tuple[attribute_type, BaseBounds]
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "template", "attribute_constraints", "type_selector", "typ"]
+
+    def __init__(self,
+                 name: str,
+                 *,
+                 headers: List[str],
+                 template: attribute_type,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
+        self.name = name
+        self.headers = headers
+        self.template = _make_link_by_uid(template)
+        self.attribute_constraints = None if attribute_constraints is None \
+            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
+        self.type_selector = type_selector
+
+
 class IngredientIdentifierByProcessTemplateAndName(
         Serializable['IngredientIdentifierByProcessAndName'], Variable):
-    """[ALPHA] Ingredient identifier associated with a process template and a name.
+    """Ingredient identifier associated with a process template and a name.
 
     Parameters
     ---------
@@ -367,7 +412,7 @@ class IngredientIdentifierByProcessTemplateAndName(
 
 
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
-    """[ALPHA] A boolean variable indicating whether a given label is applied.
+    """A boolean variable indicating whether a given label is applied.
 
     Matches by process template, ingredient name, and the label string to check.
 
@@ -425,7 +470,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 class IngredientLabelsSetByProcessAndName(
         Serializable['IngredientLabelsSetByProcessAndName'],
         Variable):
-    """[ALPHA] The set of labels on an ingredient when used in a process.
+    """The set of labels on an ingredient when used in a process.
 
     For example, the ingredient "ethanol" might be labeled "solvent", "alcohol" and "VOC".
     The column would then contain that set of strings.
@@ -470,7 +515,7 @@ class IngredientLabelsSetByProcessAndName(
 
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
-    """[ALPHA] The quantity of an ingredient associated with a process template and a name.
+    """The quantity of an ingredient associated with a process template and a name.
 
     Parameters
     ---------
@@ -541,7 +586,7 @@ class IngredientQuantityByProcessAndName(
 
 
 class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Variable):
-    """[ALPHA] A unique identifier of the terminal material of the material history, by scope.
+    """A unique identifier of the terminal material of the material history, by scope.
 
     Parameters
     ---------
@@ -572,17 +617,8 @@ class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Var
         self.scope = scope
 
 
-@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
-            details="RootIdentifier is deprecated in favor of TerminalMaterialIdentifier")
-def RootIdentifier(name: str, *,
-                   headers: List[str],
-                   scope: str = CITRINE_SCOPE) -> TerminalMaterialIdentifier:
-    """[DEPRECATED] Use TerminalMaterialIdentifier instead."""
-    return TerminalMaterialIdentifier(name=name, headers=headers, scope=scope)
-
-
 class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
-    """[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.
+    """Attribute marked by an attribute template in the trunk of the history tree.
 
     The search for an attribute that marks the given attribute template starts at the terminal
     of the material history tree and proceeds until any of the given process templates are reached.
@@ -614,7 +650,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     process_templates: list[LinkByUID]
         process templates that should not be traversed through when searching for a matching
         attribute.  The attribute may be present in these processes but not their ingredients.
-    attribute_constraints: list[list[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -639,7 +675,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-    constraint_type = Union[attribute_type, BaseBounds]
+    constraint_type = Tuple[attribute_type, BaseBounds]
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "attribute_template", "process_templates",
@@ -651,7 +687,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
                  headers: List[str],
                  attribute_template: attribute_type,
                  process_templates: List[process_type],
-                 attribute_constraints: Optional[List[List[constraint_type]]] = None,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -663,7 +699,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 
 
 class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
-    """[ALPHA] Ingredient identifier in the trunk of a material history tree.
+    """Ingredient identifier in the trunk of a material history tree.
 
     The search for an ingredient starts at the terminal of the material history tree and
     proceeds until any of the given process templates are reached. Those templates block the search
@@ -738,7 +774,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 
 
 class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], Variable):
-    """[ALPHA] The set of labels on an ingredient in the trunk of a material history tree.
+    """The set of labels on an ingredient in the trunk of a material history tree.
 
     The search for an ingredient starts at the terminal of the material history tree and proceeds
     until any of the given process templates are reached. Those templates block the search from
@@ -803,7 +839,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 
 
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
-    """[ALPHA] Ingredient quantity in the trunk of a material history tree.
+    """Ingredient quantity in the trunk of a material history tree.
 
     The search for an ingredient starts at the terminal of the material history tree and proceeds
     until any of the given process templates are reached. Those templates block the search from
@@ -905,7 +941,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
 
 
 class LocalIngredientIdentifier(Serializable['LocalIngredientIdentifier'], Variable):
-    """[ALPHA] Ingredient identifier for the root process of a material history tree.
+    """Ingredient identifier for the root process of a material history tree.
 
     Get ingredient identifier by name. Stop traversal when encountering any ingredient.
     This class exists because we began seeing a common pattern of using
@@ -955,7 +991,7 @@ class LocalIngredientIdentifier(Serializable['LocalIngredientIdentifier'], Varia
 
 
 class LocalIngredientLabelsSet(Serializable['LocalIngredientLabelsSet'], Variable):
-    """[ALPHA] The set of labels on an ingredient for the root process of a material history tree.
+    """The set of labels on an ingredient for the root process of a material history tree.
 
     Define a variable contains the set of labels that is present on the ingredient
 
@@ -995,7 +1031,7 @@ class LocalIngredientLabelsSet(Serializable['LocalIngredientLabelsSet'], Variabl
 
 
 class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable):
-    """[ALPHA] The quantity of an ingredient for the root process of a material history tree.
+    """The quantity of an ingredient for the root process of a material history tree.
 
     Get ingredient quantity by name. Stop traversal when encountering any ingredient.
     This class exists because we began seeing a common pattern of using
@@ -1064,7 +1100,7 @@ class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable)
 
 
 class XOR(Serializable['XOR'], Variable):
-    """[ALPHA] Logical exclusive OR for GEM table variables.
+    """Logical exclusive OR for GEM table variables.
 
     This variable combines the results of 2 or more variables into a single variable according to
     exclusive OR logic. XOR is defined when exactly one of its inputs is defined. Otherwise it is

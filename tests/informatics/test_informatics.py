@@ -5,9 +5,7 @@ from citrine.informatics.constraints import ScalarRangeConstraint, AcceptableCat
     IngredientCountConstraint, IngredientFractionConstraint, LabelFractionConstraint
 from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace, FormulationDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
-from citrine.informatics.processors import GridProcessor, EnumeratedProcessor
 from citrine.informatics.scores import LIScore, EIScore, EVScore
-from citrine.informatics.reports import ModelSummary, FeatureImportanceReport
 
 informatics_string_data = [
     (IngredientCountConstraint(
@@ -41,8 +39,6 @@ informatics_string_data = [
     ), "<FormulationDesignSpace 'formulation'>"),
     (ScalarMaxObjective('z'), "<ScalarMaxObjective 'z'>"),
     (ScalarMinObjective('z'), "<ScalarMinObjective 'z'>"),
-    (GridProcessor('my thing', description='does a thing', grid_sizes=dict(x=1)), "<GridProcessor 'my thing'>"),
-    (EnumeratedProcessor('my enumerated thing', description='enumerates', max_candidates=10), "<EnumeratedProcessor 'my enumerated thing'>"),
     (LIScore(objectives=[], baselines=[]), "<LIScore>"),
     (EIScore(objectives=[], baselines=[], constraints=[]), "<EIScore>"),
     (EVScore(objectives=[], constraints=[]), "<EVScore>"),

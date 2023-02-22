@@ -22,7 +22,7 @@ setup(name='citrine',
       packages=find_packages(where='src'),
       install_requires=[
           "requests>=2.25.1,<3",
-          "pyjwt>=1.7.1,<2",
+          "pyjwt>=2,<3",
           "arrow>=0.15.4,<0.16",
           "gemd>=1.9.0,<2",
           "boto3>=1.17.93,<2",
@@ -36,11 +36,11 @@ setup(name='citrine',
               "pandas>=1.1.5,<2"
           ],
           "../tests": [
-              "factory-boy>=2.12.0,<3"
+              "factory-boy>=2.12.0,<3",
               "mock>=3.0.5,<4",
               "pandas>=1.1.5,<2",
               "pytest>=6.2.5,<7",
-              "pytz>=2019.3"
+              "pytz>=2019.3",
               "requests-mock>=1.7.0,<2",
           ]
       },

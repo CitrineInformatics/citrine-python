@@ -77,10 +77,6 @@ def test_make_link_by_uid():
     no_citrine_id = ProcessSpec("spec", uids={"custom scope": "custom id"})
     assert _make_link_by_uid(no_citrine_id) == LinkByUID(scope="custom scope", id="custom id")
 
-    # If the scope argument is specified, throw a warning but respect the argument
-    with pytest.warns(DeprecationWarning):
-        assert _make_link_by_uid(uid, scope="my scope") == LinkByUID(scope="my scope", id=str(uid))
-
     with pytest.raises(ValueError):
         _make_link_by_uid(ProcessSpec("spec"))  # no ids
     with pytest.raises(TypeError):

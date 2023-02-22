@@ -208,32 +208,10 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
 
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
-            params={'per_page': 20, 'module_type': "DESIGN_SPACE"})
+            params={'per_page': 20, 'module_type': "DESIGN_SPACE", 'page': 1})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(design_spaces) == 2
-
-
-def test_experimental_deprecated(valid_formulation_design_space_data):
-    # Given
-    session = FakeSession()
-    response = deepcopy(valid_formulation_design_space_data)
-    response["experimental"] = True
-    response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
-
-    session.set_response(response)
-
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    design_space = DesignSpace.build(valid_formulation_design_space_data)
-
-    # When
-    registered = dsc.register(design_space)
-
-    # Then
-    with pytest.deprecated_call():
-        assert registered.experimental is False
-    with pytest.deprecated_call():
-        assert registered.experimental_reasons == []
 
 
 def test_archive(valid_formulation_design_space_data):

@@ -94,19 +94,17 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         """Return the resource type in the collection."""
         return MeasurementSpec
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate], *,
-                         scope: Optional[str] = None) -> Iterator[MeasurementSpec]:
+    def list_by_template(self,
+                         uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
+                         ) -> Iterator[MeasurementSpec]:
         """
-        [ALPHA] Get the measurement specs using the specified measurement template.
+        Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
             A representation of of the measurement template whose measurement spec usages are
             to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -114,5 +112,5 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
             The measurement specs using the specified measurement template.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation('measurement-templates', uid=link)

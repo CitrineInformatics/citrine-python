@@ -5,7 +5,6 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
-from warnings import warn
 
 import jwt
 import requests
@@ -24,7 +23,7 @@ from citrine.exceptions import (
     UnauthorizedRefreshToken,
     WorkflowNotReadyException)
 
-# Choose a 5 second buffer so that there's no chance of the access token
+# Choose a 5-second buffer so that there's no chance of the access token
 # expiring during the check for expiration
 EXPIRATION_BUFFER_MILLIS: timedelta = timedelta(milliseconds=5000)
 logger = getLogger(__name__)
@@ -35,23 +34,14 @@ class Session(requests.Session):
 
     def __init__(self,
                  refresh_token: str = None,
-                 legacy_scheme: Optional[str] = None,
-                 host: str = None,
-                 port: Optional[str] = None,
                  *,
-                 scheme: str = None):
+                 scheme: str = None,
+                 host: str = None,
+                 port: Optional[str] = None):
         super().__init__()
         if refresh_token is None:
             refresh_token = environ.get('CITRINE_API_KEY')
-        if legacy_scheme is not None:
-            warn("Creating a session with positional arguments other than refresh_token "
-                 "is deprecated; use keyword arguments to specify scheme, host and port.",
-                 DeprecationWarning)
-            if scheme is None:
-                scheme = legacy_scheme
-            else:
-                raise ValueError("Specify legacy_scheme or scheme, not both.")
-        elif scheme is None:
+        if scheme is None:
             scheme = 'https'
         if host is None:
             host = environ.get('CITRINE_API_HOST')
@@ -131,7 +121,9 @@ class Session(requests.Session):
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
         self.access_token_expiration = datetime.utcfromtimestamp(
-            jwt.decode(self.access_token, verify=False)['exp']
+            jwt.decode(self.access_token,
+                       options={"verify_signature": False},
+                       algorithms=["HS256"])['exp']
         )
 
         # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.

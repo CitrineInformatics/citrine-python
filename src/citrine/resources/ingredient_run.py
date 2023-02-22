@@ -118,18 +118,15 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return IngredientRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec], *,
-                     scope: Optional[str] = None) -> Iterator[IngredientRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+                     ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get the ingredient runs using the specified ingredient spec.
+        Get the ingredient runs using the specified ingredient spec.
 
         Parameters
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
             A representation of the ingredient spec whose ingredient run usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -137,22 +134,19 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredient runs using the specified ingredient spec.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='ingredient-specs', uid=link)
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun], *,
-                        scope: Optional[str] = None) -> Iterator[IngredientRun]:
+                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+                        ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get ingredients to a process.
+        Get ingredients to a process.
 
         Parameters
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
             A representation of the process whose ingredients are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -160,22 +154,19 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredients to the specified process.
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='process-runs', uid=link)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
-                         scope: Optional[str] = None) -> Iterator[IngredientRun]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+                         ) -> Iterator[IngredientRun]:
         """
-        [ALPHA] Get ingredients using the specified material.
+        Get ingredients using the specified material.
 
         Parameters
         ----------
         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
             A representation of the material whose ingredient run usages are to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
 
         Returns
         -------
@@ -183,5 +174,5 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredients using the specified material
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         return self._get_relation(relation='material-runs', uid=link)

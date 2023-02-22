@@ -1,11 +1,10 @@
-import warnings
 from copy import deepcopy
 from typing import Callable, Union, Iterable, Optional, Tuple
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
@@ -30,8 +29,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         Upload a new design workflow.
 
         The model's branch ID is ignored in favor of this collection's. If this
-        collection has a null branch ID, then the model is uploaded to the v1
-        endpoint and retrieved separately, to ensure all details are included.
+        collection has a null branch ID, then a branch is first created, then
+        the design workflow is created on it.
 
         Parameters
         ----------
@@ -45,26 +44,12 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_id is None:
-            # Prior to the introduction of branches, partial design workflows were not supported
-            # at all. As such, their use without a branch continues to be an error.
-            if model.predictor_id is None or model.design_space_id is None:
-                raise ValueError("A design workflow without a predictor ID and/or a design space "
-                                 "ID must be registered to a specific branch.")
-
             # There are a number of contexts in which hitting design workflow endpoints without a
             # branch ID is valid, so only this particular usage is deprecated.
-            msg = ('Creating a design workflow without a branch is deprecated as of 1.19.0 and '
-                   'will be removed in 2.0.0. Branches are a concept introduced in the CP2 '
-                   'version of the Citrine Platform. To learn more, see our documentation at '
-                   'https://citrineinformatics.github.io/citrine-python/workflows/design_workflows.html#branches')  # noqa
-            warnings.warn(msg, category=DeprecationWarning)
-
-            # To create a design workflow without providing a branch ID, we need to hit the v1
-            # API, then do a GET to grab the ID of the branch that was created automatically.
-            v1 = _DesignWorkflowCollectionV1(self.project_id, self.session)
-            # Passing in the subclass instance as self avoids infinite recursion.
-            created_dw = super(DesignWorkflowCollection, v1).register(model)
-            return super().get(created_dw.uid)
+            msg = ('A design workflow must be created with a branch. Please use'
+                   'branch.design_workflows.register() instead of '
+                   'project.design_workflows.register().')
+            raise RuntimeError(msg)
         else:
             # branch_id is in the body of design workflow endpoints, so it must be serialized.
             # This means the collection branch_id might not match the workflow branch_id. The
@@ -123,43 +108,35 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             raise ValueError('Cannot update a design workflow unless its branch_id is set.')
 
         # If executions have already been done, warn about future behavior change
-        executions = model.design_executions.list(per_page=1)
+        executions = model.design_executions.list()
         if next(executions, None) is not None:
-            warnings.warn("Updating a design workflow after candidate generation is "
-                          "deprecated, please create a new DesignWorkflow instead "
-                          "(e.g. branch.design_workflows.register())",
-                          DeprecationWarning)
+            raise RuntimeError("Cannot update a design workflow after candidate generation, "
+                               "please register a new design workflow instead")
 
         return super().update(model)
 
-    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def archive(self, uid: Union[UUID, str]):
         """Archive a design workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to archive
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         url = format_escaped_url(self._path_template, project_id=self.project_id) \
             + format_escaped_url("/{}/archive", uid)
         self.session.put_resource(url, {}, version=self._api_version)
 
-    def restore(self, uid: Union[UUID, str] = None, workflow_id: [UUID, str] = None):
+    def restore(self, uid: Union[UUID, str]):
         """Restore an archived design workflow.
 
         Parameters
         ----------
         uid: Union[UUID, str]
             Unique identifier of the workflow to restore
-        workflow_id: Union[UUID, str]
-            [DEPRECATED] please use uid instead
 
         """
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         url = format_escaped_url(self._path_template, project_id=self.project_id) \
             + format_escaped_url("/{}/restore", uid)
         self.session.put_resource(url, {}, version=self._api_version)
@@ -169,15 +146,11 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
 
-    def list_archived(self,
-                      *,
-                      page: Optional[int] = None,
-                      per_page: int = 500) -> Iterable[DesignWorkflow]:
+    def list_archived(self, *, per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def _fetch_page(self,
@@ -196,9 +169,3 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                                    per_page=per_page,
                                    json_body=json_body,
                                    additional_params=params)
-
-
-class _DesignWorkflowCollectionV1(DesignWorkflowCollection):
-    """A small proxy class to direct all calls to the v1 endpoints."""
-
-    _api_version = "v1"

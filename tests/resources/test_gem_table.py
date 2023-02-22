@@ -266,21 +266,6 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         assert mock_write_files_locally.call_args == call(b'stuff', "table4.pdf")
 
 
-@patch("citrine.resources.gemtables.write_file_locally")
-def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
-    with requests_mock.mock() as mock_get:
-        # Given
-        remote_url = "http://otherhost:4566/anywhere"
-        retrieved_table = table(remote_url)
-        session.set_response(retrieved_table.dump())
-        mock_get.get(remote_url, text='stuff')
-        with pytest.warns(DeprecationWarning):
-            collection.read(table=(retrieved_table.uid, retrieved_table.version), local_path="table4.csv")
-        assert mock_get.call_count == 1
-        assert mock_write_files_locally.call_count == 1
-        assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")
-
-
 def test_read_table_into_memory_from_collection(table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
