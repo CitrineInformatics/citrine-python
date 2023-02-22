@@ -14,7 +14,7 @@ def valid_data():
         description='All about my workflow',
         status='SUCCEEDED',
         status_description='READY',
-        status_info=['Things are looking good'],
+        status_detail=[{'level': 'Info', 'msg': 'Things are looking good'}],
         archived=False,
         design_space_id=str(uuid4()),
         predictor_id=str(uuid4()),
@@ -26,7 +26,7 @@ def valid_data():
 @pytest.fixture
 def valid_serialization_output(valid_data):
     return {x: y for x, y in valid_data.items() if x not in
-            ['status', 'status_info', 'status_description', 'created_by', 'create_time']}
+            ['status', 'status_detail', 'status_description', 'created_by', 'create_time']}
 
 
 def test_simple_deserialization(valid_data):

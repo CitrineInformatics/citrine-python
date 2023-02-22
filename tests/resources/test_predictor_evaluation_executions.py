@@ -60,6 +60,9 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
     assert execution.workflow_id == collection.workflow_id
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
+    assert execution.status_detail
+    with pytest.deprecated_call():
+        assert execution.status_info == [detail.msg for detail in execution.status_detail]
 
 
 def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecution, session,

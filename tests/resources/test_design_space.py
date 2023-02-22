@@ -46,6 +46,8 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
     # Then
     status_detail_tuples = {(detail.level, detail.msg) for detail in design_space.status_detail}
     assert status_detail_tuples == status_detail_data
+    with pytest.deprecated_call():
+        assert design_space.status_info == [args[1] for args in status_detail_data]
 
 
 def test_formulation_build(valid_formulation_design_space_data):
@@ -226,7 +228,6 @@ def test_archive(valid_formulation_design_space_data):
 
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
-    del expected_payload["status_info"]
     del expected_payload["status_detail"]
     del expected_payload["id"]
 
@@ -250,7 +251,6 @@ def test_restore(valid_formulation_design_space_data):
 
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
-    del expected_payload["status_info"]
     del expected_payload["status_detail"]
     del expected_payload["id"]
 

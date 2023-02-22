@@ -185,7 +185,7 @@ class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
     type = "PredictorEvaluationWorkflow"
     status = "SUCCEEDED"
     status_description = "READY"
-    status_info = []
+    status_detail = []
 
 
 class DesignSpaceConfigDataFactory(factory.DictFactory):
@@ -204,7 +204,6 @@ class DesignSpaceDataFactory(factory.DictFactory):
     archived = False
     module_type = "DESIGN_SPACE"
     status = "READY"
-    status_info = []
     status_detail = []
 
 
@@ -217,7 +216,7 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     predictor_id = factory.Faker("uuid4")
     status = "SUCCEEDED"
     status_description = "READY"
-    status_info = []
+    status_detail = []
 
 
 class JobSubmissionResponseFactory(factory.DictFactory):
