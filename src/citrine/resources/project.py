@@ -606,11 +606,24 @@ class Project(Resource['Project']):
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
 
-    def filter_by_id(self, id_search_string: str) -> Iterator[DataObject]:
-        """FIXME docstring."""
+    def list_by_id(self, id_search_string: str) -> Iterator[DataObject]:
+        """List GEMD objects within a project for a given id search string.
+
+        Searches all objects for a matching id string, across all scope: id pairs.
+
+        Parameters
+        ----------
+        id_search_string: String
+            A custom id or UUID4 string. Only exact matches will be returned.
+
+        Returns
+        ----------
+        Iterator[DataObject]
+            An iterator of DataObject objects.
+        """
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"
+            self._get_path(ignore_dataset=True) + f"storables/{id_search_string}/filter-by-id" #FIXME this won't work
         )
         return (self.build(raw) for raw in raw_objects)
 

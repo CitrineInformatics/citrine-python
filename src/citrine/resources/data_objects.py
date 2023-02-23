@@ -6,8 +6,9 @@ from uuid import uuid4
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
+import citrine.exceptions
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
-from citrine.exceptions import BadRequest
+from citrine.exceptions import BadRequest, NotFound
 from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
@@ -138,10 +139,29 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
                 return e.api_error.validation_errors
             raise e
 
-    def filter_by_id(self, id_search_string) -> Iterator[DataObject]:
-        """FIXME docstring."""
+    def list_by_id(self, id_search_string) -> Iterator[DataObject]:
+        """List GEMD objects of an object collection type for a given id search string.
+
+        Searches all objects for a matching id string, across all scope: id pairs.
+
+        Parameters
+        ----------
+        id_search_string: String
+            A custom id or UUID4 string. Only exact matches will be returned.
+
+        Returns
+        ----------
+        Iterator[DataObject]
+            An iterator of DataObject objects.
+        """
+        # FIXME 404 causes runtime error -- list_by_name uses same pattern, and just returns an empty generator object when no results are found. How does that work?
+        base_path = self._get_path(ignore_dataset=True)
+        path = base_path + f"/{id_search_string}/search-by-id"
+
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            self._get_path(ignore_dataset=True) + f"/{id_search_string}/filter-by-id"
+            path,
+            version="v1"
+
         )
         return (self.build(raw) for raw in raw_objects)

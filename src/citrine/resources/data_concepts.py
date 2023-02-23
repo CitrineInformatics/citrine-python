@@ -835,7 +835,3 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params,
             version='v1')
         return (self.build(raw) for raw in raw_objects)
-
-    def list_by_id(self) -> Sequence:
-        """FIXME add docstring."""
-        raise NotImplementedError
