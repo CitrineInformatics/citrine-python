@@ -45,14 +45,13 @@ class FakeCall:
 
 class FakeSession:
     """Fake version of Session used to test API interaction."""
-    def __init__(self, *, accounts_v3=False):
+    def __init__(self):
         self.calls = []
         self.responses = []
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
         self.use_idempotent_dataset_put = False
-        self._accounts_service_v3 = accounts_v3
 
     def set_response(self, resp):
         self.responses = [resp]

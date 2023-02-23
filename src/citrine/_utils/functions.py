@@ -1,5 +1,4 @@
 import inspect
-from functools import wraps
 import os
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -213,41 +212,3 @@ def format_escaped_url(
     return template.format(*[quote(str(x), safe='') for x in args],
                            **{k: quote(str(v), safe='') for (k, v) in kwargs.items()}
                            )
-
-
-def use_teams(alt, negate=False, deprecated=False):
-    """
-    Raises error with a redirect message if method is unavailable with(out) teams support.
-
-    Parameters
-    ----------
-    alt: str
-        the alternative method the user should use. Added to the Error message
-    negate: bool
-        Set to True if the error should be raised if teams are in use. Keep False
-        if error should be raised if teams are not available.
-
-    """
-    def decorator(f):
-        @wraps(f)
-        def wrapper(self, *args, **kwargs):
-            if negate:
-                if not self.session._accounts_service_v3:
-                    raise NotImplementedError(f"Not available, you may be looking for {alt}")
-            else:
-                if deprecated:
-                    # If the method is just deprecated, print a warning even once they're on Teams.
-                    warn(f"This method is deprecated. Use {alt} instead.", DeprecationWarning)
-                elif self.session._accounts_service_v3:
-                    # If deprecated is false, that means it's unavailable on Teams, so error.
-                    raise NotImplementedError(f"Not available, you may be looking for {alt}")
-                else:
-                    # If this user isn't on Teams, but it will be unavailable once they are, treat
-                    # it like a deprecation warning but specify it will be unavailable.
-                    warn("This method will be unavailable once Teams are released, and you will "
-                         "need to use {alt}.", DeprecationWarning)
-            return f(self, *args, **kwargs)
-
-        return wrapper
-
-    return decorator

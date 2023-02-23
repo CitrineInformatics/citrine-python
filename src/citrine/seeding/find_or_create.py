@@ -88,9 +88,8 @@ def find_or_create_project(*,
     If not found, creates a new project with the given name
     """
     if project_collection.team_id is None:
-        # @deprecated(deprecated_in="1.33.1", removed_in="2.0.0", ...)
-        warnings.warn("This method will be unreliable once Teams are released, "
-                      "at which point you should use find_or_create_team.",
+        warnings.warn("This method should be called through a team, which can be retrieved by "
+                      "find_or_create_team.",
                       DeprecationWarning)
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
