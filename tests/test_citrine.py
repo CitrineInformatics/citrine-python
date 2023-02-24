@@ -23,7 +23,6 @@ token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 def test_citrine_creation():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         assert '1234' == Citrine(api_key='1234', host='citrine-testing.fake').session.refresh_token
 
@@ -31,7 +30,6 @@ def test_citrine_creation():
 def test_citrine_signature(monkeypatch):
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('http://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
 
         assert '1234' == Citrine(api_key='1234',
                                  scheme='http',
@@ -45,7 +43,6 @@ def test_citrine_signature(monkeypatch):
         monkeypatch.setenv("CITRINE_API_KEY", patched_key)
         monkeypatch.setenv("CITRINE_API_HOST", patched_host)
         m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Citrine().session.refresh_token
         assert patched_key == Citrine(api_key=patched_key).session.refresh_token
@@ -60,7 +57,6 @@ def test_citrine_signature(monkeypatch):
 def test_citrine_project_session():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         citrine = Citrine(api_key='foo', host='citrine-testing.fake')
 
@@ -70,35 +66,13 @@ def test_citrine_project_session():
 def test_citrine_user_session():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         citrine = Citrine(api_key='foo', host='citrine-testing.fake')
     assert citrine.session == citrine.users.session
-
-
-def test_citrine_project_session_warn():
-    with requests_mock.Mocker() as m:
-        m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config',
-              json={'accounts_service_v3': True})
-        citrine = Citrine(api_key='foo', host='citrine-testing.fake')
-    with pytest.warns(UserWarning):
-        citrine.projects
 
 
 def test_citrine_team_session():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
-        citrine = Citrine(api_key='foo', host='citrine-testing.fake')
-    with pytest.raises(NotImplementedError):
-        citrine.teams
-
-
-def test_citrine_team_session_v3():
-    with requests_mock.Mocker() as m:
-        m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config',
-              json={'accounts_service_v3': True})
         citrine = Citrine(api_key='foo', host='citrine-testing.fake')
     assert citrine.session == citrine.teams.session
 
@@ -106,7 +80,6 @@ def test_citrine_team_session_v3():
 def test_citrine_user_agent():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('https://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         citrine = Citrine(api_key='foo', host='citrine-testing.fake')
 
     agent_parts = citrine.session.headers['User-Agent'].split()

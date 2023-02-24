@@ -10,7 +10,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, use_teams
+from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
@@ -43,11 +43,9 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.project_member import ProjectMember
-from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
-from citrine.resources.user import User
 
 
 class Project(Resource['Project']):
@@ -242,7 +240,6 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
-    @use_teams("project.make_public", True)
     def publish(self, *, resource: Resource):
         """
         Publish a resource from a project to its encompassing team.
@@ -269,7 +266,6 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
-    @use_teams("project.make_private", True)
     def un_publish(self, *, resource: Resource):
         """
         Un-publish a resource from a project from its encompassing team.
@@ -292,7 +288,6 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
-    @use_teams("project.make_public", True)
     def pull_in_resource(self, *, resource: Resource):
         """
         Pull in a public resource from this project's team.
@@ -316,125 +311,6 @@ class Project(Resource['Project']):
             version='v3', json={'ids': [resource_access["id"]]})
         return True
 
-    @use_teams("team.share")
-    def share(self, *,
-              resource: Optional[Resource],
-              project_id: Optional[Union[str, UUID]] = None
-              ) -> Dict[str, str]:
-        """Share a resource with another project.
-
-        Parameters
-        ----------
-        resource: Resource
-            The resource owned by this project, which will be shared
-        project_id: Union[str, UUID]
-            The id of the project with which to share the resource
-
-        """
-        resource_dict = resource.access_control_dict()
-        return self.session.post_resource(f"{self._path()}/share", {
-            "project_id": str(project_id),
-            "resource": resource_dict
-        })
-
-    @use_teams("project.publish")
-    def transfer_resource(self, *, resource: Resource,
-                          receiving_project_uid: Union[str, UUID]) -> bool:
-        """
-        Transfer ownership of a resource.
-
-        The new owner of the the supplied resource becomes the project
-        with ``uid == receiving_project_uid``.
-
-        Parameters
-        ----------
-        resource: Resource
-            The resource owned by this project, which will get transferred to
-            the project with ``uid == receiving_project_uid``.
-        receiving_project_uid: Union[string, UUID]
-            The uid of the project to which the resource will be transferred.
-
-        Returns
-        -------
-        bool
-            Returns ``True`` upon successful resource transfer.
-
-        """
-        try:
-            self.session.checked_post(f"{self._path()}/transfer-resource", {
-                "to_project_id": str(receiving_project_uid),
-                "resource": resource.access_control_dict()})
-        except AttributeError:  # If _resource_type is not implemented
-            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
-                               f"cannot be made transferred")
-
-        return True
-
-    @use_teams("project.publish")
-    def make_public(self, resource: Resource) -> bool:
-        """
-        Grant public access to a resource owned by this project.
-
-        Parameters
-        ----------
-        resource: Resource
-            An instance of a resource owned by this project (e.g., a dataset).
-
-        Returns
-        -------
-        bool
-            ``True`` if the action was performed successfully
-
-        """
-        try:
-            self.session.checked_post(f"{self._path()}/make-public", {
-                "resource": resource.access_control_dict()
-            })
-        except AttributeError:  # If _resource_type is not implemented
-            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
-                               f"cannot be made public")
-        return True
-
-    @use_teams("project.un_publish")
-    def make_private(self, resource: Resource) -> bool:
-        """
-        Remove public access for a resource owned by this project.
-
-        Parameters
-        ----------
-        resource: Resource
-            An instance of a resource owned by this project (e.g., a dataset).
-
-        Returns
-        -------
-        bool
-            ``True`` if the action was performed successfully
-
-        """
-        try:
-            self.session.checked_post(f"{self._path()}/make-private", {
-                "resource": resource.access_control_dict()
-            })
-        except AttributeError:  # If _resource_type is not implemented
-            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
-                               f"cannot be made private")
-        return True
-
-    def creator(self) -> str:
-        """
-        Return the creator of this project.
-
-        Returns
-        -------
-        str
-            The email of the creator of this resource.
-
-        """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available")
-        email = self.session.get_resource(f"{self._path()}/creator")["email"]
-        return email
-
     def owned_dataset_ids(self) -> List[str]:
         """
         List all the ids of the datasets owned by the current project.
@@ -445,46 +321,11 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        if self.session._accounts_service_v3:
-            query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-            dataset_ids = self.session.get_resource("/DATASET/authorized-ids",
-                                                    params=query_params,
-                                                    version="v3")['ids']
-        else:
-            dataset_ids = self.session.get_resource(f"{self._path()}/dataset_ids")["dataset_ids"]
-        return dataset_ids
+        query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
+        return self.session.get_resource("/DATASET/authorized-ids",
+                                         params=query_params,
+                                         version="v3")['ids']
 
-    def owned_table_ids(self) -> List[str]:
-        """
-        List all the ids of the tables owned by the current project.
-
-        Returns
-        -------
-        List[str]
-            The ids of the tables owned by current project
-
-        """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available")
-        table_ids = self.session.get_resource(f"{self._path()}/table_ids")["table_ids"]
-        return table_ids
-
-    def owned_table_config_ids(self) -> List[str]:
-        """
-        List all the ids of the table configs owned by the current project.
-
-        Returns
-        -------
-        List[str]
-            The ids of the table configs owned by current project
-
-        """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Not available")
-        result = self.session.get_resource(f"{self._path()}/table_definition_ids")
-        return result["table_definition_ids"]
-
-    @use_teams("team.list_members", deprecated=True)
     def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
         """
         List all of the members in the current project.
@@ -498,69 +339,9 @@ class Project(Resource['Project']):
         """
         from citrine.resources.team import TeamCollection
 
-        if self.session._accounts_service_v3:
-            team_collection = TeamCollection(self.session)
-            parent_team = team_collection.get(self.team_id)
-            return parent_team.list_members()
-        else:
-            members = self.session.get_resource(f"{self._path()}/users")["users"]
-            return [ProjectMember(user=User.build(m),
-                                  project=self,
-                                  role=m["role"])
-                    for m in members]
-
-    @use_teams("team.update_user_action")
-    def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
-        """
-        Update a User's role and action permissions in the Project.
-
-        Valid roles are ``MEMBER`` or ``LEAD``.
-
-        ``WRITE`` is the only action available for specification.
-
-        Returns
-        -------
-        bool
-            Returns ``True`` if user role successfully updated
-
-        """
-        self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
-                                  {'role': role, 'actions': actions})
-        return True
-
-    @use_teams("team.add_user")
-    def add_user(self, user_uid: Union[str, UUID]):
-        """
-        Add a User to a Project.
-
-        Adds User with ``MEMBER`` role to the Project.
-        Use the ``update_user_rule`` method to change a User's role.
-
-        Returns
-        -------
-        bool
-            Returns ``True`` if user successfully added
-
-        """
-        self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
-                                  {'role': MEMBER, 'actions': []})
-        return True
-
-    @use_teams("team.remove_user")
-    def remove_user(self, user_uid: Union[str, UUID]) -> bool:
-        """
-        Remove a User from a Project.
-
-        Returns
-        -------
-        bool
-            Returns ``True`` if user successfully removed
-
-        """
-        self.session.checked_delete(
-            self._path() + format_escaped_url("/users/{}", user_uid)
-        )
-        return True
+        team_collection = TeamCollection(self.session)
+        parent_team = team_collection.get(self.team_id)
+        return parent_team.list_members()
 
     def gemd_batch_delete(
             self,
@@ -624,7 +405,7 @@ class ProjectCollection(Collection[Project]):
 
     @property
     def _api_version(self):
-        return 'v3' if self.session._accounts_service_v3 else 'v1'
+        return 'v3'
 
     def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
         self.session = session
@@ -651,10 +432,6 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    @use_teams("team.projects.register", deprecated=False)
-    def _old_register(self, name: str, *, description: Optional[str] = None) -> Project:
-        return super().register(Project(name, description=description))
-
     def register(self, name: str, *, description: Optional[str] = None):
         """
         Create and upload new project.
@@ -668,7 +445,9 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.team_id is None:
-            return self._old_register(name=name, description=description)
+            raise NotImplementedError("Cannot register a project without a team ID. "
+                                      "Use team.projects.register.")
+
         path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
         project = Project(name, description=description)
         try:
@@ -695,12 +474,6 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        if self.session._accounts_service_v3:
-            return self._list_v3(per_page=per_page)
-        else:
-            return super().list(per_page=per_page)
-
-    def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
         if self.team_id is None:
             path = '/projects'
         else:
@@ -823,14 +596,8 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        if self.session._accounts_service_v3:
-            return self._build_collection_elements(self.search_all(search_params))
+        return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
-
-        return self._paginator.paginate(page_fetcher=self._fetch_page_search,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page,
-                                        search_params=search_params)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """
@@ -845,43 +612,3 @@ class ProjectCollection(Collection[Project]):
     def update(self, model: Project) -> Project:
         """Projects cannot be updated."""
         raise NotImplementedError("Project update is not supported at this time.")
-
-    def _fetch_page_search(self, page: Optional[int] = None,
-                           per_page: Optional[int] = None,
-                           search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
-        """
-        Fetch resources that match the supplied search parameters.
-
-        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
-        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
-        parameters, and the request body to the search endpoint.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return. Default is 20.
-        search_params: dict, optional
-            A ``dict`` representing a request body that could be sent to a POST request. The "json"
-            field should be passed as the key for the outermost ``dict``, with its value the
-            request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
-
-        Returns
-        -------
-        Iterable[dict]
-            Elements in this collection.
-        str
-            The next uri if one is available, empty string otherwise
-
-        """
-        # Making 'json' the key of the outermost dict, so that search_params can be passed
-        # directly to the function making the request with keyword expansion
-        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
-
-        path = self._get_path() + "/search"
-
-        return self._fetch_page(path=path, fetch_func=self.session.post_resource,
-                                page=page, per_page=per_page,
-                                json_body=json_body)

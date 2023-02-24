@@ -54,7 +54,6 @@ class Session(requests.Session):
         self.refresh_token: str = refresh_token
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
-        self._accounts_service_v3: bool = False
 
         agent = "{}/{} python-requests/{} citrine-python/{}".format(
             platform.python_implementation(),
@@ -96,7 +95,6 @@ class Session(requests.Session):
                            requests.exceptions.ConnectionError,
                            requests.exceptions.ChunkedEncodingError)
         self._refresh_access_token()
-        self._check_accounts_version()
 
     def _versioned_base_url(self, version: str = 'v1'):
         return urlunsplit((
@@ -129,15 +127,6 @@ class Session(requests.Session):
         # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.
         self.auth = BearerAuth(self.access_token)
 
-    def _check_accounts_version(self) -> None:
-        """Checks Product to find out what version of Accounts is used."""
-        response = self._request_with_retry('GET',
-                                            self._versioned_base_url() + 'utils/runtime-config')
-
-        if response.status_code != 200:
-            raise CitrineException(response.text)
-        self._accounts_service_v3 = response.json().get('accounts_service_v3', False)
-
     def _request_with_retry(self, method, uri, **kwargs):
         """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
         # The urllib3 Retry object does not handle retries when ConnectionErrors
@@ -161,7 +150,6 @@ class Session(requests.Session):
 
         if self._is_access_token_expired():
             self._refresh_access_token()
-            self._check_accounts_version()
         uri = self._versioned_base_url(version) + path.lstrip('/')
 
         logger.debug('\turi: {}'.format(uri))
@@ -175,7 +163,6 @@ class Session(requests.Session):
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
-                self._check_accounts_version()
                 response = self._request_with_retry(method, uri, **kwargs)
         except AttributeError:
             # Catch AttributeErrors and log response

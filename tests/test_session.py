@@ -34,7 +34,6 @@ def refresh_token(expiration: datetime = None) -> dict:
 def session():
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         session = Session(
             refresh_token='12345',
@@ -53,7 +52,6 @@ def test_session_signature(monkeypatch):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
     with requests_mock.Mocker() as m:
         m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('ftp://citrine-testing.fake:8080/api/v1/utils/runtime-config', json=dict())
 
         assert '1234' == Session(refresh_token='1234',
                                  scheme='ftp',
@@ -67,7 +65,6 @@ def test_session_signature(monkeypatch):
         monkeypatch.setenv("CITRINE_API_KEY", patched_key)
         monkeypatch.setenv("CITRINE_API_HOST", patched_host)
         m.post(f'https://{patched_host}/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get(f'https://{patched_host}/api/v1/utils/runtime-config', json=dict())
 
         assert patched_key == Session().refresh_token
         assert patched_key == Session(refresh_token=patched_key).refresh_token
@@ -84,7 +81,6 @@ def test_get_refreshes_token(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('http://citrine-testing.fake/api/v1/foo',
               json={'foo': 'bar'},
@@ -94,18 +90,6 @@ def test_get_refreshes_token(session: Session):
 
     assert {'foo': 'bar'} == resp
     assert datetime(2019, 3, 14) == session.access_token_expiration
-
-
-def test_get_runtime_config_failure(session: Session):
-    session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
-
-    with requests_mock.Mocker() as m:
-        m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
-        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', status_code=400)
-
-        with pytest.raises(CitrineException):
-            session.get_resource('/foo')
 
 
 def test_get_refresh_token_failure(session: Session):
@@ -216,7 +200,6 @@ def test_post_refreshes_token_when_denied(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.register_uri('POST', 'http://citrine-testing.fake/api/v1/foo', [
             {'status_code': 401, 'json': {'reason': 'invalid-token'}},
