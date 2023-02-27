@@ -771,8 +771,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-               scope: Optional[str] = None, dry_run: bool = False):
+    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *, dry_run: bool = False):
         """
         Delete an element of the collection by its id.
 
