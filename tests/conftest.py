@@ -10,7 +10,7 @@ from tests.utils.factories import (PredictorEntityDataFactory, PredictorDataData
                                    PredictorMetadataDataFactory, StatusDataFactory)
 
 
-def build_predictor_entity(instance, status_name="READY", status_info=[], status_detail=[]):
+def build_predictor_entity(instance, status_name="READY", status_detail=[]):
     user = str(uuid.uuid4())
     time = '2020-04-23T15:46:26Z'
     return dict(
@@ -23,7 +23,6 @@ def build_predictor_entity(instance, status_name="READY", status_info=[], status
         metadata=dict(
             status=dict(
                 name=status_name,
-                info=status_info,
                 detail=status_detail
             ),
             created=dict(
@@ -45,7 +44,6 @@ def valid_product_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=False,
         display_name='my design space',
@@ -58,7 +56,6 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='READY',
-                    status_info=[],
                     status_detail=[],
                     id=str(uuid.uuid4()),
                     archived=False,
@@ -77,7 +74,6 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='CREATED',
-                    status_info=[],
                     status_detail=[],
                     id=None,
                     archived=False,
@@ -136,7 +132,6 @@ def valid_enumerated_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=True,
         display_name='my enumerated design space',
@@ -182,7 +177,6 @@ def valid_formulation_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=True,
         display_name='formulation design space',
@@ -707,7 +701,7 @@ def generic_entity():
         "id": str(uuid.uuid4()),
         "status": "INPROGRESS",
         "status_description": "VALIDATING",
-        "status_info": ["System processing"],
+        "status_detail": [{"level": "Info", "msg": "System processing"}],
         "experimental": False,
         "experimental_reasons": [],
         "create_time": '2020-04-23T15:46:26Z',
