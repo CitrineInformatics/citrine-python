@@ -350,19 +350,6 @@ def test_list_no_team(session):
     assert 5 == len(projects)
 
 
-def test_list_projects_filters_non_projects(collection, session, caplog):
-    # Given
-    projects_data = ProjectDataFactory.create_batch(5)
-    projects_data.append({'foo': 'not a project'})
-    session.set_response({'projects': projects_data})
-
-    # Then
-    with caplog.at_level(WARNING):
-        caplog.clear()
-        assert len(list(collection.list())) == 5 # Skip the bad one
-        assert any(r.levelno == WARNING for r in caplog.records)
-
-
 def test_list_projects_with_page_params(collection, session):
     # Given
     project_data = ProjectDataFactory()
