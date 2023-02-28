@@ -53,8 +53,19 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
     Parameters
     ----------
     name: str
-        the name of the design space
-    scope: str
+        A unique name used to reference the materials produced by this node in the design space.
+        If the material produced by this node is used as an ingredient in other node definitions,
+        this name should appear as an ingredient name in the other node's formulation subspace.
+    scope: Optional[str]
+        An optional custom scope used to identify materials produced by this design space.
+    attributes: Set[Dimension]
+        Set of dimensions included on materials produced by this node.
+    formulation_subspace: Optional[FormulationDesignSpace]
+        An optional formulation design space defining the ingredients, labels,
+        and constraints for formulations produced by this node.
+    template_link: Optional[TemplateLink]
+        A set of identifiers linking materials produced by this node to Citrine Platform
+        material and process templates.
 
     """
 
@@ -71,7 +82,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             *,
             name: str,
             scope: Optional[str] = None,
-            attributes: Optional[Sequence[Dimension]] = None,
+            attributes: Optional[Set[Dimension]] = None,
             formulation_subspace: Optional[FormulationDesignSpace] = None,
             template_link: Optional[TemplateLink] = None
     ):
@@ -100,7 +111,16 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
 class MaterialHistoryDesignSpace(
     Resource["MaterialHistoryDesignSpace"], DesignSpace, AIResourceMetadata
 ):
-    """A design space that produces candidates as material histories.
+    """A design space that produces material history candidates.
+
+    A material history design space begins with a root node that defines the
+    attributes and formulations included on the terminal materials of the resulting histories.
+    It also includes a set of sub-nodes that can be used to define the structure of any new
+    intermediate mixtures that appear in the history of the root node.
+
+    The process structure of the material history candidates is defined through the `name`
+    and `formulation_subspace` fields of the material node definitions.
+
 
     Parameters
     ----------
@@ -143,29 +163,29 @@ class MaterialHistoryDesignSpace(
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        data["config"]["root"] = cls.__build_format_node(data["config"]["root"])
+        data["config"]["root"] = cls.__build_format(data["config"]["root"])
         data["config"]["subspaces"] = {
-            cls.__build_format_node(node) for node in data["config"]["subspaces"]
+            cls.__build_format(node) for node in data["config"]["subspaces"]
         }
         return data
 
     @staticmethod
-    def __build_format_node(node: dict) -> dict:
+    def __build_format(node: dict) -> dict:
         # Wrap formulation in a "config" block so it can be deserialized as FormulationDesignSpace
-        formulation_data = node.pop("formulation")
-        if formulation_data:
-            node["formulation"] = {"config": formulation_data}
+        formulation = node.pop("formulation")
+        if formulation:
+            node["formulation"] = {"config": formulation}
         return node
 
     def _post_dump(self, data: dict) -> dict:
-        data["config"]["root"] = self.__dump_format_node(data["config"]["root"])
+        data["config"]["root"] = self.__dump_format(data["config"]["root"])
         data["config"]["subspaces"] = {
-            self.__dump_format_node(x) for x in data["config"]["subspaces"]
+            self.__dump_format(x) for x in data["config"]["subspaces"]
         }
         return data
 
     @staticmethod
-    def __dump_format_node(node: dict) -> dict:
+    def __dump_format(node: dict) -> dict:
         formulation = node.pop("formulation")
         if formulation:
             node["formulation"] = formulation["config"]
