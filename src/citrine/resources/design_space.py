@@ -2,11 +2,24 @@
 from typing import Optional, TypeVar, Union
 from uuid import UUID
 
+from gemd.enumeration.base_enumeration import BaseEnumeration
+
 from citrine._session import Session
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
+
+
+class DefaultDesignSpaceMode(BaseEnumeration):
+    """The format to use when creating a default design space.
+
+    * ATTRIBUTE results in a product design space containing dimensions required by the predictor
+    * HISTORY results in a material history design space resembling the shape of training data
+    """
+
+    ATTRIBUTE = 'ATTRIBUTE'
+    HISTORY = 'HISTORY'
 
 
 class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
@@ -68,6 +81,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                        *,
                        predictor_id: UUID,
                        predictor_version: Optional[Union[int, str]] = None,
+                       mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
                        include_label_count_constraints: bool = False,
@@ -92,6 +106,10 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
 
         predictor_version: Optional[Union[int, str]]
             Version of the predictor used to construct the design space
+
+        mode: DefaultDesignSpaceMode
+            The type of default design space to produce.
+            Defaults to DefaultDesignSpaceMode.ATTRIBUTE.
 
         include_ingredient_fraction_constraints: bool
             Whether to include constraints on ingredient fractions based on the training data.
@@ -118,6 +136,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         path = f'projects/{self.project_id}/design-spaces/default'
         payload = {
             "predictor_id": str(predictor_id),
+            "mode": mode.value,
             "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
             "include_label_fraction_constraints": include_label_fraction_constraints,
             "include_label_count_constraints": include_label_count_constraints,

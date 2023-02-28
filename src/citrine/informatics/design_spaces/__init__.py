@@ -4,3 +4,4 @@ from .design_space import *
 from .enumerated_design_space import *
 from .formulation_design_space import *
 from .product_design_space import *
+from .material_history_design_space import *
