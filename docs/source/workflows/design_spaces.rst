@@ -284,3 +284,6 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   )
 
   registered_design_space = project.design_spaces.register(design_space)
+
+Material History Design Space
+-----------------------------

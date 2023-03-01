@@ -12,7 +12,7 @@ CreationType = TypeVar('CreationType', bound=DesignSpace)
 
 
 class DefaultDesignSpaceMode(BaseEnumeration):
-    """The format to use when creating a default design space.
+    """The type of default design space to create.
 
     * ATTRIBUTE results in a product design space containing dimensions required by the predictor
     * HISTORY results in a material history design space resembling the shape of training data

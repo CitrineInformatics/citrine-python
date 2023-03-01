@@ -8,7 +8,7 @@ import pytest
 from citrine.exceptions import NotFound
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
-from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.design_space import DesignSpaceCollection, DefaultDesignSpaceMode
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.session import FakeCall, FakeRequestResponse, FakeSession
 
@@ -117,12 +117,13 @@ def test_create_default(predictor_version, valid_product_design_space_data, vali
         session=session
     )
 
-    expected_payload ={
+    expected_payload = {
         "predictor_id": str(predictor_id),
         "include_ingredient_fraction_constraints": False,
         "include_label_fraction_constraints": False,
         "include_label_count_constraints": False,
-        "include_parameter_constraints": False
+        "include_parameter_constraints": False,
+        "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
     }
     if predictor_version is not None:
         expected_payload["predictor_version"] = predictor_version
@@ -167,6 +168,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
         json={
+            "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
             "predictor_id": str(predictor_id),
             "predictor_version": predictor_version,
             "include_ingredient_fraction_constraints": ingredient_fractions,

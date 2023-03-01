@@ -7,7 +7,6 @@ from citrine._rest.ai_resource_metadata import AIResourceMetadata
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine.resources.project import Project
 from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.process_template import ProcessTemplate
 from citrine.informatics.dimensions import Dimension
@@ -46,7 +45,7 @@ class TemplateLink(Serializable["TemplateLink"]):
 
     def __init__(
             self,
-            project: Project,
+            project,
             *,
             material_template: MaterialTemplateType,
             process_template: ProcessTemplateType
@@ -54,8 +53,8 @@ class TemplateLink(Serializable["TemplateLink"]):
         resolved_mat = project.gemd.get(material_template)
         resolved_proc = project.gemd.get(process_template)
 
-        self.material_template = resolved_mat.uids["id"]
-        self.process_template = resolved_proc.uids["id"]
+        self.material_template: UUID = UUID(resolved_mat.uids["id"])
+        self.process_template: UUID = UUID(resolved_proc.uids["id"])
         self._name = f"{resolved_proc.name}-{resolved_mat.name}"
 
 
@@ -99,22 +98,10 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             template_link: Optional[TemplateLink] = None
     ):
         self.name = name
-        self.scope = scope
+        self.scope: Optional[str] = scope
         self.attributes = attributes or set()
-        self.formulation_subspace = formulation_subspace
-        self.template_link = template_link
-
-    @property
-    def template_name(self) -> Optional[str]:
-        return self.template_link.name if self.template_link else None
-
-    @property
-    def material_template(self) -> Optional[UUID]:
-        return self.template_link.material_template if self.template_link else None
-
-    @property
-    def process_template(self) -> Optional[UUID]:
-        return self.template_link.process_template if self.template_link else None
+        self.formulation_subspace: Optional[FormulationDesignSpace] = formulation_subspace
+        self.template_link: Optional[TemplateLink] = template_link
 
     def __repr__(self):
         return "<MaterialNodeDefinition {!r}>".format(self.name)
