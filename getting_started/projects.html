@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1.5. Projects &mdash; Citrine Python 2.0.0 documentation</title>
+  <title>1.5. Projects &mdash; Citrine Python 2.2.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.0.0
+                2.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -161,7 +161,7 @@ The <code class="docutils literal notranslate"><span class="pre">ProjectMember</
 <section id="add-user-to-a-project">
 <h3><span class="section-number">1.5.2.2. </span>Add User to a Project<a class="headerlink" href="#add-user-to-a-project" title="Permalink to this headline"></a></h3>
 <p>Users can be added to a Project. They will be granted READ access to resources in the Project and will be given the
-role MEMBER. This is accomplished with the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.add_user" title="citrine.resources.project.Project.add_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_user()</span></code></a> method.</p>
+role MEMBER. This is accomplished with the <code class="xref py py-func docutils literal notranslate"><span class="pre">add_user()</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID of the user you&#39;d like to add</span>
 <span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
@@ -174,7 +174,7 @@ role MEMBER. This is accomplished with the <a class="reference internal" href=".
 <section id="remove-user-from-a-project">
 <h3><span class="section-number">1.5.2.3. </span>Remove User from a Project<a class="headerlink" href="#remove-user-from-a-project" title="Permalink to this headline"></a></h3>
 <p>Users can also be removed from a Project. This is achieved with the
-<a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user" title="citrine.resources.project.Project.remove_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_user()</span></code></a> method.</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">remove_user()</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID fo the user you&#39;d like to delete</span>
 <span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
@@ -187,7 +187,7 @@ role MEMBER. This is accomplished with the <a class="reference internal" href=".
 <section id="update-user-s-role-and-actions-in-a-project">
 <h3><span class="section-number">1.5.2.4. </span>Update User’s Role and Actions in a Project<a class="headerlink" href="#update-user-s-role-and-actions-in-a-project" title="Permalink to this headline"></a></h3>
 <p>A user’s role in a Project can be updated. The method
-<a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.update_user_role" title="citrine.resources.project.Project.update_user_role"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_user_role()</span></code></a> facilitates changing a User’s role.</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">update_user_role()</span></code> facilitates changing a User’s role.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">LEAD</span> <span class="kn">from</span> <span class="nn">project_roles</span>
 <span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>

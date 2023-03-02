@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.project module &mdash; Citrine Python 2.0.0 documentation</title>
+  <title>citrine.resources.project module &mdash; Citrine Python 2.2.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.0.0
+                2.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -134,39 +134,9 @@ to the project, and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.add_user">
-<span class="sig-name descname"><span class="pre">add_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.add_user" title="Permalink to this definition"></a></dt>
-<dd><p>Add a User to a Project.</p>
-<p>Adds User with <code class="docutils literal notranslate"><span class="pre">MEMBER</span></code> role to the Project.
-Use the <code class="docutils literal notranslate"><span class="pre">update_user_rule</span></code> method to change a User’s role.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user successfully added</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.build">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.build" title="Permalink to this definition"></a></dt>
 <dd><p>Build an instance of this object from given data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.creator">
-<span class="sig-name descname"><span class="pre">creator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.creator" title="Permalink to this definition"></a></dt>
-<dd><p>Return the creator of this project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The email of the creator of this resource.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -224,74 +194,12 @@ containing the project if teams have been released.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.make_private">
-<span class="sig-name descname"><span class="pre">make_private</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.make_private" title="Permalink to this definition"></a></dt>
-<dd><p>Remove public access for a resource owned by this project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g., a dataset).</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.make_public">
-<span class="sig-name descname"><span class="pre">make_public</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.make_public" title="Permalink to this definition"></a></dt>
-<dd><p>Grant public access to a resource owned by this project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g., a dataset).</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.owned_dataset_ids">
 <span class="sig-name descname"><span class="pre">owned_dataset_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.owned_dataset_ids" title="Permalink to this definition"></a></dt>
 <dd><p>List all the ids of the datasets owned by the current project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The ids of the modules owned by current project</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[str]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.owned_table_config_ids">
-<span class="sig-name descname"><span class="pre">owned_table_config_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.owned_table_config_ids" title="Permalink to this definition"></a></dt>
-<dd><p>List all the ids of the table configs owned by the current project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The ids of the table configs owned by current project</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[str]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.owned_table_ids">
-<span class="sig-name descname"><span class="pre">owned_table_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.owned_table_ids" title="Permalink to this definition"></a></dt>
-<dd><p>List all the ids of the tables owned by the current project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The ids of the tables owned by current project</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>List[str]</p>
@@ -337,57 +245,6 @@ into the other project.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.remove_user">
-<span class="sig-name descname"><span class="pre">remove_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.remove_user" title="Permalink to this definition"></a></dt>
-<dd><p>Remove a User from a Project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user successfully removed</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.share">
-<span class="sig-name descname"><span class="pre">share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._rest.resource.Resource</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.project.Project.share" title="Permalink to this definition"></a></dt>
-<dd><p>Share a resource with another project.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this project, which will be shared</p></li>
-<li><p><strong>project_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>]</em>) – The id of the project with which to share the resource</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.transfer_resource">
-<span class="sig-name descname"><span class="pre">transfer_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receiving_project_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.project.Project.transfer_resource" title="Permalink to this definition"></a></dt>
-<dd><p>Transfer ownership of a resource.</p>
-<p>The new owner of the the supplied resource becomes the project
-with <code class="docutils literal notranslate"><span class="pre">uid</span> <span class="pre">==</span> <span class="pre">receiving_project_uid</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this project, which will get transferred to
-the project with <code class="docutils literal notranslate"><span class="pre">uid</span> <span class="pre">==</span> <span class="pre">receiving_project_uid</span></code>.</p></li>
-<li><p><strong>receiving_project_uid</strong> (<em>Union</em><em>[</em><em>string</em><em>, </em><em>UUID</em><em>]</em>) – The uid of the project to which the resource will be transferred.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> upon successful resource transfer.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.un_publish">
 <span class="sig-name descname"><span class="pre">un_publish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.un_publish" title="Permalink to this definition"></a></dt>
 <dd><p>Un-publish a resource from a project from its encompassing team.</p>
@@ -400,22 +257,6 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.update_user_role">
-<span class="sig-name descname"><span class="pre">update_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">LEAD</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MEMBER</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">READ</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition"></a></dt>
-<dd><p>Update a User’s role and action permissions in the Project.</p>
-<p>Valid roles are <code class="docutils literal notranslate"><span class="pre">MEMBER</span></code> or <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">WRITE</span></code> is the only action available for specification.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user role successfully updated</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
