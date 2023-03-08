@@ -209,13 +209,16 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         else:
             return self._train(created_predictor.uid)
 
-    def update(self, predictor: Predictor) -> Predictor:
+    def update(self, predictor: Predictor, retrain: bool = True) -> Predictor:
         """Update and train a Predictor.
 
-        If the predictor is a draft, this will overwrite its contents, then begin training. If it's
-        not a draft, a new version will be created with the update, and then training will begin.
+        If the predictor is a draft, this will overwrite its contents, then optionally
+        begin training.
+        If it's not a draft, a new version will be created with the update, and then
+        optionally training will begin.
 
-        In either case, if training completes successfully, it will no longer be a draft.
+        In either case, if training is requested and completes successfully, it will no longer
+        be a draft.
         """
         updated_predictor = super().update(predictor)
 
@@ -224,7 +227,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         # so we should continue to do it automatically
         if updated_predictor.failed():
             return updated_predictor
-        else:
+        elif retrain:
             return self._train(updated_predictor.uid)
 
     def _train(self, uid: Union[UUID, str]) -> Predictor:

@@ -208,6 +208,25 @@ def test_update(valid_label_fractions_predictor_data):
     assert session.calls == expected_calls
 
 
+def test_update_no_train(valid_label_fractions_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_label_fractions_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    entity_path = f"{predictors_path}/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=entity_path, json=predictor.dump())
+    ]
+
+    updated_predictor = pc.update(predictor, False)
+
+    assert session.calls == expected_calls
+
+
 def test_register_update_checks_status(valid_auto_ml_predictor_data):
     # PredictorCollection.register/update makes two calls internally
     # The first creates/updates the resource, the second kicks off training
