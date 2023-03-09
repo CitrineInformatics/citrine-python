@@ -8,6 +8,9 @@ from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
     MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
     CategoricalDescriptor
 from citrine.informatics.predictors import *
+from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
+from citrine.informatics.predictors.single_prediction import SinglePrediction
+from citrine.informatics.design_candidate import DesignMaterial
 
 from tests.utils.factories import PredictorEntityDataFactory, PredictorDataDataFactory
 
@@ -407,3 +410,21 @@ def test_status(valid_label_fractions_predictor_data, auto_ml):
     # A deserialized predictor should have the correct status
     predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
+
+def test_single_predict(graph_predictor):
+    """Ensures we get a prediction back from a simple predict call"""
+    session = mock.Mock()
+    graph_predictor._project_id = uuid.uuid4()
+    graph_predictor.uid = uuid.uuid4()
+    graph_predictor.version = 2
+    material_data = {'vars':
+                     {'X': {'m': 1.1, 's': 0.1, 'type': 'R'},
+                      'Y': {'m': 2.2, 's': 0.2, 'type': 'R'}}}
+    material = DesignMaterial.build(material_data)
+    request = SinglePredictRequest(uuid.uuid4(), list(), material)
+    prediction_in = SinglePrediction(request.material_id, list(), material)
+    session.post_resource.return_value = prediction_in.dump()
+    graph_predictor._session = session
+    prediction_out = graph_predictor.predict(request)
+    assert prediction_out.dump() == prediction_in.dump()
+    assert session.post_resource.call_count == 1
