@@ -4,7 +4,7 @@ import pytest
 from citrine.informatics.constraints import *
 from citrine.informatics.descriptors import FormulationDescriptor
 
-formulation_descriptor = FormulationDescriptor('formulation')
+formulation_descriptor = FormulationDescriptor.hierarchical()
 
 
 @pytest.fixture

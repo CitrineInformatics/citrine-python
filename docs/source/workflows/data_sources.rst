@@ -123,7 +123,7 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_for
     )
 
     # create a descriptor to hold formulations
-    formulation = FormulationDescriptor(key='formulation')
+    formulation = FormulationDescriptor.hierarchical()
 
     IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
