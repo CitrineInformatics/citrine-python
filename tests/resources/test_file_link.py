@@ -523,7 +523,8 @@ def test_process_file(collection: FileCollection, session):
     # then does a GET on the job executions endpoint
     # then gets the file processing result
     session.set_responses(job_id_resp, job_execution_resp, file_processing_result_resp)
-    collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV)
+    with pytest.warns(DeprecationWarning):
+        collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV)
 
 
 def test_process_file_no_waiting(collection: FileCollection, session):
@@ -540,8 +541,9 @@ def test_process_file_no_waiting(collection: FileCollection, session):
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     session.set_response(job_id_resp)
-    resp = collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV,
-                              wait_for_response=False)
+    with pytest.warns(DeprecationWarning):
+        resp = collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV,
+                                  wait_for_response=False)
     assert str(resp.job_id) == job_id_resp['job_id']
 
 
@@ -555,9 +557,10 @@ def test_process_file_exceptions(collection: FileCollection, session):
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     with pytest.raises(ValueError, match="on-platform resources"):
-        collection.process(file_link=file_link,
-                           processing_type=FileProcessingType.VALIDATE_CSV,
-                           wait_for_response=False)
+        with pytest.warns(DeprecationWarning):
+            collection.process(file_link=file_link,
+                               processing_type=FileProcessingType.VALIDATE_CSV,
+                               wait_for_response=False)
 
 
 def test_resolve_file_link(collection: FileCollection, session):
