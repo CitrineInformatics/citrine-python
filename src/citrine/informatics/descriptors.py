@@ -256,8 +256,10 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     @staticmethod
     def hierarchical() -> "FormulationDescriptor":
+        """The hierarchical formulation descriptor with key 'Formulation'."""
         return FormulationDescriptor("Formulation")
 
     @staticmethod
     def flat() -> "FormulationDescriptor":
+        """The flat formulation descriptor with key 'Flat Formulation'."""
         return FormulationDescriptor("Flat Formulation")

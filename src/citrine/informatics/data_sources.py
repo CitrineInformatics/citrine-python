@@ -124,7 +124,6 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         self.formulation_descriptor = None
 
 
-
 class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):
     """A reference to a data source based on an experiment result hosted on the data platform.
 
