@@ -721,7 +721,8 @@ class FileCollection(Collection[FileLink]):
 
     @deprecated(deprecated_in="2.4.0",
                 removed_in="3.0.0",
-                details="The process file protocol is deprecated in favor of GUI-based ingest routes")
+                details="The process file protocol is deprecated "
+                        "in favor of GUI-based ingest routes")
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
                 wait_for_response: bool = True,
