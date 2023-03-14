@@ -235,7 +235,8 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     Parameters
     ----------
     key: str
-        the key corresponding to a descriptor
+        The key for the descriptor, which must be either 'Formulation' or 'Flat Formulation'
+        to result in valid Citrine Platform assets.
 
     """
 
@@ -252,3 +253,11 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     def __repr__(self):
         return "FormulationDescriptor(key={})".format(self.key)
+
+    @staticmethod
+    def hierarchical() -> "FormulationDescriptor":
+        return FormulationDescriptor("Formulation")
+
+    @staticmethod
+    def flat() -> "FormulationDescriptor":
+        return FormulationDescriptor("Flat Formulation")

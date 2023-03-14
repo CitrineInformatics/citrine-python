@@ -133,8 +133,8 @@ For example:
     # Assume a categorical descriptor, 'color', represented as a TopCategories variable
     candidate.material.values['color'].probabilities
 
-    # Assume a formulation descriptor, 'final mixture', represented as a Mixture variable
-    candidate.material.values['final mixture'].quantities
+    # Assume a formulation descriptor, 'Flat Formulation', represented as a Mixture variable
+    candidate.material.values['Flat Formulation'].quantities
 
     # Assume a chemical formula descriptor, 'alloying material', represented as a ChemicalFormula variable
     candidate.material.values['alloying material'].formula
