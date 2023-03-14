@@ -116,8 +116,8 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
         if formulation_descriptor is not None:
             warnings.warn(
-                "The field `formulation_descriptor` in a GemTableDataSource is deprecated "
-                "and will be ignored. The Citrine Platform will auto-generate a "
+                "The field `formulation_descriptor` on a GemTableDataSource is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
                 "FormulationDescriptor with key 'Formulation' for tables containing formulations.",
                 DeprecationWarning
             )

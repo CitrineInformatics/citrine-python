@@ -10,7 +10,7 @@ install:
 - pip install -U -r test_requirements.txt
 - pip install --no-deps -e .
 script:
-- pytest --cov=src/ --cov-report term-missing:skip-covered --cov-config=tox.ini --cov-fail-under=100 -r .
+- ./scripts/run_pytest.sh
 - flake8 src
 - derp src src/citrine/__version__.py
 - cd docs; make html; cd ..;

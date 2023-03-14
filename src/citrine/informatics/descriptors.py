@@ -236,7 +236,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     ----------
     key: str
         The key for the descriptor, which must be either 'Formulation' or 'Flat Formulation'
-        to result in valid Citrine Platform assets.
+        to produce valid Citrine Platform assets.
 
     """
 
