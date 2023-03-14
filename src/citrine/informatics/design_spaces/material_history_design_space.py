@@ -57,6 +57,9 @@ class TemplateLink(Serializable["TemplateLink"]):
         self.process_template: UUID = UUID(resolved_proc.uids["id"])
         self._name = f"{resolved_proc.name}-{resolved_mat.name}"
 
+    def __repr__(self):
+        return "<TemplateLink {!r}>".format(self._name)
+
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
     """A single node in a material history design space.
@@ -172,9 +175,9 @@ class MaterialHistoryDesignSpace(
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         data["config"]["root"] = cls.__build_format(data["config"]["root"])
-        data["config"]["subspaces"] = {
+        data["config"]["subspaces"] = [
             cls.__build_format(node) for node in data["config"]["subspaces"]
-        }
+        ]
         return data
 
     @staticmethod
