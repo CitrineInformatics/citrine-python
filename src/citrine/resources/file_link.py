@@ -1,4 +1,5 @@
 """A collection of FileLink objects."""
+from deprecation import deprecated
 import mimetypes
 import os
 from pathlib import Path
@@ -718,6 +719,10 @@ class FileCollection(Collection[FileLink]):
         download_response = requests.get(final_url)
         return download_response.content
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated "
+                        "in favor of GUI-based ingest routes")
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
                 wait_for_response: bool = True,
@@ -770,6 +775,9 @@ class FileCollection(Collection[FileLink]):
         else:
             return job
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated in favor of other ingest routes")
     def poll_file_processing_job(self, *, file_link: FileLink,
                                  processing_type: FileProcessingType,
                                  job_id: UUID,
@@ -806,6 +814,9 @@ class FileCollection(Collection[FileLink]):
 
         return self.file_processing_result(file_link=file_link, processing_types=[processing_type])
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated in favor of other ingest routes")
     def file_processing_result(self, *,
                                file_link: FileLink,
                                processing_types: List[FileProcessingType]) -> \
