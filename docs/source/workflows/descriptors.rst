@@ -73,7 +73,7 @@ e.g., those produced by the :class:`~citrine.informatics.predictors.simple_mixtu
 
 The two allowed formulation descriptors can be obtained by the helper methods
 ``FormulationDescriptor.hierarchical()`` and ``FormulationDescriptor.flat()``
-which produce descriptors with the keys 'Formulation' and 'Flat Formulation', respectively.
+that produce descriptors with the keys 'Formulation' and 'Flat Formulation', respectively.
 
 
 Platform Vocabularies

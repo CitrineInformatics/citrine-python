@@ -13,7 +13,7 @@ from citrine.informatics.descriptors import *
     MolecularStructureDescriptor("organic"),
     CategoricalDescriptor("my categorical", categories=["a", "b"]),
     CategoricalDescriptor("categorical", categories=["*"]),
-    FormulationDescriptor("formulation")
+    FormulationDescriptor.hierarchical()
 ])
 def descriptor(request):
     return request.param

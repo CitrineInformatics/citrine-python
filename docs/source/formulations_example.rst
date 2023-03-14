@@ -442,8 +442,8 @@ Training a Predictor
 
 With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the GEM Table, ``table``.
-The Citrine Platform will automatically recognize when a GEM table contains formulations
-and produce an appropriate :class:`~citrine.informatics.descriptors.FormulationDescriptor` with key 'Formulation'
+The Citrine Platform will automatically recognize when a GEM Table contains formulations
+and produce a :class:`~citrine.informatics.descriptors.FormulationDescriptor` with key 'Formulation'
 for the training data.
 
 .. code-block:: python

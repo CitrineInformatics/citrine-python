@@ -21,7 +21,7 @@ def test_mean_feature_properties():
     project = FakeProject(num_properties=num_properties)
     smiles = MolecularStructureDescriptor("smiles")
     chem = ChemicalFormulaDescriptor("formula")
-    formulation = FormulationDescriptor("formulation")
+    formulation = FormulationDescriptor.hierarchical()
     mol_featurizer = MolecularStructureFeaturizer(name="", description="", input_descriptor=smiles)
     chem_featurizer = ChemicalFormulaFeaturizer(name="", description="", input_descriptor=chem)
 

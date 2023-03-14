@@ -64,7 +64,7 @@ def valid_product_design_space_data():
                         type='FormulationDesignSpace',
                         name='first subspace',
                         description='',
-                        formulation_descriptor=FormulationDescriptor('X').dump(),
+                        formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['foo'],
                         labels={'bar': {'foo'}},
                         constraints=[],
@@ -82,7 +82,7 @@ def valid_product_design_space_data():
                         type='FormulationDesignSpace',
                         name='second subspace',
                         description='formulates some things',
-                        formulation_descriptor=FormulationDescriptor('Y').dump(),
+                        formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['baz'],
                         labels={},
                         constraints=[],
@@ -172,7 +172,7 @@ def valid_formulation_design_space_data():
     """Produce valid formulation design space data."""
     from citrine.informatics.constraints import IngredientCountConstraint
     from citrine.informatics.descriptors import FormulationDescriptor
-    descriptor = FormulationDescriptor('formulation')
+    descriptor = FormulationDescriptor.hierarchical()
     constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
     return dict(
         module_type='DESIGN_SPACE',
@@ -401,7 +401,7 @@ def valid_ing_formulation_predictor_data():
         type='IngredientsToSimpleMixture',
         name='Ingredients to formulation predictor',
         description='Constructs mixtures from ingredients',
-        output=FormulationDescriptor('simple mixture').dump(),
+        output=FormulationDescriptor.hierarchical().dump(),
         id_to_quantity={
             'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
             'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
@@ -419,7 +419,7 @@ def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor.hierarchical()
     instance = dict(
         type='GeneralizedMeanProperty',
         name='Mean property predictor',
@@ -427,7 +427,7 @@ def valid_generalized_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=['density'],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -440,7 +440,7 @@ def valid_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor.flat()
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
     instance = dict(
         type='MeanProperty',
@@ -449,7 +449,7 @@ def valid_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -465,7 +465,7 @@ def valid_label_fractions_predictor_data():
         type='LabelFractions',
         name='Label fractions predictor',
         description='Computes relative proportions of labeled ingredients',
-        input=FormulationDescriptor('simple mixture').dump(),
+        input=FormulationDescriptor.hierarchical().dump(),
         labels=['solvent']
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
@@ -479,7 +479,7 @@ def valid_ingredient_fractions_predictor_data():
         type='IngredientFractions',
         name='Ingredient fractions predictor',
         description='Computes ingredient fractions',
-        input=FormulationDescriptor('ingredients').dump(),
+        input=FormulationDescriptor.hierarchical().dump(),
         ingredients=['Blue dye', 'Red dye']
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
@@ -528,15 +528,15 @@ def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import FormulationDescriptor
-    input_formulation = FormulationDescriptor('input formulation')
-    output_formulation = FormulationDescriptor('output formulation')
+    input_formulation = FormulationDescriptor.hierarchical()
+    output_formulation = FormulationDescriptor.flat()
     instance = dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
         description='simple mixture description',
         input=input_formulation.dump(),
         output=output_formulation.dump(),
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=input_formulation).dump()]
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 

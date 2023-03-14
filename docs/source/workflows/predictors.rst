@@ -805,8 +805,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         latent_variables = [],
         training_data = GemTableDataSource(
             table_id=training_data_table_uid,
-            table_version=1,
-            formulation_descriptor=formulation_descriptor
+            table_version=1
         )
     )
 

@@ -9,17 +9,17 @@ from citrine.informatics.scores import LIScore, EIScore, EVScore
 
 informatics_string_data = [
     (IngredientCountConstraint(
-        formulation_descriptor=FormulationDescriptor('x'),
+        formulation_descriptor=FormulationDescriptor.hierarchical(),
         min=0, max=1
     ), "<IngredientCountConstraint 'x'>"),
     (IngredientFractionConstraint(
-        formulation_descriptor=FormulationDescriptor('x'),
+        formulation_descriptor=FormulationDescriptor.hierarchical(),
         ingredient='y',
         min=0,
         max=1
     ),"<IngredientFractionConstraint 'x'::'y'>"),
     (LabelFractionConstraint(
-        formulation_descriptor=FormulationDescriptor('x'),
+        formulation_descriptor=FormulationDescriptor.hierarchical(),
         label='y',
         min=0,
         max=1
@@ -32,7 +32,7 @@ informatics_string_data = [
     (FormulationDesignSpace(
         name='formulation',
         description='desc',
-        formulation_descriptor=FormulationDescriptor('x'),
+        formulation_descriptor=FormulationDescriptor.hierarchical(),
         ingredients={'y'},
         constraints=set(),
         labels={}
