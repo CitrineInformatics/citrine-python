@@ -6,7 +6,7 @@ import mock
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
     MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
-    CategoricalDescriptor
+    CategoricalDescriptor, FormulationKey
 from citrine.informatics.predictors import *
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
@@ -378,7 +378,7 @@ def test_mean_property_round_robin(mean_property_predictor):
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
-    assert label_fractions_predictor.input_descriptor.key == 'Formulation'
+    assert label_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
@@ -387,8 +387,8 @@ def test_label_fractions_property_initialization(label_fractions_predictor):
 def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     """Make sure the correct fields go to the correct places for a simple mixture predictor."""
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
-    assert simple_mixture_predictor.input_descriptor.key == 'Formulation'
-    assert simple_mixture_predictor.output_descriptor.key == 'Flat Formulation'
+    assert simple_mixture_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert simple_mixture_predictor.output_descriptor.key == FormulationKey.FLAT.value
     assert simple_mixture_predictor.training_data == [formulation_data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
@@ -397,7 +397,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
-    assert ingredient_fractions_predictor.input_descriptor.key == 'Formulation'
+    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str

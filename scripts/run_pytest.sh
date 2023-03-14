@@ -6,4 +6,5 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 REPO_DIR=$(dirname $SCRIPT_DIR)
 
-pytest --cov=src/ --cov-report term-missing:skip-covered --cov-config=tox.ini --cov-fail-under=100 -r .
+pytest --cov=$REPO_DIR/src --cov-report term-missing:skip-covered --cov-config=$REPO_DIR/tox.ini \
+  --cov-fail-under=100 -r $REPO_DIR/tests
