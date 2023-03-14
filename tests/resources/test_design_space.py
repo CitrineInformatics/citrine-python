@@ -56,7 +56,7 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.archived
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
-    assert design_space.formulation_descriptor.key == 'formulation'
+    assert design_space.formulation_descriptor.key == 'Formulation'
     assert design_space.ingredients == {'foo'}
     assert design_space.labels == {'bar': {'foo'}}
     assert len(design_space.constraints) == 1

@@ -199,8 +199,7 @@ def valid_gem_data_source_dict():
     return {
         "type": "hosted_table_data_source",
         "table_id": 'e5c51369-8e71-4ec6-b027-1f92bdc14762',
-        "table_version": 2,
-        "formulation_descriptor": None
+        "table_version": 2
     }
 
 

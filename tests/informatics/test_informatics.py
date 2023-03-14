@@ -11,19 +11,19 @@ informatics_string_data = [
     (IngredientCountConstraint(
         formulation_descriptor=FormulationDescriptor.hierarchical(),
         min=0, max=1
-    ), "<IngredientCountConstraint 'x'>"),
+    ), "<IngredientCountConstraint 'Formulation'>"),
     (IngredientFractionConstraint(
         formulation_descriptor=FormulationDescriptor.hierarchical(),
         ingredient='y',
         min=0,
         max=1
-    ),"<IngredientFractionConstraint 'x'::'y'>"),
+    ),"<IngredientFractionConstraint 'Formulation'::'y'>"),
     (LabelFractionConstraint(
         formulation_descriptor=FormulationDescriptor.hierarchical(),
         label='y',
         min=0,
         max=1
-    ), "<LabelFractionConstraint 'x'::'y'>"),
+    ), "<LabelFractionConstraint 'Formulation'::'y'>"),
     (ScalarRangeConstraint(descriptor_key='z'), "<ScalarRangeConstraint 'z'>"),
     (AcceptableCategoriesConstraint(descriptor_key='x', acceptable_categories=[]), "<AcceptableCategoriesConstraint 'x'>"),
     (ProductDesignSpace(name='my design space', description='does some things'),
