@@ -254,12 +254,12 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     def __repr__(self):
         return "FormulationDescriptor(key={})".format(self.key)
 
-    @staticmethod
-    def hierarchical() -> "FormulationDescriptor":
+    @classmethod
+    def hierarchical(cls) -> "FormulationDescriptor":
         """The hierarchical formulation descriptor with key 'Formulation'."""
         return FormulationDescriptor("Formulation")
 
-    @staticmethod
-    def flat() -> "FormulationDescriptor":
+    @classmethod
+    def flat(cls) -> "FormulationDescriptor":
         """The flat formulation descriptor with key 'Flat Formulation'."""
         return FormulationDescriptor("Flat Formulation")

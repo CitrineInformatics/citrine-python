@@ -68,8 +68,8 @@ The Formulation Descriptor has no parameters other than a name,
 of which the two allowed values are 'Formulation' and 'Flat Formulation'.
 The key 'Formulation' should be used when referring to mixtures found directly in the training data,
 for which the ingredients may be other mixtures themselves.
-The key 'Flat Formulation' should be used when referring to mixtures containing only raw ingredients,
-e.g., those produced by the :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
+The key 'Flat Formulation' should be reserved for mixtures comprised of only raw ingredients
+produced by a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
 
 The two allowed formulation descriptors can be obtained by the helper methods
 ``FormulationDescriptor.hierarchical()`` and ``FormulationDescriptor.flat()``
