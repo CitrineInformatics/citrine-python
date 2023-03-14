@@ -62,3 +62,8 @@ def test_to_json(descriptor):
     json_str = json.dumps(descriptor.dump())
     desc = Descriptor.build(json.loads(json_str))
     assert desc == descriptor
+
+
+def test_formulation_from_string_key():
+    descriptor = FormulationDescriptor(FormulationKey.HIERARCHICAL.value)
+    assert descriptor.key == FormulationKey.HIERARCHICAL.value

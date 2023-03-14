@@ -343,7 +343,7 @@ def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     """Make sure the correct fields go to the correct places for an ingredients to formulation predictor."""
     assert ing_to_formulation_predictor.name == 'Ingredients to formulation predictor'
-    assert ing_to_formulation_predictor.output.key == 'Formulation'
+    assert ing_to_formulation_predictor.output.key == FormulationKey.HIERARCHICAL.value
     assert ing_to_formulation_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
     assert ing_to_formulation_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = f'<IngredientsToFormulationPredictor \'{ing_to_formulation_predictor.name}\'>'
@@ -353,7 +353,7 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
-    assert mean_property_predictor.input_descriptor.key == 'Formulation'
+    assert mean_property_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert mean_property_predictor.properties == [density, chain_type]
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True

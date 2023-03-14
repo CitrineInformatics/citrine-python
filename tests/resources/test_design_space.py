@@ -6,7 +6,7 @@ import mock
 import pytest
 
 from citrine.exceptions import NotFound
-from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.descriptors import RealDescriptor, FormulationKey
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
@@ -56,7 +56,7 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.archived
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
-    assert design_space.formulation_descriptor.key == 'Formulation'
+    assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert design_space.ingredients == {'foo'}
     assert design_space.labels == {'bar': {'foo'}}
     assert len(design_space.constraints) == 1

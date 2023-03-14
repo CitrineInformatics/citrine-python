@@ -1,10 +1,6 @@
 #!/usr/bin/env sh
 
-# Helper script to execute pytest with coverage on the citrine-python test directory
+# Helper script to execute pytest with coverage when invoked from the citrine-python repository directory
 # This is invoked by the Travis test job, so is useful to check for when developing locally
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-REPO_DIR=$(dirname $SCRIPT_DIR)
-
-pytest --cov=$REPO_DIR/src --cov-report term-missing:skip-covered --cov-config=$REPO_DIR/tox.ini \
-  --cov-fail-under=100 -r $REPO_DIR/tests
+pytest --cov=src/ --cov-report term-missing:skip-covered --cov-config=tox.ini --cov-fail-under=100 -r .
