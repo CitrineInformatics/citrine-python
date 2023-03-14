@@ -129,12 +129,15 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 class GEMDQueryDataSource(Serializable['GEMDQueryDataSource'], DataSource):
 
     typ = properties.String('type', default='gemd_query_data_source', deserializable=False)
-    datasets = properties.Set(properties.UUID, "datasets")
+    datasets = properties.Set(
+        properties.Union([properties.UUID, properties.String]),
+        "datasets"
+    )
 
     def _attrs(self) -> List[str]:
         return ["datasets", "typ"]
 
-    def __init__(self, *, datasets: Set[UUID]):
+    def __init__(self, *, datasets: Set[Union[UUID, str]]):
         self.datasets = datasets
 
 
