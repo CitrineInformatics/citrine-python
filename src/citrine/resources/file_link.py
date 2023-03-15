@@ -588,7 +588,6 @@ class FileCollection(Collection[FileLink]):
                                                       json={'s3_version': uploader.s3_version})
 
         try:
-            print(complete_response['file_info'])
             file_id = complete_response['file_info']['file_id']
             version_id = complete_response['file_info']['version']
         except KeyError:
