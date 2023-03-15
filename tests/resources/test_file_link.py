@@ -117,8 +117,8 @@ def test_upload(collection: FileCollection, session, tmpdir, monkeypatch):
         'foo.TXT': 'text/plain',  # Capitalization in extension is fine
         'foo.bar': 'application/octet-stream'  # No match == generic binary
     }
-    file_id = '12345'
-    version = '13'
+    file_id = str(uuid4())
+    version = str(uuid4())
 
     # This is the dictionary structure we expect from the upload completion request
     file_info_response = {
@@ -276,7 +276,7 @@ def test_upload_file(collection: FileCollection, session, uploader, tmpdir, monk
     with monkeypatch.context() as m:
         stashed_kwargs = {}
 
-        def _stash_kwargs(*args, **kwargs):
+        def _stash_kwargs(*_, **kwargs):
             stashed_kwargs.update(kwargs)
             return FakeS3Client({'VersionId': '71'})
 
@@ -395,6 +395,7 @@ def test_file_download(collection: FileCollection, session, tmpdir):
     with pytest.raises(ValueError, match="malformed"):
         collection.download(file_link=bad_file, local_path=target_dir)
 
+
 def test_read(collection: FileCollection, session):
     """
     Test that reading a file works as expected.
@@ -422,12 +423,30 @@ def test_read(collection: FileCollection, session):
         )
         assert expected_call == session.last_call
 
-
-
     bad_url = f"bin/uuid3/versions/uuid4"
     bad_file = FileLink.build(FileLinkDataFactory(url=bad_url, filename=filename))
     with pytest.raises(ValueError, match="malformed"):
         collection.read(file_link=bad_file)
+
+    # Test with files.list endpoint-like object
+    filelink = collection.build({"id": str(uuid4()),
+                                 "version": str(uuid4()),
+                                 "filename": filename,
+                                 "type": FileLink.typ})
+    pre_signed_url_2 = "http://files.citrine.io/secret-codes/2222222222222"  # arbitrary
+    session.set_response({'pre_signed_read_link': pre_signed_url_2})
+    with requests_mock.mock() as mock_get:
+        mock_get.get(pre_signed_url_2, text="quite lovely")
+        # When
+        io = collection.read(file_link=filelink)
+        assert io.decode('UTF-8') == 'quite lovely'
+        # When
+        assert mock_get.call_count == 1
+        expected_call_2 = FakeCall(
+            method='GET',
+            path=filelink.url + '/content-link'
+        )
+        assert expected_call_2 == session.last_call
 
 
 def test_external_file_read(collection: FileCollection, session):
@@ -440,7 +459,6 @@ def test_external_file_read(collection: FileCollection, session):
     url = "http://customer.com/data-lake/files/123/versions/456"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
 
-
     with requests_mock.mock() as mock_get:
         mock_get.get(url, text='010111011')
 
@@ -451,7 +469,6 @@ def test_external_file_read(collection: FileCollection, session):
         # When
         assert mock_get.call_count == 1
 
-    # assert local_path.read_text() == '010111011'
 
 def test_external_file_download(collection: FileCollection, session, tmpdir):
     """
@@ -601,7 +618,7 @@ def test_resolve_file_link(collection: FileCollection, session):
         'files': raw_files
     })
 
-    file1 = FileLink.build(collection._as_dict_from_resource(raw_files[1]))
+    file1 = collection.build(raw_files[1])
 
     assert collection._resolve_file_link(file1) == file1, "Resolving a FileLink is a no-op"
     assert session.num_calls == 0, "No-op still hit server"
@@ -721,8 +738,8 @@ def test_get(collection: FileCollection, session):
     for f1 in file1_versions:
         f1['unversioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}"
         f1['versioned_url'] = f"http://test.domain.net:8002/api/v1/files/{f1['id']}/versions/{f1['version']}"
-    file0 = FileLink.build(collection._as_dict_from_resource(raw_files[0]))
-    file1 = FileLink.build(collection._as_dict_from_resource(raw_files[1]))
+    file0 = collection.build(raw_files[0])
+    file1 = collection.build(raw_files[1])
 
     session.set_response({
         'files': [raw_files[1]]
