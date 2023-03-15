@@ -15,6 +15,8 @@ from citrine.jobs.waiting import (
     wait_while_validating,
     ConditionTimeoutError
 )
+from citrine.resources.status_detail import StatusDetail
+
 
 @mock.patch('time.sleep', return_value=None)
 def test_wait_while_validating(sleep_mock):
@@ -24,10 +26,10 @@ def test_wait_while_validating(sleep_mock):
     collection = mock.Mock()
     module = mock.Mock()
     statuses = mock.PropertyMock(side_effect=["VALIDATING", "VALID", "VALID"])
-    status_info = mock.PropertyMock(return_value="The predictor is now validated.")
+    status_detail = mock.PropertyMock(return_value=[StatusDetail(msg="The predictor is now validated.", level="Info")])
     in_progress = mock.PropertyMock(side_effect=[True, False, False])
     type(module).status = statuses
-    type(module).status_info = status_info
+    type(module).status_detail = status_detail
     module.in_progress = in_progress
     collection.get.return_value = module
 
@@ -62,8 +64,10 @@ def test_wait_while_executing(sleep_mock):
     collection = mock.Mock()
     workflow_execution = mock.Mock(spec=DesignExecution)
     statuses = mock.PropertyMock(side_effect=["INPROGRESS", "SUCCEEDED", "SUCCEEDED"])
+    status_detail = mock.PropertyMock(return_value=[StatusDetail(msg="Execution is complete.", level="Info")])
     in_progress = mock.PropertyMock(side_effect=[True, False, False])
     type(workflow_execution).status = statuses
+    type(workflow_execution).status_detail = status_detail
     workflow_execution.in_progress = in_progress
     collection.get.return_value = workflow_execution
 

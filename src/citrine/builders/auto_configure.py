@@ -289,7 +289,7 @@ class AutoConfigureWorkflow():
         """Update status info based on currently stored assets."""
         # Work backwards from end of workflow, return early when possible
         if self.design_workflow is not None:
-            self._status_info = self.design_workflow.status_info
+            self._status_info = [detail.msg for detail in self.design_workflow.status_detail]
             if self.design_workflow.failed():
                 self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
             else:
@@ -305,7 +305,8 @@ class AutoConfigureWorkflow():
             return
 
         if self.predictor_evaluation_workflow is not None:
-            self._status_info = self.predictor_evaluation_workflow
+            pew_status_detail = self.predictor_evaluation_workflow.status_detail
+            self._status_info = [detail.msg for detail in pew_status_detail]
             if self.predictor_evaluation_workflow.failed():
                 self._status = AutoConfigureStatus.PEW_FAILED
             else:
@@ -656,7 +657,7 @@ class AutoConfigureWorkflow():
 
         self._predictor_evaluation_workflow = pew
         self._status = AutoConfigureStatus.PEW_CREATED
-        self._status_info = pew.status_info
+        self._status_info = [detail.msg for detail in pew.status_detail]
 
         if pew.failed():
             # Can proceed without raising error, but can't get PEE
@@ -727,7 +728,7 @@ class AutoConfigureWorkflow():
 
         self._design_workflow = workflow
         self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
-        self._status_info = workflow.status_info
+        self._status_info = [detail.msg for detail in workflow.status_detail]
 
         if workflow.failed():
             self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED

@@ -30,7 +30,7 @@ def generate_fake_wait_while(*, status: str, status_detail: Optional[List[Status
         elif "execution" in kwargs:
             execution = kwargs["execution"]
             execution.status = status
-            execution.status_info = status
+            execution.status_detail = StatusDetail(msg=status, level="Unknown")
             return execution
 
     return _wait_while_status

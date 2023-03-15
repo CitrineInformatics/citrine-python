@@ -22,6 +22,7 @@ class Constraint(PolymorphicSerializable['Constraint']):
         from .label_fraction_constraint import LabelFractionConstraint
         from .scalar_range_constraint import ScalarRangeConstraint
         from .categorical_constraint import AcceptableCategoriesConstraint
+        from .ingredient_ratio_constraint import IngredientRatioConstraint
         return {
             'Categorical': AcceptableCategoriesConstraint,  # Kept for backwards compatibility.
             'AcceptableCategoriesConstraint': AcceptableCategoriesConstraint,
@@ -29,4 +30,5 @@ class Constraint(PolymorphicSerializable['Constraint']):
             'IngredientFractionConstraint': IngredientFractionConstraint,
             'LabelFractionConstraint': LabelFractionConstraint,
             'ScalarRange': ScalarRangeConstraint,
+            'IngredientRatio': IngredientRatioConstraint,
         }[data['type']]

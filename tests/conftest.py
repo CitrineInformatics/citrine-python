@@ -10,7 +10,7 @@ from tests.utils.factories import (PredictorEntityDataFactory, PredictorDataData
                                    PredictorMetadataDataFactory, StatusDataFactory)
 
 
-def build_predictor_entity(instance, status_name="READY", status_info=[], status_detail=[]):
+def build_predictor_entity(instance, status_name="READY", status_detail=[]):
     user = str(uuid.uuid4())
     time = '2020-04-23T15:46:26Z'
     return dict(
@@ -23,7 +23,6 @@ def build_predictor_entity(instance, status_name="READY", status_info=[], status
         metadata=dict(
             status=dict(
                 name=status_name,
-                info=status_info,
                 detail=status_detail
             ),
             created=dict(
@@ -45,7 +44,6 @@ def valid_product_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=False,
         display_name='my design space',
@@ -58,7 +56,6 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='READY',
-                    status_info=[],
                     status_detail=[],
                     id=str(uuid.uuid4()),
                     archived=False,
@@ -67,7 +64,7 @@ def valid_product_design_space_data():
                         type='FormulationDesignSpace',
                         name='first subspace',
                         description='',
-                        formulation_descriptor=FormulationDescriptor('X').dump(),
+                        formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['foo'],
                         labels={'bar': {'foo'}},
                         constraints=[],
@@ -77,7 +74,6 @@ def valid_product_design_space_data():
                 dict(
                     module_type='DESIGN_SPACE',
                     status='CREATED',
-                    status_info=[],
                     status_detail=[],
                     id=None,
                     archived=False,
@@ -86,7 +82,7 @@ def valid_product_design_space_data():
                         type='FormulationDesignSpace',
                         name='second subspace',
                         description='formulates some things',
-                        formulation_descriptor=FormulationDescriptor('Y').dump(),
+                        formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['baz'],
                         labels={},
                         constraints=[],
@@ -136,7 +132,6 @@ def valid_enumerated_design_space_data():
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=True,
         display_name='my enumerated design space',
@@ -177,12 +172,11 @@ def valid_formulation_design_space_data():
     """Produce valid formulation design space data."""
     from citrine.informatics.constraints import IngredientCountConstraint
     from citrine.informatics.descriptors import FormulationDescriptor
-    descriptor = FormulationDescriptor('formulation')
+    descriptor = FormulationDescriptor.hierarchical()
     constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
-        status_info=[],
         status_detail=[],
         archived=True,
         display_name='formulation design space',
@@ -205,8 +199,7 @@ def valid_gem_data_source_dict():
     return {
         "type": "hosted_table_data_source",
         "table_id": 'e5c51369-8e71-4ec6-b027-1f92bdc14762',
-        "table_version": 2,
-        "formulation_descriptor": None
+        "table_version": 2
     }
 
 
@@ -407,7 +400,7 @@ def valid_ing_formulation_predictor_data():
         type='IngredientsToSimpleMixture',
         name='Ingredients to formulation predictor',
         description='Constructs mixtures from ingredients',
-        output=FormulationDescriptor('simple mixture').dump(),
+        output=FormulationDescriptor.hierarchical().dump(),
         id_to_quantity={
             'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
             'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
@@ -425,7 +418,7 @@ def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor.hierarchical()
     instance = dict(
         type='GeneralizedMeanProperty',
         name='Mean property predictor',
@@ -433,7 +426,7 @@ def valid_generalized_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=['density'],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -446,7 +439,7 @@ def valid_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor.flat()
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
     instance = dict(
         type='MeanProperty',
@@ -455,7 +448,7 @@ def valid_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -471,7 +464,7 @@ def valid_label_fractions_predictor_data():
         type='LabelFractions',
         name='Label fractions predictor',
         description='Computes relative proportions of labeled ingredients',
-        input=FormulationDescriptor('simple mixture').dump(),
+        input=FormulationDescriptor.hierarchical().dump(),
         labels=['solvent']
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
@@ -485,7 +478,7 @@ def valid_ingredient_fractions_predictor_data():
         type='IngredientFractions',
         name='Ingredient fractions predictor',
         description='Computes ingredient fractions',
-        input=FormulationDescriptor('ingredients').dump(),
+        input=FormulationDescriptor.hierarchical().dump(),
         ingredients=['Blue dye', 'Red dye']
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
@@ -534,15 +527,15 @@ def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import FormulationDescriptor
-    input_formulation = FormulationDescriptor('input formulation')
-    output_formulation = FormulationDescriptor('output formulation')
+    input_formulation = FormulationDescriptor.hierarchical()
+    output_formulation = FormulationDescriptor.flat()
     instance = dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
         description='simple mixture description',
         input=input_formulation.dump(),
         output=output_formulation.dump(),
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=input_formulation).dump()]
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -707,7 +700,7 @@ def generic_entity():
         "id": str(uuid.uuid4()),
         "status": "INPROGRESS",
         "status_description": "VALIDATING",
-        "status_info": ["System processing"],
+        "status_detail": [{"level": "Info", "msg": "System processing"}],
         "experimental": False,
         "experimental_reasons": [],
         "create_time": '2020-04-23T15:46:26Z',

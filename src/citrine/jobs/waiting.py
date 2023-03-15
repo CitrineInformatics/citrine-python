@@ -81,9 +81,9 @@ def wait_for_asynchronous_object(
         )
 
     current_resource = collection.get(resource.uid)
-    if print_status_info and hasattr(current_resource, 'status_info'):
+    if print_status_info and hasattr(current_resource, 'status_detail'):
         print("\nStatus info:")
-        pprint(current_resource.status_info)
+        pprint([detail.msg for detail in current_resource.status_detail])
     return current_resource
 
 

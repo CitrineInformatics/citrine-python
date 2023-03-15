@@ -255,8 +255,8 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   from citrine.informatics.design_spaces import FormulationDesignSpace
   from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
 
-  # define a descriptor to store formulations
-  descriptor = FormulationDescriptor(key="saline solution")
+  # define the default descriptor to store formulations
+  descriptor = FormulationDescriptor.hierarchical()
 
   # set of unique ingredient names
   ingredients = {"water", "salt", "boric acid"}

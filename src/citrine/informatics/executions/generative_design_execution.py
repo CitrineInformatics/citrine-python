@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Optional, Iterable
+from typing import Iterable, List, Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -10,6 +10,9 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.generative_design import GenerativeDesignResult
+from citrine.resources.status_detail import StatusDetail
+
+from deprecation import deprecated
 
 
 class GenerativeDesignExecution(
@@ -37,13 +40,10 @@ class GenerativeDesignExecution(
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)
     """:Optional[str]: more detailed description of the execution's status"""
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
+    status_detail = properties.List(properties.Object(StatusDetail), 'status_detail', default=[],
+                                    serializable=False)
+    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
-    """:Optional[List[str]]: human-readable explanations of the status"""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
@@ -54,6 +54,12 @@ class GenerativeDesignExecution(
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
     """:Optional[datetime]: date and time at which the resource was most recently updated,
     if it has been updated"""
+
+    @property
+    @deprecated(deprecated_in="2.2.0", removed_in="3.0.0", details="Use status_detail instead.")
+    def status_info(self) -> List[str]:
+        """:List[str]: human-readable explanations of the status."""
+        return [detail.msg for detail in self.status_detail]
 
     def __init__(self):
         """The GenerativeDesign executions are not directly instantiated by the user."""

@@ -6,7 +6,7 @@ import mock
 import pytest
 
 from citrine.exceptions import NotFound
-from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.descriptors import RealDescriptor, FormulationKey
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection, DefaultDesignSpaceMode
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
@@ -46,6 +46,8 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
     # Then
     status_detail_tuples = {(detail.level, detail.msg) for detail in design_space.status_detail}
     assert status_detail_tuples == status_detail_data
+    with pytest.deprecated_call():
+        assert design_space.status_info == [args[1] for args in status_detail_data]
 
 
 def test_formulation_build(valid_formulation_design_space_data):
@@ -54,7 +56,7 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.archived
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
-    assert design_space.formulation_descriptor.key == 'formulation'
+    assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert design_space.ingredients == {'foo'}
     assert design_space.labels == {'bar': {'foo'}}
     assert len(design_space.constraints) == 1
@@ -228,7 +230,6 @@ def test_archive(valid_formulation_design_space_data):
 
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
-    del expected_payload["status_info"]
     del expected_payload["status_detail"]
     del expected_payload["id"]
 
@@ -252,7 +253,6 @@ def test_restore(valid_formulation_design_space_data):
 
     expected_payload = deepcopy(update_response)
     del expected_payload["status"]
-    del expected_payload["status_info"]
     del expected_payload["status_detail"]
     del expected_payload["id"]
 

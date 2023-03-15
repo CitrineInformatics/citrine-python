@@ -6,7 +6,9 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._session import Session
 from citrine.resources.report import ReportResource
-
+from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
+from citrine.informatics.predictors.single_prediction import SinglePrediction
+from citrine._utils.functions import format_escaped_url
 
 __all__ = ['Predictor']
 
@@ -23,6 +25,9 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     """:Optional[UUID]: Citrine Platform unique identifier"""
     name = properties.String('data.name')
     description = properties.Optional(properties.String(), 'data.description')
+    version = properties.Optional(
+        properties.Union([properties.Integer(), properties.String()]),
+        'metadata.version', serializable=False)
 
     _response_key = None
     _project_id: Optional[UUID] = None
@@ -30,6 +35,7 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     _in_progress_statuses = ["VALIDATING", "CREATED"]
     _succeeded_statuses = ["READY"]
     _failed_statuses = ["INVALID", "ERROR"]
+    _api_version = "v3"
 
     @property
     def report(self):
@@ -89,3 +95,18 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
                 '{} is not a valid predictor type. '
                 'Must be in {}.'.format(data['data']['instance']['type'], type_dict.keys())
             )
+
+    def _path(self):
+        return format_escaped_url(
+            '/projects/{project_id}/predictors/{predictor_id}/versions/{version}',
+            project_id=self._project_id,
+            predictor_id=str(self.uid),
+            version=self.version
+        )
+
+    def predict(self,
+                predict_request: SinglePredictRequest) -> SinglePrediction:
+        """Make a one-off prediction with this predictor."""
+        path = self._path() + '/predict'
+        res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
+        return SinglePrediction.build(res)
