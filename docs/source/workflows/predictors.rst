@@ -169,6 +169,7 @@ Citrine-python currently supports the following operators and functions:
   - exponential: ``exp``
 
 - constants: ``pi``, ``e``
+- if statements: ``if(condition, value_if_true, value_if_false)``
 
 ExpressionPredictors do not support complex numbers.
 
