@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.5. Design Spaces &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>4.5. Design Spaces &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -321,8 +321,8 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
 <span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">FormulationDesignSpace</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.constraints</span> <span class="kn">import</span> <span class="n">IngredientCountConstraint</span><span class="p">,</span> <span class="n">IngredientFractionConstraint</span>
 
-<span class="c1"># define a descriptor to store formulations</span>
-<span class="n">descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;saline solution&quot;</span><span class="p">)</span>
+<span class="c1"># define the default descriptor to store formulations</span>
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
 
 <span class="c1"># set of unique ingredient names</span>
 <span class="n">ingredients</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;boric acid&quot;</span><span class="p">}</span>

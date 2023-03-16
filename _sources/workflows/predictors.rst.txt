@@ -169,6 +169,7 @@ Citrine-python currently supports the following operators and functions:
   - exponential: ``exp``
 
 - constants: ``pi``, ``e``
+- if statements: ``if(condition, value_if_true, value_if_false)``
 
 ExpressionPredictors do not support complex numbers.
 
@@ -359,7 +360,7 @@ Ingredients to formulation predictor (ALPHA)
 
 The :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` constructs a formulation from a list of ingredients.
 This predictor is only required to construct formulations from CSV data sources.
-Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
+Formulations are constructed automatically by GEM Tables when the underlying GEMD data contains formulations, so
 an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
@@ -432,7 +433,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     )
 
     # create a descriptor to hold formulations
-    formulation = FormulationDescriptor(key='formulation')
+    formulation = FormulationDescriptor.hierarchical()
 
     IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
@@ -460,25 +461,26 @@ Along the lines of the example above, hypertonic saline can be mixed with water 
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
 The :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
 
-The formulation to be flattened is specified by an ``input_descriptor`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
-These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output_descriptor`` formulation descriptor.
+The formulation to be flattened is specified by an ``input_descriptor`` formulation descriptor that should be named 'Formulation';
+the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes,
+with the resulting candidates described by an ``output_descriptor`` formulation descriptor
+that should be named 'Flat Formulation'.
 The ``training_data`` parameter is used as a source of formulation recipes to be used in flattening hierarchical mixtures.
 
 The following example illustrates how a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
 
 .. code:: python
 
-    from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.predictors import SimpleMixturePredictor
 
-    input_formulation = FormulationDescriptor(key='diluted saline')
-    output_formulation = FormulationDescriptor(key='diluted saline (flattened)')
+    input_formulation = FormulationDescriptor.hierarchical()
+    output_formulation = FormulationDescriptor.flat()
 
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(
         table_id=table_uid,
-        table_version=1,
-        formulation_descriptor=input_formulation
+        table_version=1
     )
 
     SimpleMixturePredictor(
@@ -567,7 +569,7 @@ to compute the mean solute density and the distribution of acetone solubility in
     from citrine.informatics.predictors import MeanPropertyPredictor
 
     # descriptor that holds formulation data
-    formulation = FormulationDescriptor(key='formulation')
+    formulation = FormulationDescriptor.hierarchical()
 
     # property descriptor to featurize
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
@@ -578,8 +580,7 @@ to compute the mean solute density and the distribution of acetone solubility in
     # table with formulations and their ingredients
     data_source = GemTableDataSource(
         table_id=table_uid,
-        table_version=1,
-        formulation_descriptor=formulation
+        table_version=1
     )
 
     mean_property_predictor = MeanPropertyPredictor(
@@ -637,7 +638,7 @@ The example below shows how to configure an ``IngredientFractionsPredictor`` tha
     from citrine.informatics.predictors import IngredientFractionsPredictor
     from citrine.informatics.descriptors import FormulationDescriptor
 
-    formulation_descriptor = FormulationDescriptor(key='formulation')
+    formulation_descriptor = FormulationDescriptor.hierarchical()
 
     ingredient_fractions = IngredientFractionsPredictor(
         name='Ingredient Fractions Predictor',
@@ -662,7 +663,8 @@ Label fractions predictor
 -------------------------
 
 The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
+The predictor is configured by specifying either the flat or hierarchical formulation descriptor
+that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
 The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a formulation.
@@ -671,7 +673,7 @@ The following example demonstrates how to create a predictor that computes the t
 
     from citrine.informatics.descriptors import FormulationDescriptor
     # descriptor that holds formulation data
-    formulation_descriptor = FormulationDescriptor(key='formulation')
+    formulation_descriptor = FormulationDescriptor.flat()
 
     label_fractions = LabelFractionsPredictor(
         name='Saline solution label fractions',
@@ -779,7 +781,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
                                     )
 
     # create a descriptor to store formulations
-    formulation_descriptor = FormulationDescriptor(key='formulation')
+    formulation_descriptor = FormulationDescriptor.flat()
 
     # create a predictor that computes ingredient fractions
     ingredient_fractions = IngredientFractionsPredictor(
@@ -804,8 +806,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         latent_variables = [],
         training_data = GemTableDataSource(
             table_id=training_data_table_uid,
-            table_version=1,
-            formulation_descriptor=formulation_descriptor
+            table_version=1
         )
     )
 
@@ -837,3 +838,51 @@ Because training data are shared by all predictors in the graph, a data source d
 If all data sources required to train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
+
+Single Predictions
+---------------------------------
+
+Once a :class:`~citrine.informatics.predictors.predictor.Predictor` has been trained, a one-off prediction may be made against it by using the :func:`~citrine.informatics.predictors.predictor.Predictor.predict` method.
+
+This method accepts a :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest`, which is akin to a :ref:`DesignCandidate <design_candidate_anchor>` that you can define and modify and is not persisted in the Citrine Platform. When building a :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest` note that only the material properties required to make a prediction (the "input" properties") are required. Indeed, when making a prediction on a predictor using the :func:`~citrine.informatics.predictors.predictor.Predictor.predict` method, the system will automatically filter out any provided material properties that are not inputs to the predictor. The output of a call to ``predict()`` is a :class:`~~citrine.informatics.predictors.single_prediction.SinglePrediction`, which is essentially the :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest` with all of the predicted properties of the material filled in with the predicted values.
+
+Note that a ``random_seed`` may be provided to the :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest`. Providing a consistent ``random_seed`` across requests with the same inputs guantees consistent predictions.
+
+The following is a simple example of several predictions based on a function that builds a list of prediction requests. This example retrieves 3 candidates from a prior design execution, updates them slightly, and makes new predictions with the updated inputs. Note that while this example uses existing an :ref:`DesignCandidate <design_candidate_anchor>` as a convenience to build the update prediction requests, there is no requirement that a prediction request be related to an existing :ref:`DesignCandidate <design_candidate_anchor>` -- rather any arbitrary request can be made as long as the inputs satisfy the requirements of the predictor.
+
+.. code:: python
+
+   import os
+   from citrine import Citrine
+   from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
+   from citrine.informatics.predictors.single_prediction import SinglePrediction
+
+   # arbitrary example of building a list of requests
+   def build_requests() -> list[SinglePredictRequest]:
+     # assuming some my_execution: DesignExecution
+     my_candidates = my_execution.candidates(per_page = 3)
+     rs = []
+     for idx, c in enumerate(my_candidates):
+       my_candidate = c
+       my_candidate.material.values["Heat Treatment Time 1"].mean -= 1
+       rs.append(SinglePredictRequest(
+           material_id = my_candidate.material_id,
+           identifiers = my_candidate.identifiers,
+           material = my_candidate.material,
+       ))
+       if idx == 2:
+           break
+     return rs
+
+   # retrieve the predictor you'd like to use
+   my_predictor = my_project.predictors.get(
+       uid = PREDICTOR_ID, version = "most_recent")
+
+   # Make a prediction for each request and print out relevant results
+   for request in build_requests():
+     my_prediction: SinglePrediction = my_predictor.predict(request)
+     my_id = request.material_id
+     heat_treatment_time = request.material.values["Heat Treatment Time 1"].mean
+     predicted_tensile_strength = my_prediction.material.values["Tensile Strength"].mean
+     print(f"{my_id} updated_time={heat_treatment_time} strength={predicted_tensile_strength}")
+

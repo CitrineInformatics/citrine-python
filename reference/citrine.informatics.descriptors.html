@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.descriptors module &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>citrine.informatics.descriptors module &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -194,12 +194,14 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationDescriptor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.descriptors.</span></span><span class="sig-name descname"><span class="pre">FormulationDescriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.descriptors.</span></span><span class="sig-name descname"><span class="pre">FormulationDescriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.descriptors.FormulationKey" title="citrine.informatics.descriptors.FormulationKey"><span class="pre">citrine.informatics.descriptors.FormulationKey</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a>], <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
 <p>A descriptor to hold formulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The key for the descriptor, which must be either ‘Formulation’ or ‘Flat Formulation’
+to produce valid Citrine Platform assets.
+The two allowed values can be accessed from the <cite>FormulationKey</cite> enum.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -215,9 +217,21 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationDescriptor.flat">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><span class="pre">citrine.informatics.descriptors.FormulationDescriptor</span></a></span></span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor.flat" title="Permalink to this definition"></a></dt>
+<dd><p>The flat formulation descriptor with key ‘Flat Formulation’.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationDescriptor.get_type">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor.get_type" title="Permalink to this definition"></a></dt>
 <dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationDescriptor.hierarchical">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hierarchical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><span class="pre">citrine.informatics.descriptors.FormulationDescriptor</span></a></span></span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor.hierarchical" title="Permalink to this definition"></a></dt>
+<dd><p>The hierarchical formulation descriptor with key ‘Formulation’.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -228,6 +242,27 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationDescriptor.typ">
 <span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Formulation'</span></em><a class="headerlink" href="#citrine.informatics.descriptors.FormulationDescriptor.typ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.descriptors.</span></span><span class="sig-name descname"><span class="pre">FormulationKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.FormulationKey" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>The allowed names for a FormulationDescriptor.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HIERARCHICAL</span></code> is the key “Formulation”</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FLAT</span></code> is the key “Flat Formulation”</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationKey.FLAT">
+<span class="sig-name descname"><span class="pre">FLAT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Flat</span> <span class="pre">Formulation'</span></em><a class="headerlink" href="#citrine.informatics.descriptors.FormulationKey.FLAT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.descriptors.FormulationKey.HIERARCHICAL">
+<span class="sig-name descname"><span class="pre">HIERARCHICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Formulation'</span></em><a class="headerlink" href="#citrine.informatics.descriptors.FormulationKey.HIERARCHICAL" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

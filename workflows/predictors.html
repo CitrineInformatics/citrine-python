@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -67,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#simple-ml-predictor">4.4.12. Simple ML predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#predictor-reports">4.4.13. Predictor reports</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#training-data">4.4.14. Training data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#single-predictions">4.4.15. Single Predictions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
@@ -258,6 +259,7 @@ Citrine-python currently supports the following operators and functions:</p>
 </ul>
 </li>
 <li><p>constants: <code class="docutils literal notranslate"><span class="pre">pi</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code></p></li>
+<li><p>if statements: <code class="docutils literal notranslate"><span class="pre">if(condition,</span> <span class="pre">value_if_true,</span> <span class="pre">value_if_false)</span></code></p></li>
 </ul>
 <p>ExpressionPredictors do not support complex numbers.</p>
 <p>The following example demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a>.</p>
@@ -434,7 +436,7 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
 <h2><span class="section-number">4.4.7. </span>Ingredients to formulation predictor (ALPHA)<a class="headerlink" href="#ingredients-to-formulation-predictor-alpha" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> constructs a formulation from a list of ingredients.
 This predictor is only required to construct formulations from CSV data sources.
-Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
+Formulations are constructed automatically by GEM Tables when the underlying GEMD data contains formulations, so
 an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> is not required in those cases.</p>
 <p>Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient’s quantity.
 For example, <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">lower_bound=0,</span> <span class="pre">upper_bound=1,</span> <span class="pre">units='')}</span></code> defines an ingredient <code class="docutils literal notranslate"><span class="pre">water</span></code> with quantity held by the descriptor <code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">quantity</span></code>.
@@ -522,7 +524,7 @@ These labels are specified via:</p>
 <span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold formulations</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;formulation&#39;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
 
 <span class="n">IngredientsToFormulationPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to formulation predictor&#39;</span><span class="p">,</span>
@@ -549,21 +551,22 @@ These labels are specified via:</p>
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
 The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.</p>
-<p>The formulation to be flattened is specified by an <code class="docutils literal notranslate"><span class="pre">input_descriptor</span></code> formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
-These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an <code class="docutils literal notranslate"><span class="pre">output_descriptor</span></code> formulation descriptor.
+<p>The formulation to be flattened is specified by an <code class="docutils literal notranslate"><span class="pre">input_descriptor</span></code> formulation descriptor that should be named ‘Formulation’;
+the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes,
+with the resulting candidates described by an <code class="docutils literal notranslate"><span class="pre">output_descriptor</span></code> formulation descriptor
+that should be named ‘Flat Formulation’.
 The <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter is used as a source of formulation recipes to be used in flattening hierarchical mixtures.</p>
 <p>The following example illustrates how a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
 
-<span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;diluted saline&#39;</span><span class="p">)</span>
-<span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
+<span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
+<span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
     <span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span>
-    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">input_formulation</span>
+    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
@@ -660,7 +663,7 @@ to compute the mean solute density and the distribution of acetone solubility in
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">MeanPropertyPredictor</span>
 
 <span class="c1"># descriptor that holds formulation data</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;formulation&#39;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
 
 <span class="c1"># property descriptor to featurize</span>
 <span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cm^3&#39;</span><span class="p">)</span>
@@ -671,8 +674,7 @@ to compute the mean solute density and the distribution of acetone solubility in
 <span class="c1"># table with formulations and their ingredients</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
     <span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span>
-    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span>
+    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 
 <span class="n">mean_property_predictor</span> <span class="o">=</span> <span class="n">MeanPropertyPredictor</span><span class="p">(</span>
@@ -724,7 +726,7 @@ this predictor would compute outputs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;formulation&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
 
 <span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredient Fractions Predictor&#39;</span><span class="p">,</span>
@@ -747,12 +749,13 @@ where <code class="docutils literal notranslate"><span class="pre">`{formulation
 <section id="label-fractions-predictor">
 <h2><span class="section-number">4.4.11. </span>Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
+The predictor is configured by specifying either the flat or hierarchical formulation descriptor
+that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
 <p>The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a formulation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 <span class="c1"># descriptor that holds formulation data</span>
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;formulation&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 
 <span class="n">label_fractions</span> <span class="o">=</span> <span class="n">LabelFractionsPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Saline solution label fractions&#39;</span><span class="p">,</span>
@@ -850,7 +853,7 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
                                 <span class="p">)</span>
 
 <span class="c1"># create a descriptor to store formulations</span>
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;formulation&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 
 <span class="c1"># create a predictor that computes ingredient fractions</span>
 <span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
@@ -875,8 +878,7 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
         <span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span>
-        <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation_descriptor</span>
+        <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
@@ -905,6 +907,48 @@ Because training data are shared by all predictors in the graph, a data source d
 If all data sources required to train a predictor are specified elsewhere in the graph, the <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.</p>
+</section>
+<section id="single-predictions">
+<h2><span class="section-number">4.4.15. </span>Single Predictions<a class="headerlink" href="#single-predictions" title="Permalink to this headline"></a></h2>
+<p>Once a <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a> has been trained, a one-off prediction may be made against it by using the <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor.predict" title="citrine.informatics.predictors.predictor.Predictor.predict"><code class="xref py py-func docutils literal notranslate"><span class="pre">predict()</span></code></a> method.</p>
+<p>This method accepts a <a class="reference internal" href="../reference/citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePredictRequest</span></code></a>, which is akin to a <a class="reference internal" href="design_workflows.html#design-candidate-anchor"><span class="std std-ref">DesignCandidate</span></a> that you can define and modify and is not persisted in the Citrine Platform. When building a <a class="reference internal" href="../reference/citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePredictRequest</span></code></a> note that only the material properties required to make a prediction (the “input” properties”) are required. Indeed, when making a prediction on a predictor using the <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor.predict" title="citrine.informatics.predictors.predictor.Predictor.predict"><code class="xref py py-func docutils literal notranslate"><span class="pre">predict()</span></code></a> method, the system will automatically filter out any provided material properties that are not inputs to the predictor. The output of a call to <code class="docutils literal notranslate"><span class="pre">predict()</span></code> is a <a class="reference internal" href="../reference/citrine.informatics.predictors.single_prediction.html#citrine.informatics.predictors.single_prediction.SinglePrediction" title="citrine.informatics.predictors.single_prediction.SinglePrediction"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePrediction</span></code></a>, which is essentially the <a class="reference internal" href="../reference/citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePredictRequest</span></code></a> with all of the predicted properties of the material filled in with the predicted values.</p>
+<p>Note that a <code class="docutils literal notranslate"><span class="pre">random_seed</span></code> may be provided to the <a class="reference internal" href="../reference/citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">SinglePredictRequest</span></code></a>. Providing a consistent <code class="docutils literal notranslate"><span class="pre">random_seed</span></code> across requests with the same inputs guantees consistent predictions.</p>
+<p>The following is a simple example of several predictions based on a function that builds a list of prediction requests. This example retrieves 3 candidates from a prior design execution, updates them slightly, and makes new predictions with the updated inputs. Note that while this example uses existing an <a class="reference internal" href="design_workflows.html#design-candidate-anchor"><span class="std std-ref">DesignCandidate</span></a> as a convenience to build the update prediction requests, there is no requirement that a prediction request be related to an existing <a class="reference internal" href="design_workflows.html#design-candidate-anchor"><span class="std std-ref">DesignCandidate</span></a> – rather any arbitrary request can be made as long as the inputs satisfy the requirements of the predictor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors.single_predict_request</span> <span class="kn">import</span> <span class="n">SinglePredictRequest</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors.single_prediction</span> <span class="kn">import</span> <span class="n">SinglePrediction</span>
+
+<span class="c1"># arbitrary example of building a list of requests</span>
+<span class="k">def</span> <span class="nf">build_requests</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SinglePredictRequest</span><span class="p">]:</span>
+  <span class="c1"># assuming some my_execution: DesignExecution</span>
+  <span class="n">my_candidates</span> <span class="o">=</span> <span class="n">my_execution</span><span class="o">.</span><span class="n">candidates</span><span class="p">(</span><span class="n">per_page</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+  <span class="n">rs</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">my_candidates</span><span class="p">):</span>
+    <span class="n">my_candidate</span> <span class="o">=</span> <span class="n">c</span>
+    <span class="n">my_candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Heat Treatment Time 1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SinglePredictRequest</span><span class="p">(</span>
+        <span class="n">material_id</span> <span class="o">=</span> <span class="n">my_candidate</span><span class="o">.</span><span class="n">material_id</span><span class="p">,</span>
+        <span class="n">identifiers</span> <span class="o">=</span> <span class="n">my_candidate</span><span class="o">.</span><span class="n">identifiers</span><span class="p">,</span>
+        <span class="n">material</span> <span class="o">=</span> <span class="n">my_candidate</span><span class="o">.</span><span class="n">material</span><span class="p">,</span>
+    <span class="p">))</span>
+    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">break</span>
+  <span class="k">return</span> <span class="n">rs</span>
+
+<span class="c1"># retrieve the predictor you&#39;d like to use</span>
+<span class="n">my_predictor</span> <span class="o">=</span> <span class="n">my_project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">PREDICTOR_ID</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;most_recent&quot;</span><span class="p">)</span>
+
+<span class="c1"># Make a prediction for each request and print out relevant results</span>
+<span class="k">for</span> <span class="n">request</span> <span class="ow">in</span> <span class="n">build_requests</span><span class="p">():</span>
+  <span class="n">my_prediction</span><span class="p">:</span> <span class="n">SinglePrediction</span> <span class="o">=</span> <span class="n">my_predictor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+  <span class="n">my_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">material_id</span>
+  <span class="n">heat_treatment_time</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Heat Treatment Time 1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span>
+  <span class="n">predicted_tensile_strength</span> <span class="o">=</span> <span class="n">my_prediction</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Tensile Strength&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span>
+  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">my_id</span><span class="si">}</span><span class="s2"> updated_time=</span><span class="si">{</span><span class="n">heat_treatment_time</span><span class="si">}</span><span class="s2"> strength=</span><span class="si">{</span><span class="n">predicted_tensile_strength</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 

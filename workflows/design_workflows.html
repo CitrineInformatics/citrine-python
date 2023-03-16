@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.6. Design Workflows &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>4.6. Design Workflows &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -188,7 +188,7 @@ A workflow execution has a status (in progress, succeeded, or failed) and result
 </div>
 </section>
 <section id="design-candidate">
-<h2><span class="section-number">4.6.2. </span>Design Candidate<a class="headerlink" href="#design-candidate" title="Permalink to this headline"></a></h2>
+<span id="design-candidate-anchor"></span><h2><span class="section-number">4.6.2. </span>Design Candidate<a class="headerlink" href="#design-candidate" title="Permalink to this headline"></a></h2>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate" title="citrine.informatics.design_candidate.DesignCandidate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignCandidate</span></code></a> represents the result of the Design Execution.
 They contain the <cite>primary score</cite> of the candidate and the <a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignMaterial" title="citrine.informatics.design_candidate.DesignMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignMaterial</span></code></a> for that candidate.
 DesignMaterials are simpler approximations (“projections”) of the materials information about a particular design candidate.</p>
@@ -214,8 +214,8 @@ Each variable is represented as one of:</p>
 <span class="c1"># Assume a categorical descriptor, &#39;color&#39;, represented as a TopCategories variable</span>
 <span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">probabilities</span>
 
-<span class="c1"># Assume a formulation descriptor, &#39;final mixture&#39;, represented as a Mixture variable</span>
-<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;final mixture&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantities</span>
+<span class="c1"># Assume a formulation descriptor, &#39;Flat Formulation&#39;, represented as a Mixture variable</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;Flat Formulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantities</span>
 
 <span class="c1"># Assume a chemical formula descriptor, &#39;alloying material&#39;, represented as a ChemicalFormula variable</span>
 <span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;alloying material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">formula</span>

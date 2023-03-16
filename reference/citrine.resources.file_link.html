@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -80,7 +80,7 @@
 <p>A collection of FileLink objects.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.file_link.CsvColumnInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.file_link.</span></span><span class="sig-name descname"><span class="pre">CsvColumnInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._serialization.properties.String</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><span class="pre">gemd.entity.bounds.base_bounds.BaseBounds</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_range_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><span class="pre">gemd.entity.bounds.base_bounds.BaseBounds</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.CsvColumnInfo" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.file_link.</span></span><span class="sig-name descname"><span class="pre">CsvColumnInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><span class="pre">gemd.entity.bounds.base_bounds.BaseBounds</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_range_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><span class="pre">gemd.entity.bounds.base_bounds.BaseBounds</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.CsvColumnInfo" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
 <p>The info for a CSV Column, contains the name, recommended and exact bounds.</p>
 <dl class="py method">
@@ -226,6 +226,9 @@ then the filename of this FileLink object will be appended to the path.</p></li>
 <dd class="field-odd"><p>Map[<a class="reference internal" href="#citrine.resources.file_link.FileProcessingType" title="citrine.resources.file_link.FileProcessingType">FileProcessingType</a>, <a class="reference internal" href="#citrine.resources.file_link.FileProcessingResult" title="citrine.resources.file_link.FileProcessingResult">FileProcessingResult</a>]</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.4.0: </span>This will be removed in 3.0.0. The process file protocol is deprecated in favor of GUI-based ingest routes</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -295,6 +298,9 @@ it will return None to indicate the job was successful.</p>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.4.0: </span>This will be removed in 3.0.0. The process file protocol is deprecated in favor of GUI-based ingest routes</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -319,6 +325,9 @@ it will return None to indicate the job was successful.</p>
 <dd class="field-odd"><p><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse">JobSubmissionResponse</a></p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.4.0: </span>This will be removed in 3.0.0. The process file protocol is deprecated in favor of GUI-based ingest routes</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -431,8 +440,28 @@ a new version of the existing file.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.created_by">
+<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.created_by" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.created_time">
+<span class="sig-name descname"><span class="pre">created_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.created_time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.filename">
 <span class="sig-name descname"><span class="pre">filename</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.filename" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.mime_type">
+<span class="sig-name descname"><span class="pre">mime_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.mime_type" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -442,18 +471,38 @@ a new version of the existing file.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.size">
+<span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.skip">
 <span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.skip" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.typ">
-<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.typ" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_link'</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.typ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.uid" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.url">
 <span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.url" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileLink.version_number">
+<span class="sig-name descname"><span class="pre">version_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.file_link.FileLink.version_number" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

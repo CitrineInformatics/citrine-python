@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Formulations Example &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>5. Formulations Example &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -548,16 +548,14 @@ To build the table asynchronously, use <a class="reference internal" href="refer
 <h2><span class="section-number">5.4. </span>Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline"></a></h2>
 <p>With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a <a class="reference internal" href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> based on the GEM Table, <code class="docutils literal notranslate"><span class="pre">table</span></code>.
-We choose to define a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> to hold the formulation;
-if we do not specify it then a default descriptor will be generated, but given how crucial this descriptor is it is best to specify it directly.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+The Citrine Platform will automatically recognize when a GEM Table contains formulations
+and produce a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> with key ‘Formulation’
+for the training data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s2">&quot;mixed and blended margarita&quot;</span><span class="p">)</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
     <span class="n">table_id</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
-    <span class="n">table_version</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
-    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span>
+    <span class="n">table_version</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">version</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -568,7 +566,8 @@ Although the homogeneous representation is not entirely appropriate for all form
 especially when coupled with flexible machine learning models that can emulate more complex relationships within the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
 
-<span class="n">flat_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s2">&quot;homogenized margarita&quot;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
+<span class="n">flat_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 <span class="n">simple_mixture_predictor</span> <span class="o">=</span> <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Simple margarita mixture&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Flatten a mixture of mixtures into leaf ingredients&quot;</span><span class="p">,</span>

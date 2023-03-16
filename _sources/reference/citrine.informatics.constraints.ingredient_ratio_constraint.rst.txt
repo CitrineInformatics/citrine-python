@@ -1,0 +1,8 @@
+citrine.informatics.constraints.ingredient\_ratio\_constraint module
+====================================================================
+
+.. automodule:: citrine.informatics.constraints.ingredient_ratio_constraint
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

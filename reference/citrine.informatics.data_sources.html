@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.data_sources module &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>citrine.informatics.data_sources module &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -207,11 +207,6 @@ training data for predictors and the input data for some design spaces.</p>
 <li><p><strong>table_id</strong> (<em>UUID</em>) – Unique identifier for the GEM Table</p></li>
 <li><p><strong>table_version</strong> (<em>Union</em><em>[</em><em>str</em><em>,</em><em>int</em><em>]</em>) – Version number for the GEM Table. The first GEM table built from a configuration
 has version = 1. Strings are cast to ints.</p></li>
-<li><p><strong>formulation_descriptor</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a><em>]</em>) – Optional descriptor used to store formulations emitted by the data source.
-If the data source emits a formulation but this argument is not provided, then a
-default formulation descriptor will be generated. The formulations descriptor, and
-other descriptors, can be retrieved using
-<a class="reference internal" href="citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source" title="citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">descriptors_from_data_source()</span></code></a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -232,11 +227,6 @@ other descriptors, can be retrieved using
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource.get_type" title="Permalink to this definition"></a></dt>
 <dd><p>Return the subtype.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.data_sources.GemTableDataSource.formulation_descriptor">
-<span class="sig-name descname"><span class="pre">formulation_descriptor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><span class="pre">citrine.informatics.descriptors.FormulationDescriptor</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource.formulation_descriptor" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.data_sources.GemTableDataSource.table_id">

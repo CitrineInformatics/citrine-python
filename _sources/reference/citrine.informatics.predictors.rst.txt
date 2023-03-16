@@ -18,6 +18,8 @@ Submodules
    citrine.informatics.predictors.molecular_structure_featurizer
    citrine.informatics.predictors.predictor
    citrine.informatics.predictors.simple_mixture_predictor
+   citrine.informatics.predictors.single_predict_request
+   citrine.informatics.predictors.single_prediction
 
 Module contents
 ---------------

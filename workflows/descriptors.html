@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.2. Descriptors &mdash; Citrine Python 2.2.1 documentation</title>
+  <title>4.2. Descriptors &mdash; Citrine Python 2.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.2.1
+                2.8.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -153,9 +153,17 @@ The Molecular Structure Descriptor has no parameters other than a name.</p>
 </section>
 <section id="formulation-descriptor">
 <h2><span class="section-number">4.2.6. </span>Formulation Descriptor<a class="headerlink" href="#formulation-descriptor" title="Permalink to this headline"></a></h2>
-<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> is used to represent variables that contain information
-about mixtures of other materials.
-The Formulation Descriptor has no parameters other than a name.</p>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a>
+is used to represent variables that contain information about mixtures of other materials.
+The Formulation Descriptor has no parameters other than a name,
+of which the two allowed values are ‘Formulation’ and ‘Flat Formulation’.
+The key ‘Formulation’ should be used when referring to mixtures found directly in the training data,
+for which the ingredients may be other mixtures themselves.
+The key ‘Flat Formulation’ should be reserved for mixtures comprised of only raw ingredients
+produced by a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>.</p>
+<p>The two allowed formulation descriptors can be obtained by the helper methods
+<code class="docutils literal notranslate"><span class="pre">FormulationDescriptor.hierarchical()</span></code> and <code class="docutils literal notranslate"><span class="pre">FormulationDescriptor.flat()</span></code>
+that produce descriptors with the keys ‘Formulation’ and ‘Flat Formulation’, respectively.</p>
 </section>
 </section>
 <section id="platform-vocabularies">

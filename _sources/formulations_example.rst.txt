@@ -442,19 +442,17 @@ Training a Predictor
 
 With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the GEM Table, ``table``.
-We choose to define a :class:`~citrine.informatics.descriptors.FormulationDescriptor` to hold the formulation;
-if we do not specify it then a default descriptor will be generated, but given how crucial this descriptor is it is best to specify it directly.
+The Citrine Platform will automatically recognize when a GEM Table contains formulations
+and produce a :class:`~citrine.informatics.descriptors.FormulationDescriptor` with key 'Formulation'
+for the training data.
 
 .. code-block:: python
 
-    from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.data_sources import GemTableDataSource
 
-    formulation = FormulationDescriptor("mixed and blended margarita")
     data_source = GemTableDataSource(
         table_id=table.uid,
-        table_version=table.version,
-        formulation_descriptor=formulation
+        table_version=table.version
     )
 
 The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation -- it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
@@ -467,7 +465,8 @@ especially when coupled with flexible machine learning models that can emulate m
 
     from citrine.informatics.predictors import SimpleMixturePredictor
 
-    flat_formulation = FormulationDescriptor("homogenized margarita")
+    formulation = FormulationDescriptor.hierarchical()
+    flat_formulation = FormulationDescriptor.flat()
     simple_mixture_predictor = SimpleMixturePredictor(
         name="Simple margarita mixture",
         description="Flatten a mixture of mixtures into leaf ingredients",
