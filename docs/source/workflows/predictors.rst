@@ -857,20 +857,9 @@ The following is a simple example of several predictions based on a function tha
    from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
    from citrine.informatics.predictors.single_prediction import SinglePrediction
 
-   # assuming your Citrine deployment is https://matsci.citrine-platform.com
-   CITRINE_HOST="matsci.citrine-platform.com"
-   citrine_client = Citrine(host=CITRINE_HOST, api_key=os.environ.get("CITRINE_API_KEY"))
-
-   PROJECT_ID="<uuid>"
-   my_project = citrine_client.projects.get(PROJECT_ID)
-
    # arbitrary example of building a list of requests
    def build_requests() -> list[SinglePredictRequest]:
-     WORKFLOW_ID="<uuid>"
-     EXECUTION_ID="<uuid>"
-
-     my_workflow = my_project.design_workflows.get(WORKFLOW_ID)
-     my_execution = my_workflow.design_executions.get(EXECUTION_ID)
+     # assuming some my_execution: DesignExecution
      my_candidates = my_execution.candidates(per_page = 3)
      rs = []
      for idx, c in enumerate(my_candidates):
@@ -885,8 +874,7 @@ The following is a simple example of several predictions based on a function tha
            break
      return rs
 
-   # retrieve the predictor
-   PREDICTOR_ID="<uuid>"
+   # retrieve the predictor you'd like to use
    my_predictor = my_project.predictors.get(
        uid = PREDICTOR_ID, version = "most_recent")
 
