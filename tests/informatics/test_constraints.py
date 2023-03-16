@@ -4,7 +4,7 @@ import pytest
 from citrine.informatics.constraints import *
 from citrine.informatics.descriptors import FormulationDescriptor
 
-formulation_descriptor = FormulationDescriptor('formulation')
+formulation_descriptor = FormulationDescriptor.hierarchical()
 
 
 @pytest.fixture
@@ -61,6 +61,19 @@ def label_fraction_constraint() -> LabelFractionConstraint:
         is_required=False
     )
 
+@pytest.fixture
+def ingredient_ratio_constraint() -> IngredientRatioConstraint:
+    """Build an IngredientRatioConstraint"""
+    return IngredientRatioConstraint(
+        formulation_descriptor=formulation_descriptor,
+        min=0.0,
+        max=1e6,
+        ingredient=("foo", 1.0),
+        label=("foolabel", 0.5),
+        basis_ingredients={"baz": 3.0, "bat": 4.0},
+        basis_labels={"bazlabel": 1.3, "batlabel": 100.0}
+    )
+
 
 def test_scalar_range_initialization(scalar_range_constraint):
     """Make sure the correct fields go to the correct places."""
@@ -102,6 +115,52 @@ def test_label_fraction_initialization(label_fraction_constraint):
     assert label_fraction_constraint.min == 0.0
     assert label_fraction_constraint.max == 1.0
     assert not label_fraction_constraint.is_required
+
+
+def test_ingredient_ratio_initialization(ingredient_ratio_constraint):
+    """Make sure the correct fields go to the correct places."""
+    assert ingredient_ratio_constraint.formulation_descriptor == formulation_descriptor
+    assert ingredient_ratio_constraint.min == 0.0
+    assert ingredient_ratio_constraint.max == 1e6
+    assert ingredient_ratio_constraint.ingredient == ("foo", 1.0)
+    assert ingredient_ratio_constraint.label == ("foolabel", 0.5)
+    assert ingredient_ratio_constraint.basis_ingredients == {"baz": 3.0, "bat": 4.0}
+    assert ingredient_ratio_constraint.basis_labels == {"bazlabel": 1.3, "batlabel": 100.0}
+
+def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.ingredient = ("foo", 2, "bar", 4)
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.ingredient = ("foo", )
+    with pytest.raises(TypeError):
+        ingredient_ratio_constraint.ingredient = ("foo", "yup")
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.ingredient = ("foo", -1)
+
+    newval = ("foo", 42)
+    ingredient_ratio_constraint.ingredient = newval
+    assert ingredient_ratio_constraint.ingredient == newval
+    ingredient_ratio_constraint.ingredient = None
+    assert ingredient_ratio_constraint.ingredient is None
+    ingredient_ratio_constraint.ingredient = []
+    assert ingredient_ratio_constraint.ingredient is None
+
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.label = ("foolabel", 2, "barlabel", 4)
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.label = ("foolabel", )
+    with pytest.raises(TypeError):
+        ingredient_ratio_constraint.label = ("foolabel", "yup")
+    with pytest.raises(ValueError):
+        ingredient_ratio_constraint.label = ("foolabel", -1)
+
+    newval = ("foolabel", 42)
+    ingredient_ratio_constraint.label = newval
+    assert ingredient_ratio_constraint.label == newval
+    ingredient_ratio_constraint.label = None
+    assert ingredient_ratio_constraint.label is None
+    ingredient_ratio_constraint.label = []
+    assert ingredient_ratio_constraint.label is None
 
 
 def test_range_defaults():

@@ -1,10 +1,11 @@
 """A collection of FileLink objects."""
+from deprecation import deprecated
 import mimetypes
 import os
 from pathlib import Path
 from enum import Enum
 from logging import getLogger
-from typing import Iterable, Optional, Tuple, Union, List, Dict
+from typing import Optional, Tuple, Union, List, Dict
 from urllib.parse import urlparse, quote
 from uuid import UUID
 
@@ -14,9 +15,7 @@ from boto3.session import Config
 from botocore.exceptions import ClientError
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, Integer
+from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
@@ -82,14 +81,14 @@ class FileProcessingData:
 class CsvColumnInfo(Serializable):
     """The info for a CSV Column, contains the name, recommended and exact bounds."""
 
-    name = String('name')
+    name = properties.String('name')
     """:str: name of the column"""
-    bounds = Object(BaseBounds, 'bounds')
+    bounds = properties.Object(BaseBounds, 'bounds')
     """:BaseBounds: recommended bounds of the column (might include some padding)"""
-    exact_range_bounds = Object(BaseBounds, 'exact_range_bounds')
+    exact_range_bounds = properties.Object(BaseBounds, 'exact_range_bounds')
     """:BaseBounds: exact bounds of the column"""
 
-    def __init__(self, name: String, bounds: BaseBounds,
+    def __init__(self, name: str, bounds: BaseBounds,
                  exact_range_bounds: BaseBounds):  # pragma: no cover
         self.name = name
         self.bounds = bounds
@@ -99,10 +98,10 @@ class CsvColumnInfo(Serializable):
 class CsvValidationData(FileProcessingData, Serializable):
     """The resulting data from the processed CSV file."""
 
-    columns = PropertyOptional(PropertyList(Object(CsvColumnInfo)), 'columns',
-                               override=True)
+    columns = properties.Optional(properties.List(properties.Object(CsvColumnInfo)),
+                                  'columns', override=True)
     """:Optional[List[CsvColumnInfo]]: all of the columns in the CSV"""
-    record_count = Integer('record_count')
+    record_count = properties.Integer('record_count')
     """:int: the number of rows in the CSV"""
 
     def __init__(self, columns: List[CsvColumnInfo],
@@ -137,9 +136,20 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
 
     """
 
-    filename = String('filename', override=True)
-    url = String('url', override=True)
-    typ = String('type')
+    # NOTE: skipping the "metadata" field since it appears to be unused
+    # NOTE: skipping the "versioned_url" field since it is redundant
+    # NOTE: skipping the "unversioned_url" field since it is redundant
+    filename = properties.String('filename', override=True)
+    url = properties.String('url', override=True)
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    version = properties.Optional(properties.UUID, 'version', serializable=False)
+    created_time = properties.Optional(properties.Datetime, 'created_time', serializable=False)
+    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    mime_type = properties.Optional(properties.String, 'mime_type', serializable=False)
+    size = properties.Optional(properties.Integer, 'size', serializable=False)
+    description = properties.Optional(properties.String, 'description', serializable=False)
+    version_number = properties.Optional(properties.Integer, 'version_number', serializable=False)
+    typ = properties.String('type', default="file_link", deserializable=False)
 
     def __init__(self, filename: str, url: str):
         GEMDFileLink.__init__(self, filename, url)
@@ -151,7 +161,7 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
         return self.filename
 
     def __str__(self):
-        return '<File link {!r}>'.format(self.filename)
+        return f'<File link {self.filename!r}>'
 
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with gemd)."""
@@ -216,82 +226,22 @@ class FileCollection(Collection[FileLink]):
                                  *,
                                  action: str = None) -> str:
         """Build the platform path for taking an action with a particular file link."""
-        # Use this sessions project/dataset credentials and the URL's file / version
-        file_id, version_id = self._get_ids_from_url(file_link.url)
-        if file_id is None:
-            raise ValueError("FileLink did not contain a Citrine platform file URL.")
+        # Use this session's project/dataset credentials and the URLs file / version
+        if file_link.uid is not None:
+            file_id = file_link.uid
+            version_id = file_link.version
+        else:
+            file_id, version_id = self._get_ids_from_url(file_link.url)
+            if file_id is None:
+                raise ValueError("FileLink did not contain a Citrine platform file URL.")
         return self._get_path(uid=file_id, version=version_id, action=action)
 
     def build(self, data: dict) -> FileLink:
         """Build an instance of FileLink."""
+        # Use this chance to construct a URL from platform metadata
+        if 'url' not in data:
+            data['url'] = self._get_path(uid=data["id"], version=data["version"])
         return FileLink.build(data)
-
-    def _fetch_page(self,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Tuple[Iterable[FileLink], str]:
-        """
-        List all visible files in the collection.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" number of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return for each call. Default is 20.
-
-        Returns
-        -------
-        Iterable[FileLink]
-            FileLink objects in this collection.
-        str
-            The next uri if one is available, empty string otherwise
-
-        """
-        path = self._get_path()
-        params = {}
-        if page is not None:
-            params["page"] = page
-        if per_page is not None:
-            params["per_page"] = per_page
-
-        response = self.session.get_resource(path=path, params=params)
-        collection = response[self._collection_key]
-        return collection, ""
-
-    def _build_collection_elements(self, collection):
-        for file in collection:
-            yield self.build(self._as_dict_from_resource(file))
-
-    def _as_dict_from_resource(self, file: dict):
-        """
-        Convert a file link resource downloaded from the API into a FileLink dictionary.
-
-        This is necessary because the database resource contains additional information that is
-        not in the FileLink object, such as file size and the id of the user who uploaded the file.
-
-        Parameters
-        ---------
-        file: dict
-            A JSON dictionary corresponding to the file link as it is saved in the database.
-
-        Returns
-        -------
-        dict
-            A dictionary that can be built into a FileLink object.
-
-        """
-        # FIXME  While the 'id' field is supposed to be the file ID, it contains the version
-        #  for some reason.  Needs to be fixed on back end.  PLA-9482
-        filename = file['filename']
-        file_id = file['id']
-        version_id = file['version']
-
-        file_dict = {
-            'url': self._get_path(uid=file_id, version=version_id),
-            'filename': filename,
-            'type': GEMDFileLink.typ
-        }
-        return file_dict
 
     def get(self,
             uid: Union[UUID, str],
@@ -345,7 +295,7 @@ class FileCollection(Collection[FileLink]):
                 file = self._search_by_file_name(dset_id=self.dataset_id,
                                                  file_name=uid,
                                                  file_version_number=version)
-            else:  # We did our type checks earlier; version is an UUID
+            else:  # We did our type checks earlier; version is a UUID
                 file = self._search_by_file_version_id(file_version_id=version)
         else:  # We did our type checks earlier; uid is a UUID
             if isinstance(version, UUID):
@@ -487,7 +437,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data['files'][0]))
+        return self.build(data['files'][0])
 
     def _search_by_file_version_id(self,
                                    file_version_id: UUID
@@ -517,7 +467,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data['files'][0]))
+        return self.build(data['files'][0])
 
     def _search_by_dataset_file_id(self,
                                    dataset_file_id: UUID,
@@ -558,7 +508,7 @@ class FileCollection(Collection[FileLink]):
 
         data = self.session.post_resource(path=path, json=search_json)
 
-        return self.build(self._as_dict_from_resource(data['files'][0]))
+        return self.build(data['files'][0])
 
     @staticmethod
     def _mime_type(file_path: Path):
@@ -644,8 +594,7 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
 
-        url = self._get_path(uid=file_id, version=version_id)
-        return FileLink(filename=dest_name, url=url)
+        return self.build({"filename": dest_name, "id": file_id, "version": version_id})
 
     def download(self, *, file_link: Union[str, UUID, FileLink], local_path: Union[str, Path]):
         """
@@ -673,19 +622,8 @@ class FileCollection(Collection[FileLink]):
         else:
             final_path = local_path
 
-        if self._is_external_url(file_link.url):  # Pull it from where ever it lives
-            final_url = file_link.url
-        elif self._validate_local_url(file_link.url):
-            # The "/content-link" route returns a pre-signed url to download the file.
-            content_link = self._get_path_from_file_link(file_link, action='content-link')
-            content_link_response = self.session.get_resource(content_link)
-            pre_signed_url = content_link_response['pre_signed_read_link']
-            final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
-        else:  # Unrecognized
-            raise ValueError(f"URL was malformed for a local file resource ({file_link.url}).")
-
-        download_response = requests.get(final_url)
-        write_file_locally(download_response.content, final_path)
+        response_content = self.read(file_link=file_link)
+        write_file_locally(response_content, final_path)
 
     def read(self, *, file_link: Union[str, UUID, FileLink]):
         """
@@ -718,6 +656,10 @@ class FileCollection(Collection[FileLink]):
         download_response = requests.get(final_url)
         return download_response.content
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated "
+                        "in favor of GUI-based ingest routes")
     def process(self, *, file_link: Union[FileLink, str, UUID],
                 processing_type: FileProcessingType,
                 wait_for_response: bool = True,
@@ -770,6 +712,10 @@ class FileCollection(Collection[FileLink]):
         else:
             return job
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated "
+                        "in favor of GUI-based ingest routes")
     def poll_file_processing_job(self, *, file_link: FileLink,
                                  processing_type: FileProcessingType,
                                  job_id: UUID,
@@ -806,6 +752,10 @@ class FileCollection(Collection[FileLink]):
 
         return self.file_processing_result(file_link=file_link, processing_types=[processing_type])
 
+    @deprecated(deprecated_in="2.4.0",
+                removed_in="3.0.0",
+                details="The process file protocol is deprecated "
+                        "in favor of GUI-based ingest routes")
     def file_processing_result(self, *,
                                file_link: FileLink,
                                processing_types: List[FileProcessingType]) -> \

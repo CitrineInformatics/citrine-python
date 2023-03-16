@@ -6,8 +6,11 @@ import mock
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
     MolecularStructureDescriptor, FormulationDescriptor, ChemicalFormulaDescriptor, \
-    CategoricalDescriptor
+    CategoricalDescriptor, FormulationKey
 from citrine.informatics.predictors import *
+from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
+from citrine.informatics.predictors.single_prediction import SinglePrediction
+from citrine.informatics.design_candidate import DesignMaterial
 
 from tests.utils.factories import PredictorEntityDataFactory, PredictorDataDataFactory
 
@@ -21,12 +24,12 @@ shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bo
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
-formulation = FormulationDescriptor('formulation')
-formulation_output = FormulationDescriptor('output formulation')
+formulation = FormulationDescriptor.hierarchical()
+formulation_output = FormulationDescriptor.flat()
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
 salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
 data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
-formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
+formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0)
 
 
 def build_predictor_data(instance):
@@ -340,7 +343,7 @@ def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     """Make sure the correct fields go to the correct places for an ingredients to formulation predictor."""
     assert ing_to_formulation_predictor.name == 'Ingredients to formulation predictor'
-    assert ing_to_formulation_predictor.output.key == 'formulation'
+    assert ing_to_formulation_predictor.output.key == FormulationKey.HIERARCHICAL.value
     assert ing_to_formulation_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
     assert ing_to_formulation_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = f'<IngredientsToFormulationPredictor \'{ing_to_formulation_predictor.name}\'>'
@@ -350,7 +353,7 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
-    assert mean_property_predictor.input_descriptor.key == 'formulation'
+    assert mean_property_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert mean_property_predictor.properties == [density, chain_type]
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
@@ -375,7 +378,7 @@ def test_mean_property_round_robin(mean_property_predictor):
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
-    assert label_fractions_predictor.input_descriptor.key == 'formulation'
+    assert label_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
@@ -384,8 +387,8 @@ def test_label_fractions_property_initialization(label_fractions_predictor):
 def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     """Make sure the correct fields go to the correct places for a simple mixture predictor."""
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
-    assert simple_mixture_predictor.input_descriptor.key == 'formulation'
-    assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
+    assert simple_mixture_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert simple_mixture_predictor.output_descriptor.key == FormulationKey.FLAT.value
     assert simple_mixture_predictor.training_data == [formulation_data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
@@ -394,7 +397,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
-    assert ingredient_fractions_predictor.input_descriptor.key == 'formulation'
+    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
@@ -407,3 +410,21 @@ def test_status(valid_label_fractions_predictor_data, auto_ml):
     # A deserialized predictor should have the correct status
     predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
+
+def test_single_predict(graph_predictor):
+    """Ensures we get a prediction back from a simple predict call"""
+    session = mock.Mock()
+    graph_predictor._project_id = uuid.uuid4()
+    graph_predictor.uid = uuid.uuid4()
+    graph_predictor.version = 2
+    material_data = {'vars':
+                     {'X': {'m': 1.1, 's': 0.1, 'type': 'R'},
+                      'Y': {'m': 2.2, 's': 0.2, 'type': 'R'}}}
+    material = DesignMaterial.build(material_data)
+    request = SinglePredictRequest(uuid.uuid4(), list(), material)
+    prediction_in = SinglePrediction(request.material_id, list(), material)
+    session.post_resource.return_value = prediction_in.dump()
+    graph_predictor._session = session
+    prediction_out = graph_predictor.predict(request)
+    assert prediction_out.dump() == prediction_in.dump()
+    assert session.post_resource.call_count == 1

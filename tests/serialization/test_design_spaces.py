@@ -103,7 +103,7 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
     Deserialization is done both directly (using FormulationDesignSpace)
     and polymorphically (using DesignSpace)
     """
-    expected_descriptor = FormulationDescriptor('formulation')
+    expected_descriptor = FormulationDescriptor.hierarchical()
     expected_constraint = IngredientCountConstraint(
         formulation_descriptor=expected_descriptor,
         min=0,

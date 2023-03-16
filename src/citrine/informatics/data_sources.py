@@ -1,4 +1,5 @@
 """Tools for working with Descriptors."""
+import warnings
 from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
@@ -95,22 +96,12 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     table_version: Union[str,int]
         Version number for the GEM Table. The first GEM table built from a configuration
         has version = 1. Strings are cast to ints.
-    formulation_descriptor: Optional[FormulationDescriptor]
-        Optional descriptor used to store formulations emitted by the data source.
-        If the data source emits a formulation but this argument is not provided, then a
-        default formulation descriptor will be generated. The formulations descriptor, and
-        other descriptors, can be retrieved using
-        :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source`.
 
     """
 
     typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
-    formulation_descriptor = properties.Optional(
-        properties.Object(FormulationDescriptor),
-        "formulation_descriptor"
-    )
 
     def _attrs(self) -> List[str]:
         return ["table_id", "table_version", "typ"]
@@ -122,7 +113,15 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
                  formulation_descriptor: Optional[FormulationDescriptor] = None):
         self.table_id: UUID = table_id
         self.table_version: Union[int, str] = table_version
-        self.formulation_descriptor: Optional[FormulationDescriptor] = formulation_descriptor
+
+        if formulation_descriptor is not None:
+            warnings.warn(
+                "The field `formulation_descriptor` on a GemTableDataSource is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                "FormulationDescriptor with key 'Formulation' for tables containing formulations.",
+                DeprecationWarning
+            )
+        self.formulation_descriptor = None
 
 
 class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):

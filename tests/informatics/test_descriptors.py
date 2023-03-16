@@ -13,7 +13,7 @@ from citrine.informatics.descriptors import *
     MolecularStructureDescriptor("organic"),
     CategoricalDescriptor("my categorical", categories=["a", "b"]),
     CategoricalDescriptor("categorical", categories=["*"]),
-    FormulationDescriptor("formulation")
+    FormulationDescriptor.hierarchical()
 ])
 def descriptor(request):
     return request.param
@@ -62,3 +62,8 @@ def test_to_json(descriptor):
     json_str = json.dumps(descriptor.dump())
     desc = Descriptor.build(json.loads(json_str))
     assert desc == descriptor
+
+
+def test_formulation_from_string_key():
+    descriptor = FormulationDescriptor(FormulationKey.HIERARCHICAL.value)
+    assert descriptor.key == FormulationKey.HIERARCHICAL.value

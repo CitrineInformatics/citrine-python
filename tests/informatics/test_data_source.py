@@ -14,7 +14,7 @@ from citrine.resources.file_link import FileLink
                   identifiers=["identifier"]),
     GemTableDataSource(table_id=uuid.uuid4(), table_version=1),
     GemTableDataSource(table_id=uuid.uuid4(), table_version="2"),
-    GemTableDataSource(table_id=uuid.uuid4(), table_version="2", formulation_descriptor=FormulationDescriptor("formulation")),
+    GemTableDataSource(table_id=uuid.uuid4(), table_version="2"),
     ExperimentDataSourceRef(datasource_id=uuid.uuid4())
 ])
 def data_source(request):
@@ -39,3 +39,12 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         DataSource.build({"type": "foo"})
+
+
+def test_deprecated_formulation_option():
+    with pytest.warns(DeprecationWarning):
+        GemTableDataSource(
+            table_id=uuid.uuid4(),
+            table_version=1,
+            formulation_descriptor=FormulationDescriptor.hierarchical()
+        )

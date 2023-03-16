@@ -1,5 +1,7 @@
 """Tools for working with Descriptors."""
-from typing import Type, Set
+from typing import Type, Set, Union
+
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -11,7 +13,20 @@ __all__ = ['Descriptor',
            'ChemicalFormulaDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
-           'FormulationDescriptor']
+           'FormulationDescriptor',
+           'FormulationKey']
+
+
+class FormulationKey(BaseEnumeration):
+    """The allowed names for a FormulationDescriptor.
+
+    * ``HIERARCHICAL`` is the key "Formulation"
+    * ``FLAT`` is the key "Flat Formulation"
+
+    """
+
+    HIERARCHICAL = "Formulation"
+    FLAT = "Flat Formulation"
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
@@ -235,20 +250,36 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     Parameters
     ----------
     key: str
-        the key corresponding to a descriptor
+        The key for the descriptor, which must be either 'Formulation' or 'Flat Formulation'
+        to produce valid Citrine Platform assets.
+        The two allowed values can be accessed from the `FormulationKey` enum.
 
     """
 
-    typ = properties.String('type', default='Formulation', deserializable=False)
+    typ = properties.String(
+        'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
+    )
+
+    def __init__(self, key: Union[FormulationKey, str]):
+        if not isinstance(key, FormulationKey):
+            key = FormulationKey.get_enum(key)
+        self.key: str = key.value
 
     def __eq__(self, other):
         return self._equals(other, ["key", "typ"])
-
-    def __init__(self, key: str):
-        self.key: str = key
 
     def __str__(self):
         return "<FormulationDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
         return "FormulationDescriptor(key={})".format(self.key)
+
+    @classmethod
+    def hierarchical(cls) -> "FormulationDescriptor":
+        """The hierarchical formulation descriptor with key 'Formulation'."""
+        return FormulationDescriptor(FormulationKey.HIERARCHICAL)
+
+    @classmethod
+    def flat(cls) -> "FormulationDescriptor":
+        """The flat formulation descriptor with key 'Flat Formulation'."""
+        return FormulationDescriptor(FormulationKey.FLAT)
