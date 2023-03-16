@@ -101,6 +101,8 @@ You can to look up what :doc:`score <scores>` was used for a particular executio
     descriptors = execution.descriptors
 
 
+.. _design_candidate_anchor:
+
 Design Candidate
 -----------------
 

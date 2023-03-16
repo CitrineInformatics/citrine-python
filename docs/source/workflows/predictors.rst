@@ -838,3 +838,63 @@ Because training data are shared by all predictors in the graph, a data source d
 If all data sources required to train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
+
+Single Predictions
+---------------------------------
+
+Once a :class:`~citrine.informatics.predictors.predictor.Predictor` has been trained, a one-off prediction may be made against it by using the :func:`~citrine.informatics.predictors.predictor.Predictor.predict` method.
+
+This method accepts a :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest`, which is akin to a :ref:`DesignCandidate <design_candidate_anchor>` that you can define and modify and is not persisted in the Citrine Platform. When building a :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest` note that only the material properties required to make a prediction (the "input" properties") are required. Indeed, when making a prediction on a predictor using the :func:`~citrine.informatics.predictors.predictor.Predictor.predict` method, the system will automatically filter out any provided material properties that are not inputs to the predictor. The output of a call to ``predict()`` is a :class:`~~citrine.informatics.predictors.single_prediction.SinglePrediction`, which is essentially the :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest` with all of the predicted properties of the material filled in with the predicted values.
+
+Note that a ``random_seed`` may be provided to the :class:`~citrine.informatics.predictors.single_predict_request.SinglePredictRequest`. Providing a consistent ``random_seed`` across requests with the same inputs guantees consistent predictions.
+
+The following is a simple example of several predictions based on a function that builds a list of prediction requests. This example retrieves 3 candidates from a prior design execution, updates them slightly, and makes new predictions with the updated inputs. Note that while this example uses existing an :ref:`DesignCandidate <design_candidate_anchor>` as a convenience to build the update prediction requests, there is no requirement that a prediction request be related to an existing :ref:`DesignCandidate <design_candidate_anchor>` -- rather any arbitrary request can be made as long as the inputs satisfy the requirements of the predictor.
+
+.. code:: python
+
+   import os
+   from citrine import Citrine
+   from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
+   from citrine.informatics.predictors.single_prediction import SinglePrediction
+
+   # assuming your Citrine deployment is https://matsci.citrine-platform.com
+   CITRINE_HOST="matsci.citrine-platform.com"
+   citrine_client = Citrine(host=CITRINE_HOST, api_key=os.environ.get("CITRINE_API_KEY"))
+
+   PROJECT_ID="<uuid>"
+   my_project = citrine_client.projects.get(PROJECT_ID)
+
+   # arbitrary example of building a list of requests
+   def build_requests() -> list[SinglePredictRequest]:
+     WORKFLOW_ID="<uuid>"
+     EXECUTION_ID="<uuid>"
+
+     my_workflow = my_project.design_workflows.get(WORKFLOW_ID)
+     my_execution = my_workflow.design_executions.get(EXECUTION_ID)
+     my_candidates = my_execution.candidates(per_page = 3)
+     rs = []
+     for idx, c in enumerate(my_candidates):
+       my_candidate = c
+       my_candidate.material.values["Heat Treatment Time 1"].mean -= 1
+       rs.append(SinglePredictRequest(
+           material_id = my_candidate.material_id,
+           identifiers = my_candidate.identifiers,
+           material = my_candidate.material,
+       ))
+       if idx == 2:
+           break
+     return rs
+
+   # retrieve the predictor
+   PREDICTOR_ID="<uuid>"
+   my_predictor = my_project.predictors.get(
+       uid = PREDICTOR_ID, version = "most_recent")
+
+   # Make a prediction for each request and print out relevant results
+   for request in build_requests():
+     my_prediction: SinglePrediction = my_predictor.predict(request)
+     my_id = request.material_id
+     heat_treatment_time = request.material.values["Heat Treatment Time 1"].mean
+     predicted_tensile_strength = my_prediction.material.values["Tensile Strength"].mean
+     print(f"{my_id} updated_time={heat_treatment_time} strength={predicted_tensile_strength}")
+
