@@ -29,8 +29,8 @@ class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
             "IntegerValue": IntegerExperimentValue,
             "CategoricalValue": CategoricalExperimentValue,
             "MixtureValue": MixtureExperimentValue,
-            "OrganicValue": ChemicalFormulaExperimentValue,
-            "InorganicValue": MolecularStructureExperimentValue,
+            "InorganicValue": ChemicalFormulaExperimentValue,
+            "OrganicValue": MolecularStructureExperimentValue,
         }[data["type"]]
 
     def __str__(self):
@@ -113,7 +113,7 @@ class ChemicalFormulaExperimentValue(Serializable['ChemicalFormulaExperimentValu
     """Experiment value for a chemical formula."""
 
     value = properties.String('value')
-    typ = properties.String('type', default='OrganicValue', deserializable=False)
+    typ = properties.String('type', default='InorganicValue', deserializable=False)
 
     def __init__(self, value: str):
         self.value = value
@@ -124,7 +124,7 @@ class MolecularStructureExperimentValue(Serializable['MolecularStructureExperime
     """Experiment value for a molecular structure."""
 
     value = properties.String('value')
-    typ = properties.String('type', default='InorganicValue', deserializable=False)
+    typ = properties.String('type', default='OrganicValue', deserializable=False)
 
     def __init__(self, value: str):
         self.value = value
