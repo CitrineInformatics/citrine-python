@@ -27,12 +27,12 @@ if [ -z "$TRAVIS_PULL_REQUEST" ];  # Not Travis context
 then
     if [ "`git rev-parse --abbrev-ref HEAD`" == "main" ];
     then echo "On main branch";                                                  exit 1;
-    else bash $REPO_DIR/scripts/validate-version-bump.sh                      || exit 1;
+    else python $REPO_DIR/scripts/validate_version_bump.py                    || exit 1;
     fi
-# only run the validate-version-bump.sh script on PR builds against main,
+# only run the validate-_ersion_bump.py script on PR builds against main,
 # since those have access to a "main" reference to git show the version
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_BRANCH" == "main" ];
-then bash $REPO_DIR/scripts/validate-version-bump.sh                          || exit 1;
+then python $REPO_DIR/scripts/validate_version_bump.py                        || exit 1;
 fi
 
 flake8 $REPO_DIR/src                                                          || exit 1;
