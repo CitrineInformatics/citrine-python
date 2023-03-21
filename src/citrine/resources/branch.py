@@ -7,6 +7,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
@@ -100,6 +101,33 @@ class BranchCollection(Collection[Branch]):
         branch.project_id = self.project_id
         return branch
 
+    def get_by_root_id(self, *, branch_root_id: Union[UUID, str]) -> Branch:
+        """
+        Given a branch root ID, retrieve the latest version of the branch.
+
+        Parameters
+        ---------
+        branch_root_id:  Union[UUID, str]
+            Unique identifier of the branch root
+
+        Returns
+        -------
+        Branch
+            The latest version of the branch.
+
+        """
+        params = {"root": str(branch_root_id), "version": "latest"}
+        branch = next(self._list_with_params(per_page=1, **params), None)
+        if branch:
+            return branch
+        else:
+            raise NotFound.build(
+                message=f"Branch root '{branch_root_id}' not found",
+                method="GET",
+                path=self._get_path(),
+                params=params
+            )
+
     def list(self, *, per_page: int = 20) -> Iterator[Branch]:
         """
         List active branches using pagination.
@@ -138,7 +166,10 @@ class BranchCollection(Collection[Branch]):
             Archived branches in this collection.
 
         """
-        fetcher = functools.partial(self._fetch_page, additional_params={"archived": True})
+        return self._list_with_params(per_page=per_page, archived=True)
+
+    def _list_with_params(self, *, per_page, **kwargs):
+        fetcher = functools.partial(self._fetch_page, additional_params=kwargs)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
