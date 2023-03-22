@@ -19,7 +19,7 @@ class DefaultDesignSpaceMode(BaseEnumeration):
     """
 
     ATTRIBUTE = 'ATTRIBUTE'
-    HISTORY = 'HISTORY'
+    HIERARCHICAL = 'HIERARCHICAL'
 
 
 class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):

@@ -16,7 +16,7 @@ from citrine.informatics.design_spaces.design_space import DesignSpace
 __all__ = [
     "TemplateLink",
     "MaterialNodeDefinition",
-    "MaterialHistoryDesignSpace"
+    "HierarchicalDesignSpace"
 ]
 
 
@@ -110,8 +110,8 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         return "<MaterialNodeDefinition {!r}>".format(self.name)
 
 
-class MaterialHistoryDesignSpace(
-    Resource["MaterialHistoryDesignSpace"], DesignSpace, AIResourceMetadata
+class HierarchicalDesignSpace(
+    Resource["HierarchicalDesignSpace"], DesignSpace, AIResourceMetadata
 ):
     """A design space that produces material history candidates.
 
@@ -156,7 +156,7 @@ class MaterialHistoryDesignSpace(
     status = properties.String("status", serializable=False)
     module_type = properties.String("module_type", default="DESIGN_SPACE")
     typ = properties.String(
-        "config.type", default="MaterialHistoryDesignSpace", deserializable=False
+        "config.type", default="HierarchicalDesignSpace", deserializable=False
     )
 
     def __init__(
@@ -203,4 +203,4 @@ class MaterialHistoryDesignSpace(
         return node
 
     def __repr__(self):
-        return "<MaterialHistoryDesignSpace {!r}>".format(self.name)
+        return "<HierarchicalDesignSpace {!r}>".format(self.name)

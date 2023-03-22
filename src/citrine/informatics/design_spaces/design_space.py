@@ -28,12 +28,12 @@ class DesignSpace(Module):
         from .enumerated_design_space import EnumeratedDesignSpace
         from .formulation_design_space import FormulationDesignSpace
         from .product_design_space import ProductDesignSpace
-        from .material_history_design_space import MaterialHistoryDesignSpace
+        from .hierarchical_design_space import HierarchicalDesignSpace
         return {
             'Univariate': ProductDesignSpace,
             'ProductDesignSpace': ProductDesignSpace,
             'EnumeratedDesignSpace': EnumeratedDesignSpace,
             'FormulationDesignSpace': FormulationDesignSpace,
             'DataSourceDesignSpace': DataSourceDesignSpace,
-            'MaterialHistoryDesignSpace': MaterialHistoryDesignSpace
+            'HierarchicalDesignSpace': HierarchicalDesignSpace
         }[data['config']['type']]
