@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -83,12 +83,14 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     """
 
     quantities = properties.Mapping(properties.String, properties.Float, 'q')
+    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'l')
     """:Dict[str, float]: mapping from ingredient identifiers to their quantities"""
     typ = properties.String('type', default='M', deserializable=False)
     """:str: polymorphic type code"""
 
-    def __init__(self, *, quantities: dict):
+    def __init__(self, *, quantities: dict, labels: Optional[dict] = None):
         self.quantities = quantities
+        self.labels = labels or {}
         pass  # pragma: no cover
 
 
