@@ -119,6 +119,7 @@ def test_predict(design_workflow, design_execution, example_candidates):
                         "q": {
                             "water": 72.5
                         },
+                        "l": {},
                         "type": "M"
                     },
                     "Salt": {

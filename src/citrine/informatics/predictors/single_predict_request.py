@@ -5,6 +5,8 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.design_candidate import DesignMaterial
 
+__all__ = ['SinglePredictRequest']
+
 
 class SinglePredictRequest(Serializable["SinglePredictRequest"]):
     """A Citrine Single Predict Request.

@@ -83,8 +83,9 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     """
 
     quantities = properties.Mapping(properties.String, properties.Float, 'q')
-    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'l')
     """:Dict[str, float]: mapping from ingredient identifiers to their quantities"""
+    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'l')
+    """:Dict[str, Set[str]]: mapping from label identifiers to their associated ingredients"""
     typ = properties.String('type', default='M', deserializable=False)
     """:str: polymorphic type code"""
 
