@@ -10,3 +10,5 @@ from .chemical_formula_featurizer import *
 from .simple_mixture_predictor import *
 from .auto_ml_predictor import *
 from .mean_property_predictor import *
+from .single_predict_request import *
+from .single_prediction import *

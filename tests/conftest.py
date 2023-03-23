@@ -682,7 +682,7 @@ def example_candidates():
                 'vars': {
                     'Temperature': {'type': 'R', 'm': 475.8, 's': 0},
                     'Flour': {'type': 'C', 'cp': {'flour': 100.0}},
-                    'Water': {'type': 'M', 'q': {'water': 72.5}},
+                    'Water': {'type': 'M', 'q': {'water': 72.5}, 'l': {}},
                     'Salt': {'type': 'F', 'f': 'NaCl'},
                     'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
                 }
