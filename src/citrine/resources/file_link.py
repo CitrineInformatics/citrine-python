@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from enum import Enum
 from logging import getLogger
-from typing import Optional, Tuple, Union, List, Dict
+from typing import Optional, Tuple, Union, List, Dict, Iterable
 from urllib.parse import urlparse, quote
 from uuid import UUID
 
@@ -182,8 +182,8 @@ class FileCollection(Collection[FileLink]):
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
-                  ignore_dataset: Optional[bool] = False,
                   *,
+                  ignore_dataset: Optional[bool] = False,
                   version: Union[str, UUID] = None,
                   action: str = None) -> str:
         """Build the path for taking an action with a particular file version."""
@@ -248,7 +248,7 @@ class FileCollection(Collection[FileLink]):
             *,
             version: Optional[Union[UUID, str, int]] = None) -> FileLink:
         """
-        Get an element of the collection by its id.
+        Retrieve an on-platform FileLink from its filename or file uuid.
 
         Parameters
         ----------
@@ -359,7 +359,7 @@ class FileCollection(Collection[FileLink]):
             aws_session_token, bucket, object_key, & upload_id.
 
         """
-        path = self._get_path() + "/uploads"
+        path = self._get_path(action="uploads")
         mime_type = self._mime_type(file_path)
         file_size = file_path.stat().st_size
         assert isinstance(file_size, int)
@@ -423,7 +423,7 @@ class FileCollection(Collection[FileLink]):
             All the data needed for a file.
 
         """
-        path = self._get_path() + "/search"
+        path = self._get_path(action="search")
 
         search_json = {
             'fileSearchFilter':
@@ -456,7 +456,7 @@ class FileCollection(Collection[FileLink]):
             All the data needed for a file.
 
         """
-        path = self._get_path() + "/search"
+        path = self._get_path(action="search")
 
         search_json = {
             'fileSearchFilter': {
@@ -495,7 +495,7 @@ class FileCollection(Collection[FileLink]):
             All the data needed for a file.
 
         """
-        path = self._get_path() + "/search"
+        path = self._get_path(action="search")
 
         search_json = {
             'fileSearchFilter': {
@@ -644,14 +644,12 @@ class FileCollection(Collection[FileLink]):
 
         if self._is_external_url(file_link.url):  # Pull it from where ever it lives
             final_url = file_link.url
-        elif self._validate_local_url(file_link.url):
+        else:
             # The "/content-link" route returns a pre-signed url to download the file.
             content_link = self._get_path_from_file_link(file_link, action='content-link')
             content_link_response = self.session.get_resource(content_link)
             pre_signed_url = content_link_response['pre_signed_read_link']
             final_url = rewrite_s3_links_locally(pre_signed_url, self.session.s3_endpoint_url)
-        else:  # Unrecognized
-            raise ValueError(f"URL was malformed for a local file resource ({file_link.url}).")
 
         download_response = requests.get(final_url)
         return download_response.content
@@ -690,10 +688,10 @@ class FileCollection(Collection[FileLink]):
             A JobSubmissionResponse which can be used to poll for the result.
 
         """
-        file_link = self._resolve_file_link(file_link)
-        if not self._validate_local_url(file_link.url):
+        if self._is_external_url(file_link.url):
             raise ValueError(f"Only on-platform resources can be processed. "
                              f"Passed URL {file_link.url}.")
+        file_link = self._resolve_file_link(file_link)
 
         params = {"processing_type": processing_type.value}
         response = self.session.put_resource(
@@ -797,6 +795,38 @@ class FileCollection(Collection[FileLink]):
 
         return results
 
+    def ingest(self, files: Iterable[FileLink]):
+        """
+        [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
+
+        Parameters
+        ----------
+        files: List[FileLink]
+            A list of files, already on platform, from which GEMD objects should be built
+
+        """
+        targets = [self._resolve_file_link(f) for f in files]
+        if any(self._is_external_url(f.url) for f in targets):
+            externals = [f.url for f in targets if self._is_external_url(f.url)]
+            raise ValueError(f"All files must be on-platform to load them.  "
+                             f"The following are not: {externals}")
+
+        file_infos = [
+            {"dataset_file_id": str(f.uid),
+             "file_version_uuid": str(f.version)
+             }
+            for f in targets]
+        req = {
+            "project_id": str(self.project_id),
+            "dataset_id": str(self.dataset_id),
+            "files": file_infos
+        }
+        base_url = format_escaped_url("/projects/{}/ingestions", self.project_id)
+        create_ingestion_resp = self.session.post_resource(path=base_url, json=req)
+        ingestion_id = create_ingestion_resp["ingestion_id"]
+        job_url = base_url + format_escaped_url("/{}/gemd-objects", ingestion_id)
+        return self.session.post_resource(path=job_url, json={})
+
     def delete(self, file_link: FileLink):
         """
         Delete the file associated with a given FileLink from the database.
@@ -817,8 +847,25 @@ class FileCollection(Collection[FileLink]):
 
     def _resolve_file_link(self, identifier: Union[str, UUID, FileLink]) -> FileLink:
         """Generate the FileLink object referenced by the passed argument."""
-        if isinstance(identifier, FileLink):  # Passthrough for convenience
-            return identifier
+        if isinstance(identifier, GEMDFileLink):
+            if isinstance(identifier, FileLink) and identifier.uid is not None:
+                # Passthrough since it's as full as it can get
+                return identifier
+            if self._is_external_url(identifier.url):
+                # Up-convert type with existing info
+                return FileLink(filename=identifier.filename, url=identifier.url)
+            # Resolve on-platform uid and possibly up-convert
+            file_id, version_id = self._get_ids_from_url(identifier.url)
+            if file_id is None:
+                raise ValueError(f"URL was malformed for local resources; "
+                                 f"passed URL {identifier.url}")
+            platform_link = self.get(uid=file_id, version=version_id)
+            if platform_link.filename != identifier.filename:
+                raise ValueError(
+                    f"Name mismatch between link ({identifier.filename}) "
+                    f"and platform ({platform_link.filename})"
+                )
+            return platform_link
         elif isinstance(identifier, str) and self._is_external_url(identifier):
             # Assume it's an absolute URL
             filename = urlparse(identifier).path.split('/')[-1]
@@ -848,10 +895,3 @@ class FileCollection(Collection[FileLink]):
             return False
 
         return urlparse(self._get_path()).netloc != parsed.netloc
-
-    def _validate_local_url(self, url):
-        """Verify link is well formed."""
-        if self._is_external_url(url):
-            return False
-
-        return self._get_ids_from_url(url)[1] is not None  # Implies file_id is None, too
