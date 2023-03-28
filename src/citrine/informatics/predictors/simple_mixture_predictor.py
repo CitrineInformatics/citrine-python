@@ -1,9 +1,10 @@
+import warnings
 from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor
+from citrine.informatics.descriptors import FormulationDescriptor, FormulationKey
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['SimpleMixturePredictor']
@@ -45,14 +46,31 @@ class SimpleMixturePredictor(
                  name: str,
                  *,
                  description: str,
-                 input_descriptor: FormulationDescriptor,
-                 output_descriptor: FormulationDescriptor,
+                 input_descriptor: Optional[FormulationDescriptor] = None,
+                 output_descriptor: Optional[FormulationDescriptor] = None,
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-        self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.output_descriptor: FormulationDescriptor = output_descriptor
         self.training_data: List[DataSource] = training_data or []
+
+        if input_descriptor is not None:
+            warnings.warn(
+                "The field `input_descriptor` on a SimpleMixturePredictor is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                f"FormulationDescriptor with key '{FormulationKey.HIERARCHICAL.value}' as input.",
+                DeprecationWarning
+            )
+
+        if output_descriptor is not None:
+            warnings.warn(
+                "The field `output_descriptor` on a SimpleMixturePredictor is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                f"FormulationDescriptor with key '{FormulationKey.FLAT.value}' as output.",
+                DeprecationWarning
+            )
+
+        self.input_descriptor = FormulationDescriptor.hierarchical()
+        self.output_descriptor = FormulationDescriptor.flat()
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)

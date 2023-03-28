@@ -1,8 +1,9 @@
-from typing import Set, Mapping
+import warnings
+from typing import Set, Mapping, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as _properties
-from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor, FormulationKey
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['IngredientsToFormulationPredictor']
@@ -42,7 +43,7 @@ class IngredientsToFormulationPredictor(
                  name: str,
                  *,
                  description: str,
-                 output: FormulationDescriptor,
+                 output: Optional[FormulationDescriptor] = None,
                  id_to_quantity: Mapping[str, RealDescriptor],
                  labels: Mapping[str, Set[str]]):
         self.name: str = name
@@ -50,6 +51,16 @@ class IngredientsToFormulationPredictor(
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
         self.labels: Mapping[str, Set[str]] = labels
+
+        if output is not None:
+            warnings.warn(
+                "The field `output` on an IngredientsToFormulationPredictor is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                f"FormulationDescriptor with key '{FormulationKey.HIERARCHICAL.value}' as output.",
+                DeprecationWarning
+            )
+
+        self.output = FormulationDescriptor.hierarchical()
 
     def __str__(self):
         return '<IngredientsToFormulationPredictor {!r}>'.format(self.name)
