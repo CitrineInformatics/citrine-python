@@ -36,7 +36,9 @@ class Collection(Generic[ResourceType], Pageable):
         ref = ResourceRef(uid)
         return self.session.put_resource(url, ref.dump(), version=self._api_version)
 
-    def _get_path(self, uid: Optional[Union[UUID, str]] = None,
+    def _get_path(self,
+                  uid: Optional[Union[UUID, str]] = None,
+                  *,
                   ignore_dataset: Optional[bool] = False) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
         subpath = format_escaped_url('/{}', uid) if uid else ''

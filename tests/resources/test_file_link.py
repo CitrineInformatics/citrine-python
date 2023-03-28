@@ -352,8 +352,10 @@ def test_file_download(collection: FileCollection, session, tmpdir):
     """
     # Given
     filename = 'diagram.pdf'
-    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{uuid4()}/versions/{uuid4()}"
-    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+    file_uid = str(uuid4())
+    version_uid = str(uuid4())
+    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
         'pre_signed_read_link': pre_signed_url,
@@ -403,8 +405,10 @@ def test_read(collection: FileCollection, session):
     """
     # Given
     filename = 'diagram.pdf'
-    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{uuid4()}/versions/{uuid4()}"
-    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+    file_uid = str(uuid4())
+    version_uid = str(uuid4())
+    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
         'pre_signed_read_link': pre_signed_url,
@@ -499,8 +503,8 @@ def test_process_file(collection: FileCollection, session):
     """Test processing an existing file."""
 
     file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = 'www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
-    file_link = collection.build(FileLinkDataFactory(url=full_url))
+    full_url = collection._get_path(uid=file_id, version=version_id)
+    file_link = collection.build(FileLinkDataFactory(url=full_url, id=file_id, version=version_id))
 
     job_id_resp = {
         'job_id': str(uuid4())
@@ -548,8 +552,8 @@ def test_process_file_no_waiting(collection: FileCollection, session):
     """Test processing an existing file without waiting on the result."""
 
     file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = 'www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
-    file_link = collection.build(FileLinkDataFactory(url=full_url))
+    full_url = collection._get_path(uid=file_id, version=version_id)
+    file_link = collection.build(FileLinkDataFactory(url=full_url, id=file_id, version=version_id))
 
     job_id_resp = {
         'job_id': str(uuid4())
@@ -566,11 +570,9 @@ def test_process_file_no_waiting(collection: FileCollection, session):
 
 def test_process_file_exceptions(collection: FileCollection, session):
     """Test processing an existing file without waiting on the result."""
-
-    file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = 'https://www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
+    full_url = f'http://www.files.com/file.path'
     file_link = collection.build(FileLinkDataFactory(url=full_url))
-
+    collection._get_path()
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     with pytest.raises(ValueError, match="on-platform resources"):
@@ -578,6 +580,22 @@ def test_process_file_exceptions(collection: FileCollection, session):
             collection.process(file_link=file_link,
                                processing_type=FileProcessingType.VALIDATE_CSV,
                                wait_for_response=False)
+
+
+def test_ingest(collection: FileCollection, session):
+    """Test the on-platform ingest route."""
+    good_file1 = collection.build({"filename": "good.csv", "id": str(uuid4()), "version": str(uuid4())})
+    good_file2 = collection.build({"filename": "also.csv", "id": str(uuid4()), "version": str(uuid4())})
+    bad_file = FileLink(filename="bad.csv", url="http://files.com/input.csv")
+
+    job_id_resp = {
+        'ingestion_id': str(uuid4())
+    }
+    session.set_responses(job_id_resp, job_id_resp)
+    collection.ingest([good_file1, good_file2])
+
+    with pytest.raises(ValueError, match=bad_file.url):
+        collection.ingest([good_file1, bad_file])
 
 
 def test_resolve_file_link(collection: FileCollection, session):
@@ -626,17 +644,27 @@ def test_resolve_file_link(collection: FileCollection, session):
     session.set_response({
         'files': [raw_files[1]]
     })
-    assert collection._resolve_file_link(UUID(raw_files[1]['id'])) == file1, "UUID didn't resolve"
+
+    unresolved = FileLink(filename=file1.filename, url=file1.url)
+    assert collection._resolve_file_link(unresolved) == file1, "FileLink didn't resolve"
     assert session.num_calls == 1
+
+    unresolved.filename = "Wrong.file"
+    with pytest.raises(ValueError):
+        collection._resolve_file_link(unresolved)
+    assert session.num_calls == 2
+
+    assert collection._resolve_file_link(UUID(raw_files[1]['id'])) == file1, "UUID didn't resolve"
+    assert session.num_calls == 3
 
     session.set_response({
         'files': [raw_files[1]]
     })
     assert collection._resolve_file_link(raw_files[1]['id']) == file1, "String UUID didn't resolve"
-    assert session.num_calls == 2
+    assert session.num_calls == 4
 
     assert collection._resolve_file_link(raw_files[1]['version']) == file1, "Version UUID didn't resolve"
-    assert session.num_calls == 3
+    assert session.num_calls == 5
 
     abs_link = "https://wwww.website.web/web.pdf"
     assert collection._resolve_file_link(abs_link).filename == "web.pdf"
@@ -646,36 +674,17 @@ def test_resolve_file_link(collection: FileCollection, session):
         'files': [raw_files[1]]
     })
     assert collection._resolve_file_link(file1.url) == file1, "Relative path didn't resolve"
-    assert session.num_calls == 4
+    assert session.num_calls == 6
 
     session.set_response({
         'files': [raw_files[1]]
     })
     assert collection._resolve_file_link(file1.filename) == file1, "Filename didn't resolve"
-    assert session.num_calls == 5
+    assert session.num_calls == 7
 
     with pytest.raises(TypeError):
         collection._resolve_file_link(12345)
-    assert session.num_calls == 5
-
-
-def test_validate_filelink_url(collection: FileCollection):
-    good = [
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
-        f"/files/{uuid4()}/versions/{uuid4()}"
-    ]
-    bad = [
-        f"/projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
-        f"/projects/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?query=param",
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?#fragment",
-        "http://customer.com/data-lake/files/123/versions/456",
-        "/files/uuid4/versions/uuid4",
-    ]
-    for x in good:
-        assert collection._validate_local_url(x)
-    for x in bad:
-        assert not collection._validate_local_url(x)
+    assert session.num_calls == 7
 
 
 def test_get_ids_from_url(collection: FileCollection):
