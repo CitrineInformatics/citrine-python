@@ -349,7 +349,7 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
-    assert mean_property_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert mean_property_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert mean_property_predictor.properties == [density, chain_type]
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
@@ -374,7 +374,7 @@ def test_mean_property_round_robin(mean_property_predictor):
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
-    assert label_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert label_fractions_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
@@ -393,7 +393,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
-    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
@@ -424,3 +424,21 @@ def test_single_predict(graph_predictor):
     prediction_out = graph_predictor.predict(request)
     assert prediction_out.dump() == prediction_in.dump()
     assert session.post_resource.call_count == 1
+
+
+def test_formulation_deprecations():
+    with pytest.warns(DeprecationWarning):
+        SimpleMixturePredictor(
+            name="Warning",
+            description="Description",
+            input_descriptor=FormulationDescriptor.hierarchical(),
+            output_descriptor=FormulationDescriptor.flat()
+        )
+    with pytest.warns(DeprecationWarning):
+        IngredientsToFormulationPredictor(
+            name="Warning",
+            description="Description",
+            output=FormulationDescriptor.hierarchical(),
+            id_to_quantity={},
+            labels={}
+        )

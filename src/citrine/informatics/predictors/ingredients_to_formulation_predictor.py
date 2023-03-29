@@ -63,4 +63,5 @@ class IngredientsToFormulationPredictor(
 
     @property
     def output(self) -> FormulationDescriptor:
+        """The output formulation descriptor with key 'Formulation'."""
         return FormulationDescriptor.hierarchical()

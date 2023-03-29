@@ -67,8 +67,10 @@ class SimpleMixturePredictor(
 
     @property
     def input_descriptor(self) -> FormulationDescriptor:
+        """The input formulation descriptor with key 'Formulation'."""
         return FormulationDescriptor.hierarchical()
 
     @property
     def output_descriptor(self) -> FormulationDescriptor:
+        """The output formulation descriptor with key 'Flat Formulation'."""
         return FormulationDescriptor.flat()

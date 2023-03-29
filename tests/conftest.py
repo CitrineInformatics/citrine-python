@@ -400,7 +400,6 @@ def valid_ing_formulation_predictor_data():
         type='IngredientsToSimpleMixture',
         name='Ingredients to formulation predictor',
         description='Constructs mixtures from ingredients',
-        output=FormulationDescriptor.hierarchical().dump(),
         id_to_quantity={
             'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
             'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
@@ -526,15 +525,10 @@ def invalid_predictor_data():
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.descriptors import FormulationDescriptor
-    input_formulation = FormulationDescriptor.hierarchical()
-    output_formulation = FormulationDescriptor.flat()
     instance = dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
         description='simple mixture description',
-        input=input_formulation.dump(),
-        output=output_formulation.dump(),
         training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
