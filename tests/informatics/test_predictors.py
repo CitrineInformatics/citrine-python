@@ -24,8 +24,7 @@ shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bo
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
-formulation = FormulationDescriptor.hierarchical()
-formulation_output = FormulationDescriptor.flat()
+flat_formulation = FormulationDescriptor.flat()
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
 salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
 data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
@@ -150,7 +149,6 @@ def ing_to_formulation_predictor() -> IngredientsToFormulationPredictor:
     return IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
-        output=formulation,
         id_to_quantity={
             'water': water_quantity,
             'salt': salt_quantity
@@ -168,7 +166,7 @@ def mean_property_predictor() -> MeanPropertyPredictor:
     return MeanPropertyPredictor(
         name='Mean property predictor',
         description='Computes mean ingredient properties',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         properties=[density, chain_type],
         p=2.5,
         training_data=[formulation_data_source],
@@ -184,8 +182,6 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
     return SimpleMixturePredictor(
         name='Simple mixture predictor',
         description='Computes mean ingredient properties',
-        input_descriptor=formulation,
-        output_descriptor=formulation_output,
         training_data=[formulation_data_source]
     )
 
@@ -196,7 +192,7 @@ def label_fractions_predictor() -> LabelFractionsPredictor:
     return LabelFractionsPredictor(
         name='Label fractions predictor',
         description='Compute relative proportions of labeled ingredients',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         labels={'solvent'}
     )
 
@@ -207,7 +203,7 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     return IngredientFractionsPredictor(
         name='Ingredient fractions predictor',
         description='Computes total ingredient fractions',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         ingredients={"Green Paste", "Blue Paste"}
     )
 

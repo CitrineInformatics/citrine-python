@@ -95,7 +95,10 @@ As an example, consider the following saline solution data.
 
 Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
 Ingredient identifiers are given by the first column.
-A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` can be configured to construct formulations from this data via the following:
+A CSV data source and an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
+can be configured to construct formulations from tabular data.
+This predictor automatically generates an ``output`` formulation descriptor named 'Formulation'.
+The following example illustrates this process:
 
 .. code:: python
 
@@ -122,13 +125,9 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_for
         identifiers=['Ingredient id']
     )
 
-    # create a descriptor to hold formulations
-    formulation = FormulationDescriptor.hierarchical()
-
     IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
-        output=formulation,
         # map from ingredient id to its quantity
         id_to_quantity={
             'water': water_quantity,

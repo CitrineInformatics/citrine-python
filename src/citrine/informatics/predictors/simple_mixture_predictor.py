@@ -2,7 +2,7 @@ import warnings
 from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor, FormulationKey
 from citrine.informatics.predictors import Predictor
@@ -20,10 +20,6 @@ class SimpleMixturePredictor(
         name of the configuration
     description: str
         description of the predictor
-    input_descriptor: FormulationDescriptor
-        input descriptor for the hierarchical (un-mixed) formulation
-    output_descriptor: FormulationDescriptor
-        output descriptor for the flat (mixed) formulation
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
@@ -34,13 +30,10 @@ class SimpleMixturePredictor(
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
-    output_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.output')
-    training_data = _properties.List(_properties.Object(DataSource),
-                                     'data.instance.training_data', default=[])
-
-    typ = _properties.String('data.instance.type', default='SimpleMixture',
-                             deserializable=False)
+    training_data = properties.List(
+        properties.Object(DataSource), 'data.instance.training_data', default=[]
+    )
+    typ = properties.String('data.instance.type', default='SimpleMixture', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -69,8 +62,13 @@ class SimpleMixturePredictor(
                 DeprecationWarning
             )
 
-        self.input_descriptor = FormulationDescriptor.hierarchical()
-        self.output_descriptor = FormulationDescriptor.flat()
-
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)
+
+    @property
+    def input_descriptor(self) -> FormulationDescriptor:
+        return FormulationDescriptor.hierarchical()
+
+    @property
+    def output_descriptor(self) -> FormulationDescriptor:
+        return FormulationDescriptor.flat()
