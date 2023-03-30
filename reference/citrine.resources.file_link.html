@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 2.8.0 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 2.10.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.8.0
+                2.10.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -234,7 +234,7 @@ then the filename of this FileLink object will be appended to the path.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a></span></span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.get" title="Permalink to this definition"></a></dt>
-<dd><p>Get an element of the collection by its id.</p>
+<dd><p>Retrieve an on-platform FileLink from its filename or file uuid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -249,6 +249,17 @@ highest version number (most recent).</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.file_link.FileCollection.ingest">
+<span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><span class="pre">citrine.resources.file_link.FileLink</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileCollection.ingest" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>files</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em>) – A list of files, already on platform, from which GEMD objects should be built</p>
 </dd>
 </dl>
 </dd></dl>

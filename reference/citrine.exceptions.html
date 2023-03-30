@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.exceptions module &mdash; Citrine Python 2.8.0 documentation</title>
+  <title>citrine.exceptions module &mdash; Citrine Python 2.10.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.8.0
+                2.10.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -203,6 +203,30 @@ set self.__traceback__ to tb and return self.</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>A particular url was not found. (http status 404).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.exceptions.NotFound.build">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound.build" title="Permalink to this definition"></a></dt>
+<dd><p>Construct a NotFound response from parameters.</p>
+<p>This allows raising NotFound locally to produce consistent behavior even if the server
+doesn’t return a 404.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – The text of the exception message, which will be surrounded by more details.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – The HTTP method which resulted in the error, to display in the full message.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – The path from which the error came, to display in the full message</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – The query parameters passed as part of the request, to display in the full message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The NotFound exception corresponding to the above arguments.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.exceptions.NotFound" title="citrine.exceptions.NotFound">NotFound</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.exceptions.NotFound.with_traceback">
 <span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound.with_traceback" title="Permalink to this definition"></a></dt>
