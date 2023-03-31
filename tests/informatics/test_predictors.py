@@ -24,8 +24,7 @@ shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bo
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 chain_type = CategoricalDescriptor('Chain Type', categories={'Gaussian Coil', 'Rigid Rod', 'Worm-like'})
-formulation = FormulationDescriptor.hierarchical()
-formulation_output = FormulationDescriptor.flat()
+flat_formulation = FormulationDescriptor.flat()
 water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
 salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
 data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
@@ -147,7 +146,6 @@ def ing_to_formulation_predictor() -> IngredientsToFormulationPredictor:
     return IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
-        output=formulation,
         id_to_quantity={
             'water': water_quantity,
             'salt': salt_quantity
@@ -165,7 +163,7 @@ def mean_property_predictor() -> MeanPropertyPredictor:
     return MeanPropertyPredictor(
         name='Mean property predictor',
         description='Computes mean ingredient properties',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         properties=[density, chain_type],
         p=2.5,
         impute_properties=True,
@@ -180,8 +178,6 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
     return SimpleMixturePredictor(
         name='Simple mixture predictor',
         description='Computes mean ingredient properties',
-        input_descriptor=formulation,
-        output_descriptor=formulation_output
     )
 
 
@@ -191,7 +187,7 @@ def label_fractions_predictor() -> LabelFractionsPredictor:
     return LabelFractionsPredictor(
         name='Label fractions predictor',
         description='Compute relative proportions of labeled ingredients',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         labels={'solvent'}
     )
 
@@ -202,7 +198,7 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     return IngredientFractionsPredictor(
         name='Ingredient fractions predictor',
         description='Computes total ingredient fractions',
-        input_descriptor=formulation,
+        input_descriptor=flat_formulation,
         ingredients={"Green Paste", "Blue Paste"}
     )
 
@@ -347,7 +343,7 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
-    assert mean_property_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert mean_property_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert mean_property_predictor.properties == [density, chain_type]
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
@@ -371,7 +367,7 @@ def test_mean_property_round_robin(mean_property_predictor):
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
-    assert label_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert label_fractions_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
@@ -389,7 +385,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
-    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
+    assert ingredient_fractions_predictor.input_descriptor.key == FormulationKey.FLAT.value
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
@@ -437,9 +433,34 @@ def test_deprecated_training_data():
         MeanPropertyPredictor(
             name="SimpleMixture",
             description="",
-            input_descriptor=formulation,
+            input_descriptor=flat_formulation,
             properties=[x, y, z],
             p=1.0,
             impute_properties=True,
             training_data=[data_source]
+        )
+
+    with pytest.warns(DeprecationWarning):
+        SimpleMixturePredictor(
+            name="Warning",
+            description="Description",
+            training_data=[data_source]
+        )
+
+
+def test_formulation_deprecations():
+    with pytest.warns(DeprecationWarning):
+        SimpleMixturePredictor(
+            name="Warning",
+            description="Description",
+            input_descriptor=FormulationDescriptor.hierarchical(),
+            output_descriptor=FormulationDescriptor.flat()
+        )
+    with pytest.warns(DeprecationWarning):
+        IngredientsToFormulationPredictor(
+            name="Warning",
+            description="Description",
+            output=FormulationDescriptor.hierarchical(),
+            id_to_quantity={},
+            labels={}
         )

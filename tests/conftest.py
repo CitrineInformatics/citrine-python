@@ -395,12 +395,11 @@ def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metr
 @pytest.fixture
 def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
-    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.descriptors import RealDescriptor
     instance = dict(
         type='IngredientsToSimpleMixture',
         name='Ingredients to formulation predictor',
         description='Constructs mixtures from ingredients',
-        output=FormulationDescriptor.hierarchical().dump(),
         id_to_quantity={
             'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
             'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
@@ -417,7 +416,6 @@ def valid_ing_formulation_predictor_data():
 def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.data_sources import GemTableDataSource
     formulation_descriptor = FormulationDescriptor.hierarchical()
     instance = dict(
         type='GeneralizedMeanProperty',
@@ -437,7 +435,6 @@ def valid_generalized_mean_property_predictor_data():
 def valid_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-    from citrine.informatics.data_sources import GemTableDataSource
     formulation_descriptor = FormulationDescriptor.flat()
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
     instance = dict(
@@ -524,16 +521,10 @@ def invalid_predictor_data():
 @pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.descriptors import FormulationDescriptor
-    input_formulation = FormulationDescriptor.hierarchical()
-    output_formulation = FormulationDescriptor.flat()
     instance = dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
         description='simple mixture description',
-        input=input_formulation.dump(),
-        output=output_formulation.dump(),
         training_data=[]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
