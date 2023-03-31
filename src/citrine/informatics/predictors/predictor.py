@@ -118,7 +118,8 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
         if training_data is not None:
             warnings.warn(
                 f"The field `training_data` on {cls.__name__} predictors is deprecated "
-                "and will be removed in version 3.0.0. Please only add training data "
-                "to the parent GraphPredictor.",
+                "and will be removed in version 3.0.0. Training on this predictor will be "
+                "automatically moved to the parent GraphPredictor upon registration. "
+                "Please only add training data to the parent GraphPredictor.",
                 DeprecationWarning
             )
