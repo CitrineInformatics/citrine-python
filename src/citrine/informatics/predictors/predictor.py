@@ -1,10 +1,12 @@
-from typing import Optional, Type
+import warnings
+from typing import Optional, Type, List
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._session import Session
+from citrine.informatics.data_sources import DataSource
 from citrine.resources.report import ReportResource
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
@@ -110,3 +112,13 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
         path = self._path() + '/predict'
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
         return SinglePrediction.build(res)
+
+    @classmethod
+    def _check_deprecated_training_data(cls, training_data: Optional[List[DataSource]]) -> None:
+        if training_data is not None:
+            warnings.warn(
+                f"The field `training_data` on {cls.__name__} predictors is deprecated "
+                "and will be removed in version 3.0.0. Please only add training data "
+                "to the parent GraphPredictor.",
+                DeprecationWarning
+            )

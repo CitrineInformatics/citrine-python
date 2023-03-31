@@ -52,6 +52,8 @@ class SimpleMixturePredictor(
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
+
+        self._check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):

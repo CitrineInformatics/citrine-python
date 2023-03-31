@@ -105,6 +105,8 @@ class MeanPropertyPredictor(
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
         self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
+
+        self._check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):
