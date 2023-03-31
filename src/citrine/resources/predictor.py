@@ -7,7 +7,6 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.paginator import Paginator
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
@@ -170,10 +169,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         self.session: Session = session
         self._versions_collection = _PredictorVersionCollection(project_id, session)
 
-    def _predictors_path(self, subpath: str, uid: Union[UUID, str] = None) -> str:
-        path_template = self._path_template + (f"/{uid}" if uid else "") + f"/{subpath}"
-        return format_escaped_url(path_template, project_id=self.project_id)
-
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
         predictor: Predictor = Predictor.build(data)
@@ -228,7 +223,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             return self._train(updated_predictor.uid)
 
     def _train(self, uid: Union[UUID, str]) -> Predictor:
-        path = self._predictors_path("train", uid)
+        path = self._get_path(uid, action="train")
         params = {"create_version": True}
         entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
         return self.build(entity)
@@ -248,7 +243,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             Unique identifier of the predictor to archive.
 
         """
-        path = self._predictors_path("archive", uid)
+        path = self._get_path(uid=uid, action="archive")
         self.session.put_resource(path, {}, version=self._api_version)
 
     def restore_root(self, uid: Union[UUID, str]):
@@ -258,7 +253,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             Unique identifier of the predictor to restore.
 
         """
-        path = self._predictors_path("restore", uid)
+        path = self._get_path(uid, action="restore")
         self.session.put_resource(path, {}, version=self._api_version)
 
     def root_is_archived(self, uid: Union[UUID, str]) -> bool:
@@ -312,7 +307,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             The update, if an update is available; None otherwise.
 
         """
-        path = self._predictors_path("update-check", uid)
+        path = self._get_path(uid, action="update-check")
         update_data = self.session.get_resource(path, version=self._api_version)
         if update_data["updatable"]:
             built = Predictor.build(update_data)
@@ -369,7 +364,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             pattern = AutoConfigureMode.get_enum(pattern)
         pattern = pattern.value
 
-        path = self._predictors_path("default")
+        path = self._get_path(action="default")
         body = {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)

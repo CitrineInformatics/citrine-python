@@ -386,7 +386,7 @@ class TableConfigCollection(Collection[TableConfig]):
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         if version is not None:
-            path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
+            path = self._get_path(uid, action=["versions", version])
             data = self.session.get_resource(path)
         else:
             path = self._get_path(uid)
@@ -502,7 +502,7 @@ class TableConfigCollection(Collection[TableConfig]):
             List of links to the material runs to use as terminal materials in the preview
 
         """
-        path = self._get_path() + "/preview"
+        path = self._get_path(action="preview")
         body = {
             "definition": table_config.dump(),
             "rows": [x.as_dict() for x in preview_materials]

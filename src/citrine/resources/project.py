@@ -526,7 +526,7 @@ class ProjectCollection(Collection[Project]):
 
         """
         collections = []
-        path = self._get_path() + '/search'
+        path = self._get_path(action="search")
         query_params = {'userId': ""}
 
         json = {} if search_params is None else {'search_params': search_params}

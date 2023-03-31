@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
@@ -124,8 +123,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             Unique identifier of the workflow to archive
 
         """
-        url = format_escaped_url(self._path_template, project_id=self.project_id) \
-            + format_escaped_url("/{}/archive", uid)
+        url = self._get_path(uid=uid, action="archive")
         self.session.put_resource(url, {}, version=self._api_version)
 
     def restore(self, uid: Union[UUID, str]):
@@ -137,8 +135,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             Unique identifier of the workflow to restore
 
         """
-        url = format_escaped_url(self._path_template, project_id=self.project_id) \
-            + format_escaped_url("/{}/restore", uid)
+        url = self._get_path(uid=uid, action="restore")
         self.session.put_resource(url, {}, version=self._api_version)
 
     def delete(self, uid: Union[UUID, str]) -> Response:

@@ -6,7 +6,6 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
@@ -184,8 +183,7 @@ class BranchCollection(Collection[Branch]):
             Unique identifier of the branch to archive
 
         """
-        archive_path_template = f'{self._get_path(uid)}/archive'
-        url = format_escaped_url(archive_path_template, project_id=self.project_id, branch_id=uid)
+        url = self._get_path(uid, action="archive")
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
@@ -199,8 +197,7 @@ class BranchCollection(Collection[Branch]):
             Unique identifier of the branch to restore
 
         """
-        restore_path_template = f'{self._get_path(uid)}/restore'
-        url = format_escaped_url(restore_path_template, project_id=self.project_id, branch_id=uid)
+        url = self._get_path(uid, action="restore")
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
@@ -267,8 +264,7 @@ class BranchCollection(Collection[Branch]):
             A list of data updates and compatible predictors
 
         """
-        path_template = f'{self._path_template}/{{branch_id}}/data-version-updates-predictor'
-        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=uid)
+        path = self._get_path(uid=uid, action="data-version-updates-predictor")
         data = self.session.get_resource(path, version=self._api_version)
         return BranchDataUpdate.build(data)
 
@@ -303,9 +299,7 @@ class BranchCollection(Collection[Branch]):
             The new branch record after version update
 
         """
-        path_template = f'{self._path_template}/next-version-predictor'
-
-        path = format_escaped_url(path_template, project_id=self.project_id)
+        path = self._get_path(action="next-version-predictor")
         data = self.session.post_resource(path, branch_instructions.dump(),
                                           version=self._api_version,
                                           params={
