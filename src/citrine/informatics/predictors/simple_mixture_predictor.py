@@ -1,9 +1,10 @@
+import warnings
 from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor
+from citrine.informatics.descriptors import FormulationDescriptor, FormulationKey
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['SimpleMixturePredictor']
@@ -19,10 +20,6 @@ class SimpleMixturePredictor(
         name of the configuration
     description: str
         description of the predictor
-    input_descriptor: FormulationDescriptor
-        input descriptor for the hierarchical (un-mixed) formulation
-    output_descriptor: FormulationDescriptor
-        output descriptor for the flat (mixed) formulation
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
@@ -33,26 +30,47 @@ class SimpleMixturePredictor(
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
-    output_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.output')
-    training_data = _properties.List(_properties.Object(DataSource),
-                                     'data.instance.training_data', default=[])
-
-    typ = _properties.String('data.instance.type', default='SimpleMixture',
-                             deserializable=False)
+    training_data = properties.List(
+        properties.Object(DataSource), 'data.instance.training_data', default=[]
+    )
+    typ = properties.String('data.instance.type', default='SimpleMixture', deserializable=False)
 
     def __init__(self,
                  name: str,
                  *,
                  description: str,
-                 input_descriptor: FormulationDescriptor,
-                 output_descriptor: FormulationDescriptor,
+                 input_descriptor: Optional[FormulationDescriptor] = None,
+                 output_descriptor: Optional[FormulationDescriptor] = None,
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-        self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.output_descriptor: FormulationDescriptor = output_descriptor
         self.training_data: List[DataSource] = training_data or []
+
+        if input_descriptor is not None:
+            warnings.warn(
+                "The field `input_descriptor` on a SimpleMixturePredictor is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                f"FormulationDescriptor with key '{FormulationKey.HIERARCHICAL.value}' as input.",
+                DeprecationWarning
+            )
+
+        if output_descriptor is not None:
+            warnings.warn(
+                "The field `output_descriptor` on a SimpleMixturePredictor is deprecated "
+                "and will be ignored. The Citrine Platform will automatically generate a "
+                f"FormulationDescriptor with key '{FormulationKey.FLAT.value}' as output.",
+                DeprecationWarning
+            )
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)
+
+    @property
+    def input_descriptor(self) -> FormulationDescriptor:
+        """The input formulation descriptor with key 'Formulation'."""
+        return FormulationDescriptor.hierarchical()
+
+    @property
+    def output_descriptor(self) -> FormulationDescriptor:
+        """The output formulation descriptor with key 'Flat Formulation'."""
+        return FormulationDescriptor.flat()

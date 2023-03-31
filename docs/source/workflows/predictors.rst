@@ -406,7 +406,9 @@ These labels are specified via:
 
     labels = {"solvent": {"water"}, "solute": {"salt"}}
 
-The following example illustrates how an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is constructed for the saline example.
+The following example illustrates how an
+:class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
+is constructed for the saline example.
 
 .. code:: python
 
@@ -432,13 +434,9 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         identifiers=['Ingredient id']
     )
 
-    # create a descriptor to hold formulations
-    formulation = FormulationDescriptor.hierarchical()
-
     IngredientsToFormulationPredictor(
         name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
-        output=formulation,
         # map from ingredient id to its quantity
         id_to_quantity={
             'water': water_quantity,
@@ -459,23 +457,22 @@ Simple mixture predictor
 Formulations may contain ingredients that are blends of other ingredients.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
-The :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
+The :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`
+flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
 
-The formulation to be flattened is specified by an ``input_descriptor`` formulation descriptor that should be named 'Formulation';
+An ``input_descriptor`` with key 'Formulation' is automatically generated that refers to the formulation to be flattened;
 the associated material history of the input formulation is traversed to determine the leaf ingredients.
 These leaf ingredients are then summed across all leaves of the mixing processes,
-with the resulting candidates described by an ``output_descriptor`` formulation descriptor
-that should be named 'Flat Formulation'.
+with the resulting candidates described by an automatically generated ``output_descriptor`` formulation descriptor named 'Flat Formulation'.
 The ``training_data`` parameter is used as a source of formulation recipes to be used in flattening hierarchical mixtures.
 
-The following example illustrates how a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
+The following example illustrates how a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`
+can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline,
+yielding just the quantities of the leaf constituents salt and water.
 
 .. code:: python
 
     from citrine.informatics.predictors import SimpleMixturePredictor
-
-    input_formulation = FormulationDescriptor.hierarchical()
-    output_formulation = FormulationDescriptor.flat()
 
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(
@@ -486,8 +483,6 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     SimpleMixturePredictor(
         name='Simple mixture predictor',
         description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
-        input_descriptor=input_formulation,
-        output_descriptor=output_formulation,
         training_data=[data_source]
     )
 
