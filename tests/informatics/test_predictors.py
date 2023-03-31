@@ -92,8 +92,7 @@ def auto_ml() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from inputs w and x',
         inputs=[w, x],
-        outputs=[z],
-        training_data=[data_source]
+        outputs=[z]
     )
 
 
@@ -103,8 +102,7 @@ def auto_ml_no_outputs() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from inputs w and x',
         inputs=[w, x],
-        outputs=[],
-        training_data=[data_source]
+        outputs=[]
     )
 
 
@@ -114,8 +112,7 @@ def auto_ml_multiple_outputs() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from inputs w and x',
         inputs=[w, x],
-        outputs=[z, y],
-        training_data=[data_source]
+        outputs=[z, y]
     )
 
 
@@ -126,7 +123,7 @@ def graph_predictor() -> GraphPredictor:
         name='Graph predictor',
         description='description',
         predictors=[uuid.uuid4(), uuid.uuid4()],
-        training_data=[data_source]
+        training_data=[data_source, formulation_data_source]
     )
 
 
@@ -171,7 +168,6 @@ def mean_property_predictor() -> MeanPropertyPredictor:
         input_descriptor=formulation,
         properties=[density, chain_type],
         p=2.5,
-        training_data=[formulation_data_source],
         impute_properties=True,
         default_properties={'density': 1.0, 'Chain Type': 'Gaussian Coil'},
         label='solvent'
@@ -185,8 +181,7 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
         name='Simple mixture predictor',
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
-        output_descriptor=formulation_output,
-        training_data=[formulation_data_source]
+        output_descriptor=formulation_output
     )
 
 
@@ -233,7 +228,7 @@ def test_graph_initialization(graph_predictor):
     assert graph_predictor.name == 'Graph predictor'
     assert graph_predictor.description == 'description'
     assert len(graph_predictor.predictors) == 2
-    assert graph_predictor.training_data == [data_source]
+    assert graph_predictor.training_data == [data_source, formulation_data_source]
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
@@ -290,7 +285,6 @@ def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from inputs w and x"
     assert auto_ml.inputs == [w, x]
-    assert auto_ml.training_data == [data_source]
     assert auto_ml.dump()['instance']['outputs'] == [z.dump()]
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
@@ -357,7 +351,6 @@ def test_mean_property_initialization(mean_property_predictor):
     assert mean_property_predictor.properties == [density, chain_type]
     assert mean_property_predictor.p == 2.5
     assert mean_property_predictor.impute_properties == True
-    assert mean_property_predictor.training_data == [formulation_data_source]
     assert mean_property_predictor.default_properties == {'density': 1.0, 'Chain Type': 'Gaussian Coil'}
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
@@ -389,7 +382,6 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
     assert simple_mixture_predictor.input_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert simple_mixture_predictor.output_descriptor.key == FormulationKey.FLAT.value
-    assert simple_mixture_predictor.training_data == [formulation_data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
 
@@ -411,6 +403,7 @@ def test_status(valid_label_fractions_predictor_data, auto_ml):
     predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
 
+
 def test_single_predict(graph_predictor):
     """Ensures we get a prediction back from a simple predict call"""
     session = mock.Mock()
@@ -428,3 +421,25 @@ def test_single_predict(graph_predictor):
     prediction_out = graph_predictor.predict(request)
     assert prediction_out.dump() == prediction_in.dump()
     assert session.post_resource.call_count == 1
+
+
+def test_deprecated_training_data():
+    with pytest.warns(DeprecationWarning):
+        AutoMLPredictor(
+            name="AutoML",
+            description="",
+            inputs=[x, y],
+            outputs=[z],
+            training_data=[data_source]
+        )
+
+    with pytest.warns(DeprecationWarning):
+        MeanPropertyPredictor(
+            name="SimpleMixture",
+            description="",
+            input_descriptor=formulation,
+            properties=[x, y, z],
+            p=1.0,
+            impute_properties=True,
+            training_data=[data_source]
+        )

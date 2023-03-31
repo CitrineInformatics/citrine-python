@@ -216,7 +216,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
         inputs=[x.dump()],
         outputs=[z.dump()],
         estimators=[AutoMLEstimator.RANDOM_FOREST.value],
-        training_data=[valid_gem_data_source_dict]
+        training_data=[]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -426,7 +426,6 @@ def valid_generalized_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=['density'],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -448,10 +447,10 @@ def valid_mean_property_predictor_data():
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
         p=2,
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
         impute_properties=True,
         default_properties={'density': 1.0},
-        label='solvent'
+        label='solvent',
+        training_data=[]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -535,7 +534,7 @@ def valid_simple_mixture_predictor_data():
         description='simple mixture description',
         input=input_formulation.dump(),
         output=output_formulation.dump(),
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
+        training_data=[]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
