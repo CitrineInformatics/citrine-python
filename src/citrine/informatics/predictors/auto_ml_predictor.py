@@ -89,8 +89,10 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
-        self.training_data: List[DataSource] = training_data or []
         self.outputs = outputs
+
+        self._check_deprecated_training_data(training_data)
+        self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)
