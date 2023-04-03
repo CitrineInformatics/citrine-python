@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from logging import getLogger
 from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator, Sequence, Dict
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable
@@ -41,8 +41,8 @@ class Collection(Generic[ResourceType], Pageable):
                   uid: Optional[Union[UUID, str]] = None,
                   *,
                   ignore_dataset: bool = False,
-                  action: Optional[Sequence] = None,
-                  query_terms: Optional[Dict[str, str]] = None,
+                  action: Union[str, Sequence[str]] = [],
+                  query_terms: Dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
         if ignore_dataset:
@@ -54,23 +54,16 @@ class Collection(Generic[ResourceType], Pageable):
         if uid is not None:
             path.append("{uid}")
 
-        if action is None:
-            action = []
-        elif isinstance(action, str):
+        if isinstance(action, str):
             action = [action]
         else:
             action = list(action)
         path.extend(["{}"] * len(action))
 
-        if query_terms is None:
-            query_terms = {}
-        query_args = [x for k_and_v in query_terms.items() for x in k_and_v]
+        query = urlencode(query_terms)
+        new_url = base._replace(path='/'.join(path), query=query).geturl()
 
-        new_path = '/'.join(path)
-        new_query = "&".join(["{}={}"] * len(query_terms))
-        new_url = base._replace(path=new_path, query=new_query).geturl()
-
-        return format_escaped_url(new_url, *action, *query_args, **self.__dict__, uid=uid)
+        return format_escaped_url(new_url, *action, **self.__dict__, uid=uid)
 
     @abstractmethod
     def build(self, data: dict):

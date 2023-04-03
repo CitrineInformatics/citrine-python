@@ -44,6 +44,8 @@ class SimpleMixturePredictor(
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
+
+        self._check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
         if input_descriptor is not None:

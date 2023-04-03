@@ -185,10 +185,11 @@ class FileCollection(Collection[FileLink]):
                   *,
                   ignore_dataset: Optional[bool] = False,
                   version: Union[str, UUID] = None,
-                  action: Optional[Sequence] = None) -> str:
+                  action: Union[str, Sequence[str]] = [],
+                  query_terms: Dict[str, str] = {},) -> str:
         """Build the path for taking an action with a particular file version."""
         if version is not None:
-            action = ['versions', version] + ([] if action is None else [action])
+            action = ['versions', version] + ([action] if isinstance(action, str) else action)
         return super()._get_path(uid=uid, ignore_dataset=ignore_dataset, action=action)
 
     @staticmethod
