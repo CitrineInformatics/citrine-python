@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
 
@@ -130,12 +130,12 @@ class ChemicalFormulaFeaturizer(VersionedEngineResource['ChemicalFormulaFeaturiz
 
     """
 
-    input_descriptor = _properties.Object(Descriptor, 'data.instance.input')
-    features = _properties.List(_properties.String, 'data.instance.features')
-    excludes = _properties.List(_properties.String, 'data.instance.excludes')
-    powers = _properties.List(_properties.Integer, 'data.instance.powers')
+    input_descriptor = properties.Object(Descriptor, 'data.instance.input')
+    features = properties.List(properties.String, 'data.instance.features')
+    excludes = properties.List(properties.String, 'data.instance.excludes', default=[])
+    powers = properties.List(properties.Integer, 'data.instance.powers')
 
-    typ = _properties.String('data.instance.type', default='ChemicalFormulaFeaturizer',
+    typ = properties.String('data.instance.type', default='ChemicalFormulaFeaturizer',
                              deserializable=False)
 
     def __init__(self,
