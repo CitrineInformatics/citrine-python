@@ -135,8 +135,9 @@ class ChemicalFormulaFeaturizer(VersionedEngineResource['ChemicalFormulaFeaturiz
     excludes = properties.List(properties.String, 'data.instance.excludes', default=[])
     powers = properties.List(properties.Integer, 'data.instance.powers')
 
-    typ = properties.String('data.instance.type', default='ChemicalFormulaFeaturizer',
-                             deserializable=False)
+    typ = properties.String(
+        'data.instance.type', default='ChemicalFormulaFeaturizer', deserializable=False
+    )
 
     def __init__(self,
                  name: str,
