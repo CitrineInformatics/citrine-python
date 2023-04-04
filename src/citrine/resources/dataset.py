@@ -479,7 +479,7 @@ class DatasetCollection(Collection[Dataset]):
         """Get a Dataset with the given unique name."""
         if unique_name is None:
             raise ValueError("You must supply a unique_name")
-        path = self._get_path() + "?unique_name=" + unique_name
+        path = self._get_path(query_terms={"unique_name": unique_name})
         data = self.session.get_resource(path)
 
         if len(data) == 1:

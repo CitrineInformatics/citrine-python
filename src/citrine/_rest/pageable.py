@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Optional, Iterable, Dict, Tuple, Callable, Union
+from typing import Optional, Iterable, Dict, Tuple, Callable, Union, Sequence
 from uuid import UUID
 
 
@@ -12,8 +12,13 @@ class Pageable():
     _collection_key: str = NotImplemented
     _api_version: str = "v1"
 
-    def _get_path(self, uid: Optional[Union[UUID, str]] = None,
-                  ignore_dataset: Optional[bool] = False) -> str:
+    def _get_path(self,
+                  uid: Optional[Union[UUID, str]] = None,
+                  *,
+                  ignore_dataset: bool = False,
+                  action: Union[str, Sequence[str]] = [],
+                  query_terms: Dict[str, str] = {},
+                  ) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
         raise NotImplementedError  # pragma: no cover
 

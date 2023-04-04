@@ -620,9 +620,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to update "
                                "a data model object with data validation.")
 
-        url = self._get_path() + \
-            "/" + scope + "/" + id + "/async"
-
+        url = self._get_path(action=[scope, id, "async"])
         response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
 
         job_id = response_json["job_id"]
@@ -693,8 +691,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid)
-        path = self._get_path(ignore_dataset=self.dataset_id is None) \
-            + format_escaped_url("/{}/{}", link.scope, link.id)
+        path = self._get_path(ignore_dataset=self.dataset_id is None, action=[link.scope, link.id])
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -729,7 +726,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-name",
+            self._get_path(ignore_dataset=True, action="filter-by-name"),
             forward=forward,
             per_page=per_page,
             params=params)
@@ -785,7 +782,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid)
-        path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
+        path = self._get_path(action=[link.scope, link.id])
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded

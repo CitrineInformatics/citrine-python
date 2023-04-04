@@ -101,7 +101,7 @@ class GemTableCollection(Collection[GemTable]):
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
-            path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
+            path = self._get_path(uid, action=["versions", version])
             data = self.session.get_resource(path)
             return self.build(data)
         else:

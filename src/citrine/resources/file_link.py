@@ -5,8 +5,8 @@ import os
 from pathlib import Path
 from enum import Enum
 from logging import getLogger
-from typing import Optional, Tuple, Union, List, Dict, Iterable
-from urllib.parse import urlparse, quote
+from typing import Optional, Tuple, Union, List, Dict, Iterable, Sequence
+from urllib.parse import urlparse
 from uuid import UUID
 
 import requests
@@ -185,16 +185,12 @@ class FileCollection(Collection[FileLink]):
                   *,
                   ignore_dataset: Optional[bool] = False,
                   version: Union[str, UUID] = None,
-                  action: str = None) -> str:
+                  action: Union[str, Sequence[str]] = [],
+                  query_terms: Dict[str, str] = {},) -> str:
         """Build the path for taking an action with a particular file version."""
-        base = urlparse(super()._get_path(uid=uid, ignore_dataset=ignore_dataset))
-        new_path = base.path.split('/')
         if version is not None:
-            new_path.extend([quote(x) for x in ('versions', str(version))])
-        if action is not None:
-            new_path.append(quote(action))
-
-        return base._replace(path='/'.join(new_path)).geturl()
+            action = ['versions', version] + ([action] if isinstance(action, str) else action)
+        return super()._get_path(uid=uid, ignore_dataset=ignore_dataset, action=action)
 
     @staticmethod
     def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
@@ -583,8 +579,8 @@ class FileCollection(Collection[FileLink]):
             The filename and url of the uploaded object.
 
         """
-        path = self._get_path() + format_escaped_url("/uploads/{}/complete", uploader.upload_id)
-        complete_response = self.session.put_resource(path=path,
+        url = self._get_path(action=["uploads", uploader.upload_id, "complete"])
+        complete_response = self.session.put_resource(path=url,
                                                       json={'s3_version': uploader.s3_version})
 
         try:

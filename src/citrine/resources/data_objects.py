@@ -76,7 +76,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         raw_objects = self.session.cursor_paged_resource(
             self.session.post_resource,
             # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
+            self._get_path(ignore_dataset=True, action="filter-by-attribute-bounds"),
             json=body,
             forward=forward,
             per_page=per_page,
@@ -116,7 +116,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
          against. Ignored unless data object is an IngredientSpec or IngredientRun.
         :return: List[ValidationError] of validation errors encountered. Empty if successful.
         """
-        path = self._get_path(ignore_dataset=True) + "/validate-templates"
+        path = self._get_path(ignore_dataset=True, action="validate-templates")
 
         temp_scope = str(uuid4())
         GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
