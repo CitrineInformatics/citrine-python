@@ -10,7 +10,6 @@ class FingerprintType(BaseEnumeration):
     * AP is the Atom Pairs Fingerprint.
     * PHCO is the Path-Length Connectivity Fingerprint.
     * BPF is the Binary Path Fingerprint.
-    * BTF is the Bit-String Topological Fingerprint.
     * PATH is the Paths of Atoms of Heteroatoms Fingerprint.
     * ECFP4 is the Extended Connectivity Fingerprint with radius 4.
     * ECFP6 is the Extended Connectivity Fingerprint with radius 6.
@@ -21,7 +20,6 @@ class FingerprintType(BaseEnumeration):
     AP = "AP"
     PHCO = "PHCO"
     BPF = "BPF"
-    BTF = "BTF"
     PATH = "PATH"
     ECFP4 = "ECFP4"
     ECFP6 = "ECFP6"
