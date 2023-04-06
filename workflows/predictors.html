@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 2.10.0 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 2.11.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.10.0
+                2.11.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -500,7 +500,9 @@ These labels are specified via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">},</span> <span class="s2">&quot;solute&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;salt&quot;</span><span class="p">}}</span>
 </pre></div>
 </div>
-<p>The following example illustrates how an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> is constructed for the saline example.</p>
+<p>The following example illustrates how an
+<a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a>
+is constructed for the saline example.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientsToFormulationPredictor</span>
 
@@ -523,13 +525,9 @@ These labels are specified via:</p>
     <span class="n">identifiers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Ingredient id&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 
-<span class="c1"># create a descriptor to hold formulations</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
-
 <span class="n">IngredientsToFormulationPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to formulation predictor&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a mixture from ingredient quantities&#39;</span><span class="p">,</span>
-    <span class="n">output</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
     <span class="c1"># map from ingredient id to its quantity</span>
     <span class="n">id_to_quantity</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
@@ -550,18 +548,17 @@ These labels are specified via:</p>
 <p>Formulations may contain ingredients that are blends of other ingredients.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
-The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.</p>
-<p>The formulation to be flattened is specified by an <code class="docutils literal notranslate"><span class="pre">input_descriptor</span></code> formulation descriptor that should be named ‘Formulation’;
+The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>
+flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">input_descriptor</span></code> with key ‘Formulation’ is automatically generated that refers to the formulation to be flattened;
 the associated material history of the input formulation is traversed to determine the leaf ingredients.
 These leaf ingredients are then summed across all leaves of the mixing processes,
-with the resulting candidates described by an <code class="docutils literal notranslate"><span class="pre">output_descriptor</span></code> formulation descriptor
-that should be named ‘Flat Formulation’.
+with the resulting candidates described by an automatically generated <code class="docutils literal notranslate"><span class="pre">output_descriptor</span></code> formulation descriptor named ‘Flat Formulation’.
 The <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter is used as a source of formulation recipes to be used in flattening hierarchical mixtures.</p>
-<p>The following example illustrates how a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.</p>
+<p>The following example illustrates how a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>
+can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline,
+yielding just the quantities of the leaf constituents salt and water.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
-
-<span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
-<span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
@@ -572,8 +569,6 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients&#39;</span><span class="p">,</span>
-    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">input_formulation</span><span class="p">,</span>
-    <span class="n">output_descriptor</span><span class="o">=</span><span class="n">output_formulation</span><span class="p">,</span>
     <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>

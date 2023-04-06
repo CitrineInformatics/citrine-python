@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Formulations Example &mdash; Citrine Python 2.10.0 documentation</title>
+  <title>5. Formulations Example &mdash; Citrine Python 2.11.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.10.0
+                2.11.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -566,13 +566,9 @@ Although the homogeneous representation is not entirely appropriate for all form
 especially when coupled with flexible machine learning models that can emulate more complex relationships within the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
 
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
-<span class="n">flat_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">flat</span><span class="p">()</span>
 <span class="n">simple_mixture_predictor</span> <span class="o">=</span> <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Simple margarita mixture&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Flatten a mixture of mixtures into leaf ingredients&quot;</span><span class="p">,</span>
-    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>  <span class="c1"># this is the formulation descriptor from the table</span>
-    <span class="n">output_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span>  <span class="c1"># this is a new descriptor to represent the flattened formulation</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Flatten a mixture of mixtures into leaf ingredients&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>

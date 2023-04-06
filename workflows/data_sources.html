@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.8. Data Sources &mdash; Citrine Python 2.10.0 documentation</title>
+  <title>4.8. Data Sources &mdash; Citrine Python 2.11.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.10.0
+                2.11.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -204,7 +204,10 @@ Additionally, each ingredient id used as a key in the predictor’s map from ing
 </table>
 <p>Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
 Ingredient identifiers are given by the first column.
-A CSV data source and <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> can be configured to construct formulations from this data via the following:</p>
+A CSV data source and an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a>
+can be configured to construct formulations from tabular data.
+This predictor automatically generates an <code class="docutils literal notranslate"><span class="pre">output</span></code> formulation descriptor named ‘Formulation’.
+The following example illustrates this process:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientsToFormulationPredictor</span>
@@ -228,13 +231,9 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
     <span class="n">identifiers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Ingredient id&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 
-<span class="c1"># create a descriptor to hold formulations</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="o">.</span><span class="n">hierarchical</span><span class="p">()</span>
-
 <span class="n">IngredientsToFormulationPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to formulation predictor&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a mixture from ingredient quantities&#39;</span><span class="p">,</span>
-    <span class="n">output</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
     <span class="c1"># map from ingredient id to its quantity</span>
     <span class="n">id_to_quantity</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
