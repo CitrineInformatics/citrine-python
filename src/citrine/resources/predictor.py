@@ -121,12 +121,18 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def archive(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
+    def archive(self,
+                uid: Union[UUID, str],
+                *,
+                version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
         url = self._construct_path(uid, version, "archive")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def restore(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
+    def restore(self,
+                uid: Union[UUID, str],
+                *,
+                version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
@@ -145,6 +151,22 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
                 return None
             else:
                 raise exc
+        return self.build(entity)
+
+    def is_stale(self,
+                 uid: Union[UUID, str],
+                 *,
+                 version: Union[int, str] = MOST_RECENT_VER) -> bool:
+        path = self._construct_path(uid, version, "is-stale")
+        response = self.session.get_resource(path, version=self._api_version)
+        return response["is_stale"]
+
+    def retrain_stale(self,
+                      uid: Union[UUID, str],
+                      *,
+                      version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+        path = self._construct_path(uid, version, "retrain-stale")
+        entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
 
@@ -416,3 +438,20 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """
         new_pred = self.convert_to_graph(uid, version=version, retrain_if_needed=retrain_if_needed)
         return self.update(new_pred) if new_pred else None
+
+    def is_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> bool:
+        """Returns True if a predictor is stale, False otherwise.
+
+        A predictor is stale if it's in the READY state, but the platform cannot load the
+        previously trained object.
+        """
+        return self._versions_collection.is_stale(uid, version=version)
+
+    def retrain_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+        """Begins retraining a stale predictor.
+
+        This can only be used on a stale predictor, which is when it's in the READY state, but the
+        platform cannot load the previously trained object. Using it on a non-stale predictor will
+        result in an error.
+        """
+        return self._versions_collection.retrain_stale(uid, version=version)

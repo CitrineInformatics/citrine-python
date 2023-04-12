@@ -628,3 +628,40 @@ def test_restore_invalid_version(valid_graph_predictor_data, version):
 
     with pytest.raises(ValueError):
         pc.restore_version(uuid.uuid4(), version=version)
+
+
+@pytest.mark.parametrize("is_stale", (True, False))
+def test_is_stale(valid_graph_predictor_data, is_stale):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_graph_predictor_data["id"]
+    pred_version = valid_graph_predictor_data["metadata"]["version"]
+    response = {
+        "id": pred_id,
+        "version": pred_version,
+        "status": "READY",
+        "is_stale": is_stale
+    }
+    session.set_response(response)
+
+    resp = pc.is_stale(pred_id, version=pred_version)
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+    assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{pred_version}/is-stale")]
+    assert resp == is_stale
+
+def test_retrain_stale(valid_graph_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    pred_id = valid_graph_predictor_data["id"]
+    pred_version = valid_graph_predictor_data["metadata"]["version"]
+
+    response = deepcopy(valid_graph_predictor_data)
+    response["metadata"]["status"]["name"] = "VALIDATING"
+    response["metadata"]["status"]["detail"] = []
+    session.set_response(response)
+
+    pc.retrain_stale(pred_id, version=pred_version)
+
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+    assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{pred_version}/retrain-stale", json={})]
