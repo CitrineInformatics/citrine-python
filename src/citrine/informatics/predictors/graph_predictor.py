@@ -2,9 +2,9 @@ from typing import List, Optional, Union
 from uuid import UUID
 
 from citrine._rest.engine_resource import VersionedEngineResource
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties as properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import Predictor, PredictorNode
 
 __all__ = ['GraphPredictor']
 
@@ -18,8 +18,8 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
         name of the configuration
     description: str
         the description of the predictor
-    predictors: List[Union[UUID, Predictor]]
-        the list of predictors to use in the graph, either UUIDs or serialized predictors
+    predictors: List[PredictorNode]
+        the list of individual predictors to use in the graph
     training_data: Optional[List[DataSource]]
         Optional sources of training data shared by all predictors in the graph.
         Training data provided by this graph predictor does not need to be specified as part of the
@@ -31,40 +31,26 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
 
     """
 
-    predictors = _properties.List(_properties.Union(
-        [_properties.UUID, _properties.Object(Predictor)]), 'data.instance.predictors')
+    predictors = properties.List(properties.Object(PredictorNode), 'data.instance.predictors')
+
     # the default seems to be defined in instances, not the class itself
     # this is tested in test_graph_default_training_data
-    training_data = _properties.List(_properties.Object(DataSource),
-                                     'data.instance.training_data', default=[])
+    training_data = properties.List(
+        properties.Object(DataSource), 'data.instance.training_data', default=[]
+    )
 
-    typ = _properties.String('data.instance.type', default='Graph', deserializable=False)
+    typ = properties.String('data.instance.type', default='Graph', deserializable=False)
 
     def __init__(self,
                  name: str,
                  *,
                  description: str,
-                 predictors: List[Union[UUID, Predictor]],
+                 predictors: List[PredictorNode],
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-        self.predictors: List[Union[UUID, Predictor]] = predictors
+        self.predictors: List[PredictorNode] = predictors
         self.training_data: List[DataSource] = training_data or []
-
-    def _post_dump(self, data: dict) -> dict:
-        data = super()._post_dump(data)
-        for i, predictor in enumerate(data['instance']['predictors']):
-            if isinstance(predictor, dict):
-                # embedded predictors are not modules, so only serialize their config
-                data['instance']['predictors'][i] = predictor['instance']
-        return data
-
-    @classmethod
-    def _pre_build(cls, data: dict) -> dict:
-        for i, predictor_data in enumerate(data['data']['instance']['predictors']):
-            if isinstance(predictor_data, dict):
-                data['data']['instance']['predictors'][i] = Predictor.wrap_instance(predictor_data)
-        return data
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)

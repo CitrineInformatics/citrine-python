@@ -1,12 +1,10 @@
-import warnings
-from typing import Optional, Type, List
+from typing import Optional, Type
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._session import Session
-from citrine.informatics.data_sources import DataSource
 from citrine.resources.report import ReportResource
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
@@ -29,7 +27,9 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     description = properties.Optional(properties.String(), 'data.description')
     version = properties.Optional(
         properties.Union([properties.Integer(), properties.String()]),
-        'metadata.version', serializable=False)
+        'metadata.version',
+        serializable=False
+    )
 
     _response_key = None
     _project_id: Optional[UUID] = None
@@ -67,27 +67,7 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
     def get_type(cls, data) -> Type['Predictor']:
         """Return the subtype."""
         from .graph_predictor import GraphPredictor
-        from .expression_predictor import ExpressionPredictor
-        from .molecular_structure_featurizer import MolecularStructureFeaturizer
-        from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
-        from .label_fractions_predictor import LabelFractionsPredictor
-        from .simple_mixture_predictor import SimpleMixturePredictor
-        from .ingredient_fractions_predictor import IngredientFractionsPredictor
-        from .auto_ml_predictor import AutoMLPredictor
-        from .mean_property_predictor import MeanPropertyPredictor
-        from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
-        type_dict = {
-            "Graph": GraphPredictor,
-            "AnalyticExpression": ExpressionPredictor,
-            "MoleculeFeaturizer": MolecularStructureFeaturizer,
-            "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
-            "MeanProperty": MeanPropertyPredictor,
-            "LabelFractions": LabelFractionsPredictor,
-            "SimpleMixture": SimpleMixturePredictor,
-            "IngredientFractions": IngredientFractionsPredictor,
-            "ChemicalFormulaFeaturizer": ChemicalFormulaFeaturizer,
-            "AutoML": AutoMLPredictor,
-        }
+        type_dict = {"Graph": GraphPredictor}
         typ = type_dict.get(data['data']['instance']['type'])
 
         if typ is not None:
@@ -106,20 +86,8 @@ class Predictor(PolymorphicSerializable['Predictor'], AsynchronousObject):
             version=self.version
         )
 
-    def predict(self,
-                predict_request: SinglePredictRequest) -> SinglePrediction:
+    def predict(self, predict_request: SinglePredictRequest) -> SinglePrediction:
         """Make a one-off prediction with this predictor."""
         path = self._path() + '/predict'
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
         return SinglePrediction.build(res)
-
-    @classmethod
-    def _check_deprecated_training_data(cls, training_data: Optional[List[DataSource]]) -> None:
-        if training_data is not None:
-            warnings.warn(
-                f"The field `training_data` on {cls.__name__} predictors is deprecated "
-                "and will be removed in version 3.0.0. Include training data for all "
-                "sub-predictors on the parent GraphPredictor. Existing training data "
-                "on this predictor will be moved to the parent GraphPredictor upon registration.",
-                DeprecationWarning
-            )

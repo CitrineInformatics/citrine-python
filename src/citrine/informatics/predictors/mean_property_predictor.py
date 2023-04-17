@@ -1,18 +1,18 @@
 from typing import List, Optional, Mapping, Union
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
     FormulationDescriptor, RealDescriptor, CategoricalDescriptor
 )
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
+from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['MeanPropertyPredictor']
 
 
-class MeanPropertyPredictor(
-        VersionedEngineResource['MeanPropertyPredictor'], Predictor):
+class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
     """A predictor that computes a component-weighted mean of real or categorical properties.
 
     Each component in a formulation contributes to the mean property
@@ -63,28 +63,28 @@ class MeanPropertyPredictor(
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
+    input_descriptor = _properties.Object(FormulationDescriptor, 'input')
     properties = _properties.List(
         _properties.Union(
             [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
         ),
-        'data.instance.properties'
+        'properties'
     )
-    p = _properties.Float('data.instance.p')
-    impute_properties = _properties.Boolean('data.instance.impute_properties')
-    label = _properties.Optional(_properties.String, 'data.instance.label')
+    p = _properties.Float('p')
+    impute_properties = _properties.Boolean('impute_properties')
+    label = _properties.Optional(_properties.String, 'label')
     default_properties = _properties.Optional(
         _properties.Mapping(
             _properties.String,
             _properties.Union([_properties.String, _properties.Float])
         ),
-        'data.instance.default_properties'
+        'default_properties'
     )
     training_data = _properties.List(
-        _properties.Object(DataSource), 'data.instance.training_data', default=[]
+        _properties.Object(DataSource), 'training_data', default=[]
     )
 
-    typ = _properties.String('data.instance.type', default='MeanProperty', deserializable=False)
+    typ = _properties.String('type', default='MeanProperty', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -106,7 +106,7 @@ class MeanPropertyPredictor(
         self.label: Optional[str] = label
         self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
 
-        self._check_deprecated_training_data(training_data)
+        _check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):

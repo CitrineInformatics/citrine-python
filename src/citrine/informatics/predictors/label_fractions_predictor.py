@@ -1,15 +1,14 @@
 from typing import Set
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['LabelFractionsPredictor']
 
 
-class LabelFractionsPredictor(
-        VersionedEngineResource['LabelFractionsPredictor'], Predictor):
+class LabelFractionsPredictor(Resource["LabelFractionsPredictor"], PredictorNode):
     """A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters
@@ -25,11 +24,10 @@ class LabelFractionsPredictor(
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'data.instance.input')
-    labels = _properties.Set(_properties.String, 'data.instance.labels')
+    input_descriptor = _properties.Object(FormulationDescriptor, 'input')
+    labels = _properties.Set(_properties.String, 'labels')
 
-    typ = _properties.String('data.instance.type', default='LabelFractions',
-                             deserializable=False)
+    typ = _properties.String('type', default='LabelFractions', deserializable=False)
 
     def __init__(self,
                  name: str,
