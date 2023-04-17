@@ -11,7 +11,7 @@ from citrine.informatics.predictors import (
     AutoMLPredictor,
     ExpressionPredictor,
     GraphPredictor,
-    Predictor, SimpleMixturePredictor,
+    SimpleMixturePredictor,
 )
 from citrine.resources.predictor import PredictorCollection, _PredictorVersionCollection, AutoConfigureMode
 from tests.conftest import build_predictor_entity
@@ -294,7 +294,7 @@ def test_check_update_some():
     # given
     session = FakeSession()
     desc = RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg")
-    response = Predictor.wrap_instance({
+    response = GraphPredictor.wrap_instance({
         "type": "Graph",
         "name": "foo",
         "description": "bar",

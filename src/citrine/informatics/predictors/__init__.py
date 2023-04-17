@@ -1,6 +1,5 @@
 # flake8: noqa
 from .node import *
-from .predictor import *
 from .expression_predictor import *
 from .graph_predictor import *
 from .ingredient_fractions_predictor import *

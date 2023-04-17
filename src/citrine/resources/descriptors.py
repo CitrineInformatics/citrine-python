@@ -5,7 +5,7 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.predictors import Predictor, PredictorNode
+from citrine.informatics.predictors import PredictorNode, GraphPredictor
 
 
 # Not a full Collection since CRUD operations are not valid for Descriptors
@@ -16,7 +16,7 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, *, predictor: Union[Predictor, PredictorNode],
+    def from_predictor_responses(self, *, predictor: Union[GraphPredictor, PredictorNode],
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
         Get responses for a predictor, given an input space.
@@ -36,7 +36,7 @@ class DescriptorMethods:
             descriptors).
 
         """
-        if isinstance(predictor, Predictor):
+        if isinstance(predictor, GraphPredictor):
             predictor_data = predictor.dump()["instance"]
         else:
             predictor_data = predictor.dump()

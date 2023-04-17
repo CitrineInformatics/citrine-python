@@ -1,6 +1,6 @@
 """Resources that represent collections of predictors."""
 from functools import partial
-from typing import Any, Iterable, Optional, TypeVar, Union
+from typing import Any, Iterable, Optional, Union
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -9,11 +9,8 @@ from citrine._rest.paginator import Paginator
 from citrine._session import Session
 from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.module import AbstractModuleCollection
-
-
-CreationType = TypeVar('CreationType', bound=Predictor)
 
 
 MOST_RECENT_VER = "most_recent"
@@ -33,21 +30,21 @@ class AutoConfigureMode(BaseEnumeration):
 
 
 class _PredictorVersionPaginator(Paginator):
-    def _comparison_fields(self, entity: Predictor) -> Any:
+    def _comparison_fields(self, entity: GraphPredictor) -> Any:
         return (entity.uid, entity.version)
 
-    def paginate(self, *args, **kwargs) -> Iterable[Predictor]:
+    def paginate(self, *args, **kwargs) -> Iterable[GraphPredictor]:
         # Since predictor versions have the same uid, and the paginate method uses uid alone to
         # dedup, we have to disable deduplication in order to use it.
         kwargs["deduplicate"] = False
         return super().paginate(*args, **kwargs)
 
 
-class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
+class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
     _api_version = 'v3'
     _path_template = '/projects/{project_id}/predictors/{uid}/versions'
     _individual_key = None
-    _resource = Predictor
+    _resource = GraphPredictor
     _collection_key = 'response'
     _paginator: Paginator = _PredictorVersionPaginator()
 
@@ -80,15 +77,15 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
         }
         return partial(self._fetch_page, **fetcher_params)
 
-    def _train(self, uid: Union[UUID, str], version: Union[int, str]) -> Predictor:
+    def _train(self, uid: Union[UUID, str], version: Union[int, str]) -> GraphPredictor:
         path = self._construct_path(uid, version, "train")
         params = {"create_version": True}
         entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
         return self.build(entity)
 
-    def build(self, data: dict) -> Predictor:
+    def build(self, data: dict) -> GraphPredictor:
         """Build an individual Predictor."""
-        predictor: Predictor = Predictor.build(data)
+        predictor: GraphPredictor = GraphPredictor.build(data)
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
@@ -96,7 +93,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def get(self,
             uid: Union[UUID, str],
             *,
-            version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+            version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         path = self._construct_path(uid, version)
         entity = self.session.get_resource(path, version=self._api_version)
         return self.build(entity)
@@ -104,7 +101,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def list(self,
              uid: Union[UUID, str],
              *,
-             per_page: int = 100) -> Iterable[Predictor]:
+             per_page: int = 100) -> Iterable[GraphPredictor]:
         """List non-archived versions of the given predictor."""
         page_fetcher = self._page_fetcher(uid=uid)
         return self._paginator.paginate(page_fetcher=page_fetcher,
@@ -114,7 +111,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def list_archived(self,
                       uid: Union[UUID, str],
                       *,
-                      per_page: int = 20) -> Iterable[Predictor]:
+                      per_page: int = 20) -> Iterable[GraphPredictor]:
         """List archived versions of the given predictor."""
         page_fetcher = self._page_fetcher(uid=uid, filter="archived eq 'true'")
         return self._paginator.paginate(page_fetcher=page_fetcher,
@@ -124,7 +121,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def archive(self,
                 uid: Union[UUID, str],
                 *,
-                version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+                version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         url = self._construct_path(uid, version, "archive")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
@@ -132,7 +129,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def restore(self,
                 uid: Union[UUID, str],
                 *,
-                version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+                version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
@@ -141,7 +138,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
                          uid: Union[UUID, str],
                          *,
                          version: Union[int, str] = MOST_RECENT_VER,
-                         retrain_if_needed: bool = False) -> Predictor:
+                         retrain_if_needed: bool = False) -> Optional[GraphPredictor]:
         path = self._construct_path(uid, version, "convert")
         try:
             entity = self.session.get_resource(path, version=self._api_version)
@@ -164,13 +161,13 @@ class _PredictorVersionCollection(AbstractModuleCollection[Predictor]):
     def retrain_stale(self,
                       uid: Union[UUID, str],
                       *,
-                      version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+                      version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         path = self._construct_path(uid, version, "retrain-stale")
         entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
 
-class PredictorCollection(AbstractModuleCollection[Predictor]):
+class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
     """Represents the collection of all predictors for a project.
 
     Parameters
@@ -183,7 +180,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     _api_version = 'v3'
     _path_template = '/projects/{project_id}/predictors'
     _individual_key = None
-    _resource = Predictor
+    _resource = GraphPredictor
     _collection_key = 'response'
 
     def __init__(self, project_id: UUID, session: Session):
@@ -191,9 +188,9 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         self.session: Session = session
         self._versions_collection = _PredictorVersionCollection(project_id, session)
 
-    def build(self, data: dict) -> Predictor:
+    def build(self, data: dict) -> GraphPredictor:
         """Build an individual Predictor."""
-        predictor: Predictor = Predictor.build(data)
+        predictor: GraphPredictor = GraphPredictor.build(data)
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
@@ -201,7 +198,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     def get(self,
             uid: Union[UUID, str],
             *,
-            version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+            version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         """Get a predictor by ID and (optionally) version.
 
         If version is omitted, the most recent version will be retrieved.
@@ -210,7 +207,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         return self._versions_collection.get(uid=uid, version=version)
 
-    def register(self, predictor: Predictor) -> Predictor:
+    def register(self, predictor: GraphPredictor) -> GraphPredictor:
         """Register and train a Predictor.
 
         This predctor will be version 1, and its `draft` flag will be `True`. If training completes
@@ -226,7 +223,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         else:
             return self._train(created_predictor.uid)
 
-    def update(self, predictor: Predictor) -> Predictor:
+    def update(self, predictor: GraphPredictor) -> GraphPredictor:
         """Update and train a Predictor.
 
         If the predictor is a draft, this will overwrite its contents, then begin training. If it's
@@ -244,17 +241,27 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         else:
             return self._train(updated_predictor.uid)
 
-    def _train(self, uid: Union[UUID, str]) -> Predictor:
+    def _train(self, uid: Union[UUID, str]) -> GraphPredictor:
         path = self._get_path(uid, action="train")
         params = {"create_version": True}
         entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
         return self.build(entity)
 
-    def archive_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+    def archive_version(
+            self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str]
+    ) -> GraphPredictor:
         """Archive a predictor version."""
         return self._versions_collection.archive(uid, version=version)
 
-    def restore_version(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+    def restore_version(
+            self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str]
+    ) -> GraphPredictor:
         """Restore a predictor version."""
         return self._versions_collection.restore(uid, version=version)
 
@@ -290,11 +297,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     def list_versions(self,
                       uid: Union[UUID, str] = None,
                       *,
-                      per_page: int = 100) -> Iterable[Predictor]:
+                      per_page: int = 100) -> Iterable[GraphPredictor]:
         """List all non-archived versions of the given Predictor."""
         return self._versions_collection.list(uid, per_page=per_page)
 
-    def list_archived(self, *, per_page: int = 20) -> Iterable[Predictor]:
+    def list_archived(self, *, per_page: int = 20) -> Iterable[GraphPredictor]:
         """List archived Predictors."""
         fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
         return self._paginator.paginate(page_fetcher=fetcher,
@@ -304,11 +311,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
     def list_archived_versions(self,
                                uid: Union[UUID, str] = None,
                                *,
-                               per_page: int = 20) -> Iterable[Predictor]:
+                               per_page: int = 20) -> Iterable[GraphPredictor]:
         """List all archived versions of the given Predictor."""
         return self._versions_collection.list_archived(uid, per_page=per_page)
 
-    def check_for_update(self, uid: Union[UUID, str]) -> Optional[Predictor]:
+    def check_for_update(self, uid: Union[UUID, str]) -> Optional[GraphPredictor]:
         """
         Check if there are updates available for a predictor.
 
@@ -332,7 +339,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         path = self._get_path(uid, action="update-check")
         update_data = self.session.get_resource(path, version=self._api_version)
         if update_data["updatable"]:
-            built = Predictor.build(update_data)
+            built = GraphPredictor.build(update_data)
             built.uid = uid
             return built
         else:
@@ -342,7 +349,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                        *,
                        training_data: DataSource,
                        pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
-                       prefer_valid: bool = True) -> Predictor:
+                       prefer_valid: bool = True) -> GraphPredictor:
         """Create a default predictor for some training data.
 
         This method will return an unregistered predictor generated by inspecting the
@@ -390,14 +397,14 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         body = {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
         data = self.session.post_resource(path, json=body, version=self._api_version)
-        return self.build(Predictor.wrap_instance(data["instance"]))
+        return self.build(GraphPredictor.wrap_instance(data["instance"]))
 
     def convert_to_graph(self,
                          uid: Union[UUID, str],
                          retrain_if_needed: bool = False,
                          *,
-                         version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
-        """Given a SimpleML or Graph predictor, get an equivalent Graph predictor.
+                         version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+        """Given a predictor containing SimpleML nodes, get an equivalent Graph predictor.
 
         Returns a Graph predictor with any SimpleML predictors converted to an equivalent AutoML
         predictor. If it's not a SimpleML or Graph predictor, or it's not in the READY state, an
@@ -431,7 +438,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
                            uid: Union[UUID, str],
                            retrain_if_needed: bool = False,
                            *,
-                           version: Union[int, str] = MOST_RECENT_VER) -> Predictor:
+                           version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
         """Given a SimpleML or Graph predictor, overwrite it with an equivalent Graph predictor.
 
         See `PredictorCollection.convert_to_graph` for more detail.
@@ -447,7 +454,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """
         return self._versions_collection.is_stale(uid, version=version)
 
-    def retrain_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> Predictor:
+    def retrain_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> GraphPredictor:
         """Begins retraining a stale predictor.
 
         This can only be used on a stale predictor, which is when it's in the READY state, but the

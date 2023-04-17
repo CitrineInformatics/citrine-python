@@ -5,7 +5,7 @@ from citrine._session import Session
 from citrine.exceptions import BadRequest
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace
-from citrine.informatics.predictors import Predictor, GraphPredictor
+from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.module import AbstractModuleCollection
 from citrine.resources.predictor import PredictorCollection
@@ -41,9 +41,15 @@ class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCo
         )
 
 
-class FakePredictorCollection(FakeModuleCollection[Predictor], PredictorCollection):
+class FakePredictorCollection(FakeModuleCollection[GraphPredictor], PredictorCollection):
 
-    def create_default(self, *, training_data: DataSource, pattern="PLAIN", prefer_valid=True) -> Predictor:
+    def create_default(
+            self,
+            *,
+            training_data: DataSource,
+            pattern="PLAIN",
+            prefer_valid=True
+    ) -> GraphPredictor:
         return GraphPredictor(
             name=f"Default {pattern.lower()} predictor",
             description="",

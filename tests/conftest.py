@@ -231,7 +231,6 @@ def valid_graph_predictor_data(
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
     instance = dict(
-        type='Graph',
         name='Graph predictor',
         description='description',
         predictors=[
@@ -436,7 +435,7 @@ def valid_mean_property_predictor_data():
         description='Computes mean ingredient properties',
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
-        p=2,
+        p=2.0,
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent',

@@ -28,10 +28,9 @@ from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.predictor import AutoConfigureMode
 from citrine.resources.project import Project
 from citrine.resources.property_template import PropertyTemplateCollection
-
-from citrine.builders.auto_configure import AutoConfigureMode
 
 
 density_desc = RealDescriptor("density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
