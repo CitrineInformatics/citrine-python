@@ -8,7 +8,7 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.project import ProjectCollection
 from citrine.resources.team import TeamCollection
-from citrine.informatics.predictors import AutoMLPredictor
+from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create,
                                             get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
@@ -96,23 +96,26 @@ def dataset_collection() -> DatasetCollection:
 
 @pytest.fixture
 def predictor_collection() -> PredictorCollection:
-    predictors = FakePredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
-                                session)
+    predictors = FakePredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
 
-    #Adding a few predictors in the collection to have something to update
+    # Adding a few predictors in the collection to have something to update
     for i in range(0, 5):
-        predictors.register(AutoMLPredictor(name="resource " + str(i),
-                                            description='',
-                                            inputs=[],
-                                            outputs=[]))
+        pred = GraphPredictor(
+            name=f"resource {i}",
+            description="",
+            predictors=[AutoMLPredictor(name="", description="", inputs=[], outputs=[])]
+        )
+        predictors.register(pred)
 
-    #Adding a few predictors with the same name ("resource {0,1}" were made above)
+    # Adding a few predictors with the same name ("resource {0,1}" were made above)
     # this is used to test behavior if there are duplicates
     for i in range(0, 2):
-        predictors.register(AutoMLPredictor(name="resource " + str(i),
-                                            description='',
-                                            inputs=[],
-                                            outputs=[]))
+        pred = GraphPredictor(
+            name=f"resource {i}",
+            description="",
+            predictors=[AutoMLPredictor(name="", description="", inputs=[], outputs=[])]
+        )
+        predictors.register(pred)
     return predictors
 
 
@@ -306,7 +309,8 @@ def test_find_or_create_dataset_raise_error_exist_multiple(dataset_collection):
 def test_create_or_update_none_found(predictor_collection):
     # test when resource doesn't exist with listed name and check if new one is created
     assert not [r for r in list(predictor_collection.list()) if r.name == absent_name]
-    pred = AutoMLPredictor(name=absent_name, description='', inputs=[], outputs=[])
+    aml = AutoMLPredictor(name=absent_name, description='', inputs=[], outputs=[])
+    pred = GraphPredictor(name=absent_name, description='', predictors=[aml])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.uid == pred.uid
@@ -318,10 +322,8 @@ def test_create_or_update_none_found(predictor_collection):
 
 def test_create_or_update_unique_found(predictor_collection):
     # test when there is a single unique resource that exists with the listed name and update
-    pred = AutoMLPredictor(name="resource 4", #this is a unique name in the collection
-                            description='I am updated!',
-                            inputs=[],
-                            outputs=[])
+    aml = AutoMLPredictor(name="", description='', inputs=[], outputs=[])
+    pred = GraphPredictor(name="resource 4", description="I am updated!", predictors=[aml])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
     assert returned_pred.name == pred.name
@@ -330,11 +332,11 @@ def test_create_or_update_unique_found(predictor_collection):
     updated_pred = [r for r in list(predictor_collection.list()) if r.name == "resource 4"][0]
     assert updated_pred.description == "I am updated!"
 
+
 def test_create_or_update_raise_error_multiple_found(predictor_collection):
     # test when there are multiple resources that exists with the same listed name and raise error
-    pred = AutoMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
-                            description='I am updated!',
-                            inputs=[],
-                            outputs=[])
+    # resource 1 is not a unique name
+    aml = AutoMLPredictor(name="", description='', inputs=[], outputs=[])
+    pred = GraphPredictor(name="resource 1", description="I am updated!", predictors=[aml])
     with pytest.raises(ValueError):
         create_or_update(collection=predictor_collection, resource=pred)

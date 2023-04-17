@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Union
 from uuid import UUID
 
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import Predictor, PredictorNode
 
 
 # Not a full Collection since CRUD operations are not valid for Descriptors
@@ -16,15 +16,16 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, *, predictor: Predictor,
+    def from_predictor_responses(self, *, predictor: Union[Predictor, PredictorNode],
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
         Get responses for a predictor, given an input space.
 
         Parameters
         ----------
-        predictor : Predictor
-            The predictor whose available responses are to be computed.
+        predictor : Union[Predictor, PredictorNode]
+            Either a single predictor node or full predictor
+             whose available responses are to be computed.
         inputs : List[Descriptor]
             The input space to the predictor.
 
@@ -35,11 +36,16 @@ class DescriptorMethods:
             descriptors).
 
         """
+        if isinstance(predictor, Predictor):
+            predictor_data = predictor.dump()["instance"]
+        else:
+            predictor_data = predictor.dump()
+
         response = self.session.post_resource(
             path=format_escaped_url('/projects/{}/material-descriptors/predictor-responses',
                                     self.project_id),
             json={
-                'predictor': predictor.dump()['instance'],
+                'predictor': predictor_data,
                 'inputs': [i.dump() for i in inputs]
             }
         )

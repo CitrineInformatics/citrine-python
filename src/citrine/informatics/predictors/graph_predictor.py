@@ -1,5 +1,4 @@
-from typing import List, Optional, Union
-from uuid import UUID
+from typing import List, Optional
 
 from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as properties

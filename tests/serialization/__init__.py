@@ -24,3 +24,9 @@ def predictor_serialization_check(json, module_class):
     module = module_class.build(json)
     serialized = module.dump()
     assert serialized == dict(json["data"].items())
+
+
+def predictor_node_serialization_check(json, module_class):
+    module = module_class.build(json)
+    serialized = module.dump()
+    assert serialized == dict(json.items())

@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
-from citrine.informatics.predictors import MolecularStructureFeaturizer
+from citrine.informatics.predictors import MolecularStructureFeaturizer, GraphPredictor
 from citrine.resources.descriptors import DescriptorMethods
 from tests.utils.session import FakeSession
 
@@ -49,6 +49,21 @@ def test_from_predictor_responses():
     assert session.last_call.path == '/projects/{}/material-descriptors/predictor-responses'\
         .format(descriptors.project_id)
     assert session.last_call.method == 'POST'
+
+    graph = GraphPredictor(
+        name="Graph",
+        description="Contains a featurizer",
+        predictors=[featurizer]
+    )
+    graph_results = descriptors.from_predictor_responses(predictor=graph, inputs=[MolecularStructureDescriptor(col)])
+    assert graph_results == [
+        RealDescriptor(
+            key=r['descriptor_key'],
+            lower_bound=r['lower_bound'],
+            upper_bound=r['upper_bound'],
+            units=r['units']
+        ) for r in response_json['responses']
+    ]
 
 
 def test_descriptors_from_data_source():
