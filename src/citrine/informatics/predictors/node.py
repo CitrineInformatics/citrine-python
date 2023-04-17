@@ -21,8 +21,7 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"]):
     """An individual compute node within a Predictor.
 
     A PredictorNode cannot be registered to the Citrine Platform by itself
-    and must be included as a component within a Predictor (i.e., GraphPredictor)
-    to be used.
+    and must be included as a component within a GraphPredictor to be used.
 
     """
 
