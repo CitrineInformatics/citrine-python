@@ -83,7 +83,7 @@ def test_auto_ml_serialization(valid_auto_ml_predictor_data):
 
 
 def test_invalid_graph(invalid_graph_predictor_data):
-    """Ensures we raise proper exception when horribly malformed data is used."""
+    """Ensures we raise proper exception when malformed data is used."""
     with pytest.raises(ValueError):
         GraphPredictor.build(invalid_graph_predictor_data)
 
