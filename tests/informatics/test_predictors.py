@@ -469,6 +469,14 @@ def test_deprecated_node_fields(valid_auto_ml_predictor_data):
     assert aml.uid is None
     assert aml.version is None
     assert aml.draft is None
+    assert aml.created_by is None
+    assert aml.updated_by is None
+    assert aml.archived_by is None
+    assert aml.create_time is None
+    assert aml.update_time is None
+    assert aml.archive_time is None
+    assert aml.status is None
+    assert len(aml.status_detail) == 0
 
 
 def test_unhydrated_graph_deprecation():

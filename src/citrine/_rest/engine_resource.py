@@ -8,8 +8,10 @@ from citrine.resources.status_detail import StatusDetail
 Self = TypeVar('Self', bound='Resource')
 
 
-class EngineMetaData:
-    """Base class for meta-data fields added to AI Engine resources."""
+# This class is the base type for the new module endpoints which do not support versions. If/once
+# they support versioning, they should be switched to inherit from VersionedEngineResource.
+class EngineResource(Resource[Self]):
+    """Base resource for metadata from stand-alone AI Engine modules."""
 
     created_by = properties.Optional(properties.UUID, 'metadata.created.user', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
@@ -39,12 +41,6 @@ class EngineMetaData:
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
                                     default=[], serializable=False)
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
-
-
-# This class is the base type for the new module endpoints which do not support versions. If/once
-# they support versioning, they should be switched to inherit from VersionedEngineResource.
-class EngineResource(Resource[Self], EngineMetaData):
-    """Base resource for metadata from stand-alone AI Engine modules."""
 
     _resource_type = ResourceTypeEnum.MODULE
 

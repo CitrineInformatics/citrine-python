@@ -1,14 +1,15 @@
 import warnings
+from datetime import datetime
 from typing import Type, Optional, List
 from uuid import UUID
 
 from deprecation import deprecated
 
-from citrine._rest.engine_resource import EngineMetaData
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
+from citrine.resources.status_detail import StatusDetail
 
 
 def _check_deprecated_training_data(training_data: Optional[List[DataSource]]) -> None:
@@ -22,11 +23,8 @@ def _check_deprecated_training_data(training_data: Optional[List[DataSource]]) -
         )
 
 
-# PredictorNode inherits EngineMetaData and Predictor for backwards compat,
-# both of which should be removed in a major release
 class PredictorNode(
     PolymorphicSerializable["PredictorNode"],
-    EngineMetaData,
     Predictor
 ):
     """An individual compute node within a Predictor.
@@ -38,36 +36,6 @@ class PredictorNode(
 
     name = properties.String("name")
     description = properties.Optional(properties.String(), "description")
-
-    @property
-    @deprecated(
-        deprecated_in="2.13.0",
-        removed_in="3.0.0",
-        details="Use `uid` on parent GraphPredictor."
-    )
-    def uid(self) -> Optional[UUID]:
-        """Optional Citrine Platform unique identifier."""
-        return None
-
-    @property
-    @deprecated(
-        deprecated_in="2.13.0",
-        removed_in="3.0.0",
-        details="Use `version` on parent GraphPredictor."
-    )
-    def version(self) -> Optional[int]:
-        """The version number of the resource."""
-        return None
-
-    @property
-    @deprecated(
-        deprecated_in="2.13.0",
-        removed_in="3.0.0",
-        details="Use `draft` on parent GraphPredictor."
-    )
-    def draft(self) -> Optional[bool]:
-        """The draft status of the resource."""
-        return None
 
     @classmethod
     def get_type(cls, data) -> Type['PredictorNode']:
@@ -100,3 +68,113 @@ class PredictorNode(
                 '{} is not a valid predictor node type. '
                 'Must be in {}.'.format(data['type'], type_dict.keys())
             )
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `uid` on parent GraphPredictor."
+    )
+    def uid(self) -> Optional[UUID]:
+        """Optional Citrine Platform unique identifier."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `version` on parent GraphPredictor."
+    )
+    def version(self) -> Optional[int]:
+        """The version number of the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `draft` on parent GraphPredictor."
+    )
+    def draft(self) -> Optional[bool]:
+        """The draft status of the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `created_by` on parent GraphPredictor."
+    )
+    def created_by(self) -> Optional[UUID]:
+        """The id of the user who created the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `updated_by` on parent GraphPredictor."
+    )
+    def updated_by(self) -> Optional[UUID]:
+        """The id of the user who most recently updated the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `archived_by` on parent GraphPredictor."
+    )
+    def archived_by(self) -> Optional[UUID]:
+        """The id of the user who most recently archived the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `create_time` on parent GraphPredictor."
+    )
+    def create_time(self) -> Optional[datetime]:
+        """The date and time at which the resource was created."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `update_time` on parent GraphPredictor."
+    )
+    def update_time(self) -> Optional[datetime]:
+        """The date and time at which the resource was most recently updated."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `archive_time` on parent GraphPredictor."
+    )
+    def archive_time(self) -> Optional[datetime]:
+        """The date and time at which the resource was archived."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Check `status` on parent GraphPredictor."
+    )
+    def status(self) -> Optional[str]:
+        """Short description of the resource's status."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Check `status_detail` on parent GraphPredictor."
+    )
+    def status_detail(self) -> List[StatusDetail]:
+        """A list of structured status info, containing the message and level."""
+        return []
