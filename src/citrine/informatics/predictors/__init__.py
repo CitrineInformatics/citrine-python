@@ -1,4 +1,5 @@
 # flake8: noqa
+from .predictor import *
 from .node import *
 from .expression_predictor import *
 from .graph_predictor import *

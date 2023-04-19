@@ -1,9 +1,14 @@
 import warnings
 from typing import Type, Optional, List
+from uuid import UUID
 
+from deprecation import deprecated
+
+from citrine._rest.engine_resource import EngineMetaData
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.data_sources import DataSource
+from citrine.informatics.predictors import Predictor
 
 
 def _check_deprecated_training_data(training_data: Optional[List[DataSource]]) -> None:
@@ -17,7 +22,13 @@ def _check_deprecated_training_data(training_data: Optional[List[DataSource]]) -
         )
 
 
-class PredictorNode(PolymorphicSerializable["PredictorNode"]):
+# PredictorNode inherits EngineMetaData and Predictor for backwards compat,
+# both of which should be removed in a major release
+class PredictorNode(
+    PolymorphicSerializable["PredictorNode"],
+    EngineMetaData,
+    Predictor
+):
     """An individual compute node within a Predictor.
 
     A PredictorNode cannot be registered to the Citrine Platform by itself
@@ -27,6 +38,36 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"]):
 
     name = properties.String("name")
     description = properties.Optional(properties.String(), "description")
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `uid` on parent GraphPredictor."
+    )
+    def uid(self) -> Optional[UUID]:
+        """Optional Citrine Platform unique identifier."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `version` on parent GraphPredictor."
+    )
+    def version(self) -> Optional[int]:
+        """The version number of the resource."""
+        return None
+
+    @property
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Use `draft` on parent GraphPredictor."
+    )
+    def draft(self) -> Optional[bool]:
+        """The draft status of the resource."""
+        return None
 
     @classmethod
     def get_type(cls, data) -> Type['PredictorNode']:

@@ -11,7 +11,7 @@ from citrine.informatics.predictors import (
     AutoMLPredictor,
     ExpressionPredictor,
     GraphPredictor,
-    SimpleMixturePredictor,
+    SimpleMixturePredictor
 )
 from citrine.resources.predictor import PredictorCollection, _PredictorVersionCollection, AutoConfigureMode
 from tests.conftest import build_predictor_entity

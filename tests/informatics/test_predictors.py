@@ -12,9 +12,6 @@ from citrine.informatics.predictors.single_predict_request import SinglePredictR
 from citrine.informatics.predictors.single_prediction import SinglePrediction
 from citrine.informatics.design_candidate import DesignMaterial
 
-from tests.utils.factories import PredictorEntityDataFactory, PredictorDataDataFactory
-
-
 w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
@@ -463,4 +460,23 @@ def test_formulation_deprecations():
             output=FormulationDescriptor.hierarchical(),
             id_to_quantity={},
             labels={}
+        )
+
+
+def test_deprecated_node_fields(valid_auto_ml_predictor_data):
+    # Just testing for coverage of method
+    aml = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    assert aml.uid is None
+    assert aml.version is None
+    assert aml.draft is None
+
+
+def test_unhydrated_graph_deprecation():
+    good = SimpleMixturePredictor(name="Warning", description="Description")
+    bad = uuid.uuid4()
+    with pytest.warns(DeprecationWarning):
+        GraphPredictor(
+            name="Warning",
+            description="Hydrate me!",
+            predictors=[good, bad]
         )
