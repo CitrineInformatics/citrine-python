@@ -11,7 +11,7 @@ from citrine.informatics.predictors import (
     AutoMLPredictor,
     ExpressionPredictor,
     GraphPredictor,
-    Predictor,
+    SimpleMixturePredictor
 )
 from citrine.resources.predictor import PredictorCollection, _PredictorVersionCollection, AutoConfigureMode
 from tests.conftest import build_predictor_entity
@@ -35,21 +35,21 @@ def basic_predictor_report_data():
     }
 
 
-def test_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
+def test_build(valid_graph_predictor_data, basic_predictor_report_data):
     session = FakeSession()
     session.set_response(basic_predictor_report_data)
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = pc.build(valid_auto_ml_predictor_data)
-    assert predictor.name == 'AutoML predictor'
-    assert predictor.description == 'Predicts z from input x'
+    predictor = pc.build(valid_graph_predictor_data)
+    assert predictor.name == 'Graph predictor'
+    assert predictor.description == 'description'
 
 
-def test_build_with_status(valid_auto_ml_predictor_data, basic_predictor_report_data):
+def test_build_with_status(valid_graph_predictor_data, basic_predictor_report_data):
     session = FakeSession()
     session.set_response(basic_predictor_report_data)
 
     status_detail_data = {("Info", "info_msg"), ("Warning", "warning msg"), ("Error", "error msg")}
-    data = deepcopy(valid_auto_ml_predictor_data)
+    data = deepcopy(valid_graph_predictor_data)
     data["metadata"]["status"]["detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
 
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -65,11 +65,11 @@ def test_delete():
         pc.delete(uuid.uuid4())
 
 
-def test_archive_root(valid_label_fractions_predictor_data):
+def test_archive_root(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    pred_id = valid_label_fractions_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
     session.set_response(None)
 
@@ -78,11 +78,11 @@ def test_archive_root(valid_label_fractions_predictor_data):
     assert session.calls == [FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/archive", json={})]
 
 
-def test_restore_root(valid_label_fractions_predictor_data):
+def test_restore_root(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
-    pred_id = valid_label_fractions_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
     session.set_response(None)
 
@@ -91,12 +91,12 @@ def test_restore_root(valid_label_fractions_predictor_data):
     assert session.calls == [FakeCall(method='PUT', path=f"{predictors_path}/{pred_id}/restore", json={})]
 
 
-def test_root_is_archived(valid_label_fractions_predictor_data):
-    predictor_id = uuid.UUID(valid_label_fractions_predictor_data["id"])
+def test_root_is_archived(valid_graph_predictor_data):
+    predictor_id = uuid.UUID(valid_graph_predictor_data["id"])
 
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    session.set_response(paging_response(valid_label_fractions_predictor_data))
+    session.set_response(paging_response(valid_graph_predictor_data))
 
     assert pc.root_is_archived(predictor_id)
     assert pc.root_is_archived(str(predictor_id))
@@ -108,15 +108,6 @@ def test_root_is_archived(valid_label_fractions_predictor_data):
     assert not pc.root_is_archived(predictor_id)
 
 
-def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
-    session = mock.Mock()
-    session.get_resource.return_value = basic_predictor_report_data
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = pc.build(valid_auto_ml_predictor_data)
-    assert predictor.name == 'AutoML predictor'
-    assert predictor.description == 'Predicts z from input x'
-
-
 def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data
@@ -124,14 +115,14 @@ def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     predictor = pc.build(valid_graph_predictor_data)
     assert predictor.name == 'Graph predictor'
     assert predictor.description == 'description'
-    assert len(predictor.predictors) == 2
+    assert len(predictor.predictors) == 5
     assert len(predictor.training_data) == 1
 
 
-def test_register(valid_label_fractions_predictor_data):
+def test_register(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    entity = deepcopy(valid_label_fractions_predictor_data)
+    entity = deepcopy(valid_graph_predictor_data)
     session.set_response(entity)
 
     predictor = pc.build(entity)
@@ -147,25 +138,12 @@ def test_register(valid_label_fractions_predictor_data):
     assert session.calls == expected_calls
 
 
-def test_automl_register(valid_auto_ml_predictor_data):
-    pred_data = valid_auto_ml_predictor_data
-
-    session = FakeSession()
-    session.set_responses(pred_data, pred_data, paging_response(pred_data))
-    
-    pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
-    registered = pc.register(predictor)
-
-    assert registered.name == 'AutoML predictor'
-
-
-def test_graph_register(valid_graph_predictor_data, valid_graph_predictor_data_response):
-    pred_data = deepcopy(valid_graph_predictor_data_response)
+def test_graph_register(valid_graph_predictor_data):
+    pred_data = deepcopy(valid_graph_predictor_data)
 
     session = FakeSession()
     session.set_responses(
-        deepcopy(valid_graph_predictor_data_response),
+        deepcopy(valid_graph_predictor_data),
         pred_data,
         paging_response(pred_data))
     
@@ -176,22 +154,22 @@ def test_graph_register(valid_graph_predictor_data, valid_graph_predictor_data_r
     assert registered.name == 'Graph predictor'
 
 
-def test_failed_register(valid_auto_ml_predictor_data):
+def test_failed_register(valid_graph_predictor_data):
     session = mock.Mock()
     session.post_resource.side_effect = NotFound("/projects/uuid/not_found",
                                                  FakeRequestResponse(400))
     pc = PredictorCollection(uuid.uuid4(), session)
-    predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    predictor = GraphPredictor.build(valid_graph_predictor_data)
     with pytest.raises(ModuleRegistrationFailedException) as e:
         pc.register(predictor)
-    assert 'The "AutoMLPredictor" failed to register.' in str(e.value)
+    assert 'The "GraphPredictor" failed to register.' in str(e.value)
     assert '/projects/uuid/not_found' in str(e.value)
 
 
-def test_update(valid_label_fractions_predictor_data):
+def test_update(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    entity = deepcopy(valid_label_fractions_predictor_data)
+    entity = deepcopy(valid_graph_predictor_data)
     session.set_response(entity)
 
     predictor = pc.build(entity)
@@ -208,14 +186,14 @@ def test_update(valid_label_fractions_predictor_data):
     assert session.calls == expected_calls
 
 
-def test_register_update_checks_status(valid_auto_ml_predictor_data):
+def test_register_update_checks_status(valid_graph_predictor_data):
     # PredictorCollection.register/update makes two calls internally
     # The first creates/updates the resource, the second kicks off training
     # Test if create/update returns an INVALID status, we don't make the training call
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
 
-    instance = deepcopy(valid_auto_ml_predictor_data)["data"]["instance"]
+    instance = deepcopy(valid_graph_predictor_data)["data"]["instance"]
     valid_entity = build_predictor_entity(instance)
     invalid_entity = build_predictor_entity(
         instance,
@@ -238,14 +216,13 @@ def test_register_update_checks_status(valid_auto_ml_predictor_data):
     assert session.num_calls == 2
 
 
-def test_list_predictors(valid_auto_ml_predictor_data, valid_expression_predictor_data,
-                         basic_predictor_report_data):
+def test_list_predictors(valid_graph_predictor_data, valid_graph_predictor_data_empty):
     # Given
     session = FakeSession()
     collection = PredictorCollection(uuid.uuid4(), session)
     session.set_responses(
         {
-            'response': [valid_auto_ml_predictor_data, valid_expression_predictor_data],
+            'response': [valid_graph_predictor_data, valid_graph_predictor_data_empty],
             'next': ''
         },
         basic_predictor_report_data,
@@ -263,11 +240,11 @@ def test_list_predictors(valid_auto_ml_predictor_data, valid_expression_predicto
     assert len(predictors) == 2
 
 
-def test_get(valid_label_fractions_predictor_data):
+def test_get(valid_graph_predictor_data):
     # Given
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    entity = valid_label_fractions_predictor_data
+    entity = valid_graph_predictor_data
     session.set_responses(entity)
     id = uuid.uuid4()
     version = 4
@@ -317,13 +294,20 @@ def test_check_update_some():
     # given
     session = FakeSession()
     desc = RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg")
-    response = Predictor.wrap_instance({
-        "type": "AnalyticExpression",
+    response = GraphPredictor.wrap_instance({
+        "type": "Graph",
         "name": "foo",
         "description": "bar",
-        "expression": "2 * x",
-        "output": RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg").dump(),
-        "aliases": {}
+        "predictors": [
+            {
+                "type": "AnalyticExpression",
+                "name": "foo",
+                "description": "bar",
+                "expression": "2 * x",
+                "output": RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg").dump(),
+                "aliases": {}
+            }
+        ]
     })
     session.set_responses({"updatable": True, **response}, paging_response(response))
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -334,7 +318,12 @@ def test_check_update_some():
 
     # then
     assert pc._api_version == 'v3'
-    expected = ExpressionPredictor("foo", description="bar", expression="2 * x", output=desc, aliases={})
+    exp = ExpressionPredictor("foo", description="bar", expression="2 * x", output=desc, aliases={})
+    expected = GraphPredictor(
+        name="foo",
+        description="bar",
+        predictors=[exp]
+    )
     assert update_check.dump() == expected.dump()
     assert update_check.uid == predictor_id
 
@@ -387,9 +376,9 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert result.name == valid_graph_predictor_data["data"]["name"]
     assert isinstance(result, GraphPredictor)
     # including nested predictors
-    assert len(result.predictors) == 2
-    assert isinstance(result.predictors[0], uuid.UUID)
-    assert isinstance(result.predictors[1], ExpressionPredictor)
+    assert len(result.predictors) == 5
+    assert isinstance(result.predictors[0], SimpleMixturePredictor)
+    assert isinstance(result.predictors[-1], AutoMLPredictor)
 
 
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent", None))
@@ -531,16 +520,16 @@ def test_predictor_list_archived(valid_graph_predictor_data):
     assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20, 'page': 1})
 
 
-def test_list_versions(valid_expression_predictor_data):
+def test_list_versions(valid_graph_predictor_data):
     # Given
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_expression_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
-    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1 = deepcopy(valid_graph_predictor_data)
     predictor_v1["metadata"]["draft"] = False
 
-    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2 = deepcopy(valid_graph_predictor_data)
     predictor_v2["metadata"]["version"] = 2
 
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
@@ -555,16 +544,16 @@ def test_list_versions(valid_expression_predictor_data):
     assert len(listed_predictors) == 2
 
 
-def test_list_archived_versions(valid_expression_predictor_data):
+def test_list_archived_versions(valid_graph_predictor_data):
     # Given
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_expression_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
-    predictor_v1 = deepcopy(valid_expression_predictor_data)
+    predictor_v1 = deepcopy(valid_graph_predictor_data)
     predictor_v1["metadata"]["draft"] = False
 
-    predictor_v2 = deepcopy(valid_expression_predictor_data)
+    predictor_v2 = deepcopy(valid_graph_predictor_data)
     predictor_v2["metadata"]["version"] = 2
 
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
@@ -581,14 +570,14 @@ def test_list_archived_versions(valid_expression_predictor_data):
 
 
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_archive_version(valid_label_fractions_predictor_data, version):
+def test_archive_version(valid_graph_predictor_data, version):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_label_fractions_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
-    session.set_response(valid_label_fractions_predictor_data)
+    session.set_response(valid_graph_predictor_data)
 
     pc.archive_version(pred_id, version=version)
 
@@ -596,14 +585,14 @@ def test_archive_version(valid_label_fractions_predictor_data, version):
 
 
 @pytest.mark.parametrize("version", (2, "1", "latest", "most_recent"))
-def test_restore_version(valid_label_fractions_predictor_data, version):
+def test_restore_version(valid_graph_predictor_data, version):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
-    pred_id = valid_label_fractions_predictor_data["id"]
+    pred_id = valid_graph_predictor_data["id"]
 
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
 
-    session.set_response(valid_label_fractions_predictor_data)
+    session.set_response(valid_graph_predictor_data)
 
     pc.restore_version(pred_id, version=version)
 

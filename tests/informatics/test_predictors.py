@@ -12,9 +12,6 @@ from citrine.informatics.predictors.single_predict_request import SinglePredictR
 from citrine.informatics.predictors.single_prediction import SinglePrediction
 from citrine.informatics.design_candidate import DesignMaterial
 
-from tests.utils.factories import PredictorEntityDataFactory, PredictorDataDataFactory
-
-
 w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
 y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
@@ -116,12 +113,12 @@ def auto_ml_multiple_outputs() -> AutoMLPredictor:
 
 
 @pytest.fixture
-def graph_predictor() -> GraphPredictor:
+def graph_predictor(molecule_featurizer, auto_ml) -> GraphPredictor:
     """Build a GraphPredictor for testing."""
     return GraphPredictor(
         name='Graph predictor',
         description='description',
-        predictors=[uuid.uuid4(), uuid.uuid4()],
+        predictors=[molecule_featurizer, auto_ml],
         training_data=[data_source, formulation_data_source]
     )
 
@@ -203,20 +200,20 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     )
 
 
-def test_simple_report(auto_ml):
+def test_simple_report(graph_predictor):
     """Ensures we get a report from a simple predictor post_build call"""
     with pytest.raises(ValueError):
         # without a project or session, this should error
-        assert auto_ml.report is None
+        assert graph_predictor.report is None
     session = mock.Mock()
     session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
-    auto_ml._session = session
-    auto_ml._project_id = uuid.uuid4()
-    auto_ml.uid = uuid.uuid4()
-    auto_ml.version = 2
-    assert auto_ml.report is not None
+    graph_predictor._session = session
+    graph_predictor._project_id = uuid.uuid4()
+    graph_predictor.uid = uuid.uuid4()
+    graph_predictor.version = 2
+    assert graph_predictor.report is not None
     assert session.get_resource.call_count == 1
-    assert auto_ml.report.status == 'OK'
+    assert graph_predictor.report.status == 'OK'
 
 
 def test_graph_initialization(graph_predictor):
@@ -246,14 +243,14 @@ def test_molecule_featurizer(molecule_featurizer):
 
     assert str(molecule_featurizer) == "<MolecularStructureFeaturizer 'Molecule featurizer'>"
 
-    assert molecule_featurizer.dump() == PredictorDataDataFactory(instance={
+    assert molecule_featurizer.dump() == {
             'name': 'Molecule featurizer',
             'description': 'description',
             'descriptor': {'descriptor_key': 'SMILES', 'type': 'Organic'},
             'features': ['all'],
             'excludes': ['standard'],
             'type': 'MoleculeFeaturizer'
-        })
+        }
 
 
 def test_chemical_featurizer(chemical_featurizer):
@@ -266,7 +263,7 @@ def test_chemical_featurizer(chemical_featurizer):
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
 
-    assert chemical_featurizer.dump() == PredictorDataDataFactory(instance={
+    assert chemical_featurizer.dump() == {
         'name': 'Chemical featurizer',
         'description': 'description',
         'input': ChemicalFormulaDescriptor("formula").dump(),
@@ -274,29 +271,29 @@ def test_chemical_featurizer(chemical_featurizer):
         'excludes': [],
         'powers': [1, 2],
         'type': 'ChemicalFormulaFeaturizer'
-    })
+    }
 
 
 def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from inputs w and x"
     assert auto_ml.inputs == [w, x]
-    assert auto_ml.dump()['instance']['outputs'] == [z.dump()]
+    assert auto_ml.dump()['outputs'] == [z.dump()]
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
-    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml.dump()))
+    built = AutoMLPredictor.build(auto_ml.dump())
     assert built.outputs == [z]
-    assert built.dump()['instance']['outputs'] == [z.dump()]
+    assert built.dump()['outputs'] == [z.dump()]
 
 
 def test_auto_ml_no_outputs(auto_ml_no_outputs):
     assert auto_ml_no_outputs.outputs == []
-    assert auto_ml_no_outputs.dump()['instance']['outputs'] == []
+    assert auto_ml_no_outputs.dump()['outputs'] == []
 
-    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_no_outputs.dump()))
+    built = AutoMLPredictor.build(auto_ml_no_outputs.dump())
     assert built.outputs == []
-    assert built.dump()['instance']['outputs'] == []
+    assert built.dump()['outputs'] == []
 
 
 def test_auto_ml_estimators():
@@ -323,11 +320,11 @@ def test_auto_ml_estimators():
 
 def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
     assert auto_ml_multiple_outputs.outputs == [z, y]
-    assert auto_ml_multiple_outputs.dump()['instance']['outputs'] == [z.dump(), y.dump()]
+    assert auto_ml_multiple_outputs.dump()['outputs'] == [z.dump(), y.dump()]
 
-    built = AutoMLPredictor.build(PredictorEntityDataFactory(data=auto_ml_multiple_outputs.dump()))
+    built = AutoMLPredictor.build(auto_ml_multiple_outputs.dump())
     assert built.outputs == [z, y]
-    assert built.dump()['instance']['outputs'] == [z.dump(), y.dump()]
+    assert built.dump()['outputs'] == [z.dump(), y.dump()]
 
 
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
@@ -355,7 +352,7 @@ def test_mean_property_initialization(mean_property_predictor):
 
 def test_mean_property_round_robin(mean_property_predictor):
     """Make sure that the MPP can be de/serialized appropriately."""
-    data = PredictorEntityDataFactory(data=mean_property_predictor.dump())
+    data = mean_property_predictor.dump()
     new_mpp = MeanPropertyPredictor.build(data)
     real_props = [d for d in new_mpp.properties if isinstance(d, RealDescriptor)]
     cat_props = [d for d in new_mpp.properties if isinstance(d, CategoricalDescriptor)]
@@ -391,12 +388,12 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert str(ingredient_fractions_predictor) == expected_str
 
 
-def test_status(valid_label_fractions_predictor_data, auto_ml):
+def test_status(graph_predictor, valid_graph_predictor_data):
     """Ensure we can check the status of predictor validation."""
     # A locally built predictor should be "False" for all status checks
-    assert not auto_ml.in_progress() and not auto_ml.failed() and not auto_ml.succeeded()
+    assert not graph_predictor.in_progress() and not graph_predictor.failed() and not graph_predictor.succeeded()
     # A deserialized predictor should have the correct status
-    predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
+    predictor = GraphPredictor.build(valid_graph_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
 
 
@@ -463,4 +460,34 @@ def test_formulation_deprecations():
             output=FormulationDescriptor.hierarchical(),
             id_to_quantity={},
             labels={}
+        )
+
+
+def test_deprecated_node_fields(valid_auto_ml_predictor_data):
+    # Just testing for coverage of methods
+    aml = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    assert aml.uid is None
+    assert aml.version is None
+    assert aml.draft is None
+    assert aml.created_by is None
+    assert aml.updated_by is None
+    assert aml.archived_by is None
+    assert aml.create_time is None
+    assert aml.update_time is None
+    assert aml.archive_time is None
+    assert aml.status is None
+    assert len(aml.status_detail) == 0
+    assert aml.in_progress() is False
+    assert aml.succeeded() is False
+    assert aml.failed() is False
+
+
+def test_unhydrated_graph_deprecation():
+    good = SimpleMixturePredictor(name="Warning", description="Description")
+    bad = uuid.uuid4()
+    with pytest.warns(DeprecationWarning):
+        GraphPredictor(
+            name="Warning",
+            description="Hydrate me!",
+            predictors=[good, bad]
         )

@@ -1,16 +1,17 @@
 import warnings
 from typing import Set, Mapping, Optional
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor, FormulationKey
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['IngredientsToFormulationPredictor']
 
 
 class IngredientsToFormulationPredictor(
-        VersionedEngineResource['IngredientsToFormulationPredictor'], Predictor):
+    Resource["IngredientsToFormulationPredictor"], PredictorNode
+):
     """A predictor interface that constructs a formulation from ingredient quantities.
 
     Parameters
@@ -29,14 +30,11 @@ class IngredientsToFormulationPredictor(
     """
 
     id_to_quantity = properties.Mapping(
-        properties.String, properties.Object(RealDescriptor), 'data.instance.id_to_quantity'
+        properties.String, properties.Object(RealDescriptor), 'id_to_quantity'
     )
-    labels = properties.Mapping(
-        properties.String, properties.Set(properties.String), 'data.instance.labels'
-    )
-    typ = properties.String(
-        'data.instance.type', default='IngredientsToSimpleMixture', deserializable=False
-    )
+    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'labels')
+
+    typ = properties.String('type', default='IngredientsToSimpleMixture', deserializable=False)
 
     def __init__(self,
                  name: str,

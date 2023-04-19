@@ -1,17 +1,17 @@
 import warnings
 from typing import List, Optional
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor, FormulationKey
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
+from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['SimpleMixturePredictor']
 
 
-class SimpleMixturePredictor(
-        VersionedEngineResource['SimpleMixturePredictor'], Predictor):
+class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
     """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters
@@ -30,10 +30,9 @@ class SimpleMixturePredictor(
 
     """
 
-    training_data = properties.List(
-        properties.Object(DataSource), 'data.instance.training_data', default=[]
-    )
-    typ = properties.String('data.instance.type', default='SimpleMixture', deserializable=False)
+    training_data = properties.List(properties.Object(DataSource), 'training_data', default=[])
+
+    typ = properties.String('type', default='SimpleMixture', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -45,7 +44,7 @@ class SimpleMixturePredictor(
         self.name: str = name
         self.description: str = description
 
-        self._check_deprecated_training_data(training_data)
+        _check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
         if input_descriptor is not None:

@@ -18,7 +18,7 @@ from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWor
 
 from citrine.resources.gemtables import GemTable
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.predictor import Predictor, AutoConfigureMode
+from citrine.resources.predictor import GraphPredictor, AutoConfigureMode
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig, TableBuildAlgorithm
 
@@ -170,7 +170,7 @@ class AutoConfigureWorkflow():
         return self._table
 
     @property
-    def predictor(self) -> Optional[Predictor]:
+    def predictor(self) -> Optional[GraphPredictor]:
         """Get the predictor associated with this workflow."""
         return self._predictor
 
@@ -497,7 +497,7 @@ class AutoConfigureWorkflow():
     def from_predictor(
             self,
             *,
-            predictor: Predictor,
+            predictor: GraphPredictor,
             evaluator: Optional[PredictorEvaluator] = None,
             design_space: Optional[DesignSpace] = None,
             score: Optional[Union[Score, Objective]] = None,
@@ -597,7 +597,7 @@ class AutoConfigureWorkflow():
     def _predictor_registration_stage(
             self,
             *,
-            predictor: Predictor,
+            predictor: GraphPredictor,
             print_status_info: bool
     ):
         """Register and validate a provided predictor."""
@@ -626,7 +626,7 @@ class AutoConfigureWorkflow():
     def _predictor_evaluation_stage(
             self,
             *,
-            predictor: Predictor,
+            predictor: GraphPredictor,
             evaluator: Optional[PredictorEvaluator],
             print_status_info: bool
     ):
@@ -672,7 +672,7 @@ class AutoConfigureWorkflow():
     def _design_space_build_stage(
             self,
             *,
-            predictor: Predictor,
+            predictor: GraphPredictor,
             design_space: Optional[DesignSpace],
             print_status_info: bool
     ):
@@ -704,7 +704,7 @@ class AutoConfigureWorkflow():
     def _design_workflow_build_stage(
             self,
             *,
-            predictor: Predictor,
+            predictor: GraphPredictor,
             design_space: DesignSpace,
             score: Optional[Union[Score, Objective]],
             print_status_info: bool

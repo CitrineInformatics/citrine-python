@@ -1,14 +1,14 @@
 from typing import List, Optional
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['ChemicalFormulaFeaturizer']
 
 
-class ChemicalFormulaFeaturizer(VersionedEngineResource['ChemicalFormulaFeaturizer'], Predictor):
+class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], PredictorNode):
     """
     A featurizer for chemical formulae. Inspired by Magpie.
 
@@ -130,14 +130,12 @@ class ChemicalFormulaFeaturizer(VersionedEngineResource['ChemicalFormulaFeaturiz
 
     """
 
-    input_descriptor = properties.Object(Descriptor, 'data.instance.input')
-    features = properties.List(properties.String, 'data.instance.features')
-    excludes = properties.List(properties.String, 'data.instance.excludes', default=[])
-    powers = properties.List(properties.Integer, 'data.instance.powers')
+    input_descriptor = properties.Object(Descriptor, 'input')
+    features = properties.List(properties.String, 'features')
+    excludes = properties.List(properties.String, 'excludes', default=[])
+    powers = properties.List(properties.Integer, 'powers')
 
-    typ = properties.String(
-        'data.instance.type', default='ChemicalFormulaFeaturizer', deserializable=False
-    )
+    typ = properties.String('type', default='ChemicalFormulaFeaturizer', deserializable=False)
 
     def __init__(self,
                  name: str,

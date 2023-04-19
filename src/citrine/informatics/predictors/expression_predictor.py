@@ -1,14 +1,14 @@
 from typing import Mapping
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['ExpressionPredictor']
 
 
-class ExpressionPredictor(VersionedEngineResource['ExpressionPredictor'], Predictor):
+class ExpressionPredictor(Resource["ExpressionPredictor"], PredictorNode):
     """A predictor that computes an output from an expression and set of bounded inputs.
 
     For a discussion of expression syntax and a list of allowed symbols,
@@ -30,13 +30,13 @@ class ExpressionPredictor(VersionedEngineResource['ExpressionPredictor'], Predic
 
     """
 
-    expression = _properties.String('data.instance.expression')
-    output = _properties.Object(RealDescriptor, 'data.instance.output')
-    aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
-                                  'data.instance.aliases')
+    expression = _properties.String('expression')
+    output = _properties.Object(RealDescriptor, 'output')
+    aliases = _properties.Mapping(
+        _properties.String, _properties.Object(RealDescriptor), 'aliases'
+    )
 
-    typ = _properties.String('data.instance.type',
-                             default='AnalyticExpression', deserializable=False)
+    typ = _properties.String('type', default='AnalyticExpression', deserializable=False)
 
     def __init__(self,
                  name: str,

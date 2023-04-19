@@ -1,9 +1,12 @@
-from typing import List
+from typing import List, Union
 from uuid import uuid4
 
 from citrine.informatics.descriptors import Descriptor, RealDescriptor, CategoricalDescriptor
-from citrine.informatics.predictors import Predictor, ChemicalFormulaFeaturizer, MolecularStructureFeaturizer, \
-    MeanPropertyPredictor
+from citrine.informatics.predictors import (
+    ChemicalFormulaFeaturizer,
+    MolecularStructureFeaturizer,
+    MeanPropertyPredictor, PredictorNode, GraphPredictor
+)
 from citrine.resources.descriptors import DescriptorMethods
 from tests.utils.session import FakeSession
 
@@ -14,7 +17,11 @@ class FakeDescriptorMethods(DescriptorMethods):
         self.session = FakeSession()
         self.num_properties = num_properties
 
-    def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]):
+    def from_predictor_responses(
+            self,
+            predictor: Union[PredictorNode, GraphPredictor],
+            inputs: List[Descriptor]
+    ):
         if isinstance(predictor, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
             input_descriptor = predictor.input_descriptor
             return [

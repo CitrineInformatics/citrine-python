@@ -209,7 +209,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    instance = dict(
+    return dict(
         type='AutoML',
         name='AutoML predictor',
         description='Predicts z from input x',
@@ -218,48 +218,44 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
         estimators=[AutoMLEstimator.RANDOM_FOREST.value],
         training_data=[]
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
-def valid_graph_predictor_data():
+def valid_graph_predictor_data(
+        valid_simple_mixture_predictor_data,
+        valid_label_fractions_predictor_data,
+        valid_expression_predictor_data,
+        valid_mean_property_predictor_data,
+        valid_auto_ml_predictor_data
+):
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.descriptors import RealDescriptor
     instance = dict(
-        type='Graph',
         name='Graph predictor',
         description='description',
         predictors=[
-            str(uuid.uuid4()),
-            dict(
-                type='AnalyticExpression',
-                name='Expression predictor',
-                description='mean of 2 outputs',
-                expression='(X + Y)/2',
-                output=RealDescriptor(
-                    'Property~Some metric', lower_bound=0, upper_bound=1000, units='W'
-                ).dump(),
-                aliases={
-                    "Property~X": RealDescriptor("X", lower_bound=0, upper_bound=1000, units='').dump(),
-                    "Property~Y": RealDescriptor("Y", lower_bound=0, upper_bound=1000, units='').dump()
-                }
-            )
+            valid_simple_mixture_predictor_data,
+            valid_label_fractions_predictor_data,
+            valid_expression_predictor_data,
+            valid_mean_property_predictor_data,
+            valid_auto_ml_predictor_data
         ],
         training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
-# The server only returns hydrated graphs (i.e. all predictor UUIDs resolved).
-# As such, this just strips out any UUIDs from predictors list.
 @pytest.fixture
-def valid_graph_predictor_data_response(valid_graph_predictor_data):
-    graph_data_response = deepcopy(valid_graph_predictor_data)
-    for index, predictor_input in enumerate(valid_graph_predictor_data["data"]["instance"]["predictors"]):
-        if isinstance(predictor_input, str):
-            del graph_data_response["data"]["instance"]["predictors"][index]
-    return graph_data_response
+def valid_graph_predictor_data_empty():
+    """Another predictor valid data used for tests."""
+    instance = dict(
+        type='Graph',
+        name='Empty Graph predictor',
+        description='description',
+        predictors=[],
+        training_data=[]
+    )
+    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -267,7 +263,7 @@ def valid_deprecated_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
-    instance = dict(
+    return dict(
         type='Expression',
         name='Expression predictor',
         description='Computes shear modulus from Youngs modulus and Poissons ratio',
@@ -278,7 +274,6 @@ def valid_deprecated_expression_predictor_data():
             'v': "Property~Poisson's ratio",
         }
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -288,7 +283,7 @@ def valid_expression_predictor_data():
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
     youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
     poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-    instance = dict(
+    return dict(
         type='AnalyticExpression',
         name='Expression predictor',
         description='Computes shear modulus from Youngs modulus and Poissons ratio',
@@ -299,7 +294,6 @@ def valid_expression_predictor_data():
             'v': poissons_ratio.dump(),
         }
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -396,7 +390,7 @@ def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metr
 def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    instance = dict(
+    return dict(
         type='IngredientsToSimpleMixture',
         name='Ingredients to formulation predictor',
         description='Constructs mixtures from ingredients',
@@ -409,7 +403,6 @@ def valid_ing_formulation_predictor_data():
             'solute': ['salt'],
         }
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -417,7 +410,7 @@ def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
     formulation_descriptor = FormulationDescriptor.hierarchical()
-    instance = dict(
+    return dict(
         type='GeneralizedMeanProperty',
         name='Mean property predictor',
         description='Computes mean ingredient properties',
@@ -428,7 +421,6 @@ def valid_generalized_mean_property_predictor_data():
         default_properties={'density': 1.0},
         label='solvent'
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -437,47 +429,44 @@ def valid_mean_property_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     formulation_descriptor = FormulationDescriptor.flat()
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
-    instance = dict(
+    return dict(
         type='MeanProperty',
         name='Mean property predictor',
         description='Computes mean ingredient properties',
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
-        p=2,
+        p=2.0,
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent',
         training_data=[]
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
 def valid_label_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    instance = dict(
+    return dict(
         type='LabelFractions',
         name='Label fractions predictor',
         description='Computes relative proportions of labeled ingredients',
         input=FormulationDescriptor.hierarchical().dump(),
         labels=['solvent']
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
 def valid_ingredient_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    instance = dict(
+    return dict(
         type='IngredientFractions',
         name='Ingredient fractions predictor',
         description='Computes ingredient fractions',
         input=FormulationDescriptor.hierarchical().dump(),
         ingredients=['Blue dye', 'Red dye']
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
@@ -494,7 +483,23 @@ def valid_data_source_design_space_dict(valid_gem_data_source_dict):
 
 
 @pytest.fixture
-def invalid_predictor_data():
+def invalid_predictor_node_data():
+    """Produce invalid valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
+    return dict(
+        type='invalid',
+        name='my predictor',
+        description='does some things',
+        inputs=[x.dump(), y.dump()],
+        output=z.dump()
+    )
+
+
+@pytest.fixture
+def invalid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
@@ -503,9 +508,8 @@ def invalid_predictor_data():
     instance = dict(
         type='invalid',
         name='my predictor',
-        description='does some things',
-        inputs=[x.dump(), y.dump()],
-        output=z.dump()
+        description='does some things badly',
+        predictors=[x.dump(), y.dump()],
     )
     detail = [
         StatusDetail(level=StatusLevelEnum.WARNING, msg='Something is wrong'),
@@ -521,13 +525,12 @@ def invalid_predictor_data():
 @pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
-    instance = dict(
+    return dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
         description='simple mixture description',
         training_data=[]
     )
-    return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
 
 @pytest.fixture
