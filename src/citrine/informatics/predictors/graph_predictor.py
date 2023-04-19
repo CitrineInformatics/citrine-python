@@ -2,6 +2,7 @@ import warnings
 from typing import List, Optional, Union
 from uuid import UUID
 
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._rest.engine_resource import VersionedEngineResource
 from citrine._serialization import properties as properties
 from citrine._session import Session
@@ -15,7 +16,7 @@ from citrine.resources.report import ReportResource
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
+class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObject, Predictor):
     """A predictor interface that stitches individual predictor nodes together.
 
     The GraphPredictor is the only predictor that can be registered on the Citrine Platform
@@ -59,16 +60,19 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
         serializable=False
     )
 
+    _api_version = "v3"
     _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
-    _api_version = "v3"
+    _in_progress_statuses = ["VALIDATING", "CREATED"]
+    _succeeded_statuses = ["READY"]
+    _failed_statuses = ["INVALID", "ERROR"]
 
     def __init__(self,
                  name: str,
                  *,
                  description: str,
-                 predictors: List[Union[UUID, Predictor]],
+                 predictors: List[Union[UUID, PredictorNode]],
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
@@ -78,8 +82,8 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], Predictor):
         if len(uid_predictors) > 0:
             warnings.warn(
                 "Referencing predictors by a UUID inside a GraphPredictor is no longer supported "
-                "by the Citrine Platform. Please remove all references to predictors "
-                "and only add PredictorNode objects to the `predictors` field.",
+                "on the Citrine Platform. Please remove all references to predictors "
+                "and add only PredictorNode objects to the `predictors` field.",
                 DeprecationWarning
             )
 

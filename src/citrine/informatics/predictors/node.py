@@ -175,3 +175,30 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     def status_detail(self) -> List[StatusDetail]:
         """A list of structured status info, containing the message and level."""
         return []
+
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Check `in_progress` on parent GraphPredictor."
+    )
+    def in_progress(self) -> bool:
+        """Whether the backend process is in progress."""
+        return False
+
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Check `succeeded` on parent GraphPredictor."
+    )
+    def succeeded(self) -> bool:
+        """Whether the backend process has completed successfully."""
+        return False
+
+    @deprecated(
+        deprecated_in="2.13.0",
+        removed_in="3.0.0",
+        details="Check `failed` on parent GraphPredictor."
+    )
+    def failed(self) -> bool:
+        """Whether the backend process has completed unsuccessfully."""
+        return False

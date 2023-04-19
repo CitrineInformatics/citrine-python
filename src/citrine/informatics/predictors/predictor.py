@@ -1,11 +1,10 @@
-from citrine._rest.asynchronous_object import AsynchronousObject
-
 __all__ = ['Predictor']
 
 
-class Predictor(AsynchronousObject):
-    """Parent type of the individual PredictorNode and composite GraphPredictor."""
+class Predictor:
+    """Parent type of the individual predictors on the Citrine Platform.
 
-    _in_progress_statuses = ["VALIDATING", "CREATED"]
-    _succeeded_statuses = ["READY"]
-    _failed_statuses = ["INVALID", "ERROR"]
+    The Predictor class unifies the composite GraphPredictor and individual PredictorNode types
+    but does not provide any functionality on its own.
+
+    """

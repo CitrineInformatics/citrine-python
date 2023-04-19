@@ -464,7 +464,7 @@ def test_formulation_deprecations():
 
 
 def test_deprecated_node_fields(valid_auto_ml_predictor_data):
-    # Just testing for coverage of method
+    # Just testing for coverage of methods
     aml = AutoMLPredictor.build(valid_auto_ml_predictor_data)
     assert aml.uid is None
     assert aml.version is None
@@ -477,6 +477,9 @@ def test_deprecated_node_fields(valid_auto_ml_predictor_data):
     assert aml.archive_time is None
     assert aml.status is None
     assert len(aml.status_detail) == 0
+    assert aml.in_progress() is False
+    assert aml.succeeded() is False
+    assert aml.failed() is False
 
 
 def test_unhydrated_graph_deprecation():
