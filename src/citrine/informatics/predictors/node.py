@@ -23,10 +23,7 @@ def _check_deprecated_training_data(training_data: Optional[List[DataSource]]) -
         )
 
 
-class PredictorNode(
-    PolymorphicSerializable["PredictorNode"],
-    Predictor
-):
+class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     """An individual compute node within a Predictor.
 
     A PredictorNode cannot be registered to the Citrine Platform by itself
