@@ -294,6 +294,16 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         uid = str(uid)
         return any(uid == str(archived_pred.uid) for archived_pred in self.list_archived())
 
+    def archive(self, uid: Union[UUID, str]):
+        """[UNSUPPORTED] Use archive_root or archive_version instead."""
+        raise NotImplementedError("The archive() method is no longer supported. You most likely "
+                                  "want archive_root(), or possibly archive_version().")
+
+    def restore(self, uid: Union[UUID, str]):
+        """[UNSUPPORTED] Use restore_root or restore_version instead."""
+        raise NotImplementedError("The restore() method is no longer supported. You most likely "
+                                  "want restore_root(), or possibly restore_version().")
+
     def list_versions(self,
                       uid: Union[UUID, str] = None,
                       *,
