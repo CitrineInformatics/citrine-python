@@ -654,3 +654,11 @@ def test_retrain_stale(valid_graph_predictor_data):
 
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
     assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{pred_version}/retrain-stale", json={})]
+
+def test_unsupported_archive():
+    with pytest.raises(NotImplementedError):
+        PredictorCollection(uuid.uuid4(), FakeSession()).archive(uuid.uuid4())
+
+def test_unsupported_restore():
+    with pytest.raises(NotImplementedError):
+        PredictorCollection(uuid.uuid4(), FakeSession()).restore(uuid.uuid4())
