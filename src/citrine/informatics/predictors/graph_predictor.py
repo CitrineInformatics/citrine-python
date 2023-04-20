@@ -78,7 +78,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         self.description: str = description
         self.training_data: List[DataSource] = training_data or []
 
-        uid_predictors = [x for x in predictors if not isinstance(x, UUID)]
+        uid_predictors = [x for x in predictors if isinstance(x, UUID)]
         if len(uid_predictors) > 0:
             warnings.warn(
                 "Referencing predictors by a UUID inside a GraphPredictor is no longer supported "
