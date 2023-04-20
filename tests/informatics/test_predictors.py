@@ -466,28 +466,43 @@ def test_formulation_deprecations():
 def test_deprecated_node_fields(valid_auto_ml_predictor_data):
     # Just testing for coverage of methods
     aml = AutoMLPredictor.build(valid_auto_ml_predictor_data)
-    assert aml.uid is None
-    assert aml.version is None
-    assert aml.draft is None
-    assert aml.created_by is None
-    assert aml.updated_by is None
-    assert aml.archived_by is None
-    assert aml.create_time is None
-    assert aml.update_time is None
-    assert aml.archive_time is None
-    assert aml.status is None
-    assert len(aml.status_detail) == 0
-    assert aml.in_progress() is False
-    assert aml.succeeded() is False
-    assert aml.failed() is False
+    with pytest.deprecated_call():
+        assert aml.uid is None
+    with pytest.deprecated_call():
+        assert aml.version is None
+    with pytest.deprecated_call():
+        assert aml.draft is None
+    with pytest.deprecated_call():
+        assert aml.created_by is None
+    with pytest.deprecated_call():
+        assert aml.updated_by is None
+    with pytest.deprecated_call():
+        assert aml.archived_by is None
+    with pytest.deprecated_call():
+        assert aml.create_time is None
+    with pytest.deprecated_call():
+        assert aml.update_time is None
+    with pytest.deprecated_call():
+        assert aml.archive_time is None
+    with pytest.deprecated_call():
+        assert aml.status is None
+    with pytest.deprecated_call():
+        assert len(aml.status_detail) == 0
+    with pytest.deprecated_call():
+        assert aml.in_progress() is False
+    with pytest.deprecated_call():
+        assert aml.succeeded() is False
+    with pytest.deprecated_call():
+        assert aml.failed() is False
 
 
 def test_unhydrated_graph_deprecation():
     good = SimpleMixturePredictor(name="Warning", description="Description")
     bad = uuid.uuid4()
     with pytest.warns(DeprecationWarning):
-        GraphPredictor(
+        graph = GraphPredictor(
             name="Warning",
             description="Hydrate me!",
             predictors=[good, bad]
         )
+        assert len(graph.predictors) == 1
