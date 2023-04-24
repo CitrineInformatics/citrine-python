@@ -70,8 +70,8 @@ def ingredient_ratio_constraint() -> IngredientRatioConstraint:
         max=1e6,
         ingredient=("foo", 1.0),
         label=("foolabel", 0.5),
-        basis_ingredients={"baz": 3.0, "bat": 4.0},
-        basis_labels={"bazlabel": 1.3, "batlabel": 100.0}
+        basis_ingredients=["baz", "bat"],
+        basis_labels=["bazlabel", "batlabel"]
     )
 
 
@@ -124,8 +124,8 @@ def test_ingredient_ratio_initialization(ingredient_ratio_constraint):
     assert ingredient_ratio_constraint.max == 1e6
     assert ingredient_ratio_constraint.ingredient == ("foo", 1.0)
     assert ingredient_ratio_constraint.label == ("foolabel", 0.5)
-    assert ingredient_ratio_constraint.basis_ingredients == {"baz": 3.0, "bat": 4.0}
-    assert ingredient_ratio_constraint.basis_labels == {"bazlabel": 1.3, "batlabel": 100.0}
+    assert ingredient_ratio_constraint.basis_ingredient_names == {"baz", "bat"}
+    assert ingredient_ratio_constraint.basis_label_names == {"bazlabel", "batlabel"}
 
 def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
     with pytest.raises(ValueError):
@@ -161,6 +161,45 @@ def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
     assert ingredient_ratio_constraint.label is None
     ingredient_ratio_constraint.label = []
     assert ingredient_ratio_constraint.label is None
+
+    newval_dict = {"foobasis": 3}
+    with pytest.deprecated_call():
+        ingredient_ratio_constraint.basis_ingredients = newval_dict
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_ingredients == dict.fromkeys(newval_dict.keys(), 1)
+    ingredient_ratio_constraint.basis_ingredient_names = set(newval_dict.keys())
+
+    newval_set = {"foobasis2"}
+    ingredient_ratio_constraint.basis_ingredients = newval_set
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_ingredients == dict.fromkeys(newval_set, 1)
+    ingredient_ratio_constraint.basis_ingredient_names = newval_set
+
+    newval_set = {"foobasis3"}
+    ingredient_ratio_constraint.basis_ingredient_names = newval_set
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_ingredients == dict.fromkeys(newval_set, 1)
+    ingredient_ratio_constraint.basis_ingredient_names = newval_set
+
+    newval_dict = {"foolabelbasis": 3}
+    with pytest.deprecated_call():
+        ingredient_ratio_constraint.basis_labels = newval_dict
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_labels == dict.fromkeys(newval_dict.keys(), 1)
+    ingredient_ratio_constraint.basis_label_names = set(newval_dict.keys())
+
+    newval_set = {"foolabelbasis2"}
+    ingredient_ratio_constraint.basis_labels = newval_set
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_labels == dict.fromkeys(newval_set, 1)
+    ingredient_ratio_constraint.basis_label_names = newval_set
+
+    newval_set = {"foolabelbasis3"}
+    ingredient_ratio_constraint.basis_label_names = newval_set
+    with pytest.deprecated_call():
+        assert ingredient_ratio_constraint.basis_labels == dict.fromkeys(newval_set, 1)
+    ingredient_ratio_constraint.basis_label_names = newval_set
+
 
 
 def test_range_defaults():
