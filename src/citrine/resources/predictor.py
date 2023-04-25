@@ -5,15 +5,44 @@ from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
+from citrine._rest.resource import Resource
 from citrine._rest.paginator import Paginator
+from citrine._serialization import properties
 from citrine._session import Session
 from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.module import AbstractModuleCollection
+from citrine.resources.status_detail import StatusDetail
 
 
 MOST_RECENT_VER = "most_recent"
+
+
+class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
+    """Return type for async default predictor generation and retrieval."""
+
+    uid = properties.UUID('id', serializable=False)
+    """:UUID: Citrine Platform unique identifier for this task."""
+
+    predictor = properties.Optional(properties.Object(GraphPredictor), 'data', serializable=False)
+    """:Optional[GraphPredictor]:"""
+
+    status = properties.String('metadata.status', serializable=False)
+    """:str: short description of the resource's status"""
+
+    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status_detail',
+                                    default=[], serializable=False)
+    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+
+    @classmethod
+    def build(cls, data: dict):
+        """Build an instance of this object from given data."""
+        if data.get("data"):
+            data["data"] = GraphPredictor.wrap_instance(data["data"]["instance"])
+
+        retval = super().build(data)
+        return retval
 
 
 class AutoConfigureMode(BaseEnumeration):
@@ -394,20 +423,79 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
 
         Returns
         -------
-        Predictor
+        GraphPredictor
             Automatically configured predictor for the training data
 
         """
+        payload = PredictorCollection._create_default_payload(training_data, pattern, prefer_valid)
+        path = self._get_path(action="default")
+        data = self.session.post_resource(path, json=payload, version=self._api_version)
+        return self.build(GraphPredictor.wrap_instance(data["instance"]))
+
+    def create_default_async(self,
+                             *,
+                             training_data: DataSource,
+                             pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                             prefer_valid: bool = True) -> AsyncDefaultPredictor:
+        """Similar to PredictorCollection.create_default, except asynchronous.
+
+        This begins a long-running task to generate the predictor. The returned object contains an
+        ID which can be used to track its status and get the resulting predictor once complete.
+        PredictorCollection.get_default_async is intended for that purpose.
+
+        See PredictorCollection.create_default for more details on the generation process and
+        parameter specifics.
+
+        Parameters
+        ----------
+        training_data: DataSource
+            The data to configure the predictor to model.
+        pattern: AutoConfigureMode or str
+            The predictor pattern to use, either "PLAIN", "FORMULATION", or "INFER".
+            The "INFER" pattern auto-detects whether the `DataSource` contains formulations
+            data or not.
+            If it does, then a formulation predictor is created.
+            If not, then a plain predictor is created.
+        prefer_valid: Boolean
+            If True, enables filtering of sparse descriptors and trimming of
+            excess graph components in attempt to return a default configuration
+            that will pass validation.
+            Default: True.
+
+        Returns
+        -------
+        AsyncDefaultPredictor
+            Information on the long-running default predictor generation task.
+
+        """
+        payload = PredictorCollection._create_default_payload(training_data, pattern, prefer_valid)
+        path = self._get_path(action="default-async")
+        data = self.session.post_resource(path, json=payload, version=self._api_version)
+        return AsyncDefaultPredictor.build(data)
+
+    @staticmethod
+    def _create_default_payload(training_data: DataSource,
+                                pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                                prefer_valid: bool = True) -> dict:
         # Continue handling string pattern inputs
         if not isinstance(pattern, AutoConfigureMode):
             pattern = AutoConfigureMode.get_enum(pattern)
         pattern = pattern.value
 
-        path = self._get_path(action="default")
-        body = {"data_source": training_data.dump(), "pattern": pattern,
+        return {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
-        data = self.session.post_resource(path, json=body, version=self._api_version)
-        return self.build(GraphPredictor.wrap_instance(data["instance"]))
+
+    def get_default_async(self, *, task_id: Union[UUID, str]) -> AsyncDefaultPredictor:
+        """Get the current async default predictor generation result.
+
+        The status field will indicate if it's INPROGRESS, SUCCEEDED, or FAILED. While INPROGRESS,
+        the predictor will also be None. Once it's SUCCEEDED, it will be populated with a
+        GraphPredictor, which can then be registered to the platform. If it's FAILED, look to the
+        status_detail field for more information on what went wrong.
+        """
+        path = self._get_path(action=f"default-async")
+        data = self.session.get_resource(f"{path}/{task_id}", version=self._api_version)
+        return AsyncDefaultPredictor.build(data)
 
     def convert_to_graph(self,
                          uid: Union[UUID, str],

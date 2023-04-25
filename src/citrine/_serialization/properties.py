@@ -655,7 +655,7 @@ class Object(PropertyCollection[typing.Any, dict]):
             raise AttributeError("Tried to deserialize to {!r}, which has no fields and is not an"
                                  " explicitly serializable class".format(self.klass))
 
-        instance = self.klass.__new__(self.klass, {})
+        instance = self.klass.__new__(self.klass)
         for property_name, field in self.fields.items():
             if field.deserializable:
                 value = field.deserialize_from_dict(data)
