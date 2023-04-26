@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>citrine.informatics.predictors.node module &mdash; Citrine Python 2.15.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.15.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>citrine.informatics.predictors.node module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/citrine.informatics.predictors.node.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-citrine.informatics.predictors.node">
+<span id="citrine-informatics-predictors-node-module"></span><h1>citrine.informatics.predictors.node module<a class="headerlink" href="#module-citrine.informatics.predictors.node" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.node.</span></span><span class="sig-name descname"><span class="pre">PredictorNode</span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<a class="reference internal" href="#citrine.informatics.predictors.node.PredictorNode" title="citrine.informatics.predictors.node.PredictorNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorNode</span></code></a>], <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<p>An individual compute node within a Predictor.</p>
+<p>A PredictorNode cannot be registered to the Citrine Platform by itself
+and must be included as a component within a GraphPredictor to be used.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.polymorphic_serializable.SelfType</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build the underlying type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.failed">
+<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.failed" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed unsuccessfully.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>failed</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.predictors.node.PredictorNode" title="citrine.informatics.predictors.node.PredictorNode"><span class="pre">citrine.informatics.predictors.node.PredictorNode</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.in_progress">
+<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.in_progress" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process is in progress.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>in_progress</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.succeeded">
+<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.succeeded" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed successfully.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>succeeded</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.archive_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archive_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.archive_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was archived.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>archive_time</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.archived_by">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archived_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.archived_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who most recently archived the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>archived_by</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.create_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.create_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was created.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>create_time</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.created_by">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.created_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who created the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>created_by</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.description" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.draft">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">draft</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.draft" title="Permalink to this definition"></a></dt>
+<dd><p>The draft status of the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>draft</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.status">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.status" title="Permalink to this definition"></a></dt>
+<dd><p>Short description of the resource’s status.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>status</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.status_detail">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status_detail</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail"><span class="pre">citrine.resources.status_detail.StatusDetail</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.status_detail" title="Permalink to this definition"></a></dt>
+<dd><p>A list of structured status info, containing the message and level.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>status_detail</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.uid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Optional Citrine Platform unique identifier.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>uid</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.update_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.update_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was most recently updated.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>update_time</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.updated_by">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.updated_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who most recently updated the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>updated_by</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.predictors.node.PredictorNode.version">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.node.PredictorNode.version" title="Permalink to this definition"></a></dt>
+<dd><p>The version number of the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>version</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

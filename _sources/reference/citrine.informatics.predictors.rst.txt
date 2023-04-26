@@ -16,6 +16,7 @@ Submodules
    citrine.informatics.predictors.label_fractions_predictor
    citrine.informatics.predictors.mean_property_predictor
    citrine.informatics.predictors.molecular_structure_featurizer
+   citrine.informatics.predictors.node
    citrine.informatics.predictors.predictor
    citrine.informatics.predictors.simple_mixture_predictor
    citrine.informatics.predictors.single_predict_request

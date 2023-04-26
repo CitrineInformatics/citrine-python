@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictors.predictor module &mdash; Citrine Python 2.12.0 documentation</title>
+  <title>citrine.informatics.predictors.predictor module &mdash; Citrine Python 2.15.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.12.0
+                2.15.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -80,85 +80,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.predictor.</span></span><span class="sig-name descname"><span class="pre">Predictor</span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<a class="reference internal" href="#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
-<p>Module that describes the ability to compute/predict properties of materials.</p>
-<p>Abstract type that returns the proper type given a serialized dict. Subtype
-based on the ‘type’ value of the passed in dict.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.polymorphic_serializable.SelfType</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.build" title="Permalink to this definition"></a></dt>
-<dd><p>Build the underlying type.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.failed">
-<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.failed" title="Permalink to this definition"></a></dt>
-<dd><p>Whether the backend process has completed unsuccessfully.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.get_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.get_type" title="Permalink to this definition"></a></dt>
-<dd><p>Return the subtype.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.in_progress">
-<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.in_progress" title="Permalink to this definition"></a></dt>
-<dd><p>Whether the backend process is in progress.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predict_request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><span class="pre">citrine.informatics.predictors.single_predict_request.SinglePredictRequest</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.single_prediction.html#citrine.informatics.predictors.single_prediction.SinglePrediction" title="citrine.informatics.predictors.single_prediction.SinglePrediction"><span class="pre">citrine.informatics.predictors.single_prediction.SinglePrediction</span></a></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.predict" title="Permalink to this definition"></a></dt>
-<dd><p>Make a one-off prediction with this predictor.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.succeeded">
-<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.succeeded" title="Permalink to this definition"></a></dt>
-<dd><p>Whether the backend process has completed successfully.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.wrap_instance">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.wrap_instance" title="Permalink to this definition"></a></dt>
-<dd><p>Insert a serialized embedded predictor into a module envelope.</p>
-<p>This facilitates deserialization.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.description" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.name" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.report">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report</span></span><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.report" title="Permalink to this definition"></a></dt>
-<dd><p>Fetch the predictor report.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.uid">
-<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.uid" title="Permalink to this definition"></a></dt>
-<dd><p>Citrine Platform unique identifier</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.predictor.Predictor.version">
-<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.predictor.Predictor.version" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parent type of the individual predictors on the Citrine Platform.</p>
+<p>The Predictor class unifies the composite GraphPredictor and individual PredictorNode types
+but does not provide any functionality on its own.</p>
 </dd></dl>
 
 </section>

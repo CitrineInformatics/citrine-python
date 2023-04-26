@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.predictors.simple_mixture_predictor module &mdash; Citrine Python 2.12.0 documentation</title>
+  <title>citrine.informatics.predictors.simple_mixture_predictor module &mdash; Citrine Python 2.15.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.12.0
+                2.15.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -79,8 +79,8 @@
 <span id="citrine-informatics-predictors-simple-mixture-predictor-module"></span><h1>citrine.informatics.predictors.simple_mixture_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.simple_mixture_predictor" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.simple_mixture_predictor.</span></span><span class="sig-name descname"><span class="pre">SimpleMixturePredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.engine_resource.VersionedEngineResource</span></code>[<a class="reference internal" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>], <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.simple_mixture_predictor.</span></span><span class="sig-name descname"><span class="pre">SimpleMixturePredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_descriptor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><span class="pre">citrine.informatics.descriptors.FormulationDescriptor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_descriptor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><span class="pre">citrine.informatics.descriptors.FormulationDescriptor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><span class="pre">citrine.informatics.data_sources.DataSource</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>], <a class="reference internal" href="citrine.informatics.predictors.node.html#citrine.informatics.predictors.node.PredictorNode" title="citrine.informatics.predictors.node.PredictorNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.node.PredictorNode</span></code></a></p>
 <p>A predictor interface that flattens a formulation into a simple mixture.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -104,14 +104,9 @@ predictor is part of a graph that includes all training data required by this pr
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build" title="Permalink to this definition"></a></dt>
 <dd><p>Build an instance of this object from given data.</p>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build_with_parent">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_with_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_cls</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.include_parent_properties.Self</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.build_with_parent" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.dump">
@@ -123,11 +118,14 @@ predictor is part of a graph that includes all training data required by this pr
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.failed">
 <span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.failed" title="Permalink to this definition"></a></dt>
 <dd><p>Whether the backend process has completed unsuccessfully.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>failed</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.get_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.get_type" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.node.html#citrine.informatics.predictors.node.PredictorNode" title="citrine.informatics.predictors.node.PredictorNode"><span class="pre">citrine.informatics.predictors.node.PredictorNode</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.get_type" title="Permalink to this definition"></a></dt>
 <dd><p>Return the subtype.</p>
 </dd></dl>
 
@@ -135,70 +133,54 @@ predictor is part of a graph that includes all training data required by this pr
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.in_progress">
 <span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.in_progress" title="Permalink to this definition"></a></dt>
 <dd><p>Whether the backend process is in progress.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predict_request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.single_predict_request.html#citrine.informatics.predictors.single_predict_request.SinglePredictRequest" title="citrine.informatics.predictors.single_predict_request.SinglePredictRequest"><span class="pre">citrine.informatics.predictors.single_predict_request.SinglePredictRequest</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.single_prediction.html#citrine.informatics.predictors.single_prediction.SinglePrediction" title="citrine.informatics.predictors.single_prediction.SinglePrediction"><span class="pre">citrine.informatics.predictors.single_prediction.SinglePrediction</span></a></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.predict" title="Permalink to this definition"></a></dt>
-<dd><p>Make a one-off prediction with this predictor.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>in_progress</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.succeeded">
 <span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.succeeded" title="Permalink to this definition"></a></dt>
 <dd><p>Whether the backend process has completed successfully.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>succeeded</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.wrap_instance">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.wrap_instance" title="Permalink to this definition"></a></dt>
-<dd><p>Insert a serialized embedded predictor into a module envelope.</p>
-<p>This facilitates deserialization.</p>
-</dd></dl>
-
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archive_time">
-<span class="sig-name descname"><span class="pre">archive_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archive_time" title="Permalink to this definition"></a></dt>
-<dd><p>date and time at which the resource was archived,
-if it has been archived</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archive_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archive_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was archived.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>archive_time</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archived_by">
-<span class="sig-name descname"><span class="pre">archived_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archived_by" title="Permalink to this definition"></a></dt>
-<dd><p>id of the user who archived the resource, if it has been archived</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archived_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.archived_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who most recently archived the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>archived_by</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.create_time">
-<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.create_time" title="Permalink to this definition"></a></dt>
-<dd><p>date and time at which the resource was created</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.create_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was created.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>create_time</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.created_by">
-<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.created_by" title="Permalink to this definition"></a></dt>
-<dd><p>id of the user who created the resource</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.created_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who created the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>created_by</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -206,10 +188,14 @@ if it has been archived</p>
 <span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.description" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.draft">
-<span class="sig-name descname"><span class="pre">draft</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.draft" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">draft</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.draft" title="Permalink to this definition"></a></dt>
+<dd><p>The draft status of the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>draft</cite> on parent GraphPredictor.</p>
+</div>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.input_descriptor">
@@ -229,31 +215,21 @@ if it has been archived</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.report">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">report</span></span><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.report" title="Permalink to this definition"></a></dt>
-<dd><p>Fetch the predictor report.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status">
-<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status" title="Permalink to this definition"></a></dt>
-<dd><p>short description of the resource’s status</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[str]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status" title="Permalink to this definition"></a></dt>
+<dd><p>Short description of the resource’s status.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>status</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_detail">
-<span class="sig-name descname"><span class="pre">status_detail</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_detail" title="Permalink to this definition"></a></dt>
-<dd><p>a list of structured status info, containing the message and level</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail">StatusDetail</a>]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status_detail</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail"><span class="pre">citrine.resources.status_detail.StatusDetail</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.status_detail" title="Permalink to this definition"></a></dt>
+<dd><p>A list of structured status info, containing the message and level.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Check <cite>status_detail</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -266,50 +242,40 @@ if it has been archived</p>
 <span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleMixture'</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.typ" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.uid">
-<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.uid" title="Permalink to this definition"></a></dt>
-<dd><p>Citrine Platform unique identifier</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Optional Citrine Platform unique identifier.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>uid</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.update_time">
-<span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.update_time" title="Permalink to this definition"></a></dt>
-<dd><p>date and time at which the resource was most recently updated,
-if it has been updated</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.update_time" title="Permalink to this definition"></a></dt>
+<dd><p>The date and time at which the resource was most recently updated.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>update_time</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.updated_by">
-<span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.updated_by" title="Permalink to this definition"></a></dt>
-<dd><p>id of the user who most recently updated the resource,
-if it has been updated</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.updated_by" title="Permalink to this definition"></a></dt>
+<dd><p>The id of the user who most recently updated the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>updated_by</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.version">
-<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.version" title="Permalink to this definition"></a></dt>
-<dd><p>The draft status of the resource.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Boolean</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor.version" title="Permalink to this definition"></a></dt>
+<dd><p>The version number of the resource.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.13.0: </span>This will be removed in 3.0.0. Use <cite>version</cite> on parent GraphPredictor.</p>
+</div>
 </dd></dl>
 
 </dd></dl>

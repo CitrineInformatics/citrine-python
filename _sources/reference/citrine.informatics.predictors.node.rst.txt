@@ -1,0 +1,8 @@
+citrine.informatics.predictors.node module
+==========================================
+
+.. automodule:: citrine.informatics.predictors.node
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

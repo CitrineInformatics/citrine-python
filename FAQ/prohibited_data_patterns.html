@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.1. Prohibited Data Patterns &mdash; Citrine Python 2.12.0 documentation</title>
+  <title>7.1. Prohibited Data Patterns &mdash; Citrine Python 2.15.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.12.0
+                2.15.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -105,7 +105,7 @@ some of the functionality the API and/or Platform would otherwise provide.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">procsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test proc&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">matsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MaterialSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test mat&#39;</span><span class="p">,</span><span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ingsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">IngredientSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ing&#39;</span><span class="p">,</span><span class="n">material</span><span class="o">=</span><span class="n">matsp</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>
-<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
 </pre></div>
 </div>
 <p>In this example, the following steps occurred:</p>
