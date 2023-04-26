@@ -36,13 +36,11 @@ class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
     @classmethod
-    def build(cls, data: dict):
+    def _pre_build(cls, data: dict) -> dict:
         """Build an instance of this object from given data."""
         if data.get("data"):
             data["data"] = GraphPredictor.wrap_instance(data["data"]["instance"])
-
-        retval = super().build(data)
-        return retval
+        return data
 
 
 class AutoConfigureMode(BaseEnumeration):
@@ -493,8 +491,8 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         GraphPredictor, which can then be registered to the platform. If it's FAILED, look to the
         status_detail field for more information on what went wrong.
         """
-        path = self._get_path(action=f"default-async")
-        data = self.session.get_resource(f"{path}/{task_id}", version=self._api_version)
+        path = self._get_path(action=["default-async", task_id])
+        data = self.session.get_resource(path, version=self._api_version)
         return AsyncDefaultPredictor.build(data)
 
     def convert_to_graph(self,
