@@ -1,21 +1,26 @@
 """Resources that represent material templates."""
 from typing import List, Dict, Optional, Union, Sequence, Type
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
-    LinkOrElse
+from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
+from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
 
-class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMaterialTemplate):
+class MaterialTemplate(
+    GEMDResource['MaterialTemplate'],
+    ObjectTemplate,
+    GEMDMaterialTemplate,
+    typ=GEMDMaterialTemplate.typ
+):
     """
     A material template.
 
@@ -47,13 +52,13 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
 
     _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
-    name = String('name', override=True)
-    description = PropertyOptional(String(), 'description', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    properties = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'properties', override=True)
-    typ = String('type')
+    properties = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDPropertyTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ), 'properties', override=True)
 
     def __init__(self,
                  name: str,
@@ -71,7 +76,7 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
         # the typing above is more general.
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMaterialTemplate.typ)
+        DataConcepts.__init__(self)
         GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
                                       uids=uids, tags=tags,
                                       description=description)

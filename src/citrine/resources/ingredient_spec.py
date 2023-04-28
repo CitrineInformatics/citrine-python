@@ -2,9 +2,9 @@
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
+from citrine._serialization.properties import String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
@@ -16,7 +16,12 @@ from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec):
+class IngredientSpec(
+    GEMDResource['IngredientSpec'],
+    ObjectSpec,
+    GEMDIngredientSpec,
+    typ=GEMDIngredientSpec.typ
+):
     """
     An ingredient specification.
 
@@ -61,20 +66,19 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
 
     _response_key = GEMDIngredientSpec.typ  # 'ingredient_spec'
 
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
-    material = PropertyOptional(LinkOrElse(), 'material', override=True)
-    process = PropertyOptional(LinkOrElse(), 'process', override=True)
+    material = PropertyOptional(LinkOrElse(GEMDMaterialSpec), 'material', override=True)
+    process = PropertyOptional(LinkOrElse(GEMDProcessSpec),
+                               'process',
+                               override=True,
+                               use_init=True)
     mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction', override=True)
     volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction', override=True)
     number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction', override=True)
-    absolute_quantity = PropertyOptional(
-        Object(ContinuousValue), 'absolute_quantity', override=True)
-    name = String('name', override=True)
-    labels = PropertyOptional(PropertyList(String()), 'labels', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
-    typ = String('type')
+    absolute_quantity = PropertyOptional(Object(ContinuousValue),
+                                         'absolute_quantity',
+                                         override=True)
+    name = String('name', override=True, use_init=True)
+    labels = PropertyOptional(PropertyList(String()), 'labels', override=True, use_init=True)
 
     def __init__(self,
                  name: str,
@@ -93,7 +97,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
         if uids is None:
             uids = dict()
 
-        DataConcepts.__init__(self, GEMDIngredientSpec.typ)
+        DataConcepts.__init__(self)
         GEMDIngredientSpec.__init__(self, uids=uids, tags=tags, notes=notes,
                                     material=material, process=process,
                                     mass_fraction=mass_fraction, volume_fraction=volume_fraction,

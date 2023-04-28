@@ -2,10 +2,10 @@
 from typing import List, Dict, Optional, Type, Union, Iterator
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
+from citrine._serialization.properties import String, Object, LinkOrElse
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
@@ -17,7 +17,7 @@ from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.source.performed_source import PerformedSource
 
 
-class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
+class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMDProcessRun.typ):
     """
     A process run.
 
@@ -62,16 +62,11 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
 
     _response_key = GEMDProcessRun.typ  # 'process_run'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
+    name = String('name', override=True, use_init=True)
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    spec = PropertyOptional(LinkOrElse(GEMDProcessSpec), 'spec', override=True, use_init=True,)
     source = PropertyOptional(Object(PerformedSource), "source", override=True)
-    typ = String('type')
 
     def __init__(self,
                  name: str,
@@ -86,7 +81,7 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
                  source: Optional[PerformedSource] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDProcessRun.typ)
+        DataConcepts.__init__(self)
         GEMDProcessRun.__init__(self, name=name, uids=uids,
                                 tags=tags, conditions=conditions, parameters=parameters,
                                 spec=spec, file_links=file_links, notes=notes, source=source)

@@ -2,10 +2,10 @@
 from typing import List, Dict, Optional, Type, Union, Iterator
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
+from citrine._serialization.properties import String, Object, LinkOrElse
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
@@ -17,7 +17,12 @@ from gemd.entity.template.measurement_template import \
     MeasurementTemplate as GEMDMeasurementTemplate
 
 
-class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSpec):
+class MeasurementSpec(
+    GEMDResource['MeasurementSpec'],
+    ObjectSpec,
+    GEMDMeasurementSpec,
+    typ=GEMDMeasurementSpec.typ
+):
     """
     A measurement specification.
 
@@ -49,15 +54,14 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
 
     _response_key = GEMDMeasurementSpec.typ  # 'measurement_spec'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
+    name = String('name', override=True, use_init=True)
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    template = PropertyOptional(LinkOrElse(), 'template', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
-    typ = String('type')
+    template = PropertyOptional(LinkOrElse(GEMDMeasurementTemplate),
+                                'template',
+                                override=True,
+                                use_init=True,
+                                )
 
     def __init__(self,
                  name: str,
@@ -71,7 +75,7 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMeasurementSpec.typ)
+        DataConcepts.__init__(self)
         GEMDMeasurementSpec.__init__(self, name=name, uids=uids,
                                      tags=tags, conditions=conditions, parameters=parameters,
                                      template=template, file_links=file_links, notes=notes)

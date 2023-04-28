@@ -17,7 +17,7 @@ from citrine._serialization.properties import (
     Optional,
     String,
     Union,
-    UUID,
+    UUID
 )
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric, RMSE, CoverageProbability
 from citrine.resources.dataset import Dataset
@@ -240,13 +240,13 @@ def test_linkorelse_deserialize_requires_serializable():
 
 def test_linkorelse_deserialize_requires_scope_and_id():
     loe = LinkOrElse()
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         loe.deserialize({'type': LinkByUID.typ})
 
 
 def test_linkorelse_deserialize():
     loe = LinkOrElse()
-    lbu = loe.deserialize({'type': LinkByUID.typ, 'scope': 'foo', 'id': uuid.uuid4()})
+    lbu = loe.deserialize({'type': LinkByUID.typ, 'scope': 'foo', 'id': str(uuid.uuid4())})
     assert isinstance(lbu, LinkByUID)
 
 

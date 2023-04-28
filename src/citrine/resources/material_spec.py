@@ -3,10 +3,10 @@ from logging import getLogger
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._serialization.properties import String, LinkOrElse, Object
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
@@ -19,7 +19,12 @@ from gemd.entity.template.material_template import MaterialTemplate as GEMDMater
 logger = getLogger(__name__)
 
 
-class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
+class MaterialSpec(
+    GEMDResource['MaterialSpec'],
+    ObjectSpec,
+    GEMDMaterialSpec,
+    typ=GEMDMaterialSpec.typ
+):
     """
     A material specification.
 
@@ -51,16 +56,19 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
 
     _response_key = GEMDMaterialSpec.typ  # 'material_spec'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
-    process = PropertyOptional(LinkOrElse(), 'process', override=True)
-    properties = PropertyOptional(
-        PropertyList(Object(PropertyAndConditions)), 'properties', override=True)
-    template = PropertyOptional(LinkOrElse(), 'template', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
-    typ = String('type')
+    name = String('name', override=True, use_init=True)
+    process = PropertyOptional(LinkOrElse(GEMDProcessSpec),
+                               'process',
+                               override=True,
+                               use_init=True,
+                               )
+    properties = PropertyOptional(PropertyList(Object(PropertyAndConditions)),
+                                  'properties',
+                                  override=True)
+    template = PropertyOptional(LinkOrElse(GEMDMaterialTemplate),
+                                'template',
+                                override=True,
+                                use_init=True,)
 
     def __init__(self,
                  name: str,
@@ -74,7 +82,7 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMaterialSpec.typ)
+        DataConcepts.__init__(self)
         GEMDMaterialSpec.__init__(self, name=name, uids=uids,
                                   tags=tags, process=process, properties=properties,
                                   template=template, file_links=file_links, notes=notes)

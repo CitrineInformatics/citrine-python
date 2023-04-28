@@ -65,12 +65,12 @@ def test_mapping_property_list_of_pairs_multiple():
 
 
 class DummyDescriptor(object):
-    dummy_map = properties.Mapping(properties.Float(), properties.String)
-    dummy_list = properties.List(properties.Float, properties.String)
-    dummy_set = properties.Set(type(properties.Float()))
-    link_or_else = properties.LinkOrElse()
-    map_collection_key = properties.Mapping(properties.Optional(properties.String), properties.Integer)
-    specified_mixed_list = properties.SpecifiedMixedList([properties.Integer(default=100)])
+    dummy_map = properties.Mapping(properties.Float(), properties.String, "dummy_map")
+    dummy_list = properties.List(properties.Float, "dummy_list")
+    dummy_set = properties.Set(type(properties.Float()), "dummy_map")
+    link_or_else = properties.LinkOrElse(serialization_path="link_or_else")
+    map_collection_key = properties.Mapping(properties.Optional(properties.String), properties.Integer, "map_collection_key")
+    specified_mixed_list = properties.SpecifiedMixedList([properties.Integer(default=100)], "specified_mixed_list")
 
 
 def test_collection_setters():

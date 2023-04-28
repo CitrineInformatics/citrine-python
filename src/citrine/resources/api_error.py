@@ -4,7 +4,7 @@ from typing import Optional, List
 from gemd.entity.dict_serializable import DictSerializable
 
 
-class ValidationError(DictSerializable):
+class ValidationError(DictSerializable, typ="validation_error"):
     """A user-facing error message describing why their request was invalid."""
 
     def __init__(self, failure_message: Optional[str] = None, property: Optional[str] = None,
@@ -15,7 +15,7 @@ class ValidationError(DictSerializable):
         self.failure_id = failure_id
 
 
-class ApiError(DictSerializable):
+class ApiError(DictSerializable, typ="api_error"):
     """The engineering API root level error model."""
 
     def __init__(self, code: int, message: str, validation_errors: List[ValidationError] = None):

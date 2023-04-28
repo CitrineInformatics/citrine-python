@@ -55,7 +55,7 @@ def test_assign_audit_info():
     with pytest.raises(AttributeError, match=r"can't set attribute"):
         sample_object.audit_info = None
 
-    with pytest.raises(TypeError, match=r"audit_info must be a dictionary or None"):
+    with pytest.raises(ValueError, match=r"is not one of valid types.*audit_info"):
         ProcessSpec.build({
             'type': 'process_spec',
             'name': "A process spec",

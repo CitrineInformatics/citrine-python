@@ -7,22 +7,30 @@ from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
+from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import String, Object
+from citrine._serialization.properties import Optional as PropertyOptional
+from gemd.entity.file_link import FileLink
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
 from citrine.resources.process_template import ProcessTemplate
+from gemd.entity.object.base_object import BaseObject
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.attribute_template import AttributeTemplate
 
 
-class DataObject(DataConcepts, ABC):
+class DataObject(DataConcepts, BaseObject, ABC):
     """
     An abstract data object object.
 
     DataObject must be extended along with `Resource`
     """
+
+    notes = PropertyOptional(String(), 'notes')
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")

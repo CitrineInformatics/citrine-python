@@ -1,4 +1,6 @@
 """Tests of the Material Run schema."""
+import json
+
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.measurement_spec import MeasurementSpec
@@ -7,7 +9,7 @@ from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.json import loads, dumps
+from gemd.json import GEMDJson
 from gemd.demo.cake import make_cake
 from gemd.entity.object import MeasurementRun as GEMDMeasurementRun
 from gemd.entity.object import MaterialRun as GEMDMaterialRun
@@ -51,7 +53,7 @@ def test_process_attachment():
     cake.process = ProcessRun('Icing', uids={'id': '12345'})
     cake_data = cake.dump()
 
-    cake_copy = loads(dumps(cake_data)).as_dict()
+    cake_copy = MaterialRun.build(cake_data).as_dict()
 
     assert cake_copy['name'] == cake.name
     assert cake_copy['uids'] == cake.uids
@@ -109,7 +111,7 @@ def test_measurement_material_connection_rehydration():
     meas2 = GEMDMeasurementRun("measurement on ending material",
                                spec=meas_spec, material=ending_mat)
 
-    copy = MaterialRun.build(ending_mat)
+    copy = MaterialRun.build(json.loads(GEMDJson().dumps(ending_mat)))
     assert isinstance(copy, MaterialRun), "copy of ending_mat should be a MaterialRun"
     assert len(copy.measurements) == 1, "copy of ending_mat should have one measurement"
     assert isinstance(copy.measurements[0], MeasurementRun), \
@@ -153,6 +155,38 @@ def test_cake():
     method attempts to traverse the object tree, and requires an overhaul of build().
     """
     gemd_cake = make_cake()
-    cake = MaterialRun.build(gemd_cake)
+    cake = MaterialRun.build(json.loads(GEMDJson().dumps(gemd_cake)))
     assert [ingred.name for ingred in cake.process.ingredients] == \
            [ingred.name for ingred in gemd_cake.process.ingredients]
+    assert [ingred.labels for ingred in cake.process.ingredients] == \
+           [ingred.labels for ingred in gemd_cake.process.ingredients]
+    gemd_queue = []
+    citr_queue = []
+    queue = [gemd_cake]
+    while queue:
+        this = queue.pop(0)
+        gemd_queue.append(this)
+        queue.extend([i.material for i in this.process.ingredients])
+    queue = [cake]
+    while queue:
+        this = queue.pop(0)
+        citr_queue.append(this)
+        queue.extend([i.material for i in this.process.ingredients])
+    while gemd_queue:
+        left = gemd_queue.pop()
+        right = citr_queue.pop()
+        if left.process != right.process:
+            dct1 = left.process._dict_for_compare()
+            dct2 = right.process._dict_for_compare()
+            for k in dct1:
+                if dct1[k] != dct2[k]:
+                    print(k)
+            blah = dct1["ingredients"][0]._dict_for_compare()
+            labh = dct2["ingredients"][0]._dict_for_compare()
+            assert left.process == right.process
+        if left != right:
+            print(left.name)
+            print(left)
+            print(right)
+            break
+    assert gemd_cake == cake

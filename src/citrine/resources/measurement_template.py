@@ -1,12 +1,11 @@
 """Resources that represent measurement templates."""
 from typing import List, Dict, Optional, Union, Sequence, Type
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
-    LinkOrElse
+from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
@@ -16,10 +15,17 @@ from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.measurement_template \
     import MeasurementTemplate as GEMDMeasurementTemplate
+from gemd.entity.template.condition_template import ConditionTemplate as GEMDConditionTemplate
+from gemd.entity.template.parameter_template import ParameterTemplate as GEMDParameterTemplate
+from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
 
-class MeasurementTemplate(ObjectTemplate,
-                          Resource['MeasurementTemplate'], GEMDMeasurementTemplate):
+class MeasurementTemplate(
+    GEMDResource['MeasurementTemplate'],
+    ObjectTemplate,
+    GEMDMeasurementTemplate,
+    typ=GEMDMeasurementTemplate.typ
+):
     """
     A measurement template.
 
@@ -61,17 +67,36 @@ class MeasurementTemplate(ObjectTemplate,
 
     _response_key = GEMDMeasurementTemplate.typ  # 'measurement_template'
 
-    name = String('name', override=True)
-    description = PropertyOptional(String(), 'description', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    properties = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'properties', override=True)
-    conditions = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'parameters', override=True)
-    typ = String('type')
+    properties = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDPropertyTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ),
+        'properties',
+        override=True
+    )
+    conditions = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDConditionTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ),
+        'conditions',
+        override=True
+    )
+    parameters = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDParameterTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ),
+        'parameters',
+        override=True
+    )
 
     def __init__(self,
                  name: str,
@@ -96,7 +121,7 @@ class MeasurementTemplate(ObjectTemplate,
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMeasurementTemplate.typ)
+        DataConcepts.__init__(self)
         GEMDMeasurementTemplate.__init__(self, name=name, properties=properties,
                                          conditions=conditions, parameters=parameters, tags=tags,
                                          uids=uids, description=description)

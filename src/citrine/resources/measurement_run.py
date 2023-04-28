@@ -2,10 +2,10 @@
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
+from citrine._serialization.properties import String, Object, LinkOrElse
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
@@ -19,7 +19,12 @@ from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasureme
 from gemd.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
+class MeasurementRun(
+    GEMDResource['MeasurementRun'],
+    ObjectRun,
+    GEMDMeasurementRun,
+    typ=GEMDMeasurementRun.typ
+):
     """
     A measurement run.
 
@@ -58,18 +63,17 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
 
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
+    name = String('name', override=True, use_init=True)
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
     properties = PropertyOptional(PropertyList(Object(Property)), 'properties', override=True)
-    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
-    material = PropertyOptional(LinkOrElse(), "material", override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    spec = PropertyOptional(LinkOrElse(GEMDMeasurementSpec), 'spec', override=True, use_init=True,)
+    material = PropertyOptional(LinkOrElse(GEMDMaterialRun),
+                                "material",
+                                override=True,
+                                use_init=True,
+                                )
     source = PropertyOptional(Object(PerformedSource), "source", override=True)
-    typ = String('type')
 
     def __init__(self,
                  name: str,
@@ -86,7 +90,7 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
                  source: Optional[PerformedSource] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMeasurementRun.typ)
+        DataConcepts.__init__(self)
         GEMDMeasurementRun.__init__(self, name=name, uids=uids,
                                     material=material,
                                     tags=tags, conditions=conditions, properties=properties,

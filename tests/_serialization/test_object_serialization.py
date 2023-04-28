@@ -61,3 +61,90 @@ def test_bad_object_serde():
 
 def test_object_str_representation():
     assert "<Object[NominalReal] 'foo'>" == str(Object(NominalReal, 'foo'))
+
+
+def test_override_configurations():
+    """Check that weird override cases get caught."""
+    class OverrideTestClass(Serializable['OverrideTestClass']):
+        overridden_value = String("overridden_value", override=True)
+        overridden_option = Optional(String(), "overridden_option", override=True)
+
+    with pytest.raises(AttributeError, match="overridden_value"):
+        OverrideTestClass.build(data={"overridden_value": "string"})
+
+    obj = OverrideTestClass()
+    with pytest.raises(AttributeError, match="overridden_value"):
+        obj.overridden_value = "1"
+    with pytest.raises(AttributeError, match="overridden_option"):
+        obj.overridden_option = "1"
+    with pytest.raises(AttributeError, match="overridden_value"):
+        _ = obj.overridden_value
+
+
+def test_override_read_only():
+    """Check that weird override cases get caught."""
+
+    class BaseTestClass:
+        def __init__(self, required, initable="Me"):
+            self._no_key = None
+            self._required = required
+            self._initable = initable
+
+        @property
+        def initable(self):
+            return self._initable
+
+        @property
+        def required(self):
+            return self._required
+
+    class OverrideTestClass(Serializable['OverrideTestClass'], BaseTestClass):
+        no_key = Optional(String(), "no_key", override=True)
+        initable = Optional(String(), "initable", override=True, use_init=True)
+        required = String("required", override=True, use_init=True)
+
+    with pytest.raises(AttributeError, match="no_key"):
+        OverrideTestClass.build(data={"no_key": "string", "required": "value"})
+
+    obj = OverrideTestClass(required="I was required")
+    with pytest.raises(AttributeError, match="no_key"):
+        obj.no_key = "1"
+    with pytest.raises(AttributeError, match="no_key"):
+        _ = obj.no_key
+    with pytest.raises(AttributeError, match="can't set"):
+        obj.initable = "1"
+    with pytest.raises(AttributeError, match="can't set"):
+        obj.required = "1"
+
+
+def test_init_props():
+    """Test exceptions around use_init."""
+
+    class TestClass:
+        def __init__(self, required, *, optional=None):
+            self._required = None
+            self.required = required
+
+        @property
+        def required(self):
+            return self._required
+
+        @required.setter
+        def required(self, value):
+            if value == "magic_value":
+                raise TypeError("magic_value")
+            self._required = value
+
+    class BadClass(Serializable['BadClass'], TestClass):
+        required = String("required", override=True)
+        optional = Optional(String(), "optional", use_init=True)
+
+    class GoodClass(Serializable['BadClass'], TestClass):
+        required = Optional(String(), "required", override=True, use_init=True)
+        optional = Optional(String(), "optional", use_init=True)
+
+    with pytest.raises(AttributeError, match="use_init"):
+        BadClass.build({"required": "value", "optional": "value"})
+
+    with pytest.raises(TypeError):
+        GoodClass.build({"required": "magic_value", "optional": "value"})

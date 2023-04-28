@@ -5,32 +5,43 @@ from os.path import basename
 import pytest
 
 from gemd.entity.bounds.integer_bounds import IntegerBounds
-from gemd.entity.attribute import Condition
+from gemd.entity.attribute import Property, Condition, Parameter, PropertyAndConditions
 from gemd.entity.value import NominalInteger
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
+from gemd.entity.object.material_run import MaterialRun as GemdMaterialRun
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
+from gemd.entity.object.process_run import ProcessRun as GemdProcessRun
+from gemd.entity.object.measurement_spec import MeasurementSpec as GemdMeasurementSpec
+from gemd.entity.object.measurement_run import MeasurementRun as GemdMeasurementRun
+from gemd.entity.object.ingredient_spec import IngredientSpec as GemdIngredientSpec
+from gemd.entity.object.ingredient_run import IngredientRun as GemdIngredientRun
+from gemd.entity.template.material_template import MaterialTemplate as GemdMaterialTemplate
+from gemd.entity.template.process_template import ProcessTemplate as GemdProcessTemplate
+from gemd.entity.template.measurement_template import MeasurementTemplate as GemdMeasurementTemplate
+from gemd.entity.template.condition_template import ConditionTemplate as GemdConditionTemplate
+from gemd.entity.template.parameter_template import ParameterTemplate as GemdParameterTemplate
+from gemd.entity.template.property_template import PropertyTemplate as GemdPropertyTemplate
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
+from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE, CITRINE_TAG_PREFIX
 from citrine.resources.gemd_resource import GEMDResourceCollection
-from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
-from citrine.resources.material_run import MaterialRunCollection, MaterialRun
+from citrine.resources.ingredient_run import IngredientRun
+from citrine.resources.ingredient_spec import IngredientSpec
+from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
 from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
-from citrine.resources.measurement_run import MeasurementRunCollection, MeasurementRun
-from citrine.resources.measurement_spec import MeasurementSpec, MeasurementSpecCollection
-from citrine.resources.measurement_template import MeasurementTemplate, \
-    MeasurementTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection, ParameterTemplate
-from citrine.resources.process_run import ProcessRunCollection, ProcessRun
-from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
-from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
-from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
+from citrine.resources.measurement_run import MeasurementRun
+from citrine.resources.measurement_spec import MeasurementSpec
+from citrine.resources.measurement_template import MeasurementTemplate
+from citrine.resources.parameter_template import ParameterTemplate
+from citrine.resources.process_run import ProcessRun
+from citrine.resources.process_spec import ProcessSpec
+from citrine.resources.process_template import ProcessTemplate
+from citrine.resources.property_template import PropertyTemplate
 from citrine._utils.functions import format_escaped_url
 
 from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
@@ -93,19 +104,78 @@ def test_register(gemd_collection):
     """Check that register routes to the correct collections"""
     targets = [
         MaterialTemplate("foo"),
-        MaterialSpec("foo"),
+        MaterialSpec("foo",
+                     properties=[PropertyAndConditions(
+                         property=Property("prop", value=NominalInteger(1)),
+                         conditions=[Condition("cond", value=NominalInteger(1))],
+                     )]
+                     ),
         MaterialRun("foo"),
         ProcessTemplate("foo"),
-        ProcessSpec("foo"),
-        ProcessRun("foo"),
+        ProcessSpec("foo",
+                    conditions=[Condition("cond", value=NominalInteger(1))],
+                    parameters=[Parameter("para", value=NominalInteger(1))]),
+        ProcessRun("foo",
+                   conditions=[Condition("cond", value=NominalInteger(1))],
+                   parameters=[Parameter("para", value=NominalInteger(1))]),
         MeasurementTemplate("foo"),
-        MeasurementSpec("foo"),
-        MeasurementRun("foo"),
+        MeasurementSpec("foo",
+                        conditions=[Condition("cond", value=NominalInteger(1))],
+                        parameters=[Parameter("para", value=NominalInteger(1))]),
+        MeasurementRun("foo",
+                       properties=[Property("prop", value=NominalInteger(1))],
+                       conditions=[Condition("cond", value=NominalInteger(1))],
+                       parameters=[Parameter("para", value=NominalInteger(1))]),
         IngredientSpec("foo"),
         IngredientRun(),
         PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
         ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+    ]
+
+    for obj in targets:
+        assert len(obj.uids) == 0
+        gemd_collection.register(obj, dry_run=True)
+        assert len(obj.uids) == 0
+        registered = gemd_collection.register(obj, dry_run=False)
+        assert len(obj.uids) == 1
+        assert len(registered.uids) == 1
+        assert basename(gemd_collection.session.calls[-1].path) == basename(gemd_collection._path_template)
+        for pair in obj.uids.items():
+            assert pair[1] == registered.uids[pair[0]]
+
+
+def test_gemd_register(gemd_collection):
+    """Check that register routes to the correct collections"""
+    targets = [
+        GemdMaterialTemplate("foo"),
+        GemdMaterialSpec("foo",
+                         properties=[PropertyAndConditions(
+                             property=Property("prop", value=NominalInteger(1)),
+                             conditions=[Condition("cond", value=NominalInteger(1))],
+                     )]
+                     ),
+        GemdMaterialRun("foo"),
+        GemdProcessTemplate("foo"),
+        GemdProcessSpec("foo",
+                        conditions=[Condition("cond", value=NominalInteger(1))],
+                        parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdProcessRun("foo",
+                       conditions=[Condition("cond", value=NominalInteger(1))],
+                       parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdMeasurementTemplate("foo"),
+        GemdMeasurementSpec("foo",
+                            conditions=[Condition("cond", value=NominalInteger(1))],
+                            parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdMeasurementRun("foo",
+                           properties=[Property("prop", value=NominalInteger(1))],
+                           conditions=[Condition("cond", value=NominalInteger(1))],
+                           parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdIngredientSpec("foo"),
+        GemdIngredientRun(),
+        GemdPropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
+        GemdParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
+        GemdConditionTemplate("bar", bounds=IntegerBounds(0, 1))
     ]
 
     for obj in targets:

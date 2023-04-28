@@ -159,7 +159,7 @@ def test_invalid_template_conversions():
             PropertyTemplate("mixture", bounds=CompositionBounds(components=["sugar", "spice"]))
         )
 
-    class DummyBounds(BaseBounds):
+    class DummyBounds(BaseBounds, typ="dummy_bounds"):
         """Fake bounds to test unrecognized bounds."""
 
         def contains(self, bounds):

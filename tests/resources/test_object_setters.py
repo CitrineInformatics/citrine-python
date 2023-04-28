@@ -53,7 +53,7 @@ def test_object_pointer_serde():
 def test_object_validation():
     """Test that an object pointing to another object is validated."""
     meas = MeasurementRun("A measurement")
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         MaterialRun("A cake", process=meas)
 
 

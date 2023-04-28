@@ -48,14 +48,14 @@ def test_simple_deserialization(valid_data):
     assert process_run.uids == {'id': valid_data['uids']['id'], 'my_id': 'process1-v1'}
     assert process_run.tags == ['baking::cakes', 'danger::low']
     assert process_run.conditions[0] == Condition(name='oven temp',
-                                                         value=NominalReal(203.0, ''),
-                                                         origin='measured')
+                                                  value=NominalReal(203.0, ''),
+                                                  origin='measured')
     assert process_run.parameters == []
     assert process_run.file_links == []
     assert process_run.template is None
     assert process_run.output_material is None
     assert process_run.spec == \
-           ProcessSpec(name="Spec for proc 1",
+           ProcessSpec(name="Spec for proc 1", tags=[],
                        uids={'id': valid_data['spec']['uids']['id']},
                        conditions=[Condition(name='oven temp', value=UniformReal(175, 225, ''),
                                              origin='specified')]

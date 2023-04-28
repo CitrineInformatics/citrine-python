@@ -1,3 +1,5 @@
+import pytest
+
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
@@ -21,3 +23,11 @@ def test_flatten():
 
     flat = flatten(spec, scope='testing')
     assert len(flat) == 3, "Expected 3 flattened objects"
+
+
+def test_mismatch():
+    """Test behavior when we have type mismatch between a dict and target object."""
+    spec = ProcessSpec(name="spec")
+    assert spec == ProcessSpec.build(spec.dump())
+    with pytest.raises(ValueError):
+        ProcessTemplate.build(spec.dump())
