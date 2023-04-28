@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -127,7 +127,7 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         fingerprint_type: FingerprintType,
         min_fingerprint_similarity: float,
         mutation_per_seed: int,
-        structure_exclusions: properties.Optional(List[StructureExclusion]),
+        structure_exclusions: Optional[List[StructureExclusion]],
     ):
         self.seeds: List[str] = seeds
         self.fingerprint_type: FingerprintType = fingerprint_type
