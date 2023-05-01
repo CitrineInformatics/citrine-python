@@ -2,6 +2,7 @@
 from abc import abstractmethod
 import typing
 from datetime import datetime
+from inspect import signature
 from itertools import chain
 import uuid
 import arrow
@@ -39,6 +40,8 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         Include the field when serializing an object to a dictionary; default: True
     deserializable: bool
         Look for the field when deserializing a dictionary into an object; default: True
+    default:  DeserializedType
+        If no value is found in an incoming dictionary, which value to use; default: None
     override: bool
         Use a parent class' accessor methods; default: False
     use_init: bool
@@ -752,9 +755,15 @@ class Object(PropertyCollection[typing.Any, dict]):
             try:
                 instance = self.klass(**{k: v for k, v in values.items() if k in init_props})
             except TypeError as e:
-                if "required" in str(e) and "argument" in str(e):
-                    raise AttributeError(f"{self.klass} has at least 1 property marked as "
-                                         f"`use_init`, but a required argument wasn't: {e}")
+                # Check if it's because the signature was wrong
+                sig = signature(self.klass.__init__)
+                for arg, param in sig.parameters.items():
+                    if arg not in init_props | {'self'}:
+                        if param.default is param.empty:
+                            raise AttributeError(
+                                f"{self.klass} has at least 1 property marked as `use_init`, "
+                                f"but required arguments weren't: {e}"
+                            )
                 else:
                     raise e
         else:

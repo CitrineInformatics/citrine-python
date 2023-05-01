@@ -593,12 +593,14 @@ def test_project_batch_delete(project, session):
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
-    expected_api_error = ApiError(400, "",
-                                  validation_errors=[ValidationError(
-                                      failure_message="fail msg",
-                                      failure_id="identifier.coreid.missing")])
+    expected_api_error = ApiError.build({
+        "code": "400",
+        "message": "",
+        "validation_errors": [{"failure_message": "fail msg", "failure_id": "identifier.coreid.missing"}]
+    })
 
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
 
     # And again with tuples of (scope, id)
     del_resp = project.gemd_batch_delete([LinkByUID('id',
@@ -606,7 +608,8 @@ def test_project_batch_delete(project, session):
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
 
 
 def test_batch_delete_bad_input(project):

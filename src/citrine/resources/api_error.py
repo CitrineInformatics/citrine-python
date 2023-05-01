@@ -1,41 +1,27 @@
-from copy import copy
-from typing import Optional, List
-
-from gemd.entity.dict_serializable import DictSerializable
+from citrine._serialization import properties
+from citrine._serialization.serializable import Serializable
 
 
-class ValidationError(DictSerializable, typ="validation_error"):
+class ValidationError(Serializable["ValidationError"]):
     """A user-facing error message describing why their request was invalid."""
 
-    def __init__(self, failure_message: Optional[str] = None, property: Optional[str] = None,
-                 input: Optional[str] = None, failure_id: Optional[str] = None):
-        self.failure_message = failure_message
-        self.property = property
-        self.input = input
-        self.failure_id = failure_id
+    failure_message = properties.Optional(properties.String(), "failure_message")
+    property = properties.Optional(properties.String(), "property")
+    input = properties.Optional(properties.String(), "input")
+    failure_id = properties.Optional(properties.String(), "failure_id")
 
 
-class ApiError(DictSerializable, typ="api_error"):
+class ApiError(Serializable["ApiError"]):
     """The engineering API root level error model."""
 
-    def __init__(self, code: int, message: str, validation_errors: List[ValidationError] = None):
-        self.code = code
-        self.message = message
-        self.validation_errors = validation_errors or []
+    code = properties.Optional(properties.Integer(), "code")
+    message = properties.Optional(properties.String(), "message")
+    validation_errors = properties.List(properties.Object(ValidationError), "validation_errors")
 
     def has_failure(self, failure_id: str) -> bool:
         """Checks if this error contains a ValidationError with specified failure ID."""
         if not failure_id:
             # Discourage both anonymous errors ('') and confusing has_failure(None)
             # syntax which may imply there is no failure at all.
-            raise ValueError("failure_id cannot be empty: '{}'".format(failure_id))
+            raise ValueError(f"failure_id cannot be empty: '{failure_id}'")
         return any(v.failure_id == failure_id for v in self.validation_errors)
-
-    @classmethod
-    def from_dict(cls, d):
-        """Reconstitute the API error object from a dictionary."""
-        d = copy(d)
-        d.pop('debug_stacktrace', None)
-        d['validation_errors'] = [ValidationError.from_dict(e)
-                                  for e in d.get('validation_errors', [])]
-        return cls(**d)

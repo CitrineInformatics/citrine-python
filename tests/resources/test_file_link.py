@@ -770,7 +770,7 @@ def test_get(collection: FileCollection, session):
     })
     assert collection.get(uid=raw_files[1]['filename'], version=raw_files[1]['version']) == file1
 
-    validation_error = ValidationError(failure_message="file not found", failure_id="failure_id")
+    validation_error = ValidationError.build({"failure_message": "file not found", "failure_id": "failure_id"})
     session.set_response(
         NotFound("path", FakeRequestResponseApiError(400, "Not found", [validation_error]))
     )
@@ -792,7 +792,7 @@ def test_exceptions(collection: FileCollection, session):
     with pytest.raises(ValueError):
         collection.get(uid=uuid4(), version="Words!")
 
-    validation_error = ValidationError(failure_message="file not found", failure_id="failure_id")
+    validation_error = ValidationError.build({"failure_message": "file not found", "failure_id": "failure_id"})
     session.set_response(
         NotFound("path", FakeRequestResponseApiError(400, "Not found", [validation_error]))
     )

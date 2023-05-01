@@ -354,7 +354,7 @@ def test_validate_templates_errors(collection, session):
     run = MaterialRunFactory(name="")
 
     # When
-    validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
+    validation_error = ValidationError.build({"failure_message": "you failed", "failure_id": "failure_id"})
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
     errors = collection.validate_templates(model=run)
 
@@ -365,7 +365,8 @@ def test_validate_templates_errors(collection, session):
         path="projects/{}/material-runs/validate-templates".format(project_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
-    assert errors == [validation_error]
+    assert len(errors) == 1
+    assert errors[0].dump() == validation_error.dump()
 
 
 def test_validate_templates_unrelated_400(collection, session):
