@@ -20,6 +20,10 @@ from tests.utils.session import (
     FakeRequestResponse,
     FakeSession
 )
+from tests.utils.factories import (
+        AsyncDefaultPredictorResponseFactory, AsyncDefaultPredictorResponseMetadataFactory,
+        TableDataSourceDataFactory
+)
 
 
 def paging_response(*items):
@@ -142,11 +146,7 @@ def test_graph_register(valid_graph_predictor_data):
     pred_data = deepcopy(valid_graph_predictor_data)
 
     session = FakeSession()
-    session.set_responses(
-        deepcopy(valid_graph_predictor_data),
-        pred_data,
-        paging_response(pred_data))
-    
+    session.set_responses(deepcopy(valid_graph_predictor_data), pred_data)
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     registered = pc.register(predictor)
@@ -309,7 +309,7 @@ def test_check_update_some():
             }
         ]
     })
-    session.set_responses({"updatable": True, **response}, paging_response(response))
+    session.set_responses({"updatable": True, **response})
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor_id = uuid.uuid4()
 
@@ -337,6 +337,8 @@ def test_unexpected_pattern():
     # Then
     with pytest.raises(ValueError):
         pc.create_default(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
+    with pytest.raises(ValueError):
+        pc.create_default_async(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
 def test_create_default_mode_pattern(valid_graph_predictor_data):
@@ -346,7 +348,7 @@ def test_create_default_mode_pattern(valid_graph_predictor_data):
     session = FakeSession()
     # Setup a response that includes instance instead of config
     response = deepcopy(valid_graph_predictor_data)
-    session.set_responses(response["data"], paging_response(response))
+    session.set_response(response["data"])
 
     pc = PredictorCollection(uuid.uuid4(), session)
 
@@ -366,7 +368,7 @@ def test_returned_predictor(valid_graph_predictor_data):
     # Setup a response that includes instance instead of config
     response = deepcopy(valid_graph_predictor_data)["data"]
 
-    session.set_responses(response, paging_response(response))
+    session.set_responses(response)
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
@@ -662,3 +664,47 @@ def test_unsupported_archive():
 def test_unsupported_restore():
     with pytest.raises(NotImplementedError):
         PredictorCollection(uuid.uuid4(), FakeSession()).restore(uuid.uuid4())
+
+def test_create_default_async():
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+        
+    mode = "PLAIN"
+    prefer_valid = False
+    ds = GemTableDataSource(table_id=uuid.uuid4(), table_version=1)
+    data_source_payload = TableDataSourceDataFactory(table_id=str(ds.table_id), table_version=ds.table_version)
+    expected_payload = {
+        "data_source": data_source_payload,
+        "pattern": mode,
+        "prefer_valid": prefer_valid
+    }
+
+    metadata = AsyncDefaultPredictorResponseMetadataFactory(data_source=data_source_payload)
+    session.set_response(AsyncDefaultPredictorResponseFactory(metadata=metadata, data=None))
+
+    result = pc.create_default_async(training_data=ds, pattern=mode, prefer_valid=prefer_valid)
+
+    assert session.calls == [FakeCall(method="POST", path=f"{predictors_path}/default-async", json=expected_payload)]
+
+
+def test_get_default_async(valid_graph_predictor_data):
+    instance = valid_graph_predictor_data["data"]["instance"]
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    response = AsyncDefaultPredictorResponseFactory()
+    response["data"]["instance"] = instance
+    session.set_response(response)
+
+    # When
+    result = pc.get_default_async(task_id=response["id"])
+
+    # Then the response is parsed in a predictor
+    assert str(result.uid) == response["id"]
+    assert result.status == response["metadata"]["status"]
+    assert result.status_detail == response["metadata"]["status_detail"]
+    assert result.predictor is not None
+    assert result.predictor.predictors
+    assert len(result.predictor.predictors) == len(instance["predictors"])

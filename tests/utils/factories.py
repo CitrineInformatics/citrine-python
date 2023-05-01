@@ -132,7 +132,6 @@ class TableDataSourceDataFactory(factory.DictFactory):
     type = "hosted_table_data_source"
     table_id = factory.Faker("uuid4")
     table_version = randrange(10)
-    formulation_descriptor = None
 
 
 class UserTimestampDataFactory(factory.DictFactory):
@@ -174,6 +173,27 @@ class PredictorEntityDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     data = factory.SubFactory(PredictorDataDataFactory)
     metadata = factory.SubFactory(PredictorMetadataDataFactory)
+
+
+class AsyncDefaultPredictorResponseMetadataFactory(factory.DictFactory):
+    data_source = factory.SubFactory(TableDataSourceDataFactory)
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+    status = "INPROGRESS"
+    status_detail = []
+
+
+class AsyncDefaultPredictorResponseDataFactory(factory.DictFactory):
+    name = factory.LazyAttribute(lambda data: data.instance["name"])
+    description = factory.LazyAttribute(lambda data: data.instance["description"])
+    instance = factory.SubFactory(PredictorInstanceDataFactory)
+    output = []
+
+
+class AsyncDefaultPredictorResponseFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    metadata = factory.SubFactory(AsyncDefaultPredictorResponseMetadataFactory)
+    data = factory.SubFactory(AsyncDefaultPredictorResponseDataFactory)
 
 
 class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
