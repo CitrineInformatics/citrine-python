@@ -1,5 +1,6 @@
 """Tests of the Material Run schema."""
 import json
+from typing import Optional, Iterable
 
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
@@ -145,14 +146,14 @@ def test_measurement_material_connection_rehydration():
 
 
 def test_cake():
-    """Test that the cake example from gemd can be built without modification.
-    This only tests the fix to a limited problem (not all ingredients being reconstructed) and
-    is not a full test of equivalence, because the reconstruction creates "dangling paths."
-    Consider a material/process run/spec square. The material run links to a material spec, which
-    links to a process spec. The material run also links to a process run that links to a process
-    spec, but it's a different process spec, and is not linked to the material spec. If you try
-    to call mat.process.spec.output_material it returns None. This is due to the way the build()
-    method attempts to traverse the object tree, and requires an overhaul of build().
+    """
+    Test that the cake example from gemd can be built without modification.
+
+    This example has complex interconnections and fully exercises the data model.
+    We want to test if when such a material history is serialized and deserialized,
+    all relevant logical relationships are restored -- that objects that appear
+    in different parts of the material history are literally identical and not
+    just copies.
     """
     gemd_cake = make_cake()
     cake = MaterialRun.build(json.loads(GEMDJson().dumps(gemd_cake)))
@@ -160,33 +161,19 @@ def test_cake():
            [ingred.name for ingred in gemd_cake.process.ingredients]
     assert [ingred.labels for ingred in cake.process.ingredients] == \
            [ingred.labels for ingred in gemd_cake.process.ingredients]
-    gemd_queue = []
-    citr_queue = []
-    queue = [gemd_cake]
-    while queue:
-        this = queue.pop(0)
-        gemd_queue.append(this)
-        queue.extend([i.material for i in this.process.ingredients])
-    queue = [cake]
-    while queue:
-        this = queue.pop(0)
-        citr_queue.append(this)
-        queue.extend([i.material for i in this.process.ingredients])
-    while gemd_queue:
-        left = gemd_queue.pop()
-        right = citr_queue.pop()
-        if left.process != right.process:
-            dct1 = left.process._dict_for_compare()
-            dct2 = right.process._dict_for_compare()
-            for k in dct1:
-                if dct1[k] != dct2[k]:
-                    print(k)
-            blah = dct1["ingredients"][0]._dict_for_compare()
-            labh = dct2["ingredients"][0]._dict_for_compare()
-            assert left.process == right.process
-        if left != right:
-            print(left.name)
-            print(left)
-            print(right)
-            break
     assert gemd_cake == cake
+
+    def _by_name(start: MaterialRun, names: Iterable[str]) -> Optional[MaterialRun]:
+        if isinstance(names, str):
+            names = [names]
+        while names:
+            target = names.pop(0)
+            start = next((i.material for i in start.process.ingredients if i.name == target), None)
+            if start is None:
+                return None
+        return start
+
+    by_cake = _by_name(cake, ["baked cake", "batter", "wet ingredients", "butter"])
+    by_frosting = _by_name(cake, ["frosting", "butter"])
+    assert by_cake is by_frosting  # Same literal object
+    assert _by_name(gemd_cake, ["frosting", "butter"]) is not by_frosting  # Same literal object

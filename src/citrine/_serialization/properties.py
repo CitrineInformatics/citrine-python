@@ -232,7 +232,7 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
         """
 
 
-@lru_cache(maxsize=1024 * 1024)
+@lru_cache(maxsize=1024)
 def _get_key_and_base_class(prop: Property, klass: typing.Any) -> \
         typing.Tuple[typing.Optional[str], typing.Optional[str]]:
     """
@@ -689,7 +689,7 @@ class Enumeration(Property[BaseEnumeration, str]):
         return self.klass.get_value(value)
 
 
-@lru_cache(maxsize=1024 * 1024)
+@lru_cache(maxsize=1024)
 def _fields_map(klass: typing.Type) -> typing.Dict[str, Property]:
     """Compute the properties-relevant fields in a given class."""
     return {
