@@ -873,6 +873,7 @@ class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]
             try:
                 return target.build(value)
             except TypeError as e:
+                # TODO: Consider migrating this ValueError to a TypeError for 3
                 match = re.search(r"__init__.* missing (\d+) required \w+ arguments: (.+)", str(e))
                 if match:
                     raise ValueError(
