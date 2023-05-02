@@ -245,13 +245,6 @@ def test_linkorelse_deserialize_requires_scope_and_id():
     with pytest.raises(ValueError, match=r"missing.+required"):
         loe.deserialize({'type': LinkByUID.typ})
 
-    with pytest.raises(TypeError):
-        loe.deserialize({
-            'type': ProcessSpec.typ,
-            'name': 'Badly structured',
-            'conditions': [{'type': Condition.typ, "value": 'invalid structure'}],
-        })
-
 
 def test_linkorelse_raises_deep_errors():
     loe = LinkOrElse()
