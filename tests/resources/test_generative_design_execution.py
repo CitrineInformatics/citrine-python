@@ -4,7 +4,7 @@ import uuid
 from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
-from citrine.informatics.generative_design import FingerprintType
+from citrine.informatics.generative_design import FingerprintType, StructureExclusion
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -55,7 +55,8 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
         seeds=["CC(O)=O"],
         fingerprint_type=FingerprintType.ECFP4,
         min_fingerprint_similarity=0.5,
-        mutation_per_seed=2
+        mutation_per_seed=2,
+        structure_exclusions=[StructureExclusion.BROMINE, StructureExclusion.IODINE],
     )
 
     # When
@@ -73,7 +74,10 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
             'seeds': design_execuption_input.seeds,
             'fingerprint_type': design_execuption_input.fingerprint_type.value,
             'min_fingerprint_similarity': design_execuption_input.min_fingerprint_similarity,
-            'mutation_per_seed': design_execuption_input.mutation_per_seed
+            'mutation_per_seed': design_execuption_input.mutation_per_seed,
+            'structure_exclusions': [
+                exclusion.value for exclusion in design_execuption_input.structure_exclusions
+            ],
         }
     )
 
