@@ -286,3 +286,47 @@ def test_get_none():
         dsc.get(uid=None)
 
     assert "uid=None" in str(excinfo.value)
+
+
+def test_register_dehydrated_design_spaces_deprecated(valid_product_design_space_data, valid_product_design_space):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+
+    subspace_data = valid_product_design_space_data["config"]["subspaces"][0]
+    subspace_data["config"] = subspace_data["instance"]
+    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
+    ds.subspaces[0] = subspace_data["id"]
+
+    session.set_responses(subspace_data, valid_product_design_space_data)
+    
+    with pytest.deprecated_call():
+        retval = dsc.register(ds)
+
+    base_path = f"/projects/{dsc.project_id}/modules"
+    assert session.calls == [
+        FakeCall(method='GET', path=f"{base_path}/{subspace_data['id']}"),
+        FakeCall(method='POST', path=base_path, json=valid_product_design_space.dump())
+    ]
+    assert retval.dump() == valid_product_design_space.dump()
+
+
+def test_update_dehydrated_design_spaces_deprecated(valid_product_design_space_data, valid_product_design_space):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+
+    subspace_data = valid_product_design_space_data["config"]["subspaces"][0]
+    subspace_data["config"] = subspace_data["instance"]
+    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
+    ds.subspaces[0] = subspace_data["id"]
+
+    session.set_responses(subspace_data, valid_product_design_space_data)
+    
+    with pytest.deprecated_call():
+        retval = dsc.update(ds)
+
+    base_path = f"/projects/{dsc.project_id}/modules"
+    assert session.calls == [
+        FakeCall(method='GET', path=f"{base_path}/{subspace_data['id']}"),
+        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}", json=valid_product_design_space.dump())
+    ]
+    assert retval.dump() == valid_product_design_space.dump()

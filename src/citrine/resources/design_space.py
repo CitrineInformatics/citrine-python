@@ -1,5 +1,6 @@
 """Resources that represent collections of design spaces."""
-from typing import Optional, TypeVar, Union
+import warnings
+from typing import List, Optional, TypeVar, Union
 from uuid import UUID
 
 from citrine._session import Session
@@ -54,15 +55,33 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                 raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
         return
 
+    def _hydrate_design_space(self, model: DesignSpace) -> List[DesignSpace]:
+        if model.typ != "ProductDesignSpace":
+            return model
+
+        subspaces = []
+        for subspace in model.subspaces:
+            if isinstance(subspace, (str, UUID)):
+                warnings.warn("Support for UUIDs in subspaces is deprecated as of 2.16.0, and "
+                              "will be dropped in 3.0. Please use DesignSpace objects instead.",
+                              DeprecationWarning)
+                subspaces.append(self.get(subspace))
+            else:
+                subspaces.append(subspace)
+        model.subspaces = subspaces
+        return model
+
     def register(self, model: DesignSpace) -> DesignSpace:
         """Create a new design space."""
         self._validate_write_request(model)
-        return AbstractModuleCollection.register(self, model)
+        hydrated_model = self._hydrate_design_space(model)
+        return AbstractModuleCollection.register(self, hydrated_model)
 
     def update(self, model: DesignSpace) -> DesignSpace:
         """Update an existing design space by uid."""
         self._validate_write_request(model)
-        return AbstractModuleCollection.update(self, model)
+        hydrated_model = self._hydrate_design_space(model)
+        return AbstractModuleCollection.update(self, hydrated_model)
 
     def create_default(self,
                        *,
