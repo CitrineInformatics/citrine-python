@@ -14,7 +14,7 @@ from boto3 import client as boto3_client
 from boto3.session import Config
 from botocore.exceptions import ClientError
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
@@ -23,6 +23,7 @@ from citrine._utils.functions import write_file_locally, format_escaped_url
 
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
+from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -99,7 +100,7 @@ class CsvValidationData(FileProcessingData, Serializable):
     """The resulting data from the processed CSV file."""
 
     columns = properties.Optional(properties.List(properties.Object(CsvColumnInfo)),
-                                  'columns', override=True)
+                                  'columns')
     """:Optional[List[CsvColumnInfo]]: all of the columns in the CSV"""
     record_count = properties.Integer('record_count')
     """:int: the number of rows in the CSV"""
@@ -117,13 +118,27 @@ class FileProcessingResult:
     The type of the actual data depends on the specific processing type.
     """
 
-    def __init__(self, processing_type: FileProcessingType, data: Union[Dict,
-                                                                        FileProcessingData]):
+    def __init__(self,
+                 processing_type: FileProcessingType,
+                 data: Union[Dict, FileProcessingData]):
         self.processing_type = processing_type
         self.data = data
 
 
-class FileLink(Resource['FileLink'], GEMDFileLink):
+class FileLinkMeta(DictSerializableMeta):
+    """Metaclass for FileLink deserialization."""
+
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cls.typ = properties.String('type', default="file_link", deserializable=False)
+
+
+class FileLink(
+    GEMDResource['FileLink'],
+    GEMDFileLink,
+    metaclass=FileLinkMeta,
+    typ=GEMDFileLink.typ
+):
     """
     Resource that stores the name and url of an external file.
 
@@ -139,8 +154,8 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
     # NOTE: skipping the "metadata" field since it appears to be unused
     # NOTE: skipping the "versioned_url" field since it is redundant
     # NOTE: skipping the "unversioned_url" field since it is redundant
-    filename = properties.String('filename', override=True)
-    url = properties.String('url', override=True)
+    filename = properties.String('filename')
+    url = properties.String('url')
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     version = properties.Optional(properties.UUID, 'version', serializable=False)
     created_time = properties.Optional(properties.Datetime, 'created_time', serializable=False)
@@ -149,11 +164,10 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
     size = properties.Optional(properties.Integer, 'size', serializable=False)
     description = properties.Optional(properties.String, 'description', serializable=False)
     version_number = properties.Optional(properties.Integer, 'version_number', serializable=False)
-    typ = properties.String('type', default="file_link", deserializable=False)
 
     def __init__(self, filename: str, url: str):
         GEMDFileLink.__init__(self, filename, url)
-        self.typ = GEMDFileLink.typ
+        self.typ = FileLink.typ
 
     @property
     def name(self):
@@ -162,10 +176,6 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
 
     def __str__(self):
         return f'<File link {self.filename!r}>'
-
-    def as_dict(self) -> dict:
-        """Dump to a dictionary (useful for interoperability with gemd)."""
-        return self.dump()
 
 
 class FileCollection(Collection[FileLink]):

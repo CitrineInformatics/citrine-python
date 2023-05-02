@@ -1,17 +1,18 @@
 """Resources that represent parameter templates."""
 from typing import List, Dict, Optional, Type
 
-from citrine._rest.resource import Resource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object
+from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
-from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.parameter_template import ParameterTemplate as GEMDParameterTemplate
 
 
-class ParameterTemplate(AttributeTemplate, Resource['ParameterTemplate'], GEMDParameterTemplate):
+class ParameterTemplate(
+    GEMDResource['ParameterTemplate'],
+    AttributeTemplate,
+    GEMDParameterTemplate,
+    typ=GEMDParameterTemplate.typ
+):
     """
     A parameter template.
 
@@ -36,13 +37,6 @@ class ParameterTemplate(AttributeTemplate, Resource['ParameterTemplate'], GEMDPa
 
     _response_key = GEMDParameterTemplate.typ  # 'parameter_template'
 
-    name = String('name', override=True)
-    description = PropertyOptional(String(), 'description', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    bounds = Object(BaseBounds, 'bounds', override=True)
-    typ = String('type')
-
     def __init__(self,
                  name: str,
                  *,
@@ -52,7 +46,7 @@ class ParameterTemplate(AttributeTemplate, Resource['ParameterTemplate'], GEMDPa
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDParameterTemplate.typ)
+        super(AttributeTemplate, self).__init__()
         GEMDParameterTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                        uids=uids, description=description)
 

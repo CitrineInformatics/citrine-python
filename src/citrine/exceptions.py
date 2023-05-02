@@ -54,7 +54,7 @@ class NonRetryableHttpException(NonRetryableException):
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
                     from citrine.resources.api_error import ApiError
-                    self.api_error = ApiError.from_dict(resp_json)
+                    self.api_error = ApiError.build(resp_json)
 
                     validation_error_msgs = [
                         "{} ({})".format(f.failure_message, f.failure_id)

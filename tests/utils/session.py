@@ -217,7 +217,7 @@ class FakeRequestResponseApiError:
                  reason: str = 'BadRequest'):
         self.api_error_json = {"code": code,
                                "message": message,
-                               "validation_errors": [ve.as_dict() for ve in validation_errors]}
+                               "validation_errors": [ve.dump() for ve in validation_errors]}
         self.text = message
         self.status_code = code
         self.reason = reason

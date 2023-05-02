@@ -1,4 +1,4 @@
-gemd==1.11.1
+gemd==1.13.0
 requests==2.25.1
 pyjwt==2.4.0
 arrow==0.15.4

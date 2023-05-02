@@ -1,22 +1,28 @@
 """Resources that represent process templates."""
 from typing import List, Dict, Optional, Union, Sequence, Type
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import Union as PropertyUnion
-from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
+from citrine._serialization.properties import String, Object, SpecifiedMixedList, \
     LinkOrElse
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
+from gemd.entity.template.condition_template import ConditionTemplate as GEMDConditionTemplate
+from gemd.entity.template.parameter_template import ParameterTemplate as GEMDParameterTemplate
 
 
-class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTemplate):
+class ProcessTemplate(
+    GEMDResource['ProcessTemplate'],
+    ObjectTemplate,
+    GEMDProcessTemplate,
+    typ=GEMDProcessTemplate.typ
+):
     """
     A process template.
 
@@ -53,17 +59,28 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
 
     _response_key = GEMDProcessTemplate.typ  # 'process_template'
 
-    name = String('name', override=True)
-    description = PropertyOptional(String(), 'description', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    conditions = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'parameters', override=True)
+    conditions = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDConditionTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ),
+        'conditions',
+        override=True
+    )
+    parameters = PropertyOptional(
+        PropertyList(
+            PropertyUnion([LinkOrElse(GEMDParameterTemplate),
+                           SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
+                                               PropertyOptional(Object(BaseBounds))])]
+                          )
+        ),
+        'parameters',
+        override=True
+    )
     allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels', override=True)
     allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names', override=True)
-    typ = String('type')
 
     def __init__(self,
                  name: str,
@@ -85,7 +102,7 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDProcessTemplate.typ)
+        super(ObjectTemplate, self).__init__()
         GEMDProcessTemplate.__init__(self, name=name, uids=uids,
                                      conditions=conditions, parameters=parameters, tags=tags,
                                      description=description, allowed_labels=allowed_labels,

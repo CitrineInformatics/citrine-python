@@ -27,6 +27,7 @@ def valid_data():
         conditions=[],
         template={
             'name': 'the template',
+            'tags': [],
             'uids': {'id': str(uuid4())},
             'type': 'process_template',
             'conditions': [],
@@ -35,9 +36,10 @@ def valid_data():
                     {
                         'type': 'parameter_template',
                         'name': 'oven temp template',
+                        'tags': [],
                         'bounds': {'type': 'real_bounds', 'lower_bound': 175, 'upper_bound': 225, 'default_units': 'dimensionless'},
                         'uids': {'id': str(uuid4())},
-                        'description': None, 'tags': []
+                        'description': None,
                     },
                     {
                         'type': 'real_bounds',
@@ -48,7 +50,6 @@ def valid_data():
             'allowed_labels': ['a', 'b'],
             'allowed_names': ['a name'],
             'description': 'a long description',
-            'tags': []
         },
         file_links=[{'type': 'file_link', 'filename': 'cake_recipe.txt', 'url': 'www.baking.com'}],
         audit_info={'created_by': str(uuid4()), 'created_at': 1559933807392},
@@ -62,13 +63,14 @@ def test_simple_deserialization(valid_data):
     assert process_spec.uids == {'id': valid_data['uids']['id']}
     assert process_spec.tags == ['baking::cakes', 'danger::low']
     assert process_spec.parameters[0] == Parameter(name='oven temp',
-                                                          value=UniformReal(195, 205, ''),
-                                                          origin='specified')
+                                                   value=UniformReal(195, 205, ''),
+                                                   origin='specified')
     assert process_spec.conditions == []
     assert process_spec.template == \
-           ProcessTemplate('the template', uids={'id': valid_data['template']['uids']['id']},
+           ProcessTemplate('the template', tags=[],
+                           uids={'id': valid_data['template']['uids']['id']},
                            parameters=[
-                               [ParameterTemplate('oven temp template',
+                               [ParameterTemplate('oven temp template', tags=[],
                                                   bounds=RealBounds(175, 225, ''),
                                                   uids={'id': valid_data['template']['parameters'][0][0]['uids']['id']}),
                                 RealBounds(175, 225, '')]
@@ -87,7 +89,6 @@ def test_serialization(valid_data):
     """Ensure that a serialized Process Run looks sane."""
     process_spec: ProcessSpec = ProcessSpec.build(valid_data)
     serialized = process_spec.dump()
-    # Null subelements of audit info are not excluded from serialization (though they should be)
-    serialized['audit_info'].pop('updated_by')
-    serialized['audit_info'].pop('updated_at')
+    # Audit info & dataset are not included in the dump
+    serialized['audit_info'] = valid_data['audit_info']
     assert serialized == valid_data

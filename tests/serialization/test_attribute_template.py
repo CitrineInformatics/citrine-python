@@ -1,4 +1,6 @@
 """Tests of the attribute template schema."""
+import pytest
+import logging
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate
@@ -11,11 +13,12 @@ from gemd.json import loads, dumps
 def test_condition_template():
     """Test creation and serde of condition templates."""
     bounds = RealBounds(2.5, 10.0, default_units='cm')
-    template = ConditionTemplate("Chamber width", bounds=bounds, description="width of chamber")
+    template = ConditionTemplate("Chamber width", tags=[], bounds=bounds, description="width of chamber")
     assert template.uids is not None  # uids should be added automatically
 
     # Take template through a serde cycle and ensure that it is unchanged
     assert ConditionTemplate.build(template.dump()) == template
+
     # A more complicated cycle that goes through both gemd-python and citrine-python serde.
     assert ConditionTemplate.build(loads(dumps(template.dump())).as_dict()) == template
 

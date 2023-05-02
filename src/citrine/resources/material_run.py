@@ -1,16 +1,12 @@
 """Resources that represent material run data objects."""
-import json
-import os
-from logging import getLogger
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
-from citrine._serialization.properties import List as PropertyList
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._serialization.properties import String, LinkOrElse
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
+from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
@@ -19,13 +15,14 @@ from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
-from gemd.json import GEMDEncoder
-from gemd.util import writable_sort_order
-
-logger = getLogger(__name__)
 
 
-class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
+class MaterialRun(
+    GEMDResource['MaterialRun'],
+    ObjectRun,
+    GEMDMaterialRun,
+    typ=GEMDMaterialRun.typ
+):
     """
     A material run.
 
@@ -63,15 +60,16 @@ class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
 
     _response_key = GEMDMaterialRun.typ  # 'material_run'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
-    process = PropertyOptional(LinkOrElse(), 'process', override=True)
-    sample_type = String('sample_type', override=True)
-    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
-    typ = String('type')
+    name = String('name', override=True, use_init=True)
+    process = PropertyOptional(LinkOrElse(GEMDProcessRun),
+                               'process',
+                               override=True,
+                               use_init=True,)
+    sample_type = PropertyOptional(String, 'sample_type', override=True)
+    spec = PropertyOptional(LinkOrElse(GEMDMaterialSpec),
+                            'spec',
+                            override=True,
+                            use_init=True,)
 
     def __init__(self,
                  name: str,
@@ -85,7 +83,7 @@ class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDMaterialRun.typ)
+        super(ObjectRun, self).__init__()
         GEMDMaterialRun.__init__(self, name=name, uids=uids,
                                  tags=tags, process=process,
                                  sample_type=sample_type, spec=spec,
@@ -109,7 +107,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
+    def get_history(self, id: Union[str, UUID, LinkByUID, MaterialRun]) -> MaterialRun:
         """
         Get the history associated with a terminal material.
 
@@ -131,24 +129,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         link = _make_link_by_uid(id)
-        base_path = os.path.dirname(self._get_path(ignore_dataset=True))
-        path = base_path + format_escaped_url("/material-history/{}/{}", link.scope, link.id)
+        path = format_escaped_url("projects/{}/material-history/{}/{}",
+                                  self.project_id,
+                                  link.scope,
+                                  link.id
+                                  )
         data = self.session.get_resource(path)
 
-        # Add the root to the context and sort by writable order
-        blob = dict()
-        blob["context"] = sorted(
-            data['context'] + [data['root']],
-            key=lambda x: writable_sort_order(x["type"])
-        )
-        terminal_scope, terminal_id = next(iter(data['root']['uids'].items()))
-        # Add a link to the root as the "object"
-        blob["object"] = LinkByUID(scope=terminal_scope, id=terminal_id)
-
-        # Serialize using normal json (with the GEMDEncoder) and then deserialize with the
-        # GEMDEncoder encoder in order to rebuild the material history
-        return MaterialRun.get_json_support().loads(
-            json.dumps(blob, cls=GEMDEncoder, sort_keys=True))
+        return MaterialRun.build(data)
 
     def get_by_process(self,
                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
@@ -167,9 +155,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        link = _make_link_by_uid(uid)
         return next(
-            self._get_relation(relation='process-runs', uid=link, per_page=1),
+            self._get_relation(relation='process-runs', uid=uid, per_page=1),
             None
         )
 
@@ -190,8 +177,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The material runs using the specified material spec.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation('material-specs', uid=link)
+        return self._get_relation('material-specs', uid=uid)
 
     def list_by_template(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
