@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.api_error module &mdash; Citrine Python 2.15.0 documentation</title>
+  <title>citrine.resources.api_error module &mdash; Citrine Python 2.17.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.15.0
+                2.17.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -79,61 +79,19 @@
 <span id="citrine-resources-api-error-module"></span><h1>citrine.resources.api_error module<a class="headerlink" href="#module-citrine.resources.api_error" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ApiError">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.api_error.</span></span><span class="sig-name descname"><span class="pre">ApiError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.api_error.ValidationError" title="citrine.resources.api_error.ValidationError"><span class="pre">citrine.resources.api_error.ValidationError</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ApiError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.api_error.</span></span><span class="sig-name descname"><span class="pre">ApiError</span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiError</span></code></a>]</p>
 <p>The engineering API root level error model.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError.as_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Convert the object to a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A dictionary representation of the object, where the keys are its fields.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.build">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></a></span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError.build" title="Permalink to this definition"></a></dt>
-<dd><p>Build an object from a JSON dictionary.</p>
-<p>This differs from <cite>from_dict</cite> in that the values themselves may <em>also</em> be dictionaries
-corresponding to serialized DictSerializable objects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – The object as a serialized dictionary.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The deserialized object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DictSerializable</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError.dump" title="Permalink to this definition"></a></dt>
-<dd><p>Convert the object to a JSON dictionary, so that every entry is serialized.</p>
-<p>Uses the json encoder client, so objects with uids are converted to LinkByUID dictionaries.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A string representation of the object as a dictionary.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ApiError.from_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Reconstitute the API error object from a dictionary.</p>
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.api_error.ApiError.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -143,95 +101,57 @@ corresponding to serialized DictSerializable objects.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.skip">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.api_error.ApiError.skip" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ApiError.code" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.typ">
-<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#citrine.resources.api_error.ApiError.typ" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ApiError.message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.api_error.ApiError.validation_errors">
+<span class="sig-name descname"><span class="pre">validation_errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ApiError.validation_errors" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.api_error.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failure_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ValidationError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.api_error.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.resources.api_error.ValidationError" title="citrine.resources.api_error.ValidationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValidationError</span></code></a>]</p>
 <p>A user-facing error message describing why their request was invalid.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.as_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Convert the object to a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A dictionary representation of the object, where the keys are its fields.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.build">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></a></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.build" title="Permalink to this definition"></a></dt>
-<dd><p>Build an object from a JSON dictionary.</p>
-<p>This differs from <cite>from_dict</cite> in that the values themselves may <em>also</em> be dictionaries
-corresponding to serialized DictSerializable objects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – The object as a serialized dictionary.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The deserialized object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DictSerializable</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.dump" title="Permalink to this definition"></a></dt>
-<dd><p>Convert the object to a JSON dictionary, so that every entry is serialized.</p>
-<p>Uses the json encoder client, so objects with uids are converted to LinkByUID dictionaries.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A string representation of the object as a dictionary.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></a></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.from_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Reconstitute the object from a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – The object as a dictionary of key-value pairs that correspond to the object’s fields.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The deserialized object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DictSerializable</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.api_error.ValidationError.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.skip">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.skip" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.failure_id">
+<span class="sig-name descname"><span class="pre">failure_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.failure_id" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.typ">
-<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.typ" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.failure_message">
+<span class="sig-name descname"><span class="pre">failure_message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.failure_message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.input">
+<span class="sig-name descname"><span class="pre">input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.api_error.ValidationError.property">
+<span class="sig-name descname"><span class="pre">property</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.api_error.ValidationError.property" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

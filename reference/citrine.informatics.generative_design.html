@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.generative_design module &mdash; Citrine Python 2.15.0 documentation</title>
+  <title>citrine.informatics.generative_design module &mdash; Citrine Python 2.17.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.15.0
+                2.17.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -136,7 +136,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">GenerativeDesignInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fingerprint_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><span class="pre">citrine.informatics.generative_design.FingerprintType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_fingerprint_similarity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation_per_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">GenerativeDesignInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fingerprint_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><span class="pre">citrine.informatics.generative_design.FingerprintType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_fingerprint_similarity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation_per_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_exclusions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.generative_design.StructureExclusion" title="citrine.informatics.generative_design.StructureExclusion"><span class="pre">citrine.informatics.generative_design.StructureExclusion</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.generative_design.GenerativeDesignInput" title="citrine.informatics.generative_design.GenerativeDesignInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignInput</span></code></a>]</p>
 <p>A Citrine Generative Design Execution Input.</p>
 <dl class="field-list simple">
@@ -148,6 +148,8 @@
 <li><p><strong>mutation_per_seed</strong> (<em>int</em>) – The number of initial mutations that will be attempted per seed.
 IMPORTANT, the total number of molecules generated will likely be lower than this value.
 Some mutations may be duplicates or may not meet the fingerprint similarity threshold.</p></li>
+<li><p><strong>structure_exclusions</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.informatics.generative_design.StructureExclusion" title="citrine.informatics.generative_design.StructureExclusion"><em>StructureExclusion</em></a><em>]</em>) – The structure exclusions used to limit molecule mutations.
+If None, no structure exclusions will be used.</p></li>
 </ul>
 </dd>
 </dl>
@@ -181,6 +183,11 @@ Some mutations may be duplicates or may not meet the fingerprint similarity thre
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.seeds">
 <span class="sig-name descname"><span class="pre">seeds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.seeds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignInput.structure_exclusions">
+<span class="sig-name descname"><span class="pre">structure_exclusions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.generative_design.StructureExclusion" title="citrine.informatics.generative_design.StructureExclusion"><span class="pre">citrine.informatics.generative_design.StructureExclusion</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignInput.structure_exclusions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -235,6 +242,99 @@ Some mutations may be duplicates or may not meet the fingerprint similarity thre
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.generative_design.GenerativeDesignResult.uid">
 <span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.generative_design.GenerativeDesignResult.uid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.generative_design.</span></span><span class="sig-name descname"><span class="pre">StructureExclusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] Structure exclusion type used in Generative Design.</p>
+<ul class="simple">
+<li><p><cite>DOUBLE_BONDS</cite> excludes mutation steps that add double bonds.</p></li>
+<li><p><cite>TRIPLE_BONDS</cite> excludes mutation steps that add triple bonds.</p></li>
+<li><p><cite>ANIONS</cite> excludes mutation steps that add anions.</p></li>
+<li><p><cite>CATIONS</cite> excludes mutation steps that add cations.</p></li>
+<li><p><cite>IONS</cite> excludes mutation steps that add anions and cations.</p></li>
+<li><p><cite>BORON</cite> excludes mutation steps that add boron atoms.</p></li>
+<li><p><cite>PHOSPHORUS</cite> excludes mutation steps that add phosphorus atoms.</p></li>
+<li><p><cite>SULFUR</cite> excludes mutation steps that add sulfur atoms.</p></li>
+<li><p><cite>NITROGEN</cite> excludes mutation steps that add nitrogen atoms.</p></li>
+<li><p><cite>OXYGEN</cite> excludes mutation steps that add oxygen atoms.</p></li>
+<li><p><cite>FLUORINE</cite> excludes mutation steps that add fluorine atoms.</p></li>
+<li><p><cite>BROMINE</cite> excludes mutation steps that add bromine atoms.</p></li>
+<li><p><cite>IODINE</cite> excludes mutation steps that add iodine atoms.</p></li>
+<li><p><cite>CHLORINE</cite> excludes mutation steps that add chlorine atoms.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.ANIONS">
+<span class="sig-name descname"><span class="pre">ANIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ANIONS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.ANIONS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.BORON">
+<span class="sig-name descname"><span class="pre">BORON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BORON'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.BORON" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.BROMINE">
+<span class="sig-name descname"><span class="pre">BROMINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BROMINE'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.BROMINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.CATIONS">
+<span class="sig-name descname"><span class="pre">CATIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CATIONS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.CATIONS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.CHLORINE">
+<span class="sig-name descname"><span class="pre">CHLORINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CHLORINE'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.CHLORINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.DOUBLE_BONDS">
+<span class="sig-name descname"><span class="pre">DOUBLE_BONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DOUBLE_BONDS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.DOUBLE_BONDS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.FLUORINE">
+<span class="sig-name descname"><span class="pre">FLUORINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FLUORINE'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.FLUORINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.IODINE">
+<span class="sig-name descname"><span class="pre">IODINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'IODINE'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.IODINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.IONS">
+<span class="sig-name descname"><span class="pre">IONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'IONS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.IONS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.NITROGEN">
+<span class="sig-name descname"><span class="pre">NITROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NITROGEN'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.NITROGEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.OXYGEN">
+<span class="sig-name descname"><span class="pre">OXYGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'OXYGEN'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.OXYGEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.PHOSPHORUS">
+<span class="sig-name descname"><span class="pre">PHOSPHORUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PHOSPHORUS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.PHOSPHORUS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.SULFUR">
+<span class="sig-name descname"><span class="pre">SULFUR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SULFUR'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.SULFUR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.generative_design.StructureExclusion.TRIPLE_BONDS">
+<span class="sig-name descname"><span class="pre">TRIPLE_BONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TRIPLE_BONDS'</span></em><a class="headerlink" href="#citrine.informatics.generative_design.StructureExclusion.TRIPLE_BONDS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

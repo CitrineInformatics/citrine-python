@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.property_template module &mdash; Citrine Python 2.15.0 documentation</title>
+  <title>citrine.resources.property_template module &mdash; Citrine Python 2.17.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.15.0
+                2.17.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -81,7 +81,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.property_template.</span></span><span class="sig-name descname"><span class="pre">PropertyTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><span class="pre">gemd.entity.bounds.base_bounds.BaseBounds</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">uids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.resources.property_template.PropertyTemplate" title="citrine.resources.property_template.PropertyTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyTemplate</span></code></a>], <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.property_template.html#gemd.entity.template.property_template.PropertyTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.template.property_template.PropertyTemplate</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.GEMDResource</span></code>[<a class="reference internal" href="#citrine.resources.property_template.PropertyTemplate" title="citrine.resources.property_template.PropertyTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyTemplate</span></code></a>], <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplate</span></code></a>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.property_template.html#gemd.entity.template.property_template.PropertyTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.template.property_template.PropertyTemplate</span></code></a></p>
 <p>A property template.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -127,49 +127,36 @@ for filtering and discoverability.</p></li>
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.as_dict">
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.as_dict" title="Permalink to this definition"></a></dt>
 <dd><p>Dump to a dictionary (useful for interoperability with gemd).</p>
-<p>Note that something in the serialization stack changes the result df __dict__ dramatically
+<p>Because of the _key mapping in Property, __dict__’s keys are fundamentally different
 between gemd.entity.dict_serializable and this class.  This means we can’t just use gemd’s
-as_dict, and so we’ll trust citrine._serialization.properties to get us the list.</p>
+as_dict for comparisons.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.build" title="Permalink to this definition"></a></dt>
-<dd><p>Build a data concepts object from a dictionary or from a GEMD object.</p>
-<p>This is an internal method, and should not be called directly by users.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A representation of the object. It must be possible to put this dictionary through
-the loads/dumps cycle of the GMED
-<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.json.html#module-gemd.json" title="(in GEMD-python)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">JSON</span> <span class="pre">encoder</span></code></a>. The ensuing dictionary must
-have a <cite>type</cite> field that corresponds to the response key of this class or of
-<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An object corresponding to a data concepts resource.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
-</dd>
-</dl>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._rest.resource.GEMDSelf</span></span></span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.build" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a raw, nested dictionary into Objects.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.dump">
 <span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.dump" title="Permalink to this definition"></a></dt>
-<dd><p>Overload dump to include the client-specific fields.</p>
+<dd><p>Dump this instance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.from_dict" title="Permalink to this definition"></a></dt>
-<dd><p>Build a data concepts object from a dictionary.</p>
-<p>This is an internal method, and should not be called directly by users.  First,
-it removes client_specific_fields from d, if present, and then calls the gemd
-object’s from_dict method.  Finally, it adds those fields back.</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">gemd.entity.dict_serializable.DictSerializableType</span></span></span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.from_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Reconstitute the object from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – A representation of the object that will be shallowly loaded into the object.</p>
+<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – The object as a dictionary of key-value pairs that correspond to the object’s fields.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The deserialized object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DictSerializable</p>
 </dd>
 </dl>
 </dd></dl>
@@ -192,12 +179,6 @@ This method will also work if data is a deserialized GEMD object.</p>
 <dd class="field-odd"><p>collection</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.get_json_support">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_json_support</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.get_json_support" title="Permalink to this definition"></a></dt>
-<dd><p>Get a DataConcepts-compatible json serializer/deserializer.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -247,33 +228,6 @@ This method will also work if data is a deserialized GEMD object.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.bounds">
-<span class="sig-name descname"><span class="pre">bounds</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.bounds" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.class_dict">
-<span class="sig-name descname"><span class="pre">class_dict</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.class_dict" title="Permalink to this definition"></a></dt>
-<dd><p>dictionary from the type key to the class for every class     that extends DataConcepts.</p>
-<p>Only populated if the <a class="reference internal" href="#citrine.resources.property_template.PropertyTemplate.get_type" title="citrine.resources.property_template.PropertyTemplate.get_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_type()</span></code></a> method is invoked.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Dict[str, class]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.client_specific_fields">
-<span class="sig-name descname"><span class="pre">client_specific_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'audit_info':</span> <span class="pre">&lt;class</span> <span class="pre">'citrine.resources.audit_info.AuditInfo'&gt;,</span> <span class="pre">'dataset':</span> <span class="pre">&lt;class</span> <span class="pre">'citrine._serialization.properties.UUID'&gt;}</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.client_specific_fields" title="Permalink to this definition"></a></dt>
-<dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
-<ul class="simple">
-<li><p>audit_info contains who/when information about the resource on the citrine platform</p></li>
-<li><p>dataset is the unique Citrine id of the dataset that owns this resource</p></li>
-</ul>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.collection_dict">
 <span class="sig-name descname"><span class="pre">collection_dict</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.collection_dict" title="Permalink to this definition"></a></dt>
 <dd><p>dictionary from the type key to the associated collection      for every class that extends DataConcepts.</p>
@@ -297,12 +251,6 @@ This method will also work if data is a deserialized GEMD object.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.json_support">
-<span class="sig-name descname"><span class="pre">json_support</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.json_support" title="Permalink to this definition"></a></dt>
-<dd><p>Custom json support object, which knows how to serialize and deserialize DataConcepts classes.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -310,11 +258,6 @@ This method will also work if data is a deserialized GEMD object.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.skip">
 <span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.skip" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.tags" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -327,11 +270,6 @@ This method will also work if data is a deserialized GEMD object.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.uid" title="Permalink to this definition"></a></dt>
 <dd><p>Get the Citrine Identifier (scope = “id”), or None if not registered.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.resources.property_template.PropertyTemplate.uids">
-<span class="sig-name descname"><span class="pre">uids</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.uids" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
