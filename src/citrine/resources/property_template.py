@@ -3,7 +3,6 @@ from typing import List, Dict, Optional, Type
 
 from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
-from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
@@ -47,7 +46,7 @@ class PropertyTemplate(
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(AttributeTemplate, self).__init__()
         GEMDPropertyTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                       uids=uids, description=description)
 

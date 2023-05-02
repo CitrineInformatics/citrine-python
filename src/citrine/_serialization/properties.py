@@ -7,6 +7,7 @@ from itertools import chain
 import uuid
 import arrow
 from functools import lru_cache
+import re
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 from gemd.entity.link_by_uid import LinkByUID
@@ -27,7 +28,8 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
     Basic operating unit of a serialization layer.
 
     By defining a Property as a class variable, access methods are defined and
-    the
+    a type-aware deserialization method is implemented for translating between
+    a dictionary-based representation and a Python object based representation.
 
     Parameters
     ----------
@@ -204,9 +206,14 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
         property_name, base_class = _get_key_and_base_class(self, type(obj))
         if issubclass(type(value), self.underlying_types):
             value_to_set = self._set_elements(value)
-        else:
+        elif issubclass(type(value), self.serialized_types):
             # if value is not an underlying type, set its deserialized version.
             value_to_set = self.deserialize(value, base_class=base_class)
+        else:
+            raise TypeError(
+                f"{value} is a {type(value)}, but {property_name} expects one of: "
+                f"{self.underlying_types}"
+            )
 
         if self._key is None:
             if base_class is not None:
@@ -863,8 +870,17 @@ class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]
     def _deserialize(self, value: dict):
         if 'type' in value:
             target = DictSerializable.class_mapping[value['type']]
-            return target.build(value)
-
+            try:
+                return target.build(value)
+            except TypeError as e:
+                match = re.search(r"__init__.* missing (\d+) required \w+ arguments: (.+)", str(e))
+                if match:
+                    raise ValueError(
+                        f"{match.group(1)} missing required "
+                        f"field{'s' if match.group(1) != '1' else ''}: {match.group(2)}"
+                    )
+                else:
+                    raise e
         raise Exception("Serializable object that is being pointed to must have a self-contained "
                         "build() method that does not call deserialize().")
 

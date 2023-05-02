@@ -6,7 +6,6 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -76,7 +75,7 @@ class MaterialTemplate(
         # the typing above is more general.
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectTemplate, self).__init__()
         GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
                                       uids=uids, tags=tags,
                                       description=description)

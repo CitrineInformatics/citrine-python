@@ -7,7 +7,6 @@ from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate
@@ -121,7 +120,7 @@ class MeasurementTemplate(
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectTemplate, self).__init__()
         GEMDMeasurementTemplate.__init__(self, name=name, properties=properties,
                                          conditions=conditions, parameters=parameters, tags=tags,
                                          uids=uids, description=description)

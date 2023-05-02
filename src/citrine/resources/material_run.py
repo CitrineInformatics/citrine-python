@@ -6,7 +6,7 @@ from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
+from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
@@ -83,7 +83,7 @@ class MaterialRun(
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectRun, self).__init__()
         GEMDMaterialRun.__init__(self, name=name, uids=uids,
                                  tags=tags, process=process,
                                  sample_type=sample_type, spec=spec,
@@ -155,9 +155,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        link = _make_link_by_uid(uid)
         return next(
-            self._get_relation(relation='process-runs', uid=link, per_page=1),
+            self._get_relation(relation='process-runs', uid=uid, per_page=1),
             None
         )
 
@@ -178,8 +177,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The material runs using the specified material spec.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation('material-specs', uid=link)
+        return self._get_relation('material-specs', uid=uid)
 
     def list_by_template(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]

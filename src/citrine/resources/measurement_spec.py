@@ -6,7 +6,6 @@ from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -75,7 +74,7 @@ class MeasurementSpec(
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectSpec, self).__init__()
         GEMDMeasurementSpec.__init__(self, name=name, uids=uids,
                                      tags=tags, conditions=conditions, parameters=parameters,
                                      template=template, file_links=file_links, notes=notes)
@@ -116,5 +115,4 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
             The measurement specs using the specified measurement template.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation('measurement-templates', uid=link)
+        return self._get_relation('measurement-templates', uid=uid)

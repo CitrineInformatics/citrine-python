@@ -8,7 +8,6 @@ from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import String, Object, SpecifiedMixedList, \
     LinkOrElse
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -103,7 +102,7 @@ class ProcessTemplate(
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectTemplate, self).__init__()
         GEMDProcessTemplate.__init__(self, name=name, uids=uids,
                                      conditions=conditions, parameters=parameters, tags=tags,
                                      description=description, allowed_labels=allowed_labels,

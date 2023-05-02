@@ -3,13 +3,15 @@ import uuid
 import arrow
 import pytest
 from gemd.enumeration.base_enumeration import BaseEnumeration
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import ProcessSpec
+from gemd.entity.attribute.condition import Condition
 
 from citrine._serialization.properties import (
     Datetime,
     Enumeration,
     Float,
     Integer,
-    LinkByUID,
     LinkOrElse,
     Set,
     SpecifiedMixedList,
@@ -240,8 +242,25 @@ def test_linkorelse_deserialize_requires_serializable():
 
 def test_linkorelse_deserialize_requires_scope_and_id():
     loe = LinkOrElse()
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError, match=r"missing.+required"):
         loe.deserialize({'type': LinkByUID.typ})
+
+    with pytest.raises(TypeError):
+        loe.deserialize({
+            'type': ProcessSpec.typ,
+            'name': 'Badly structured',
+            'conditions': [{'type': Condition.typ, "value": 'invalid structure'}],
+        })
+
+
+def test_linkorelse_raises_deep_errors():
+    loe = LinkOrElse()
+    with pytest.raises(TypeError):
+        loe.deserialize({
+            'type': ProcessSpec.typ,
+            'name': 'Badly structured',
+            'conditions': [{'type': Condition.typ, "value": 'invalid structure'}],
+        })
 
 
 def test_linkorelse_deserialize():

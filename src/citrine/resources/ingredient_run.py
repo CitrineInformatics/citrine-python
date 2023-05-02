@@ -6,7 +6,6 @@ from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.link_by_uid import LinkByUID
@@ -98,7 +97,7 @@ class IngredientRun(
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectRun, self).__init__()
         GEMDIngredientRun.__init__(self, uids=uids, tags=tags, notes=notes,
                                    material=material, process=process,
                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
@@ -141,8 +140,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredient runs using the specified ingredient spec.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation(relation='ingredient-specs', uid=link)
+        return self._get_relation(relation='ingredient-specs', uid=uid)
 
     def list_by_process(self,
                         uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
@@ -161,8 +159,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredients to the specified process.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation(relation='process-runs', uid=link)
+        return self._get_relation(relation='process-runs', uid=uid)
 
     def list_by_material(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
@@ -181,5 +178,4 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
             The ingredients using the specified material
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation(relation='material-runs', uid=link)
+        return self._get_relation(relation='material-runs', uid=uid)

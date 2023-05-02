@@ -6,7 +6,6 @@ from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -90,7 +89,7 @@ class MeasurementRun(
                  source: Optional[PerformedSource] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self)
+        super(ObjectRun, self).__init__()
         GEMDMeasurementRun.__init__(self, name=name, uids=uids,
                                     material=material,
                                     tags=tags, conditions=conditions, properties=properties,
@@ -132,8 +131,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurement runs using the specified measurement spec.
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation('measurement-specs', uid=link)
+        return self._get_relation('measurement-specs', uid=uid)
 
     def list_by_material(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
@@ -152,5 +150,4 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurements of the specified material
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation(relation='material-runs', uid=link)
+        return self._get_relation(relation='material-runs', uid=uid)
