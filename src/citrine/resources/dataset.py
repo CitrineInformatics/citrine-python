@@ -273,7 +273,8 @@ class Dataset(Resource['Dataset']):
     def delete_contents(
             self,
             *,
-            prompt_to_confirm: bool,
+            prompt_to_confirm: bool = True,
+            remove_templates: bool = True,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
     ):
@@ -283,7 +284,13 @@ class Dataset(Resource['Dataset']):
         Parameters
         ----------
         prompt_to_confirm: bool
-            If True, prompt for user confirmation before triggering delete.
+            If True, prompt for user confirmation before triggering delete.  Included
+            so that a script can skip confirmation if desired, but a user will not
+            accidentally stumble in a notebook or other REPL environment.  Default: True
+        remove_templates: bool
+            If False, templates will not be deleted along with other contents of the
+            dataset.  If true, all GEMD entities including templates will be deleted.
+            Default: True
         timeout: float
             Amount of time to wait on the job (in seconds) before giving up.
             Note that this number has no effect on the underlying job itself,
@@ -314,7 +321,8 @@ class Dataset(Resource['Dataset']):
             else:
                 print(f'"{user_response}" is not a valid response')
 
-        response = self.session.delete_resource(path)
+        params = {"remove_templates": remove_templates}
+        response = self.session.delete_resource(path, params=params)
         job_id = response["job_id"]
 
         return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
