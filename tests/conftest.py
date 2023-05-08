@@ -66,7 +66,7 @@ def valid_product_design_space_data():
                         description='',
                         formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['foo'],
-                        labels={'bar': {'foo'}},
+                        labels={'bar': ['foo']},
                         constraints=[],
                         resolution=0.1
                     )
