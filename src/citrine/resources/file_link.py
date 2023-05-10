@@ -830,7 +830,7 @@ class FileCollection(Collection[FileLink]):
         base_url = format_escaped_url("/projects/{}/ingestions", self.project_id)
         create_ingestion_resp = self.session.post_resource(path=base_url, json=req)
         ingestion_id = create_ingestion_resp["ingestion_id"]
-        job_url = base_url + format_escaped_url("/{}/gemd-objects", ingestion_id)
+        job_url = base_url + format_escaped_url("/{}/gemd-objects-async", ingestion_id)
         return self.session.post_resource(path=job_url, json={})
 
     def delete(self, file_link: FileLink):
