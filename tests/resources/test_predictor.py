@@ -708,3 +708,25 @@ def test_get_default_async(valid_graph_predictor_data):
     assert result.predictor is not None
     assert result.predictor.predictors
     assert len(result.predictor.predictors) == len(instance["predictors"])
+
+
+def test_get_featurized_training_data(example_hierarchical_design_material):
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    session.set_responses([example_hierarchical_design_material])
+    id = uuid.uuid4()
+    version = 4
+
+    # When
+    materials = pc.get_featurized_training_data(id, version=version)
+
+    # Then
+    expected_call = FakeCall(
+        method='GET',
+        path=f'/projects/{pc.project_id}/predictors/{id}/versions/{version}/featurized-training-data',
+        params={}
+    )
+    assert session.num_calls == 1
+    assert expected_call == session.last_call
+    assert len(materials) == 1
