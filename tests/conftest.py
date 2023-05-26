@@ -678,12 +678,16 @@ def example_candidates():
                     'Water': {'type': 'M', 'q': {'water': 72.5}, 'l': {}},
                     'Salt': {'type': 'F', 'f': 'NaCl'},
                     'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
+                },
+                'identifiers': {
+                    'id': str(uuid.uuid4()),
+                    'identifiers': [],
+                    'material_template': str(uuid.uuid4()),
+                    'process_template': str(uuid.uuid4())
                 }
             }
         }]
     }
-
-
 
 
 @pytest.fixture
