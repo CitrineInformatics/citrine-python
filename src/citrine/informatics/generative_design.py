@@ -135,8 +135,8 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         fingerprint_type: FingerprintType,
         min_fingerprint_similarity: float,
         mutation_per_seed: int,
-        structure_exclusions: Optional[List[StructureExclusion]],
-        min_substructure_counts: Optional[Dict[str, int]],
+        structure_exclusions: Optional[List[StructureExclusion]] = None,
+        min_substructure_counts: Optional[Dict[str, int]] = None,
     ):
         self.seeds: List[str] = seeds
         self.fingerprint_type: FingerprintType = fingerprint_type
