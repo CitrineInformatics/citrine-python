@@ -124,12 +124,34 @@ class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
 class DesignMaterial(Serializable["DesignMaterial"]):
     """Description of the material that was designed, as a set of DesignVariables."""
 
+    material_id = properties.UUID('identifiers.id')
+
+    identifiers = properties.List(properties.String, 'identifiers.external')
+
+    process_template = properties.Optional(properties.UUID, 'identifiers.process_template')
+
+    material_template = properties.Optional(properties.UUID, 'identifiers.material_template')
+
     values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
     """:Dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
     def __init__(self, *, values: dict):
         self.values = values
         pass
+
+
+class HierarchicalDesignMaterial(Serializable["HierarchicalDesignMaterial"]):
+    """Description of a designed material history as a set of connected individual materials."""
+
+    root = properties.Object(DesignMaterial, 'terminal')
+
+    sub_materials = properties.List(properties.Object(DesignMaterial), 'sub_materials')
+
+    mixtures = properties.Mapping(properties.UUID, properties.Object(Mixture), 'mixtures')
+    """:Dict[UUID, Mixture]: mapping from material ID to mixture the material is composed of"""
+
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class DesignCandidate(Serializable["DesignCandidate"]):
@@ -149,6 +171,20 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     and constraints (higher is better)"""
     material = properties.Object(DesignMaterial, 'material')
     """:DesignMaterial: the material returned by the design workflow"""
+
+    def __init__(self):
+        pass  # pragma: no cover
+
+
+class HierarchicalDesignCandidate(Serializable["HierarchicalDesignCandidate"]):
+
+    uid = properties.UUID('id')
+
+    primary_score = properties.Float('primary_score')
+
+    rank = properties.Integer("rank")
+
+    material = properties.Object(HierarchicalDesignMaterial, "material")
 
     def __init__(self):
         pass  # pragma: no cover

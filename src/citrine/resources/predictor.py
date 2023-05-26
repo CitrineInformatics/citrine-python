@@ -1,6 +1,6 @@
 """Resources that represent collections of predictors."""
 from functools import partial
-from typing import Any, Iterable, Optional, Union
+from typing import Any, Iterable, Optional, Union, List
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -11,6 +11,7 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
+from citrine.informatics.design_candidate import HierarchicalDesignMaterial
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.module import AbstractModuleCollection
 from citrine.resources.status_detail import StatusDetail
@@ -125,6 +126,18 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
         entity = self.session.get_resource(path, version=self._api_version)
         return self.build(entity)
 
+    def get_featurized_training_data(
+            self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str] = MOST_RECENT_VER
+    ) -> List[HierarchicalDesignMaterial]:
+        version_path = self._construct_path(uid, version)
+        full_path = f"{version_path}/featurized-training-data"
+        data = self.session.get_resource(full_path, version=self._api_version)
+        return [HierarchicalDesignMaterial.build(x) for x in data]
+
+
     def list(self,
              uid: Union[UUID, str],
              *,
@@ -233,6 +246,14 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         return self._versions_collection.get(uid=uid, version=version)
+
+    def get_featurized_training_data(
+            self,
+            uid: Union[UUID, str],
+            *,
+            version: Union[int, str] = MOST_RECENT_VER
+    ) -> List[HierarchicalDesignMaterial]:
+        return self._versions_collection.get_featurized_training_data(uid=uid, version=version)
 
     def register(self, predictor: GraphPredictor) -> GraphPredictor:
         """Register and train a Predictor.
