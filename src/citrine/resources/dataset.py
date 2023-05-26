@@ -17,6 +17,7 @@ from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.delete import _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
+from citrine.resources.ingestion import IngestionCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
@@ -91,6 +92,10 @@ class Dataset(Resource['Dataset']):
     update_time = properties.Optional(properties.Datetime(), 'update_time')
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
+    project_id = properties.Optional(properties.UUID(), 'project_id',
+                                     serializable=False, deserializable=False)
+    session = properties.Optional(properties.Object(Session), 'session',
+                                  serializable=False, deserializable=False)
 
     def __init__(self, name: str, *, summary: str,
                  description: str, unique_name: Optional[str] = None):
@@ -193,6 +198,11 @@ class Dataset(Resource['Dataset']):
     def files(self) -> FileCollection:
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
+
+    @property
+    def ingestions(self) -> IngestionCollection:
+        """Return a resource representing all files in the dataset."""
+        return IngestionCollection(self.project_id, self.uid, self.session)
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
         """Register a data model object to the appropriate collection."""
@@ -360,6 +370,14 @@ class Dataset(Resource['Dataset']):
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
             BaseEntity can also be used to provide an external ID.
+
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up. Defaults
+            to 2 minutes. Note that this number has no effect on the underlying job
+            itself, which can also time out server-side.
+
+        polling_delay: float
+            How long to delay between each polling retry attempt.
 
         Returns
         -------
