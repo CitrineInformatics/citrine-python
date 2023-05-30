@@ -403,9 +403,15 @@ def test_single_predict(graph_predictor):
     graph_predictor._project_id = uuid.uuid4()
     graph_predictor.uid = uuid.uuid4()
     graph_predictor.version = 2
-    material_data = {'vars':
-                     {'X': {'m': 1.1, 's': 0.1, 'type': 'R'},
-                      'Y': {'m': 2.2, 's': 0.2, 'type': 'R'}}}
+    material_data = {
+        'vars': {
+            'X': {'m': 1.1, 's': 0.1, 'type': 'R'},
+            'Y': {'m': 2.2, 's': 0.2, 'type': 'R'}
+        },
+        'identifiers': {
+            'id': str(uuid.uuid4())
+        }
+    }
     material = DesignMaterial.build(material_data)
     request = SinglePredictRequest(uuid.uuid4(), list(), material)
     prediction_in = SinglePrediction(request.material_id, list(), material)
