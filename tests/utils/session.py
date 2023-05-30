@@ -43,7 +43,7 @@ class FakeCall:
             (not self.version or not other.version or self.version == other.version) # Allows users to check the URL version without forcing everyone to.
 
 
-class FakeSession (Session):
+class FakeSession(Session):
     """Fake version of Session used to test API interaction."""
     def __init__(self):
         self.calls = []

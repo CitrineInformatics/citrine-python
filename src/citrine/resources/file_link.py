@@ -134,6 +134,32 @@ class FileLinkMeta(DictSerializableMeta):
         cls.typ = properties.String('type', default="file_link", deserializable=False)
 
 
+def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
+    """Attempt to extract file_id and version_id from a URL."""
+    parsed = urlparse(url)
+    if len(parsed.query) > 0 or len(parsed.fragment) > 0:
+        # Illegal modifiers
+        return None, None
+    split_path = urlparse(url).path.split('/')
+    if len(split_path) >= 4 and split_path[-4] == 'files' and split_path[-2] == 'versions':
+        file_id = split_path[-3]
+        version_id = split_path[-1]
+    elif len(split_path) >= 2 and split_path[-2] == 'files':
+        file_id = split_path[-1]
+        version_id = None
+    else:
+        file_id, version_id = None, None
+
+    if file_id is not None:
+        try:
+            file_id = UUID(file_id)
+            if version_id is not None:
+                version_id = UUID(version_id)
+        except ValueError:
+            return None, None
+    return file_id, version_id
+
+
 class FileLink(
     GEMDResource['FileLink'],
     GEMDFileLink,
@@ -188,6 +214,11 @@ class FileLink(
 
     def __init__(self, filename: str, url: str):
         GEMDFileLink.__init__(self, filename, url)
+        uid, version = _get_ids_from_url(url)
+        if uid is not None:
+            self.uid = uid
+        if version is not None:
+            self.version = version
         self.typ = FileLink.typ
 
     @staticmethod
@@ -200,6 +231,17 @@ class FileLink(
     def name(self):
         """Attribute name is an alias for filename."""
         return self.filename
+
+    @classmethod
+    def _pre_build(cls, data: dict) -> dict:
+        """Run data modification before building."""
+        if 'url' in data and 'id' not in data:
+            uid, version = _get_ids_from_url(data['url'])
+            if uid is not None:
+                data['id'] = str(uid)
+            if version is not None:
+                data['version'] = str(version)
+        return data
 
     def __str__(self):
         return f'<File link {self.filename!r}>'
@@ -229,51 +271,20 @@ class FileCollection(Collection[FileLink]):
             action = ['versions', version] + ([action] if isinstance(action, str) else action)
         return super()._get_path(uid=uid, ignore_dataset=ignore_dataset, action=action)
 
-    @staticmethod
-    def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
-        """Attempt to extract file_id and version_id from a URL."""
-        parsed = urlparse(url)
-        if len(parsed.query) > 0 or len(parsed.fragment) > 0:
-            # Illegal modifiers
-            return None, None
-        split_path = urlparse(url).path.split('/')
-        if len(split_path) >= 4 and split_path[-4] == 'files' and split_path[-2] == 'versions':
-            file_id = split_path[-3]
-            version_id = split_path[-1]
-        elif len(split_path) >= 2 and split_path[-2] == 'files':
-            file_id = split_path[-1]
-            version_id = None
-        else:
-            file_id, version_id = None, None
-
-        if file_id is not None:
-            try:
-                file_id = UUID(file_id)
-                if version_id is not None:
-                    version_id = UUID(version_id)
-            except ValueError:
-                return None, None
-        return file_id, version_id
-
     def _get_path_from_file_link(self, file_link: FileLink,
                                  *,
                                  action: str = None) -> str:
         """Build the platform path for taking an action with a particular file link."""
-        # Use this session's project/dataset credentials and the URLs file / version
-        if file_link.uid is not None:
-            file_id = file_link.uid
-            version_id = file_link.version
-        else:
-            file_id, version_id = self._get_ids_from_url(file_link.url)
-            if file_id is None:
-                raise ValueError("FileLink did not contain a Citrine platform file URL.")
-        return self._get_path(uid=file_id, version=version_id, action=action)
+        if not self._is_on_platform_url(file_link.url) or file_link.uid is None:
+            raise ValueError("FileLink did not contain a Citrine platform file URL.")
+        return self._get_path(uid=file_link.uid, version=file_link.version, action=action)
 
     def build(self, data: dict) -> FileLink:
         """Build an instance of FileLink."""
         # Use this chance to construct a URL from platform metadata
         if 'url' not in data:
-            data['url'] = self._get_path(uid=data["id"], version=data["version"])
+            data['url'] = self._get_path(uid=data['id'], version=data['version'])
+
         return FileLink.build(data)
 
     def get(self,
@@ -868,7 +879,7 @@ class FileCollection(Collection[FileLink]):
             The result of the ingestion operation.
 
         """
-        from citrine.resources.ingestion import IngestionCollection  # noqa: F401
+        from citrine.resources.ingestion import IngestionCollection
 
         targets = [self._resolve_file_link(f) for f in files]
         offplatform = [f for f in targets if not self._is_on_platform_url(f.url)]
@@ -906,7 +917,7 @@ class FileCollection(Collection[FileLink]):
         """
         if not self._is_on_platform_url(file_link.url):
             raise ValueError(f"Only platform resources can be deleted; passed URL {file_link.url}")
-        file_id = self._get_ids_from_url(file_link.url)[0]
+        file_id = _get_ids_from_url(file_link.url)[0]
         if file_id is None:
             raise ValueError(f"URL was malformed for local resources; passed URL {file_link.url}")
         data = self.session.delete_resource(self._get_path(file_id))
@@ -915,29 +926,26 @@ class FileCollection(Collection[FileLink]):
     def _resolve_file_link(self, identifier: Union[str, UUID, FileLink]) -> FileLink:
         """Generate the FileLink object referenced by the passed argument."""
         if isinstance(identifier, GEMDFileLink):
-            if isinstance(identifier, FileLink) and identifier.uid is not None:
-                # Passthrough since it's as full as it can get
-                return identifier
+            if not isinstance(identifier, FileLink):  # Up-convert type with existing info
+                update = FileLink(filename=identifier.filename, url=identifier.url)
 
-            if not self._is_on_platform_url(identifier.url):
-                # Up-convert type with existing info
-                return FileLink(filename=identifier.filename, url=identifier.url)
+                if self._is_on_platform_url(update.url):
+                    if update.uid is None:
+                        raise ValueError(f"URL was malformed for platform resources; "
+                                         f"passed URL {update.url}")
+                    else:  # Validate that it's a real record
+                        update = self.get(uid=update.uid, version=update.version)
+                        if update.filename != identifier.filename:
+                            raise ValueError(
+                                f"Name mismatch between link ({identifier.filename}) "
+                                f"and platform ({update.filename})"
+                            )
+                    identifier = update
 
-            # Resolve on-platform uid and possibly up-convert
-            file_id, version_id = self._get_ids_from_url(identifier.url)
-            if file_id is None:
-                raise ValueError(f"URL was malformed for local resources; "
-                                 f"passed URL {identifier.url}")
-            platform_link = self.get(uid=file_id, version=version_id)
-            if platform_link.filename != identifier.filename:
-                raise ValueError(
-                    f"Name mismatch between link ({identifier.filename}) "
-                    f"and platform ({platform_link.filename})"
-                )
-            return platform_link
+            return identifier  # Passthrough since it's as full as it can get
         elif isinstance(identifier, str):
             if self._is_on_platform_url(identifier):  # It's either a filename or URL
-                file_id, version_id = self._get_ids_from_url(identifier)
+                file_id, version_id = _get_ids_from_url(identifier)
                 if file_id is None:  # Try it as a name or a stand-alone UID
                     return self.get(identifier)
                 else:  # We got a file UID (and possibly a version UID) from a URL

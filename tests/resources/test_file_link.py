@@ -7,8 +7,8 @@ from uuid import uuid4, UUID
 import requests_mock
 
 from citrine.resources.api_error import ValidationError
-from citrine.resources.file_link import FileCollection, FileLink, _Uploader, \
-    FileProcessingType
+from citrine.resources.file_link import FileCollection, FileLink, GEMDFileLink, _Uploader, \
+    FileProcessingType, _get_ids_from_url
 from citrine.resources.ingestion import Ingestion, IngestionCollection
 from citrine.exceptions import NotFound
 
@@ -402,7 +402,7 @@ def test_file_download(collection: FileCollection, session, tmpdir):
 
     bad_url = f"bin/uuid3/versions/uuid4"
     bad_file = FileLink.build(FileLinkDataFactory(url=bad_url, filename=filename))
-    with pytest.raises(ValueError, match="malformed"):
+    with pytest.raises(ValueError, match="Citrine"):
         collection.download(file_link=bad_file, local_path=target_dir)
 
 
@@ -437,7 +437,7 @@ def test_read(collection: FileCollection, session, tmp_path):
 
     bad_url = f"bin/uuid3/versions/uuid4"
     bad_file = FileLink.build(FileLinkDataFactory(url=bad_url, filename=filename))
-    with pytest.raises(ValueError, match="malformed"):
+    with pytest.raises(ValueError, match="Citrine"):
         collection.read(file_link=bad_file)
 
     # Test with files.list endpoint-like object
@@ -715,8 +715,14 @@ def test_resolve_file_link(collection: FileCollection, session):
         'files': [raw_files[1]]
     })
 
-    unresolved = FileLink(filename=file1.filename, url=file1.url)
+    unresolved = GEMDFileLink(filename=file1.filename, url=file1.url)
     assert collection._resolve_file_link(unresolved) == file1, "FileLink didn't resolve"
+    assert session.num_calls == 1
+    assert session.num_calls == 1
+
+    with pytest.raises(ValueError, match="malformed"):
+        malformed = GEMDFileLink(filename=file1.filename, url="bad/relative/url")
+        collection._resolve_file_link(malformed)
     assert session.num_calls == 1
 
     unresolved.filename = "Wrong.file"
@@ -775,14 +781,14 @@ def test_get_ids_from_url(collection: FileCollection):
         "/files/uuid4/versions/uuid4",
     ]
     for x in good:
-        assert collection._get_ids_from_url(x)[0] is not None
-        assert collection._get_ids_from_url(x)[1] is not None
+        assert _get_ids_from_url(x)[0] is not None
+        assert _get_ids_from_url(x)[1] is not None
     for x in file:
-        assert collection._get_ids_from_url(x)[0] is not None
-        assert collection._get_ids_from_url(x)[1] is None
+        assert _get_ids_from_url(x)[0] is not None
+        assert _get_ids_from_url(x)[1] is None
     for x in bad:
-        assert collection._get_ids_from_url(x)[0] is None
-        assert collection._get_ids_from_url(x)[1] is None
+        assert _get_ids_from_url(x)[0] is None
+        assert _get_ids_from_url(x)[1] is None
 
 
 def test_get(collection: FileCollection, session):

@@ -1,6 +1,7 @@
 import pytest
 from uuid import uuid4
 
+from citrine.resources.file_link import FileLink
 from citrine.resources.ingestion import Ingestion, IngestionStatus, IngestionCollection
 from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError
 
@@ -43,6 +44,9 @@ def test_not_implementeds(collection):
 
     with pytest.raises(NotImplementedError):
         collection.update(operation)
+
+    with pytest.raises(NotImplementedError):
+        collection.delete(operation)
 
     with pytest.raises(NotImplementedError):
         collection.list()
@@ -152,3 +156,8 @@ def test_processing_exceptions(ingest, monkeypatch):
         result = ingest.build_objects(raise_errors=False)
         assert not result.success
         assert any('everything' in e for e in result.errors)
+
+
+def test_ingestion_flow(collection: IngestionCollection):
+    with pytest.raises(ValueError, match="UID"):
+        collection.build_from_file_links([FileLink(filename="mine.txt", url="http:/external.com")])

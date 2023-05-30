@@ -233,19 +233,16 @@ class IngestionCollection(Collection[Ingestion]):
             The files to ingest.
 
         """
-        from citrine.resources.file_link import FileLink
-
-        def _get_valid_file_link(incoming: FileLink) -> FileLink:
-            return incoming
-
-        valid_links = [_get_valid_file_link(f) for f in file_links]
+        invalid_links = [f for f in file_links if f.uid is None]
+        if len(invalid_links) != 0:
+            raise ValueError(f"{len(invalid_links)} File Links have no on-platform UID.")
 
         req = {
             "dataset_id": str(self.dataset_id),
             "project_id": str(self.project_id),
             "files": [
                 {"dataset_file_id": str(f.uid), "file_version_uuid": str(f.version)}
-                for f in valid_links
+                for f in file_links
             ]
         }
 
@@ -253,17 +250,21 @@ class IngestionCollection(Collection[Ingestion]):
         return self.build(response)
 
     def build(self, data: dict) -> Ingestion:
-        """Build an instance of an Ingestions."""
+        """Build an instance of an Ingestion."""
         result = Ingestion.build({**data, "session": self.session})
         return result
 
     def register(self, model: Ingestion) -> Ingestion:
-        """Cannot register an execution."""
+        """Cannot register an Ingestion."""
         raise NotImplementedError("Cannot register an Ingestion.")
 
     def update(self, model: Ingestion) -> Ingestion:
-        """Cannot update an execution."""
+        """Cannot update an Ingestion."""
         raise NotImplementedError("Cannot update an Ingestion.")
+
+    def delete(self, model: Ingestion) -> Ingestion:
+        """Cannot delete an Ingestion."""
+        raise NotImplementedError("Cannot delete an Ingestion.")
 
     def list(self, *, per_page: int = 100) -> Iterator[Ingestion]:
         """Cannot list Ingestions."""

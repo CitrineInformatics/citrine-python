@@ -115,6 +115,8 @@ class Dataset(Resource['Dataset']):
         self.update_time = None
         self.delete_time = None
         self.public = None
+        self.project_id = None
+        self.session = None
 
     def __str__(self):
         return '<Dataset {!r}>'.format(self.name)
