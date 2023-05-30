@@ -14,7 +14,7 @@ from citrine.exceptions import PollingTimeoutError, JobFailureError
 logger = getLogger(__name__)
 
 
-class JobSubmissionResponse(Resource['AraJobStatus']):
+class JobSubmissionResponse(Resource['JobSubmissionResponse']):
     """A response to a submit-job request for the job submission framework.
 
     This is returned as a successful response from the remote service.
@@ -22,9 +22,6 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
 
     job_id = properties.UUID("job_id")
     """:UUID: job id of the job submission request"""
-
-    def __init__(self):
-        pass  # pragma: no cover
 
 
 class TaskNode(Resource['TaskNode']):
@@ -63,9 +60,6 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     """:List[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
     """:Optional[dict[str, str]]: job output properties and results"""
-
-    def __init__(self):
-        pass  # pragma: no cover
 
 
 def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],

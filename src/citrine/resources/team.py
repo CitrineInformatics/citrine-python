@@ -7,7 +7,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources import ProjectCollection
+from citrine.resources.project import ProjectCollection
 from citrine.resources.user import User, UserCollection
 
 WRITE = "WRITE"

@@ -165,6 +165,7 @@ def test_get_by_unique_name_no_unique_name_present(collection, session):
     with pytest.raises(ValueError):
         collection.get_by_unique_name(None)
 
+
 def test_get_by_unique_name_multiple_results(collection, session):
 
     # This really shouldn't happen
@@ -306,6 +307,10 @@ def test_gemd_resource_get_project_id(dataset):
 
 def test_files_get_project_id(dataset):
     assert dataset.project_id == dataset.files.project_id
+
+
+def test_ingestion_get_project_id(dataset):
+    assert dataset.project_id == dataset.ingestions.project_id
 
 
 def test_gemd_posts(dataset):
