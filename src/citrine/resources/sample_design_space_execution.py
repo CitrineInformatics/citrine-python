@@ -1,0 +1,99 @@
+"""Resources that represent both individual and collections of sample design space executions."""
+from typing import Optional, Union, Iterator
+from uuid import UUID
+
+from citrine._rest.collection import Collection
+from citrine._session import Session
+from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
+from citrine.informatics.design_spaces import DesignSpace
+from citrine.informatics.executions import ExecutionDetails
+from citrine.resources.response import Response
+
+
+class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecution"]):
+    """A collection of SampleDesignSpaceExecutions."""
+
+    _path_template = '/projects/{project_id}/design-spaces/{design_space_id}/sample'
+    _individual_key = 'sample_execution'
+    _collection_key = 'sample_executions'
+    _resource = SampleDesignSpaceExecution
+
+    def __init__(self, project_id: UUID, design_space_id: UUID, session: Session):
+        self.project_id: UUID = project_id
+        self.design_space_id: UUID = design_space_id
+        self.session: Session = session
+
+    def build(self, data: dict) -> SampleDesignSpaceExecution:
+        """Build an individual SampleDesignSpaceExecution."""
+        execution = SampleDesignSpaceExecution.build(data)
+        execution._session = self.session
+        execution.project_id = self.project_id
+        execution.design_space_id = self.design_space_id
+        return execution
+
+    def trigger(
+        self, design_space: DesignSpace, execution_details: ExecutionDetails
+    ) -> SampleDesignSpaceExecution:
+        """Trigger a sample design space execution."""
+        path = self._get_path()
+        request_dict = {
+            'design_space': design_space.dump(),
+            'execution_details': execution_details.dump()
+        }
+        data = self.session.post_resource(path, request_dict)
+        return self.build(data)
+
+    def register(self, model: SampleDesignSpaceExecution) -> SampleDesignSpaceExecution:
+        """Cannot register an execution."""
+        raise NotImplementedError("Cannot register a SampleDesignSpaceExecution.")
+
+    def update(self, model: SampleDesignSpaceExecution) -> SampleDesignSpaceExecution:
+        """Cannot update an execution."""
+        raise NotImplementedError("Cannot update a SampleDesignSpaceExecution.")
+
+    def list(self, *,
+             page: Optional[int] = None,
+             per_page: int = 10,
+             ) -> Iterator[SampleDesignSpaceExecution]:
+        """
+        Paginate over the elements of the collection.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterator[ResourceType]
+            Resources in this collection.
+
+        """
+        return self._paginator.paginate(page_fetcher=self._fetch_page,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """Sample Design Space Executions cannot be deleted or archived."""
+        raise NotImplementedError(
+            "Sample Design Space Executions cannot be deleted"
+        )
+
+    def get_results(self, execution_id: Union[UUID, str]) -> dict:
+        """Get the results of a sample design space execution."""
+        path = self._get_path() + f'/{execution_id}/results'
+        return self.session.get_resource(path)
+
+    def get_result(self, execution_id: Union[UUID, str], result_id: Union[UUID, str]) -> dict:
+        """Get a specific result of a sample design space execution."""
+        path = self._get_path() + f'/{execution_id}/results/{result_id}'
+        return self.session.get_resource(path)

@@ -6,6 +6,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.executions.design_execution import DesignExecution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
+from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 from citrine.informatics.executions import PredictorEvaluationExecution
 from citrine.informatics.modules import Module
 
@@ -132,13 +133,24 @@ def wait_while_executing(
     collection: Union[
         Collection[PredictorEvaluationExecution],
         Collection[DesignExecution],
-        Collection[GenerativeDesignExecution]
+        Collection[GenerativeDesignExecution],
+        Collection[SampleDesignSpaceExecution]
     ],
-    execution: Union[PredictorEvaluationExecution, DesignExecution, GenerativeDesignExecution],
+    execution: Union[
+        PredictorEvaluationExecution,
+        DesignExecution,
+        GenerativeDesignExecution,
+        SampleDesignSpaceExecution
+    ],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-) -> Union[PredictorEvaluationExecution, DesignExecution, GenerativeDesignExecution]:
+) -> Union[
+        PredictorEvaluationExecution,
+        DesignExecution,
+        GenerativeDesignExecution,
+        SampleDesignSpaceExecution
+    ]:
     """
     Wait until execution is finished.
 
