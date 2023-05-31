@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -109,6 +109,11 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
     structure_exclusions: List[StructureExclusion]
         The structure exclusions used to limit molecule mutations.
         If None, no structure exclusions will be used.
+    min_substructure_counts: Dict[str, int]
+        Dictionary for constraining which substructures (represented by SMILES strings)
+        must appear in each mutated molecule, along with integer values representing the
+        minimum number of times each substructure must appear in a molecule to be
+        considered a valid mutation.
 
     """
 
@@ -120,6 +125,9 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         properties.Enumeration(StructureExclusion),
         "structure_exclusions"
     )
+    min_substructure_counts = properties.Mapping(
+        properties.String(), properties.Integer(), "min_substructure_counts",
+    )
 
     def __init__(
         self, *,
@@ -127,10 +135,12 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         fingerprint_type: FingerprintType,
         min_fingerprint_similarity: float,
         mutation_per_seed: int,
-        structure_exclusions: Optional[List[StructureExclusion]],
+        structure_exclusions: Optional[List[StructureExclusion]] = None,
+        min_substructure_counts: Optional[Dict[str, int]] = None,
     ):
         self.seeds: List[str] = seeds
         self.fingerprint_type: FingerprintType = fingerprint_type
         self.min_fingerprint_similarity: float = min_fingerprint_similarity
         self.mutation_per_seed: int = mutation_per_seed
-        self.structure_exclusions: List[StructureExclusion] = structure_exclusions
+        self.structure_exclusions: List[StructureExclusion] = structure_exclusions or []
+        self.min_substructure_counts: Dict[str, int] = min_substructure_counts or {}

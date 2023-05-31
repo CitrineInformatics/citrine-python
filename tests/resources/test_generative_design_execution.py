@@ -57,6 +57,7 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
         min_fingerprint_similarity=0.5,
         mutation_per_seed=2,
         structure_exclusions=[StructureExclusion.BROMINE, StructureExclusion.IODINE],
+        min_substructure_counts={"C": 1, "O": 1},
     )
 
     # When
@@ -78,6 +79,7 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
             'structure_exclusions': [
                 exclusion.value for exclusion in design_execuption_input.structure_exclusions
             ],
+            'min_substructure_counts': design_execuption_input.min_substructure_counts,
         }
     )
 
@@ -130,4 +132,3 @@ def test_list(collection: GenerativeDesignExecutionCollection, session):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
-

@@ -102,36 +102,7 @@ def test_predict(design_workflow, design_execution, example_candidates):
         json={
             'material_id': str(material_id),
             'identifiers': [],
-            'material': {
-                'vars': {
-                    'Temperature': {
-                        'm': 475.8,
-                        "s": 0.0,
-                        "type": "R"
-                    },
-                    "Flour": {
-                        "cp": {
-                                "flour": 100.0
-                            },
-                        "type": "C"
-                    },
-                    "Water": {
-                        "q": {
-                            "water": 72.5
-                        },
-                        "l": {},
-                        "type": "M"
-                    },
-                    "Salt": {
-                        "f": "NaCl",
-                        "type": "F"
-                    },
-                    "Yeast": {
-                        "s": "O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15",
-                        "type": "S"
-                    }
-                }
-            },
+            'material': candidate.material.dump(),
             'created_from_id': str(candidate.uid),
             'random_seed': None
         },
