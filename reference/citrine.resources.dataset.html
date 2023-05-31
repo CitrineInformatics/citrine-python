@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.dataset module &mdash; Citrine Python 2.19.2 documentation</title>
+  <title>citrine.resources.dataset module &mdash; Citrine Python 2.22.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.19.2
+                2.22.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -274,10 +274,16 @@ of BaseEntities.</p>
 <p>Also note that Attribute Templates cannot be deleted at present.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>BaseEntity</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>BaseEntity</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed
 as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
 or string is assumed to be a Citrine ID, whereas a LinkByUID or
-BaseEntity can also be used to provide an external ID.</p>
+BaseEntity can also be used to provide an external ID.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – Amount of time to wait on the job (in seconds) before giving up. Defaults
+to 2 minutes. Note that this number has no effect on the underlying job
+itself, which can also time out server-side.</p></li>
+<li><p><strong>polling_delay</strong> (<em>float</em>) – How long to delay between each polling retry attempt.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of (LinkByUID, api_error) for each failure to delete an object.
@@ -384,6 +390,12 @@ registration. Requires installing the optional tqdm module. Default: false</p></
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.ingestions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingestions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.ingestion.html#citrine.resources.ingestion.IngestionCollection" title="citrine.resources.ingestion.IngestionCollection"><span class="pre">citrine.resources.ingestion.IngestionCollection</span></a></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingestions" title="Permalink to this definition"></a></dt>
+<dd><p>Return a resource representing all files in the dataset.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.ingredient_runs">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingredient_runs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection" title="citrine.resources.ingredient_run.IngredientRunCollection"><span class="pre">citrine.resources.ingredient_run.IngredientRunCollection</span></a></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingredient_runs" title="Permalink to this definition"></a></dt>
 <dd><p>Return a resource representing all ingredient runs in this dataset.</p>
@@ -460,6 +472,11 @@ registration. Requires installing the optional tqdm module. Default: false</p></
 <dd><p>Return a resource representing all process templates in this dataset.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.project_id">
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.property_templates">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">property_templates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="citrine.resources.property_template.html#citrine.resources.property_template.PropertyTemplateCollection" title="citrine.resources.property_template.PropertyTemplateCollection"><span class="pre">citrine.resources.property_template.PropertyTemplateCollection</span></a></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.property_templates" title="Permalink to this definition"></a></dt>
@@ -469,6 +486,11 @@ registration. Requires installing the optional tqdm module. Default: false</p></
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id5">
 <span class="sig-name descname"><span class="pre">public</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.session">
+<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.session" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

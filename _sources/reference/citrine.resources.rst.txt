@@ -26,6 +26,7 @@ Submodules
    citrine.resources.gemd_resource
    citrine.resources.gemtables
    citrine.resources.generative_design_execution
+   citrine.resources.ingestion
    citrine.resources.ingredient_run
    citrine.resources.ingredient_spec
    citrine.resources.job

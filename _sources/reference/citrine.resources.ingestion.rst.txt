@@ -1,0 +1,8 @@
+citrine.resources.ingestion module
+==================================
+
+.. automodule:: citrine.resources.ingestion
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
