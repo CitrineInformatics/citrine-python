@@ -5,8 +5,7 @@ from uuid import UUID
 from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
-from citrine.informatics.design_spaces import DesignSpace
-from citrine.informatics.executions import ExecutionDetails
+from citrine.informatics.design_spaces.design_space import SampleDesignSpaceInput
 from citrine.resources.response import Response
 
 
@@ -14,8 +13,8 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
     """A collection of SampleDesignSpaceExecutions."""
 
     _path_template = '/projects/{project_id}/design-spaces/{design_space_id}/sample'
-    _individual_key = 'sample_execution'
-    _collection_key = 'sample_executions'
+    _individual_key = None
+    _collection_key = 'response'
     _resource = SampleDesignSpaceExecution
 
     def __init__(self, project_id: UUID, design_space_id: UUID, session: Session):
@@ -32,14 +31,11 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         return execution
 
     def trigger(
-        self, design_space: DesignSpace, execution_details: ExecutionDetails
+        self, sample_design_space_input: SampleDesignSpaceInput
     ) -> SampleDesignSpaceExecution:
         """Trigger a sample design space execution."""
         path = self._get_path()
-        request_dict = {
-            'design_space': design_space.dump(),
-            'execution_details': execution_details.dump()
-        }
+        request_dict = sample_design_space_input.dump()
         data = self.session.post_resource(path, request_dict)
         return self.build(data)
 
@@ -79,7 +75,6 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
-                                        page=page,
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
@@ -87,13 +82,3 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         raise NotImplementedError(
             "Sample Design Space Executions cannot be deleted"
         )
-
-    def get_results(self, execution_id: Union[UUID, str]) -> dict:
-        """Get the results of a sample design space execution."""
-        path = self._get_path() + f'/{execution_id}/results'
-        return self.session.get_resource(path)
-
-    def get_result(self, execution_id: Union[UUID, str], result_id: Union[UUID, str]) -> dict:
-        """Get a specific result of a sample design space execution."""
-        path = self._get_path() + f'/{execution_id}/results/{result_id}'
-        return self.session.get_resource(path)

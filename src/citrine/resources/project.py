@@ -155,7 +155,7 @@ class Project(Resource['Project']):
     @property
     def sample_design_space_executions(self) -> SampleDesignSpaceExecutionCollection:
         """Return a collection representing all visible sample design space executions."""
-        return SampleDesignSpaceExecutionCollection(project_id=self.uid, session=self.session)
+        return SampleDesignSpaceExecutionCollection(project_id=self.uid, design_space_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
