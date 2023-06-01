@@ -1,18 +1,27 @@
 """Resources that represent both individual and collections of design workflow executions."""
-import sys
 from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._utils.functions import shadow_classes_in_module
+from citrine._utils.functions import MigratedClassMeta
 from citrine._session import Session
-import citrine.informatics.executions.design_execution
-from citrine.informatics.executions import DesignExecution
+from citrine.informatics import executions
 from citrine.informatics.scores import Score
 from citrine.resources.response import Response
 
 
-shadow_classes_in_module(citrine.informatics.executions.design_execution, sys.modules[__name__])
+class DesignExecution(executions.DesignExecution,
+                      deprecated_in="2.22.1",
+                      removed_in="3.0.0",
+                      metaclass=MigratedClassMeta):
+    """The execution of a DesignWorkflow.
+
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Design executions also have a ``status_description`` field with more information.
+
+    DesignExecution should be imported from citrine.informatics.executions.
+
+    """
 
 
 class DesignExecutionCollection(Collection["DesignExecution"]):
@@ -21,7 +30,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     _path_template = '/projects/{project_id}/design-workflows/{workflow_id}/executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
-    _resource = DesignExecution
+    _resource = executions.DesignExecution
 
     def __init__(self,
                  project_id: UUID,
@@ -31,9 +40,9 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
 
-    def build(self, data: dict) -> DesignExecution:
+    def build(self, data: dict) -> executions.DesignExecution:
         """Build an individual DesignWorkflowExecution."""
-        execution = DesignExecution.build(data)
+        execution = executions.DesignExecution.build(data)
         execution._session = self.session
         execution.project_id = self.project_id
         return execution
@@ -45,11 +54,11 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         data = self.session.post_resource(path, json)
         return self.build(data)
 
-    def register(self, model: DesignExecution) -> DesignExecution:
+    def register(self, model: executions.DesignExecution) -> executions.DesignExecution:
         """Cannot register an execution."""
         raise NotImplementedError("Cannot register a DesignExecution.")
 
-    def update(self, model: DesignExecution) -> DesignExecution:
+    def update(self, model: executions.DesignExecution) -> executions.DesignExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a DesignExecution.")
 
@@ -77,7 +86,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         raise NotImplementedError(
             "Design Executions cannot be restored")
 
-    def list(self, *, per_page: int = 100) -> Iterator[DesignExecution]:
+    def list(self, *, per_page: int = 100) -> Iterator[executions.DesignExecution]:
         """
         Paginate over the elements of the collection.
 

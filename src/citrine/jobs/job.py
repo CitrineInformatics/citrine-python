@@ -62,12 +62,16 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     """:Optional[dict[str, str]]: job output properties and results"""
 
 
-def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
-                             job: Union[JobSubmissionResponse, UUID, str], *,
+def _poll_for_job_completion(session: Session,
+                             project_id: Union[UUID, str],
+                             job: Union[JobSubmissionResponse, UUID, str],
+                             *,
                              timeout: float = 2 * 60,
-                             polling_delay: float = 2.0) -> JobStatusResponse:
+                             polling_delay: float = 2.0,
+                             raise_errors: bool = True,
+                             ) -> JobStatusResponse:
     """
-    Polls for job completion given a timeout, failing with an exception on job failure.
+    Polls for job completion given a timeout.
 
     This polls for job completion given the Job ID, failing appropriately if the job result
     was not successful.
@@ -82,6 +86,8 @@ def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
         itself, which can also time out server-side.
     polling_delay:
         How long to delay between each polling retry attempt.
+    raise_errors:
+        Whether to raise a JobFailureError on job failure.
 
     Returns
     -------
@@ -113,15 +119,16 @@ def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
             raise PollingTimeoutError('Job {} timed out.'.format(job_id))
     if status.status == 'Failure':
         logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
-        failure_reasons = []
-        for task in status.tasks:
-            if task.status == 'Failure':
-                logger.error('Task {} failed with reason "{}"'.format(
-                    task.id, task.failure_reason))
-                failure_reasons.append(task.failure_reason)
-        raise JobFailureError(
-            message='Job {} terminated with Failure status. Failure reasons: {}'.format(
-                job_id, failure_reasons), job_id=job_id,
-            failure_reasons=failure_reasons)
+        if raise_errors:
+            failure_reasons = []
+            for task in status.tasks:
+                if task.status == 'Failure':
+                    logger.error('Task {} failed with reason "{}"'.format(
+                        task.id, task.failure_reason))
+                    failure_reasons.append(task.failure_reason)
+            raise JobFailureError(
+                message='Job {} terminated with Failure status. Failure reasons: {}'.format(
+                    job_id, failure_reasons), job_id=job_id,
+                failure_reasons=failure_reasons)
 
     return status

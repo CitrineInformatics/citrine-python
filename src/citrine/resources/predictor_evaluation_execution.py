@@ -1,21 +1,26 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import partial
-import sys
 from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import PredictorRef
 from citrine._session import Session
-from citrine._utils.functions import shadow_classes_in_module, \
-    format_escaped_url
-from citrine.informatics.executions import PredictorEvaluationExecution
-import citrine.informatics.executions.predictor_evaluation_execution
+from citrine._utils.functions import MigratedClassMeta, format_escaped_url
+from citrine.informatics.executions import predictor_evaluation_execution
 from citrine.resources.response import Response
 
 
-shadow_classes_in_module(citrine.informatics.executions.predictor_evaluation_execution,
-                         sys.modules[__name__])
+class PredictorEvaluationExecution(predictor_evaluation_execution.PredictorEvaluationExecution,
+                                   deprecated_in="2.22.1",
+                                   removed_in="3.0.0",
+                                   metaclass=MigratedClassMeta):
+    """The execution of a PredictorEvaluationWorkflow.
+
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Predictor evaluation executions also have a ``status_description`` field with more information.
+
+    """
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
@@ -24,7 +29,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
-    _resource = PredictorEvaluationExecution
+    _resource = predictor_evaluation_execution.PredictorEvaluationExecution
 
     def __init__(self,
                  project_id: UUID,
@@ -34,9 +39,9 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         self.session: Session = session
         self.workflow_id: Optional[UUID] = workflow_id
 
-    def build(self, data: dict) -> PredictorEvaluationExecution:
+    def build(self, data: dict) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
-        execution = PredictorEvaluationExecution.build(data)
+        execution = predictor_evaluation_execution.PredictorEvaluationExecution.build(data)
         execution._session = self.session
         execution.project_id = self.project_id
         return execution
@@ -78,11 +83,15 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         return self.build(data)
 
-    def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+    def register(self,
+                 model: predictor_evaluation_execution.PredictorEvaluationExecution
+                 ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot register an execution."""
         raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
 
-    def update(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+    def update(self,
+               model: predictor_evaluation_execution.PredictorEvaluationExecution
+               ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
@@ -113,7 +122,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
              per_page: int = 100,
              predictor_id: Optional[UUID] = None,
              predictor_version: Optional[Union[int, str]] = None
-             ) -> Iterator[PredictorEvaluationExecution]:
+             ) -> Iterator[predictor_evaluation_execution.PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
 
