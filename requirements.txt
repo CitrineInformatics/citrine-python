@@ -1,5 +1,5 @@
 gemd==1.13.0
-requests==2.25.1
+requests==2.31.0
 pyjwt==2.4.0
 arrow==0.15.4
 sphinx==4.3.0
@@ -7,6 +7,6 @@ sphinxcontrib-apidoc==0.3.0
 sphinx-rtd-theme==1.0.0
 boto3==1.17.93
 botocore==1.20.95
-deprecation==2.0.7
+deprecation==2.1.0
 urllib3==1.26.5
 tqdm==4.62.3
