@@ -156,3 +156,9 @@ def test_restore(workflow_execution, collection):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
+
+
+def test_deprecated():
+    from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
+    with pytest.deprecated_call():
+        PredictorEvaluationExecution()
