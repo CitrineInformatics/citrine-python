@@ -10,7 +10,7 @@ env:
     - PIP_UPDATE="-U"
     - PIP_UPDATE=""
 install:
-- pip install --no-compile $PIP_UPDATE -r requirements.txt -r test_requirements.txt -e .
+- pip install --only-binary pandas $PIP_UPDATE -r requirements.txt -r test_requirements.txt -e .
 script:
 - bash scripts/run_tests.sh
 - cd docs; make html; cd ..;
