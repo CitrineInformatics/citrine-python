@@ -6,10 +6,11 @@ python:
 - '3.9'
 - '3.10'
 - '3.11'
+env:
+    - PIP_UPDATE="-U"
+    - PIP_UPDATE=""
 install:
-- pip install -U -r requirements.txt
-- pip install -U -r test_requirements.txt
-- pip install --no-deps -e .
+- pip install --no-compile $PIP_UPDATE -r requirements.txt -r test_requirements.txt -e .
 script:
 - bash scripts/run_tests.sh
 - cd docs; make html; cd ..;
@@ -23,6 +24,7 @@ deploy:
   on:
     tags: true
     python: '3.10' # only need this to run once
+    env: PIP_UPDATE="-U"
 - provider: pypi
   user: CitrineInformatics
   password: "$PYPI_PASSWORD"
