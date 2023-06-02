@@ -5,6 +5,7 @@ from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
+from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._rest.paginator import Paginator
 from citrine._serialization import properties
@@ -13,7 +14,6 @@ from citrine.exceptions import Conflict
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_candidate import HierarchicalDesignMaterial
 from citrine.informatics.predictors import GraphPredictor
-from citrine.resources.module import AbstractModuleCollection
 from citrine.resources.status_detail import StatusDetail
 
 
@@ -70,7 +70,7 @@ class _PredictorVersionPaginator(Paginator):
         return super().paginate(*args, **kwargs)
 
 
-class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
+class _PredictorVersionCollection(Collection[GraphPredictor]):
     _api_version = 'v3'
     _path_template = '/projects/{project_id}/predictors/{uid}/versions'
     _individual_key = None
@@ -219,8 +219,13 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
         entity = self.session.put_resource(path, json, version=self._api_version)
         return self.build(entity)
 
+    def delete(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
+        """Predictor versions cannot be deleted at this time."""
+        msg = "Predictor versions cannot be deleted. Use 'archive_version' instead."
+        raise NotImplementedError(msg)
 
-class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
+
+class PredictorCollection(Collection[GraphPredictor]):
     """Represents the collection of all predictors for a project.
 
     Parameters
@@ -625,3 +630,8 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         return self._versions_collection.rename(
             uid, version=version, name=name, description=description
         )
+
+    def delete(self, uid: Union[UUID, str]):
+        """Predictors cannot be deleted at this time."""
+        msg = "Predictors cannot be deleted. Use 'archive_version' or 'archive_root' instead."
+        raise NotImplementedError(msg)

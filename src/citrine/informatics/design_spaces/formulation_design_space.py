@@ -1,16 +1,15 @@
 from typing import Mapping, Optional, Set
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['FormulationDesignSpace']
 
 
-class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AIResourceMetadata):
+class FormulationDesignSpace(ModuleEngineResource['FormulationDesignSpace'], DesignSpace):
     """Design space composed of mixtures of ingredients.
 
     Parameters
@@ -37,26 +36,23 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
     formulation_descriptor = properties.Object(
         FormulationDescriptor,
-        'config.formulation_descriptor'
+        'data.instance.formulation_descriptor'
     )
-    ingredients = properties.Set(properties.String, 'config.ingredients')
+    ingredients = properties.Set(properties.String, 'data.instance.ingredients')
     labels = properties.Optional(properties.Mapping(
         properties.String,
         properties.Set(properties.String)
-    ), 'config.labels')
-    constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
-    resolution = properties.Float('config.resolution')
+    ), 'data.instance.labels')
+    constraints = properties.Set(properties.Object(Constraint), 'data.instance.constraints')
+    resolution = properties.Float('data.instance.resolution')
 
     typ = properties.String(
-        'config.type',
+        'data.instance.type',
         default='FormulationDesignSpace',
         deserializable=False
     )
-    module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -74,10 +70,6 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
         self.constraints: Set[Constraint] = constraints
         self.labels: Optional[Mapping[str, Set[str]]] = labels
         self.resolution: float = resolution
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<FormulationDesignSpace {!r}>'.format(self.name)

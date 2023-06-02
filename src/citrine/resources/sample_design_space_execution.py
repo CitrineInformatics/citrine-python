@@ -12,6 +12,7 @@ from citrine.resources.response import Response
 class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecution"]):
     """A collection of SampleDesignSpaceExecutions."""
 
+    _api_version = 'v3'
     _path_template = '/projects/{project_id}/design-spaces/{design_space_id}/sample'
     _individual_key = None
     _collection_key = 'response'
@@ -36,7 +37,7 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         """Trigger a sample design space execution."""
         path = self._get_path()
         request_dict = sample_design_space_input.dump()
-        data = self.session.post_resource(path, request_dict)
+        data = self.session.post_resource(path, request_dict, version=self._api_version)
         return self.build(data)
 
     def register(self, model: SampleDesignSpaceExecution) -> SampleDesignSpaceExecution:

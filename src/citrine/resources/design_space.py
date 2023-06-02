@@ -3,14 +3,14 @@ import warnings
 from typing import List, Optional, TypeVar, Union
 from uuid import UUID
 
-from citrine._session import Session
-from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
+from citrine._rest.collection import Collection
+from citrine._session import Session
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
 
 
-class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
+class DesignSpaceCollection(Collection[DesignSpace]):
     """Represents the collection of design spaces as well as the resources belonging to it.
 
     Parameters
@@ -20,10 +20,11 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
 
     """
 
-    _path_template = '/projects/{project_id}/modules'
+    _api_version = 'v3'
+    _path_template = '/projects/{project_id}/design-spaces'
     _individual_key = None
     _resource = DesignSpace
-    _module_type = 'DESIGN_SPACE'
+    _collection_key = 'response'
     _enumerated_cell_limit = 128 * 2000
 
     def __init__(self, project_id: UUID, session: Session):
@@ -37,7 +38,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         design_space._project_id = self.project_id
         return design_space
 
-    def _validate_write_request(self, design_space: DesignSpace):
+    def _verify_write_request(self, design_space: DesignSpace):
         """Perform write-time validations of the design space registration or update.
 
         EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
@@ -55,12 +56,12 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                 raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
         return
 
-    def _hydrate_design_space(self, model: DesignSpace) -> List[DesignSpace]:
-        if model.typ != "ProductDesignSpace":
-            return model
+    def _hydrate_design_space(self, design_space: DesignSpace) -> List[DesignSpace]:
+        if design_space.typ != "ProductDesignSpace":
+            return design_space
 
         subspaces = []
-        for subspace in model.subspaces:
+        for subspace in design_space.subspaces:
             if isinstance(subspace, (str, UUID)):
                 warnings.warn("Support for UUIDs in subspaces is deprecated as of 2.16.0, and "
                               "will be dropped in 3.0. Please use DesignSpace objects instead.",
@@ -68,20 +69,78 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
                 subspaces.append(self.get(subspace))
             else:
                 subspaces.append(subspace)
-        model.subspaces = subspaces
-        return model
+        design_space.subspaces = subspaces
+        return design_space
 
-    def register(self, model: DesignSpace) -> DesignSpace:
+    def register(self, design_space: DesignSpace) -> DesignSpace:
         """Create a new design space."""
-        self._validate_write_request(model)
-        hydrated_model = self._hydrate_design_space(model)
-        return AbstractModuleCollection.register(self, hydrated_model)
+        self._verify_write_request(design_space)
+        hydrated_ds = self._hydrate_design_space(design_space)
 
-    def update(self, model: DesignSpace) -> DesignSpace:
-        """Update an existing design space by uid."""
-        self._validate_write_request(model)
-        hydrated_model = self._hydrate_design_space(model)
-        return AbstractModuleCollection.update(self, hydrated_model)
+        registered_ds = super().register(hydrated_ds)
+
+        # If the initial response is invalid, just return it.
+        # If not, kick off validation, since we never exposed saving a design space without
+        # validation so we should continue to do it automatically
+        if registered_ds.failed():
+            return registered_ds
+        else:
+            return self._validate(registered_ds.uid)
+
+    def update(self, design_space: DesignSpace) -> DesignSpace:
+        """Update and validate an existing DesignSpace."""
+        self._verify_write_request(design_space)
+        hydrated_ds = self._hydrate_design_space(design_space)
+        updated_ds = super().update(hydrated_ds)
+
+        # The /api/v3/design-spaces endpoint switched archiving from a field on the update payload
+        # to their own endpoints. To maintain backwards compatibility, all design spaces have an
+        # _archived field set by the archived property. It will be archived if True, and restored
+        # if False. It defaults to None, which does nothing. The value is reset afterwards.
+        if design_space._archived is True:
+            self.archive(design_space.uid)
+        elif design_space._archived is False:
+            self.restore(design_space.uid)
+        design_space._archived = None
+
+        # If the initial response is invalid, just return it.
+        # If not, kick off validation, since we never exposed saving a design space without
+        # validation so we should continue to do it automatically
+        if updated_ds.failed():
+            return updated_ds
+        else:
+            return self._validate(updated_ds.uid)
+
+    def _validate(self, uid: Union[UUID, str]) -> DesignSpace:
+        path = self._get_path(uid, action="validate")
+        entity = self.session.put_resource(path, {}, version=self._api_version)
+        return self.build(entity)
+
+    def archive(self, uid: Union[UUID, str]) -> DesignSpace:
+        """Archiving a design space removes it from view, but is not a hard delete.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            Unique identifier of the design space to archive
+
+        """
+        url = self._get_path(uid, action="archive")
+        entity = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(entity)
+
+    def restore(self, uid: Union[UUID, str]) -> DesignSpace:
+        """Restore an archived design space.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            Unique identifier of the design space to restore
+
+        """
+        url = self._get_path(uid, action="restore")
+        entity = self.session.put_resource(url, {}, version=self._api_version)
+        return self.build(entity)
 
     def create_default(self,
                        *,
@@ -145,7 +204,10 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         if predictor_version:
             payload["predictor_version"] = predictor_version
 
-        data = self.session.post_resource(path, json=payload, version="v2")
-        if 'instance' in data:
-            data['config'] = data.pop('instance')
+        data = self.session.post_resource(path, json=payload, version=self._api_version)
         return self.build(data)
+
+    def delete(self, uid: Union[UUID, str]):
+        """Design Spaces cannot be deleted at this time."""
+        msg = "Design Spaces cannot be deleted at this time. Use 'archive' instead."
+        raise NotImplementedError(msg)

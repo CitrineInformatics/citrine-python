@@ -1,16 +1,15 @@
 from typing import List, Union, Optional
 from uuid import UUID
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.dimensions import Dimension
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ProductDesignSpace']
 
 
-class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResourceMetadata):
+class ProductDesignSpace(ModuleEngineResource['ProductDesignSpace'], DesignSpace):
     """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.
@@ -29,19 +28,14 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    subspaces = properties.List(properties.Union(
-        [properties.UUID, properties.Object(DesignSpace)]
-    ), 'config.subspaces', default=[])
+    subspaces = properties.List(properties.Object(DesignSpace), 'data.instance.subspaces',
+                                default=[])
     dimensions = properties.Optional(
-        properties.List(properties.Object(Dimension)), 'config.dimensions'
+        properties.List(properties.Object(Dimension)), 'data.instance.dimensions'
     )
-    # Product design spaces should not be embedded in other subspaces, hence status is required
-    status = properties.String('status', serializable=False)
 
-    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
-    module_type = properties.String('module_type', default='DESIGN_SPACE')
+    typ = properties.String('data.instance.type', default='ProductDesignSpace',
+                            deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -55,20 +49,18 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
         self.dimensions: List[Dimension] = dimensions or []
 
     def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        for i, subspace in enumerate(data['config']['subspaces']):
+        data = super()._post_dump(data)
+        for i, subspace in enumerate(data['instance']['subspaces']):
             if isinstance(subspace, dict):
                 # embedded design spaces are not modules, so only serialize their config
-                data['config']['subspaces'][i] = subspace['config']
+                data['instance']['subspaces'][i] = subspace['instance']
         return data
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        subspaces = data['config'].get('subspaces', [])
-        # For each subspace, rename the `instance` key to `config`.
-        for i, _ in enumerate(subspaces):
-            data['config']['subspaces'][i]['config'] = \
-                data['config']['subspaces'][i].pop('instance')
+        for i, subspace_data in enumerate(data['data']['instance']['subspaces']):
+            if isinstance(subspace_data, dict):
+                data['data']['instance']['subspaces'][i] = DesignSpace.wrap_instance(subspace_data)
         return data
 
     def __str__(self):

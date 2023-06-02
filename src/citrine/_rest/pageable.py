@@ -106,6 +106,4 @@ class Pageable():
             params["page"] = page
         if per_page is not None:
             params["per_page"] = per_page
-        if module_type is not None:
-            params["module_type"] = module_type
         return params

@@ -1,15 +1,14 @@
 from typing import List, Mapping, Any
 
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['EnumeratedDesignSpace']
 
 
-class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIResourceMetadata):
+class EnumeratedDesignSpace(ModuleEngineResource['EnumeratedDesignSpace'], DesignSpace):
     """An explicit enumeration of candidate materials to score.
 
     Enumerated design spaces are intended to capture small spaces with fewer than
@@ -29,13 +28,12 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
+    descriptors = properties.List(properties.Object(Descriptor), 'data.instance.descriptors')
+    data = properties.List(properties.Mapping(properties.String, properties.Raw),
+                           'data.instance.data')
 
-    descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
-    data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')
-
-    typ = properties.String('config.type', default='EnumeratedDesignSpace', deserializable=False)
-    module_type = properties.String('module_type', default='DESIGN_SPACE')
+    typ = properties.String('data.instance.type', default='EnumeratedDesignSpace',
+                            deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -47,10 +45,6 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
         self.description: str = description
         self.descriptors: List[Descriptor] = descriptors
         self.data: List[Mapping[str, Any]] = data
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
 
     def __str__(self):
         return '<EnumeratedDesignSpace {!r}>'.format(self.name)
