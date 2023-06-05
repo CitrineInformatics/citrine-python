@@ -205,6 +205,18 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
         entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
+    def rename(self,
+               uid: Union[UUID, str],
+               *,
+               version: Union[int, str] = MOST_RECENT_VER,
+               name: str,
+               description: str
+               ) -> GraphPredictor:
+        path = self._construct_path(uid, version, "rename")
+        json = {"name": name, "description": description}
+        entity = self.session.put_resource(path, json, version=self._api_version)
+        return self.build(entity)
+
 
 class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
     """Represents the collection of all predictors for a project.
@@ -596,3 +608,18 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         result in an error.
         """
         return self._versions_collection.retrain_stale(uid, version=version)
+
+    def rename(self,
+               uid: Union[UUID, str],
+               *,
+               version: Union[int, str],
+               name: str,
+               description: str) -> GraphPredictor:
+        """Rename an existing predictor.
+
+        Both a name and description can be provided. This does not trigger retraining.
+        Any existing version of the predictor can be renamed.
+        """
+        return self._versions_collection.rename(
+            uid, version=version, name=name, description=description
+        )
