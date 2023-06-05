@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 import uuid
+import warnings
 
 from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
@@ -97,13 +98,14 @@ def test_migrated_class():
 
     """
     # Declaring the migrated class raises no concern
-    with pytest.warns(None) as w:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
         class MigratedProperty(Property,
                                deprecated_in="1.2.3",
                                removed_in="2.0.0",
                                metaclass=generate_shared_meta(Property)):
             pass
-    assert len(w.list) == 0
 
     with pytest.deprecated_call():
         MigratedProperty(name="I'm a property!")
@@ -112,12 +114,12 @@ def test_migrated_class():
         class DerivedProperty(MigratedProperty):
             pass
 
-    assert len(w.list) == 0  # Deriving from a derived class is fine
-    with pytest.warns(None) as w:
+    # Deriving from a derived class is fine
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
         class DoublyDerivedProperty(DerivedProperty):
             pass
-
-    assert len(w.list) == 0  # Deriving from a derived class is fine
 
     class IndependentProperty(Property):
         pass
