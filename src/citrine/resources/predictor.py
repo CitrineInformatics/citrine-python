@@ -17,7 +17,9 @@ from citrine.resources.module import AbstractModuleCollection
 from citrine.resources.status_detail import StatusDetail
 
 
+# Refers to the most recently edited prediction version. Could be a draft.
 MOST_RECENT_VER = "most_recent"
+LATEST_VER = "latest"  # Refers to the highest saved predictor version.
 
 
 class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
@@ -76,7 +78,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
     _collection_key = 'response'
     _paginator: Paginator = _PredictorVersionPaginator()
 
-    _SPECIAL_VERSIONS = ["latest", MOST_RECENT_VER]
+    _SPECIAL_VERSIONS = [LATEST_VER, MOST_RECENT_VER]
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -92,7 +94,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
             if version_str not in self._SPECIAL_VERSIONS \
                     and (not version_str.isdecimal() or int(version_str) <= 0):
                 raise ValueError("A predictor version must either be a positive integer, "
-                                 f"\"latest\", or \"{MOST_RECENT_VER}\".")
+                                 f"\"{LATEST_VER}\", or \"{MOST_RECENT_VER}\".")
 
             path += f"/{version_str}"
             path += f"/{action}" if action else ""
@@ -208,7 +210,7 @@ class _PredictorVersionCollection(AbstractModuleCollection[GraphPredictor]):
     def rename(self,
                uid: Union[UUID, str],
                *,
-               version: Union[int, str] = MOST_RECENT_VER,
+               version: Union[int, str],
                name: str,
                description: str
                ) -> GraphPredictor:
@@ -617,8 +619,8 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
                description: str) -> GraphPredictor:
         """Rename an existing predictor.
 
-        Both a name and description can be provided. This does not trigger retraining.
-        Any existing version of the predictor can be renamed.
+        Both the name and description can be changed. This does not trigger retraining.
+        Any existing version of the predictor can be renamed, or "most recent".
         """
         return self._versions_collection.rename(
             uid, version=version, name=name, description=description
