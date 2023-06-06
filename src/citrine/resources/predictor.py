@@ -620,7 +620,7 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         """Rename an existing predictor.
 
         Both the name and description can be changed. This does not trigger retraining.
-        Any existing version of the predictor can be renamed, or "most recent".
+        Any existing version of the predictor can be renamed, or "most_recent".
         """
         return self._versions_collection.rename(
             uid, version=version, name=name, description=description
