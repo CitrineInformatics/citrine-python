@@ -6,10 +6,13 @@ python:
 - '3.9'
 - '3.10'
 - '3.11'
+env:
+    - UPGRADES="-U gemd pandas arrow urllib3 requests pytest boto3"
+    - UPGRADES=""
 install:
-- pip install -U -r requirements.txt
-- pip install -U -r test_requirements.txt
-- pip install --no-deps -e .
+- pip install --only-binary ':all:' -r requirements.txt
+- pip install --only-binary ':all:' -r test_requirements.txt
+- pip install --only-binary ':all:' $UPGRADES -e .
 script:
 - bash scripts/run_tests.sh
 - cd docs; make html; cd ..;
@@ -23,6 +26,7 @@ deploy:
   on:
     tags: true
     python: '3.10' # only need this to run once
+    env: PIP_UPDATE="-U"
 - provider: pypi
   user: CitrineInformatics
   password: "$PYPI_PASSWORD"

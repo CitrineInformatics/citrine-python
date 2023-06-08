@@ -13,6 +13,7 @@ with open(path.join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as
 setup(name='citrine',
       # Update this in src/citrine/__version__.py
       version=about['__version__'],
+      python_requires='>=3.7',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       long_description=long_description,
@@ -21,26 +22,26 @@ setup(name='citrine',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),
       install_requires=[
-          "requests>=2.25.1,<3",
+          "requests>=2.31.0,<3",
           "pyjwt>=2,<3",
-          "arrow>=0.15.4,<0.16",
+          "arrow>=0.15.4,<2",
           "gemd>=1.13.0,<2",
           "boto3>=1.17.93,<2",
           "botocore>=1.20.95,<2",
-          "deprecation>=2.0.7,<3",
-          "urllib3>=1.26.5,<2",
+          "deprecation>=2.1.0,<3",
+          "urllib3>=1.26.5,<3",
           "tqdm>=4.62.3,<5"
       ],
       extras_require={
           "builders": [
-              "pandas>=1.1.5,<2"
+              "pandas>=1.3.5,<3"
           ],
           "../tests": [
-              "factory-boy>=2.12.0,<3",
-              "mock>=3.0.5,<4",
-              "pandas>=1.1.5,<2",
-              "pytest>=6.2.5,<7",
-              "pytz>=2019.3",
+              "factory-boy>=2.12.0,<4",
+              "mock>=3.0.5,<5",
+              "pandas>=1.3.5,<3",
+              "pytest>=6.2.5,<8",
+              "pytz>=2020.1",
               "requests-mock>=1.7.0,<2",
           ]
       },
