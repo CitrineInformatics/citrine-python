@@ -641,6 +641,7 @@ def test_is_stale(valid_graph_predictor_data, is_stale):
     assert session.calls == [FakeCall(method='GET', path=f"{versions_path}/{pred_version}/is-stale")]
     assert resp == is_stale
 
+
 def test_retrain_stale(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)
@@ -657,13 +658,16 @@ def test_retrain_stale(valid_graph_predictor_data):
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
     assert session.calls == [FakeCall(method='PUT', path=f"{versions_path}/{pred_version}/retrain-stale", json={})]
 
+
 def test_unsupported_archive():
     with pytest.raises(NotImplementedError):
         PredictorCollection(uuid.uuid4(), FakeSession()).archive(uuid.uuid4())
 
+
 def test_unsupported_restore():
     with pytest.raises(NotImplementedError):
         PredictorCollection(uuid.uuid4(), FakeSession()).restore(uuid.uuid4())
+
 
 def test_create_default_async():
     session = FakeSession()
@@ -683,7 +687,7 @@ def test_create_default_async():
     metadata = AsyncDefaultPredictorResponseMetadataFactory(data_source=data_source_payload)
     session.set_response(AsyncDefaultPredictorResponseFactory(metadata=metadata, data=None))
 
-    result = pc.create_default_async(training_data=ds, pattern=mode, prefer_valid=prefer_valid)
+    pc.create_default_async(training_data=ds, pattern=mode, prefer_valid=prefer_valid)
 
     assert session.calls == [FakeCall(method="POST", path=f"{predictors_path}/default-async", json=expected_payload)]
 
@@ -730,3 +734,20 @@ def test_get_featurized_training_data(example_hierarchical_design_material):
     assert session.num_calls == 1
     assert expected_call == session.last_call
     assert len(materials) == 1
+
+
+def test_rename(valid_graph_predictor_data):
+    pred_id = valid_graph_predictor_data["id"]
+    pred_version = valid_graph_predictor_data["metadata"]["version"]
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    new_name = "a new name"
+    new_description = "this new name is much better"
+    # When
+    session.set_response(valid_graph_predictor_data)
+    pc.rename(pred_id, version=pred_version, name=new_name, description=new_description)
+    # Then
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+    expected_payload = {"name": new_name, "description": new_description}
+    assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
