@@ -149,8 +149,8 @@ def wait_while_executing(
         PredictorEvaluationExecution,
         DesignExecution,
         GenerativeDesignExecution,
-        SampleDesignSpaceExecution
-    ]:
+        SampleDesignSpaceExecution,
+]:
     """
     Wait until execution is finished.
 
