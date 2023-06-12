@@ -218,10 +218,6 @@ def test_generative_design_executions_get_project_id(project):
     assert project.uid == project.generative_design_executions.project_id
 
 
-def test_sample_design_space_executions_get_project_id(project):
-    assert project.uid == project.sample_design_space_executions.project_id
-
-
 def test_branches_get_project_id(project):
     assert project.uid == project.branches.project_id
 

@@ -39,8 +39,6 @@ from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
 from citrine.resources.generative_design_execution import \
     GenerativeDesignExecutionCollection
-from citrine.resources.sample_design_space_execution import \
-    SampleDesignSpaceExecutionCollection
 from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
@@ -151,13 +149,6 @@ class Project(Resource['Project']):
     def generative_design_executions(self) -> GenerativeDesignExecutionCollection:
         """Return a collection representing all visible generative design executions."""
         return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
-
-    @property
-    def sample_design_space_executions(self) -> SampleDesignSpaceExecutionCollection:
-        """Return a collection representing all visible sample design space executions."""
-        return SampleDesignSpaceExecutionCollection(
-            project_id=self.uid, design_space_id=self.uid, session=self.session
-        )
 
     @property
     def datasets(self) -> DatasetCollection:

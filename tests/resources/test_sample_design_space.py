@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.design_spaces.design_space import SampleDesignSpaceInput
+from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 from citrine.resources.sample_design_space_execution import SampleDesignSpaceExecutionCollection
 from tests.utils.session import FakeSession, FakeCall

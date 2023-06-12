@@ -4,6 +4,8 @@ from typing import Type
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.modules import Module
+from citrine.resources.sample_design_space_execution import \
+    SampleDesignSpaceExecutionCollection
 
 
 __all__ = ['DesignSpace']
@@ -36,18 +38,9 @@ class DesignSpace(Module):
             'DataSourceDesignSpace': DataSourceDesignSpace
         }[data['config']['type']]
 
-
-class SampleDesignSpaceInput(Serializable['SampleDesignSpaceInput']):
-    """A Citrine Sample Design Space Execution Input.
-
-    Parameters
-    ----------
-    n_candidates: int
-        The number of non-correlated samples to draw from the design space domain.
-
-    """
-
-    n_candidates = properties.Integer("n_candidates")
-
-    def __init__(self, *, n_candidates: int):
-        self.n_candidates: int = n_candidates
+    @property
+    def sample_design_space_executions(self):
+        """Start a Sample Design Space Execution using the current Design Space."""
+        return SampleDesignSpaceExecutionCollection(
+            project_id=self._project_id, design_space_id=self.uid, session=self._session
+        )

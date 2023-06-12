@@ -1,11 +1,11 @@
 """Resources that represent both individual and collections of sample design space executions."""
-from typing import Optional, Union, Iterator
+from typing import Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
-from citrine.informatics.design_spaces.design_space import SampleDesignSpaceInput
+from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
 from citrine.resources.response import Response
 
 
@@ -48,7 +48,6 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         raise NotImplementedError("Cannot update a SampleDesignSpaceExecution.")
 
     def list(self, *,
-             page: Optional[int] = None,
              per_page: int = 10,
              ) -> Iterator[SampleDesignSpaceExecution]:
         """
