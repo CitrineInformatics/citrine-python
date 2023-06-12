@@ -32,7 +32,6 @@ def sample_design_space_execution(collection: SampleDesignSpaceExecutionCollecti
     return collection.build(sample_design_space_execution_dict)
 
 
-
 def test_basic_methods(sample_design_space_execution, collection):
     assert "SampleDesignSpaceExecution" in str(sample_design_space_execution)
 
@@ -50,8 +49,6 @@ def test_build_new_execution(collection, sample_design_space_execution_dict):
     assert execution.project_id == collection.project_id
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
-
-
 
 
 def test_trigger_execution(collection: SampleDesignSpaceExecutionCollection, sample_design_space_execution_dict, session):
