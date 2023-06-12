@@ -59,4 +59,4 @@ class Execution(Pageable, AsynchronousObject, ABC):
         return f'<{self.__class__.__name__} {str(self.uid)!r}>'
 
     def _path(self):
-        raise NotImplementedError("Subclasses must implement the _path method")
+        raise NotImplementedError("Subclasses must implement the _path method")  # pragma: no cover

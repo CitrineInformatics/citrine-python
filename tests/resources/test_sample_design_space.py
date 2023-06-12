@@ -1,6 +1,7 @@
 import pytest
 import uuid
 
+from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 from citrine.resources.sample_design_space_execution import SampleDesignSpaceExecutionCollection
@@ -14,16 +15,22 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection(session) -> SampleDesignSpaceExecutionCollection:
-    return SampleDesignSpaceExecutionCollection(
-        project_id=uuid.uuid4(),
-        design_space_id=uuid.uuid4(),
-        session=session,
-    )
+    ds = DesignSpace()
+    ds._project_id = uuid.uuid4()
+    ds.uid = uuid.uuid4()
+    ds._session = session
+    return ds.sample_design_space_executions
+
+
+@pytest.fixture
+def design_space() -> DesignSpace:
+    return 
 
 
 @pytest.fixture
 def sample_design_space_execution(collection: SampleDesignSpaceExecutionCollection, sample_design_space_execution_dict) -> SampleDesignSpaceExecution:
     return collection.build(sample_design_space_execution_dict)
+
 
 
 def test_basic_methods(sample_design_space_execution, collection):
@@ -43,6 +50,8 @@ def test_build_new_execution(collection, sample_design_space_execution_dict):
     assert execution.project_id == collection.project_id
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
+
+
 
 
 def test_trigger_execution(collection: SampleDesignSpaceExecutionCollection, sample_design_space_execution_dict, session):

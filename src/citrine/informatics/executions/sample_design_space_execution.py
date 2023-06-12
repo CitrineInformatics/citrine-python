@@ -2,17 +2,17 @@ from functools import partial
 from typing import Optional, Iterable
 from uuid import UUID
 
-from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_candidate import SampleSearchSpaceResultCandidate
 from citrine.informatics.executions.base_execution import Execution
+from citrine.informatics.design_candidate import SampleSearchSpaceResultCandidate
 from citrine._rest.resource import Resource
+from citrine._utils.functions import format_escaped_url
 
 
 class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Execution):
     """The execution of a Sample Design Space task.
 
-    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
-    Design executions also have a ``status_description`` field with more information.
+    Possible statuses are EXECUTING, SUCCEEDED, and FAILED.
+    Sample Design Space executions also have a ``status_detail`` field with more information.
 
     """
 
