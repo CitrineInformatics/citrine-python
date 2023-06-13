@@ -171,4 +171,4 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
             return {}
 
     def __str__(self):
-        return f'<IngredientRatioConstraint {self.formulation_descriptor.key!r}>'
+        return f"<IngredientRatioConstraint '{self.formulation_descriptor.key}'>"

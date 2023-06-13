@@ -25,11 +25,8 @@ class StatusDetail(Serializable[StatusDetailType]):
     level = properties.String("level")
 
     def __init__(self, *, msg: str, level: Union[str, StatusLevelEnum]):
-        if not isinstance(level, StatusLevelEnum):
-            level = StatusLevelEnum.get_enum(level)
-
         self.msg = msg
-        self.level = level.value
+        self.level = StatusLevelEnum.from_str(level, exception=True)
 
     def __str__(self):
         return f"[{self.level.upper()}] {self.msg}"  # pragma: no cover

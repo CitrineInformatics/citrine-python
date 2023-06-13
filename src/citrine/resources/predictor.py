@@ -528,9 +528,7 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
                                 pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
                                 prefer_valid: bool = True) -> dict:
         # Continue handling string pattern inputs
-        if not isinstance(pattern, AutoConfigureMode):
-            pattern = AutoConfigureMode.get_enum(pattern)
-        pattern = pattern.value
+        pattern = AutoConfigureMode.from_str(pattern, exception=True)
 
         return {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
