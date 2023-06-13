@@ -689,11 +689,11 @@ class Enumeration(Property[BaseEnumeration, str]):
     def serialized_types(self):
         return str
 
-    def _deserialize(self, value: str) -> uuid.UUID:
-        return self.klass.get_enum(value)
+    def _deserialize(self, value: str) -> BaseEnumeration:
+        return self.klass.from_str(value, exception=True)
 
     def _serialize(self, value: typing.Any) -> str:
-        return self.klass.get_value(value)
+        return self.klass.from_str(value, exception=True).value
 
 
 @lru_cache(maxsize=1024)

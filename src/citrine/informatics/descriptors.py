@@ -261,15 +261,13 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     )
 
     def __init__(self, key: Union[FormulationKey, str]):
-        if not isinstance(key, FormulationKey):
-            key = FormulationKey.get_enum(key)
-        self.key: str = key.value
+        self.key = FormulationKey.from_str(key, exception=True)
 
     def __eq__(self, other):
         return self._equals(other, ["key", "typ"])
 
     def __str__(self):
-        return "<FormulationDescriptor {!r}>".format(self.key)
+        return f"<FormulationDescriptor '{self.key}'>"
 
     def __repr__(self):
         return "FormulationDescriptor(key={})".format(self.key)

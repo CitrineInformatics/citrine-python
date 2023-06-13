@@ -3,7 +3,6 @@ from deprecation import deprecated
 import mimetypes
 import os
 from pathlib import Path
-from enum import Enum
 from logging import getLogger
 from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, List, Dict, Iterable, Sequence
@@ -68,7 +67,7 @@ class _Uploader:
         self.s3_addressing_style = 'auto'
 
 
-class FileProcessingType(Enum):
+class FileProcessingType(BaseEnumeration):
     """The supported File Processing Types."""
 
     VALIDATE_CSV = "VALIDATE_CSV"

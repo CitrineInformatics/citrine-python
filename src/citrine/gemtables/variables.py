@@ -572,9 +572,8 @@ class IngredientQuantityByProcessAndName(
         self.type_selector = type_selector
 
         # Cast to make sure the string is valid
-        if not isinstance(quantity_dimension, IngredientQuantityDimension):
-            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
-        self.quantity_dimension = quantity_dimension
+        self.quantity_dimension = IngredientQuantityDimension.from_str(quantity_dimension,
+                                                                       exception=True)
 
         if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
             if unit is None:
@@ -927,9 +926,8 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         self.type_selector = type_selector
 
         # Cast to make sure the string is valid
-        if not isinstance(quantity_dimension, IngredientQuantityDimension):
-            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
-        self.quantity_dimension = quantity_dimension
+        self.quantity_dimension = IngredientQuantityDimension.from_str(quantity_dimension,
+                                                                       exception=True)
 
         if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
             if unit is None:
@@ -1086,9 +1084,8 @@ class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable)
         self.type_selector = type_selector
 
         # Cast to make sure the string is valid
-        if not isinstance(quantity_dimension, IngredientQuantityDimension):
-            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
-        self.quantity_dimension = quantity_dimension
+        self.quantity_dimension = IngredientQuantityDimension.from_str(quantity_dimension,
+                                                                       exception=True)
 
         if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
             if unit is None:
