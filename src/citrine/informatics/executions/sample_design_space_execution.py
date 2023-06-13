@@ -49,8 +49,8 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
         if "major" not in status_dict:
             if status_dict["minor"] in major_status_mapping:
                 status_dict["major"] = major_status_mapping[status_dict["minor"]]
-        else:
-            raise ValueError(f"Unknown minor status: {status_dict['minor']}")  # pragma: no cover
+            else:
+                raise ValueError(f"Unknown minor status: {status_dict['minor']}")
 
         # Update data dictionary with minor and detail status
         data["status_description"] = status_dict['minor']

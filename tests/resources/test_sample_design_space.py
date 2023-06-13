@@ -84,6 +84,15 @@ def test_execution_completes():
     assert execution_success.succeeded()
 
 
+def test_bad_minor_status_fails():
+    data_success = {
+        'id': str(uuid.uuid4()),
+        'status': {'minor': 'BAD MINOR STATUS', 'detail': [], 'info': []},
+    }
+    with pytest.raises(ValueError):
+        SampleDesignSpaceExecution.build(data_success)
+
+
 def test_sample_design_space_execution_results(sample_design_space_execution: SampleDesignSpaceExecution, session, example_sample_design_space_response):
     # Given
     session.set_response(example_sample_design_space_response)
