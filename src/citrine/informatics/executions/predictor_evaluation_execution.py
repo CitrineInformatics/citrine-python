@@ -3,7 +3,7 @@ from functools import lru_cache
 from citrine._serialization import properties
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
-from citrine.informatics.executions.base_execution import Execution
+from citrine.informatics.executions.execution import Execution
 from citrine._rest.resource import Resource
 
 

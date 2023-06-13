@@ -5,7 +5,7 @@ from uuid import UUID
 from citrine._rest.resource import Resource
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.generative_design import GenerativeDesignResult
-from citrine.informatics.executions.base_execution import Execution
+from citrine.informatics.executions.execution import Execution
 
 
 class GenerativeDesignExecution(Resource["GenerativeDesignExecution"], Execution):

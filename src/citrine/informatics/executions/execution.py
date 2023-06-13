@@ -21,7 +21,7 @@ class Execution(Pageable, AsynchronousObject, ABC):
 
     _paginator: Paginator = Paginator()
     _collection_key = 'response'
-    _in_progress_statuses = ["INPROGRESS", "EXECUTING"]
+    _in_progress_statuses = ["INPROGRESS"]
     _succeeded_statuses = ["SUCCEEDED"]
     _failed_statuses = ["FAILED"]
     _session: Optional[Session] = None

@@ -2,7 +2,7 @@ from functools import partial
 from typing import Optional, Iterable
 from uuid import UUID
 
-from citrine.informatics.executions.base_execution import Execution
+from citrine.informatics.executions.execution import Execution
 from citrine.informatics.design_candidate import SampleSearchSpaceResultCandidate
 from citrine._rest.resource import Resource
 from citrine._utils.functions import format_escaped_url
@@ -11,8 +11,8 @@ from citrine._utils.functions import format_escaped_url
 class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Execution):
     """The execution of a Sample Design Space task.
 
-    Possible statuses are EXECUTING, SUCCEEDED, and FAILED.
-    Sample Design Space executions also have a ``status_detail`` field with more information.
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Additional fields ``status_description`` and ``status_detail`` provide more information.
 
     """
 
@@ -28,9 +28,20 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         """Run data modification before building."""
-        status = data.get('status')
-        update_dict = {"status": status["minor"], "status_detail": status["detail"]}
-        data.update(update_dict)
+        status_dict = data['status']
+
+        # Set major status
+        if "major" not in status_dict and status_dict["minor"] in ["EXECUTING", "VALIDATING"]:
+            status_dict["major"] = "INPROGRESS"
+
+        # Update data dictionary with minor and detail status
+        data["status_description"] = status_dict['minor']
+        data["status_detail"] = status_dict['detail']
+
+        # If major status exists, update data dictionary
+        if "major" in status_dict:
+            data["status"] = status_dict["major"]
+
         return data
 
     @classmethod

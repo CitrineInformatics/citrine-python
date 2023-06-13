@@ -9,7 +9,7 @@ from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.predict_request import PredictRequest
 from citrine.informatics.scores import Score
-from citrine.informatics.executions.base_execution import Execution
+from citrine.informatics.executions.execution import Execution
 
 
 class DesignExecution(Resource["DesignExecution"], Execution):
