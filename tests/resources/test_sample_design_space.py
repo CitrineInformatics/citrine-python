@@ -84,7 +84,6 @@ def test_execution_completes():
     assert execution_success.succeeded()
 
 
-
 def test_sample_design_space_execution_results(sample_design_space_execution: SampleDesignSpaceExecution, session, example_sample_design_space_response):
     # Given
     session.set_response(example_sample_design_space_response)
