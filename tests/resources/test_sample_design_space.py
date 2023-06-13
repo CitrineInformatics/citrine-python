@@ -75,6 +75,16 @@ def test_trigger_execution(collection: SampleDesignSpaceExecutionCollection, sam
     )
 
 
+def test_execution_completes():
+    data_success = {
+        'id': str(uuid.uuid4()),
+        'status': {'minor': 'COMPLETED', 'detail': [], 'info': []},
+    }
+    execution_success = SampleDesignSpaceExecution.build(data_success)
+    assert execution_success.succeeded()
+
+
+
 def test_sample_design_space_execution_results(sample_design_space_execution: SampleDesignSpaceExecution, session, example_sample_design_space_response):
     # Given
     session.set_response(example_sample_design_space_response)

@@ -30,17 +30,34 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
         """Run data modification before building."""
         status_dict = data['status']
 
-        # Set major status
-        if "major" not in status_dict and status_dict["minor"] in ["EXECUTING", "VALIDATING"]:
-            status_dict["major"] = "INPROGRESS"
+        # Mapping for major status if missing
+        major_status_mapping = {
+            'CREATED': 'INPROGRESS',
+            'UPDATED': 'INPROGRESS',
+            'STARTED': 'INPROGRESS',
+            'VALIDATING': 'INPROGRESS',
+            'EXECUTING': 'INPROGRESS',
+            'BUILDING': 'INPROGRESS',
+            'COMPLETED': 'SUCCEEDED',
+            'READY': 'SUCCEEDED',
+            'INVALID': 'FAILED',
+            'CANCELLED': 'FAILED',
+            'RESOURCE_EXCEEDED': 'FAILED',
+            'ERROR': 'FAILED',
+        }
+
+        if "major" not in status_dict:
+            if status_dict["minor"] in major_status_mapping:
+                status_dict["major"] = major_status_mapping[status_dict["minor"]]
+        else:
+            raise ValueError(f"Unknown minor status: {status_dict['minor']}")  # pragma: no cover
 
         # Update data dictionary with minor and detail status
         data["status_description"] = status_dict['minor']
         data["status_detail"] = status_dict['detail']
 
-        # If major status exists, update data dictionary
-        if "major" in status_dict:
-            data["status"] = status_dict["major"]
+        # Update data dictionary with major status and remove it if not present
+        data["status"] = status_dict["major"]
 
         return data
 
