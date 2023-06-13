@@ -4,6 +4,8 @@ from typing import Type
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.modules import Module
+from citrine.resources.sample_design_space_execution import \
+    SampleDesignSpaceExecutionCollection
 
 
 __all__ = ['DesignSpace']
@@ -35,3 +37,10 @@ class DesignSpace(Module):
             'FormulationDesignSpace': FormulationDesignSpace,
             'DataSourceDesignSpace': DataSourceDesignSpace
         }[data['config']['type']]
+
+    @property
+    def sample_design_space_executions(self):
+        """Start a Sample Design Space Execution using the current Design Space."""
+        return SampleDesignSpaceExecutionCollection(
+            project_id=self._project_id, design_space_id=self.uid, session=self._session
+        )

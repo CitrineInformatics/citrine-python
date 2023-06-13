@@ -661,6 +661,21 @@ def example_holdout_result_dict(example_holdout_evaluator_dict, example_rmse_met
     }
 
 
+@pytest.fixture
+def sample_design_space_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update(
+        {
+            "design_space_id": str(uuid.uuid4()),
+            "status": {
+                "minor": ret.get("status_description"),
+                "detail": ret.get("status_detail"),
+            },
+        }
+    )
+    return ret
+
+
 @pytest.fixture()
 def example_design_material():
     return {
@@ -704,6 +719,19 @@ def example_candidates(example_design_material):
             "material": example_design_material
         }]
     }
+
+
+@pytest.fixture()
+def example_sample_design_space_response(example_hierarchical_design_material):
+    return {
+        "per_page": 4,
+        "response": [{
+            "id": str(uuid.uuid4()),
+            "execution_id": str(uuid.uuid4()),
+            "material": example_hierarchical_design_material
+        }]
+    }
+
 
 
 @pytest.fixture
