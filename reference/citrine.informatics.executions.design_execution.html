@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.executions.design_execution module &mdash; Citrine Python 2.22.0 documentation</title>
+  <title>citrine.informatics.executions.design_execution module &mdash; Citrine Python 2.24.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.22.0
+                2.24.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -80,7 +80,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.executions.design_execution.DesignExecution">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.executions.design_execution.</span></span><span class="sig-name descname"><span class="pre">DesignExecution</span></span><a class="headerlink" href="#citrine.informatics.executions.design_execution.DesignExecution" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignExecution</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.pageable.Pageable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignExecution</span></code></a>], <a class="reference internal" href="citrine.informatics.executions.execution.html#citrine.informatics.executions.execution.Execution" title="citrine.informatics.executions.execution.Execution"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.executions.execution.Execution</span></code></a></p>
 <p>The execution of a DesignWorkflow.</p>
 <p>Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
 Design executions also have a <code class="docutils literal notranslate"><span class="pre">status_description</span></code> field with more information.</p>
@@ -167,14 +167,8 @@ Design executions also have a <code class="docutils literal notranslate"><span c
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.executions.design_execution.DesignExecution.project_id">
-<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.executions.design_execution.DesignExecution.project_id" title="Permalink to this definition"></a></dt>
-<dd><p>Unique ID of the project that contains this workflow execution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.executions.design_execution.DesignExecution.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.executions.design_execution.DesignExecution.score">
@@ -236,8 +230,8 @@ Design executions also have a <code class="docutils literal notranslate"><span c
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.executions.design_execution.DesignExecution.uid">
-<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.executions.design_execution.DesignExecution.uid" title="Permalink to this definition"></a></dt>
-<dd><p>Unique identifier of the workflow execution</p>
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.executions.design_execution.DesignExecution.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Unique identifier of the execution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>UUID</p>

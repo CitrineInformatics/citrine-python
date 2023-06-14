@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.predictor_evaluation_execution module &mdash; Citrine Python 2.22.0 documentation</title>
+  <title>citrine.resources.predictor_evaluation_execution module &mdash; Citrine Python 2.24.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.22.0
+                2.24.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -79,9 +79,213 @@
 <span id="citrine-resources-predictor-evaluation-execution-module"></span><h1>citrine.resources.predictor_evaluation_execution module<a class="headerlink" href="#module-citrine.resources.predictor_evaluation_execution" title="Permalink to this headline"></a></h1>
 <p>Resources that represent both individual and collections of predictor evaluation executions.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.predictor_evaluation_execution.</span></span><span class="sig-name descname"><span class="pre">PredictorEvaluationExecution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution</span></code></a></p>
+<p>The execution of a PredictorEvaluationWorkflow.</p>
+<p>Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+Predictor evaluation executions also have a <code class="docutils literal notranslate"><span class="pre">status_description</span></code> field with more information.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.access_control_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.failed">
+<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.failed" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed unsuccessfully.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.in_progress">
+<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.in_progress" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process is in progress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.results">
+<span class="sig-name descname"><span class="pre">results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evaluator_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult" title="citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult"><span class="pre">citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.results" title="Permalink to this definition"></a></dt>
+<dd><p>Get a specific evaluation result by the name of the evaluator that produced it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>evaluator_name</strong> (<em>str</em>) – Name of the evaluator for which to get the results</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The evaluation result from the evaluator with the given name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult" title="citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult">PredictorEvaluationResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.succeeded">
+<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.succeeded" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed successfully.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.create_time">
+<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.create_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which the resource was created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.created_by">
+<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.created_by" title="Permalink to this definition"></a></dt>
+<dd><p>id of the user who created the resource</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.evaluator_names">
+<span class="sig-name descname"><span class="pre">evaluator_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.evaluator_names" title="Permalink to this definition"></a></dt>
+<dd><p>names of the predictor evaluators that were executed. These are used
+when calling the <code class="docutils literal notranslate"><span class="pre">results()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.predictor_id">
+<span class="sig-name descname"><span class="pre">predictor_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.predictor_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.predictor_version">
+<span class="sig-name descname"><span class="pre">predictor_version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.predictor_version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.project_id">
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status" title="Permalink to this definition"></a></dt>
+<dd><p>short description of the execution’s status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_description">
+<span class="sig-name descname"><span class="pre">status_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_description" title="Permalink to this definition"></a></dt>
+<dd><p>more detailed description of the execution’s status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_detail">
+<span class="sig-name descname"><span class="pre">status_detail</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_detail" title="Permalink to this definition"></a></dt>
+<dd><p>a list of structured status info, containing the message and level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail">StatusDetail</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.status_info" title="Permalink to this definition"></a></dt>
+<dd><p>human-readable explanations of the status.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.2.0: </span>This will be removed in 3.0.0. Use status_detail instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Unique identifier of the execution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.update_time">
+<span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.update_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which the resource was most recently updated,
+if it has been updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.updated_by">
+<span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.updated_by" title="Permalink to this definition"></a></dt>
+<dd><p>id of the user who most recently updated the resource,
+if it has been updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.workflow_id">
+<span class="sig-name descname"><span class="pre">workflow_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.workflow_id" title="Permalink to this definition"></a></dt>
+<dd><p>Unique identifier of the workflow that was executed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.predictor_evaluation_execution.</span></span><span class="sig-name descname"><span class="pre">PredictorEvaluationExecutionCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._session.Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workflow_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecution</span></code>]</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecution</span></code></a>]</p>
 <p>A collection of PredictorEvaluationExecutions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.archive">
@@ -130,7 +334,7 @@ is specified it limits the maximum number of elements in the response.</p></li>
 <dd class="field-even"><p>The matching predictor evaluation executions.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[<a class="reference internal" href="citrine.informatics.executions.predictor_evaluation_execution.html#citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution">PredictorEvaluationExecution</a>]</p>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution">PredictorEvaluationExecution</a>]</p>
 </dd>
 </dl>
 </dd></dl>

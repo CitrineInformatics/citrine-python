@@ -1,0 +1,8 @@
+citrine.resources.sample\_design\_space\_execution module
+=========================================================
+
+.. automodule:: citrine.resources.sample_design_space_execution
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

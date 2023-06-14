@@ -53,6 +53,7 @@ Submodules
    citrine.resources.property_template
    citrine.resources.report
    citrine.resources.response
+   citrine.resources.sample_design_space_execution
    citrine.resources.status_detail
    citrine.resources.table_config
    citrine.resources.team

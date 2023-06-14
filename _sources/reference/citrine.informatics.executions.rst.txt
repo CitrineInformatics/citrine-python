@@ -8,8 +8,10 @@ Submodules
    :maxdepth: 4
 
    citrine.informatics.executions.design_execution
+   citrine.informatics.executions.execution
    citrine.informatics.executions.generative_design_execution
    citrine.informatics.executions.predictor_evaluation_execution
+   citrine.informatics.executions.sample_design_space_execution
 
 Module contents
 ---------------

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.design_execution module &mdash; Citrine Python 2.22.0 documentation</title>
+  <title>citrine.resources.design_execution module &mdash; Citrine Python 2.24.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.22.0
+                2.24.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -79,9 +79,221 @@
 <span id="citrine-resources-design-execution-module"></span><h1>citrine.resources.design_execution module<a class="headerlink" href="#module-citrine.resources.design_execution" title="Permalink to this headline"></a></h1>
 <p>Resources that represent both individual and collections of design workflow executions.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.design_execution.</span></span><span class="sig-name descname"><span class="pre">DesignExecution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.executions.design_execution.DesignExecution</span></code></a></p>
+<p>The execution of a DesignWorkflow.</p>
+<p>Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+Design executions also have a <code class="docutils literal notranslate"><span class="pre">status_description</span></code> field with more information.</p>
+<p>DesignExecution should be imported from citrine.informatics.executions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.access_control_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.candidates">
+<span class="sig-name descname"><span class="pre">candidates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate" title="citrine.informatics.design_candidate.DesignCandidate"><span class="pre">citrine.informatics.design_candidate.DesignCandidate</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.candidates" title="Permalink to this definition"></a></dt>
+<dd><p>Fetch the Design Candidates for the particular execution, paginated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.failed">
+<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.failed" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed unsuccessfully.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.in_progress">
+<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.in_progress" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process is in progress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predict_request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predict_request.html#citrine.informatics.predict_request.PredictRequest" title="citrine.informatics.predict_request.PredictRequest"><span class="pre">citrine.informatics.predict_request.PredictRequest</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate" title="citrine.informatics.design_candidate.DesignCandidate"><span class="pre">citrine.informatics.design_candidate.DesignCandidate</span></a></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Invoke a prediction on a design candidate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.succeeded">
+<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.succeeded" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the backend process has completed successfully.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.create_time">
+<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.create_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which the resource was created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.created_by">
+<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.created_by" title="Permalink to this definition"></a></dt>
+<dd><p>id of the user who created the resource</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.descriptors">
+<span class="sig-name descname"><span class="pre">descriptors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.descriptors" title="Permalink to this definition"></a></dt>
+<dd><p>all of the descriptors in the candidates generated by this execution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor">Descriptor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.project_id">
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.score">
+<span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.score" title="Permalink to this definition"></a></dt>
+<dd><p>score by which this execution was evaluated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score">Score</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.status" title="Permalink to this definition"></a></dt>
+<dd><p>short description of the execution’s status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.status_description">
+<span class="sig-name descname"><span class="pre">status_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.status_description" title="Permalink to this definition"></a></dt>
+<dd><p>more detailed description of the execution’s status</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.status_detail">
+<span class="sig-name descname"><span class="pre">status_detail</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.status_detail" title="Permalink to this definition"></a></dt>
+<dd><p>a list of structured status info, containing the message and level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.status_detail.html#citrine.resources.status_detail.StatusDetail" title="citrine.resources.status_detail.StatusDetail">StatusDetail</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.status_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.status_info" title="Permalink to this definition"></a></dt>
+<dd><p>human-readable explanations of the status.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.2.0: </span>This will be removed in 3.0.0. Use status_detail instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Unique identifier of the execution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.update_time">
+<span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.update_time" title="Permalink to this definition"></a></dt>
+<dd><p>date and time at which the resource was most recently updated,
+if it has been updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.updated_by">
+<span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.updated_by" title="Permalink to this definition"></a></dt>
+<dd><p>id of the user who most recently updated the resource,
+if it has been updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.version_number">
+<span class="sig-name descname"><span class="pre">version_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.version_number" title="Permalink to this definition"></a></dt>
+<dd><p>Integer identifier that increases each time the workflow is executed. The first
+execution has version_number = 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecution.workflow_id">
+<span class="sig-name descname"><span class="pre">workflow_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.design_execution.DesignExecution.workflow_id" title="Permalink to this definition"></a></dt>
+<dd><p>Unique identifier of the workflow that was executed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecutionCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.design_execution.</span></span><span class="sig-name descname"><span class="pre">DesignExecutionCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._session.Session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workflow_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_execution.DesignExecutionCollection" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DesignExecution</span></code>]</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="#citrine.resources.design_execution.DesignExecution" title="citrine.resources.design_execution.DesignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignExecution</span></code></a>]</p>
 <p>A collection of DesignExecutions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.design_execution.DesignExecutionCollection.archive">
