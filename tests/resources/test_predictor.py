@@ -137,7 +137,25 @@ def test_register(valid_graph_predictor_data):
         FakeCall(method="PUT", path=f"{predictors_path}/{entity['id']}/train", params={"create_version": True}, json={}),
     ]
 
-    updated_predictor = pc.register(predictor)
+    pc.register(predictor)
+
+    assert session.calls == expected_calls
+
+
+def test_register_no_train(valid_graph_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_graph_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+
+    predictors_path = f"/projects/{pc.project_id}/predictors"
+    expected_calls = [
+        FakeCall(method="POST", path=predictors_path, json=predictor.dump()),
+    ]
+
+    pc.register(predictor, train=False)
 
     assert session.calls == expected_calls
 
@@ -181,7 +199,26 @@ def test_update(valid_graph_predictor_data):
         FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
     ]
 
-    updated_predictor = pc.update(predictor)
+    pc.update(predictor)
+
+    assert session.calls == expected_calls
+
+
+def test_update_no_train(valid_graph_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_graph_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    entity_path = f"{predictors_path}/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
+    ]
+
+    pc.update(predictor, train=False)
 
     assert session.calls == expected_calls
 
@@ -214,6 +251,25 @@ def test_register_update_checks_status(valid_graph_predictor_data):
     update_output = pc.update(update_input)
     assert update_output.failed()
     assert session.num_calls == 2
+
+
+def test_train(valid_graph_predictor_data):
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    entity = deepcopy(valid_graph_predictor_data)
+    session.set_response(entity)
+
+    predictor = pc.build(entity)
+
+    predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
+    entity_path = f"{predictors_path}/{entity['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}),
+    ]
+
+    pc.train(predictor.uid)
+
+    assert session.calls == expected_calls
 
 
 def test_list_predictors(valid_graph_predictor_data, valid_graph_predictor_data_empty):
