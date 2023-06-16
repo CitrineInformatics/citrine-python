@@ -286,41 +286,43 @@ class PredictorCollection(AbstractModuleCollection[GraphPredictor]):
         """
         return self._versions_collection.get_featurized_training_data(uid=uid, version=version)
 
-    def register(self, predictor: GraphPredictor) -> GraphPredictor:
-        """Register and train a Predictor.
+    def register(self, predictor: GraphPredictor, *, train: bool = True) -> GraphPredictor:
+        """Register and optionally train a Predictor.
 
-        This predctor will be version 1, and its `draft` flag will be `True`. If training completes
-        successfully, the `draft` flag will be set to `False`. Otherwise, it will remain `False`.
+        This predctor will be version 1, and its `draft` flag will be `True`. If train is True and
+        training completes successfully, the `draft` flag will be set to `False`. Otherwise, it
+        will remain `True`.
         """
         created_predictor = super().register(predictor)
 
-        # If the initial response is invalid, just return it.
-        # If not, kick off training since we never exposed saving a model without it,
-        # so we should continue to do it automatically.
-        if created_predictor.failed():
+        if not train or created_predictor.failed():
             return created_predictor
         else:
-            return self._train(created_predictor.uid)
+            return self.train(created_predictor.uid)
 
-    def update(self, predictor: GraphPredictor) -> GraphPredictor:
-        """Update and train a Predictor.
+    def update(self, predictor: GraphPredictor, *, train: bool = True) -> GraphPredictor:
+        """Update and optionally train a Predictor.
 
-        If the predictor is a draft, this will overwrite its contents, then begin training. If it's
-        not a draft, a new version will be created with the update, and then training will begin.
+        If the predictor is a draft, this will overwrite its contents. If it's not a draft, a new
+        version will be created with the update.
 
-        In either case, if training completes successfully, it will no longer be a draft.
+        In either case, training will begin after the update if train is `True`. And if training
+        completes successfully, the Predictor will no longer be a draft.
         """
         updated_predictor = super().update(predictor)
 
-        # If the initial response is invalid, just return it
-        # If not, kick off training since we never exposed saving a model without training
-        # so we should continue to do it automatically
-        if updated_predictor.failed():
+        if not train or updated_predictor.failed():
             return updated_predictor
         else:
-            return self._train(updated_predictor.uid)
+            return self.train(updated_predictor.uid)
 
-    def _train(self, uid: Union[UUID, str]) -> GraphPredictor:
+    def train(self, uid: Union[UUID, str]) -> GraphPredictor:
+        """Train a predictor.
+
+        If the predictor is not a draft, a new version will be created which is a copy of the
+        current predictor version as a draft, which will be trained. Either way, if training
+        completes successfully, the Predictor will no longer be a draft.
+        """
         path = self._get_path(uid, action="train")
         params = {"create_version": True}
         entity = self.session.put_resource(path, {}, params=params, version=self._api_version)
