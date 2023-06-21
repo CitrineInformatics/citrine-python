@@ -896,9 +896,11 @@ class FileCollection(Collection[FileLink]):
         ingestion_collection = IngestionCollection(project_id=self.project_id,
                                                    dataset_id=self.dataset_id,
                                                    session=self.session)
-        ingestion = ingestion_collection.build_from_file_links(targets)
+        ingestion = ingestion_collection.build_from_file_links(
+            file_links=targets,
+            raise_errors=raise_errors
+        )
         return ingestion.build_objects(
-            raise_errors=raise_errors,
             build_table=build_table,
             delete_dataset_contents=delete_dataset_contents,
             delete_templates=delete_templates

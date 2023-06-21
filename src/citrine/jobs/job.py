@@ -1,8 +1,7 @@
 from logging import getLogger
+from time import time, sleep
 from typing import Union
 from uuid import UUID
-
-from time import time, sleep
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._rest.resource import Resource
@@ -41,9 +40,6 @@ class TaskNode(Resource['TaskNode']):
     """:Set[str]: all the tasks that this task is dependent on"""
     failure_reason = properties.Optional(String(), "failure_reason")
     """:str: if a task has failed, the failure reason will be in this parameter"""
-
-    def __init__(self):
-        pass  # pragma: no cover
 
 
 class JobStatusResponse(Resource['JobStatusResponse']):
@@ -87,7 +83,7 @@ def _poll_for_job_completion(session: Session,
     polling_delay:
         How long to delay between each polling retry attempt.
     raise_errors:
-        Whether to raise a JobFailureError on job failure.
+        Whether a `Failure` response should raise a JobFailureError.
 
     Returns
     -------
@@ -127,8 +123,9 @@ def _poll_for_job_completion(session: Session,
                         task.id, task.failure_reason))
                     failure_reasons.append(task.failure_reason)
             raise JobFailureError(
-                message='Job {} terminated with Failure status. Failure reasons: {}'.format(
-                    job_id, failure_reasons), job_id=job_id,
+                message=f'Job {job_id} terminated with Failure status. '
+                        f'Failure reasons: {failure_reasons}',
+                job_id=job_id,
                 failure_reasons=failure_reasons)
 
     return status
