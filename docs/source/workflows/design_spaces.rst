@@ -284,3 +284,30 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   )
 
   registered_design_space = project.design_spaces.register(design_space)
+
+Sampling from Design Spaces
+---------------------------
+
+To sample candidates from a registered design space, you can use the Citrine Python client as shown in the example below:
+
+.. code:: python
+
+   from citrine import Citrine
+   from citrine.jobs.waiting import wait_while_executing
+   from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
+
+   # Replace with your API key, host, project ID, and design space ID
+   session = Citrine(api_key="API_KEY", scheme="https", host="HOST", port="443")
+   project = session.projects.get("PROJECT_ID")
+   design_space = project.design_spaces.get("DESIGN_SPACE_ID")
+   sample_design_space_collection = design_space.sample_design_space_executions
+
+   sample_input = SampleDesignSpaceInput(n_candidates=50)
+   sample_design_space_execution = sample_design_space_collection.trigger(sample_input)
+
+   execution = wait_while_executing(
+       collection=sample_design_space_collection, execution=sample_design_space_execution
+   )
+
+   sampled_candidates = [candidate.material for candidate in execution.results()]
+   root_materials = [candidate.root for candidate in sampled_candidates]
