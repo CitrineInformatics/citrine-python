@@ -54,7 +54,6 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                       "but {} were given. Please reduce the number of descriptors or candidates " \
                       "in this EnumeratedDesignSpace"
                 raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
-        return
 
     def _hydrate_design_space(self, design_space: DesignSpace) -> List[DesignSpace]:
         if design_space.typ != "ProductDesignSpace":

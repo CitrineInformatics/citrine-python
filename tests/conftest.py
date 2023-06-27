@@ -716,9 +716,10 @@ def sample_design_space_execution_dict(generic_entity):
         {
             "design_space_id": str(uuid.uuid4()),
             "status": {
+                "major": ret.get("status"),
                 "minor": ret.get("status_description"),
-                "detail": ret.get("status_detail"),
-            },
+                "detail": ret.get("status_detail")
+            }
         }
     )
     return ret
