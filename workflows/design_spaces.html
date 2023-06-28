@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.5. Design Spaces &mdash; Citrine Python 2.24.1 documentation</title>
+  <title>4.5. Design Spaces &mdash; Citrine Python 2.26.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.24.1
+                2.26.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -57,6 +57,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#product-design-space">4.5.2. Product design space</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#data-source-design-space">4.5.3. Data Source Design Space</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#formulation-design-space">4.5.4. Formulation Design Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sampling-from-design-spaces">4.5.5. Sampling from Design Spaces</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
@@ -350,6 +351,26 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
 <span class="p">)</span>
 
 <span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="sampling-from-design-spaces">
+<h2><span class="section-number">4.5.5. </span>Sampling from Design Spaces<a class="headerlink" href="#sampling-from-design-spaces" title="Permalink to this headline"></a></h2>
+<p>To sample candidates from a registered design space, follow the example below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_executing</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces.sample_design_space</span> <span class="kn">import</span> <span class="n">SampleDesignSpaceInput</span>
+
+<span class="n">sample_input</span> <span class="o">=</span> <span class="n">SampleDesignSpaceInput</span><span class="p">(</span><span class="n">n_candidates</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">sample_design_space_collection</span> <span class="o">=</span> <span class="n">design_space</span><span class="o">.</span><span class="n">sample_design_space_executions</span>
+<span class="n">sample_design_space_execution</span> <span class="o">=</span> <span class="n">sample_design_space_collection</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">sample_input</span><span class="p">)</span>
+
+<span class="n">execution</span> <span class="o">=</span> <span class="n">wait_while_executing</span><span class="p">(</span>
+    <span class="n">collection</span><span class="o">=</span><span class="n">sample_design_space_collection</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="n">sample_design_space_execution</span>
+<span class="p">)</span>
+
+<span class="n">sampled_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">material</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">execution</span><span class="o">.</span><span class="n">results</span><span class="p">()]</span>
+<span class="n">root_materials</span> <span class="o">=</span> <span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">root</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">sampled_candidates</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>

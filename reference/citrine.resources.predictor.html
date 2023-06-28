@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.predictor module &mdash; Citrine Python 2.24.1 documentation</title>
+  <title>citrine.resources.predictor module &mdash; Citrine Python 2.26.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.24.1
+                2.26.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -172,7 +172,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.predictor.</span></span><span class="sig-name descname"><span class="pre">PredictorCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.module.html#citrine.resources.module.AbstractModuleCollection" title="citrine.resources.module.AbstractModuleCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.module.AbstractModuleCollection</span></code></a>[<a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></code></a>]</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></code></a>]</p>
 <p>Represents the collection of all predictors for a project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -346,7 +346,7 @@ Default: True.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.delete" title="Permalink to this definition"></a></dt>
-<dd><p>Modules cannot be deleted at this time.</p>
+<dd><p>Predictors cannot be deleted at this time.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -439,10 +439,11 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.register" title="Permalink to this definition"></a></dt>
-<dd><p>Register and train a Predictor.</p>
-<p>This predctor will be version 1, and its <cite>draft</cite> flag will be <cite>True</cite>. If training completes
-successfully, the <cite>draft</cite> flag will be set to <cite>False</cite>. Otherwise, it will remain <cite>False</cite>.</p>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.register" title="Permalink to this definition"></a></dt>
+<dd><p>Register and optionally train a Predictor.</p>
+<p>This predctor will be version 1, and its <cite>draft</cite> flag will be <cite>True</cite>. If train is True and
+training completes successfully, the <cite>draft</cite> flag will be set to <cite>False</cite>. Otherwise, it
+will remain <cite>True</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -495,12 +496,22 @@ result in an error.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.train" title="Permalink to this definition"></a></dt>
+<dd><p>Train a predictor.</p>
+<p>If the predictor is not a draft, a new version will be created which is a copy of the
+current predictor version as a draft, which will be trained. Either way, if training
+completes successfully, the Predictor will no longer be a draft.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor.PredictorCollection.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.update" title="Permalink to this definition"></a></dt>
-<dd><p>Update and train a Predictor.</p>
-<p>If the predictor is a draft, this will overwrite its contents, then begin training. If it’s
-not a draft, a new version will be created with the update, and then training will begin.</p>
-<p>In either case, if training completes successfully, it will no longer be a draft.</p>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></span><a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update and optionally train a Predictor.</p>
+<p>If the predictor is a draft, this will overwrite its contents. If it’s not a draft, a new
+version will be created with the update.</p>
+<p>In either case, training will begin after the update if train is <cite>True</cite>. And if training
+completes successfully, the Predictor will no longer be a draft.</p>
 </dd></dl>
 
 </dd></dl>
