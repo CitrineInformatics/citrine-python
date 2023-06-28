@@ -16,9 +16,11 @@ class ModuleCollection(Collection[Module]):
 
     """
 
-    _path_template = '/projects/{project_id}/modules'
+    _path_template = '/projects/{project_id}/design-spaces'
+    _api_version = 'v3'
     _individual_key = None
     _resource = Module
+    _collection_key = 'response'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
