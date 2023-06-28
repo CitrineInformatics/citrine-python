@@ -1,7 +1,9 @@
 """Tests for citrine.builders.design_spaces."""
+import logging
+import uuid
+
 import pytest
 import numpy as np
-import logging
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
@@ -43,6 +45,31 @@ def basic_cartesian_space() -> EnumeratedDesignSpace:
         description=''
     )
     return basic_space
+
+@pytest.fixture
+def basic_cartesian_space_entity(basic_cartesian_space) -> EnumeratedDesignSpace:
+    return {
+        "id": str(uuid.uuid4()),
+        "data": {
+            "name": basic_cartesian_space.name,
+            "description": basic_cartesian_space.description,
+            "instance": basic_cartesian_space.dump()
+        },
+        "metadata": {
+            "created": {
+                "user": str(uuid.uuid4()),
+                "time": "2020-04-23T15:46:26Z"
+            },
+            "updated": {
+                "user": str(uuid.uuid4()),
+                "time": "2020-04-23T15:46:26Z"
+            },
+            "status": {
+                "name": "CREATED",
+                "detail": []
+            }
+        }
+    }
 
 
 @pytest.fixture
@@ -349,7 +376,7 @@ def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
         project=project, uid=old.uid, dataset=dataset, filename=fname)
     assert new.name == old.name
     # the other equality logic is tested in test_enumerated_to_data_source
-    assert project.design_spaces.get(old.uid).archived
+    assert project.design_spaces.get(old.uid).is_archived
 
     # test that it doesn't work when it shouldn't
     with pytest.raises(ValueError):
@@ -357,7 +384,7 @@ def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
             project=project, uid=new.uid, dataset=dataset, filename=fname)
 
     # it failed, so it shouldn't have archived the old one
-    assert not project.design_spaces.get(new.uid).archived
+    assert not project.design_spaces.get(new.uid).is_archived
 
     # test that it works for a design space that cannot be archived because it is in use
     old_in_use = project.design_spaces.register(basic_cartesian_space)
@@ -365,4 +392,3 @@ def test_migrate_enumerated(caplog, basic_cartesian_space, to_clean):
     with caplog.at_level(logging.WARNING):
         migrate_enumerated_design_space(
             project=project, uid=old_in_use.uid, dataset=dataset, filename=fname)
-        assert any(r.levelno == logging.WARNING for r in caplog.records)

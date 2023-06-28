@@ -53,22 +53,21 @@ def test_enumerated_initialization(enumerated_design_space):
 
 def test_data_source_build(valid_data_source_design_space_dict):
     ds = DesignSpace.build(valid_data_source_design_space_dict)
-    assert ds.name == valid_data_source_design_space_dict["config"]["name"]
-    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["config"]["data_source"])
+    assert ds.name == valid_data_source_design_space_dict["data"]["instance"]["name"]
+    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data"]["instance"]["data_source"])
+    assert str(ds) == f'<DataSourceDesignSpace \'{ds.name}\'>'
 
-def test_data_source_create():
-    ds = DataSourceDesignSpace(
-        name="Test",
-        description="ing",
-        data_source=CSVDataSource(
-            file_link=FileLink(filename="foo.csv", url="http://example.com/bar.csv"),
-            column_definitions={
-                "foo": RealDescriptor(key="bar", lower_bound=0, upper_bound=100, units="kg")
-            }
-        )
-    )
-    round_robin = DesignSpace.build(ds.dump())
-    assert ds.name == round_robin.name
-    assert ds.description == round_robin.description
-    assert ds.data_source == round_robin.data_source
+def test_data_source_create(valid_data_source_design_space_dict):
+    ds = valid_data_source_design_space_dict
+    round_robin = DesignSpace.build(ds)
+    assert ds["data"]["name"] == round_robin.name
+    assert ds["data"]["description"] == round_robin.description
+    assert ds["data"]["instance"]["data_source"] == round_robin.data_source.dump()
     assert "DataSource" in str(ds)
+
+def test_deprecated_module_type(product_design_space):
+    with pytest.deprecated_call():
+        product_design_space.module_type = "foo"
+
+    with pytest.deprecated_call():
+        assert product_design_space.module_type == "DESIGN_SPACE"

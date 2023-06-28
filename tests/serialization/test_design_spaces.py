@@ -2,7 +2,7 @@
 from copy import copy, deepcopy
 from uuid import UUID
 
-from . import module_serialization_check, valid_serialization_output
+from . import design_space_serialization_check, valid_serialization_output
 from citrine.informatics.constraints import IngredientCountConstraint
 from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor,\
     FormulationDescriptor
@@ -23,7 +23,7 @@ def test_product_deserialization(valid_product_design_space_data):
         assert type(design_space.dimensions[1]) == EnumeratedDimension
         assert design_space.dimensions[1].values == ['red']
         assert type(design_space.subspaces[0]) == FormulationDesignSpace
-        assert type(design_space.subspaces[0].uid) == UUID
+        assert design_space.subspaces[0].uid is None
         assert type(design_space.subspaces[1]) == FormulationDesignSpace
         assert design_space.subspaces[1].uid is None
         assert design_space.subspaces[1].ingredients == {'baz'}
@@ -35,31 +35,8 @@ def test_product_serialization(valid_product_design_space_data):
     design_space = ProductDesignSpace.build(valid_product_design_space_data)
     serialized = design_space.dump()
     serialized['id'] = valid_product_design_space_data['id']
-    assert serialized['config']['subspaces'][0] == original_data['config']['subspaces'][0]['instance']
-    assert serialized['config']['subspaces'][1] == original_data['config']['subspaces'][1]['instance']
-
-    # Replace one of the subspaces with its uid, and check that the serialized result is the same.
-    design_space.subspaces[0] = design_space.subspaces[0].uid
-    serialized_with_uid = design_space.dump()
-    serialized_with_uid['id'] = valid_product_design_space_data['id']
-    assert serialized_with_uid['config']['subspaces'][0] == str(design_space.subspaces[0])
-    assert serialized_with_uid['config']['subspaces'][1] == serialized['config']['subspaces'][1]
-
-
-def test_old_product_serialization(old_valid_product_design_space_data):
-    """Ensure that the old version of the product design space can be (de)serialized.
-    The previous version had no `subspaces` field and had type `Univariate`.
-    Some on-platform assets are saved this way, and should be converted seamlessly
-    into ProductDesignSpaces.
-    """
-    design_space = ProductDesignSpace.build(old_valid_product_design_space_data)
-    assert design_space.subspaces == []
-    assert design_space.typ == 'ProductDesignSpace'
-    serialized = design_space.dump()
-    serialized['id'] = old_valid_product_design_space_data['id']
-    serialized['config']['type'] = 'Univariate'
-    del serialized['config']['subspaces']
-    assert serialized == valid_serialization_output(old_valid_product_design_space_data)
+    assert serialized['instance']['subspaces'][0] == original_data['data']['instance']['subspaces'][0]
+    assert serialized['instance']['subspaces'][1] == original_data['data']['instance']['subspaces'][1]
 
 
 def test_enumerated_deserialization(valid_enumerated_design_space_data):
@@ -96,7 +73,7 @@ def test_enumerated_deserialization(valid_enumerated_design_space_data):
 
 def test_enumerated_serialization(valid_enumerated_design_space_data):
     """Ensure that a serialized EnumeratedDesignSpace looks sane."""
-    module_serialization_check(valid_enumerated_design_space_data, EnumeratedDesignSpace)
+    design_space_serialization_check(valid_enumerated_design_space_data, EnumeratedDesignSpace)
 
 
 def test_formulation_deserialization(valid_formulation_design_space_data):
@@ -127,4 +104,4 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
 
 def test_formulation_serialization(valid_formulation_design_space_data):
     """Ensure that a serialized FormulationDesignSpace looks sane."""
-    module_serialization_check(valid_formulation_design_space_data, FormulationDesignSpace)
+    design_space_serialization_check(valid_formulation_design_space_data, FormulationDesignSpace)

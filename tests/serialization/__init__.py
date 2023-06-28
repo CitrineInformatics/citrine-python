@@ -6,7 +6,7 @@ def valid_serialization_output(valid_data):
     return {x: y for x, y in valid_data.items() if x not in exclude_fields}
 
 
-def module_serialization_check(data, moduleClass):
+def design_space_serialization_check(data, moduleClass):
     """Assert that given json is unchanged under round-robin (de)serialization.
 
     Parameters
@@ -16,8 +16,7 @@ def module_serialization_check(data, moduleClass):
     """
     module = moduleClass.build(data)
     serialized = module.dump()
-    serialized['id'] = data['id']
-    assert serialized == valid_serialization_output(data)
+    assert serialized == valid_serialization_output(data)['data']
 
 
 def predictor_serialization_check(json, module_class):
