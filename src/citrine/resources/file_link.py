@@ -856,7 +856,7 @@ class FileCollection(Collection[FileLink]):
 
         Parameters
         ----------
-        files: List[FileLink]
+        files: List[FileLink, str]
             A list of files from which GEMD objects should be built
         upload: bool
             If the files are off-platform references, upload them first.  Defaults to False,
