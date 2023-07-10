@@ -1,5 +1,4 @@
 """Tools for working with Descriptors."""
-import warnings
 from typing import Type, Set, Union
 
 from deprecation import deprecated
@@ -22,13 +21,11 @@ __all__ = ['Descriptor',
 class FormulationKey(BaseEnumeration):
     """The allowed names for a FormulationDescriptor.
 
-    * ``LOCAL`` is the key "Formulation"
-    * ``HIERARCHICAL`` alias for ``LOCAL`` (to be removed in v3.0.0)
+    * ``HIERARCHICAL`` is the key "Formulation"
     * ``FLAT`` is the key "Flat Formulation"
 
     """
 
-    LOCAL = "Formulation"
     HIERARCHICAL = "Formulation"
     FLAT = "Flat Formulation"
 
@@ -155,13 +152,13 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         return "IntegerDescriptor({}, {}, {})".format(self.key, self.lower_bound, self.upper_bound)
 
     @property
+    @deprecated(
+        deprecated_in="2.27.0",
+        removed_in="3.0.0",
+        details="Integer descriptors are always dimensionless."
+    )
     def units(self) -> str:
         """Return 'dimensionless' for the units of an integer descriptor."""
-        warnings.warn(
-            "Units on an integer descriptor are always dimensionless. "
-            "This field will be removed in version 3.0.0",
-            DeprecationWarning
-        )
         return "dimensionless"
 
 
@@ -264,7 +261,9 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     """
 
-    typ = properties.String('type', default=FormulationKey.LOCAL.value, deserializable=False)
+    typ = properties.String(
+        'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
+    )
 
     def __init__(self, key: Union[FormulationKey, str]):
         self.key = FormulationKey.from_str(key, exception=True)
@@ -279,16 +278,9 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
         return "FormulationDescriptor(key={})".format(self.key)
 
     @classmethod
-    def local(cls) -> "FormulationDescriptor":
-        """The local formulation descriptor with key 'Formulation'."""
-        return FormulationDescriptor(FormulationKey.LOCAL)
-
-    @classmethod
-    @deprecated(deprecated_in="2.27.0", removed_in="3.0.0",
-                details="Please use the 'FormulationDescriptor.local()' instead.")
     def hierarchical(cls) -> "FormulationDescriptor":
-        """Alias for `FormulationDescriptor.local()`."""
-        return FormulationDescriptor.local()
+        """The hierarchical formulation descriptor with key 'Formulation'."""
+        return FormulationDescriptor(FormulationKey.HIERARCHICAL)
 
     @classmethod
     def flat(cls) -> "FormulationDescriptor":

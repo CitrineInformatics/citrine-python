@@ -102,7 +102,7 @@ def test_integer_range_initialization(integer_range_constraint):
     assert integer_range_constraint.lower_bound == 1
     assert integer_range_constraint.upper_bound == 10
     assert not integer_range_constraint.lower_inclusive
-    assert integer_range_constraint.upper_inclusive
+    assert not integer_range_constraint.upper_inclusive
 
 
 def test_categorical_initialization(categorical_constraint):
@@ -221,7 +221,6 @@ def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
     with pytest.deprecated_call():
         assert ingredient_ratio_constraint.basis_labels == dict.fromkeys(newval_set, 1)
     ingredient_ratio_constraint.basis_label_names = newval_set
-
 
 
 def test_range_defaults():

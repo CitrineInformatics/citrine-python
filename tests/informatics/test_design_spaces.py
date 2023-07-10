@@ -1,22 +1,23 @@
 """Tests for citrine.informatics.design_spaces."""
 import pytest
 
-from citrine.informatics.data_sources import DataSource, CSVDataSource
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
+from citrine.informatics.data_sources import DataSource
+from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
+    IntegerDescriptor
 from citrine.informatics.design_spaces import *
-from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
-from citrine.resources.file_link import FileLink
+from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension, \
+    IntegerDimension
 
 
 @pytest.fixture
 def product_design_space() -> ProductDesignSpace:
     """Build a ProductDesignSpace for testing."""
     alpha = RealDescriptor('alpha', lower_bound=0, upper_bound=100, units="")
-    beta = RealDescriptor('beta', lower_bound=0, upper_bound=100, units="")
+    beta = IntegerDescriptor('beta', lower_bound=0, upper_bound=100)
     gamma = CategoricalDescriptor('gamma', categories=['a', 'b', 'c'])
     dimensions = [
         ContinuousDimension(alpha, lower_bound=0, upper_bound=10),
-        ContinuousDimension(beta, lower_bound=0, upper_bound=10),
+        IntegerDimension(beta, lower_bound=0, upper_bound=10),
         EnumeratedDimension(gamma, values=['a', 'c'])
     ]
     return ProductDesignSpace(name='my design space', description='does some things', dimensions=dimensions)
@@ -57,6 +58,7 @@ def test_data_source_build(valid_data_source_design_space_dict):
     assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data"]["instance"]["data_source"])
     assert str(ds) == f'<DataSourceDesignSpace \'{ds.name}\'>'
 
+
 def test_data_source_create(valid_data_source_design_space_dict):
     ds = valid_data_source_design_space_dict
     round_robin = DesignSpace.build(ds)
@@ -64,6 +66,7 @@ def test_data_source_create(valid_data_source_design_space_dict):
     assert ds["data"]["description"] == round_robin.description
     assert ds["data"]["instance"]["data_source"] == round_robin.data_source.dump()
     assert "DataSource" in str(ds)
+
 
 def test_deprecated_module_type(product_design_space):
     with pytest.deprecated_call():

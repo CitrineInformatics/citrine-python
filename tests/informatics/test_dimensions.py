@@ -1,8 +1,10 @@
 """Tests for citrine.informatics.dimensions."""
 import pytest
 
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
+from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
+    IntegerDescriptor
+from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension, \
+    IntegerDimension
 
 
 @pytest.fixture
@@ -10,6 +12,13 @@ def continuous_dimension() -> ContinuousDimension:
     """Build a ContinuousDimension."""
     alpha = RealDescriptor('alpha', lower_bound=0, upper_bound=100, units="")
     return ContinuousDimension(alpha, lower_bound=3, upper_bound=33)
+
+
+@pytest.fixture
+def integer_dimension() -> IntegerDimension:
+    """Build an IntegerDimension."""
+    beta = IntegerDescriptor('beta', lower_bound=0, upper_bound=100)
+    return IntegerDimension(beta, lower_bound=3, upper_bound=33)
 
 
 @pytest.fixture
@@ -34,6 +43,18 @@ def test_continuous_bounds():
     assert lower_none.upper_bound == 0
 
     upper_none = ContinuousDimension(beta, lower_bound=0)
+    assert upper_none.lower_bound == 0
+    assert upper_none.upper_bound == 10
+
+
+def test_integer_bounds():
+    """Test bounds are assigned correctly, even when bounds are == 0"""
+    beta = IntegerDescriptor('beta', lower_bound=-10, upper_bound=10)
+    lower_none = IntegerDimension(beta, upper_bound=0)
+    assert lower_none.lower_bound == -10
+    assert lower_none.upper_bound == 0
+
+    upper_none = IntegerDimension(beta, lower_bound=0)
     assert upper_none.lower_bound == 0
     assert upper_none.upper_bound == 10
 
