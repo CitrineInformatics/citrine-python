@@ -1,4 +1,4 @@
-.. generative_design_execution:
+.. _generative_design:
 
 [ALPHA] Generative Design Execution
 ===================================
@@ -22,27 +22,13 @@ After the generative design process is complete, the mutations are filtered base
 Mutations that do not meet the similarity threshold or are duplicates will be discarded. The remaining mutations are returned as a subset of the original mutations in the form of a list of :class:`~citrine.informatics.generative_design.GenerativeDesignResult` objects.
 These results contain information about the seed molecule, the mutation, the similarity score, and the fingerprint type used during execution.
 
-After triggering the execution and waiting for completion, the user can retrieve the results and utilize them in their work.'
-The following example demonstrates how to run a generative design execution on the Citrine Platform using the Citrine Python client.
+After triggering the execution and waiting for completion, the user can retrieve the results and utilize them in their work.
+The following example demonstrates how to run a generative design execution on the Citrine Platform:
 
 .. code-block:: python
 
-    import os
-    from citrine import Citrine
     from citrine.jobs.waiting import wait_while_executing
     from citrine.informatics.generative_design import GenerativeDesignInput, FingerprintType, StructureExclusion
-
-    session = Citrine(
-        api_key=os.environ.get("API_KEY"),
-        scheme="https",
-        host=os.environ.get("CITRINE_HOST"),
-        port="443",
-    )
-
-    team_uid = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    project_uid = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    team = session.teams.get(team_uid)
-    project = team.projects.get(project_uid)
 
     # Trigger a new generative design execution
     generative_design_input = GenerativeDesignInput(
@@ -66,9 +52,7 @@ The following example demonstrates how to run a generative design execution on t
     mutations = [(gen.seed, gen.mutated) for gen in generated]
 
     # Or get a completed execution by ID
-    execution_uid = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    execution = project.generative_design_executions.get(execution_uid)
+    execution_id = execution.uid
+    execution = project.generative_design_executions.get(execution_id)
     generated = execution.results()
     mutations = [(gen.seed, gen.mutated) for gen in generated]
-
-To execute the code, replace the `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` placeholders with valid UIDs from your Citrine environment. Ensure that the API key, scheme, host, and port are correctly specified in the `Citrine` initialization.
