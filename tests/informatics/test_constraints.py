@@ -19,6 +19,17 @@ def scalar_range_constraint() -> ScalarRangeConstraint:
 
 
 @pytest.fixture
+def integer_range_constraint() -> IntegerRangeConstraint:
+    """Build an IntegerRangeConstraint."""
+    return IntegerRangeConstraint(
+        descriptor_key='integer',
+        lower_bound=1,
+        upper_bound=10,
+        lower_inclusive=False
+    )
+
+
+@pytest.fixture
 def categorical_constraint() -> AcceptableCategoriesConstraint:
     """Build a CategoricalConstraint."""
     return AcceptableCategoriesConstraint(
@@ -61,6 +72,7 @@ def label_fraction_constraint() -> LabelFractionConstraint:
         is_required=False
     )
 
+
 @pytest.fixture
 def ingredient_ratio_constraint() -> IngredientRatioConstraint:
     """Build an IngredientRatioConstraint"""
@@ -82,6 +94,15 @@ def test_scalar_range_initialization(scalar_range_constraint):
     assert scalar_range_constraint.upper_bound == 10.0
     assert not scalar_range_constraint.lower_inclusive
     assert scalar_range_constraint.upper_inclusive
+
+
+def test_integer_range_initialization(integer_range_constraint):
+    """Make sure the correct fields go to the correct places."""
+    assert integer_range_constraint.descriptor_key == 'integer'
+    assert integer_range_constraint.lower_bound == 1
+    assert integer_range_constraint.upper_bound == 10
+    assert not integer_range_constraint.lower_inclusive
+    assert integer_range_constraint.upper_inclusive
 
 
 def test_categorical_initialization(categorical_constraint):
@@ -126,6 +147,7 @@ def test_ingredient_ratio_initialization(ingredient_ratio_constraint):
     assert ingredient_ratio_constraint.label == ("foolabel", 0.5)
     assert ingredient_ratio_constraint.basis_ingredient_names == {"baz", "bat"}
     assert ingredient_ratio_constraint.basis_label_names == {"bazlabel", "batlabel"}
+
 
 def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
     with pytest.raises(ValueError):

@@ -67,3 +67,9 @@ def test_to_json(descriptor):
 def test_formulation_from_string_key():
     descriptor = FormulationDescriptor(FormulationKey.HIERARCHICAL.value)
     assert descriptor.key == FormulationKey.HIERARCHICAL.value
+
+
+def test_integer_units_deprecation():
+    descriptor = IntegerDescriptor("integer", lower_bound=5, upper_bound=10)
+    with pytest.deprecated_call():
+        assert descriptor.units == "dimensionless"

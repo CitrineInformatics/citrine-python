@@ -1,6 +1,8 @@
 """Tools for working with Descriptors."""
+import warnings
 from typing import Type, Set, Union
 
+from deprecation import deprecated
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
@@ -20,11 +22,13 @@ __all__ = ['Descriptor',
 class FormulationKey(BaseEnumeration):
     """The allowed names for a FormulationDescriptor.
 
-    * ``HIERARCHICAL`` is the key "Formulation"
+    * ``LOCAL`` is the key "Formulation"
+    * ``HIERARCHICAL`` alias for ``LOCAL`` (to be removed in v3.0.0)
     * ``FLAT`` is the key "Flat Formulation"
 
     """
 
+    LOCAL = "Formulation"
     HIERARCHICAL = "Formulation"
     FLAT = "Flat Formulation"
 
@@ -134,17 +138,12 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
 
     lower_bound = properties.Integer('lower_bound')
     upper_bound = properties.Integer('upper_bound')
-    units = properties.String('units', default='dimensionless')
     typ = properties.String('type', default='Integer', deserializable=False)
 
     def __eq__(self, other):
-        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "typ"])
 
-    def __init__(self,
-                 key: str,
-                 *,
-                 lower_bound: int,
-                 upper_bound: int):
+    def __init__(self, key: str, *, lower_bound: int, upper_bound: int):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
@@ -153,8 +152,17 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         return "<IntegerDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntegerDescriptor({}, {}, {}, {})".format(
-            self.key, self.lower_bound, self.upper_bound, self.units)
+        return "IntegerDescriptor({}, {}, {})".format(self.key, self.lower_bound, self.upper_bound)
+
+    @property
+    def units(self) -> str:
+        """Return 'dimensionless' for the units of an integer descriptor."""
+        warnings.warn(
+            "Units on an integer descriptor are always dimensionless. "
+            "This field will be removed in version 3.0.0",
+            DeprecationWarning
+        )
+        return "dimensionless"
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
@@ -256,9 +264,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     """
 
-    typ = properties.String(
-        'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
-    )
+    typ = properties.String('type', default=FormulationKey.LOCAL.value, deserializable=False)
 
     def __init__(self, key: Union[FormulationKey, str]):
         self.key = FormulationKey.from_str(key, exception=True)
@@ -273,9 +279,16 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
         return "FormulationDescriptor(key={})".format(self.key)
 
     @classmethod
+    def local(cls) -> "FormulationDescriptor":
+        """The local formulation descriptor with key 'Formulation'."""
+        return FormulationDescriptor(FormulationKey.LOCAL)
+
+    @classmethod
+    @deprecated(deprecated_in="2.27.0", removed_in="3.0.0",
+                details="Please use the 'FormulationDescriptor.local()' instead.")
     def hierarchical(cls) -> "FormulationDescriptor":
-        """The hierarchical formulation descriptor with key 'Formulation'."""
-        return FormulationDescriptor(FormulationKey.HIERARCHICAL)
+        """Alias for `FormulationDescriptor.local()`."""
+        return FormulationDescriptor.local()
 
     @classmethod
     def flat(cls) -> "FormulationDescriptor":

@@ -4,19 +4,19 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 
-__all__ = ['ScalarRangeConstraint']
+__all__ = ['IntegerRangeConstraint']
 
 
-class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
-    """Represents an inequality constraint on a real-valued material attribute.
+class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint):
+    """Represents an inequality constraint on an integer-valued material attribute.
 
     Parameters
     ----------
     descriptor_key: str
         the key corresponding to a descriptor
-    lower_bound: float
+    lower_bound: int
         the minimum value in the range
-    upper_bound: float
+    upper_bound: int
         the maximum value in the range
     lower_inclusive: bool
         if True, will include the lower bound value in the range (default: true)
@@ -30,16 +30,15 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
     upper_bound = properties.Optional(properties.Float, 'max')
     lower_inclusive = properties.Boolean('min_inclusive')
     upper_inclusive = properties.Boolean('max_inclusive')
-    typ = properties.String('type', default='ScalarRange')
+    typ = properties.String('type', default='IntegerRange')
 
     def __init__(self, *,
                  descriptor_key: str,
-                 lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None,
+                 lower_bound: Optional[int] = None,
+                 upper_bound: Optional[int] = None,
                  lower_inclusive: Optional[bool] = None,
                  upper_inclusive: Optional[bool] = None):
         self.descriptor_key = descriptor_key
-
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
@@ -54,4 +53,4 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
             self.upper_inclusive = upper_inclusive
 
     def __str__(self):
-        return '<ScalarRangeConstraint {!r}>'.format(self.descriptor_key)
+        return '<IntegerRangeConstraint {!r}>'.format(self.descriptor_key)
