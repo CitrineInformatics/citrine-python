@@ -15,13 +15,6 @@ def continuous_dimension() -> ContinuousDimension:
 
 
 @pytest.fixture
-def integer_dimension() -> IntegerDimension:
-    """Build an IntegerDimension."""
-    beta = IntegerDescriptor('beta', lower_bound=0, upper_bound=100)
-    return IntegerDimension(beta, lower_bound=3, upper_bound=33)
-
-
-@pytest.fixture
 def enumerated_dimension() -> EnumeratedDimension:
     """Build an EnumeratedDimension."""
     color = CategoricalDescriptor('color', categories={'red', 'green', 'blue'})

@@ -28,21 +28,15 @@ class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint)
     descriptor_key = properties.String('descriptor_key')
     lower_bound = properties.Optional(properties.Float, 'min')
     upper_bound = properties.Optional(properties.Float, 'max')
-    lower_inclusive = properties.Optional(properties.Boolean, 'min_inclusive')
-    upper_inclusive = properties.Optional(properties.Boolean, 'max_inclusive')
     typ = properties.String('type', default='IntegerRange')
 
     def __init__(self, *,
                  descriptor_key: str,
                  lower_bound: Optional[int] = None,
-                 upper_bound: Optional[int] = None,
-                 lower_inclusive: Optional[bool] = None,
-                 upper_inclusive: Optional[bool] = None):
+                 upper_bound: Optional[int] = None):
         self.descriptor_key = descriptor_key
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
-        self.lower_inclusive = lower_inclusive
-        self.upper_inclusive = upper_inclusive
 
     def __str__(self):
         return '<IntegerRangeConstraint {!r}>'.format(self.descriptor_key)

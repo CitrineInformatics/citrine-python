@@ -24,8 +24,7 @@ def integer_range_constraint() -> IntegerRangeConstraint:
     return IntegerRangeConstraint(
         descriptor_key='integer',
         lower_bound=1,
-        upper_bound=10,
-        lower_inclusive=False
+        upper_bound=10
     )
 
 
@@ -101,8 +100,6 @@ def test_integer_range_initialization(integer_range_constraint):
     assert integer_range_constraint.descriptor_key == 'integer'
     assert integer_range_constraint.lower_bound == 1
     assert integer_range_constraint.upper_bound == 10
-    assert not integer_range_constraint.lower_inclusive
-    assert not integer_range_constraint.upper_inclusive
 
 
 def test_categorical_initialization(categorical_constraint):

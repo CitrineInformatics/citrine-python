@@ -323,9 +323,8 @@ are compatible with each type of descriptor:
 - :class:`~citrine.informatics.descriptors.RealDescriptor`: values of type :class:`~gemd.entity.NominalReal`, :class:`~gemd.entity.NormalReal`, and :class:`~gemd.entity.UniformReal`
 - :class:`~citrine.informatics.descriptors.IntegerDescriptor`: values of type :class:`~gemd.entity.NominalInteger` and :class:`~gemd.entity.UniformInteger`
 - :class:`~citrine.informatics.descriptors.MolecularStructureDescriptor`: values of type :class:`~gemd.entity.Smiles` and :class:`~gemd.entity.InChI`
-- :class:`~citrine.informatics.descriptors.CategoricalDescriptor`: values of type :class:`~gemd.entity.NominalCategorical` and :class:`~gemd.entity.DiscreteCategorical`,
-  or values of type :class:`~gemd.entity.NominalComposition` when the quantity keys are **not** atomic symbols
+- :class:`~citrine.informatics.descriptors.CategoricalDescriptor`: values of type :class:`~gemd.entity.NominalCategorical` and :class:`~gemd.entity.DiscreteCategorical`
 - :class:`~citrine.informatics.descriptors.ChemicalFormulaDescriptor`: values of type :class:`~gemd.entity.EmpiricalFormula`,
   or values of type :class:`~gemd.entity.NominalComposition` when **all** quantity keys are valid atomic symbols
-- :class:`~citrine.informatics.descriptors.FormulationDescriptor`: all values extracted by ingredient quantity, ingredient quantity, and ingredient label variables
-  for a given row are used to represent the formulation composition
+- :class:`~citrine.informatics.descriptors.FormulationDescriptor`: all values extracted by ingredient quantity, identifier, and label variables
+  are used to represent the formulation
