@@ -135,7 +135,7 @@ def test_design_space_limits():
 @pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
 def test_create_default(predictor_version, valid_product_design_space):
     session = FakeSession()
-    session.set_response(_ds_to_response(valid_product_design_space))
+    session.set_response(valid_product_design_space.dump())
    
     predictor_id = uuid.uuid4()
     collection = DesignSpaceCollection(
@@ -175,7 +175,7 @@ def test_create_default(predictor_version, valid_product_design_space):
 def test_create_default_with_config(valid_product_design_space, ingredient_fractions,
                                     label_fractions, label_count, parameters):
     session = FakeSession()
-    session.set_response(_ds_to_response(valid_product_design_space))
+    session.set_response(valid_product_design_space.dump())
     
     predictor_id = uuid.uuid4()
     predictor_version = random.randint(1, 10)

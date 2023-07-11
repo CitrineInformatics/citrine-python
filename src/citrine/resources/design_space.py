@@ -204,7 +204,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
             payload["predictor_version"] = predictor_version
 
         data = self.session.post_resource(path, json=payload, version=self._api_version)
-        return self.build(data)
+        return self.build(DesignSpace.wrap_instance(data["instance"]))
 
     def delete(self, uid: Union[UUID, str]):
         """Design Spaces cannot be deleted at this time."""
