@@ -5,8 +5,10 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError, \
-    _poll_for_job_completion
+from citrine.exceptions import BadRequest
+from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
+from citrine.resources.api_error import ValidationError
+from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 
 
 class IngestionStatus(Resource['IngestionStatus']):
@@ -22,7 +24,7 @@ class IngestionStatus(Resource['IngestionStatus']):
     """
 
     status = properties.String("status")
-    errors = properties.List(properties.String, "errors")
+    errors = properties.List(properties.Object(StatusDetail), "errors")
 
     @property
     def success(self) -> bool:
@@ -45,14 +47,14 @@ class Ingestion(Resource['Ingestion']):
 
     """
 
-    uid = properties.Optional(properties.UUID(), 'ingestion_id')
-    project_id = properties.Optional(properties.UUID(), 'project_id')
-    dataset_id = properties.Optional(properties.UUID(), 'dataset_id')
-    session = properties.Optional(properties.Object(Session), 'session', serializable=False)
+    uid = properties.UUID('ingestion_id')
+    project_id = properties.UUID('project_id')
+    dataset_id = properties.UUID('dataset_id')
+    session = properties.Object(Session, 'session', serializable=False)
+    raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
 
     def build_objects(self,
                       *,
-                      raise_errors: bool = True,
                       build_table: bool = False,
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True) -> IngestionStatus:
@@ -64,9 +66,6 @@ class Ingestion(Resource['Ingestion']):
 
         Parameters
         ----------
-        raise_errors: bool
-            Whether ingestion errors raise exceptions (vs. simply reported in the results).
-            Default: True
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
         delete_dataset_contents: bool
@@ -81,28 +80,30 @@ class Ingestion(Resource['Ingestion']):
             The object for the submitted job
 
         """
-        job = self.build_objects_async(build_table=build_table,
-                                       delete_dataset_contents=delete_dataset_contents,
-                                       delete_templates=delete_templates)
-
-        if raise_errors:
-            self.poll_for_job_completion(job)
-            status = self.status()
-            if not status.success:
-                raise JobFailureError(
-                    message=f"Job succeeded but ingestion failed: {status.errors}",
-                    job_id=job.job_id,
-                    failure_reasons=status.errors
-                )
-        else:
-            try:
-                self.poll_for_job_completion(job)
-                status = self.status()
-            except JobFailureError as e:
-                status = IngestionStatus.build({
+        try:
+            job = self.build_objects_async(build_table=build_table,
+                                           delete_dataset_contents=delete_dataset_contents,
+                                           delete_templates=delete_templates)
+        except JobFailureError as e:
+            if self.raise_errors:
+                raise e
+            else:
+                return IngestionStatus.build({
                     "status": "Failure",
-                    "errors": e.failure_reasons,
+                    "errors": [StatusDetail(msg=err, level=StatusLevelEnum.ERROR)
+                               for err in e.failure_reasons],
                 })
+
+        self.poll_for_job_completion(job)
+        status = self.status()
+
+        if self.raise_errors and not status.success:
+            errors = [e.msg for e in status.errors]
+            raise JobFailureError(
+                message=f"Job succeeded but ingestion failed: {errors}",
+                job_id=job.job_id,
+                failure_reasons=errors
+            )
 
         return status
 
@@ -139,16 +140,30 @@ class Ingestion(Resource['Ingestion']):
             "delete_dataset_contents": delete_dataset_contents,
             "delete_templates": delete_templates,
         }
-        return JobSubmissionResponse.build(
-            self.session.post_resource(path=path, json={}, params=params)
-        )
+        try:
+            return JobSubmissionResponse.build(
+                self.session.post_resource(path=path, json={}, params=params)
+            )
+        except BadRequest as e:
+            if e.api_error is not None:
+                errors = [err.failure_message for err in e.api_error.validation_errors]
+                if len(errors) == 0:
+                    errors = [e.api_error.message]
+
+                raise JobFailureError(
+                    message=e.api_error.message,
+                    job_id=None,
+                    failure_reasons=errors
+                )
+            else:
+                raise e
 
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
                                 *,
                                 timeout: Optional[float] = None,
                                 polling_delay: Optional[float] = None
-                                ) -> JobStatusResponse:
+                                ) -> IngestionStatus:
         """
         [ALPHA] Repeatedly ask server if a job associated with this ingestion has completed.
 
@@ -165,7 +180,7 @@ class Ingestion(Resource['Ingestion']):
 
         Returns
         ----------
-        JobStatusResponse
+        IngestionStatus
             A string representation of the status
 
 
@@ -176,12 +191,14 @@ class Ingestion(Resource['Ingestion']):
         if polling_delay is not None:
             kwargs["polling_delay"] = polling_delay
 
-        return _poll_for_job_completion(
+        _poll_for_job_completion(
             session=self.session,
             project_id=self.project_id,
             job=job,
+            raise_errors=False,  # JobFailureError doesn't contain the error
             **kwargs
         )
+        return self.status()
 
     def status(self) -> IngestionStatus:
         """
@@ -198,6 +215,70 @@ class Ingestion(Resource['Ingestion']):
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="status")
         return IngestionStatus.build(self.session.get_resource(path=path))
+
+
+class FailedIngestion(Ingestion):
+    """[ALPHA] Object to fill in when building an ingest fails."""
+
+    def __init__(self, errors: Iterable[ValidationError]):
+        self.errors = [StatusDetail(msg=err.failure_message, level=StatusLevelEnum.ERROR)
+                       for err in errors]
+        self.raise_errors = False
+
+    def build_objects(self,
+                      *,
+                      build_table: bool = False,
+                      delete_dataset_contents: bool = False,
+                      delete_templates: bool = True) -> IngestionStatus:
+        """[ALPHA] Satisfy the required interface for a failed ingestion."""
+        return self.status()
+
+    def build_objects_async(self,
+                            *,
+                            build_table: bool = False,
+                            delete_dataset_contents: bool = False,
+                            delete_templates: bool = True) -> JobSubmissionResponse:
+        """[ALPHA] Satisfy the required interface for a failed ingestion."""
+        raise JobFailureError(
+            message=f"Errors: {[e.msg for e in self.errors]}",
+            job_id=None,
+            failure_reasons=[e.msg for e in self.errors]
+        )
+
+    def poll_for_job_completion(self,
+                                job: JobSubmissionResponse,
+                                *,
+                                timeout: Optional[float] = None,
+                                polling_delay: Optional[float] = None
+                                ) -> IngestionStatus:
+        """[ALPHA] Satisfy the required interface for a failed ingestion."""
+        raise JobFailureError(
+            message=f"Errors: {[e.msg for e in self.errors]}",
+            job_id=None,
+            failure_reasons=[e.msg for e in self.errors]
+        )
+
+    def status(self) -> IngestionStatus:
+        """
+        [ALPHA] Retrieve the status of the ingestion  from platform.
+
+        Returns
+        ----------
+        IngestionStatus
+            The result of the ingestion attempt
+
+        """
+        if self.raise_errors:
+            raise JobFailureError(
+                message=f"Ingestion creation failed: self.errors",
+                job_id=None,
+                failure_reasons=self.errors
+            )
+        else:
+            return IngestionStatus.build({
+                "status": "Failure",
+                "errors": self.errors,
+            })
 
 
 class IngestionCollection(Collection[Ingestion]):
@@ -223,7 +304,10 @@ class IngestionCollection(Collection[Ingestion]):
         self.dataset_id = dataset_id
         self.session = session
 
-    def build_from_file_links(self, file_links: Iterable["FileLink"]) -> Ingestion:
+    def build_from_file_links(self,
+                              file_links: Iterable["FileLink"],
+                              *,
+                              raise_errors: bool = True) -> Ingestion:
         """
         [ALPHA] Create an on-platform ingestion event based on the passed FileLink objects.
 
@@ -231,8 +315,13 @@ class IngestionCollection(Collection[Ingestion]):
         ----------
         file_links: Iterable[FileLink]
             The files to ingest.
+        raise_errors: bool
+            Whether ingestion errors raise exceptions (vs. simply reported in the results).
+            Default: True
 
         """
+        if len(file_links) == 0:
+            raise ValueError(f"No files passed.")
         invalid_links = [f for f in file_links if f.uid is None]
         if len(invalid_links) != 0:
             raise ValueError(f"{len(invalid_links)} File Links have no on-platform UID.")
@@ -246,8 +335,29 @@ class IngestionCollection(Collection[Ingestion]):
             ]
         }
 
-        response = self.session.post_resource(path=self._get_path(), json=req)
-        return self.build(response)
+        try:
+            response = self.session.post_resource(path=self._get_path(), json=req)
+        except BadRequest as e:
+            if e.api_error is not None:
+                errors = e.api_error.validation_errors
+                if len(errors) == 0:
+                    errors = [ValidationError.build({"failure_message": e.api_error.message,
+                                                     "failure_id": "failure_id"})
+                              ]
+                if raise_errors:
+                    raise JobFailureError(
+                        message=e.api_error.message,
+                        job_id=None,
+                        failure_reasons=errors
+                    )
+                else:
+                    return FailedIngestion(errors=errors)
+            else:
+                raise e
+        return self.build({
+            **response,
+            "raise_errors": raise_errors
+        })
 
     def build(self, data: dict) -> Ingestion:
         """Build an instance of an Ingestion."""

@@ -2,6 +2,7 @@ from boto3 import Session
 from botocore.exceptions import ClientError
 from pathlib import Path
 import pytest
+from typing import Iterable
 from uuid import uuid4, UUID
 
 import requests_mock
@@ -33,6 +34,7 @@ def collection(session) -> FileCollection:
 @pytest.fixture
 def valid_data() -> dict:
     return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
+
 
 def test_mime_types(collection: FileCollection):
     expected_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -651,11 +653,21 @@ def test_ingest_with_upload(collection, monkeypatch):
     def _mock_upload(self, *, file_path, dest_name=None):
         return FileLink(url='relative/path', filename=file_path.name)
 
-    def _mock_build_from_file_links(self, file_links):
+    def _mock_build_from_file_links(self: IngestionCollection,
+                                    file_links: Iterable[FileLink],
+                                    *,
+                                    raise_errors: bool = True
+                                    ):
         assert len(file_links) == 2
         assert platform_file in file_links
         assert external_file not in file_links
-        return self.build({"project_id": self.project_id, "dataset_id": self.dataset_id})
+        return Ingestion.build({
+            "ingestion_id": uuid4(),
+            "project_id": self.project_id,
+            "dataset_id": self.dataset_id,
+            "session": self.session,
+            "raise_errors": raise_errors
+        })
 
     def _mock_build_objects(self, **_):
         pass
