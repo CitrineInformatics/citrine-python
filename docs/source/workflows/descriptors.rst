@@ -1,3 +1,5 @@
+.. _descriptors:
+
 Descriptors
 ===========
 
@@ -34,7 +36,7 @@ Each Integer Descriptor must provide a lower and upper bound, which is used to b
 If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
 It is better to err on the side of broader bounds than narrower ones.
 
-Integer Descriptors use dimensionless units, other units are not supported.
+Integer Descriptors are dimensionless and units cannot be specified.
 
 Categorical Descriptor
 ----------------------
