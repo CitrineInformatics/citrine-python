@@ -69,6 +69,12 @@ def test_delete():
         pc.delete(uuid.uuid4())
 
 
+def test_delete_version():
+    pvc = _PredictorVersionCollection(uuid.uuid4(), FakeSession())
+    with pytest.raises(NotImplementedError):
+        pvc.delete(uuid.uuid4())
+
+
 def test_archive_root(valid_graph_predictor_data):
     session = FakeSession()
     pc = PredictorCollection(uuid.uuid4(), session)

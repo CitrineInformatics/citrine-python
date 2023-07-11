@@ -183,8 +183,9 @@ def test_design_spaces_get_project_id(project):
     assert project.uid == project.design_spaces.project_id
 
 
-def test_modules_get_project_id(project):
-    assert project.uid == project.modules.project_id
+def test_modules_get_project_id_deprecated(project):
+    with pytest.deprecated_call():
+        assert project.uid == project.modules.project_id
 
 
 def test_descriptors_get_project_id(project):

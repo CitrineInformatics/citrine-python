@@ -41,26 +41,19 @@ def build_predictor_entity(instance, status_name="READY", status_detail=[]):
 def valid_product_design_space_data():
     """Produce valid product design space data."""
     from citrine.informatics.descriptors import FormulationDescriptor
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
     return dict(
-        module_type='DESIGN_SPACE',
-        status='VALIDATING',
-        status_detail=[],
-        archived=False,
-        display_name='my design space',
         id=str(uuid.uuid4()),
-        config=dict(
-            type='ProductDesignSpace',
+        data=dict(
             name='my design space',
             description='does some things',
-            subspaces=[
-                dict(
-                    module_type='DESIGN_SPACE',
-                    status='READY',
-                    status_detail=[],
-                    id=str(uuid.uuid4()),
-                    archived=False,
-                    name='first subspace',
-                    instance=dict(
+            instance=dict(
+                type='ProductDesignSpace',
+                name='my design space',
+                description='does some things',
+                subspaces=[
+                    dict(
                         type='FormulationDesignSpace',
                         name='first subspace',
                         description='',
@@ -69,16 +62,8 @@ def valid_product_design_space_data():
                         labels={'bar': ['foo']},
                         constraints=[],
                         resolution=0.1
-                    )
-                ),
-                dict(
-                    module_type='DESIGN_SPACE',
-                    status='CREATED',
-                    status_detail=[],
-                    id=None,
-                    archived=False,
-                    name='second subspace',
-                    instance=dict(
+                    ),
+                    dict(
                         type='FormulationDesignSpace',
                         name='second subspace',
                         description='formulates some things',
@@ -88,80 +73,104 @@ def valid_product_design_space_data():
                         constraints=[],
                         resolution=0.1
                     )
-                )
-            ],
-            dimensions=[
-                dict(
-                    type='ContinuousDimension',
-                    descriptor=dict(
-                        type='Real',
-                        descriptor_key='alpha',
-                        units='',
-                        lower_bound=5.0,
-                        upper_bound=10.0,
+                ],
+                dimensions=[
+                    dict(
+                        type='ContinuousDimension',
+                        descriptor=dict(
+                            type='Real',
+                            descriptor_key='alpha',
+                            units='',
+                            lower_bound=5.0,
+                            upper_bound=10.0,
+                        ),
+                        lower_bound=6.0,
+                        upper_bound=7.0
                     ),
-                    lower_bound=6.0,
-                    upper_bound=7.0
-                ),
-                dict(
-                    type='EnumeratedDimension',
-                    descriptor=dict(
-                        type='Categorical',
-                        descriptor_key='color',
-                        descriptor_values=['blue', 'green', 'red'],
-                    ),
-                    list=['red']
-                )
-            ]
+                    dict(
+                        type='EnumeratedDimension',
+                        descriptor=dict(
+                            type='Categorical',
+                            descriptor_key='color',
+                            descriptor_values=['blue', 'green', 'red'],
+                        ),
+                        list=['red']
+                    )
+                ]
+            )
+        ),
+        metadata=dict(
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            ),
+            status=dict(
+                name='VALIDATING',
+                detail=[]
+            )
         )
     )
 
 
 @pytest.fixture
-def old_valid_product_design_space_data(valid_product_design_space_data):
-    """Produce old valid product design space data (no subspaces, different type hint)."""
-    ret = deepcopy(valid_product_design_space_data)
-    del ret['config']['subspaces']
-    ret['config']['type'] = 'Univariate'
-    return ret
-
-
-@pytest.fixture
 def valid_enumerated_design_space_data():
     """Produce valid enumerated design space data."""
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
     return dict(
-        module_type='DESIGN_SPACE',
-        status='VALIDATING',
-        status_detail=[],
-        archived=True,
-        display_name='my enumerated design space',
         id=str(uuid.uuid4()),
-        config=dict(
-            type='EnumeratedDesignSpace',
+        data=dict(
             name='my enumerated design space',
             description='enumerates some things',
-            descriptors=[
-                dict(
-                    type='Real',
-                    descriptor_key='x',
-                    units='',
-                    lower_bound=1.0,
-                    upper_bound=2.0,
-                ),
-                dict(
-                    type='Categorical',
-                    descriptor_key='color',
-                    descriptor_values=['blue', 'green', 'red'],
-                ),
-                dict(
-                    type='Inorganic',
-                    descriptor_key='formula'
-                )
-            ],
-            data=[
-                dict(x=1, color='red', formula='C44H54Si2'),
-                dict(x=2.0, color='green', formula='V2O3')
-            ]
+            instance=dict(
+                type='EnumeratedDesignSpace',
+                name='my enumerated design space',
+                description='enumerates some things',
+                descriptors=[
+                    dict(
+                        type='Real',
+                        descriptor_key='x',
+                        units='',
+                        lower_bound=1.0,
+                        upper_bound=2.0,
+                    ),
+                    dict(
+                        type='Categorical',
+                        descriptor_key='color',
+                        descriptor_values=['blue', 'green', 'red'],
+                    ),
+                    dict(
+                        type='Inorganic',
+                        descriptor_key='formula'
+                    )
+                ],
+                data=[
+                    dict(x=1, color='red', formula='C44H54Si2'),
+                    dict(x=2.0, color='green', formula='V2O3')
+                ]
+            )
+        ),
+        metadata=dict(
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            ),
+            archived=dict(
+                user=user,
+                time=time
+            ),
+            status=dict(
+                name='VALIDATING',
+                detail=[]
+            )
         )
     )
 
@@ -174,22 +183,41 @@ def valid_formulation_design_space_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     descriptor = FormulationDescriptor.hierarchical()
     constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
     return dict(
-        module_type='DESIGN_SPACE',
-        status='VALIDATING',
-        status_detail=[],
-        archived=True,
-        display_name='formulation design space',
         id=str(uuid.uuid4()),
-        config=dict(
-            type='FormulationDesignSpace',
+        data=dict(
             name='formulation design space',
             description='formulates some things',
-            formulation_descriptor=descriptor.dump(),
-            ingredients=['foo'],
-            labels={'bar': ['foo']},
-            constraints=[constraint.dump()],
-            resolution=0.1
+            instance=dict(
+                type='FormulationDesignSpace',
+                name='formulation design space',
+                description='formulates some things',
+                formulation_descriptor=descriptor.dump(),
+                ingredients=['foo'],
+                labels={'bar': ['foo']},
+                constraints=[constraint.dump()],
+                resolution=0.1
+            )
+        ),
+        metadata=dict(
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            ),
+            archived=dict(
+                user=user,
+                time=time
+            ),
+            status=dict(
+                name='VALIDATING',
+                detail=[]
+            )
         )
     )
 
@@ -471,15 +499,35 @@ def valid_ingredient_fractions_predictor_data():
 
 @pytest.fixture
 def valid_data_source_design_space_dict(valid_gem_data_source_dict):
-    return {
-        "status": "INPROGRESS",
-        "config": {
-            "type": "DataSourceDesignSpace",
-            "name": "Example valid data source design space",
-            "description": "Example valid data source design space based on a GEM Table Data Source.",
-            "data_source": valid_gem_data_source_dict
-        }
-    }
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
+    return dict(
+        id=str(uuid.uuid4()),
+        data=dict(
+            name="Example valid data source design space",
+            description="Example valid data source design space based on a GEM Table Data Source.",
+            instance=dict(
+                type="DataSourceDesignSpace",
+                name="Example valid data source design space",
+                description="Example valid data source design space based on a GEM Table Data Source.",
+                data_source=valid_gem_data_source_dict
+            )
+        ),
+        metadata=dict(
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            ),
+            status=dict(
+                name='VALIDATING',
+                detail=[]
+            )
+        )
+    )
 
 
 @pytest.fixture
@@ -668,9 +716,10 @@ def sample_design_space_execution_dict(generic_entity):
         {
             "design_space_id": str(uuid.uuid4()),
             "status": {
+                "major": ret.get("status"),
                 "minor": ret.get("status_description"),
-                "detail": ret.get("status_detail"),
-            },
+                "detail": ret.get("status_detail")
+            }
         }
     )
     return ret

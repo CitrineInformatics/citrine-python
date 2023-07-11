@@ -152,7 +152,8 @@ An :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredic
 
 A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
 An alias is required for each expression argument.
-The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors.
+The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors,
+which may be either real or integer values.
 The expression argument does not need to match its descriptor key.
 This is useful to avoid typing out the verbose descriptor keys in the expression string.
 Note, spaces are not supported in expression arguments, e.g., ``Y`` is a valid argument while ``Young's modulus`` is not.
@@ -505,7 +506,7 @@ For categorical-valued properties, a quantity-weighted distribution of property 
 To configure a mean property predictor, we must specify:
 
 * An input descriptor that holds the mixture's recipe and ingredient labels
-* A list of properties to featurize (which may be either real or categorical)
+* A list of properties to featurize (which may be either real, integer, or categorical)
 * The power of the quantity-weighted mean.
   Positive, negative, and fractional powers are supported.
   ``p=1`` corresponds to an arithmetic mean, which weights all quantities evenly.

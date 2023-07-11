@@ -4,9 +4,9 @@ from typing import Optional, Type, List
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine.informatics.descriptors import Descriptor, RealDescriptor
+from citrine.informatics.descriptors import Descriptor, RealDescriptor, IntegerDescriptor
 
-__all__ = ['Dimension', 'ContinuousDimension', 'EnumeratedDimension']
+__all__ = ['Dimension', 'ContinuousDimension', 'IntegerDimension', 'EnumeratedDimension']
 
 
 class Dimension(PolymorphicSerializable['Dimension']):
@@ -21,6 +21,7 @@ class Dimension(PolymorphicSerializable['Dimension']):
         """Return the subtype."""
         return {
             'ContinuousDimension': ContinuousDimension,
+            'IntegerDimension': IntegerDimension,
             'EnumeratedDimension': EnumeratedDimension
         }[data['type']]
 
@@ -49,14 +50,36 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
                  lower_bound: Optional[float] = None,
                  upper_bound: Optional[float] = None):
         self.descriptor: RealDescriptor = descriptor
-        if lower_bound is not None:
-            self.lower_bound: float = lower_bound
-        else:
-            self.lower_bound: float = descriptor.lower_bound
-        if upper_bound is not None:
-            self.upper_bound: float = upper_bound
-        else:
-            self.upper_bound: float = descriptor.upper_bound
+        self.lower_bound = lower_bound if lower_bound is not None else descriptor.lower_bound
+        self.upper_bound = upper_bound if upper_bound is not None else descriptor.upper_bound
+
+
+class IntegerDimension(Serializable['IntegerDimension'], Dimension):
+    """An integer-valued dimension with inclusive lower and upper bounds.
+
+    Parameters
+    ----------
+    descriptor: IntegerDescriptor
+        a descriptor of the single dimension
+    lower_bound: int
+        inclusive lower bound
+    upper_bound: int
+        inclusive upper bound
+
+    """
+
+    descriptor = properties.Object(IntegerDescriptor, 'descriptor')
+    lower_bound = properties.Integer('lower_bound')
+    upper_bound = properties.Integer('upper_bound')
+    typ = properties.String('type', default='IntegerDimension', deserializable=False)
+
+    def __init__(self,
+                 descriptor: IntegerDescriptor, *,
+                 lower_bound: Optional[int] = None,
+                 upper_bound: Optional[int] = None):
+        self.descriptor: IntegerDescriptor = descriptor
+        self.lower_bound = lower_bound if lower_bound is not None else descriptor.lower_bound
+        self.upper_bound = upper_bound if upper_bound is not None else descriptor.upper_bound
 
 
 class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):

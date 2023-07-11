@@ -8,7 +8,7 @@ __all__ = ['ScalarRangeConstraint']
 
 
 class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
-    """Represents an inequality constraint on a scalar-valued material attribute.
+    """Represents an inequality constraint on a real-valued material attribute.
 
     Parameters
     ----------

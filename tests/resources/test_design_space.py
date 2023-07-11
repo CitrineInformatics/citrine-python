@@ -5,12 +5,41 @@ import random
 import mock
 import pytest
 
-from citrine.exceptions import NotFound
+from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.descriptors import RealDescriptor, FormulationKey
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
-from tests.utils.session import FakeCall, FakeRequestResponse, FakeSession
+from tests.utils.session import FakeCall, FakeSession
+
+def _ds_dict_to_response(ds_dict, status="CREATED"):
+    time = '2020-04-23T15:46:26Z'
+    return {
+        "id": str(uuid.uuid4()),
+        "data": {
+            "name": ds_dict["name"],
+            "description": ds_dict["description"],
+            "instance": ds_dict
+        },
+        "metadata": {
+            "created": {
+                "user": str(uuid.uuid4()),
+                "time": time
+            },
+            "updated": {
+                "user": str(uuid.uuid4()),
+                "time": time
+            },
+            "status": {
+                "name": status,
+                "detail": []
+            }
+        }
+    }
+
+def _ds_to_response(ds, status="CREATED"):
+    return _ds_dict_to_response(ds.dump()["instance"], status)
+
 
 @pytest.fixture
 def valid_product_design_space(valid_product_design_space_data) -> ProductDesignSpace:
@@ -28,8 +57,8 @@ def test_design_space_build(valid_product_design_space_data):
 
     # Then
     assert str(design_space.uid) == design_space_id
-    assert design_space.name == valid_product_design_space_data["config"]["name"]
-    assert design_space.dimensions[0].descriptor.key == valid_product_design_space_data["config"]["dimensions"][0]["descriptor"]["descriptor_key"]
+    assert design_space.name == valid_product_design_space_data["data"]["instance"]["name"]
+    assert design_space.dimensions[0].descriptor.key == valid_product_design_space_data["data"]["instance"]["dimensions"][0]["descriptor"]["descriptor_key"]
 
 
 def test_design_space_build_with_status_detail(valid_product_design_space_data):
@@ -38,7 +67,7 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
 
     status_detail_data = {("Info", "info_msg"), ("Warning", "warning msg"), ("Error", "error msg")}
     data = deepcopy(valid_product_design_space_data)
-    data["status_detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
+    data["metadata"]["status"]["detail"] = [{"level": level, "msg": msg} for level, msg in status_detail_data]
 
     # When
     design_space = collection.build(data)
@@ -53,7 +82,8 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
 def test_formulation_build(valid_formulation_design_space_data):
     pc = DesignSpaceCollection(uuid.uuid4(), None)
     design_space = pc.build(valid_formulation_design_space_data)
-    assert design_space.archived
+    with pytest.deprecated_call():
+        assert design_space.archived
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
     assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
@@ -84,8 +114,7 @@ def test_design_space_limits():
     )
 
     # create mock post response by setting the status
-    mock_response = just_right.dump()
-    mock_response["status"] = "READY"
+    mock_response = _ds_to_response(just_right, status="READY")
     session.responses.append(mock_response)
 
     # Then
@@ -104,15 +133,10 @@ def test_design_space_limits():
 
 
 @pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
-def test_create_default(predictor_version, valid_product_design_space_data, valid_product_design_space):
-    # The instance field isn't renamed to config in objects returned from this route
-    # This renames the config key to instance to match the data we get from the API
-    data_with_instance = deepcopy(valid_product_design_space_data)
-    data_with_instance['instance'] = data_with_instance.pop('config')
-
+def test_create_default(predictor_version, valid_product_design_space):
     session = FakeSession()
-    session.set_response(data_with_instance)
-    
+    session.set_response(valid_product_design_space.dump())
+   
     predictor_id = uuid.uuid4()
     collection = DesignSpaceCollection(
         project_id=uuid.uuid4(),
@@ -133,9 +157,9 @@ def test_create_default(predictor_version, valid_product_design_space_data, vali
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
         json=expected_payload,
-        version="v2"
+        version="v3"
     )
-    
+
     default_design_space = collection.create_default(predictor_id=predictor_id, predictor_version=predictor_version)
 
     assert session.num_calls == 1
@@ -148,15 +172,10 @@ def test_create_default(predictor_version, valid_product_design_space_data, vali
 @pytest.mark.parametrize("label_fractions", (True, False))
 @pytest.mark.parametrize("label_count", (True, False))
 @pytest.mark.parametrize("parameters", (True, False))
-def test_create_default_with_config(valid_product_design_space_data, valid_product_design_space,
-                                    ingredient_fractions, label_fractions, label_count, parameters):
-    # The instance field isn't renamed to config in objects returned from this route
-    # This renames the config key to instance to match the data we get from the API
-    data_with_instance = deepcopy(valid_product_design_space_data)
-    data_with_instance['instance'] = data_with_instance.pop('config')
-
+def test_create_default_with_config(valid_product_design_space, ingredient_fractions,
+                                    label_fractions, label_count, parameters):
     session = FakeSession()
-    session.set_response(data_with_instance)
+    session.set_response(valid_product_design_space.dump())
     
     predictor_id = uuid.uuid4()
     predictor_version = random.randint(1, 10)
@@ -176,7 +195,7 @@ def test_create_default_with_config(valid_product_design_space_data, valid_produ
             "include_label_count_constraints": label_count,
             "include_parameter_constraints": parameters
         },
-        version="v2"
+        version="v3"
     )
 
     default_design_space = collection.create_default(
@@ -198,19 +217,16 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
     # Given
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
-    session.set_response(
-        {
-            'entries': [valid_formulation_design_space_data, valid_enumerated_design_space_data],
-            'next': ''
-        }
-    )
+    session.set_response({
+        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+    })
 
     # When
     design_spaces = list(collection.list(per_page=20))
 
     # Then
-    expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
-            params={'per_page': 20, 'module_type': "DESIGN_SPACE", 'page': 1})
+    expected_call = FakeCall(method='GET', path='/projects/{}/design-spaces'.format(collection.project_id),
+            params={'per_page': 20, 'page': 1})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(design_spaces) == 2
@@ -222,22 +238,17 @@ def test_archive(valid_formulation_design_space_data):
     base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
     ds_id = valid_formulation_design_space_data["id"]
 
-    get_response = deepcopy(valid_formulation_design_space_data)
-    update_response = {**get_response, "archived": True}
-    session.set_responses(get_response, update_response)
-
-    expected_payload = deepcopy(update_response)
-    del expected_payload["status"]
-    del expected_payload["status_detail"]
-    del expected_payload["id"]
+    response = deepcopy(valid_formulation_design_space_data)
+    response["metadata"]["archived"] = response["metadata"]["created"]
+    session.set_response(response)
 
     archived_design_space = dsc.archive(ds_id)
 
-    assert archived_design_space.archived
+    assert archived_design_space.is_archived
     assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{ds_id}"),
-        FakeCall(method='PUT', path=f"{base_path}/{ds_id}", json=expected_payload)
+        FakeCall(method='PUT', path=f"{base_path}/{ds_id}/archive", json={}),
     ]
+
 
 def test_restore(valid_formulation_design_space_data):
     session = FakeSession()
@@ -245,37 +256,17 @@ def test_restore(valid_formulation_design_space_data):
     base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
     ds_id = valid_formulation_design_space_data["id"]
 
-    get_response = deepcopy(valid_formulation_design_space_data)
-    update_response = {**get_response, "archived": False}
-    session.set_responses(get_response, update_response)
+    response = deepcopy(valid_formulation_design_space_data)
+    if "archived" in response["metadata"]:
+        del response["metadata"]["archived"]
+    session.set_response(deepcopy(response))
 
-    expected_payload = deepcopy(update_response)
-    del expected_payload["status"]
-    del expected_payload["status_detail"]
-    del expected_payload["id"]
+    restored_design_space = dsc.restore(ds_id)
 
-    archived_design_space = dsc.restore(ds_id)
-
-    assert not archived_design_space.archived
+    assert not restored_design_space.is_archived
     assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{ds_id}"),
-        FakeCall(method='PUT', path=f"{base_path}/{ds_id}", json=expected_payload)
+        FakeCall(method='PUT', path=f"{base_path}/{ds_id}/restore", json={}),
     ]
-
-def test_archive_restore_not_found():
-    session = FakeSession()
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
-
-    response = FakeRequestResponse(404)
-    response.request.method = "GET"
-    session.set_response(NotFound(base_path, response))
-
-    with pytest.raises(RuntimeError):
-        dsc.archive(uuid.uuid4())
-
-    with pytest.raises(RuntimeError):
-        dsc.restore(uuid.uuid4())
 
 
 def test_get_none():
@@ -292,20 +283,22 @@ def test_register_dehydrated_design_spaces_deprecated(valid_product_design_space
     session = FakeSession()
     dsc = DesignSpaceCollection(uuid.uuid4(), session)
 
-    subspace_data = valid_product_design_space_data["config"]["subspaces"][0]
-    subspace_data["config"] = subspace_data["instance"]
-    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
-    ds.subspaces[0] = subspace_data["id"]
+    subspace_id = str(uuid.uuid4())
 
-    session.set_responses(subspace_data, valid_product_design_space_data)
+    subspace_data = valid_product_design_space_data["data"]["instance"]["subspaces"][0]
+    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
+    ds.subspaces[0] = subspace_id
+
+    session.set_responses(_ds_dict_to_response(subspace_data), deepcopy(valid_product_design_space_data), valid_product_design_space_data)
     
     with pytest.deprecated_call():
         retval = dsc.register(ds)
 
-    base_path = f"/projects/{dsc.project_id}/modules"
+    base_path = f"/projects/{dsc.project_id}/design-spaces"
     assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{subspace_data['id']}"),
-        FakeCall(method='POST', path=base_path, json=valid_product_design_space.dump())
+        FakeCall(method='GET', path=f"{base_path}/{subspace_id}"),
+        FakeCall(method='POST', path=base_path, json=valid_product_design_space.dump()),
+        FakeCall(method='PUT', path=f"{base_path}/{retval.uid}/validate", json={})
     ]
     assert retval.dump() == valid_product_design_space.dump()
 
@@ -313,20 +306,141 @@ def test_register_dehydrated_design_spaces_deprecated(valid_product_design_space
 def test_update_dehydrated_design_spaces_deprecated(valid_product_design_space_data, valid_product_design_space):
     session = FakeSession()
     dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    
+    subspace_id = str(uuid.uuid4())
 
-    subspace_data = valid_product_design_space_data["config"]["subspaces"][0]
-    subspace_data["config"] = subspace_data["instance"]
+    subspace_data = valid_product_design_space_data["data"]["instance"]["subspaces"][0]
     ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
-    ds.subspaces[0] = subspace_data["id"]
+    ds.subspaces[0] = subspace_id
 
-    session.set_responses(subspace_data, valid_product_design_space_data)
+    session.set_responses(
+        _ds_dict_to_response(subspace_data),
+        deepcopy(valid_product_design_space_data),
+        deepcopy(valid_product_design_space_data)
+    )
     
     with pytest.deprecated_call():
         retval = dsc.update(ds)
 
-    base_path = f"/projects/{dsc.project_id}/modules"
+    base_path = f"/projects/{dsc.project_id}/design-spaces"
     assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{subspace_data['id']}"),
-        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}", json=valid_product_design_space.dump())
+        FakeCall(method='GET', path=f"{base_path}/{subspace_id}"),
+        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}", json=valid_product_design_space.dump()),
+        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}/validate", json={})
     ]
     assert retval.dump() == valid_product_design_space.dump()
+
+
+def test_deprecated_archive_via_update(valid_product_design_space_data):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    archived_data = deepcopy(valid_product_design_space_data)
+    archived_data["metadata"]["archived"] = archived_data["metadata"]["created"]
+    validating_data = deepcopy(archived_data)
+    validating_data["metadata"]["status"]["name"] = "VALIDATING"
+    session.set_responses(
+        valid_product_design_space_data,
+        archived_data,
+        validating_data
+    )
+
+    design_space = dsc.build(deepcopy(valid_product_design_space_data))
+    with pytest.deprecated_call():
+        design_space.archived = True
+
+    design_space_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
+    entity_path = f"{design_space_path}/{valid_product_design_space_data['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=entity_path, json=design_space.dump()),
+        FakeCall(method="PUT", path=f"{entity_path}/archive", json={}),
+        FakeCall(method="PUT", path=f"{entity_path}/validate", json={}),
+    ]
+
+    archived_design_space = dsc.update(design_space)
+
+    assert session.calls == expected_calls
+    assert archived_design_space.is_archived is True
+    assert archived_design_space._archived is None
+
+def test_deprecated_restore_via_update(valid_product_design_space_data):
+    session = FakeSession()
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    archived_data = deepcopy(valid_product_design_space_data)
+    archived_data["metadata"]["archived"] = archived_data["metadata"]["created"]
+    validating_data = deepcopy(valid_product_design_space_data)
+    validating_data["metadata"]["status"]["name"] = "VALIDATING"
+    session.set_responses(archived_data, valid_product_design_space_data, validating_data)
+
+    design_space = dsc.build(deepcopy(archived_data))
+    with pytest.deprecated_call():
+        design_space.archived = False
+
+    design_space_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
+    entity_path = f"{design_space_path}/{archived_data['id']}"
+    expected_calls = [
+        FakeCall(method="PUT", path=entity_path, json=design_space.dump()),
+        FakeCall(method="PUT", path=f"{entity_path}/restore", json={}),
+        FakeCall(method="PUT", path=f"{entity_path}/validate", json={}),
+    ]
+
+    restored_design_space = dsc.update(design_space)
+
+    assert session.calls == expected_calls
+    assert restored_design_space.is_archived is False
+    assert restored_design_space._archived is None
+
+
+def test_deprecated_archived_property(valid_product_design_space_data):
+    dsc = DesignSpaceCollection(uuid.uuid4(), FakeSession())
+
+    design_space = dsc.build(valid_product_design_space_data)
+
+    with pytest.deprecated_call():
+        assert design_space.archived == design_space.is_archived
+
+    with pytest.deprecated_call():
+        design_space.archived = True
+    
+    assert design_space._archived is True
+
+
+def test_failed_register(valid_product_design_space_data):
+    response_data = deepcopy(valid_product_design_space_data)
+    response_data['metadata']['status']['name'] = 'INVALID'
+
+    session = FakeSession()
+    session.set_response(response_data)
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    ds = dsc.build(deepcopy(valid_product_design_space_data))
+    
+    retval = dsc.register(ds)
+    
+    base_path = f"/projects/{dsc.project_id}/design-spaces"
+    assert session.calls == [
+        FakeCall(method='POST', path=base_path, json=ds.dump()),
+    ]
+    assert retval.dump() == ds.dump()
+
+
+def test_failed_update(valid_product_design_space_data):
+    response_data = deepcopy(valid_product_design_space_data)
+    response_data['metadata']['status']['name'] = 'INVALID'
+
+    session = FakeSession()
+    session.set_response(response_data)
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    ds = dsc.build(deepcopy(valid_product_design_space_data))
+    
+    retval = dsc.update(ds)
+    
+    base_path = f"/projects/{dsc.project_id}/design-spaces"
+    assert session.calls == [
+        FakeCall(method='PUT', path=f'{base_path}/{ds.uid}', json=ds.dump()),
+    ]
+    assert retval.dump() == ds.dump()
+
+
+def test_delete_not_supported():
+    dsc = DesignSpaceCollection(uuid.uuid4(), FakeSession())
+    with pytest.raises(NotImplementedError):
+        dsc.delete(uuid.uuid4())

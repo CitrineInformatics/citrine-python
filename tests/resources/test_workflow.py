@@ -21,6 +21,19 @@ def basic_design_workflow_data():
     }
 
 
+@pytest.fixture(scope='module')
+def failed_design_workflow_data(basic_design_workflow_data):
+    return {
+        **basic_design_workflow_data,
+        'status': 'FAILED',
+        'status_description': 'ERROR',
+        'status_detail': [
+            {'level': 'WARN', 'msg': 'Something is wrong'},
+            {'level': 'Error', 'msg': 'Very wrong'}
+        ]
+    }
+
+
 def test_build_design_workflow(basic_design_workflow_data):
     # Given
     workflow_collection = DesignWorkflowCollection(project_id=uuid.uuid4(), session=None)
@@ -49,3 +62,10 @@ def test_list_workflows(basic_design_workflow_data):
     assert 1 == session.num_calls
     assert len(workflows) == 1
     assert isinstance(workflows[0], DesignWorkflow)
+
+
+def test_status_info(failed_design_workflow_data):
+    dwc = DesignWorkflowCollection(project_id=uuid.uuid4(), session=FakeSession())
+    dw = dwc.build(failed_design_workflow_data)
+    with pytest.deprecated_call():
+        assert dw.status_info == [status.msg for status in dw.status_detail]
