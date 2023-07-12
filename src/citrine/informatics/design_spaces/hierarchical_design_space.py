@@ -2,7 +2,7 @@ from typing import Optional, List
 from uuid import UUID
 
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
-from citrine._rest.resource import Resource
+from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.dimensions import Dimension
@@ -87,7 +87,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
 
 
 class HierarchicalDesignSpace(
-    Resource["HierarchicalDesignSpace"], DesignSpace, AIResourceMetadata
+    ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace, AIResourceMetadata
 ):
     """A design space that produces material history candidates.
 
@@ -146,12 +146,12 @@ class HierarchicalDesignSpace(
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)
 
-        root_node = data["data"]["instance"]["root"]
-        data["data"]["instance"]["root"] = self.__unwrap_node(root_node)
+        root_node = data["instance"]["root"]
+        data["instance"]["root"] = self.__unwrap_node(root_node)
 
-        data["data"]["instance"]["subspaces"] = [
+        data["instance"]["subspaces"] = [
             self.__unwrap_node(sub_node)
-            for sub_node in data['data']['instance']['subspaces']
+            for sub_node in data['instance']['subspaces']
         ]
         return data
 
