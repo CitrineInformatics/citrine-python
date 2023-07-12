@@ -178,6 +178,8 @@ class HierarchicalDesignSpace(
         formulation_subspace = node.pop('formulation')
         if formulation_subspace:
             node['formulation'] = formulation_subspace['data']['instance']
+            node['formulation']['name'] = formulation_subspace['data']['name']
+            node['formulation']['description'] = formulation_subspace['data']['description']
         return node
 
     def __repr__(self):
