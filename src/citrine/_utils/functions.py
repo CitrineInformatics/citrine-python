@@ -1,3 +1,5 @@
+from abc import ABCMeta
+from deprecation import deprecated
 import inspect
 import os
 from pathlib import Path
@@ -133,6 +135,95 @@ def write_file_locally(content, local_path: Union[str, Path]):
     local_path.open(mode='wb').write(content)
 
 
+class MigratedClassMeta(ABCMeta):
+    """
+    A metaclass for classes that were moved to new packages.
+
+    This will issue deprecation warnings when you import & use the class from the
+    old location.  A new class should be created in the old location:
+
+    ```
+    from citrine._utils.functions import MigratedClassMeta
+    from new.package import MyClass as NewMyClass
+
+    class MyClass(NewMyClass, deprecated_in="1.2.3", removed_in="2.0.0",
+                  metaclass=MigratedClassMeta):
+        pass
+    ```
+
+
+    If the migrated class has a custom metaclass of its own, it is necessary to
+    create a joint metaclass to avoid inheritance confusion:
+
+    ```
+    from citrine._utils.functions import MigratedClassMeta, generate_shared_meta
+    from new.package import MyClass as NewMyClass
+
+    class MyClass(NewMyClass, deprecated_in="1.2.3", removed_in="2.0.0",
+                  metaclass=generate_shared_meta(NewMyClass)):
+        pass
+    ```
+
+    """
+
+    _deprecation_info = {}
+
+    def __new__(mcs, *args, deprecated_in=None, removed_in=None, **kwargs):  # noqa: D102
+        return super().__new__(mcs, *args, **kwargs)
+
+    def __init__(cls, name, bases, *args, deprecated_in=None, removed_in=None, **kwargs):
+        super().__init__(name, bases, *args, **kwargs)
+        if not any(isinstance(b, MigratedClassMeta) for b in bases):
+            # First generation
+            if len(bases) != 1:
+                raise TypeError(f"Migrated Classes must reference precisely one target. "
+                                f"{bases} found.")
+            if deprecated_in is None or removed_in is None:
+                raise TypeError("Migrated Classes must include `deprecated_in` "
+                                "and `removed_in` arguments.")
+            cls._deprecation_info[cls] = (bases[0], deprecated_in, removed_in)
+
+            def _new(*args_, **kwargs_):
+                warn(f"Importing {name} from {cls.__module__} is deprecated as of "
+                     f"{deprecated_in} and will be removed in {removed_in}. "
+                     f"Please import {bases[0].__name__} from {bases[0].__module__} instead.",
+                     DeprecationWarning, stacklevel=2)
+                return bases[0](*args_[1:], **kwargs_)
+
+            cls.__new__ = _new
+
+        for base in bases:
+            if base in cls._deprecation_info:
+                # Second generation
+                alias, this_deprecated_in, this_removed_in = cls._deprecation_info[base]
+                warn(f"Importing {base.__name__} from {base.__module__} is deprecated as of "
+                     f"{this_deprecated_in} and will be removed in {this_removed_in}. "
+                     f"Please import {alias.__name__} from {alias.__module__} instead.",
+                     DeprecationWarning, stacklevel=2)
+
+    def __instancecheck__(cls, instance):
+        return any(cls.__subclasscheck__(c)
+                   for c in {type(instance), instance.__class__})
+
+    def __subclasscheck__(cls, subclass):
+        try:
+            return issubclass(subclass, cls._deprecation_info.get(cls, (type(None), ))[0])
+        except RecursionError:
+            return False
+
+
+def generate_shared_meta(target: type):
+    """Generate a custom metaclass to avoid method resolution ambiguity."""
+    if issubclass(MigratedClassMeta, type(target)):
+        return MigratedClassMeta
+    else:
+        class _CustomMeta(MigratedClassMeta, type(target)):
+            pass
+        return _CustomMeta
+
+
+@deprecated(deprecated_in="2.22.1", removed_in="3.0.0",
+            details="Use MigratedClassMeta to explicitly deprecate migrated classes.")
 def shadow_classes_in_module(source_module, target_module):
     """Shadow classes from a source to a target module, for backwards compatibility purposes."""
     for c in [cls for _, cls in inspect.getmembers(source_module, inspect.isclass) if

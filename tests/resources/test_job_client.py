@@ -1,5 +1,5 @@
 import pytest
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from citrine.jobs.job import TaskNode, JobStatusResponse, JobSubmissionResponse
 import citrine.resources.job as oldjobs
@@ -97,4 +97,6 @@ def test_build_job(collection: GemTableCollection, table_config: TableConfig):
 
 def test_renamed_classes_are_the_same():
     # Mostly make code coverage happy
-    assert oldjobs.JobSubmissionResponse == JobSubmissionResponse
+    assert issubclass(oldjobs.JobSubmissionResponse, JobSubmissionResponse)
+    with pytest.deprecated_call():
+        oldjobs.JobSubmissionResponse.build({"job_id": uuid4()})

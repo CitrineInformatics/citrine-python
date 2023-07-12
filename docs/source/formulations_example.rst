@@ -465,13 +465,9 @@ especially when coupled with flexible machine learning models that can emulate m
 
     from citrine.informatics.predictors import SimpleMixturePredictor
 
-    formulation = FormulationDescriptor.hierarchical()
-    flat_formulation = FormulationDescriptor.flat()
     simple_mixture_predictor = SimpleMixturePredictor(
         name="Simple margarita mixture",
-        description="Flatten a mixture of mixtures into leaf ingredients",
-        input_descriptor=formulation,  # this is the formulation descriptor from the table
-        output_descriptor=flat_formulation  # this is a new descriptor to represent the flattened formulation
+        description="Flatten a mixture of mixtures into leaf ingredients"
     )
 
 Using the flattened formulation as an input, we create several "featurizers" to compute features; these will be the inputs to the machine learning model(s).

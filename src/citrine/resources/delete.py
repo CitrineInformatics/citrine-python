@@ -122,5 +122,5 @@ def _poll_for_async_batch_delete_result(
     response = _poll_for_job_completion(session, project_id, job_id, timeout=timeout,
                                         polling_delay=polling_delay)
 
-    return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.from_dict(f['cause']))
+    return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.build(f['cause']))
             for f in json.loads(response.output.get('failures', '[]'))]

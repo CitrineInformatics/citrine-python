@@ -6,6 +6,7 @@ import pytest
 from dateutil import tz
 
 from citrine._rest.resource import PredictorRef
+from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import NextBranchVersionRequest, DataVersionUpdate, BranchDataUpdate
 from citrine.resources.branch import Branch, BranchCollection
 from tests.utils.factories import BranchDataFactory, CandidateExperimentSnapshotDataFactory, \
@@ -406,3 +407,35 @@ def test_experiment_data_source_no_project_id(session):
         branch.experiment_datasource
 
     assert not session.calls
+
+
+def test_get_by_root_id(session, collection, branch_path):
+    # Given
+    branches_data = BranchDataFactory.create_batch(1)
+    session.set_response({'response': branches_data})
+    root_id = uuid.uuid4()
+
+    # When
+    branch = collection.get_by_root_id(branch_root_id=root_id)
+
+    # Then
+    assert session.calls == [FakeCall(
+        method='GET',
+        path=branch_path,
+        params={'page': 1, 'per_page': 1, 'root': str(root_id), 'version': 'latest'}
+    )]
+
+
+def test_get_by_root_id_not_found(session, collection, branch_path):
+    # Given
+    session.set_response({'response': []})
+    root_id = uuid.uuid4()
+
+    # When
+    with pytest.raises(NotFound) as exc:
+        collection.get_by_root_id(branch_root_id=root_id)
+
+    # Then
+    assert str(root_id) in str(exc)
+    assert "branch root" in str(exc).lower()
+    assert "latest" in str(exc).lower()

@@ -32,6 +32,7 @@ class TemplateLink(Serializable["TemplateLink"]):
         Citrine ID referencing an on-platform material template.
     process_template: Union[UUID, str, LinkByUid, ProcessTemplate]
         Citrine ID referencing an on-platform process template.
+
     """
 
     material_template = properties.UUID("material_template")

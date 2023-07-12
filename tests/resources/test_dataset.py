@@ -165,6 +165,7 @@ def test_get_by_unique_name_no_unique_name_present(collection, session):
     with pytest.raises(ValueError):
         collection.get_by_unique_name(None)
 
+
 def test_get_by_unique_name_multiple_results(collection, session):
 
     # This really shouldn't happen
@@ -308,6 +309,10 @@ def test_files_get_project_id(dataset):
     assert dataset.project_id == dataset.files.project_id
 
 
+def test_ingestion_get_project_id(dataset):
+    assert dataset.project_id == dataset.ingestions.project_id
+
+
 def test_gemd_posts(dataset):
     """Check that dataset dispatches to GEMDResourceCollection appropriately."""
     expected = {
@@ -418,7 +423,9 @@ def test_gemd_batch_delete(dataset):
         dataset.gemd_batch_delete([7, False])
 
 
-def test_deprecated_delete_contents(dataset):
+@pytest.mark.parametrize("prompt_to_confirm", [None, False])
+@pytest.mark.parametrize("remove_templates", [False, True])
+def test_delete_contents(dataset, prompt_to_confirm, remove_templates):
 
     job_resp = {
         'job_id': '1234'
@@ -438,15 +445,18 @@ def test_deprecated_delete_contents(dataset):
     session.set_responses(job_resp, failed_job_resp)
 
     # When
-    del_resp = dataset.delete_contents(prompt_to_confirm=False)
+    del_resp = dataset.delete_contents(prompt_to_confirm=prompt_to_confirm, remove_templates=remove_templates)
 
     # Then
     assert len(del_resp) == 0
 
     # Ensure we made the expected delete call
+    path = f"projects/{dataset.project_id}/datasets/{dataset.uid}/contents"
+    params = {"remove_templates": remove_templates}
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
+        path=path,
+        params=params
     )
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call
@@ -483,7 +493,8 @@ def test_delete_contents_ok(dataset, monkeypatch):
     # Ensure we made the expected delete call
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
+        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid),
+        params={"remove_templates": True}
     )
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call

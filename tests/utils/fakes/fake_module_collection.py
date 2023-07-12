@@ -1,13 +1,14 @@
+from datetime import datetime
 from typing import TypeVar, Union
-from uuid import UUID
+from uuid import uuid4, UUID
 
+from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.exceptions import BadRequest
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace
-from citrine.informatics.predictors import Predictor, GraphPredictor
+from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.design_space import DesignSpaceCollection
-from citrine.resources.module import AbstractModuleCollection
 from citrine.resources.predictor import PredictorCollection
 
 from tests.utils.functions import normalize_uid
@@ -16,7 +17,7 @@ from tests.utils.fakes import FakeCollection
 ModuleType = TypeVar('ModuleType', bound='Module')
 
 
-class FakeModuleCollection(FakeCollection[ModuleType], AbstractModuleCollection[ModuleType]):
+class FakeModuleCollection(FakeCollection[ModuleType], Collection[ModuleType]):
 
     def __init__(self, project_id, session):
         FakeCollection.__init__(self)
@@ -24,11 +25,14 @@ class FakeModuleCollection(FakeCollection[ModuleType], AbstractModuleCollection[
         self.session: Session = session
         self.in_use = {}
 
-    def archive(self, uid: Union[UUID, str]) -> ModuleType:
-        if self.in_use.get(normalize_uid(uid), False):
+    def archive(self, module_id: UUID):
+        if self.in_use.get(normalize_uid(module_id), False):
             raise BadRequest("")
-        return AbstractModuleCollection.archive(self, uid)
 
+        module = self.get(module_id)
+        module.archived_by = uuid4()
+        module.archive_time = datetime.now()
+        return module
 
 class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCollection):
 
@@ -41,9 +45,15 @@ class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCo
         )
 
 
-class FakePredictorCollection(FakeModuleCollection[Predictor], PredictorCollection):
+class FakePredictorCollection(FakeModuleCollection[GraphPredictor], PredictorCollection):
 
-    def create_default(self, *, training_data: DataSource, pattern="PLAIN", prefer_valid=True) -> Predictor:
+    def create_default(
+            self,
+            *,
+            training_data: DataSource,
+            pattern="PLAIN",
+            prefer_valid=True
+    ) -> GraphPredictor:
         return GraphPredictor(
             name=f"Default {pattern.lower()} predictor",
             description="",

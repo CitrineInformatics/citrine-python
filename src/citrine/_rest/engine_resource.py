@@ -1,9 +1,11 @@
-from typing import TypeVar
+from typing import List, TypeVar
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.include_parent_properties import IncludeParentProperties
 from citrine.resources.status_detail import StatusDetail
+
+from deprecation import deprecated
 
 Self = TypeVar('Self', bound='Resource')
 
@@ -44,6 +46,11 @@ class EngineResource(Resource[Self]):
 
     _resource_type = ResourceTypeEnum.MODULE
 
+    @property
+    def is_archived(self):
+        """:bool: whether the resource is archived (hidden but not deleted)."""
+        return self.archived_by is not None
+
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.
         data = data["data"]
@@ -62,6 +69,39 @@ class VersionedEngineResource(EngineResource[Self], IncludeParentProperties[Self
 
     """:Boolean: The draft status of the resource."""
     draft = properties.Optional(properties.Boolean, 'metadata.draft', serializable=False)
+
+    @classmethod
+    def build(cls, data: dict):
+        """Build an instance of this object from given data."""
+        return super().build_with_parent(data, __class__)
+
+
+class ModuleEngineResource(EngineResource[Self], IncludeParentProperties[Self]):
+    """Base resource for metadata from stand-alone AI Engine modules with deprecated fields."""
+
+    # Due to the way object construction is done at present, __init__ is not executed on Resource
+    # objects, so initializing _archived doesn't work.
+    _archived = properties.Optional(properties.Boolean(), '', default=None, serializable=False,
+                                    deserializable=False)
+
+    @property
+    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0",
+                details="Please use the 'is_archived' property instead.'")
+    def archived(self):
+        """[DEPRECATED] whether the design space is archived."""
+        return self.is_archived
+
+    @archived.setter
+    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0",
+                details="Please use archive() and restore() on DesignSpaceCollection instead.")
+    def archived(self, value):
+        self._archived = value
+
+    @property
+    @deprecated(deprecated_in="2.2.0", removed_in="3.0.0", details="Use status_detail instead.")
+    def status_info(self) -> List[str]:
+        """:List[str]: human-readable explanations of the status."""
+        return [detail.msg for detail in self.status_detail]
 
     @classmethod
     def build(cls, data: dict):

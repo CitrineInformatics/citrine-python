@@ -3,15 +3,15 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(VersionedEngineResource['MolecularStructureFeaturizer'], Predictor):
+class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], PredictorNode):
     """
     A featurizer for molecular structures, powered by CDK.
 
@@ -78,11 +78,11 @@ class MolecularStructureFeaturizer(VersionedEngineResource['MolecularStructureFe
 
     """
 
-    input_descriptor = _properties.Object(Descriptor, 'data.instance.descriptor')
-    features = _properties.List(_properties.String, 'data.instance.features')
-    excludes = _properties.List(_properties.String, 'data.instance.excludes')
+    input_descriptor = _properties.Object(Descriptor, 'descriptor')
+    features = _properties.List(_properties.String, 'features')
+    excludes = _properties.List(_properties.String, 'excludes')
 
-    typ = _properties.String('data.instance.type', default='MoleculeFeaturizer', deserializable=False)
+    typ = _properties.String('type', default='MoleculeFeaturizer', deserializable=False)
 
     def __init__(self,
                  name: str,

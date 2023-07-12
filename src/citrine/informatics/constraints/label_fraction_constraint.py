@@ -47,7 +47,4 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
         self.is_required: bool = is_required
 
     def __str__(self):
-        return '<LabelFractionConstraint {!r}::{!r}>'.format(
-            self.formulation_descriptor.key,
-            self.label
-        )
+        return f"<LabelFractionConstraint '{self.formulation_descriptor.key}'::'{self.label}'>"

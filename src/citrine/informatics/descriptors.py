@@ -1,6 +1,7 @@
 """Tools for working with Descriptors."""
 from typing import Type, Set, Union
 
+from deprecation import deprecated
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
@@ -134,17 +135,12 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
 
     lower_bound = properties.Integer('lower_bound')
     upper_bound = properties.Integer('upper_bound')
-    units = properties.String('units', default='dimensionless')
     typ = properties.String('type', default='Integer', deserializable=False)
 
     def __eq__(self, other):
-        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
+        return self._equals(other, ["key", "lower_bound", "upper_bound", "typ"])
 
-    def __init__(self,
-                 key: str,
-                 *,
-                 lower_bound: int,
-                 upper_bound: int):
+    def __init__(self, key: str, *, lower_bound: int, upper_bound: int):
         self.key: str = key
         self.lower_bound: int = lower_bound
         self.upper_bound: int = upper_bound
@@ -153,8 +149,17 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         return "<IntegerDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntegerDescriptor({}, {}, {}, {})".format(
-            self.key, self.lower_bound, self.upper_bound, self.units)
+        return "IntegerDescriptor({}, {}, {})".format(self.key, self.lower_bound, self.upper_bound)
+
+    @property
+    @deprecated(
+        deprecated_in="2.27.0",
+        removed_in="3.0.0",
+        details="Integer descriptors are always dimensionless."
+    )
+    def units(self) -> str:
+        """Return 'dimensionless' for the units of an integer descriptor."""
+        return "dimensionless"
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
@@ -261,15 +266,13 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     )
 
     def __init__(self, key: Union[FormulationKey, str]):
-        if not isinstance(key, FormulationKey):
-            key = FormulationKey.get_enum(key)
-        self.key: str = key.value
+        self.key = FormulationKey.from_str(key, exception=True)
 
     def __eq__(self, other):
         return self._equals(other, ["key", "typ"])
 
     def __str__(self):
-        return "<FormulationDescriptor {!r}>".format(self.key)
+        return f"<FormulationDescriptor '{self.key}'>"
 
     def __repr__(self):
         return "FormulationDescriptor(key={})".format(self.key)

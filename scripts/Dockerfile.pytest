@@ -1,5 +1,5 @@
 # Developmental Docker container, performing the same tasks as in .travis.yml
-FROM python:3.8
+FROM python:3.9
 
 WORKDIR /src
 COPY requirements.txt .

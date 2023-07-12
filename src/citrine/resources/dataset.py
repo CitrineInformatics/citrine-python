@@ -17,6 +17,7 @@ from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.delete import _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
+from citrine.resources.ingestion import IngestionCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
@@ -91,6 +92,10 @@ class Dataset(Resource['Dataset']):
     update_time = properties.Optional(properties.Datetime(), 'update_time')
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
+    project_id = properties.Optional(properties.UUID(), 'project_id',
+                                     serializable=False, deserializable=False)
+    session = properties.Optional(properties.Object(Session), 'session',
+                                  serializable=False, deserializable=False)
 
     def __init__(self, name: str, *, summary: str,
                  description: str, unique_name: Optional[str] = None):
@@ -110,6 +115,8 @@ class Dataset(Resource['Dataset']):
         self.update_time = None
         self.delete_time = None
         self.public = None
+        self.project_id = None
+        self.session = None
 
     def __str__(self):
         return '<Dataset {!r}>'.format(self.name)
@@ -194,6 +201,11 @@ class Dataset(Resource['Dataset']):
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
 
+    @property
+    def ingestions(self) -> IngestionCollection:
+        """Return a resource representing all files in the dataset."""
+        return IngestionCollection(self.project_id, self.uid, self.session)
+
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
         """Register a data model object to the appropriate collection."""
         return self.gemd._collection_for(model).register(model, dry_run=dry_run)
@@ -273,7 +285,8 @@ class Dataset(Resource['Dataset']):
     def delete_contents(
             self,
             *,
-            prompt_to_confirm: bool,
+            prompt_to_confirm: bool = True,
+            remove_templates: bool = True,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
     ):
@@ -283,7 +296,13 @@ class Dataset(Resource['Dataset']):
         Parameters
         ----------
         prompt_to_confirm: bool
-            If True, prompt for user confirmation before triggering delete.
+            If True, prompt for user confirmation before triggering delete.  Included
+            so that a script can skip confirmation if desired, but a user will not
+            accidentally stumble in a notebook or other REPL environment.  Default: True
+        remove_templates: bool
+            If False, templates will not be deleted along with other contents of the
+            dataset.  If true, all GEMD entities including templates will be deleted.
+            Default: True
         timeout: float
             Amount of time to wait on the job (in seconds) before giving up.
             Note that this number has no effect on the underlying job itself,
@@ -314,7 +333,8 @@ class Dataset(Resource['Dataset']):
             else:
                 print(f'"{user_response}" is not a valid response')
 
-        response = self.session.delete_resource(path)
+        params = {"remove_templates": remove_templates}
+        response = self.session.delete_resource(path, params=params)
         job_id = response["job_id"]
 
         return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
@@ -352,6 +372,14 @@ class Dataset(Resource['Dataset']):
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
             BaseEntity can also be used to provide an external ID.
+
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up. Defaults
+            to 2 minutes. Note that this number has no effect on the underlying job
+            itself, which can also time out server-side.
+
+        polling_delay: float
+            How long to delay between each polling retry attempt.
 
         Returns
         -------
@@ -479,7 +507,7 @@ class DatasetCollection(Collection[Dataset]):
         """Get a Dataset with the given unique name."""
         if unique_name is None:
             raise ValueError("You must supply a unique_name")
-        path = self._get_path() + "?unique_name=" + unique_name
+        path = self._get_path(query_terms={"unique_name": unique_name})
         data = self.session.get_resource(path)
 
         if len(data) == 1:

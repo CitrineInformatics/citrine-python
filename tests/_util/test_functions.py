@@ -1,13 +1,14 @@
 from pathlib import Path
 import pytest
 import uuid
+import warnings
 
 from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
     rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module, migrate_deprecated_argument, \
-    format_escaped_url
+    format_escaped_url, MigratedClassMeta, generate_shared_meta
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
@@ -88,6 +89,82 @@ def test_write_file_locally_fails_if_directory(tmpdir):
         write_file_locally(b"anything", newdir)
 
 
+def test_migrated_class():
+    """
+    Test that inheritance and instantiation of a migrated class warn.
+
+    Note we use `Property` because it has the higher level of difficulty of because
+    it has a custom metaclass.
+
+    """
+    # Declaring the migrated class raises no concern
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        class MigratedProperty(Property,
+                               deprecated_in="1.2.3",
+                               removed_in="2.0.0",
+                               metaclass=generate_shared_meta(Property)):
+            pass
+
+    with pytest.deprecated_call():
+        MigratedProperty(name="I'm a property!")
+
+    with pytest.deprecated_call():
+        class DerivedProperty(MigratedProperty):
+            pass
+
+    # Deriving from a derived class is fine
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        class DoublyDerivedProperty(DerivedProperty):
+            pass
+
+    class IndependentProperty(Property):
+        pass
+
+    assert issubclass(MigratedProperty, Property)
+    assert issubclass(Property, MigratedProperty)
+    assert issubclass(DerivedProperty, MigratedProperty)
+    assert issubclass(DoublyDerivedProperty, MigratedProperty)
+    assert issubclass(IndependentProperty, MigratedProperty)
+    assert isinstance(Property("Property Name"), MigratedProperty)
+
+    with pytest.raises(TypeError, match="deprecated_in"):
+        class NoVersionInfo(Property, metaclass=generate_shared_meta(Property)):
+            pass
+
+    with pytest.raises(TypeError, match="precisely"):
+        class NoParent(deprecated_in="1.2.3",
+                       removed_in="2.0.0",
+                       metaclass=MigratedClassMeta):
+            pass
+
+    assert generate_shared_meta(dict) is MigratedClassMeta
+
+
+def test_recursive_subtype_recovery():
+    """
+    ABC + MigratedClassMeta creates an infinite loop of type checks for a reason
+    I do not grasp.  This is a minimal replication for why there's a try-except
+    in MigratedClassMeta.__subclasscheck__.
+
+    """
+    import abc
+
+    class Simple(abc.ABC):
+        pass
+
+    class MigratedProperty(Simple,
+                           deprecated_in="1.2.3",
+                           removed_in="2.0.0",
+                           metaclass=MigratedClassMeta):
+        pass
+
+    assert not issubclass(dict, Simple)
+
+
 def test_shadow_classes_in_module():
 
     # Given
@@ -95,7 +172,8 @@ def test_shadow_classes_in_module():
     assert getattr(target_mod, 'ExampleClass', None) == None
 
     # When
-    shadow_classes_in_module(source_mod, target_mod)
+    with pytest.deprecated_call():
+        shadow_classes_in_module(source_mod, target_mod)
 
     # Then (ensure the class is copied over)
     copied_class = getattr(target_mod, 'ExampleClass', None) # Do this vs a direct ref so IJ doesn't warn us

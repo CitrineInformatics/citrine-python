@@ -1,5 +1,7 @@
 """Citrine-specific exceptions."""
+from types import SimpleNamespace
 from typing import Optional, List
+from urllib.parse import urlencode
 from uuid import UUID
 
 from requests import Response
@@ -52,7 +54,7 @@ class NonRetryableHttpException(NonRetryableException):
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
                     from citrine.resources.api_error import ApiError
-                    self.api_error = ApiError.from_dict(resp_json)
+                    self.api_error = ApiError.build(resp_json)
 
                     validation_error_msgs = [
                         "{} ({})".format(f.failure_message, f.failure_id)
@@ -82,7 +84,45 @@ class NonRetryableHttpException(NonRetryableException):
 class NotFound(NonRetryableHttpException):
     """A particular url was not found. (http status 404)."""
 
-    pass
+    @staticmethod
+    def build(*, message: str, method: str, path: str, params: dict = {}):
+        """
+        Construct a NotFound response from parameters.
+
+        This allows raising NotFound locally to produce consistent behavior even if the server
+        doesn't return a 404.
+
+        Parameters
+        ----------
+        message: str
+            The text of the exception message, which will be surrounded by more details.
+
+        method: str
+            The HTTP method which resulted in the error, to display in the full message.
+
+        path: str
+            The path from which the error came, to display in the full message
+
+        params: dict
+            The query parameters passed as part of the request, to display in the full message.
+
+        Returns
+        -------
+        NotFound
+            The NotFound exception corresponding to the above arguments.
+
+        """
+        path_and_query = path + (f"?{urlencode(params)}" if params else "")
+        return NotFound(
+            path_and_query,
+            SimpleNamespace(
+                text=message,
+                status_code=404,
+                request=SimpleNamespace(method=method.upper()),
+                reason="Not Found",
+                json=lambda self: {"code": 404, "message": message, "validation_errors": []}
+            )
+        )
 
 
 class Unauthorized(NonRetryableHttpException):

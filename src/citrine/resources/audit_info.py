@@ -3,7 +3,7 @@ from citrine._serialization import properties
 from gemd.entity.dict_serializable import DictSerializable
 
 
-class AuditInfo(Serializable, DictSerializable):
+class AuditInfo(Serializable, DictSerializable, typ="audit_info"):
     """Model that holds audit metadata. AuditInfo objects should not be created by the user."""
 
     created_by = properties.Optional(properties.UUID, 'created_by')
@@ -36,7 +36,3 @@ class AuditInfo(Serializable, DictSerializable):
 
     def __eq__(self, other):
         return self.__repr__() == other.__repr__()
-
-    def as_dict(self):
-        """Return the object as a dictionary."""
-        return self.dump()

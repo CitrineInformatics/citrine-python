@@ -2,11 +2,12 @@ from typing import List, Optional, Set
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-from citrine._rest.engine_resource import VersionedEngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import PredictorNode
+from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['AutoMLPredictor', 'AutoMLEstimator']
 
@@ -32,7 +33,7 @@ class AutoMLEstimator(BaseEnumeration):
     ALL = "ALL"
 
 
-class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
+class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
     """A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output(s).
@@ -62,20 +63,20 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
 
     """
 
-    inputs = _properties.List(_properties.Object(Descriptor), 'data.instance.inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'data.instance.outputs')
+    inputs = _properties.List(_properties.Object(Descriptor), 'inputs')
+    outputs = _properties.List(_properties.Object(Descriptor), 'outputs')
     estimators = _properties.Set(
         _properties.Enumeration(AutoMLEstimator),
-        'data.instance.estimators',
+        'estimators',
         default={AutoMLEstimator.RANDOM_FOREST}
     )
     training_data = _properties.List(
         _properties.Object(DataSource),
-        'data.instance.training_data',
+        'training_data',
         default=[]
     )
 
-    typ = _properties.String('data.instance.type', default='AutoML', deserializable=False)
+    typ = _properties.String('type', default='AutoML', deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -89,8 +90,10 @@ class AutoMLPredictor(VersionedEngineResource['AutoMLPredictor'], Predictor):
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
-        self.training_data: List[DataSource] = training_data or []
         self.outputs = outputs
+
+        _check_deprecated_training_data(training_data)
+        self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)

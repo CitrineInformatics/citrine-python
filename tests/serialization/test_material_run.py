@@ -1,4 +1,7 @@
 """Tests of the Material Run schema."""
+import json
+from typing import Optional, Iterable
+
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.measurement_spec import MeasurementSpec
@@ -7,7 +10,7 @@ from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.json import loads, dumps
+from gemd.json import GEMDJson
 from gemd.demo.cake import make_cake
 from gemd.entity.object import MeasurementRun as GEMDMeasurementRun
 from gemd.entity.object import MaterialRun as GEMDMaterialRun
@@ -51,7 +54,7 @@ def test_process_attachment():
     cake.process = ProcessRun('Icing', uids={'id': '12345'})
     cake_data = cake.dump()
 
-    cake_copy = loads(dumps(cake_data)).as_dict()
+    cake_copy = MaterialRun.build(cake_data).as_dict()
 
     assert cake_copy['name'] == cake.name
     assert cake_copy['uids'] == cake.uids
@@ -109,7 +112,7 @@ def test_measurement_material_connection_rehydration():
     meas2 = GEMDMeasurementRun("measurement on ending material",
                                spec=meas_spec, material=ending_mat)
 
-    copy = MaterialRun.build(ending_mat)
+    copy = MaterialRun.build(json.loads(GEMDJson().dumps(ending_mat)))
     assert isinstance(copy, MaterialRun), "copy of ending_mat should be a MaterialRun"
     assert len(copy.measurements) == 1, "copy of ending_mat should have one measurement"
     assert isinstance(copy.measurements[0], MeasurementRun), \
@@ -143,16 +146,34 @@ def test_measurement_material_connection_rehydration():
 
 
 def test_cake():
-    """Test that the cake example from gemd can be built without modification.
-    This only tests the fix to a limited problem (not all ingredients being reconstructed) and
-    is not a full test of equivalence, because the reconstruction creates "dangling paths."
-    Consider a material/process run/spec square. The material run links to a material spec, which
-    links to a process spec. The material run also links to a process run that links to a process
-    spec, but it's a different process spec, and is not linked to the material spec. If you try
-    to call mat.process.spec.output_material it returns None. This is due to the way the build()
-    method attempts to traverse the object tree, and requires an overhaul of build().
+    """
+    Test that the cake example from gemd can be built without modification.
+
+    This example has complex interconnections and fully exercises the data model.
+    We want to test if when such a material history is serialized and deserialized,
+    all relevant logical relationships are restored -- that objects that appear
+    in different parts of the material history are literally identical and not
+    just copies.
     """
     gemd_cake = make_cake()
-    cake = MaterialRun.build(gemd_cake)
+    cake = MaterialRun.build(json.loads(GEMDJson().dumps(gemd_cake)))
     assert [ingred.name for ingred in cake.process.ingredients] == \
            [ingred.name for ingred in gemd_cake.process.ingredients]
+    assert [ingred.labels for ingred in cake.process.ingredients] == \
+           [ingred.labels for ingred in gemd_cake.process.ingredients]
+    assert gemd_cake == cake
+
+    def _by_name(start: MaterialRun, names: Iterable[str]) -> Optional[MaterialRun]:
+        if isinstance(names, str):
+            names = [names]
+        while names:
+            target = names.pop(0)
+            start = next((i.material for i in start.process.ingredients if i.name == target), None)
+            if start is None:
+                return None
+        return start
+
+    by_cake = _by_name(cake, ["baked cake", "batter", "wet ingredients", "butter"])
+    by_frosting = _by_name(cake, ["frosting", "butter"])
+    assert by_cake is by_frosting  # Same literal object
+    assert _by_name(gemd_cake, ["frosting", "butter"]) is not by_frosting  # Same literal object

@@ -4,7 +4,7 @@ import re
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
 
-from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
@@ -12,7 +12,9 @@ from gemd.util import recursive_foreach, set_uuids
 
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.properties import Property as SerializableProperty
+from citrine._serialization.properties import String, Mapping, Object
+from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
@@ -27,7 +29,23 @@ CITRINE_SCOPE = 'id'
 CITRINE_TAG_PREFIX = 'citr_auto'
 
 
-class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
+class DataConceptsMeta(DictSerializableMeta):
+    """Data Concepts metaclass for handling serialization."""
+
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        resolved = next((b.typ for b in cls.__bases__ if getattr(b, "typ", None) is not None),
+                        None)
+        if resolved is not None:
+            cls._typ_stash = resolved
+        cls.typ = String("type")
+
+
+class DataConcepts(
+    PolymorphicSerializable['DataConcepts'],
+    BaseEntity,
+    metaclass=DataConceptsMeta
+):
     """
     An abstract data concepts object.
 
@@ -40,21 +58,12 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
 
     """
 
+    """Properties inherited from GEMD Base Entitiy."""
+    uids = PropertyOptional(Mapping(String('scope'), String('id')), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+
     _type_key = "type"
     """str: key used to determine type of serialized object."""
-
-    _client_keys = []
-    """list of str: keys that are in the serialized object, but are only relevant to the client.
-    These keys are not passed to the data model during deserialization.
-    """
-
-    class_dict = dict()
-    """
-    Dict[str, class]: dictionary from the type key to the class for every class \
-    that extends DataConcepts.
-
-    Only populated if the :func:`get_type` method is invoked.
-    """
 
     collection_dict = dict()
     """
@@ -64,26 +73,17 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
     Only populated if the :func:`get_collection_type` method is invoked.
     """
 
-    json_support = None
-    """
-    Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
-    """
-
-    client_specific_fields = {
-        "audit_info": AuditInfo,
-        "dataset": PropertyUUID,
-    }
     """
     Fields that are added to the gemd data objects when they are used in this client
 
     * audit_info contains who/when information about the resource on the citrine platform
     * dataset is the unique Citrine id of the dataset that owns this resource
     """
+    _audit_info = PropertyOptional(Object(AuditInfo), "audit_info", serializable=False)
+    _dataset = PropertyOptional(PropertyUUID, "dataset", serializable=False)
 
-    def __init__(self, typ: str):
-        self.typ = typ
-        for field in self.client_specific_fields:
-            self.__setattr__("_{}".format(field), None)
+    def __init__(self):
+        self.typ = self._typ_stash
 
     @property
     def audit_info(self) -> Optional[AuditInfo]:
@@ -99,66 +99,6 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
     def dataset(self) -> Optional[UUID]:
         """Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
-
-    @classmethod
-    def from_dict(cls, d: dict):
-        """
-        Build a data concepts object from a dictionary.
-
-        This is an internal method, and should not be called directly by users.  First,
-        it removes client_specific_fields from d, if present, and then calls the gemd
-        object's from_dict method.  Finally, it adds those fields back.
-
-        Parameters
-        ----------
-        d: dict
-            A representation of the object that will be shallowly loaded into the object.
-
-        """
-        popped = {k: d.pop(k, None) for k in cls.client_specific_fields}
-        obj = super().from_dict(d)
-
-        for field, clazz in cls.client_specific_fields.items():
-            value = popped[field]
-            if value is None:
-                deserialized = None
-            elif issubclass(clazz, DictSerializable):
-                if not isinstance(value, dict):
-                    raise TypeError(
-                        "{} must be a dictionary or None but was {}".format(field, value))
-                deserialized = clazz.build(value)
-            elif issubclass(clazz, SerializableProperty):
-                # deserialize handles type checking already
-                deserialized = clazz(clazz).deserialize(value)
-            else:
-                raise NotImplementedError("No deserialization strategy reported for client "
-                                          "field type {} for field {}.".format(clazz, field))
-            setattr(obj, "_{}".format(field), deserialized)
-        return obj
-
-    @classmethod
-    def build(cls, data: dict):
-        """
-        Build a data concepts object from a dictionary or from a GEMD object.
-
-        This is an internal method, and should not be called directly by users.
-
-        Parameters
-        ----------
-        data: dict
-            A representation of the object. It must be possible to put this dictionary through
-            the loads/dumps cycle of the GMED
-            :py:mod:`JSON encoder <gemd.json>`. The ensuing dictionary must
-            have a `type` field that corresponds to the response key of this class or of
-            :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`.
-
-        Returns
-        -------
-        DataConcepts
-            An object corresponding to a data concepts resource.
-
-        """
-        return cls.get_json_support().copy(data)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -180,13 +120,9 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
             The class corresponding to data.
 
         """
-        if len(DataConcepts.class_dict) == 0:
-            # This line is only reached if get_type is called before build,
-            # which is hard to reproduce, hence the no cover.
-            DataConcepts._make_class_dict()  # pragma: no cover
         if isinstance(data, DictSerializable):
             data = data.as_dict()
-        return DataConcepts.class_dict[data['type']]
+        return DictSerializable.class_mapping[data['type']]
 
     @classmethod
     def get_collection_type(cls, data) -> "Type[DataConceptsCollection]":
@@ -216,31 +152,6 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         return DataConcepts.collection_dict[data['type']]
 
     @staticmethod
-    def _make_class_dict():
-        """Construct a dictionary from each type key to the class."""
-        from citrine.resources.condition_template import ConditionTemplate
-        from citrine.resources.parameter_template import ParameterTemplate
-        from citrine.resources.property_template import PropertyTemplate
-        from citrine.resources.material_template import MaterialTemplate
-        from citrine.resources.measurement_template import MeasurementTemplate
-        from citrine.resources.process_template import ProcessTemplate
-        from citrine.resources.ingredient_spec import IngredientSpec
-        from citrine.resources.material_spec import MaterialSpec
-        from citrine.resources.measurement_spec import MeasurementSpec
-        from citrine.resources.process_spec import ProcessSpec
-        from citrine.resources.ingredient_run import IngredientRun
-        from citrine.resources.material_run import MaterialRun
-        from citrine.resources.measurement_run import MeasurementRun
-        from citrine.resources.process_run import ProcessRun
-        _clazz_list = [ConditionTemplate, ParameterTemplate, PropertyTemplate,
-                       MaterialTemplate, MeasurementTemplate, ProcessTemplate,
-                       IngredientSpec, MaterialSpec, MeasurementSpec, ProcessSpec,
-                       IngredientRun, MaterialRun, MeasurementRun, ProcessRun]
-        for clazz in _clazz_list:
-            DataConcepts.class_dict[clazz._response_key] = clazz
-        DataConcepts.class_dict['link_by_uid'] = LinkByUID
-
-    @staticmethod
     def _make_collection_dict():
         """Construct a dictionary from each type key to the associated collection."""
         from citrine.resources.condition_template import ConditionTemplateCollection
@@ -266,61 +177,6 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         ]
         for collection in _collection_list:
             DataConcepts.collection_dict[collection._individual_key] = collection
-
-    @classmethod
-    def get_json_support(cls):
-        """Get a DataConcepts-compatible json serializer/deserializer."""
-        if cls.json_support is None:
-            DataConcepts._make_class_dict()
-            cls.json_support = GEMDJson(scope=CITRINE_SCOPE)
-            cls.json_support.register_classes(
-                {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
-            )
-        return cls.json_support
-
-    def dump(self) -> dict:
-        """Overload dump to include the client-specific fields."""
-        result = super().dump()
-        for field, clazz in self.client_specific_fields.items():
-            value = getattr(self, f"_{field}", None)
-            if value is None:
-                serialized = None
-            elif isinstance(value, DictSerializable):
-                serialized = value.as_dict()
-            elif issubclass(clazz, SerializableProperty):
-                # deserialize handles type checking already
-                serialized = clazz(clazz).serialize(value)
-            else:  # pragma: no cover
-                raise NotImplementedError("No serialization strategy reported for client "
-                                          "field type {} for field {}.".format(clazz, field))
-            if serialized is not None:
-                result[field] = serialized
-        return result
-
-    def as_dict(self) -> dict:
-        """
-        Dump to a dictionary (useful for interoperability with gemd).
-
-        Note that something in the serialization stack changes the result df __dict__ dramatically
-        between gemd.entity.dict_serializable and this class.  This means we can't just use gemd's
-        as_dict, and so we'll trust citrine._serialization.properties to get us the list.
-        """
-        from citrine._serialization import properties as serial_properties
-
-        result = dict()
-        for property_name in serial_properties.Object(type(self)).fields:
-            result[property_name] = getattr(self, property_name, None)
-        result["type"] = result.pop("typ")
-        return result
-
-    def _dict_for_compare(self):
-        """Which fields should be ignored in equality comparison."""
-        base = super()._dict_for_compare()
-        for field in base:
-            base[field] = getattr(self, field, base[field])
-        base.pop("audit_info", None)
-        base.pop("dataset", None)
-        return base
 
 
 def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) -> LinkByUID:
@@ -620,9 +476,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to update "
                                "a data model object with data validation.")
 
-        url = self._get_path() + \
-            "/" + scope + "/" + id + "/async"
-
+        url = self._get_path(action=[scope, id, "async"])
         response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
 
         job_id = response_json["job_id"]
@@ -693,8 +547,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid)
-        path = self._get_path(ignore_dataset=self.dataset_id is None) \
-            + format_escaped_url("/{}/{}", link.scope, link.id)
+        path = self._get_path(ignore_dataset=self.dataset_id is None, action=[link.scope, link.id])
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -729,7 +582,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-name",
+            self._get_path(ignore_dataset=True, action="filter-by-name"),
             forward=forward,
             per_page=per_page,
             params=params)
@@ -785,7 +638,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid)
-        path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
+        path = self._get_path(action=[link.scope, link.id])
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded

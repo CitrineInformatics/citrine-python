@@ -5,6 +5,8 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.design_candidate import DesignMaterial
 
+__all__ = ['SinglePrediction']
+
 
 class SinglePrediction(Serializable["SinglePrediction"]):
     """A Citrine Single Prediction.

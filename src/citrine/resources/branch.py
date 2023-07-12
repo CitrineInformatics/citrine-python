@@ -6,7 +6,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
@@ -100,6 +100,33 @@ class BranchCollection(Collection[Branch]):
         branch.project_id = self.project_id
         return branch
 
+    def get_by_root_id(self, *, branch_root_id: Union[UUID, str]) -> Branch:
+        """
+        Given a branch root ID, retrieve the latest version of the branch.
+
+        Parameters
+        ---------
+        branch_root_id:  Union[UUID, str]
+            Unique identifier of the branch root
+
+        Returns
+        -------
+        Branch
+            The latest version of the branch.
+
+        """
+        params = {"root": str(branch_root_id), "version": "latest"}
+        branch = next(self._list_with_params(per_page=1, **params), None)
+        if branch:
+            return branch
+        else:
+            raise NotFound.build(
+                message=f"Branch root '{branch_root_id}' not found",
+                method="GET",
+                path=self._get_path(),
+                params=params
+            )
+
     def list(self, *, per_page: int = 20) -> Iterator[Branch]:
         """
         List active branches using pagination.
@@ -138,7 +165,10 @@ class BranchCollection(Collection[Branch]):
             Archived branches in this collection.
 
         """
-        fetcher = functools.partial(self._fetch_page, additional_params={"archived": True})
+        return self._list_with_params(per_page=per_page, archived=True)
+
+    def _list_with_params(self, *, per_page, **kwargs):
+        fetcher = functools.partial(self._fetch_page, additional_params=kwargs)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
@@ -153,8 +183,7 @@ class BranchCollection(Collection[Branch]):
             Unique identifier of the branch to archive
 
         """
-        archive_path_template = f'{self._get_path(uid)}/archive'
-        url = format_escaped_url(archive_path_template, project_id=self.project_id, branch_id=uid)
+        url = self._get_path(uid, action="archive")
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
@@ -168,8 +197,7 @@ class BranchCollection(Collection[Branch]):
             Unique identifier of the branch to restore
 
         """
-        restore_path_template = f'{self._get_path(uid)}/restore'
-        url = format_escaped_url(restore_path_template, project_id=self.project_id, branch_id=uid)
+        url = self._get_path(uid, action="restore")
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
@@ -236,8 +264,7 @@ class BranchCollection(Collection[Branch]):
             A list of data updates and compatible predictors
 
         """
-        path_template = f'{self._path_template}/{{branch_id}}/data-version-updates-predictor'
-        path = format_escaped_url(path_template, project_id=self.project_id, branch_id=uid)
+        path = self._get_path(uid=uid, action="data-version-updates-predictor")
         data = self.session.get_resource(path, version=self._api_version)
         return BranchDataUpdate.build(data)
 
@@ -272,9 +299,7 @@ class BranchCollection(Collection[Branch]):
             The new branch record after version update
 
         """
-        path_template = f'{self._path_template}/next-version-predictor'
-
-        path = format_escaped_url(path_template, project_id=self.project_id)
+        path = self._get_path(action="next-version-predictor")
         data = self.session.post_resource(path, branch_instructions.dump(),
                                           version=self._api_version,
                                           params={

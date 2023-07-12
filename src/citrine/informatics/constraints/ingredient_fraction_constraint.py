@@ -47,7 +47,7 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
         self.is_required: bool = is_required
 
     def __str__(self):
-        return '<IngredientFractionConstraint {!r}::{!r}>'.format(
-            self.formulation_descriptor.key,
-            self.ingredient
+        return (
+            f"<IngredientFractionConstraint "
+            f"'{self.formulation_descriptor.key}'::'{self.ingredient}'>"
         )

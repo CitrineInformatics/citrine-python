@@ -1,8 +1,7 @@
 from logging import getLogger
+from time import time, sleep
 from typing import Union
 from uuid import UUID
-
-from time import time, sleep
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._rest.resource import Resource
@@ -14,7 +13,7 @@ from citrine.exceptions import PollingTimeoutError, JobFailureError
 logger = getLogger(__name__)
 
 
-class JobSubmissionResponse(Resource['AraJobStatus']):
+class JobSubmissionResponse(Resource['JobSubmissionResponse']):
     """A response to a submit-job request for the job submission framework.
 
     This is returned as a successful response from the remote service.
@@ -22,9 +21,6 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
 
     job_id = properties.UUID("job_id")
     """:UUID: job id of the job submission request"""
-
-    def __init__(self):
-        pass  # pragma: no cover
 
 
 class TaskNode(Resource['TaskNode']):
@@ -45,9 +41,6 @@ class TaskNode(Resource['TaskNode']):
     failure_reason = properties.Optional(String(), "failure_reason")
     """:str: if a task has failed, the failure reason will be in this parameter"""
 
-    def __init__(self):
-        pass  # pragma: no cover
-
 
 class JobStatusResponse(Resource['JobStatusResponse']):
     """A response to a job status check.
@@ -64,16 +57,17 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     output = properties.Optional(properties.Mapping(String, String), 'output')
     """:Optional[dict[str, str]]: job output properties and results"""
 
-    def __init__(self):
-        pass  # pragma: no cover
 
-
-def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
-                             job: Union[JobSubmissionResponse, UUID, str], *,
+def _poll_for_job_completion(session: Session,
+                             project_id: Union[UUID, str],
+                             job: Union[JobSubmissionResponse, UUID, str],
+                             *,
                              timeout: float = 2 * 60,
-                             polling_delay: float = 2.0) -> JobStatusResponse:
+                             polling_delay: float = 2.0,
+                             raise_errors: bool = True,
+                             ) -> JobStatusResponse:
     """
-    Polls for job completion given a timeout, failing with an exception on job failure.
+    Polls for job completion given a timeout.
 
     This polls for job completion given the Job ID, failing appropriately if the job result
     was not successful.
@@ -88,6 +82,8 @@ def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
         itself, which can also time out server-side.
     polling_delay:
         How long to delay between each polling retry attempt.
+    raise_errors:
+        Whether a `Failure` response should raise a JobFailureError.
 
     Returns
     -------
@@ -119,15 +115,17 @@ def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
             raise PollingTimeoutError('Job {} timed out.'.format(job_id))
     if status.status == 'Failure':
         logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
-        failure_reasons = []
-        for task in status.tasks:
-            if task.status == 'Failure':
-                logger.error('Task {} failed with reason "{}"'.format(
-                    task.id, task.failure_reason))
-                failure_reasons.append(task.failure_reason)
-        raise JobFailureError(
-            message='Job {} terminated with Failure status. Failure reasons: {}'.format(
-                job_id, failure_reasons), job_id=job_id,
-            failure_reasons=failure_reasons)
+        if raise_errors:
+            failure_reasons = []
+            for task in status.tasks:
+                if task.status == 'Failure':
+                    logger.error('Task {} failed with reason "{}"'.format(
+                        task.id, task.failure_reason))
+                    failure_reasons.append(task.failure_reason)
+            raise JobFailureError(
+                message=f'Job {job_id} terminated with Failure status. '
+                        f'Failure reasons: {failure_reasons}',
+                job_id=job_id,
+                failure_reasons=failure_reasons)
 
     return status

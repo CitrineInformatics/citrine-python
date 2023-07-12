@@ -117,3 +117,9 @@ def test_list(collection: DesignExecutionCollection, session):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
+
+
+def test_deprecated():
+    from citrine.resources.design_execution import DesignExecution
+    with pytest.deprecated_call():
+        DesignExecution()

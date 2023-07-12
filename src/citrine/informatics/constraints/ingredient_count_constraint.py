@@ -43,4 +43,4 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
         self.label: Optional[str] = label
 
     def __str__(self):
-        return '<IngredientCountConstraint {!r}>'.format(self.formulation_descriptor.key)
+        return f"<IngredientCountConstraint '{self.formulation_descriptor.key}'>"

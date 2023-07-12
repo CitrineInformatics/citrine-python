@@ -1,4 +1,5 @@
 from uuid import UUID
+import json
 
 import pytest
 from citrine._session import Session
@@ -94,23 +95,27 @@ def test_nomutate_gemd(collection, session):
 
 
 def test_get_history(collection, session):
+
     # Given
-    session.set_response({
-        'context': [],
-        'root': MaterialRunDataFactory(name='Historic MR')
-    })
+    cake = make_cake()
+    cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
+    root_link = LinkByUID.build(cake_json.pop('object'))
+    cake_json['root'] = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
+    cake_json['context'].remove(cake_json['root'])
+
+    session.set_response(cake_json)
 
     # When
-    run = collection.get_history(id=LinkByUID(scope='id', id='1234'))
+    run = collection.get_history(id=root_link)
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/material-history/id/1234'.format(collection.project_id)
+        path=f'projects/{collection.project_id}/material-history/{root_link.scope}/{root_link.id}'
     )
     assert expected_call == session.last_call
-    assert 'Historic MR' == run.name
+    assert run == cake
 
 
 def test_get_material_run(collection, session):
@@ -349,7 +354,7 @@ def test_validate_templates_errors(collection, session):
     run = MaterialRunFactory(name="")
 
     # When
-    validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
+    validation_error = ValidationError.build({"failure_message": "you failed", "failure_id": "failure_id"})
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
     errors = collection.validate_templates(model=run)
 
@@ -360,7 +365,8 @@ def test_validate_templates_errors(collection, session):
         path="projects/{}/material-runs/validate-templates".format(project_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
-    assert errors == [validation_error]
+    assert len(errors) == 1
+    assert errors[0].dump() == validation_error.dump()
 
 
 def test_validate_templates_unrelated_400(collection, session):

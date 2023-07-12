@@ -3,6 +3,8 @@ from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 
+from deprecation import deprecated
+
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -106,6 +108,7 @@ class Project(Resource['Project']):
         return format_escaped_url('/projects/{project_id}', project_id=self.uid)
 
     @property
+    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0", details="Use design_spaces instead.")
     def modules(self) -> ModuleCollection:
         """Return a resource representing all visible design spaces."""
         return ModuleCollection(self.uid, self.session)
@@ -526,7 +529,7 @@ class ProjectCollection(Collection[Project]):
 
         """
         collections = []
-        path = self._get_path() + '/search'
+        path = self._get_path(action="search")
         query_params = {'userId': ""}
 
         json = {} if search_params is None else {'search_params': search_params}

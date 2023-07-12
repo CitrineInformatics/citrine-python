@@ -1,7 +1,7 @@
 """Tools for working with Descriptors."""
 import warnings
 from abc import abstractmethod
-from typing import Type, List, Mapping, Optional, Union, Set
+from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -13,8 +13,7 @@ from citrine.resources.file_link import FileLink
 __all__ = ['DataSource',
            'CSVDataSource',
            'GemTableDataSource',
-           'ExperimentDataSourceRef',
-           'GEMDQueryDataSource']
+           'ExperimentDataSourceRef']
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
@@ -43,7 +42,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, GEMDQueryDataSource
+            CSVDataSource, GemTableDataSource, ExperimentDataSourceRef
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -123,21 +122,6 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
                 DeprecationWarning
             )
         self.formulation_descriptor = None
-
-
-class GEMDQueryDataSource(Serializable['GEMDQueryDataSource'], DataSource):
-
-    typ = properties.String('type', default='gemd_query_data_source', deserializable=False)
-    datasets = properties.Set(
-        properties.Union([properties.UUID, properties.String]),
-        "datasets"
-    )
-
-    def _attrs(self) -> List[str]:
-        return ["datasets", "typ"]
-
-    def __init__(self, *, datasets: Set[Union[UUID, str]]):
-        self.datasets = datasets
 
 
 class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):

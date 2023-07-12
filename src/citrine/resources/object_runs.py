@@ -3,9 +3,10 @@ from abc import ABC
 from typing import TypeVar
 
 from citrine.resources.data_objects import DataObject, DataObjectCollection
+from gemd.entity.object.has_spec import HasSpec
 
 
-class ObjectRun(DataObject, ABC):
+class ObjectRun(DataObject, HasSpec, ABC):
     """
     An abstract object run object.
 

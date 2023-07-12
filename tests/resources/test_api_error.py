@@ -4,11 +4,15 @@ from citrine.resources.api_error import ApiError, ValidationError
 
 
 def test_has_failure():
-    error = ApiError(400, 'you messed up', [
-        ValidationError(failure_message='failure 1', failure_id='fail.one'),
-        ValidationError(failure_message='failure 2', failure_id='fail.two'),
-        ValidationError(failure_message='vague failure'),
-    ])
+    error = ApiError.build({
+        "code": 400,
+        "message": "you messed up",
+        "validation_errors": [
+            {"failure_message": 'failure 1', "failure_id": 'fail.one'},
+            {"failure_message": 'failure 2', "failure_id": 'fail.two'},
+            {"failure_message": 'vague failure'},
+        ]
+    })
     assert error.has_failure('fail.one')
     assert error.has_failure('fail.two')
     assert not error.has_failure('not.present')
@@ -30,7 +34,7 @@ def test_deserialization():
             }
         ]
     }
-    error = ApiError.from_dict(missing_id)
+    error = ApiError.build(missing_id)
     assert error.validation_errors[0].failure_message == msg
 
     with_id = {
@@ -43,5 +47,5 @@ def test_deserialization():
             }
         ]
     }
-    error_with_id = ApiError.from_dict(with_id)
+    error_with_id = ApiError.build(with_id)
     assert error_with_id.validation_errors[0].failure_id == 'foo.id'

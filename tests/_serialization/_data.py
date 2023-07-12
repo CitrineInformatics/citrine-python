@@ -86,6 +86,5 @@ INVALID_SERIALIZED_INSTANCES = [
     (properties.Boolean, 1.0),
     (properties.Boolean, 'asdf'),
     (properties.UUID, 'wrong-number-of-chars'),
-    (properties.UUID, uuid.uuid4()),
     (properties.Datetime, '2019-07-19T35:46:08.949682+99:99'),  # nonsense time
 ]

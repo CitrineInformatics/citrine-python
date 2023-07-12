@@ -2,11 +2,10 @@
 from typing import Optional, Dict, List, Type, Union, Iterator
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
+from citrine._serialization.properties import String, Object, LinkOrElse
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -16,7 +15,12 @@ from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
 
-class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
+class ProcessSpec(
+    GEMDResource['ProcessSpec'],
+    ObjectSpec,
+    GEMDProcessSpec,
+    typ=GEMDProcessSpec.typ
+):
     """
     A process specification.
 
@@ -59,15 +63,13 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
 
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
-    name = String('name', override=True)
-    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    notes = PropertyOptional(String(), 'notes', override=True)
+    name = String('name', override=True, use_init=True)
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    template = PropertyOptional(LinkOrElse(), 'template', override=True)
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
-    typ = String('type')
+    template = PropertyOptional(LinkOrElse(GEMDProcessTemplate),
+                                'template', override=True,
+                                use_init=True,
+                                )
 
     def __init__(self,
                  name: str,
@@ -82,7 +84,7 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
                  ):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDProcessSpec.typ)
+        super(ObjectSpec, self).__init__()
         GEMDProcessSpec.__init__(self, name=name, uids=uids,
                                  tags=tags, conditions=conditions, parameters=parameters,
                                  template=template, file_links=file_links, notes=notes)
@@ -122,5 +124,4 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
             The process specs using the specified process template
 
         """
-        link = _make_link_by_uid(uid)
-        return self._get_relation('process-templates', uid=link)
+        return self._get_relation('process-templates', uid=uid)

@@ -4,7 +4,7 @@ import uuid
 from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
-from citrine.informatics.generative_design import FingerprintType
+from citrine.informatics.generative_design import FingerprintType, StructureExclusion
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -51,15 +51,17 @@ def test_build_new_execution(collection, generative_design_execution_dict):
 def test_trigger_execution(collection: GenerativeDesignExecutionCollection, generative_design_execution_dict, session):
     # Given
     session.set_response(generative_design_execution_dict)
-    design_execuption_input = GenerativeDesignInput(
+    design_execution_input = GenerativeDesignInput(
         seeds=["CC(O)=O"],
         fingerprint_type=FingerprintType.ECFP4,
         min_fingerprint_similarity=0.5,
-        mutation_per_seed=2
+        mutation_per_seed=2,
+        structure_exclusions=[StructureExclusion.BROMINE, StructureExclusion.IODINE],
+        min_substructure_counts={"C": 1, "O": 1},
     )
 
     # When
-    actual_execution = collection.trigger(design_execuption_input)
+    actual_execution = collection.trigger(design_execution_input)
 
     # Then
     assert str(actual_execution.uid) == generative_design_execution_dict["id"]
@@ -70,10 +72,14 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
         method='POST',
         path=expected_path,
         json={
-            'seeds': design_execuption_input.seeds,
-            'fingerprint_type': design_execuption_input.fingerprint_type.value,
-            'min_fingerprint_similarity': design_execuption_input.min_fingerprint_similarity,
-            'mutation_per_seed': design_execuption_input.mutation_per_seed
+            'seeds': design_execution_input.seeds,
+            'fingerprint_type': design_execution_input.fingerprint_type.value,
+            'min_fingerprint_similarity': design_execution_input.min_fingerprint_similarity,
+            'mutation_per_seed': design_execution_input.mutation_per_seed,
+            'structure_exclusions': [
+                exclusion.value for exclusion in design_execution_input.structure_exclusions
+            ],
+            'min_substructure_counts': design_execution_input.min_substructure_counts,
         }
     )
 
@@ -126,4 +132,3 @@ def test_list(collection: GenerativeDesignExecutionCollection, session):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
-

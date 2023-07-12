@@ -70,7 +70,7 @@ def test_simple_deserialization(valid_data):
                                                             value=NominalInteger(10))
     assert measurement_run.file_links == []
     assert measurement_run.template is None
-    assert measurement_run.material == MaterialRun('sponge cake',
+    assert measurement_run.material == MaterialRun('sponge cake', tags=[],
                                                    uids={'id': valid_data['material']['uids']['id']},
                                                    sample_type='experimental')
     assert measurement_run.material.audit_info.created_by == UUID(valid_data['material']['audit_info']['created_by'])
@@ -85,9 +85,11 @@ def test_serialization(valid_data):
     """Ensure that a serialized Measurement Run looks sane."""
     measurement_run: MeasurementRun = MeasurementRun.build(valid_data)
     serialized = measurement_run.dump()
-    # Null subelements of audit info are not excluded from serialization (though they should be)
-    serialized['audit_info'].pop('updated_by')
-    serialized['audit_info'].pop('updated_at')
+    # Audit info & dataset are not included in the dump
+    serialized['audit_info'] = valid_data['audit_info']
+    serialized['dataset'] = valid_data['dataset']
+    serialized['material']['audit_info'] = valid_data['material']['audit_info']
+    serialized['material']['dataset'] = valid_data['material']['dataset']
     assert serialized == valid_data
 
 

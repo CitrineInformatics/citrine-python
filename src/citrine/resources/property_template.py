@@ -1,17 +1,18 @@
 """Resources that represent property templates."""
 from typing import List, Dict, Optional, Type
 
-from citrine._rest.resource import Resource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object
+from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
-from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
 
-class PropertyTemplate(AttributeTemplate, Resource['PropertyTemplate'], GEMDPropertyTemplate):
+class PropertyTemplate(
+    GEMDResource['PropertyTemplate'],
+    AttributeTemplate,
+    GEMDPropertyTemplate,
+    typ=GEMDPropertyTemplate.typ
+):
     """
     A property template.
 
@@ -36,13 +37,6 @@ class PropertyTemplate(AttributeTemplate, Resource['PropertyTemplate'], GEMDProp
 
     _response_key = GEMDPropertyTemplate.typ  # 'property_template'
 
-    name = String('name')
-    description = PropertyOptional(String(), 'description')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    bounds = Object(BaseBounds, 'bounds')
-    typ = String('type')
-
     def __init__(self,
                  name: str,
                  *,
@@ -52,7 +46,7 @@ class PropertyTemplate(AttributeTemplate, Resource['PropertyTemplate'], GEMDProp
                  tags: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
-        DataConcepts.__init__(self, GEMDPropertyTemplate.typ)
+        super(AttributeTemplate, self).__init__()
         GEMDPropertyTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                       uids=uids, description=description)
 

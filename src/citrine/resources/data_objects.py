@@ -7,22 +7,30 @@ from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
+from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import String, Object
+from citrine._serialization.properties import Optional as PropertyOptional
+from gemd.entity.file_link import FileLink
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
 from citrine.resources.process_template import ProcessTemplate
+from gemd.entity.object.base_object import BaseObject
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.attribute_template import AttributeTemplate
 
 
-class DataObject(DataConcepts, ABC):
+class DataObject(DataConcepts, BaseObject, ABC):
     """
     An abstract data object object.
 
     DataObject must be extended along with `Resource`
     """
+
+    notes = PropertyOptional(String(), 'notes')
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
@@ -76,7 +84,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         raw_objects = self.session.cursor_paged_resource(
             self.session.post_resource,
             # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
+            self._get_path(ignore_dataset=True, action="filter-by-attribute-bounds"),
             json=body,
             forward=forward,
             per_page=per_page,
@@ -116,7 +124,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
          against. Ignored unless data object is an IngredientSpec or IngredientRun.
         :return: List[ValidationError] of validation errors encountered. Empty if successful.
         """
-        path = self._get_path(ignore_dataset=True) + "/validate-templates"
+        path = self._get_path(ignore_dataset=True, action="validate-templates")
 
         temp_scope = str(uuid4())
         GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
