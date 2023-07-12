@@ -1,14 +1,10 @@
-from typing import Optional, Set, Union
+from typing import Optional, List
 from uuid import UUID
 
-from gemd import LinkByUID
-
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
-from citrine._rest.resource import Resource, ResourceTypeEnum
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine.resources.material_template import MaterialTemplate
-from citrine.resources.process_template import ProcessTemplate
 from citrine.informatics.dimensions import Dimension
 from citrine.informatics.design_spaces import FormulationDesignSpace
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -25,41 +21,20 @@ class TemplateLink(Serializable["TemplateLink"]):
 
     Parameters
     ----------
-    project: Project
-        Project containing the material and process templates,
-        used to resolve Citrine Platform UUIDs.
-    material_template: Union[UUID, str, LinkByUid, MaterialTemplate]
+    material_template: UUID
         Citrine ID referencing an on-platform material template.
-    process_template: Union[UUID, str, LinkByUid, ProcessTemplate]
+    process_template: UUID
         Citrine ID referencing an on-platform process template.
 
     """
 
+    _name = properties.String("name", serializable=False)
     material_template = properties.UUID("material_template")
     process_template = properties.UUID("process_template")
 
-    _name = properties.String("name")
-    """Simple name used to refer to the combination of material and process template."""
-
-    MaterialTemplateType = Union[UUID, str, LinkByUID, MaterialTemplate]
-    ProcessTemplateType = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def __init__(
-            self,
-            project,
-            *,
-            material_template: MaterialTemplateType,
-            process_template: ProcessTemplateType
-    ):
-        resolved_mat = project.gemd.get(material_template)
-        resolved_proc = project.gemd.get(process_template)
-
-        self.material_template: UUID = UUID(resolved_mat.uids["id"])
-        self.process_template: UUID = UUID(resolved_proc.uids["id"])
-        self._name = f"{resolved_proc.name}-{resolved_mat.name}"
-
-    def __repr__(self):
-        return "<TemplateLink {!r}>".format(self._name)
+    def __init__(self, *, material_template: UUID, process_template: UUID):
+        self.material_template: UUID = material_template
+        self.process_template: UUID = process_template
 
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
@@ -73,7 +48,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         in the formulation subspace of a different node.
     scope: Optional[str]
         An optional custom scope used to identify the materials produced by this node.
-    attributes: Set[Dimension]
+    attributes: List[Dimension]
         Set of dimensions included on materials produced by this node.
     formulation_subspace: Optional[FormulationDesignSpace]
         An optional formulation design space defining the ingredients, labels,
@@ -86,7 +61,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
 
     name = properties.String("identifier.id")
     scope = properties.Optional(properties.String, "identifier.scope")
-    attributes = properties.Set(properties.Object(Dimension), "attributes")
+    attributes = properties.List(properties.Object(Dimension), "attributes")
     formulation_subspace = properties.Optional(
         properties.Object(FormulationDesignSpace), "formulation"
     )
@@ -97,13 +72,13 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             *,
             name: str,
             scope: Optional[str] = None,
-            attributes: Optional[Set[Dimension]] = None,
+            attributes: Optional[List[Dimension]] = None,
             formulation_subspace: Optional[FormulationDesignSpace] = None,
             template_link: Optional[TemplateLink] = None
     ):
         self.name = name
         self.scope: Optional[str] = scope
-        self.attributes = attributes or set()
+        self.attributes = attributes or list()
         self.formulation_subspace: Optional[FormulationDesignSpace] = formulation_subspace
         self.template_link: Optional[TemplateLink] = template_link
 
@@ -142,22 +117,17 @@ class HierarchicalDesignSpace(
         the description of the design space
     root: MaterialNodeDefinition
         the terminal material node produced by the design space
-    subspaces: Set[MaterialNodeDefinition]
+    subspaces: List[MaterialNodeDefinition]
         the sub material nodes produced by the design space
 
     """
 
-    _resource_type = ResourceTypeEnum.MODULE
-
-    root = properties.Object(MaterialNodeDefinition, "config.root")
-    subspaces = properties.Set(
-        properties.Object(MaterialNodeDefinition), "config.subspaces", default=set()
+    root = properties.Object(MaterialNodeDefinition, "data.instance.root")
+    subspaces = properties.List(
+        properties.Object(MaterialNodeDefinition), "data.instance.subspaces", default=list()
     )
-
-    status = properties.String("status", serializable=False)
-    module_type = properties.String("module_type", default="DESIGN_SPACE")
     typ = properties.String(
-        "config.type", default="HierarchicalDesignSpace", deserializable=False
+        "data.instance.type", default="HierarchicalDesignSpace", deserializable=False
     )
 
     def __init__(
@@ -166,42 +136,49 @@ class HierarchicalDesignSpace(
             *,
             description: str,
             root: MaterialNodeDefinition,
-            subspaces: Optional[Set[MaterialNodeDefinition]] = None
+            subspaces: Optional[List[MaterialNodeDefinition]] = None
     ):
         self.name: str = name
         self.description: str = description
         self.root: MaterialNodeDefinition = root
-        self.subspaces: Set[MaterialNodeDefinition] = subspaces or set()
+        self.subspaces: List[MaterialNodeDefinition] = subspaces or list()
 
-    @classmethod
-    def _pre_build(cls, data: dict) -> dict:
-        data["config"]["root"] = cls.__build_format(data["config"]["root"])
-        data["config"]["subspaces"] = [
-            cls.__build_format(node) for node in data["config"]["subspaces"]
+    def _post_dump(self, data: dict) -> dict:
+        data = super()._post_dump(data)
+
+        root_node = data["data"]["instance"]["root"]
+        data["data"]["instance"]["root"] = self.__unwrap_node(root_node)
+
+        data["data"]["instance"]["subspaces"] = [
+            self.__unwrap_node(sub_node)
+            for sub_node in data['data']['instance']['subspaces']
         ]
         return data
 
-    @staticmethod
-    def __build_format(node: dict) -> dict:
-        # Wrap formulation in a "config" block so it can be deserialized as FormulationDesignSpace
-        formulation = node.pop("formulation")
-        if formulation:
-            node["formulation"] = {"config": formulation}
-        return node
+    @classmethod
+    def _pre_build(cls, data: dict) -> dict:
+        root_node = data["data"]["instance"]["root"]
+        data["data"]["instance"]["root"] = cls.__wrap_node(root_node)
 
-    def _post_dump(self, data: dict) -> dict:
-        data["config"]["root"] = self.__dump_format(data["config"]["root"])
-        data["config"]["subspaces"] = {
-            self.__dump_format(x) for x in data["config"]["subspaces"]
-        }
+        data["data"]["instance"]["subspaces"] = [
+            cls.__wrap_node(sub_node) for sub_node in data['data']['instance']['subspaces']
+        ]
+
         return data
 
     @staticmethod
-    def __dump_format(node: dict) -> dict:
-        formulation = node.pop("formulation")
-        if formulation:
-            node["formulation"] = formulation["config"]
+    def __wrap_node(node: dict) -> dict:
+        formulation_subspace = node.pop('formulation')
+        if formulation_subspace:
+            node['formulation'] = DesignSpace.wrap_instance(formulation_subspace)
+        return node
+
+    @staticmethod
+    def __unwrap_node(node: dict) -> dict:
+        formulation_subspace = node.pop('formulation')
+        if formulation_subspace:
+            node['formulation'] = formulation_subspace['data']['instance']
         return node
 
     def __repr__(self):
-        return "<HierarchicalDesignSpace {!r}>".format(self.name)
+        return '<HierarchicalDesignSpace {!r}>'.format(self.name)

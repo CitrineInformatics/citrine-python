@@ -68,13 +68,15 @@ class DesignSpace(PolymorphicSerializable['DesignSpace'], AsynchronousObject):
         from .enumerated_design_space import EnumeratedDesignSpace
         from .formulation_design_space import FormulationDesignSpace
         from .product_design_space import ProductDesignSpace
+        from .hierarchical_design_space import HierarchicalDesignSpace
 
         return {
             'Univariate': ProductDesignSpace,
             'ProductDesignSpace': ProductDesignSpace,
             'EnumeratedDesignSpace': EnumeratedDesignSpace,
             'FormulationDesignSpace': FormulationDesignSpace,
-            'DataSourceDesignSpace': DataSourceDesignSpace
+            'DataSourceDesignSpace': DataSourceDesignSpace,
+            'HierarchicalDesignSpace': HierarchicalDesignSpace
         }[data['data']['instance']['type']]
 
     @property
