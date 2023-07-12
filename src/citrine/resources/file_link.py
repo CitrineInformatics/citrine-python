@@ -859,8 +859,11 @@ class FileCollection(Collection[FileLink]):
         files: List[FileLink]
             A list of files from which GEMD objects should be built
         upload: bool
-            If the files are off-platform references, upload them first.  Defaults to False,
-            in which case an off-platform resource raises an error.
+            If the files are off-platform references, upload them first.
+            Defaults to False, in which case an off-platform resource raises an error.
+            A file is off-platform if it has an absolute URL and that URL is not for the
+            citrine platform.
+            To build the correct FileLink for a file on your computer, use the `from_path` method.
         raise_errors: bool
             Whether ingestion errors raise exceptions (vs. simply reported in the results).
             Default: True
