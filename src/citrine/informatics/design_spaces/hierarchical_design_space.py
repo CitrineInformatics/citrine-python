@@ -28,7 +28,7 @@ class TemplateLink(Serializable["TemplateLink"]):
 
     """
 
-    _name = properties.String("name", serializable=False)
+    _name = properties.Optional(properties.String, "name")
     material_template = properties.UUID("material_template")
     process_template = properties.UUID("process_template")
 
