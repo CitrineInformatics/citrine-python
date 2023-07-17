@@ -8,7 +8,10 @@ __all__ = ['IntegerRangeConstraint']
 
 
 class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint):
-    """Represents an inequality constraint on an integer-valued material attribute.
+    """[ALPHA] Represents an inequality constraint on an integer-valued material attribute.
+
+    Warning: IntegerRangeConstraints are not fully supported by the Citrine Platform web interface
+    and may cause unexpected issues until resolved.
 
     Parameters
     ----------
