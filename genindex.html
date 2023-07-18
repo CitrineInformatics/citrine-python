@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>Index &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -30,7 +30,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,8 +46,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -180,6 +179,8 @@
         <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.access_control_dict">(citrine.resources.file_link.FileLink method)</a>
 </li>
         <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.access_control_dict">(citrine.resources.gemtables.GemTable method)</a>
+</li>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.access_control_dict">(citrine.resources.ingestion.FailedIngestion method)</a>
 </li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.access_control_dict">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
@@ -825,6 +826,8 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint.build">(citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint class method)</a>
 </li>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.build">(citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint class method)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.build">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.build">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint class method)</a>
@@ -890,6 +893,8 @@
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension.build">(citrine.informatics.dimensions.Dimension class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.build">(citrine.informatics.dimensions.EnumeratedDimension class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.build">(citrine.informatics.dimensions.IntegerDimension class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.build">(citrine.informatics.executions.design_execution.DesignExecution class method)</a>
 </li>
@@ -1091,6 +1096,8 @@
 </li>
         <li><a href="reference/citrine.resources.generative_design_execution.html#citrine.resources.generative_design_execution.GenerativeDesignExecutionCollection.build">(citrine.resources.generative_design_execution.GenerativeDesignExecutionCollection method)</a>
 </li>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.build">(citrine.resources.ingestion.FailedIngestion class method)</a>
+</li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.build">(citrine.resources.ingestion.Ingestion class method)</a>
 </li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.IngestionCollection.build">(citrine.resources.ingestion.IngestionCollection method)</a>
@@ -1214,10 +1221,18 @@
 </li>
       <li><a href="reference/citrine.builders.predictors.html#citrine.builders.predictors.build_mean_feature_property_predictors">build_mean_feature_property_predictors() (in module citrine.builders.predictors)</a>
 </li>
-      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.build_objects">build_objects() (citrine.resources.ingestion.Ingestion method)</a>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.build_objects">build_objects() (citrine.resources.ingestion.FailedIngestion method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.build_objects">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
-      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.build_objects_async">build_objects_async() (citrine.resources.ingestion.Ingestion method)</a>
+      </ul></li>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.build_objects_async">build_objects_async() (citrine.resources.ingestion.FailedIngestion method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.build_objects_async">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.builders.predictors.html#citrine.builders.predictors.build_simple_ml">build_simple_ml() (in module citrine.builders.predictors)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.build_with_parent">build_with_parent() (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace class method)</a>
@@ -1416,6 +1431,13 @@
 
       <ul>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#module-citrine.informatics.constraints.ingredient_ratio_constraint">module</a>
+</li>
+      </ul></li>
+      <li>
+    citrine.informatics.constraints.integer_range_constraint
+
+      <ul>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#module-citrine.informatics.constraints.integer_range_constraint">module</a>
 </li>
       </ul></li>
       <li>
@@ -2565,8 +2587,12 @@
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.SearchFileFilterTypeEnum.DATASET_FILE_ID_SEARCH">DATASET_FILE_ID_SEARCH (citrine.resources.file_link.SearchFileFilterTypeEnum attribute)</a>
 </li>
-      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.dataset_id">dataset_id (citrine.resources.ingestion.Ingestion attribute)</a>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.dataset_id">dataset_id (citrine.resources.ingestion.FailedIngestion attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.dataset_id">(citrine.resources.ingestion.Ingestion attribute)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.resources.team.html#citrine.resources.team.Team.dataset_ids">dataset_ids (citrine.resources.team.Team property)</a>
 </li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.DatasetCollection">DatasetCollection (class in citrine.resources.dataset)</a>
@@ -2768,12 +2794,16 @@
       <ul>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.descriptor">(citrine.informatics.dimensions.EnumeratedDimension attribute)</a>
 </li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.descriptor">(citrine.informatics.dimensions.IntegerDimension attribute)</a>
+</li>
       </ul></li>
       <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor">Descriptor (class in citrine.informatics.descriptors)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.descriptor_key">descriptor_key (citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.descriptor_key">(citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.descriptor_key">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective.descriptor_key">(citrine.informatics.objectives.ScalarMaxObjective attribute)</a>
@@ -2958,6 +2988,8 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint.dump">(citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint method)</a>
 </li>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.dump">(citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint method)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.dump">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint method)</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.dump">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint method)</a>
@@ -3013,6 +3045,8 @@
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.dump">(citrine.informatics.dimensions.ContinuousDimension method)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.dump">(citrine.informatics.dimensions.EnumeratedDimension method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.dump">(citrine.informatics.dimensions.IntegerDimension method)</a>
 </li>
         <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.dump">(citrine.informatics.executions.design_execution.DesignExecution method)</a>
 </li>
@@ -3165,6 +3199,8 @@
         <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.dump">(citrine.resources.file_link.FileLink method)</a>
 </li>
         <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.dump">(citrine.resources.gemtables.GemTable method)</a>
+</li>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.dump">(citrine.resources.ingestion.FailedIngestion method)</a>
 </li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.dump">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
@@ -3379,6 +3415,8 @@
         <li><a href="reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.failed">(citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion">FailedIngestion (class in citrine.resources.ingestion)</a>
+</li>
       <li><a href="reference/citrine.resources.api_error.html#citrine.resources.api_error.ValidationError.failure_id">failure_id (citrine.resources.api_error.ValidationError attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.api_error.html#citrine.resources.api_error.ValidationError.failure_message">failure_message (citrine.resources.api_error.ValidationError attribute)</a>
@@ -3429,10 +3467,10 @@
 </li>
       <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.find_collection">find_collection() (in module citrine.seeding.find_or_create)</a>
 </li>
-      <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.find_or_create_dataset">find_or_create_dataset() (in module citrine.seeding.find_or_create)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.find_or_create_dataset">find_or_create_dataset() (in module citrine.seeding.find_or_create)</a>
+</li>
       <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.find_or_create_project">find_or_create_project() (in module citrine.seeding.find_or_create)</a>
 </li>
       <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.find_or_create_team">find_or_create_team() (in module citrine.seeding.find_or_create)</a>
@@ -3832,6 +3870,8 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint.get_type">(citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint class method)</a>
 </li>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.get_type">(citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint class method)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.get_type">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.get_type">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint class method)</a>
@@ -3885,6 +3925,8 @@
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension.get_type">(citrine.informatics.dimensions.Dimension class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.get_type">(citrine.informatics.dimensions.EnumeratedDimension class method)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.get_type">(citrine.informatics.dimensions.IntegerDimension class method)</a>
 </li>
         <li><a href="reference/citrine.informatics.experiment_values.html#citrine.informatics.experiment_values.CategoricalExperimentValue.get_type">(citrine.informatics.experiment_values.CategoricalExperimentValue class method)</a>
 </li>
@@ -4357,7 +4399,11 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor">IntegerDescriptor (class in citrine.informatics.descriptors)</a>
 </li>
+      <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension">IntegerDimension (class in citrine.informatics.dimensions)</a>
+</li>
       <li><a href="reference/citrine.informatics.experiment_values.html#citrine.informatics.experiment_values.IntegerExperimentValue">IntegerExperimentValue (class in citrine.informatics.experiment_values)</a>
+</li>
+      <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint">IntegerRangeConstraint (class in citrine.informatics.constraints.integer_range_constraint)</a>
 </li>
       <li><a href="reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.StructureExclusion.IODINE">IODINE (citrine.informatics.generative_design.StructureExclusion attribute)</a>
 </li>
@@ -4609,10 +4655,10 @@
         <li><a href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpecCollection.list_by_attribute_bounds">(citrine.resources.process_spec.ProcessSpecCollection method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_by_config">list_by_config() (citrine.resources.gemtables.GemTableCollection method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_material">list_by_material() (citrine.resources.ingredient_run.IngredientRunCollection method)</a>
 
       <ul>
@@ -4765,14 +4811,18 @@
 </li>
       <li><a href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientQuantity">LocalIngredientQuantity (class in citrine.gemtables.variables)</a>
 </li>
-      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">lower_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.lower_bound">lower_bound (citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor.lower_bound">(citrine.informatics.descriptors.IntegerDescriptor attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.lower_bound">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.lower_bound">(citrine.informatics.dimensions.ContinuousDimension attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.lower_bound">(citrine.informatics.dimensions.IntegerDimension attribute)</a>
 </li>
       </ul></li>
       <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_inclusive">lower_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
@@ -5020,6 +5070,8 @@
         <li><a href="reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#module-citrine.informatics.constraints.ingredient_fraction_constraint">citrine.informatics.constraints.ingredient_fraction_constraint</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#module-citrine.informatics.constraints.ingredient_ratio_constraint">citrine.informatics.constraints.ingredient_ratio_constraint</a>
+</li>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#module-citrine.informatics.constraints.integer_range_constraint">citrine.informatics.constraints.integer_range_constraint</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#module-citrine.informatics.constraints.label_fraction_constraint">citrine.informatics.constraints.label_fraction_constraint</a>
 </li>
@@ -5680,8 +5732,12 @@
       </ul></li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.poll_file_processing_job">poll_file_processing_job() (citrine.resources.file_link.FileCollection method)</a>
 </li>
-      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.poll_for_job_completion">poll_for_job_completion() (citrine.resources.ingestion.Ingestion method)</a>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.poll_for_job_completion">poll_for_job_completion() (citrine.resources.ingestion.FailedIngestion method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.poll_for_job_completion">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.PollingTimeoutError">PollingTimeoutError</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.position">position (citrine.resources.user.User attribute)</a>
@@ -5917,6 +5973,8 @@
 </li>
         <li><a href="reference/citrine.resources.design_execution.html#citrine.resources.design_execution.DesignExecution.project_id">(citrine.resources.design_execution.DesignExecution attribute)</a>
 </li>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.project_id">(citrine.resources.ingestion.FailedIngestion attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.project_id">(citrine.resources.ingestion.Ingestion attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution.project_id">(citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution attribute)</a>
@@ -5994,6 +6052,12 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.raise_errors">raise_errors (citrine.resources.ingestion.FailedIngestion attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.raise_errors">(citrine.resources.ingestion.Ingestion attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator.RANDOM_FOREST">RANDOM_FOREST (citrine.informatics.predictors.auto_ml_predictor.AutoMLEstimator attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.predict_request.html#citrine.informatics.predict_request.PredictRequest.random_seed">random_seed (citrine.informatics.predict_request.PredictRequest attribute)</a>
@@ -6323,6 +6387,8 @@
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.session">session (citrine.resources.dataset.Dataset attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.session">(citrine.resources.ingestion.FailedIngestion attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.session">(citrine.resources.ingestion.Ingestion attribute)</a>
 </li>
       </ul></li>
@@ -6490,8 +6556,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.status">status() (citrine.resources.ingestion.Ingestion method)</a>
+      <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.status">status() (citrine.resources.ingestion.FailedIngestion method)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.status">(citrine.resources.ingestion.Ingestion method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.status_description">status_description (citrine.informatics.executions.design_execution.DesignExecution attribute)</a>
 
       <ul>
@@ -6945,6 +7015,8 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_ratio_constraint.html#citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint.typ">(citrine.informatics.constraints.ingredient_ratio_constraint.IngredientRatioConstraint attribute)</a>
 </li>
+        <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.typ">(citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.typ">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.typ">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
@@ -6988,6 +7060,8 @@
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.typ">(citrine.informatics.dimensions.ContinuousDimension attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.typ">(citrine.informatics.dimensions.EnumeratedDimension attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.typ">(citrine.informatics.dimensions.IntegerDimension attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.experiment_values.html#citrine.informatics.experiment_values.CategoricalExperimentValue.typ">(citrine.informatics.experiment_values.CategoricalExperimentValue attribute)</a>
 </li>
@@ -7227,6 +7301,8 @@
 </li>
         <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.uid">(citrine.resources.gemtables.GemTable attribute)</a>
 </li>
+        <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.FailedIngestion.uid">(citrine.resources.ingestion.FailedIngestion attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.ingestion.html#citrine.resources.ingestion.Ingestion.uid">(citrine.resources.ingestion.Ingestion attribute)</a>, <a href="reference/citrine.resources.ingestion.html#id0">[1]</a>
 </li>
         <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun.uid">(citrine.resources.ingredient_run.IngredientRun property)</a>
@@ -7296,7 +7372,7 @@
         <li><a href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientQuantity.unit">(citrine.gemtables.variables.LocalIngredientQuantity attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor.units">units (citrine.informatics.descriptors.IntegerDescriptor attribute)</a>
+      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor.units">units (citrine.informatics.descriptors.IntegerDescriptor property)</a>
 
       <ul>
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.units">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
@@ -7514,14 +7590,18 @@
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.upload">upload() (citrine.resources.file_link.FileCollection method)</a>
 </li>
-      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_bound">upper_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.integer_range_constraint.html#citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint.upper_bound">upper_bound (citrine.informatics.constraints.integer_range_constraint.IntegerRangeConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_bound">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor.upper_bound">(citrine.informatics.descriptors.IntegerDescriptor attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.upper_bound">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.upper_bound">(citrine.informatics.dimensions.ContinuousDimension attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.IntegerDimension.upper_bound">(citrine.informatics.dimensions.IntegerDimension attribute)</a>
 </li>
       </ul></li>
       <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_inclusive">upper_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>

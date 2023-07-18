@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.2. Descriptors &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>4.2. Descriptors &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -66,12 +66,12 @@
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_design.html">4.11. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -100,7 +100,7 @@
            <div itemprop="articleBody">
              
   <section id="descriptors">
-<h1><span class="section-number">4.2. </span>Descriptors<a class="headerlink" href="#descriptors" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1><span class="section-number">4.2. </span>Descriptors<a class="headerlink" href="#descriptors" title="Permalink to this headline"></a></h1>
 <p>Descriptors allow users to define a controlled vocabulary with which to describe the physical context of an AI task.
 Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
 If you are familiar with the GEMD data model, descriptors are roughly equivalent to <a class="reference internal" href="../reference/citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeTemplates</span></code></a>.</p>
@@ -129,7 +129,7 @@ If a variable is dimensionless, you can use an empty string.</p>
 Each Integer Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
 If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
 It is better to err on the side of broader bounds than narrower ones.</p>
-<p>Integer Descriptors use dimensionless units, other units are not supported.</p>
+<p>Integer Descriptors are dimensionless and units cannot be specified.</p>
 </section>
 <section id="categorical-descriptor">
 <h2><span class="section-number">4.2.3. </span>Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline"></a></h2>

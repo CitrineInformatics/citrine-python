@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.4. Predictors &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -76,12 +76,12 @@
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.11. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_design.html">4.11. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -242,7 +242,8 @@ The ML models are independently registered on-platform, but the expression predi
 An <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> should be used when the relationship between inputs and outputs is known.</p>
 <p>A string is used to define the expression, and the corresponding output is defined by a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>.
 An alias is required for each expression argument.
-The <code class="docutils literal notranslate"><span class="pre">aliases</span></code> parameter defines a mapping from expression arguments to their associated input descriptors.
+The <code class="docutils literal notranslate"><span class="pre">aliases</span></code> parameter defines a mapping from expression arguments to their associated input descriptors,
+which may be either real or integer values.
 The expression argument does not need to match its descriptor key.
 This is useful to avoid typing out the verbose descriptor keys in the expression string.
 Note, spaces are not supported in expression arguments, e.g., <code class="docutils literal notranslate"><span class="pre">Y</span></code> is a valid argument while <code class="docutils literal notranslate"><span class="pre">Young's</span> <span class="pre">modulus</span></code> is not.</p>
@@ -588,7 +589,7 @@ For categorical-valued properties, a quantity-weighted distribution of property 
 To configure a mean property predictor, we must specify:</p>
 <ul class="simple">
 <li><p>An input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
-<li><p>A list of properties to featurize (which may be either real or categorical)</p></li>
+<li><p>A list of properties to featurize (which may be either real, integer, or categorical)</p></li>
 <li><p>The power of the quantity-weighted mean.
 Positive, negative, and fractional powers are supported.
 <code class="docutils literal notranslate"><span class="pre">p=1</span></code> corresponds to an arithmetic mean, which weights all quantities evenly.

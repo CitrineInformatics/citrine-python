@@ -12,6 +12,7 @@ Submodules
    citrine.informatics.constraints.ingredient_count_constraint
    citrine.informatics.constraints.ingredient_fraction_constraint
    citrine.informatics.constraints.ingredient_ratio_constraint
+   citrine.informatics.constraints.integer_range_constraint
    citrine.informatics.constraints.label_fraction_constraint
    citrine.informatics.constraints.scalar_range_constraint
 

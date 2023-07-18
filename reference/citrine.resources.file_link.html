@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.file_link module &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>citrine.resources.file_link module &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -47,8 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -261,8 +260,11 @@ highest version number (most recent).</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>files</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em>) – A list of files from which GEMD objects should be built</p></li>
-<li><p><strong>upload</strong> (<em>bool</em>) – If the files are off-platform references, upload them first.  Defaults to False,
-in which case an off-platform resource raises an error.</p></li>
+<li><p><strong>upload</strong> (<em>bool</em>) – If the files are off-platform references, upload them first.
+Defaults to False, in which case an off-platform resource raises an error.
+A file is off-platform if it has an absolute URL and that URL is not for the
+citrine platform.
+To build the correct FileLink for a file on your computer, use the <cite>from_path</cite> method.</p></li>
 <li><p><strong>raise_errors</strong> (<em>bool</em>) – Whether ingestion errors raise exceptions (vs. simply reported in the results).
 Default: True</p></li>
 <li><p><strong>build_table</strong> (<em>bool</em>) – Whether to trigger a regeneration of the table config and building the table

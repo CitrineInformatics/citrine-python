@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -47,8 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -77,6 +76,88 @@
              
   <section id="module-citrine.resources.ingestion">
 <span id="citrine-resources-ingestion-module"></span><h1>citrine.resources.ingestion module<a class="headerlink" href="#module-citrine.resources.ingestion" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">FailedIngestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ValidationError" title="citrine.resources.api_error.ValidationError"><span class="pre">citrine.resources.api_error.ValidationError</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.resources.ingestion.Ingestion" title="citrine.resources.ingestion.Ingestion"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.ingestion.Ingestion</span></code></a></p>
+<p>[ALPHA] Object to fill in when building an ingest fails.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.access_control_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.build_objects">
+<span class="sig-name descname"><span class="pre">build_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.build_objects" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Satisfy the required interface for a failed ingestion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.build_objects_async">
+<span class="sig-name descname"><span class="pre">build_objects_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.build_objects_async" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Satisfy the required interface for a failed ingestion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.poll_for_job_completion">
+<span class="sig-name descname"><span class="pre">poll_for_job_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.poll_for_job_completion" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Satisfy the required interface for a failed ingestion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.status" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Retrieve the status of the ingestion  from platform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The result of the ingestion attempt</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus">IngestionStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.dataset_id">
+<span class="sig-name descname"><span class="pre">dataset_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.dataset_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.project_id">
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.raise_errors">
+<span class="sig-name descname"><span class="pre">raise_errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.raise_errors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.session">
+<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.session" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion.uid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">Ingestion</span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion" title="Permalink to this definition"></a></dt>
@@ -110,15 +191,13 @@ and delete objects in the dataset.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion.build_objects">
-<span class="sig-name descname"><span class="pre">build_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.build_objects" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">build_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.build_objects" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Perform a complete ingestion operation, from start to finish.</p>
 <p>Initiates an ingestion operation, polls the server to determine when the job
 has finished, and returns the outcome.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>raise_errors</strong> (<em>bool</em>) – Whether ingestion errors raise exceptions (vs. simply reported in the results).
-Default: True</p></li>
 <li><p><strong>build_table</strong> (<em>bool</em>) – Whether to build a table immediately after ingestion.  Default : False</p></li>
 <li><p><strong>delete_dataset_contents</strong> (<em>bool</em>) – Whether to delete objects prior to generating new gemd objects.  Default: False.</p></li>
 <li><p><strong>delete_templates</strong> (<em>bool</em>) – Whether to delete all objects and templates (as opposed to not deleting
@@ -164,7 +243,7 @@ templates) when <cite>delete_dataset_contents</cite> is True.  Default: True</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion.poll_for_job_completion">
-<span class="sig-name descname"><span class="pre">poll_for_job_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobStatusResponse" title="citrine.jobs.job.JobStatusResponse"><span class="pre">citrine.jobs.job.JobStatusResponse</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.poll_for_job_completion" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">poll_for_job_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobSubmissionResponse" title="citrine.jobs.job.JobSubmissionResponse"><span class="pre">citrine.jobs.job.JobSubmissionResponse</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.poll_for_job_completion" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Repeatedly ask server if a job associated with this ingestion has completed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -180,7 +259,7 @@ out server-side.</p></li>
 <dd class="field-even"><p>A string representation of the status</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="citrine.jobs.job.html#citrine.jobs.job.JobStatusResponse" title="citrine.jobs.job.JobStatusResponse">JobStatusResponse</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus">IngestionStatus</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -207,6 +286,11 @@ out server-side.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion.project_id">
 <span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.project_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion.raise_errors">
+<span class="sig-name descname"><span class="pre">raise_errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.raise_errors" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -242,11 +326,15 @@ out server-side.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionCollection.build_from_file_links">
-<span class="sig-name descname"><span class="pre">build_from_file_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">FileLink</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.Ingestion" title="citrine.resources.ingestion.Ingestion"><span class="pre">citrine.resources.ingestion.Ingestion</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionCollection.build_from_file_links" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">build_from_file_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">FileLink</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.Ingestion" title="citrine.resources.ingestion.Ingestion"><span class="pre">citrine.resources.ingestion.Ingestion</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionCollection.build_from_file_links" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Create an on-platform ingestion event based on the passed FileLink objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file_links</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em>) – The files to ingest.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_links</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em>) – The files to ingest.</p></li>
+<li><p><strong>raise_errors</strong> (<em>bool</em>) – Whether ingestion errors raise exceptions (vs. simply reported in the results).
+Default: True</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

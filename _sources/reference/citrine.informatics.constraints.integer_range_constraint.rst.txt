@@ -1,0 +1,8 @@
+citrine.informatics.constraints.integer\_range\_constraint module
+=================================================================
+
+.. automodule:: citrine.informatics.constraints.integer_range_constraint
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

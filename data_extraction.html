@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. Data Extraction &mdash; Citrine Python 2.26.1 documentation</title>
+  <title>3. Data Extraction &mdash; Citrine Python 2.28.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -57,12 +57,12 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#available-variable-definitions">3.6. Available Variable Definitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#available-column-definitions">3.7. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compatibility-with-ai-engine">3.8. Compatibility with AI Engine</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="molecular_generation.html">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -270,7 +270,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </section>
 </section>
 <section id="available-variable-definitions">
-<h2><span class="section-number">3.6. </span>Available Variable Definitions<a class="headerlink" href="#available-variable-definitions" title="Permalink to this headline"></a></h2>
+<span id="variables"></span><h2><span class="section-number">3.6. </span>Available Variable Definitions<a class="headerlink" href="#available-variable-definitions" title="Permalink to this headline"></a></h2>
 <p>There are several ways to define variables that take their values from Attributes and identifiers in GEMD objects.</p>
 <ul class="simple">
 <li><p>Attributes</p>
@@ -363,6 +363,44 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.ConcatColumn" title="citrine.gemtables.columns.ConcatColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConcatColumn</span></code></a>: for concatenating the results of a list- or set-valued result, such as is returned by <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelsSetInOutput" title="citrine.gemtables.variables.IngredientLabelsSetInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetInOutput</span></code></a></p></li>
 </ul>
 </div></blockquote>
+</section>
+<section id="compatibility-with-ai-engine">
+<h2><span class="section-number">3.8. </span>Compatibility with AI Engine<a class="headerlink" href="#compatibility-with-ai-engine" title="Permalink to this headline"></a></h2>
+<p>The Citrine Platform automatically converts the values found in a GEM Table
+into the format used by the <a class="reference internal" href="workflows/index.html#workflows"><span class="std std-ref">AI Engine</span></a> for predictor training and default asset creation.
+This includes generating <a class="reference internal" href="workflows/descriptors.html#descriptors"><span class="std std-ref">descriptors</span></a> from the variables found in the table configuration
+and extracting individual values from the cells of the GEM Table.</p>
+<p>In most cases, descriptors are generated based on the bounds
+(children of the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a> class)
+found on the attribute template referenced by a <a class="reference internal" href="#variables"><span class="std std-ref">GEM Table variable</span></a>.
+The key of the descriptor is derived from concatenation of the <cite>headers</cite> field of the table variable.
+An exception to this is for the <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a>
+which follows the special rule described below.
+The mappings from variables in a GEM Table to descriptors are as follows:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.html#gemd.entity.bounds.RealBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealBounds</span></code></a> are converted to a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a></p></li>
+<li><p><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.html#gemd.entity.bounds.IntegerBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerBounds</span></code></a> are converted to an <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor" title="citrine.informatics.descriptors.IntegerDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerDescriptor</span></code></a></p></li>
+<li><p><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.html#gemd.entity.bounds.CategoricalBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalBounds</span></code></a> are converted to a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a></p></li>
+<li><p><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.html#gemd.entity.bounds.CompositionBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositionBounds</span></code></a> are converted to a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="citrine.informatics.descriptors.ChemicalFormulaDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaDescriptor</span></code></a></p></li>
+<li><p><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.html#gemd.entity.bounds.MolecularStructureBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureBounds</span></code></a> are converted to a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureDescriptor</span></code></a></p></li>
+<li><p>A <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> with key ‘Formulation’ is generated whenever an ingredient quantity variable
+(e.g., <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityInOutput" title="citrine.gemtables.variables.IngredientQuantityInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityInOutput</span></code></a>, <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityByProcessAndName" title="citrine.gemtables.variables.IngredientQuantityByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessAndName</span></code></a>, or <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.LocalIngredientQuantity" title="citrine.gemtables.variables.LocalIngredientQuantity"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalIngredientQuantity</span></code></a>)
+is present in the table configuration</p></li>
+</ul>
+<p>When using a GEM Table as a <a class="reference internal" href="workflows/data_sources.html#data-sources"><span class="std std-ref">data source</span></a> for predictor training,
+the generated descriptors are associated with individual cell values in each row of data.
+The following value types (children of the <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseValue</span></code> class)
+are compatible with each type of descriptor:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>: values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.NominalReal" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NominalReal</span></code></a>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.NormalReal" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalReal</span></code></a>, and <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.UniformReal" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformReal</span></code></a></p></li>
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.IntegerDescriptor" title="citrine.informatics.descriptors.IntegerDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerDescriptor</span></code></a>: values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.NominalInteger" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NominalInteger</span></code></a> and <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.UniformInteger" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformInteger</span></code></a></p></li>
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureDescriptor</span></code></a>: values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.Smiles" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Smiles</span></code></a> and <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.InChI" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">InChI</span></code></a></p></li>
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a>: values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.NominalCategorical" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NominalCategorical</span></code></a> and <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.DiscreteCategorical" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscreteCategorical</span></code></a></p></li>
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="citrine.informatics.descriptors.ChemicalFormulaDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaDescriptor</span></code></a>: values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.EmpiricalFormula" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmpiricalFormula</span></code></a>,
+or values of type <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.html#gemd.entity.NominalComposition" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NominalComposition</span></code></a> when <strong>all</strong> quantity keys are valid atomic symbols</p></li>
+<li><p><a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a>: all values extracted by ingredient quantity, identifier, and label variables
+are used to represent the formulation</p></li>
+</ul>
 </section>
 </section>
 

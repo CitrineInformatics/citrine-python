@@ -220,6 +220,8 @@ For example, there could be a :class:`~gemd.entity.template.material_template.Ma
 of the cakes and another called "Brownies" that is used in all of the brownies.
 By including one or both of those templates, you can define a table of Cakes, Brownies, or both.
 
+.. _variables:
+
 Available Variable Definitions
 ------------------------------
 
@@ -287,3 +289,42 @@ There are several ways to define columns, depending on the type of the attribute
 * Collections of values
 
  * :class:`~citrine.gemtables.columns.ConcatColumn`: for concatenating the results of a list- or set-valued result, such as is returned by :class:`~citrine.gemtables.variables.IngredientLabelsSetInOutput`
+
+Compatibility with AI Engine
+----------------------------
+
+The Citrine Platform automatically converts the values found in a GEM Table
+into the format used by the :ref:`AI Engine <workflows>` for predictor training and default asset creation.
+This includes generating :ref:`descriptors <descriptors>` from the variables found in the table configuration
+and extracting individual values from the cells of the GEM Table.
+
+In most cases, descriptors are generated based on the bounds
+(children of the :class:`~gemd.entity.bounds.base_bounds.BaseBounds` class)
+found on the attribute template referenced by a :ref:`GEM Table variable <variables>`.
+The key of the descriptor is derived from concatenation of the `headers` field of the table variable.
+An exception to this is for the :class:`~citrine.informatics.descriptors.FormulationDescriptor`
+which follows the special rule described below.
+The mappings from variables in a GEM Table to descriptors are as follows:
+
+- :class:`~gemd.entity.bounds.RealBounds` are converted to a :class:`~citrine.informatics.descriptors.RealDescriptor`
+- :class:`~gemd.entity.bounds.IntegerBounds` are converted to an :class:`~citrine.informatics.descriptors.IntegerDescriptor`
+- :class:`~gemd.entity.bounds.CategoricalBounds` are converted to a :class:`~citrine.informatics.descriptors.CategoricalDescriptor`
+- :class:`~gemd.entity.bounds.CompositionBounds` are converted to a :class:`~citrine.informatics.descriptors.ChemicalFormulaDescriptor`
+- :class:`~gemd.entity.bounds.MolecularStructureBounds` are converted to a :class:`~citrine.informatics.descriptors.MolecularStructureDescriptor`
+- A :class:`~citrine.informatics.descriptors.FormulationDescriptor` with key 'Formulation' is generated whenever an ingredient quantity variable
+  (e.g., :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`, :class:`~citrine.gemtables.variables.IngredientQuantityByProcessAndName`, or :class:`~citrine.gemtables.variables.LocalIngredientQuantity`)
+  is present in the table configuration
+
+When using a GEM Table as a :ref:`data source <data-sources>` for predictor training,
+the generated descriptors are associated with individual cell values in each row of data.
+The following value types (children of the :class:`~gemd.entity.entity.value.BaseValue` class)
+are compatible with each type of descriptor:
+
+- :class:`~citrine.informatics.descriptors.RealDescriptor`: values of type :class:`~gemd.entity.NominalReal`, :class:`~gemd.entity.NormalReal`, and :class:`~gemd.entity.UniformReal`
+- :class:`~citrine.informatics.descriptors.IntegerDescriptor`: values of type :class:`~gemd.entity.NominalInteger` and :class:`~gemd.entity.UniformInteger`
+- :class:`~citrine.informatics.descriptors.MolecularStructureDescriptor`: values of type :class:`~gemd.entity.Smiles` and :class:`~gemd.entity.InChI`
+- :class:`~citrine.informatics.descriptors.CategoricalDescriptor`: values of type :class:`~gemd.entity.NominalCategorical` and :class:`~gemd.entity.DiscreteCategorical`
+- :class:`~citrine.informatics.descriptors.ChemicalFormulaDescriptor`: values of type :class:`~gemd.entity.EmpiricalFormula`,
+  or values of type :class:`~gemd.entity.NominalComposition` when **all** quantity keys are valid atomic symbols
+- :class:`~citrine.informatics.descriptors.FormulationDescriptor`: all values extracted by ingredient quantity, identifier, and label variables
+  are used to represent the formulation

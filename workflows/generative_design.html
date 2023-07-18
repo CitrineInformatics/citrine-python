@@ -4,24 +4,24 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. [ALPHA] Generative Design Execution &mdash; Citrine Python 2.26.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/favicon.png"/>
+  <title>4.11. [ALPHA] Generative Design Execution &mdash; Citrine Python 2.28.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
   <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
+    <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="7. FAQ" href="FAQ/index.html" />
-    <link rel="prev" title="5. Formulations Example" href="formulations_example.html" /> 
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.12. AI Engine Code Examples" href="code_examples.html" />
+    <link rel="prev" title="4.10. Predictor Evaluation Workflows" href="predictor_evaluation_workflows.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,14 +29,14 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
-            <img src="_static/logo.png" class="logo" alt="Logo"/>
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.26.1
+                2.28.2
               </div>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -44,13 +44,26 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. Data Extraction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="formulations_example.html">5. Formulations Example</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">6. [ALPHA] Generative Design Execution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">7. FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.6. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.7. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.8. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.9. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.10. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.11. [ALPHA] Generative Design Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
 </ul>
 
         </div>
@@ -59,17 +72,18 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Citrine Python</a>
+          <a href="../index.html">Citrine Python</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="section-number">6. </span>[ALPHA] Generative Design Execution</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">4. </span>AI Engine</a> &raquo;</li>
+      <li><span class="section-number">4.11. </span>[ALPHA] Generative Design Execution</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/molecular_generation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/workflows/generative_design.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -78,39 +92,25 @@
            <div itemprop="articleBody">
              
   <section id="alpha-generative-design-execution">
-<h1><span class="section-number">6. </span>[ALPHA] Generative Design Execution<a class="headerlink" href="#alpha-generative-design-execution" title="Permalink to this headline"></a></h1>
+<span id="generative-design"></span><h1><span class="section-number">4.11. </span>[ALPHA] Generative Design Execution<a class="headerlink" href="#alpha-generative-design-execution" title="Permalink to this headline"></a></h1>
 <p>The Citrine Platform offers a Generative Design Execution tool that allows the creation of new molecules by applying mutations to a set of given seed molecules.
-To use this feature, you need to provide a set of starting molecules and filtering parameters using the <a class="reference internal" href="reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.GenerativeDesignInput" title="citrine.informatics.generative_design.GenerativeDesignInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignInput</span></code></a> class.</p>
+To use this feature, you need to provide a set of starting molecules and filtering parameters using the <a class="reference internal" href="../reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.GenerativeDesignInput" title="citrine.informatics.generative_design.GenerativeDesignInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignInput</span></code></a> class.</p>
 <p>The class requires you to define the seed molecules for generating mutations, the fingerprint type used to calculate the <a class="reference external" href="https://www.rdkit.org/docs/GettingStartedInPython.html#fingerprinting-and-molecular-similarity">fingerprint similarity</a>, the minimum fingerprint similarity between the seed and mutated molecule, the number of initial mutations attempted per seed, and the minimum substructure counts for each mutated molecule.</p>
 <p>Various fingerprint types are available on the Citrine Platform, including Atom Pairs (AP), Path-Length Connectivity (PHCO), Binary Path (BPF), Paths of Atoms of Heteroatoms (PATH), Extended Connectivity Fingerprint with radius 4 (ECFP4) and radius 6 (ECFP6), and Focused Connectivity Fingerprint with radius 4 (FCFP4) and radius 6 (FCFP6).
 Each fingerprint type captures different aspects of molecular structure and influences the generated mutations.
-You can access these fingerprint types through the <a class="reference internal" href="reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FingerprintType</span></code></a> enum, like <cite>FingerprintType.ECFP4</cite>.</p>
+You can access these fingerprint types through the <a class="reference internal" href="../reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.FingerprintType" title="citrine.informatics.generative_design.FingerprintType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FingerprintType</span></code></a> enum, like <cite>FingerprintType.ECFP4</cite>.</p>
 <p>The <cite>structure_exclusions</cite> parameter allows you to control the structural features of mutated molecules.
 It is a sequence of exclusion types corresponding to the types of structural features or elements to exclude from the list of possible mutation steps during the generative design process.
 If a type is present in the sequence, the mutation steps generated by the process will avoid using that feature or element.
-The available structure exclusion options can be found in the <a class="reference internal" href="reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.StructureExclusion" title="citrine.informatics.generative_design.StructureExclusion"><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureExclusion</span></code></a> class.</p>
+The available structure exclusion options can be found in the <a class="reference internal" href="../reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.StructureExclusion" title="citrine.informatics.generative_design.StructureExclusion"><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureExclusion</span></code></a> class.</p>
 <p>The <cite>min_substructure_counts</cite> parameter is a dictionary for constraining which substructures (represented by SMILES strings) must appear in each mutated molecule, along with integer values representing the minimum number of times each substructure must appear in a molecule to be considered a valid mutation.</p>
 <p>After the generative design process is complete, the mutations are filtered based on their similarity to the starting seed molecules.
-Mutations that do not meet the similarity threshold or are duplicates will be discarded. The remaining mutations are returned as a subset of the original mutations in the form of a list of <a class="reference internal" href="reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.GenerativeDesignResult" title="citrine.informatics.generative_design.GenerativeDesignResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignResult</span></code></a> objects.
+Mutations that do not meet the similarity threshold or are duplicates will be discarded. The remaining mutations are returned as a subset of the original mutations in the form of a list of <a class="reference internal" href="../reference/citrine.informatics.generative_design.html#citrine.informatics.generative_design.GenerativeDesignResult" title="citrine.informatics.generative_design.GenerativeDesignResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenerativeDesignResult</span></code></a> objects.
 These results contain information about the seed molecule, the mutation, the similarity score, and the fingerprint type used during execution.</p>
-<p>After triggering the execution and waiting for completion, the user can retrieve the results and utilize them in their work.’
-The following example demonstrates how to run a generative design execution on the Citrine Platform using the Citrine Python client.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
-<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_executing</span>
+<p>After triggering the execution and waiting for completion, the user can retrieve the results and utilize them in their work.
+The following example demonstrates how to run a generative design execution on the Citrine Platform:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_executing</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.generative_design</span> <span class="kn">import</span> <span class="n">GenerativeDesignInput</span><span class="p">,</span> <span class="n">FingerprintType</span><span class="p">,</span> <span class="n">StructureExclusion</span>
-
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;API_KEY&quot;</span><span class="p">),</span>
-    <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;https&quot;</span><span class="p">,</span>
-    <span class="n">host</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CITRINE_HOST&quot;</span><span class="p">),</span>
-    <span class="n">port</span><span class="o">=</span><span class="s2">&quot;443&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">team_uid</span> <span class="o">=</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span>
-<span class="n">project_uid</span> <span class="o">=</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span>
-<span class="n">team</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_uid</span><span class="p">)</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">project_uid</span><span class="p">)</span>
 
 <span class="c1"># Trigger a new generative design execution</span>
 <span class="n">generative_design_input</span> <span class="o">=</span> <span class="n">GenerativeDesignInput</span><span class="p">(</span>
@@ -134,21 +134,20 @@ The following example demonstrates how to run a generative design execution on t
 <span class="n">mutations</span> <span class="o">=</span> <span class="p">[(</span><span class="n">gen</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">gen</span><span class="o">.</span><span class="n">mutated</span><span class="p">)</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">generated</span><span class="p">]</span>
 
 <span class="c1"># Or get a completed execution by ID</span>
-<span class="n">execution_uid</span> <span class="o">=</span> <span class="s2">&quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span>
-<span class="n">execution</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">generative_design_executions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">execution_uid</span><span class="p">)</span>
+<span class="n">execution_id</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">uid</span>
+<span class="n">execution</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">generative_design_executions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">execution_id</span><span class="p">)</span>
 <span class="n">generated</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">results</span><span class="p">()</span>
 <span class="n">mutations</span> <span class="o">=</span> <span class="p">[(</span><span class="n">gen</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">gen</span><span class="o">.</span><span class="n">mutated</span><span class="p">)</span> <span class="k">for</span> <span class="n">gen</span> <span class="ow">in</span> <span class="n">generated</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>To execute the code, replace the <cite>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</cite> placeholders with valid UIDs from your Citrine environment. Ensure that the API key, scheme, host, and port are correctly specified in the <cite>Citrine</cite> initialization.</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="formulations_example.html" class="btn btn-neutral float-left" title="5. Formulations Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="FAQ/index.html" class="btn btn-neutral float-right" title="7. FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="predictor_evaluation_workflows.html" class="btn btn-neutral float-left" title="4.10. Predictor Evaluation Workflows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code_examples.html" class="btn btn-neutral float-right" title="4.12. AI Engine Code Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
