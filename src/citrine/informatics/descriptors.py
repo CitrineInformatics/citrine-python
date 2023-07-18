@@ -120,7 +120,10 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
 
 class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
-    """A descriptor to hold integer-valued numbers.
+    """[ALPHA] A descriptor to hold integer-valued numbers.
+
+    Warning: IntegerDescriptors are not fully supported by the Citrine Platform web interface
+    and may cause unexpected issues until resolved.
 
     Parameters
     ----------
