@@ -15,7 +15,7 @@ class StatusLevelEnum(BaseEnumeration):
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
-    UNKOWN = "Unknown"
+    UNKNOWN = "Unknown"
 
 
 class StatusDetail(Serializable[StatusDetailType]):
@@ -29,4 +29,7 @@ class StatusDetail(Serializable[StatusDetailType]):
         self.level = StatusLevelEnum.from_str(level, exception=True)
 
     def __str__(self):
-        return f"[{self.level.upper()}] {self.msg}"  # pragma: no cover
+        return f"[{self.level.upper()}] {self.msg}"
+
+    def __repr__(self):
+        return f"<{self}>"
