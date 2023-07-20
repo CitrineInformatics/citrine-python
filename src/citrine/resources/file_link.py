@@ -843,7 +843,7 @@ class FileCollection(Collection[FileLink]):
         return results
 
     def ingest(self,
-               files: Iterable[FileLink],
+               files: Iterable[Union[FileLink, Path, str]],
                *,
                upload: bool = False,
                raise_errors: bool = True,
@@ -856,14 +856,19 @@ class FileCollection(Collection[FileLink]):
 
         Parameters
         ----------
-        files: List[FileLink]
-            A list of files from which GEMD objects should be built
+        files: List[FileLink, Path, or str]
+            A list of files from which GEMD objects should be built.
+            A FileLink must contain an absolute URL or a relative path for an on-platform resource.
+            Strings must be resolvable to a FileLink; if resolution fails, an exception is thrown.
+            * If upload is False, an attempt is made to resolve it to an on-platform resource.
+            * If upload is True, resolves locally first, and falls back to on-platform.
         upload: bool
             If the files are off-platform references, upload them first.
             Defaults to False, in which case an off-platform resource raises an error.
             A file is off-platform if it has an absolute URL and that URL is not for the
             citrine platform.
-            To build the correct FileLink for a file on your computer, use the `from_path` method.
+            For example, https://example.com/file.csv is off-platform, and would be
+            uploaded to platform and ingested if upload is True.
         raise_errors: bool
             Whether ingestion errors raise exceptions (vs. simply reported in the results).
             Default: True
@@ -883,14 +888,30 @@ class FileCollection(Collection[FileLink]):
         """
         from citrine.resources.ingestion import IngestionCollection
 
-        targets = [self._resolve_file_link(f) for f in files]
+        def resolve_local_paths(candidate: Union[FileLink, Path, str]) -> Union[FileLink, str]:
+            """Convert a string or Path into a FileLink if it resolves locally."""
+            if not isinstance(candidate, FileLink):
+                try:
+                    resolved = Path(candidate).resolve(strict=True)
+                    return FileLink(filename=resolved.name, url=resolved.as_uri())
+                except FileNotFoundError as e:
+                    if isinstance(candidate, Path):  # Unresolvable path passed
+                        raise e
+
+            return candidate  # It was a FileLink or an unresolvable string
+
+        if upload:
+            targets = [self._resolve_file_link(resolve_local_paths(f)) for f in files]
+        else:
+            targets = [self._resolve_file_link(f) for f in files]
         offplatform = [f for f in targets if not self._is_on_platform_url(f.url)]
+
         if upload:
             with TemporaryDirectory() as downloads:
                 paths = [Path(downloads) / f.filename for f in offplatform]
                 for file_link, path in zip(offplatform, paths):
                     self.download(file_link=file_link, local_path=path)
-                onplatform = [self.upload(file_path=p) for p in paths]
+                onplatform = [self.upload(file_path=p, dest_name=p.name) for p in paths]
             targets = [f for f in targets if self._is_on_platform_url(f.url)] + onplatform
         elif len(offplatform) > 0:
             raise ValueError(f"All files must be on-platform to load them.  "
