@@ -56,7 +56,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
     def create_default(self,
                        *,
-                       predictor_id: UUID,
+                       predictor_id: Union[UUID, str],
                        predictor_version: Optional[Union[int, str]] = None) \
             -> PredictorEvaluationWorkflow:
         """Create a default predictor evaluation workflow for a predictor and execute it.
@@ -78,7 +78,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
         Parameters
         ----------
-        predictor_id: UUID
+        predictor_id: Union[UUID, str]
             Unique identifier of the predictor used to create a default workflow
         predictor_version: Option[Union[int, str]]
             The version of the predictor used to create a default workflow

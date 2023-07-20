@@ -106,7 +106,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
 
     def list(self, *,
              per_page: int = 100,
-             branch_id: Optional[UUID] = None,
+             branch_id: Optional[Union[UUID, str]] = None,
              version: Optional[Union[int, str]] = None) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
 
@@ -116,7 +116,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
-        branch_id: UUID, optional
+        branch_id: Union[UUID, str], optional
             Filter the list by the root branch ID.
         version: Union[int, str], optional
             Filter the list by the data source version. Also accepts "latest".

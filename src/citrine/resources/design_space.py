@@ -158,7 +158,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
     def create_default(self,
                        *,
-                       predictor_id: UUID,
+                       predictor_id: Union[UUID, str],
                        predictor_version: Optional[Union[int, str]] = None,
                        mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
@@ -180,7 +180,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         Parameters
         ----------
-        predictor_id: UUID
+        predictor_id: Union[UUID, str]
             UUID of the predictor used to construct the design space
 
         predictor_version: Optional[Union[int, str]]
