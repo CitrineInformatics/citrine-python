@@ -813,3 +813,40 @@ def test_rename(valid_graph_predictor_data):
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
     expected_payload = {"name": new_name, "description": new_description}
     assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
+
+
+def test_rename_name_only(valid_graph_predictor_data):
+    pred_id = valid_graph_predictor_data["id"]
+    pred_version = valid_graph_predictor_data["metadata"]["version"]
+
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    new_name = "a new name"
+
+    # When
+    session.set_response(valid_graph_predictor_data)
+    pc.rename(pred_id, version=pred_version, name=new_name)
+
+    # Then
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+    expected_payload = {"name": new_name, "description": None}
+    assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
+
+def test_rename_description_only(valid_graph_predictor_data):
+    pred_id = valid_graph_predictor_data["id"]
+    pred_version = valid_graph_predictor_data["metadata"]["version"]
+
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    new_description = "this new name is much better"
+
+    # When
+    session.set_response(valid_graph_predictor_data)
+    pc.rename(pred_id, version=pred_version, description=new_description)
+
+    # Then
+    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
+    expected_payload = {"name": None, "description": new_description}
+    assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
