@@ -639,6 +639,9 @@ def test_ingest(collection: FileCollection, session):
     with pytest.raises(ValueError, match=bad_file.url):
         collection.ingest([good_file1, bad_file])
 
+    with pytest.raises(TypeError):
+        collection.ingest([Path(good_file1.url)])
+
 
 def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
     """Test more advanced workflows, patching to avoid unnecessary complexity."""

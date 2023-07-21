@@ -888,31 +888,36 @@ class FileCollection(Collection[FileLink]):
         """
         from citrine.resources.ingestion import IngestionCollection
 
-        def resolve_local_paths(candidate: Union[FileLink, Path, str]) -> Union[FileLink, str]:
-            """Convert a string or Path into a FileLink if it resolves locally."""
-            if not isinstance(candidate, FileLink):
-                try:
-                    resolved = Path(candidate).resolve(strict=True)
-                    return FileLink(filename=resolved.name, url=resolved.as_uri())
-                except FileNotFoundError as e:
-                    if isinstance(candidate, Path):  # Unresolvable path passed
-                        raise e
+        def resolve_with_local(candidate: Union[FileLink, Path, str]) -> FileLink:
+            """Resolve Path, str or FileLink to an absolute reference."""
+            if upload:
+                if not isinstance(candidate, GEMDFileLink):
+                    try:
+                        absolute = Path(candidate).resolve(strict=True)
+                        return FileLink(filename=absolute.name, url=absolute.as_uri())
+                    except FileNotFoundError as e:
+                        if isinstance(candidate, Path):  # Unresolvable path passed
+                            raise e
+            elif isinstance(candidate, Path):
+                raise TypeError("Path objects are only valid when upload=True.")
 
-            return candidate  # It was a FileLink or an unresolvable string
+            return self._resolve_file_link(candidate)  # It was a FileLink or unresolvable string
 
-        if upload:
-            targets = [self._resolve_file_link(resolve_local_paths(f)) for f in files]
-        else:
-            targets = [self._resolve_file_link(f) for f in files]
-        offplatform = [f for f in targets if not self._is_on_platform_url(f.url)]
+        resolved = []
+        for file in files:
+            resolved_file = resolve_with_local(file)
+            if resolved_file not in resolved:  # Remove duplicates
+                resolved.append(resolved_file)
+
+        onplatform = [f for f in resolved if self._is_on_platform_url(f.url)]
+        offplatform = [f for f in resolved if not self._is_on_platform_url(f.url)]
 
         if upload:
             with TemporaryDirectory() as downloads:
-                paths = [Path(downloads) / f.filename for f in offplatform]
-                for file_link, path in zip(offplatform, paths):
+                for file_link in offplatform:
+                    path = Path(downloads) / file_link.filename
                     self.download(file_link=file_link, local_path=path)
-                onplatform = [self.upload(file_path=p, dest_name=p.name) for p in paths]
-            targets = [f for f in targets if self._is_on_platform_url(f.url)] + onplatform
+                    onplatform.append(self.upload(file_path=path, dest_name=file_link.filename))
         elif len(offplatform) > 0:
             raise ValueError(f"All files must be on-platform to load them.  "
                              f"The following are not: {offplatform}")
@@ -921,7 +926,7 @@ class FileCollection(Collection[FileLink]):
                                                    dataset_id=self.dataset_id,
                                                    session=self.session)
         ingestion = ingestion_collection.build_from_file_links(
-            file_links=targets,
+            file_links=onplatform,
             raise_errors=raise_errors
         )
         return ingestion.build_objects(
