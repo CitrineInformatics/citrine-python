@@ -5,10 +5,142 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.exceptions import BadRequest
+from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
-from citrine.resources.api_error import ValidationError
-from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
+from citrine.resources.api_error import ApiError, ValidationError
+from gemd.enumeration.base_enumeration import BaseEnumeration
+
+
+class IngestionStatusType(BaseEnumeration):
+    """[ALPHA] State of the ingestion process."""
+
+    INGESTION_CREATED = "ingestion_created"
+
+
+class IngestionErrorFamily(BaseEnumeration):
+    """[ALPHA] What class of ingest error was encountered."""
+
+    FILE = "file"
+    STRUCTURE = "structure"
+    DATA = "data"
+    UNKNOWN = "unknown"
+
+
+class IngestionErrorType(BaseEnumeration):
+    """[ALPHA] What ingest error was encountered."""
+
+    FILE_EXTENSION_NOT_SUPPORTED = "file_extension_not_supported"
+    MISSING_TYPE_HEADER = "missing_type_header"
+    MISSING_RAW_FOR_INGREDIENT = "missing_raw_for_ingredient"
+    DUPLICATED_MATERIAL = "duplicated_material"
+    REGISTERING_OBJECTS_ERROR = "registering_objects_error"
+    MISSING_ASPECT_TYPE = "missing_aspect_type"
+    INVALID_DUPLICATE_NAME = "invalid_duplicate_name"
+    INVALID_UNITS_ON_ASPECT = "invalid_units_on_aspect"
+    INVALID_BASIS_ON_ASPECT = "invalid_basis_on_aspect"
+    INVALID_FRACTION_ON_ASPECT = "invalid_fraction_on_aspect"
+    INVALID_TYPE_HINT_ON_ASPECT = "invalid_type_hint_on_aspect"
+    CATEGORICAL_OUTSIDE_BOUNDS_ERROR = "categorical_outside_bounds_error"
+    INTEGER_OUTSIDE_BOUNDS_ERROR = "integer_outside_bounds_error"
+    REAL_OUTSIDE_BOUNDS_ERROR = "real_outside_bounds_error"
+    INVALID_PROCESS_REFERENCE = "invalid_process_reference"
+    UNKNOWN_ERROR = "unknown_error"
+
+
+class IngestionErrorLevel(BaseEnumeration):
+    """[ALPHA] Severity of the issue encountered."""
+
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+class IngestionErrorTrace(Resource['IngestionErrorTrace']):
+    """[ALPHA] Detailed information about an ingestion issue."""
+
+    family = properties.Enumeration(IngestionErrorFamily, "family")
+    error_type = properties.Enumeration(IngestionErrorType, "error_type")
+    level = properties.Enumeration(IngestionErrorLevel, "level")
+    msg = properties.String("msg")
+    dataset_file_id = properties.Optional(properties.UUID(), "dataset_file_id", default=None)
+    file_version_uuid = properties.Optional(properties.UUID(), "file_version_uuid", default=None)
+    row_number = properties.Optional(properties.Integer(), "row_number", default=None)
+    column_number = properties.Optional(properties.Integer(), "column_number", default=None)
+
+    def __init__(self,
+                 msg,
+                 level=IngestionErrorLevel.ERROR,
+                 *,
+                 family=IngestionErrorFamily.UNKNOWN,
+                 error_type=IngestionErrorType.UNKNOWN_ERROR,
+                 dataset_file_id=dataset_file_id.default,
+                 file_version_uuid=file_version_uuid.default,
+                 row_number=row_number.default,
+                 column_number=column_number.default,
+                 ):
+        self.msg = msg
+        self.level = level
+        self.family = family
+        self.error_type = error_type
+        self.dataset_file_id = dataset_file_id
+        self.file_version_uuid = file_version_uuid
+        self.row_number = row_number
+        self.column_number = column_number
+
+    @classmethod
+    def from_validation_error(cls, source: ValidationError) -> "IngestionErrorTrace":
+        """[ALPHA] Generate an IngestionErrorTrace from a ValidationError."""
+        return cls(
+            msg=source.failure_message,
+            level=IngestionErrorLevel.ERROR,
+        )
+
+    def __str__(self):
+        return f"{self!r}: {self.msg}"
+
+    def __repr__(self):
+        coords = ", ".join([x for x in (self.column_number, self.row_number) if x is not None])
+        return f"<{self.level}: {self.error_type}{f' {coords}' if len(coords) else ''}>"
+
+
+class IngestionException(CitrineException):
+    """
+    [ALPHA] An exception that contains details of a failed ingestion.
+
+    Attributes
+    ----------
+    uid: Optional[UUID]
+    errors: List[IngestionErrorTrace]
+
+    """
+
+    uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    status = properties.Enumeration(IngestionStatusType, "status")
+    errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+
+    def __init__(self,
+                 *,
+                 uid: Optional[UUID] = uid.default,
+                 errors: Iterable[IngestionErrorTrace]):
+        errors_ = list(errors)
+        message = '; '.join(str(e) for e in errors_)
+        super().__init__(message)
+        self.uid = uid
+        self.errors = errors_
+
+    @classmethod
+    def from_status(cls, source: "IngestionStatus") -> "IngestionException":
+        """[ALPHA] Build an IngestionException from an IngestionStatus."""
+        return cls(uid=source.uid, errors=source.errors)
+
+    @classmethod
+    def from_api_error(cls, source: ApiError) -> "IngestionException":
+        """[ALPHA] Build an IngestionException from an ApiError."""
+        if len(source.validation_errors) > 0:
+            return cls(errors=[IngestionErrorTrace.from_validation_error(x)
+                               for x in source.validation_errors])
+        else:
+            return cls(errors=[IngestionErrorTrace(msg=source.message)])
 
 
 class IngestionStatus(Resource['IngestionStatus']):
@@ -17,19 +149,34 @@ class IngestionStatus(Resource['IngestionStatus']):
 
     Attributes
     ----------
-    status: String
-
-    errors: List[String]
+    uid: String
+    status: IngestionStatusType
+    errors: List[IngestionErrorTrace]
 
     """
 
-    status = properties.String("status")
-    errors = properties.List(properties.Object(StatusDetail), "errors")
+    uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    status = properties.Enumeration(IngestionStatusType, "status")
+    errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+
+    def __init__(self,
+                 *,
+                 uid: Optional[UUID] = uid.default,
+                 status: IngestionStatusType = IngestionStatusType.INGESTION_CREATED,
+                 errors: Iterable[IngestionErrorTrace]):
+        self.uid = uid
+        self.status = status
+        self.errors = list(errors)
 
     @property
     def success(self) -> bool:
         """Whether the Ingestion operation was error-free."""
         return len(self.errors) == 0
+
+    @classmethod
+    def from_exception(cls, exception: IngestionException) -> "IngestionStatus":
+        """[ALPHA] Build an IngestionStatus from an IngestionException."""
+        return cls(uid=exception.uid, errors=exception.errors)
 
 
 class Ingestion(Resource['Ingestion']):
@@ -84,26 +231,16 @@ class Ingestion(Resource['Ingestion']):
             job = self.build_objects_async(build_table=build_table,
                                            delete_dataset_contents=delete_dataset_contents,
                                            delete_templates=delete_templates)
-        except JobFailureError as e:
+        except IngestionException as e:
             if self.raise_errors:
                 raise e
             else:
-                return IngestionStatus.build({
-                    "status": "Failure",
-                    "errors": [StatusDetail(msg=err, level=StatusLevelEnum.ERROR)
-                               for err in e.failure_reasons],
-                })
+                return IngestionStatus.from_exception(e)
 
-        self.poll_for_job_completion(job)
-        status = self.status()
+        status = self.poll_for_job_completion(job)
 
         if self.raise_errors and not status.success:
-            errors = [e.msg for e in status.errors]
-            raise JobFailureError(
-                message=f"Job succeeded but ingestion failed: {errors}",
-                job_id=job.job_id,
-                failure_reasons=errors
-            )
+            raise IngestionException.from_status(status)
 
         return status
 
@@ -146,15 +283,7 @@ class Ingestion(Resource['Ingestion']):
             )
         except BadRequest as e:
             if e.api_error is not None:
-                errors = [err.failure_message for err in e.api_error.validation_errors]
-                if len(errors) == 0:
-                    errors = [e.api_error.message]
-
-                raise JobFailureError(
-                    message=e.api_error.message,
-                    job_id=None,
-                    failure_reasons=errors
-                )
+                raise IngestionException.from_api_error(e.api_error)
             else:
                 raise e
 
@@ -220,9 +349,8 @@ class Ingestion(Resource['Ingestion']):
 class FailedIngestion(Ingestion):
     """[ALPHA] Object to fill in when building an ingest fails."""
 
-    def __init__(self, errors: Iterable[ValidationError]):
-        self.errors = [StatusDetail(msg=err.failure_message, level=StatusLevelEnum.ERROR)
-                       for err in errors]
+    def __init__(self, errors: Iterable[IngestionErrorTrace]):
+        self.errors = list(errors)
         self.raise_errors = False
 
     def build_objects(self,
@@ -276,7 +404,7 @@ class FailedIngestion(Ingestion):
             )
         else:
             return IngestionStatus.build({
-                "status": "Failure",
+                "status": IngestionStatusType.INGESTION_CREATED,
                 "errors": self.errors,
             })
 
@@ -339,17 +467,13 @@ class IngestionCollection(Collection[Ingestion]):
             response = self.session.post_resource(path=self._get_path(), json=req)
         except BadRequest as e:
             if e.api_error is not None:
-                errors = e.api_error.validation_errors
-                if len(errors) == 0:
-                    errors = [ValidationError.build({"failure_message": e.api_error.message,
-                                                     "failure_id": "failure_id"})
-                              ]
+                if len(e.api_error.validation_errors) != 0:
+                    errors = [IngestionErrorTrace.from_validation_error(error)
+                              for error in e.api_error.validation_errors]
+                else:
+                    errors = [IngestionErrorTrace(msg=e.api_error.message)]
                 if raise_errors:
-                    raise JobFailureError(
-                        message=e.api_error.message,
-                        job_id=None,
-                        failure_reasons=errors
-                    )
+                    raise IngestionException(errors=errors)
                 else:
                     return FailedIngestion(errors=errors)
             else:

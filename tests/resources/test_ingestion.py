@@ -6,7 +6,8 @@ from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import FileLink
-from citrine.resources.ingestion import Ingestion, IngestionStatus, IngestionCollection
+from citrine.resources.ingestion import Ingestion, IngestionCollection, IngestionStatus, IngestionStatusType, \
+    IngestionException, IngestionErrorTrace, IngestionErrorType, IngestionErrorFamily, IngestionErrorLevel
 from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError
 
 from tests.utils.factories import DatasetFactory
@@ -59,7 +60,7 @@ def operation() -> JobSubmissionResponse:
 @pytest.fixture
 def status() -> IngestionStatus:
     return IngestionStatus.build({
-        "status": "Green",
+        "status": IngestionStatusType.INGESTION_CREATED,
         "errors": []
     })
 
@@ -120,7 +121,7 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
 
 def test_processing_exceptions(session, ingest, monkeypatch):
 
-    def _mock_poll_for_job_completion(self, job, **_):
+    def _mock_poll_for_job_completion(**_):
         response = {
             "job_type": "Ingestion!!!!! :D",
             "status": "Success",
@@ -130,14 +131,14 @@ def test_processing_exceptions(session, ingest, monkeypatch):
         return JobStatusResponse.build(response)
 
     # This is mocked equivalently for all tests
-    monkeypatch.setattr(Ingestion, "poll_for_job_completion", _mock_poll_for_job_completion)
+    monkeypatch.setattr("citrine.resources.ingestion._poll_for_job_completion", _mock_poll_for_job_completion)
     validation_error = ValidationError.build({"failure_message": "you failed", "failure_id": "failure_id"})
 
     # Raise exceptions, but it worked
     ingest.raise_errors = True
     session.set_responses(
         {"job_id": str(uuid4())},
-        {"status": "Green", "errors": []}
+        {"status": IngestionStatusType.INGESTION_CREATED, "errors": []}
     )
     result = ingest.build_objects()
     assert result.success
@@ -147,43 +148,47 @@ def test_processing_exceptions(session, ingest, monkeypatch):
     ingest.raise_errors = True
     session.set_responses(
         BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])),
-        {"status": "Green", "errors": []}
+        {"status": IngestionStatusType.INGESTION_CREATED, "errors": []}
     )
-    with pytest.raises(JobFailureError, match="Bad Request"):
+    with pytest.raises(IngestionException, match="you failed"):
         ingest.build_objects()
 
     # Raise exceptions, and build_objects_async returned unspecified errors
     ingest.raise_errors = True
     session.set_responses(
         BadRequest("path", FakeRequestResponseApiError(400, "This has no details", [])),
-        {"status": "Green", "errors": []}
+        {"status": IngestionStatusType.INGESTION_CREATED, "errors": []}
     )
-    with pytest.raises(JobFailureError, match="no details"):
+    with pytest.raises(IngestionException, match="no details"):
         ingest.build_objects()
 
     # Raise exceptions, and build_objects_async had server errors
     ingest.raise_errors = True
     session.set_responses(
         BadRequest("path", FakeRequestResponseApiError(500, "This was internal", [])),
-        {"status": "Green", "errors": []}
+        {"status": IngestionStatusType.INGESTION_CREATED, "errors": []}
     )
-    with pytest.raises(JobFailureError, match="internal"):
+    with pytest.raises(IngestionException, match="internal"):
         ingest.build_objects()
 
     # Raise exceptions, and status returned errors
     ingest.raise_errors = True
     session.set_responses(
         {"job_id": str(uuid4())},
-        {"status": "Red", "errors": [{"msg": "Bad things!", "level": "error"}]}
+        {"status": IngestionStatusType.INGESTION_CREATED,
+         "errors": [{"msg": "Bad things!",
+                     "level": IngestionErrorLevel.ERROR,
+                     "family": IngestionErrorFamily.STRUCTURE,
+                     "error_type": IngestionErrorType.INVALID_DUPLICATE_NAME}]}
     )
-    with pytest.raises(JobFailureError, match="Bad things"):
+    with pytest.raises(IngestionException, match="Bad things"):
         ingest.build_objects()
 
     # Suppress exceptions, but it worked
     ingest.raise_errors = False
     session.set_responses(
         {"job_id": str(uuid4())},
-        {"status": "Green", "errors": []}
+        {"status": IngestionStatusType.INGESTION_CREATED, "errors": []}
     )
     result = ingest.build_objects()
     assert result.success
@@ -192,17 +197,22 @@ def test_processing_exceptions(session, ingest, monkeypatch):
     ingest.raise_errors = False
     session.set_responses(
         BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])),
-        {"status": "Green", "errors": [{"msg": validation_error.failure_message, "level": "error"}]}
+        {"status": IngestionStatusType.INGESTION_CREATED,
+         "errors": [{"msg": validation_error.failure_message,
+                     "level": IngestionErrorLevel.ERROR,
+                     "family": IngestionErrorFamily.DATA,
+                     "error_type": IngestionErrorType.INVALID_DUPLICATE_NAME}]}
     )
     result = ingest.build_objects()
     assert not result.success
-    assert any('you failed' in e.msg for e in result.errors)
+    assert any('you failed' in str(e) for e in result.errors)
 
     # Suppress exceptions, and build_objects_async returned errors
     ingest.raise_errors = False
     session.set_responses(
         BadRequest("No API error, so it's thrown", None),
-        {"status": "Green", "errors": [{"msg": validation_error.failure_message, "level": "error"}]}
+        {"status": IngestionStatusType.INGESTION_CREATED,
+         "errors": [IngestionErrorTrace(validation_error.failure_message).dump()]}
     )
     with pytest.raises(BadRequest):
         ingest.build_objects()
@@ -211,7 +221,8 @@ def test_processing_exceptions(session, ingest, monkeypatch):
     ingest.raise_errors = False
     session.set_responses(
         {"job_id": str(uuid4())},
-        {"status": "Red", "errors": [{"msg": "Sad", "level": "error"}] * 3}
+        {"status": IngestionStatusType.INGESTION_CREATED,
+         "errors": [IngestionErrorTrace("Sad").dump()] * 3}
     )
     result = ingest.build_objects()
     assert not result.success
@@ -235,8 +246,8 @@ def test_ingestion_flow(session: FakeSession,
     assert collection.build_from_file_links([file_link]).uid == ingest.uid
 
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Sad face", [])))
-    with pytest.raises(JobFailureError, match="Sad face"):
-        assert collection.build_from_file_links([file_link], raise_errors=True)
+    with pytest.raises(IngestionException, match="Sad face"):
+        collection.build_from_file_links([file_link], raise_errors=True)
 
     session.set_response(BadRequest("Generic Failure", None))
     with pytest.raises(BadRequest):
@@ -260,7 +271,7 @@ def test_ingestion_flow(session: FakeSession,
         with pytest.raises(JobFailureError):
             assert not failed.status().success
 
-    with pytest.raises(JobFailureError):
+    with pytest.raises(IngestionException):
         collection.build_from_file_links([file_link], raise_errors=True)
 
     ingest.raise_errors = True
@@ -269,14 +280,14 @@ def test_ingestion_flow(session: FakeSession,
         {"job_type": "Ingestion!!!!! :D", "status": "Success", "tasks": [], "output": dict()},
         {
             "ingestion_id": ingest.uid,
-            "status": "ingestion_created",
+            "status": IngestionStatusType.INGESTION_CREATED,
             "errors": [{
-                "family": "data",
-                "error_type": "missing_raw_for_ingredient",
-                "level": "error",
+                "family": IngestionErrorFamily.DATA,
+                "error_type": IngestionErrorType.MISSING_RAW_FOR_INGREDIENT,
+                "level": IngestionErrorLevel.ERROR,
                 "msg": "Missing ingredient: \"myristic (14:0)\" (Note ingredient IDs are case sensitive)"
             }]
         }
     )
-    with pytest.raises(JobFailureError, match="Missing ingredient"):
+    with pytest.raises(IngestionException, match="Missing ingredient"):
         ingest.build_objects()
