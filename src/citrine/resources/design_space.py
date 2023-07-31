@@ -268,13 +268,14 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         """
         path = f"projects/{self.project_id}/design-spaces/{uid}/convert-hierarchical"
+        data_sources = data_sources or []
         payload = {
-            "data_sources": data_sources,
-            "template_link": template_link,
+            "data_sources": [x.dump() for x in data_sources],
+            "template_link": template_link.dump() if template_link else None,
             "display_name": display_name
         }
         data = self.session.post_resource(path, json=payload, version=self._api_version)
-        return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data))
+        return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data["instance"]))
 
     def delete(self, uid: Union[UUID, str]):
         """Design Spaces cannot be deleted at this time."""
