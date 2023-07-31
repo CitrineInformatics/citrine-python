@@ -211,8 +211,8 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
                uid: Union[UUID, str],
                *,
                version: Union[int, str],
-               name: str,
-               description: str
+               name: Optional[str] = None,
+               description: Optional[str] = None
                ) -> GraphPredictor:
         path = self._construct_path(uid, version, "rename")
         json = {"name": name, "description": description}
@@ -620,8 +620,8 @@ class PredictorCollection(Collection[GraphPredictor]):
                uid: Union[UUID, str],
                *,
                version: Union[int, str],
-               name: str,
-               description: str) -> GraphPredictor:
+               name: Optional[str] = None,
+               description: Optional[str] = None) -> GraphPredictor:
         """Rename an existing predictor.
 
         Both the name and description can be changed. This does not trigger retraining.

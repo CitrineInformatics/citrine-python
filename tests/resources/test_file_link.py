@@ -639,18 +639,28 @@ def test_ingest(collection: FileCollection, session):
     with pytest.raises(ValueError, match=bad_file.url):
         collection.ingest([good_file1, bad_file])
 
+    with pytest.raises(TypeError):
+        collection.ingest([Path(good_file1.url)])
 
-def test_ingest_with_upload(collection, monkeypatch):
+
+def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
     """Test more advanced workflows, patching to avoid unnecessary complexity."""
 
     platform_file = FileLink(url='relative/path', filename='file.txt')
     platform_file.uid = uuid4()
     external_file = FileLink(url='http://citrine.io/other.txt', filename='other.txt')
+    local_file = tmp_path / 'file.csv'
+    local_file.write_text("a,b,c\n1,2,3")
+    local_file_link = FileLink(filename=local_file.name, url=local_file.as_uri())
+    local_none = tmp_path / 'not_here.csv'
 
     def _mock_download(self, *, file_link, local_path):
-        assert file_link == external_file
+        assert file_link == external_file or file_link == local_file_link
+
+    uploads = set()
 
     def _mock_upload(self, *, file_path, dest_name=None):
+        uploads.add(dest_name)
         return FileLink(url='relative/path', filename=file_path.name)
 
     def _mock_build_from_file_links(self: IngestionCollection,
@@ -658,9 +668,10 @@ def test_ingest_with_upload(collection, monkeypatch):
                                     *,
                                     raise_errors: bool = True
                                     ):
-        assert len(file_links) == 2
+        assert len(file_links) == 3
         assert platform_file in file_links
         assert external_file not in file_links
+        assert local_file not in file_links
         return Ingestion.build({
             "ingestion_id": uuid4(),
             "project_id": self.project_id,
@@ -677,7 +688,20 @@ def test_ingest_with_upload(collection, monkeypatch):
     monkeypatch.setattr(IngestionCollection, "build_from_file_links", _mock_build_from_file_links)
     monkeypatch.setattr(Ingestion, "build_objects", _mock_build_objects)
 
-    collection.ingest([platform_file, external_file], upload=True)
+    collection.ingest([platform_file, external_file, local_file], upload=True)
+    assert external_file.filename in uploads
+    assert local_file_link.filename in uploads
+
+    with pytest.raises(FileNotFoundError):
+        # Paths must be resolvable locally
+        collection.ingest([local_none], upload=True)
+
+    session.set_response(
+        NotFound("path", FakeRequestResponseApiError(400, "Not found", []))
+    )
+    with pytest.raises(NotFound):
+        # strings will fail when they can't resolve
+        collection.ingest([str(local_none)], upload=True)
 
 
 def test_resolve_file_link(collection: FileCollection, session):

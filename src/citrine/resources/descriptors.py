@@ -1,6 +1,8 @@
 from typing import List, Union
 from uuid import UUID
 
+from deprecation import deprecated
+
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
@@ -51,7 +53,7 @@ class DescriptorMethods:
         )
         return [Descriptor.build(r) for r in response['responses']]
 
-    def descriptors_from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
+    def from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
         """
         Get all descriptors associated with a data source.
 
@@ -74,3 +76,9 @@ class DescriptorMethods:
             }
         )
         return [Descriptor.build(r) for r in response['descriptors']]
+
+    @deprecated(deprecated_in="2.31.0", removed_in="3.0.0",
+                details="Use from_data_source instead.")
+    def descriptors_from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
+        """[DEPRECATED] See from_data_source."""
+        return self.from_data_source(data_source=data_source)
