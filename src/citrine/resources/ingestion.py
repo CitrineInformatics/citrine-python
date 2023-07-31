@@ -467,7 +467,7 @@ class IngestionCollection(Collection[Ingestion]):
             response = self.session.post_resource(path=self._get_path(), json=req)
         except BadRequest as e:
             if e.api_error is not None:
-                if len(e.api_error.validation_errors) != 0:
+                if e.api_error.validation_errors:
                     errors = [IngestionErrorTrace.from_validation_error(error)
                               for error in e.api_error.validation_errors]
                 else:

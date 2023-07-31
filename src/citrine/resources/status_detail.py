@@ -22,7 +22,7 @@ class StatusDetail(Serializable[StatusDetailType]):
     """A status message and its level."""
 
     msg = properties.String("msg")
-    level = properties.Enumeration(StatusLevelEnum, "level")
+    level = properties.String("level")
 
     def __init__(self, *, msg: str, level: Union[str, StatusLevelEnum]):
         self.msg = msg
