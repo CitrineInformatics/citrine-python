@@ -100,18 +100,19 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         self.display_name: Optional[str] = display_name
 
     def __repr__(self):
-        return "<MaterialNodeDefinition {!r}>".format(self.name)
+        display_name = self.display_name or self.name
+        return "<MaterialNodeDefinition {!r}>".format(display_name)
 
 
 class HierarchicalDesignSpace(
     ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace, AIResourceMetadata
 ):
-    """A design space that produces material history candidates.
+    """A design space that produces hierarchical candidates representing a material history.
 
-    A material history design space always contains a root node that defines the
+    A hierarchical design space always contains a root node that defines the
     attributes and formulation contents included on terminal materials of the candidates.
     It also includes a set of sub-nodes that can be used to define the any new
-    intermediate mixtures that appear in the history of the terminal material.
+    materials that appear in the history of the terminal material.
 
     Material histories produced by this design space are connected based on the
     name identifiers and formulation contents of each node.
@@ -122,16 +123,16 @@ class HierarchicalDesignSpace(
     referencing other sub-nodes, allowing for the linkage of complex material history shapes
     in the resulting candidates.
 
-    Every node in the design space also contains a set of `Dimension`s used to define any
-    attributes (i.e., properties, processing parameters) that should appear on new materials
-    produced by that node.
+    Every node also contains a set of :class:`~citrine.informatics.dimensions.Dimension`s
+    used to define any attributes (i.e., properties, processing parameters)
+    that will appear on the materials produced by that node.
 
-    Data sources can be included on the configuration to allow for design over "known" materials.
-    The Citrine Platform will look up the any ingredient names from formulation subspaces
-    on the design space nodes in order to inject their composition and properties
-    into the material history of the candidates. When constructing a default
-    hierarchical design space, the Citrine Platform includes any data sources
-    found on the provided predictor configuration.
+    :class:`~citrine.informatics.data_sources.DataSource`s can be included on the configuration
+    to allow for design over "known" materials. The Citrine Platform will look up
+    the any ingredient names from formulation subspaces on the design space nodes
+    in order to inject their composition/properties into the material history of the candidates.
+    When constructing a default hierarchical design space,
+    the Citrine Platform includes any data sources found on the provided predictor configuration.
 
     Parameters
     ----------
