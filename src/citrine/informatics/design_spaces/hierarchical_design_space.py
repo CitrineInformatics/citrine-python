@@ -5,6 +5,7 @@ from citrine._rest.ai_resource_metadata import AIResourceMetadata
 from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
+from citrine.informatics.data_sources import DataSource
 from citrine.informatics.dimensions import Dimension
 from citrine.informatics.design_spaces import FormulationDesignSpace
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -25,16 +26,26 @@ class TemplateLink(Serializable["TemplateLink"]):
         Citrine ID referencing an on-platform material template.
     process_template: UUID
         Citrine ID referencing an on-platform process template.
+    template_name: Optional[str]
+        Optional name describing the combination of templates for display purposes.
+        The Citrine Platform by default uses the name of the material template.
 
     """
 
-    _name = properties.Optional(properties.String, "name")
     material_template = properties.UUID("material_template")
     process_template = properties.UUID("process_template")
+    template_name = properties.Optional(properties.String, "name")
 
-    def __init__(self, *, material_template: UUID, process_template: UUID):
+    def __init__(
+            self,
+            *,
+            material_template: UUID,
+            process_template: UUID,
+            template_name: Optional[str] = None
+    ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
+        self.template_name: Optional[str] = template_name
 
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
@@ -56,6 +67,9 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
     template_link: Optional[TemplateLink]
         A set of identifiers linking the materials produced by this node to
         material and process templates on the Citrine Platform.
+    display_name: Optional[str]
+        Optional name for identifying the node on the Citrine Platform.
+        Solely for display purposes (does not appear in generated hierarchical candidates)
 
     """
 
@@ -66,6 +80,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         properties.Object(FormulationDesignSpace), "formulation"
     )
     template_link = properties.Optional(properties.Object(TemplateLink), "template")
+    display_name = properties.Optional(properties.String, "display_name")
 
     def __init__(
             self,
@@ -74,13 +89,15 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             scope: Optional[str] = None,
             attributes: Optional[List[Dimension]] = None,
             formulation_subspace: Optional[FormulationDesignSpace] = None,
-            template_link: Optional[TemplateLink] = None
+            template_link: Optional[TemplateLink] = None,
+            display_name: Optional[str] = None
     ):
         self.name = name
         self.scope: Optional[str] = scope
         self.attributes = attributes or list()
         self.formulation_subspace: Optional[FormulationDesignSpace] = formulation_subspace
         self.template_link: Optional[TemplateLink] = template_link
+        self.display_name: Optional[str] = display_name
 
     def __repr__(self):
         return "<MaterialNodeDefinition {!r}>".format(self.name)
@@ -109,22 +126,34 @@ class HierarchicalDesignSpace(
     attributes (i.e., properties, processing parameters) that should appear on new materials
     produced by that node.
 
+    Data sources can be included on the configuration to allow for design over "known" materials.
+    The Citrine Platform will look up the any ingredient names from formulation subspaces
+    on the design space nodes in order to inject their composition and properties
+    into the material history of the candidates. When constructing a default
+    hierarchical design space, the Citrine Platform includes any data sources
+    found on the provided predictor configuration.
+
     Parameters
     ----------
     name: str
-        the name of the design space
+        Name of the design space
     description: str
-        the description of the design space
+        Description of the design space
     root: MaterialNodeDefinition
-        the terminal material node produced by the design space
+        Terminal material node produced by the design space
     subspaces: List[MaterialNodeDefinition]
-        the sub material nodes produced by the design space
+        Sub material nodes produced by the design space
+    data_sources: List[DataSource]
+        Data sources used to inject known materials into the hierarchical candidates
 
     """
 
     root = properties.Object(MaterialNodeDefinition, "data.instance.root")
     subspaces = properties.List(
         properties.Object(MaterialNodeDefinition), "data.instance.subspaces", default=list()
+    )
+    data_sources = properties.List(
+        properties.Object(DataSource), "data.instance.data_sources", default=list()
     )
     typ = properties.String(
         "data.instance.type", default="HierarchicalDesignSpace", deserializable=False
@@ -136,12 +165,14 @@ class HierarchicalDesignSpace(
             *,
             description: str,
             root: MaterialNodeDefinition,
-            subspaces: Optional[List[MaterialNodeDefinition]] = None
+            subspaces: Optional[List[MaterialNodeDefinition]] = None,
+            data_sources: Optional[List[DataSource]] = None
     ):
         self.name: str = name
         self.description: str = description
         self.root: MaterialNodeDefinition = root
         self.subspaces: List[MaterialNodeDefinition] = subspaces or list()
+        self.data_sources: List[DataSource] = data_sources or list()
 
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)
