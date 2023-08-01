@@ -220,11 +220,11 @@ class FileLink(
             self.version = version
         self.typ = FileLink.typ
 
-    @staticmethod
-    def from_path(path: Union[str, Path]) -> "FileLink":
+    @classmethod
+    def from_path(cls, path: Union[str, Path]) -> "FileLink":
         """Construct a FileLink from a local Path."""
         path = Path(path)  # In case it was a string
-        return FileLink(filename=path.name, url=path.expanduser().absolute().as_uri())
+        return cls(filename=path.name, url=path.expanduser().absolute().as_uri())
 
     @property
     def name(self):
