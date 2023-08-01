@@ -28,7 +28,7 @@ def failed_design_workflow_data(basic_design_workflow_data):
         'status': 'FAILED',
         'status_description': 'ERROR',
         'status_detail': [
-            {'level': 'WARN', 'msg': 'Something is wrong'},
+            {'level': 'WARNING', 'msg': 'Something is wrong'},
             {'level': 'Error', 'msg': 'Very wrong'}
         ]
     }
