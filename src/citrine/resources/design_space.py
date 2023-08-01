@@ -232,23 +232,21 @@ class DesignSpaceCollection(Collection[DesignSpace]):
             uid: Union[UUID, str],
             *,
             data_sources: Optional[List[DataSource]] = None,
+            template_link: Optional[TemplateLink] = None,
             display_name: Optional[str] = None,
-            template_link: Optional[TemplateLink] = None
     ) -> HierarchicalDesignSpace:
         """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
 
         A :class:`~citrine.informatics.design_spaces.ProductDesignSpace` can be mapped to a
         :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace` with a root node
         containing the dimensions and formulation subspace of the original design space.
-        The converted root node can be supplemented with the data sources, template link,
-        and display name provided to this method
+        The resulting root node can be supplemented with the data sources, template link,
+        and display name provided to this method.
 
         Data sources enable the Citrine Platform to design over "known" ingredients
-        found in formulation subspaces in the original design space.
-        These materials are looked up from the data source and injected into the material histories
-        of the hierarchical candidates. The provided data sources should match those found on the
-        :class:`~citrine.informatics.predictors.GraphPredictor`
-        that will be used with the hierarchical design space to generate candidates.
+        found in the formulation subspace of the original design space.
+        These materials are looked up from the data source and injected into the material history
+        of the generated candidates.
 
         Parameters
         ----------

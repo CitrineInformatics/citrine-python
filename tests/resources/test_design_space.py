@@ -93,6 +93,18 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.resolution == 0.1
 
 
+def test_hierarchical_build(valid_hierarchical_design_space_data):
+    dc = DesignSpaceCollection(uuid.uuid4(), None)
+    hds = dc.build(valid_hierarchical_design_space_data)
+    assert hds.name == 'hierarchical design space'
+    assert hds.description == 'does things but in levels'
+    assert hds.root.formulation is not None
+    assert hds.root.template is not None
+    assert hds.root.display_name is not None
+    assert len(hds.root.attributes) == 2
+    assert len(hds.subspaces) == 1
+
+
 def test_design_space_limits():
     """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
     # Given
