@@ -287,7 +287,7 @@ class Dataset(Resource['Dataset']):
             *,
             prompt_to_confirm: bool = True,
             remove_templates: bool = True,
-            timeout: float = 2 * 60,
+            timeout: float = 20 * 60,
             polling_delay: float = 1.0
     ):
         """
