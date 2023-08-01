@@ -105,6 +105,33 @@ def test_hierarchical_build(valid_hierarchical_design_space_data):
     assert len(hds.subspaces) == 1
 
 
+def test_convert_to_hierarchical(valid_hierarchical_design_space_data):
+    data_payload = valid_hierarchical_design_space_data["data"]
+
+    session = FakeSession()
+    session.set_response(data_payload)
+
+    dc = DesignSpaceCollection(uuid.uuid4(), session)
+
+    ds_id = uuid.uuid4()
+    dc.convert_to_hierarchical(uid=ds_id)
+
+    expected_payload = {
+        "data_sources": [],
+        "display_name": None,
+        "template_link": None
+    }
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{dc.project_id}/design-spaces/{ds_id}/convert-hierarchical",
+        json=expected_payload,
+        version="v3"
+    )
+
+    assert session.num_calls == 1
+    assert session.last_call == expected_call
+
+
 def test_design_space_limits():
     """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
     # Given

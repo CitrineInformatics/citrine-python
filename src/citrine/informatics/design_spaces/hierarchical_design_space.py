@@ -1,7 +1,6 @@
 from typing import Optional, List
 from uuid import UUID
 
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 from citrine._rest.engine_resource import ModuleEngineResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -104,9 +103,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         return "<MaterialNodeDefinition {!r}>".format(display_name)
 
 
-class HierarchicalDesignSpace(
-    ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace, AIResourceMetadata
-):
+class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace):
     """A design space that produces hierarchical candidates representing a material history.
 
     A hierarchical design space always contains a root node that defines the
