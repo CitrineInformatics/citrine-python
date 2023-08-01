@@ -227,6 +227,7 @@ def valid_hierarchical_design_space_data(
         valid_gem_data_source_dict
 ):
     """Produce valid hierarchical design space data."""
+    import copy
     name = 'hierarchical design space'
     description = 'does things but in levels'
     user = str(uuid.uuid4())
@@ -240,8 +241,8 @@ def valid_hierarchical_design_space_data(
                 type='HierarchicalDesignSpace',
                 name=name,
                 description=description,
-                root=valid_material_node_definition_data,
-                subspaces=[valid_material_node_definition_data],
+                root=copy.deepcopy(valid_material_node_definition_data),
+                subspaces=[copy.deepcopy(valid_material_node_definition_data)],
                 data_sources=[valid_gem_data_source_dict]
             )
         ),

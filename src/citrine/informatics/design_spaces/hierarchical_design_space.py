@@ -199,20 +199,20 @@ class HierarchicalDesignSpace(
         return data
 
     @staticmethod
-    def __wrap_node(node: dict) -> dict:
-        formulation_subspace = node.pop('formulation')
+    def __wrap_node(node_data: dict) -> dict:
+        formulation_subspace = node_data.pop('formulation', None)
         if formulation_subspace:
-            node['formulation'] = DesignSpace.wrap_instance(formulation_subspace)
-        return node
+            node_data['formulation'] = DesignSpace.wrap_instance(formulation_subspace)
+        return node_data
 
     @staticmethod
-    def __unwrap_node(node: dict) -> dict:
-        formulation_subspace = node.pop('formulation')
+    def __unwrap_node(node_data: dict) -> dict:
+        formulation_subspace = node_data.pop('formulation', None)
         if formulation_subspace:
-            node['formulation'] = formulation_subspace['data']['instance']
-            node['formulation']['name'] = formulation_subspace['data']['name']
-            node['formulation']['description'] = formulation_subspace['data']['description']
-        return node
+            node_data['formulation'] = formulation_subspace['data']['instance']
+            node_data['formulation']['name'] = formulation_subspace['data']['name']
+            node_data['formulation']['description'] = formulation_subspace['data']['description']
+        return node_data
 
     def __repr__(self):
         return '<HierarchicalDesignSpace {!r}>'.format(self.name)

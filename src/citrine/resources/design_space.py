@@ -273,6 +273,8 @@ class DesignSpaceCollection(Collection[DesignSpace]):
             "display_name": display_name
         }
         data = self.session.post_resource(path, json=payload, version=self._api_version)
+        import json
+        print(json.dumps(DesignSpace.wrap_instance(data["instance"]), indent=2))
         return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data["instance"]))
 
     def delete(self, uid: Union[UUID, str]):

@@ -98,8 +98,8 @@ def test_hierarchical_build(valid_hierarchical_design_space_data):
     hds = dc.build(valid_hierarchical_design_space_data)
     assert hds.name == 'hierarchical design space'
     assert hds.description == 'does things but in levels'
-    assert hds.root.formulation is not None
-    assert hds.root.template is not None
+    assert hds.root.formulation_subspace is not None
+    assert hds.root.template_link is not None
     assert hds.root.display_name is not None
     assert len(hds.root.attributes) == 2
     assert len(hds.subspaces) == 1
