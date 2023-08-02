@@ -100,7 +100,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
 
     def __repr__(self):
         display_name = self.display_name or self.name
-        return "<MaterialNodeDefinition {!r}>".format(display_name)
+        return f"<MaterialNodeDefinition {display_name}>"
 
 
 class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace):
@@ -126,7 +126,7 @@ class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], D
 
     :class:`~citrine.informatics.data_sources.DataSource`s can be included on the configuration
     to allow for design over "known" materials. The Citrine Platform will look up
-    the any ingredient names from formulation subspaces on the design space nodes
+    the ingredient names from formulation subspaces on the design space nodes
     in order to inject their composition/properties into the material history of the candidates.
     When constructing a default hierarchical design space,
     the Citrine Platform includes any data sources found on the provided predictor configuration.
@@ -212,4 +212,4 @@ class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], D
         return node_data
 
     def __repr__(self):
-        return '<HierarchicalDesignSpace {!r}>'.format(self.name)
+        return f'<HierarchicalDesignSpace {self.name}>'

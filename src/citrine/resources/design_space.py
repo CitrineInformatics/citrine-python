@@ -5,6 +5,7 @@ from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, \
     HierarchicalDesignSpace, TemplateLink
@@ -265,7 +266,11 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         with a single material node obtained from the input search space.
 
         """
-        path = f"projects/{self.project_id}/design-spaces/{uid}/convert-hierarchical"
+        path = format_escaped_url(
+            "projects/{project_id}/design-spaces/{design_space_id}/convert-hierarchical",
+            project_id=self.project_id,
+            design_space_id=uid
+        )
         data_sources = data_sources or []
         payload = {
             "data_sources": [x.dump() for x in data_sources],
