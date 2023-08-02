@@ -1,36 +1,36 @@
 language: python
 dist: bionic
 python:
-- '3.7'
-- '3.8'
-- '3.9'
-- '3.10'
-- '3.11'
+  - '3.7'
+  - '3.8'
+  - '3.9'
+  - '3.10'
+  - '3.11'
 env:
-    - UPGRADES="-U gemd pandas arrow urllib3 requests pytest boto3"
-    - UPGRADES=""
+  - UPGRADES="-U gemd pandas arrow urllib3 requests pytest boto3"
+  - UPGRADES=""
 install:
-- pip install --only-binary ':all:' -r requirements.txt
-- pip install --only-binary ':all:' -r test_requirements.txt
-- pip install --only-binary ':all:' $UPGRADES -e .
+  - pip install --only-binary ':all:' -r requirements.txt
+  - pip install --only-binary ':all:' -r test_requirements.txt
+  - pip install --only-binary ':all:' $UPGRADES -e .
 script:
-- bash scripts/run_tests.sh
-- cd docs; make html; cd ..;
-- touch ./docs/_build/html/.nojekyll
+  - bash scripts/run_tests.sh
+  - cd docs; make html; cd ..;
+  - touch ./docs/_build/html/.nojekyll
 deploy:
-- provider: pages
-  skip_cleanup: true
-  github_token: "$GH_SECRET_TOKEN"
-  keep_history: true
-  local_dir: "./docs/_build/html/"
-  on:
-    tags: true
-    python: '3.10' # only need this to run once
-    env: PIP_UPDATE="-U"
-- provider: pypi
-  user: CitrineInformatics
-  password: "$PYPI_PASSWORD"
-  distributions: sdist bdist_wheel
-  skip_existing: true
-  on:
-    tags: true
+  - provider: pages
+    skip_cleanup: true
+    github_token: "$GH_SECRET_TOKEN"
+    keep_history: true
+    local_dir: "./docs/_build/html/"
+    on:
+      tags: true
+      python: '3.10' # only need this to run once
+      env: PIP_UPDATE="-U"
+  - provider: pypi
+    user: CitrineInformatics
+    password: "$PYPI_PASSWORD"
+    distributions: sdist bdist_wheel
+    skip_existing: true
+    on:
+      tags: true

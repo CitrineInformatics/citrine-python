@@ -175,7 +175,6 @@ def valid_enumerated_design_space_data():
     )
 
 
-
 @pytest.fixture
 def valid_formulation_design_space_data():
     """Produce valid formulation design space data."""
@@ -219,6 +218,91 @@ def valid_formulation_design_space_data():
                 detail=[]
             )
         )
+    )
+
+
+@pytest.fixture
+def valid_hierarchical_design_space_data(
+        valid_material_node_definition_data,
+        valid_gem_data_source_dict
+):
+    """Produce valid hierarchical design space data."""
+    import copy
+    name = 'hierarchical design space'
+    description = 'does things but in levels'
+    user = str(uuid.uuid4())
+    time = '2020-04-23T15:46:26Z'
+    return dict(
+        id=str(uuid.uuid4()),
+        data=dict(
+            name=name,
+            description=description,
+            instance=dict(
+                type='HierarchicalDesignSpace',
+                name=name,
+                description=description,
+                root=copy.deepcopy(valid_material_node_definition_data),
+                subspaces=[copy.deepcopy(valid_material_node_definition_data)],
+                data_sources=[valid_gem_data_source_dict]
+            )
+        ),
+        metadata=dict(
+            created=dict(
+                user=user,
+                time=time
+            ),
+            updated=dict(
+                user=user,
+                time=time
+            ),
+            archived=dict(
+                user=user,
+                time=time
+            ),
+            status=dict(
+                name='VALIDATING',
+                detail=[]
+            )
+        )
+    )
+
+
+@pytest.fixture
+def valid_material_node_definition_data(valid_formulation_design_space_data):
+    return dict(
+        identifier=dict(
+            id=f"Material Node-{uuid.uuid4()}",
+            scope="Custom Scope"
+        ),
+        attributes=[
+            dict(
+                type='ContinuousDimension',
+                descriptor=dict(
+                    type='Real',
+                    descriptor_key='alpha',
+                    units='',
+                    lower_bound=5.0,
+                    upper_bound=10.0,
+                ),
+                lower_bound=6.0,
+                upper_bound=7.0
+            ),
+            dict(
+                type='EnumeratedDimension',
+                descriptor=dict(
+                    type='Categorical',
+                    descriptor_key='color',
+                    descriptor_values=['blue', 'green', 'red'],
+                ),
+                list=['red']
+            )
+        ],
+        formulation=valid_formulation_design_space_data["data"]["instance"],
+        template=dict(
+            material_template=str(uuid.uuid4()),
+            process_template=str(uuid.uuid4()),
+        ),
+        display_name="Material Node"
     )
 
 

@@ -3,11 +3,27 @@ import warnings
 from typing import List, Optional, TypeVar, Union
 from uuid import UUID
 
-from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
+from gemd.enumeration.base_enumeration import BaseEnumeration
+
+from citrine._utils.functions import format_escaped_url
+from citrine.informatics.data_sources import DataSource
+from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, \
+    HierarchicalDesignSpace, TemplateLink
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
+
+
+class DefaultDesignSpaceMode(BaseEnumeration):
+    """The type of default design space to create.
+
+    * ATTRIBUTE results in a product design space containing dimensions required by the predictor
+    * HIERARCHICAL results in a hierarchical design space resembling the shape of training data
+    """
+
+    ATTRIBUTE = 'ATTRIBUTE'
+    HIERARCHICAL = 'HIERARCHICAL'
 
 
 class DesignSpaceCollection(Collection[DesignSpace]):
@@ -145,6 +161,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                        *,
                        predictor_id: UUID,
                        predictor_version: Optional[Union[int, str]] = None,
+                       mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
                        include_label_count_constraints: bool = False,
@@ -169,6 +186,10 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         predictor_version: Optional[Union[int, str]]
             Version of the predictor used to construct the design space
+
+        mode: DefaultDesignSpaceMode
+            The type of default design space to produce.
+            Defaults to DefaultDesignSpaceMode.ATTRIBUTE.
 
         include_ingredient_fraction_constraints: bool
             Whether to include constraints on ingredient fractions based on the training data.
@@ -195,6 +216,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         path = f'projects/{self.project_id}/design-spaces/default'
         payload = {
             "predictor_id": str(predictor_id),
+            "mode": mode.value,
             "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
             "include_label_fraction_constraints": include_label_fraction_constraints,
             "include_label_count_constraints": include_label_count_constraints,
@@ -205,6 +227,58 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         data = self.session.post_resource(path, json=payload, version=self._api_version)
         return self.build(DesignSpace.wrap_instance(data["instance"]))
+
+    def convert_to_hierarchical(
+            self,
+            uid: Union[UUID, str],
+            *,
+            data_sources: Optional[List[DataSource]] = None,
+            template_link: Optional[TemplateLink] = None,
+            display_name: Optional[str] = None,
+    ) -> HierarchicalDesignSpace:
+        """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
+
+        A :class:`~citrine.informatics.design_spaces.ProductDesignSpace` can be mapped to a
+        :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace` with a root node
+        containing the dimensions and formulation subspace of the original design space.
+        The resulting root node can be supplemented with the data sources, template link,
+        and display name provided to this method.
+
+        Data sources enable the Citrine Platform to design over "known" ingredients
+        found in the formulation subspace of the original design space.
+        These materials are looked up from the data source and injected into the material history
+        of the generated candidates.
+
+        Parameters
+        ----------
+        uid: Union[str, UUID]
+            UUID of the existing product design space to convert to a hierarchical version
+        data_sources: Optional[List[DataSource]]
+            Optional data sources to include in the converted hierarchical design space
+        template_link: Optional[TemplateLink]
+            Optional template link to include on the root material node
+        display_name: Optional[str]
+            Optional display name to include on the root material node
+
+        Returns
+        -------
+        A :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace`
+        with a single material node obtained from the input search space.
+
+        """
+        path = format_escaped_url(
+            "projects/{project_id}/design-spaces/{design_space_id}/convert-hierarchical",
+            project_id=self.project_id,
+            design_space_id=uid
+        )
+        data_sources = data_sources or []
+        payload = {
+            "data_sources": [x.dump() for x in data_sources],
+            "template_link": template_link.dump() if template_link else None,
+            "display_name": display_name
+        }
+        data = self.session.post_resource(path, json=payload, version=self._api_version)
+        return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data["instance"]))
 
     def delete(self, uid: Union[UUID, str]):
         """Design Spaces cannot be deleted at this time."""

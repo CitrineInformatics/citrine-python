@@ -8,7 +8,7 @@ import pytest
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.descriptors import RealDescriptor, FormulationKey
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
-from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.design_space import DesignSpaceCollection, DefaultDesignSpaceMode
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.session import FakeCall, FakeSession
 
@@ -93,6 +93,45 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.resolution == 0.1
 
 
+def test_hierarchical_build(valid_hierarchical_design_space_data):
+    dc = DesignSpaceCollection(uuid.uuid4(), None)
+    hds = dc.build(valid_hierarchical_design_space_data)
+    assert hds.name == 'hierarchical design space'
+    assert hds.description == 'does things but in levels'
+    assert hds.root.formulation_subspace is not None
+    assert hds.root.template_link is not None
+    assert hds.root.display_name is not None
+    assert len(hds.root.attributes) == 2
+    assert len(hds.subspaces) == 1
+
+
+def test_convert_to_hierarchical(valid_hierarchical_design_space_data):
+    data_payload = valid_hierarchical_design_space_data["data"]
+
+    session = FakeSession()
+    session.set_response(data_payload)
+
+    dc = DesignSpaceCollection(uuid.uuid4(), session)
+
+    ds_id = uuid.uuid4()
+    dc.convert_to_hierarchical(uid=ds_id)
+
+    expected_payload = {
+        "data_sources": [],
+        "display_name": None,
+        "template_link": None
+    }
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{dc.project_id}/design-spaces/{ds_id}/convert-hierarchical",
+        json=expected_payload,
+        version="v3"
+    )
+
+    assert session.num_calls == 1
+    assert session.last_call == expected_call
+
+
 def test_design_space_limits():
     """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
     # Given
@@ -143,12 +182,13 @@ def test_create_default(predictor_version, valid_product_design_space):
         session=session
     )
 
-    expected_payload ={
+    expected_payload = {
         "predictor_id": str(predictor_id),
         "include_ingredient_fraction_constraints": False,
         "include_label_fraction_constraints": False,
         "include_label_count_constraints": False,
-        "include_parameter_constraints": False
+        "include_parameter_constraints": False,
+        "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
     }
     if predictor_version is not None:
         expected_payload["predictor_version"] = predictor_version
@@ -188,6 +228,7 @@ def test_create_default_with_config(valid_product_design_space, ingredient_fract
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
         json={
+            "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
             "predictor_id": str(predictor_id),
             "predictor_version": predictor_version,
             "include_ingredient_fraction_constraints": ingredient_fractions,
