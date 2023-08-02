@@ -148,10 +148,10 @@ class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], D
 
     root = properties.Object(MaterialNodeDefinition, "data.instance.root")
     subspaces = properties.List(
-        properties.Object(MaterialNodeDefinition), "data.instance.subspaces", default=list()
+        properties.Object(MaterialNodeDefinition), "data.instance.subspaces"
     )
     data_sources = properties.List(
-        properties.Object(DataSource), "data.instance.data_sources", default=list()
+        properties.Object(DataSource), "data.instance.data_sources"
     )
     typ = properties.String(
         "data.instance.type", default="HierarchicalDesignSpace", deserializable=False
