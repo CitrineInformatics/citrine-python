@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.28.2 documentation</title>
+  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.34.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.2
+                2.34.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -76,9 +76,75 @@
              
   <section id="module-citrine.resources.ingestion">
 <span id="citrine-resources-ingestion-module"></span><h1>citrine.resources.ingestion module<a class="headerlink" href="#module-citrine.resources.ingestion" title="Permalink to this headline"></a></h1>
+<dl class="py exception">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace"><span class="pre">citrine.resources.ingestion.IngestionErrorTrace</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.exceptions.html#citrine.exceptions.CitrineException" title="citrine.exceptions.CitrineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.CitrineException</span></code></a></p>
+<p>[ALPHA] An exception that contains details of a failed ingestion.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.uid" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.errors">
+<span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.errors" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace">IngestionErrorTrace</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.from_api_error">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_api_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError"><span class="pre">citrine.resources.api_error.ApiError</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionException" title="citrine.resources.ingestion.IngestionException"><span class="pre">citrine.resources.ingestion.IngestionException</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.from_api_error" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Build an IngestionException from an ApiError.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.from_status">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionException" title="citrine.resources.ingestion.IngestionException"><span class="pre">citrine.resources.ingestion.IngestionException</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.from_status" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Build an IngestionException from an IngestionStatus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.with_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.args" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionException.status">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionException.status" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.FailedIngestion">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">FailedIngestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ValidationError" title="citrine.resources.api_error.ValidationError"><span class="pre">citrine.resources.api_error.ValidationError</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">FailedIngestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace"><span class="pre">citrine.resources.ingestion.IngestionErrorTrace</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.FailedIngestion" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.resources.ingestion.Ingestion" title="citrine.resources.ingestion.Ingestion"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.ingestion.Ingestion</span></code></a></p>
 <p>[ALPHA] Object to fill in when building an ingest fails.</p>
 <dl class="py method">
@@ -299,8 +365,8 @@ out server-side.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -372,16 +438,233 @@ Default: True</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorFamily">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionErrorFamily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorFamily" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] What class of ingest error was encountered.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorFamily.DATA">
+<span class="sig-name descname"><span class="pre">DATA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorFamily.DATA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorFamily.FILE">
+<span class="sig-name descname"><span class="pre">FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorFamily.FILE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorFamily.STRUCTURE">
+<span class="sig-name descname"><span class="pre">STRUCTURE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'structure'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorFamily.STRUCTURE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorFamily.UNKNOWN">
+<span class="sig-name descname"><span class="pre">UNKNOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unknown'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorFamily.UNKNOWN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorLevel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionErrorLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorLevel" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] Severity of the issue encountered.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorLevel.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorLevel.ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorLevel.INFO">
+<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'info'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorLevel.INFO" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorLevel.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'warning'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorLevel.WARNING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionErrorTrace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">IngestionErrorLevel.ERROR</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">IngestionErrorFamily.UNKNOWN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">IngestionErrorType.UNKNOWN_ERROR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_file_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_version_uuid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngestionErrorTrace</span></code></a>]</p>
+<p>[ALPHA] Detailed information about an ingestion issue.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.access_control_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.from_validation_error">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_validation_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ValidationError" title="citrine.resources.api_error.ValidationError"><span class="pre">citrine.resources.api_error.ValidationError</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace"><span class="pre">citrine.resources.ingestion.IngestionErrorTrace</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.from_validation_error" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Generate an IngestionErrorTrace from a ValidationError.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.column_number">
+<span class="sig-name descname"><span class="pre">column_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.column_number" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.dataset_file_id">
+<span class="sig-name descname"><span class="pre">dataset_file_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.dataset_file_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.error_type">
+<span class="sig-name descname"><span class="pre">error_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.error_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.family">
+<span class="sig-name descname"><span class="pre">family</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.family" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.file_version_uuid">
+<span class="sig-name descname"><span class="pre">file_version_uuid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.file_version_uuid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.level">
+<span class="sig-name descname"><span class="pre">level</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.level" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.msg">
+<span class="sig-name descname"><span class="pre">msg</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.msg" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorTrace.row_number">
+<span class="sig-name descname"><span class="pre">row_number</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorTrace.row_number" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionErrorType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] What ingest error was encountered.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.CATEGORICAL_OUTSIDE_BOUNDS_ERROR">
+<span class="sig-name descname"><span class="pre">CATEGORICAL_OUTSIDE_BOUNDS_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'categorical_outside_bounds_error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.CATEGORICAL_OUTSIDE_BOUNDS_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.DUPLICATED_MATERIAL">
+<span class="sig-name descname"><span class="pre">DUPLICATED_MATERIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'duplicated_material'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.DUPLICATED_MATERIAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.FILE_EXTENSION_NOT_SUPPORTED">
+<span class="sig-name descname"><span class="pre">FILE_EXTENSION_NOT_SUPPORTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_extension_not_supported'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.FILE_EXTENSION_NOT_SUPPORTED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INTEGER_OUTSIDE_BOUNDS_ERROR">
+<span class="sig-name descname"><span class="pre">INTEGER_OUTSIDE_BOUNDS_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'integer_outside_bounds_error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INTEGER_OUTSIDE_BOUNDS_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_BASIS_ON_ASPECT">
+<span class="sig-name descname"><span class="pre">INVALID_BASIS_ON_ASPECT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_basis_on_aspect'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_BASIS_ON_ASPECT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_DUPLICATE_NAME">
+<span class="sig-name descname"><span class="pre">INVALID_DUPLICATE_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_duplicate_name'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_DUPLICATE_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_FRACTION_ON_ASPECT">
+<span class="sig-name descname"><span class="pre">INVALID_FRACTION_ON_ASPECT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_fraction_on_aspect'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_FRACTION_ON_ASPECT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_PROCESS_REFERENCE">
+<span class="sig-name descname"><span class="pre">INVALID_PROCESS_REFERENCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_process_reference'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_PROCESS_REFERENCE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_TYPE_HINT_ON_ASPECT">
+<span class="sig-name descname"><span class="pre">INVALID_TYPE_HINT_ON_ASPECT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_type_hint_on_aspect'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_TYPE_HINT_ON_ASPECT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.INVALID_UNITS_ON_ASPECT">
+<span class="sig-name descname"><span class="pre">INVALID_UNITS_ON_ASPECT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid_units_on_aspect'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.INVALID_UNITS_ON_ASPECT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.MISSING_ASPECT_TYPE">
+<span class="sig-name descname"><span class="pre">MISSING_ASPECT_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'missing_aspect_type'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.MISSING_ASPECT_TYPE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.MISSING_RAW_FOR_INGREDIENT">
+<span class="sig-name descname"><span class="pre">MISSING_RAW_FOR_INGREDIENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'missing_raw_for_ingredient'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.MISSING_RAW_FOR_INGREDIENT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.MISSING_TYPE_HEADER">
+<span class="sig-name descname"><span class="pre">MISSING_TYPE_HEADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'missing_type_header'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.MISSING_TYPE_HEADER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.REAL_OUTSIDE_BOUNDS_ERROR">
+<span class="sig-name descname"><span class="pre">REAL_OUTSIDE_BOUNDS_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'real_outside_bounds_error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.REAL_OUTSIDE_BOUNDS_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.REGISTERING_OBJECTS_ERROR">
+<span class="sig-name descname"><span class="pre">REGISTERING_OBJECTS_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'registering_objects_error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.REGISTERING_OBJECTS_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionErrorType.UNKNOWN_ERROR">
+<span class="sig-name descname"><span class="pre">UNKNOWN_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unknown_error'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionErrorType.UNKNOWN_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatus">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionStatus</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatusType" title="citrine.resources.ingestion.IngestionStatusType"><span class="pre">citrine.resources.ingestion.IngestionStatusType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">IngestionStatusType.INGESTION_CREATED</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace"><span class="pre">citrine.resources.ingestion.IngestionErrorTrace</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngestionStatus</span></code></a>]</p>
 <p>[ALPHA] An object that represents the outcome of an ingestion event.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatus.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus.uid" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatus.status">
 <span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus.status" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>String</p>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatusType" title="citrine.resources.ingestion.IngestionStatusType">IngestionStatusType</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -391,7 +674,7 @@ Default: True</p></li>
 <span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus.errors" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>List[String]</p>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.ingestion.IngestionErrorTrace" title="citrine.resources.ingestion.IngestionErrorTrace">IngestionErrorTrace</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -414,14 +697,20 @@ Default: True</p></li>
 <dd><p>Dump this instance.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatus.from_exception">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#citrine.resources.ingestion.IngestionException" title="citrine.resources.ingestion.IngestionException"><span class="pre">citrine.resources.ingestion.IngestionException</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus.from_exception" title="Permalink to this definition"></a></dt>
+<dd><p>[ALPHA] Build an IngestionStatus from an IngestionException.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -429,6 +718,23 @@ Default: True</p></li>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">success</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatus.success" title="Permalink to this definition"></a></dt>
 <dd><p>Whether the Ingestion operation was error-free.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatusType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.resources.ingestion.</span></span><span class="sig-name descname"><span class="pre">IngestionStatusType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatusType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] State of the ingestion process.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.ingestion.IngestionStatusType.INGESTION_CREATED">
+<span class="sig-name descname"><span class="pre">INGESTION_CREATED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ingestion_created'</span></em><a class="headerlink" href="#citrine.resources.ingestion.IngestionStatusType.INGESTION_CREATED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

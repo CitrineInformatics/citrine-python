@@ -62,7 +62,7 @@ Any other type of design space can be a valid subspace.
 Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.
 
 A :class:`~citrine.informatics.dimensions.Dimension` defines valid values of a single variable.
-Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
+Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
 The product design space samples materials by taking all combinations of one element from each dimension.
 For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 10]`` the Cartesian product is:
 
@@ -106,8 +106,8 @@ If, using the previous example, temperature can be any value between 300 and 400
    dimension = ContinuousDimension(descriptor, lower_bound=300, upper_bound=400)
 
 Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
-The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
-The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).
+The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
+The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).
 
 A product design space combines subspaces in a similar manner, although subspaces are often multivariate.
 However the same principle holds for sampling: all combinations of finite factors are enumerated, while infinite factors are sampled continuously.

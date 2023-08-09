@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4.5. Design Spaces &mdash; Citrine Python 2.28.2 documentation</title>
+  <title>4.5. Design Spaces &mdash; Citrine Python 2.34.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -33,7 +33,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.28.2
+                2.34.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -156,7 +156,7 @@ Each factor can be a separate design space _or_ a univariate dimension.
 Any other type of design space can be a valid subspace.
 Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.</p>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dimension</span></code></a> defines valid values of a single variable.
-Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
+Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
 The product design space samples materials by taking all combinations of one element from each dimension.
 For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the Cartesian product is:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
@@ -191,8 +191,8 @@ If, using the previous example, temperature can be any value between 300 and 400
 </pre></div>
 </div>
 <p>Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
-The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
-The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).</p>
+The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
+The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).</p>
 <p>A product design space combines subspaces in a similar manner, although subspaces are often multivariate.
 However the same principle holds for sampling: all combinations of finite factors are enumerated, while infinite factors are sampled continuously.
 Note, each factor must be <strong>independent</strong>.
