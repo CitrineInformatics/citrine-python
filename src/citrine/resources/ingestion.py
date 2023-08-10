@@ -44,6 +44,7 @@ class IngestionErrorType(BaseEnumeration):
     INTEGER_OUTSIDE_BOUNDS_ERROR = "integer_outside_bounds_error"
     REAL_OUTSIDE_BOUNDS_ERROR = "real_outside_bounds_error"
     INVALID_PROCESS_REFERENCE = "invalid_process_reference"
+    COLLIDING_ID = "colliding_id"
     UNKNOWN_ERROR = "unknown_error"
 
 
