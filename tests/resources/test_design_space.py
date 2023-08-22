@@ -114,12 +114,12 @@ def test_convert_to_hierarchical(valid_hierarchical_design_space_data):
     dc = DesignSpaceCollection(uuid.uuid4(), session)
 
     ds_id = uuid.uuid4()
-    dc.convert_to_hierarchical(uid=ds_id)
+    predictor_id = uuid.uuid4()
+    dc.convert_to_hierarchical(uid=ds_id, predictor_id=predictor_id, predictor_version=2)
 
     expected_payload = {
-        "data_sources": [],
-        "display_name": None,
-        "template_link": None
+        "predictor_id": str(predictor_id),
+        "predictor_version": 2
     }
     expected_call = FakeCall(
         method='POST',
