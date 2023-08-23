@@ -6,9 +6,8 @@ from uuid import UUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, \
-    HierarchicalDesignSpace, TemplateLink
+    HierarchicalDesignSpace
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
@@ -232,38 +231,30 @@ class DesignSpaceCollection(Collection[DesignSpace]):
             self,
             uid: Union[UUID, str],
             *,
-            data_sources: Optional[List[DataSource]] = None,
-            template_link: Optional[TemplateLink] = None,
-            display_name: Optional[str] = None,
+            predictor_id: Union[UUID, str],
+            predictor_version: Optional[Union[int, str]] = None
     ) -> HierarchicalDesignSpace:
         """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
 
         A :class:`~citrine.informatics.design_spaces.ProductDesignSpace` can be mapped to a
-        :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace` with a root node
-        containing the dimensions and formulation subspace of the original design space.
-        The resulting root node can be supplemented with the data sources, template link,
-        and display name provided to this method.
-
-        Data sources enable the Citrine Platform to design over "known" ingredients
-        found in the formulation subspace of the original design space.
-        These materials are looked up from the data source and injected into the material history
-        of the generated candidates.
+        :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace` by using the associated
+        predictor and its training data to infer the shape of the hierarchical design space.
+        Constraints are then transferred from the product design space to the appropriate node
+        in the hierarchical design space.
 
         Parameters
         ----------
         uid: Union[str, UUID]
             UUID of the existing product design space to convert to a hierarchical version
-        data_sources: Optional[List[DataSource]]
-            Optional data sources to include in the converted hierarchical design space
-        template_link: Optional[TemplateLink]
-            Optional template link to include on the root material node
-        display_name: Optional[str]
-            Optional display name to include on the root material node
+        predictor_id: Union[UUID, str]
+            UUID of a predictor associated with the design space.
+        predictor_version: Optional[Union[int, str]]
+            Version of the predictor to use. Defaults to the most recent version.
 
         Returns
         -------
-        A :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace`
-        with a single material node obtained from the input search space.
+        A :class:`~citrine.informatics.design_spaces.HierarchicalDesignSpace` modeled on the
+        existing :class:`~citrine.informatics.design_spaces.ProductDesignSpace`.
 
         """
         path = format_escaped_url(
@@ -271,12 +262,11 @@ class DesignSpaceCollection(Collection[DesignSpace]):
             project_id=self.project_id,
             design_space_id=uid
         )
-        data_sources = data_sources or []
         payload = {
-            "data_sources": [x.dump() for x in data_sources],
-            "template_link": template_link.dump() if template_link else None,
-            "display_name": display_name
+            "predictor_id": str(predictor_id),
         }
+        if predictor_version:
+            payload["predictor_version"] = predictor_version
         data = self.session.post_resource(path, json=payload, version=self._api_version)
         return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data["instance"]))
 
