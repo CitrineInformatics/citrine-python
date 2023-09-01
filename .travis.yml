@@ -15,8 +15,7 @@ install:
   - pip install --only-binary ':all:' $UPGRADES -e .
 script:
   - bash scripts/run_tests.sh
-  - cd docs; make html; cd ..;
-  - touch ./docs/_build/html/.nojekyll
+  - test "$UPGRADES" != "" || test $TRAVIS_PYTHON_VERSION != "3.10" || bash scripts/build_docs.sh
 deploy:
   - provider: pages
     skip_cleanup: true
@@ -26,7 +25,7 @@ deploy:
     on:
       tags: true
       python: '3.10' # only need this to run once
-      env: PIP_UPDATE="-U"
+      env: PIP_UPDATE=""
   - provider: pypi
     user: CitrineInformatics
     password: "$PYPI_PASSWORD"
