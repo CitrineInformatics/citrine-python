@@ -121,6 +121,17 @@ def test_hierarchical_initialization(hierarchical_design_space):
     assert "formulation_descriptor" in fds_data
 
 
+def test_template_link_deprecations():
+    with pytest.warns(DeprecationWarning):
+        link = TemplateLink(
+            material_template=uuid.uuid4(),
+            process_template=uuid.uuid4(),
+            template_name="I am deprecated",
+            material_template_name="I am not deprecated"
+        )
+        assert link.template_name == link.material_template_name
+
+
 def test_data_source_build(valid_data_source_design_space_dict):
     ds = DesignSpace.build(valid_data_source_design_space_dict)
     assert ds.name == valid_data_source_design_space_dict["data"]["instance"]["name"]
