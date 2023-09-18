@@ -25,26 +25,30 @@ class TemplateLink(Serializable["TemplateLink"]):
         Citrine ID referencing an on-platform material template.
     process_template: UUID
         Citrine ID referencing an on-platform process template.
-    template_name: Optional[str]
-        Optional name describing the combination of templates for display purposes.
-        The Citrine Platform by default uses the name of the material template.
+    material_template_name: Optional[str]
+        Optional name of the material template.
+    process_template_name: Optional[str]
+        Optional name of the process template.
 
     """
 
     material_template = properties.UUID("material_template")
     process_template = properties.UUID("process_template")
-    template_name = properties.Optional(properties.String, "name")
+    material_template_name = properties.Optional(properties.String, "material_template_name")
+    process_template_name = properties.Optional(properties.String, "process_template_name")
 
     def __init__(
             self,
             *,
             material_template: UUID,
             process_template: UUID,
-            template_name: Optional[str] = None
+            material_template_name: Optional[str] = None,
+            process_template_name: Optional[str] = None,
     ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
-        self.template_name: Optional[str] = template_name
+        self.material_template_name: Optional[str] = material_template_name
+        self.process_template_name: Optional[str] = process_template_name
 
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):

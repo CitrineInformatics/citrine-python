@@ -75,7 +75,8 @@ def material_node_definition(formulation_design_space) -> MaterialNodeDefinition
     link = TemplateLink(
         material_template=uuid.uuid4(),
         process_template=uuid.uuid4(),
-        template_name="Template Name"
+        material_template_name="Material Template Name",
+        process_template_name="Process Template Name"
     )
 
     return MaterialNodeDefinition(
