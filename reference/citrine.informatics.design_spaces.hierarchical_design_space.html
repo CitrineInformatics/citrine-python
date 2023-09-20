@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.design_spaces.hierarchical_design_space module &mdash; Citrine Python 2.34.0 documentation</title>
+  <title>citrine.informatics.design_spaces.hierarchical_design_space module &mdash; Citrine Python 2.36.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.34.0
+                2.36.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -418,7 +418,7 @@ Solely for display purposes (does not appear in generated hierarchical candidate
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_spaces.hierarchical_design_space.</span></span><span class="sig-name descname"><span class="pre">TemplateLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_spaces.hierarchical_design_space.</span></span><span class="sig-name descname"><span class="pre">TemplateLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink" title="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateLink</span></code></a>]</p>
 <p>Link to a Citrine Platform material and process template for a material node definition.</p>
 <dl class="field-list simple">
@@ -426,8 +426,8 @@ Solely for display purposes (does not appear in generated hierarchical candidate
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>material_template</strong> (<em>UUID</em>) – Citrine ID referencing an on-platform material template.</p></li>
 <li><p><strong>process_template</strong> (<em>UUID</em>) – Citrine ID referencing an on-platform process template.</p></li>
-<li><p><strong>template_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional name describing the combination of templates for display purposes.
-The Citrine Platform by default uses the name of the material template.</p></li>
+<li><p><strong>material_template_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional name of the material template.</p></li>
+<li><p><strong>process_template_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional name of the process template.</p></li>
 </ul>
 </dd>
 </dl>
@@ -449,14 +449,28 @@ The Citrine Platform by default uses the name of the material template.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.material_template_name">
+<span class="sig-name descname"><span class="pre">material_template_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.material_template_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.process_template">
 <span class="sig-name descname"><span class="pre">process_template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">uuid.UUID</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.process_template" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.template_name">
-<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.template_name" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.process_template_name">
+<span class="sig-name descname"><span class="pre">process_template_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.process_template_name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.template_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink.template_name" title="Permalink to this definition"></a></dt>
+<dd><p>Return the name of the material template.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.36.0: </span>This will be removed in 3.0.0. Use material_template_name instead.</p>
+</div>
+</dd></dl>
 
 </dd></dl>
 
