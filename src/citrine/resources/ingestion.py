@@ -238,7 +238,7 @@ class Ingestion(Resource['Ingestion']):
             else:
                 return IngestionStatus.from_exception(e)
 
-        status = self.poll_for_job_completion(job)
+        status = self.poll_for_job_completion(job, timeout=2 * 3600)
 
         if self.raise_errors and not status.success:
             raise IngestionException.from_status(status)
