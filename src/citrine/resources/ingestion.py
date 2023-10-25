@@ -205,7 +205,10 @@ class Ingestion(Resource['Ingestion']):
                       *,
                       build_table: bool = False,
                       delete_dataset_contents: bool = False,
-                      delete_templates: bool = True) -> IngestionStatus:
+                      delete_templates: bool = True,
+                      timeout: float = None,
+                      polling_delay: Optional[float] = None
+                      ) -> IngestionStatus:
         """
         [ALPHA] Perform a complete ingestion operation, from start to finish.
 
@@ -221,6 +224,12 @@ class Ingestion(Resource['Ingestion']):
         delete_templates: bool
             Whether to delete all objects and templates (as opposed to not deleting
             templates) when `delete_dataset_contents` is True.  Default: True
+        timeout: Optional[float]
+            Amount of time to wait on the job (in seconds) before giving up. Note that
+            this number has no effect on the underlying job itself, which can also time
+            out server-side.
+        polling_delay: Optional[float]
+            How long to delay between each polling retry attempt.
 
         Returns
         ----------
@@ -238,7 +247,7 @@ class Ingestion(Resource['Ingestion']):
             else:
                 return IngestionStatus.from_exception(e)
 
-        status = self.poll_for_job_completion(job)
+        status = self.poll_for_job_completion(job, timeout=timeout, polling_delay=polling_delay)
 
         if self.raise_errors and not status.success:
             raise IngestionException.from_status(status)

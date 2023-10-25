@@ -105,22 +105,23 @@ def _poll_for_job_completion(session: Session,
         if status.status in ['Success', 'Failure']:
             break
         elif time() - start_time < timeout:
-            logger.info('Job still in progress, polling status again in {:.2f} seconds.'
-                        .format(polling_delay))
+            logger.info(
+                f'Job still in progress, polling status again in {polling_delay:.2f} seconds.'
+            )
 
             sleep(polling_delay)
         else:
-            logger.error('Job exceeded user timeout of {} seconds.'.format(timeout))
+            logger.error(f'Job exceeded user timeout of {timeout} seconds. '
+                         f'Note job on server is unaffected by this timeout.')
             logger.debug('Last status: {}'.format(status.dump()))
             raise PollingTimeoutError('Job {} timed out.'.format(job_id))
     if status.status == 'Failure':
-        logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
+        logger.debug(f'Job terminated with Failure status: {status.dump()}')
         if raise_errors:
             failure_reasons = []
             for task in status.tasks:
                 if task.status == 'Failure':
-                    logger.error('Task {} failed with reason "{}"'.format(
-                        task.id, task.failure_reason))
+                    logger.error(f'Task {task.id} failed with reason "{task.failure_reason}"')
                     failure_reasons.append(task.failure_reason)
             raise JobFailureError(
                 message=f'Job {job_id} terminated with Failure status. '

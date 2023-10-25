@@ -850,6 +850,8 @@ class FileCollection(Collection[FileLink]):
                build_table: bool = False,
                delete_dataset_contents: bool = False,
                delete_templates: bool = True,
+               timeout: float = None,
+               polling_delay: Optional[float] = None
                ) -> "IngestionStatus":  # noqa: F821
         """
         [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
@@ -879,6 +881,13 @@ class FileCollection(Collection[FileLink]):
             Whether to delete old objects prior to creating new ones.  Default: False
         delete_templates: bool
             Whether to delete old templates if deleting old objects.  Default: True
+        timeout: Optional[float]
+            Amount of time to wait on the job (in seconds) before giving up. Note that
+            this number has no effect on the underlying job itself, which can also time
+            out server-side.
+        polling_delay: Optional[float]
+            How long to delay between each polling retry attempt.
+
 
         Returns
         ----------
@@ -893,7 +902,7 @@ class FileCollection(Collection[FileLink]):
             if upload:
                 if not isinstance(candidate, GEMDFileLink):
                     try:
-                        absolute = Path(candidate).resolve(strict=True)
+                        absolute = Path(candidate).expanduser().resolve(strict=True)
                         return FileLink(filename=absolute.name, url=absolute.as_uri())
                     except FileNotFoundError as e:
                         if isinstance(candidate, Path):  # Unresolvable path passed
@@ -932,7 +941,9 @@ class FileCollection(Collection[FileLink]):
         return ingestion.build_objects(
             build_table=build_table,
             delete_dataset_contents=delete_dataset_contents,
-            delete_templates=delete_templates
+            delete_templates=delete_templates,
+            timeout=timeout,
+            polling_delay=polling_delay
         )
 
     def delete(self, file_link: FileLink):
