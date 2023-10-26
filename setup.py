@@ -29,7 +29,7 @@ setup(name='citrine',
           "boto3>=1.17.93,<2",
           "botocore>=1.20.95,<2",
           "deprecation>=2.1.0,<3",
-          "urllib3>=1.26.5,<3",
+          "urllib3>=1.26.18,<3",
           "tqdm>=4.62.3,<5"
       ],
       extras_require={
