@@ -1,13 +1,12 @@
 from abc import abstractmethod
 from logging import getLogger
 from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator, Sequence, Dict
-from urllib.parse import urlparse, urlencode
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
 from citrine._rest.resource import ResourceRef
-from citrine._utils.functions import format_escaped_url
+from citrine._utils.functions import resource_path
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
@@ -45,25 +44,9 @@ class Collection(Generic[ResourceType], Pageable):
                   query_terms: Dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
-        if ignore_dataset:
-            base = urlparse(self._dataset_agnostic_path_template)
-        else:
-            base = urlparse(self._path_template)
-        path = base.path.split('/')
-
-        if uid is not None:
-            path.append("{uid}")
-
-        if isinstance(action, str):
-            action = [action]
-        else:
-            action = list(action)
-        path.extend(["{}"] * len(action))
-
-        query = urlencode(query_terms)
-        new_url = base._replace(path='/'.join(path), query=query).geturl()
-
-        return format_escaped_url(new_url, *action, **self.__dict__, uid=uid)
+        base = self._dataset_agnostic_path_template if ignore_dataset else self._path_template
+        return resource_path(path_template=base, uid=uid, action=action, query_terms=query_terms,
+                             **self.__dict__)
 
     @abstractmethod
     def build(self, data: dict):

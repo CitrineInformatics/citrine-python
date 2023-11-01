@@ -3,8 +3,9 @@ from deprecation import deprecated
 import inspect
 import os
 from pathlib import Path
-from typing import Any, Optional, Union
-from urllib.parse import urlparse, quote
+from typing import Any, Dict, Optional, Sequence, Union
+from urllib.parse import quote, urlencode, urlparse
+from uuid import UUID
 from warnings import warn
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -303,3 +304,29 @@ def format_escaped_url(
     return template.format(*[quote(str(x), safe='') for x in args],
                            **{k: quote(str(v), safe='') for (k, v) in kwargs.items()}
                            )
+
+
+def resource_path(*,
+                  path_template: str,
+                  uid: Optional[Union[UUID, str]] = None,
+                  action: Union[str, Sequence[str]] = [],
+                  query_terms: Dict[str, str] = {},
+                  **kwargs
+                  ) -> str:
+    """Construct a url from a base path and, optionally, id and/or action."""
+    base = urlparse(path_template)
+    path = base.path.split('/')
+
+    if uid is not None:
+        path.append("{uid}")
+
+    if isinstance(action, str):
+        action = [action]
+    else:
+        action = list(action)
+    path.extend(["{}"] * len(action))
+
+    query = urlencode(query_terms)
+    new_url = base._replace(path='/'.join(path), query=query).geturl()
+
+    return format_escaped_url(new_url, *action, **kwargs, uid=uid)
