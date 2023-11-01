@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.36.0 documentation</title>
+  <title>citrine.resources.ingestion module &mdash; Citrine Python 2.37.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.36.0
+                2.37.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -257,7 +257,7 @@ and delete objects in the dataset.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.ingestion.Ingestion.build_objects">
-<span class="sig-name descname"><span class="pre">build_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.build_objects" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">build_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_dataset_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#citrine.resources.ingestion.IngestionStatus" title="citrine.resources.ingestion.IngestionStatus"><span class="pre">citrine.resources.ingestion.IngestionStatus</span></a></span></span><a class="headerlink" href="#citrine.resources.ingestion.Ingestion.build_objects" title="Permalink to this definition"></a></dt>
 <dd><p>[ALPHA] Perform a complete ingestion operation, from start to finish.</p>
 <p>Initiates an ingestion operation, polls the server to determine when the job
 has finished, and returns the outcome.</p>
@@ -268,6 +268,10 @@ has finished, and returns the outcome.</p>
 <li><p><strong>delete_dataset_contents</strong> (<em>bool</em>) – Whether to delete objects prior to generating new gemd objects.  Default: False.</p></li>
 <li><p><strong>delete_templates</strong> (<em>bool</em>) – Whether to delete all objects and templates (as opposed to not deleting
 templates) when <cite>delete_dataset_contents</cite> is True.  Default: True</p></li>
+<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Amount of time to wait on the job (in seconds) before giving up. Note that
+this number has no effect on the underlying job itself, which can also time
+out server-side.</p></li>
+<li><p><strong>polling_delay</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – How long to delay between each polling retry attempt.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
