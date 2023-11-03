@@ -77,6 +77,13 @@ def test_citrine_team_session():
     assert citrine.session == citrine.teams.session
 
 
+def test_citrine_catalyst_session():
+    with requests_mock.Mocker() as m:
+        m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
+        citrine = Citrine(api_key='foo', host='citrine-testing.fake')
+    assert citrine.session == citrine.catalyst.session
+
+
 def test_citrine_user_agent():
     with requests_mock.Mocker() as m:
         m.post('https://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
