@@ -46,6 +46,11 @@ class User(Resource['User']):
         self.screen_name: str = screen_name
         self.is_admin: bool = is_admin
 
+    @property
+    def is_internal(self) -> bool:
+        """Indicates if this user is a Citrine employee."""
+        return self.email.split("@")[-1] == "citrine.io"
+
     def __str__(self):
         return '<User {!r}>'.format(self.screen_name)
 

@@ -58,7 +58,8 @@ class EngineResource(Resource[Self]):
         # Currently, name and description exists on both the data envelope and the config.
         data["instance"]["name"] = data["name"]
         data["instance"]["description"] = data["description"]
-        return data
+
+        return super()._post_dump(data)
 
 
 class VersionedEngineResource(EngineResource[Self], IncludeParentProperties[Self]):
