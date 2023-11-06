@@ -24,13 +24,13 @@ class CatalystResource:
         Parameters
         ----------
         query: str
-            the query or instruction to pass to the assistant
+            The query or instruction to pass to the assistant
         predictor: GraphPredictor
-            the predictor you wish for the assistant to consider or act on in your query
+            The predictor you wish for the assistant to consider or act on in your query
 
         Returns
         -------
-        the assistant response, containing details of the result of your query which vary by type.
+        The assistant response, containing details of the result of your query which vary by type.
 
         """
         user = UserCollection(self.session).me()
