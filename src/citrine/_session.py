@@ -88,7 +88,7 @@ class Session(requests.Session):
         self.mount('https://', adapter)
         self.mount('http://', adapter)
 
-        # Requests has it's own set of exceptions that do not inherit from the
+        # Requests has its own set of exceptions that do not inherit from the
         # built-in exceptions. The built-in ConnectionError handles 4 different
         # child exceptions: https://docs.python.org/3/library/exceptions.html#ConnectionError
         self.retry_errs = (ConnectionError,
