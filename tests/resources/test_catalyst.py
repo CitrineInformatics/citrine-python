@@ -386,7 +386,9 @@ def test_insights_internal_user(
     expected_calls = [
         FakeCall(method="GET", path="/users/me"),
         FakeCall(
-            method="POST", path="/catalyst/insights", json=expected_insights_request
+            method="POST",
+            path="/catalyst/documents/search",
+            json=expected_insights_request,
         ),
     ]
 
