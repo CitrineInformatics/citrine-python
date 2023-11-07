@@ -107,7 +107,7 @@ class AssistantResponseInputErrors(Serializable["AssistantResponseInputErrors"],
     """A failed model assistant invocation, due to malformed input.
 
     This should only happen if there's some field omitted by the client, or one of its values is
-    outside of acceptable ranges.
+    outside acceptable ranges.
     """
 
     errors = properties.List(properties.Object(AssistantResponseInputError), "data.errors")
