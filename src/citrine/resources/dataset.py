@@ -58,7 +58,7 @@ class Dataset(Resource['Dataset']):
     uid: UUID
         Unique uuid4 identifier of this dataset.
     deleted: bool
-        Flag indicating whether or not this dataset has been deleted.
+        Flag indicating whether this dataset has been deleted.
     created_by: UUID
         ID of the user who created the dataset.
     updated_by: UUID
