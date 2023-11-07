@@ -70,7 +70,7 @@ class AssistantResponseMessage(Serializable["AssistantResponseMessage"], Assista
     message = properties.String("data.message")
 
 
-class AssistantResponseConfig(Serializable["AssistantResponseConfig"]):
+class AssistantResponseConfig(Serializable["AssistantResponseConfig"], AssistantResponse):
     """A successful model assistant invocation, whose response includes a modified predictor."""
 
     predictor = properties.Object(GraphPredictor, "data.config")
@@ -107,7 +107,7 @@ class AssistantResponseInputErrors(Serializable["AssistantResponseInputErrors"],
     """A failed model assistant invocation, due to malformed input.
 
     This should only happen if there's some field omitted by the client, or one of its values is
-    outside of acceptable ranges.
+    outside acceptable ranges.
     """
 
     errors = properties.List(properties.Object(AssistantResponseInputError), "data.errors")
