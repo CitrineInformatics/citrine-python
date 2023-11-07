@@ -1,4 +1,5 @@
 from citrine.informatics.catalyst.assistant import AssistantResponse, AssistantRequest
+from citrine.informatics.catalyst.insights import InsightsResponse, InsightsRequest
 from citrine.informatics.predictors.graph_predictor import GraphPredictor
 from citrine.resources.user import UserCollection
 from citrine._session import Session
@@ -8,8 +9,8 @@ from citrine._utils.functions import resource_path
 class CatalystResource:
     """Encapsulates th ability to invoke Catalyst."""
 
-    _path_template: str = '/catalyst'
-    _api_version = 'v1'
+    _path_template: str = "/catalyst"
+    _api_version = "v1"
 
     def __init__(self, session: Session):
         self.session: Session = session
@@ -35,11 +36,39 @@ class CatalystResource:
         """
         user = UserCollection(self.session).me()
         if not user.is_internal:
-            raise NotImplementedError("I'm sorry, but this feature is not currently available for "
-                                      "your organization. Please watch the release notes for "
-                                      "updates.")
+            raise NotImplementedError(
+                "I'm sorry, but this feature is not currently available for "
+                "your organization. Please watch the release notes for "
+                "updates."
+            )
 
         payload = AssistantRequest(question=query, predictor=predictor).dump()
         path = self._get_path("assistant")
         data = self.session.post_resource(path, json=payload, version=self._api_version)
         return AssistantResponse.build(data)
+
+    def insights(self, query: str) -> InsightsResponse:
+        """Invoke the insights.
+
+        Parameters
+        ----------
+        query: str
+            The query or instruction to pass to the insights
+
+        Returns
+        -------
+        The insights response, containing details of the result of your query which vary by type.
+
+        """
+        user = UserCollection(self.session).me()
+        if not user.is_internal:
+            raise NotImplementedError(
+                "I'm sorry, but this feature is not currently available for "
+                "your organization. Please watch the release notes for "
+                "updates."
+            )
+
+        payload = InsightsRequest(question=query).dump()
+        path = self._get_path(["documents", "search"])
+        data = self.session.post_resource(path, json=payload, version=self._api_version)
+        return InsightsResponse.build(data)
