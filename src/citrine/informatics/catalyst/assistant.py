@@ -70,7 +70,7 @@ class AssistantResponseMessage(Serializable["AssistantResponseMessage"], Assista
     message = properties.String("data.message")
 
 
-class AssistantResponseConfig(Serializable["AssistantResponseConfig"]):
+class AssistantResponseConfig(Serializable["AssistantResponseConfig"], AssistantResponse):
     """A successful model assistant invocation, whose response includes a modified predictor."""
 
     predictor = properties.Object(GraphPredictor, "data.config")
