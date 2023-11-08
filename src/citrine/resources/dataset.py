@@ -53,6 +53,7 @@ class Dataset(Resource['Dataset']):
     unique_name: Optional[str]
         An optional, globally unique name that can be used to retrieve the dataset.
 
+    BLERG
     Attributes
     ----------
     uid: UUID
