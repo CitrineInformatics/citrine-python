@@ -10,6 +10,7 @@ from citrine.informatics.catalyst.assistant import (AssistantResponse,
                                                     AssistantResponseUnsupported,
                                                     AssistantResponseInputErrors,
                                                     AssistantResponseExecError)
+from citrine.informatics.catalyst.insights import InsightsResponse
 from citrine.informatics.predictors.graph_predictor import GraphPredictor
 from tests.utils.factories import UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -173,6 +174,15 @@ def assistant_predictor(assistant_predictor_data):
     return GraphPredictor.build(assistant_predictor_data)
 
 
+@pytest.fixture
+def insights_response_data():
+    return {
+        "response": "Here is the insight based on the literature.",
+        "relevant_documents": True,
+        "document_metadata": [{"source": "doi:10.1234/example", "source_type": "doi"}],
+    }
+
+
 def test_assistant_external_user(session, catalyst, external_user_data):
     session.set_responses(external_user_data)
 
@@ -299,3 +309,37 @@ def test_assistant_exec_error(session, catalyst, internal_user_data, assistant_e
     assert resp.error == assistant_exec_error_data["data"]["error"]
 
 
+def test_insights_internal_user(
+    session, catalyst, internal_user_data, insights_response_data
+):
+    session.set_responses(internal_user_data, insights_response_data)
+
+    query = "What are the applications of ABS plastic?"
+    resp = catalyst.insights(query)
+
+    expected_insights_request = {
+        "question": query,
+        "temperature": 0.0,
+        "language_model": "gpt-3.5-turbo",
+        "n_documents": 5,
+        "response_size": 100,
+    }
+    expected_calls = [
+        FakeCall(method="GET", path="/users/me"),
+        FakeCall(
+            method="POST",
+            path="/catalyst/documents/search",
+            json=expected_insights_request,
+        ),
+    ]
+
+    assert session.calls == expected_calls
+    assert isinstance(resp, InsightsResponse)
+    assert resp.dump()["response"] == "Here is the insight based on the literature."
+
+
+def test_insights_external_user(session, catalyst, external_user_data):
+    session.set_responses(external_user_data)
+
+    with pytest.raises(NotImplementedError):
+        catalyst.insights("What are the applications of ABS plastic?")
