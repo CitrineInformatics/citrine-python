@@ -34,7 +34,7 @@ class AdminCollection(Collection[ResourceType]):
             Use list() to force evaluation of all results into an in-memory list.
 
         """
-        fetcher = partial(self._fetch_page, additional_params={"as_admin": "true"})
+        fetcher = partial(self._fetch_page, additional_params={"as_admin": "true"} if as_admin else {})
         return self._paginator.paginate(
             page_fetcher=fetcher,
             collection_builder=self._build_collection_elements,
