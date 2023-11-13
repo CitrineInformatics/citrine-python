@@ -53,7 +53,7 @@ class Paginator(Generic[ResourceType]):
         """
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible. Also
         # making 'search_params' key of outermost dict for keyword expansion by page_fetcher func
-        search_params = {} if search_params is None else {'additional_params': search_params}
+        search_params = {} if search_params is None else {'search_params': search_params}
 
         first_entity = None
         page_idx = 1

@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Iterator
 
 from citrine._rest.collection import Collection, ResourceType
@@ -33,9 +34,8 @@ class AdminCollection(Collection[ResourceType]):
             Use list() to force evaluation of all results into an in-memory list.
 
         """
+        fetcher = partial(self._fetch_page, additional_params={"as_admin": "true"})
         return self._paginator.paginate(
-            page_fetcher=self._fetch_page,
+            page_fetcher=fetcher,
             collection_builder=self._build_collection_elements,
-            per_page=per_page,
-            search_params={"as_admin": "true"} if as_admin else {},
-        )
+            per_page=per_page)
