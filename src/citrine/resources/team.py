@@ -2,7 +2,7 @@
 from typing import Optional, Union, List
 from uuid import UUID
 
-from citrine._rest.collection import Collection
+from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
@@ -394,7 +394,7 @@ class Team(Resource['Team']):
                                resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
 
 
-class TeamCollection(Collection[Team]):
+class TeamCollection(AdminCollection[Team]):
     """
     Represents the collection of all teams as well as the resources belonging to it.
 
