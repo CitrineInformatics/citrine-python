@@ -1,0 +1,8 @@
+citrine.informatics.catalyst.assistant module
+=============================================
+
+.. automodule:: citrine.informatics.catalyst.assistant
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

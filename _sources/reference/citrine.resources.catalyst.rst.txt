@@ -1,0 +1,8 @@
+citrine.resources.catalyst module
+=================================
+
+.. automodule:: citrine.resources.catalyst
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

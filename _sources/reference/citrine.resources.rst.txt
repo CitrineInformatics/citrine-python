@@ -11,6 +11,7 @@ Submodules
    citrine.resources.attribute_templates
    citrine.resources.audit_info
    citrine.resources.branch
+   citrine.resources.catalyst
    citrine.resources.condition_template
    citrine.resources.data_concepts
    citrine.resources.data_objects

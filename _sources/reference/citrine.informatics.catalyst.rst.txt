@@ -1,0 +1,21 @@
+citrine.informatics.catalyst package
+====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   citrine.informatics.catalyst.assistant
+   citrine.informatics.catalyst.insights
+   citrine.informatics.catalyst.language_model
+
+Module contents
+---------------
+
+.. automodule:: citrine.informatics.catalyst
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

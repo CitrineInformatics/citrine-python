@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>citrine.informatics.catalyst.assistant module &mdash; Citrine Python 2.41.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.41.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>citrine.informatics.catalyst.assistant module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/citrine.informatics.catalyst.assistant.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-citrine.informatics.catalyst.assistant">
+<span id="citrine-informatics-catalyst-assistant-module"></span><h1>citrine.informatics.catalyst.assistant module<a class="headerlink" href="#module-citrine.informatics.catalyst.assistant" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><span class="pre">citrine.informatics.predictors.graph_predictor.GraphPredictor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.catalyst.language_model.html#citrine.informatics.catalyst.language_model.LanguageModelChoice" title="citrine.informatics.catalyst.language_model.LanguageModelChoice"><span class="pre">citrine.informatics.catalyst.language_model.LanguageModelChoice</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">LanguageModelChoice.GPT_4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantRequest" title="citrine.informatics.catalyst.assistant.AssistantRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantRequest</span></code></a>]</p>
+<p>A query to the model assistant.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.language_model">
+<span class="sig-name descname"><span class="pre">language_model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gpt-4'</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.language_model" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.predictor">
+<span class="sig-name descname"><span class="pre">predictor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.predictor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.question">
+<span class="sig-name descname"><span class="pre">question</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.question" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantRequest.temperature">
+<span class="sig-name descname"><span class="pre">temperature</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantRequest.temperature" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponse</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponse</span></code></a>]</p>
+<p>The parent type for all Model Assistant responses.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponse.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.polymorphic_serializable.SelfType</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponse.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build the underlying type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponse.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponse.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseConfig</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig" title="citrine.informatics.catalyst.assistant.AssistantResponseConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseConfig</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A successful model assistant invocation, whose response includes a modified predictor.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseConfig.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseConfig.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseConfig.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseConfig.predictor">
+<span class="sig-name descname"><span class="pre">predictor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseConfig.predictor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseExecError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseExecError</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError" title="citrine.informatics.catalyst.assistant.AssistantResponseExecError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseExecError</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A failed model assistant invocation, due to some internal issue.</p>
+<p>This most likely indicates the assistant got some unexpected output when asking its query. It
+indicates an internal error, not a problem with the client invocation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseExecError.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseExecError.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseExecError.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseExecError.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseExecError.error" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseInputError</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError" title="citrine.informatics.catalyst.assistant.AssistantResponseInputError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseInputError</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A single input failure.</p>
+<p>Contains the error message, and the field it applies to.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError.error" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputError.field">
+<span class="sig-name descname"><span class="pre">field</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputError.field" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseInputErrors</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors" title="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseInputErrors</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A failed model assistant invocation, due to malformed input.</p>
+<p>This should only happen if there’s some field omitted by the client, or one of its values is
+outside acceptable ranges.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.errors">
+<span class="sig-name descname"><span class="pre">errors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseInputErrors.errors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseMessage</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage" title="citrine.informatics.catalyst.assistant.AssistantResponseMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseMessage</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A successful model assistant invocation, whose response is only text.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseMessage.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseMessage.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseMessage.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseMessage.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseMessage.message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.catalyst.assistant.</span></span><span class="sig-name descname"><span class="pre">AssistantResponseUnsupported</span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported" title="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssistantResponseUnsupported</span></code></a>], <a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></code></a></p>
+<p>A successful model assistant invocation, but for an unsupported query.</p>
+<p>This will cover any user query which the model assistant could not map to a functionality it
+supports. For example, asking a generic question, or something unrelated to materials.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">citrine._serialization.serializable.Self</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.build" title="Permalink to this definition"></a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.dump" title="Permalink to this definition"></a></dt>
+<dd><p>Dump this instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.get_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.catalyst.assistant.AssistantResponse" title="citrine.informatics.catalyst.assistant.AssistantResponse"><span class="pre">citrine.informatics.catalyst.assistant.AssistantResponse</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.catalyst.assistant.AssistantResponseUnsupported.message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Citrine Informatics.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

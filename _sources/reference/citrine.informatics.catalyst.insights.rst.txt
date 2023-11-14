@@ -1,0 +1,8 @@
+citrine.informatics.catalyst.insights module
+============================================
+
+.. automodule:: citrine.informatics.catalyst.insights
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
