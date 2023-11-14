@@ -1,7 +1,7 @@
 """Resources that represent both individual and collections of users."""
 from typing import Optional
 
-from citrine._rest.collection import Collection
+from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
@@ -59,7 +59,7 @@ class User(Resource['User']):
         raise NotImplementedError("Get Not Implemented in Citrine Platform")
 
 
-class UserCollection(Collection[User]):
+class UserCollection(AdminCollection[User]):
     """Represents the collection of all users."""
 
     _path_template = '/users'

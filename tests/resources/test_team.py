@@ -148,6 +148,25 @@ def test_list_teams(collection, session):
     assert 5 == len(teams)
 
 
+def test_list_teams_as_admin(collection, session):
+    # Given
+    teams_data = TeamDataFactory.create_batch(5)
+    session.set_response({"teams": teams_data})
+
+    # When
+    teams = list(collection.list(as_admin=True))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method="GET",
+        path="/teams",
+        params={"per_page": 100, "page": 1, "as_admin": "true"},
+    )
+    assert expected_call == session.last_call
+    assert 5 == len(teams)
+
+
 def test_update_team(collection: TeamCollection, team, session):
     team.name = "updated name"
     session.set_response({'team': team.dump()})
