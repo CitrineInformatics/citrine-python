@@ -98,6 +98,26 @@ def test_list_users(collection, session):
     assert len(users) == 5
 
 
+def test_list_users_as_admin(collection, session):
+    # Given
+    user_data = UserDataFactory.create_batch(5)
+    session.set_response({'users': user_data})
+
+    # When
+    users = list(collection.list(as_admin=True))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path='/users',
+        params={'per_page': 100, 'page': 1, 'as_admin': 'true'}
+    )
+
+    assert expected_call == session.last_call
+    assert len(users) == 5
+
+
 def test_get_users(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
