@@ -1,4 +1,4 @@
-gemd==1.15.0
+gemd==1.16.0
 requests==2.31.0
 pyjwt==2.4.0
 arrow==0.15.4
@@ -10,3 +10,4 @@ botocore==1.20.95
 deprecation==2.1.0
 urllib3==1.26.18
 tqdm==4.62.3
+pint==0.18

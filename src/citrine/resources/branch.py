@@ -66,7 +66,7 @@ class Branch(Resource['Branch']):
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot retrieve datasource without project reference!')
         erds = ExperimentDataSourceCollection(project_id=self.project_id, session=self.session)
-        branch_erds_iter = erds.list(root_id=self.uid, version=LATEST_VER)
+        branch_erds_iter = erds.list(branch_version_id=self.uid, version=LATEST_VER)
         return next(branch_erds_iter, None)
 
     def _post_dump(self, data: dict) -> dict:
@@ -174,7 +174,8 @@ class BranchCollection(Collection[Branch]):
                 raise ValueError("Please provide exactly one: the version ID or root ID.")
             return self.get_by_version_id(version_id=uid)
         elif root_id:
-            params = {"root": str(root_id), "version": version or LATEST_VER}
+            version = version or LATEST_VER
+            params = {"root": str(root_id), "version": version}
             branch = next(self._list_with_params(per_page=1, **params), None)
             if branch:
                 return branch
@@ -279,7 +280,7 @@ class BranchCollection(Collection[Branch]):
                 uid: Optional[Union[UUID, str]] = None,
                 *,
                 root_id: Optional[Union[UUID, str]] = None,
-                version: Optional[int] = None):
+                version: Optional[Union[int, str]] = LATEST_VER):
         """
         Archive a branch.
 
@@ -291,8 +292,9 @@ class BranchCollection(Collection[Branch]):
         root_id: Union[UUID, str], optional
             Unique ID of the branch root
 
-        version: int, optional
-            The version of the branch. If provided, must be a positive integer.
+        version: Union[int, str], optional
+            The version of the branch. If provided, must either be a positive integer, or "latest".
+            Defaults to "latest".
 
         """
         if uid:
@@ -300,8 +302,7 @@ class BranchCollection(Collection[Branch]):
                           "Please use its root ID and version number.",
                           DeprecationWarning)
         elif root_id:
-            if not version or isinstance(version, str):
-                raise ValueError("Must provide a version number to archive a branch.")
+            version = version or LATEST_VER
             # The backend API at present expects a branch version ID, so we must look it up.
             uid = self.get(root_id=root_id, version=version).uid
         else:
@@ -327,8 +328,9 @@ class BranchCollection(Collection[Branch]):
         root_id: Union[UUID, str], optional
             Unique ID of the branch root
 
-        version: int, optional
-            The version of the branch. If provided, must be a positive integer.
+        version: Union[int, str], optional
+            The version of the branch. If provided, must either be a positive integer, or "latest".
+            Defaults to "latest".
 
         """
         if uid:
@@ -336,8 +338,7 @@ class BranchCollection(Collection[Branch]):
                           "Please use its root ID and version number.",
                           DeprecationWarning)
         elif root_id:
-            if not version or isinstance(version, str):
-                raise ValueError("Must provide a version number to restore a branch.")
+            version = version or LATEST_VER
             # The backend API at present expects a branch version ID, so we must look it up.
             uid = self.get(root_id=root_id, version=version).uid
         else:
@@ -351,7 +352,7 @@ class BranchCollection(Collection[Branch]):
                     branch: Optional[Union[UUID, str, Branch]] = None,
                     *,
                     root_id: Optional[Union[UUID, str]] = None,
-                    version: Optional[int] = None,
+                    version: Optional[Union[int, str]] = LATEST_VER,
                     use_existing: bool = True,
                     retrain_models: bool = False) -> Optional[Branch]:
         """
@@ -368,8 +369,9 @@ class BranchCollection(Collection[Branch]):
         root_id: Union[UUID, str], optional
             Unique ID of the branch root
 
-        version: int, optional
-            The version of the branch. If provided, must be a positive integer.
+        version: Union[int, str], optional
+            The version of the branch. If provided, must either be a positive integer, or "latest".
+            Defaults to "latest".
 
         use_existing: bool
             If true the workflows in this branch will use existing predictors that are using
@@ -403,6 +405,7 @@ class BranchCollection(Collection[Branch]):
         elif not root_id:
             raise ValueError("Please provide exactly one: the version ID or root ID.")
 
+        version = version or LATEST_VER
         version_updates = self.data_updates(root_id=root_id, version=version)
         # If no new data sources, then exit, nothing to do
         if len(version_updates.data_updates) == 0:
@@ -423,7 +426,7 @@ class BranchCollection(Collection[Branch]):
                      uid: Optional[Union[UUID, str]] = None,
                      *,
                      root_id: Optional[Union[UUID, str]] = None,
-                     version: Optional[int] = None) -> BranchDataUpdate:
+                     version: Optional[Union[int, str]] = LATEST_VER) -> BranchDataUpdate:
         """
         Get data updates for a branch.
 
@@ -435,8 +438,9 @@ class BranchCollection(Collection[Branch]):
         root_id: Union[UUID, str], optional
             Unique ID of the branch root
 
-        version: int, optional
-            The version of the branch. If provided, must be a positive integer.
+        version: Union[int, str], optional
+            The version of the branch. If provided, must either be a positive integer, or "latest".
+            Defaults to "latest".
 
         Returns
         -------
@@ -451,8 +455,7 @@ class BranchCollection(Collection[Branch]):
             if root_id:
                 raise ValueError("Please provide exactly one: the version ID or root ID.")
         elif root_id:
-            if version is None or isinstance(version, str):
-                raise ValueError("Must provide a version number to retrieve data updates.")
+            version = version or LATEST_VER
             # The backend API at present expects a branch version ID, so we must look it up.
             uid = self.get(root_id=root_id, version=version).uid
         else:

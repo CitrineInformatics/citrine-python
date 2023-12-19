@@ -959,5 +959,6 @@ def design_workflow_dict(generic_entity):
         "design_space_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
         "predictor_version": random.randint(1, 10),
+        "branch_id": str(uuid.uuid4()),
     })
     return ret

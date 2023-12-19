@@ -43,7 +43,7 @@ class DataVersionUpdateFactory(factory.DictFactory):
 
 class PredictorRefFactory(factory.DictFactory):
     predictor_id = factory.Faker('uuid4')
-    predictor_version = randrange(10)
+    predictor_version = randrange(1, 10)
 
 
 class BranchDataUpdateFactory(factory.DictFactory):
@@ -63,7 +63,7 @@ class BranchDataFieldFactory(factory.DictFactory):
 class BranchMetadataFieldFactory(factory.DictFactory):
     root_id = factory.Faker('uuid4')
     archived = factory.Faker('boolean')
-    version = randrange(10)
+    version = randrange(1, 10)
     created = None
     updated = None
 
@@ -72,6 +72,24 @@ class BranchDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     data = factory.SubFactory(BranchDataFieldFactory)
     metadata = factory.SubFactory(BranchMetadataFieldFactory)
+
+
+class BranchVersionRefFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    version = randrange(1, 10)
+
+
+class BranchRootMetadataFieldFactory(factory.DictFactory):
+    latest_branch_version = factory.SubFactory(BranchVersionRefFactory)
+    archived = factory.Faker('boolean')
+    created = None
+    updated = None
+
+
+class BranchRootDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    data = factory.SubFactory(BranchDataFieldFactory)
+    metadata = factory.SubFactory(BranchRootMetadataFieldFactory)
 
 
 class UserDataFactory(factory.DictFactory):
@@ -84,7 +102,7 @@ class UserDataFactory(factory.DictFactory):
 
 class GemTableDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
-    version = randrange(10)
+    version = randrange(1, 10)
     signed_download_url = factory.Faker('uri')
 
 
@@ -109,7 +127,7 @@ class TableConfigJSONDataFactory(factory.DictFactory):
 class TableConfigVersionJSONDataFactory(factory.DictFactory):
     ara_definition = factory.SubFactory(TableConfigJSONDataFactory)
     id = factory.Faker('uuid4')
-    version_number = randrange(10)
+    version_number = randrange(1, 10)
 
 
 class TableConfigResponseDataFactory(factory.DictFactory):
@@ -131,7 +149,7 @@ class ListTableConfigResponseDataFactory(factory.DictFactory):
 class TableDataSourceDataFactory(factory.DictFactory):
     type = "hosted_table_data_source"
     table_id = factory.Faker("uuid4")
-    table_version = randrange(10)
+    table_version = randrange(1, 10)
 
 
 class UserTimestampDataFactory(factory.DictFactory):

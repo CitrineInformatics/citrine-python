@@ -91,25 +91,49 @@ def test_build(collection, erds_dict):
 
 
 def test_list(session, collection, erds_base_path):
+    version_id = uuid.uuid4()
 
+    session.set_response({"response": []})
+
+    list(collection.list())
+    list(collection.list(branch_version_id=version_id))
+    list(collection.list(version=4))
+    list(collection.list(version="latest"))
+    list(collection.list(branch_version_id=version_id, version=12))
+    list(collection.list(branch_version_id=version_id, version="latest"))
+
+    assert session.calls == [
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(version_id), 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": 4, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": "latest", 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(version_id), "version": 12, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(version_id), "version": "latest", 'page': 1})
+    ]
+
+
+def test_list_deprecated(session, collection, erds_base_path):
     branch_id = uuid.uuid4()
 
     session.set_response({"response": []})
     
     list(collection.list())
-    list(collection.list(branch_id=branch_id))
+    with pytest.deprecated_call():
+        list(collection.list(branch_id=branch_id))
     list(collection.list(version=4))
     list(collection.list(version="latest"))
-    list(collection.list(branch_id=branch_id, version=12))
-    list(collection.list(branch_id=branch_id, version="latest"))
+    with pytest.deprecated_call():
+        list(collection.list(branch_id=branch_id, version=12))
+    with pytest.deprecated_call():
+        list(collection.list(branch_id=branch_id, version="latest"))
 
     assert session.calls == [
         FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), 'page': 1}),
         FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": 4, 'page': 1}),
         FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": "latest", 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": 12, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": branch_id, "version": "latest", 'page': 1})
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), "version": 12, 'page': 1}),
+        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), "version": "latest", 'page': 1})
     ]
 
 

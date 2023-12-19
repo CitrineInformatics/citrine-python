@@ -211,8 +211,9 @@ def test_design_workflows_get_project_id(project):
     assert project.uid == project.design_workflows.project_id
 
 
-def test_design_workflows_get_branch_id(project):
-    assert None is project.design_workflows.branch_id
+def test_design_workflows_get_branch(project):
+    assert None is project.design_workflows.branch_root_id
+    assert None is project.design_workflows.branch_version
 
 
 def test_generative_design_executions_get_project_id(project):

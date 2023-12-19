@@ -1,43 +1,57 @@
 """Tests for citrine.informatics.workflows."""
 import json
-
-import mock
 from uuid import uuid4, UUID
 
+import mock
 import pytest
 
+from citrine._session import Session
 from citrine.informatics.design_candidate import DesignMaterial, DesignVariable, DesignCandidate, ChemicalFormula, \
     MeanAndStd, TopCategories, Mixture, MolecularStructure
 from citrine.informatics.executions import DesignExecution
 from citrine.informatics.predict_request import PredictRequest
-from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine._session import Session
 from citrine.informatics.workflows import DesignWorkflow, Workflow
 from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_workflow import DesignWorkflowCollection
+
+from tests.utils.factories import BranchDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture
-def collection() -> DesignWorkflowCollection:
+def branch_data():
+    return BranchDataFactory()
+
+@pytest.fixture
+def session() -> FakeSession:
+    return FakeSession()
+
+@pytest.fixture
+def collection(session, branch_data) -> DesignWorkflowCollection:
+    session.set_response(branch_data)
+
     return DesignWorkflowCollection(
         project_id=uuid4(),
-        session=FakeSession(),
+        session=session,
     )
 
 
 @pytest.fixture
-def execution_collection() -> DesignExecutionCollection:
+def execution_collection(session) -> DesignExecutionCollection:
     return DesignExecutionCollection(
         project_id=uuid4(),
-        session=FakeSession(),
+        session=session,
     )
 
 
 PROJECT_ID = uuid4()
 
+
 @pytest.fixture
 def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
-    return collection.build(design_workflow_dict)
+    workflow = collection.build(design_workflow_dict)
+    collection.session.calls.clear()
+    return workflow
 
 @pytest.fixture
 def design_execution(execution_collection, design_execution_dict) -> DesignExecution:
