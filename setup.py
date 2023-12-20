@@ -24,21 +24,21 @@ setup(name='citrine',
       install_requires=[
           "requests>=2.31.0,<3",
           "pyjwt>=2,<3",
-          "arrow>=0.15.4,<2",
-          "gemd>=1.15.0,<2",
-          "boto3>=1.17.93,<2",
-          "botocore>=1.20.95,<2",
+          "arrow>=1.0.0,<2",
+          "gemd>=1.16.7,<2",
+          "boto3>=1.34.12,<2",
           "deprecation>=2.1.0,<3",
           "urllib3>=1.26.18,<3",
-          "tqdm>=4.62.3,<5"
+          "tqdm>=4.27.0,<5"
       ],
       extras_require={
           "../tests": [
-              "factory-boy>=2.12.0,<4",
-              "mock>=3.0.5,<5",
-              "pytest>=6.2.5,<8",
-              "pytz>=2020.1",
-              "requests-mock>=1.7.0,<2",
+              "factory-boy>=3.3.0,<4",
+              "mock>=5.1.0,<6",
+              "pandas>=2.0.3,<3",
+              "pytest>=7.4.4,<8",
+              "pytz>=2023.3.post1",
+              "requests-mock>=1.11.0,<2",
           ]
       },
       classifiers=[
