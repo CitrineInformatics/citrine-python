@@ -84,6 +84,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                 details="Please set the branch_root_id and branch_version instead.")
     def branch_id(self, value):
         self._branch_id = value
+        self._branch_root_id = None
+        self._branch_version = None
 
     @property
     def branch_root_id(self):
