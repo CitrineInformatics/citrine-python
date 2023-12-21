@@ -3,25 +3,10 @@ from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._utils.functions import MigratedClassMeta
 from citrine._session import Session
 from citrine.informatics import executions
 from citrine.informatics.scores import Score
 from citrine.resources.response import Response
-
-
-class DesignExecution(executions.DesignExecution,
-                      deprecated_in="2.22.1",
-                      removed_in="3.0.0",
-                      metaclass=MigratedClassMeta):
-    """The execution of a DesignWorkflow.
-
-    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
-    Design executions also have a ``status_description`` field with more information.
-
-    DesignExecution should be imported from citrine.informatics.executions.
-
-    """
 
 
 class DesignExecutionCollection(Collection["DesignExecution"]):

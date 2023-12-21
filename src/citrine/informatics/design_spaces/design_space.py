@@ -10,8 +10,6 @@ from citrine._session import Session
 from citrine.resources.sample_design_space_execution import \
     SampleDesignSpaceExecutionCollection
 
-from deprecation import deprecated
-
 
 __all__ = ['DesignSpace']
 
@@ -22,18 +20,6 @@ class DesignSpace(PolymorphicSerializable['DesignSpace'], AsynchronousObject):
     Abstract type that returns the proper type given a serialized dict.
 
     """
-
-    @property
-    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0",
-                details="Please use `isinstance` or `issubclass` instead.")
-    def module_type(self):
-        """The type of module."""
-        return "DESIGN_SPACE"
-
-    @module_type.setter
-    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0")
-    def module_type(self, value):
-        pass
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""

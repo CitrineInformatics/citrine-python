@@ -7,8 +7,8 @@ from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
-    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module, migrate_deprecated_argument, \
-    format_escaped_url, MigratedClassMeta, generate_shared_meta
+    rewrite_s3_links_locally, write_file_locally, migrate_deprecated_argument, format_escaped_url, \
+    MigratedClassMeta, generate_shared_meta
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
@@ -163,29 +163,6 @@ def test_recursive_subtype_recovery():
         pass
 
     assert not issubclass(dict, Simple)
-
-
-def test_shadow_classes_in_module():
-
-    # Given
-    from tests._util import source_mod, target_mod
-    assert getattr(target_mod, 'ExampleClass', None) == None
-
-    # When
-    with pytest.deprecated_call():
-        shadow_classes_in_module(source_mod, target_mod)
-
-    # Then (ensure the class is copied over)
-    copied_class = getattr(target_mod, 'ExampleClass', None) # Do this vs a direct ref so IJ doesn't warn us
-    assert copied_class == source_mod.ExampleClass
-
-    # Python also considers the classes equivalent
-    assert issubclass(copied_class, source_mod.ExampleClass)
-    assert issubclass(source_mod.ExampleClass, copied_class)
-
-    # Reset target_mod status
-    for attr in dir(target_mod):
-        delattr(target_mod, attr)
 
 
 def test_migrate_deprecated_argument():

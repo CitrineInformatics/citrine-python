@@ -115,31 +115,6 @@ def test_list(session, collection, erds_base_path):
     ]
 
 
-def test_list_deprecated(session, collection, erds_base_path):
-    branch_id = uuid.uuid4()
-
-    session.set_response({"response": []})
-    
-    list(collection.list())
-    with pytest.deprecated_call():
-        list(collection.list(branch_id=branch_id))
-    list(collection.list(version=4))
-    list(collection.list(version=LATEST_VER))
-    with pytest.deprecated_call():
-        list(collection.list(branch_id=branch_id, version=12))
-    with pytest.deprecated_call():
-        list(collection.list(branch_id=branch_id, version=LATEST_VER))
-
-    assert session.calls == [
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": 4, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "version": LATEST_VER, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), "version": 12, 'page': 1}),
-        FakeCall(method='GET', path=erds_base_path, params={'per_page': 100, "branch": str(branch_id), "version": LATEST_VER, 'page': 1})
-    ]
-
-
 def test_read_and_retrieve(session, collection, erds_dict, erds_base_path):
     erds_id = uuid.uuid4()
     erds_path = f"{erds_base_path}/{erds_id}"

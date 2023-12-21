@@ -102,14 +102,8 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._basis_ingredients
 
     @basis_ingredients.setter
-    def basis_ingredients(self, value: Union[Set[str], Mapping[str, float]]):
+    def basis_ingredients(self, value: Set[str]):
         """Set the ingredients in the denominator of the ratio."""
-        if isinstance(value, dict):
-            warnings.warn("As of version 2.13.0, multipliers for all basis ingredients are "
-                          "ignored, so basis_ingredients should be a list of ingredient names.",
-                          DeprecationWarning)
-            value = set(value.keys())
-
         self.basis_ingredient_names = value
 
     @property
@@ -131,13 +125,8 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._basis_labels
 
     @basis_labels.setter
-    def basis_labels(self, value: Union[Set[str], Mapping[str, float]]):
+    def basis_labels(self, value: Set[str]):
         """Set the labels in the denominator of the ratio."""
-        if isinstance(value, dict):
-            warnings.warn("As of version 2.13.0, multipliers for all basis labels are ignored, so "
-                          "basis_labels should be a list of label names.", DeprecationWarning)
-            value = set(value.keys())
-
         self.basis_label_names = value
 
     @property

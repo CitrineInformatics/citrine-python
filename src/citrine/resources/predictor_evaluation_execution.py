@@ -6,21 +6,9 @@ from uuid import UUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import PredictorRef
 from citrine._session import Session
-from citrine._utils.functions import MigratedClassMeta, format_escaped_url
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.executions import predictor_evaluation_execution
 from citrine.resources.response import Response
-
-
-class PredictorEvaluationExecution(predictor_evaluation_execution.PredictorEvaluationExecution,
-                                   deprecated_in="2.22.1",
-                                   removed_in="3.0.0",
-                                   metaclass=MigratedClassMeta):
-    """The execution of a PredictorEvaluationWorkflow.
-
-    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
-    Predictor evaluation executions also have a ``status_description`` field with more information.
-
-    """
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):

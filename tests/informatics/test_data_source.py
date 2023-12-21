@@ -39,12 +39,3 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         DataSource.build({"type": "foo"})
-
-
-def test_deprecated_formulation_option():
-    with pytest.warns(DeprecationWarning):
-        GemTableDataSource(
-            table_id=uuid.uuid4(),
-            table_version=1,
-            formulation_descriptor=FormulationDescriptor.hierarchical()
-        )

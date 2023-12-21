@@ -1,7 +1,7 @@
 from typing import List, Union, Optional
 from uuid import UUID
 
-from citrine._rest.engine_resource import ModuleEngineResource
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.dimensions import Dimension
@@ -9,7 +9,7 @@ from citrine.informatics.dimensions import Dimension
 __all__ = ['ProductDesignSpace']
 
 
-class ProductDesignSpace(ModuleEngineResource['ProductDesignSpace'], DesignSpace):
+class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
     """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.

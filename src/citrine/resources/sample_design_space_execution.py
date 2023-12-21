@@ -59,9 +59,6 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
