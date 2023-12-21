@@ -17,6 +17,9 @@ from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 logger = getLogger(__name__)
 
 
+LATEST_VER = "latest"
+
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
@@ -223,7 +226,7 @@ def test_archive_version_omitted(session, collection, branch_path):
     root_id = branch_data['metadata']['root_id']
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': 'latest'
+        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': LATEST_VER
     }
     session.set_responses(branch_data_get_resp, branch_data)
 
@@ -270,7 +273,7 @@ def test_restore_version_omitted(session, collection, branch_path):
     root_id = branch_data['metadata']['root_id']
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': 'latest'
+        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': LATEST_VER
     }
     session.set_responses(branch_data_get_resp, branch_data)
 
@@ -520,7 +523,7 @@ def test_experiment_datasource(session, collection):
     # When / Then
     assert branch.experiment_datasource is not None
     assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': 'latest', 'per_page': 100, 'page': 1})
+        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
     ]
 
 
@@ -533,7 +536,7 @@ def test_no_experiment_datasource(session, collection):
     # When / Then
     assert branch.experiment_datasource is None
     assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': 'latest', 'per_page': 100, 'page': 1})
+        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
     ]
 
 
@@ -559,7 +562,7 @@ def test_get_by_root_id_deprecated(session, collection, branch_path):
     assert session.calls == [FakeCall(
         method='GET',
         path=branch_path,
-        params={'page': 1, 'per_page': 1, 'root': str(root_id), 'version': 'latest'}
+        params={'page': 1, 'per_page': 1, 'root': str(root_id), 'version': LATEST_VER}
     )]
 
 
@@ -576,7 +579,7 @@ def test_get_by_root_id_not_found_deprecated(session, collection, branch_path):
     # Then
     assert str(root_id) in str(exc)
     assert "branch root" in str(exc).lower()
-    assert "latest" in str(exc).lower()
+    assert LATEST_VER in str(exc).lower()
 
 
 def test_branch_data_updates_normal_deprecated(session, collection, branch_path):

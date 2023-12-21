@@ -24,6 +24,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                  project_id: UUID,
                  session: Session,
                  branch_id: Optional[UUID] = None,
+                 *,
                  branch_root_id: Optional[UUID] = None,
                  branch_version: Optional[int] = None):
         self.project_id: UUID = project_id
