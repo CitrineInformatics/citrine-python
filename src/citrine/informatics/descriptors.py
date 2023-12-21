@@ -1,7 +1,6 @@
 """Tools for working with Descriptors."""
 from typing import Type, Set, Union
 
-from deprecation import deprecated
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
@@ -153,16 +152,6 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
 
     def __repr__(self):
         return "IntegerDescriptor({}, {}, {})".format(self.key, self.lower_bound, self.upper_bound)
-
-    @property
-    @deprecated(
-        deprecated_in="2.27.0",
-        removed_in="3.0.0",
-        details="Integer descriptors are always dimensionless."
-    )
-    def units(self) -> str:
-        """Return 'dimensionless' for the units of an integer descriptor."""
-        return "dimensionless"
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):

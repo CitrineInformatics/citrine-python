@@ -1,11 +1,10 @@
 """A collection of FileLink objects."""
-from deprecation import deprecated
 import mimetypes
 import os
 from pathlib import Path
 from logging import getLogger
 from tempfile import TemporaryDirectory
-from typing import Optional, Tuple, Union, List, Dict, Iterable, Sequence
+from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
 
@@ -21,7 +20,6 @@ from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally
 
-from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -67,18 +65,6 @@ class _Uploader:
         self.s3_addressing_style = 'auto'
 
 
-class FileProcessingType(BaseEnumeration):
-    """The supported File Processing Types."""
-
-    VALIDATE_CSV = "VALIDATE_CSV"
-
-
-class FileProcessingData:
-    """The base class of all File Processing related data implementations."""
-
-    pass
-
-
 class CsvColumnInfo(Serializable):
     """The info for a CSV Column, contains the name, recommended and exact bounds."""
 
@@ -94,35 +80,6 @@ class CsvColumnInfo(Serializable):
         self.name = name
         self.bounds = bounds
         self.exact_range_bounds = exact_range_bounds
-
-
-class CsvValidationData(FileProcessingData, Serializable):
-    """The resulting data from the processed CSV file."""
-
-    columns = properties.Optional(properties.List(properties.Object(CsvColumnInfo)),
-                                  'columns')
-    """:Optional[List[CsvColumnInfo]]: all of the columns in the CSV"""
-    record_count = properties.Integer('record_count')
-    """:int: the number of rows in the CSV"""
-
-    def __init__(self, columns: List[CsvColumnInfo],
-                 record_count: int):  # pragma: no cover
-        self.columns = columns
-        self.record_count = record_count
-
-
-class FileProcessingResult:
-    """
-    The results of a successful file processing operation.
-
-    The type of the actual data depends on the specific processing type.
-    """
-
-    def __init__(self,
-                 processing_type: FileProcessingType,
-                 data: Union[Dict, FileProcessingData]):
-        self.processing_type = processing_type
-        self.data = data
 
 
 class FileLinkMeta(DictSerializableMeta):
@@ -700,147 +657,6 @@ class FileCollection(Collection[FileLink]):
 
         download_response = requests.get(final_url)
         return download_response.content
-
-    @deprecated(deprecated_in="2.4.0",
-                removed_in="3.0.0",
-                details="The process file protocol is deprecated "
-                        "in favor of ingest()")
-    def process(self, *, file_link: Union[FileLink, str, UUID],
-                processing_type: FileProcessingType,
-                wait_for_response: bool = True,
-                timeout: float = 2 * 60,
-                polling_delay: float = 1.0) -> Union[JobSubmissionResponse,
-                                                     Dict[FileProcessingType,
-                                                          FileProcessingResult]]:
-        """
-        Start a File Processing async job, returning a pollable job response.
-
-        Parameters
-        ----------
-        file_link: FileLink, str, or UUID
-            The file to process.
-        processing_type: FileProcessingType
-            The type of file processing to invoke.
-        wait_for_response: bool
-            Whether to wait for a result, vs. just return a job handle.  Default: True
-        timeout: float
-            How long to poll for the result before giving up. This is expressed in
-            (fractional) seconds.  Default: 120 seconds.
-        polling_delay: float
-            How long to delay between each polling retry attempt.  Default: 1 second.
-
-        Returns
-        -------
-        JobSubmissionResponse
-            A JobSubmissionResponse which can be used to poll for the result.
-
-        """
-        if self._is_external_url(file_link.url):
-            raise ValueError(f"Only on-platform resources can be processed. "
-                             f"Passed URL {file_link.url}.")
-        file_link = self._resolve_file_link(file_link)
-
-        params = {"processing_type": processing_type.value}
-        response = self.session.put_resource(
-            self._get_path_from_file_link(file_link, action="processed"),
-            json={},
-            params=params
-        )
-        job = JobSubmissionResponse.build(response)
-        logger.info('Build job submitted with job ID {}.'.format(job.job_id))
-
-        if wait_for_response:
-            return self.poll_file_processing_job(file_link=file_link,
-                                                 processing_type=processing_type,
-                                                 job_id=job.job_id, timeout=timeout,
-                                                 polling_delay=polling_delay)
-        else:
-            return job
-
-    @deprecated(deprecated_in="2.4.0",
-                removed_in="3.0.0",
-                details="The process file protocol is deprecated "
-                        "in favor of ingest()")
-    def poll_file_processing_job(self, *, file_link: FileLink,
-                                 processing_type: FileProcessingType,
-                                 job_id: UUID,
-                                 timeout: float = 2 * 60,
-                                 polling_delay: float = 1.0) -> Dict[FileProcessingType,
-                                                                     FileProcessingResult]:
-        """
-        Poll for the result of the file processing task.
-
-        Parameters
-        ----------
-        file_link: FileLink
-            The file to process.
-        processing_type: FileProcessingType
-            The processing algorithm to apply.
-        job_id: UUID
-           The background job ID to poll for.
-        timeout:
-            How long to poll for the result before giving up. This is expressed in
-            (fractional) seconds.
-        polling_delay:
-            How long to delay between each polling retry attempt.
-
-        Returns
-        -------
-        None
-           This method will raise an appropriate exception if the job failed, else
-           it will return None to indicate the job was successful.
-
-        """
-        # Poll for job completion - this will raise an error if the job failed
-        _poll_for_job_completion(self.session, self.project_id, job_id, timeout=timeout,
-                                 polling_delay=polling_delay)
-
-        return self.file_processing_result(file_link=file_link, processing_types=[processing_type])
-
-    @deprecated(deprecated_in="2.4.0",
-                removed_in="3.0.0",
-                details="The process file protocol is deprecated "
-                        "in favor of ingest()")
-    def file_processing_result(self, *,
-                               file_link: FileLink,
-                               processing_types: List[FileProcessingType]) -> \
-            Dict[FileProcessingType, FileProcessingResult]:
-        """
-        Return the file processing result for the given file link and processing type.
-
-        Parameters
-        ----------
-        file_link: FileLink
-            The file to process
-        processing_types: FileProcessingType
-            A list of the particular file processing types to retrieve
-
-        Returns
-        -------
-        Map[FileProcessingType, FileProcessingResult]
-            The file processing results, mapped by processing type.
-
-        """
-        processed_results_path = self._get_path_from_file_link(file_link, action="processed")
-
-        params = []
-        for proc_type in processing_types:
-            params.append(('processing_type', proc_type.value))
-
-        response = self.session.get_resource(processed_results_path, params=params)
-        results_json = response['results']
-        results = {}
-        for result_json in results_json:
-            processing_type = FileProcessingType[result_json['processing_type']]
-            data = result_json['data']
-
-            if processing_type == FileProcessingType.VALIDATE_CSV:
-                data = CsvValidationData.build(data)
-
-            result = FileProcessingResult(processing_type, data)
-            results[processing_type] = result
-
-        return results
 
     def ingest(self,
                files: Iterable[Union[FileLink, Path, str]],

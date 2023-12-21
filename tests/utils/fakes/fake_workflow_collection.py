@@ -24,10 +24,9 @@ class FakeWorkflowCollection(FakeCollection[WorkflowType]):
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
+    def archive(self, uid: Union[UUID, str]):
         # Search for workflow via UID to ensure exists
         # If found, flip archived=True with no return
-        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         workflow = self.get(uid)
         workflow.archived = True
         self.update(workflow)

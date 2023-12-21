@@ -9,7 +9,7 @@ import requests_mock
 
 from citrine.resources.api_error import ValidationError
 from citrine.resources.file_link import FileCollection, FileLink, GEMDFileLink, _Uploader, \
-    FileProcessingType, _get_ids_from_url
+    _get_ids_from_url
 from citrine.resources.ingestion import Ingestion, IngestionCollection
 from citrine.exceptions import NotFound
 
@@ -518,89 +518,6 @@ def test_external_file_download(collection: FileCollection, session, tmpdir):
         assert mock_get.call_count == 1
 
     assert local_path.read_text() == '010111011'
-
-
-def test_process_file(collection: FileCollection, session):
-    """Test processing an existing file."""
-
-    file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = collection._get_path(uid=file_id, version=version_id)
-    file_link = collection.build(FileLinkDataFactory(url=full_url, id=file_id, version=version_id))
-
-    job_id_resp = {
-        'job_id': str(uuid4())
-    }
-    job_execution_resp = {
-        'status': 'Success',
-        'job_type': 'something',
-        'tasks': []
-    }
-    file_processing_result_resp = {
-        'results': [
-            {
-                'processing_type': 'VALIDATE_CSV',
-                'data': {
-                    'columns': [
-                        {
-                            'name': 'a',
-                            'bounds': {
-                                'type': 'integer_bounds',
-                                'lower_bound': 0,
-                                'upper_bound': 10
-                            },
-                            'exact_range_bounds': {
-                                'type': 'integer_bounds',
-                                'lower_bound': 0,
-                                'upper_bound': 10
-                            }
-                        }
-                    ],
-                    'record_count': 123
-                }
-            }
-        ]
-    }
-
-    # First does a PUT on the /processed endpoint
-    # then does a GET on the job executions endpoint
-    # then gets the file processing result
-    session.set_responses(job_id_resp, job_execution_resp, file_processing_result_resp)
-    with pytest.warns(DeprecationWarning):
-        collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV)
-
-
-def test_process_file_no_waiting(collection: FileCollection, session):
-    """Test processing an existing file without waiting on the result."""
-
-    file_id, version_id = str(uuid4()), str(uuid4())
-    full_url = collection._get_path(uid=file_id, version=version_id)
-    file_link = collection.build(FileLinkDataFactory(url=full_url, id=file_id, version=version_id))
-
-    job_id_resp = {
-        'job_id': str(uuid4())
-    }
-
-    # First does a PUT on the /processed endpoint
-    # then does a GET on the job executions endpoint
-    session.set_response(job_id_resp)
-    with pytest.warns(DeprecationWarning):
-        resp = collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV,
-                                  wait_for_response=False)
-    assert str(resp.job_id) == job_id_resp['job_id']
-
-
-def test_process_file_exceptions(collection: FileCollection, session):
-    """Test processing an existing file without waiting on the result."""
-    full_url = f'http://www.files.com/file.path'
-    file_link = collection.build(FileLinkDataFactory(url=full_url))
-    collection._get_path()
-    # First does a PUT on the /processed endpoint
-    # then does a GET on the job executions endpoint
-    with pytest.raises(ValueError, match="on-platform resources"):
-        with pytest.warns(DeprecationWarning):
-            collection.process(file_link=file_link,
-                               processing_type=FileProcessingType.VALIDATE_CSV,
-                               wait_for_response=False)
 
 
 def test_ingest(collection: FileCollection, session):

@@ -78,14 +78,3 @@ def test_list_workflows(session, basic_design_workflow_data):
     assert 2 == session.num_calls
     assert len(workflows) == 1
     assert isinstance(workflows[0], DesignWorkflow)
-
-
-def test_status_info(session, failed_design_workflow_data):
-    branch_data = BranchDataFactory()
-    session.set_response(branch_data)
-    dwc = DesignWorkflowCollection(project_id=uuid.uuid4(), session=session)
-
-    dw = dwc.build(failed_design_workflow_data)
-
-    with pytest.deprecated_call():
-        assert dw.status_info == [status.msg for status in dw.status_detail]

@@ -75,15 +75,11 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
     # Then
     status_detail_tuples = {(detail.level, detail.msg) for detail in design_space.status_detail}
     assert status_detail_tuples == status_detail_data
-    with pytest.deprecated_call():
-        assert design_space.status_info == [args[1] for args in status_detail_data]
 
 
 def test_formulation_build(valid_formulation_design_space_data):
     pc = DesignSpaceCollection(uuid.uuid4(), None)
     design_space = pc.build(valid_formulation_design_space_data)
-    with pytest.deprecated_call():
-        assert design_space.archived
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
     assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
@@ -318,131 +314,6 @@ def test_get_none():
         dsc.get(uid=None)
 
     assert "uid=None" in str(excinfo.value)
-
-
-def test_register_dehydrated_design_spaces_deprecated(valid_product_design_space_data, valid_product_design_space):
-    session = FakeSession()
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-
-    subspace_id = str(uuid.uuid4())
-
-    subspace_data = valid_product_design_space_data["data"]["instance"]["subspaces"][0]
-    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
-    ds.subspaces[0] = subspace_id
-
-    session.set_responses(_ds_dict_to_response(subspace_data), deepcopy(valid_product_design_space_data), valid_product_design_space_data)
-    
-    with pytest.deprecated_call():
-        retval = dsc.register(ds)
-
-    base_path = f"/projects/{dsc.project_id}/design-spaces"
-    assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{subspace_id}"),
-        FakeCall(method='POST', path=base_path, json=valid_product_design_space.dump()),
-        FakeCall(method='PUT', path=f"{base_path}/{retval.uid}/validate", json={})
-    ]
-    assert retval.dump() == valid_product_design_space.dump()
-
-
-def test_update_dehydrated_design_spaces_deprecated(valid_product_design_space_data, valid_product_design_space):
-    session = FakeSession()
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    
-    subspace_id = str(uuid.uuid4())
-
-    subspace_data = valid_product_design_space_data["data"]["instance"]["subspaces"][0]
-    ds = DesignSpace.build(deepcopy(valid_product_design_space_data))
-    ds.subspaces[0] = subspace_id
-
-    session.set_responses(
-        _ds_dict_to_response(subspace_data),
-        deepcopy(valid_product_design_space_data),
-        deepcopy(valid_product_design_space_data)
-    )
-    
-    with pytest.deprecated_call():
-        retval = dsc.update(ds)
-
-    base_path = f"/projects/{dsc.project_id}/design-spaces"
-    assert session.calls == [
-        FakeCall(method='GET', path=f"{base_path}/{subspace_id}"),
-        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}", json=valid_product_design_space.dump()),
-        FakeCall(method='PUT', path=f"{base_path}/{ds.uid}/validate", json={})
-    ]
-    assert retval.dump() == valid_product_design_space.dump()
-
-
-def test_deprecated_archive_via_update(valid_product_design_space_data):
-    session = FakeSession()
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    archived_data = deepcopy(valid_product_design_space_data)
-    archived_data["metadata"]["archived"] = archived_data["metadata"]["created"]
-    validating_data = deepcopy(archived_data)
-    validating_data["metadata"]["status"]["name"] = "VALIDATING"
-    session.set_responses(
-        valid_product_design_space_data,
-        archived_data,
-        validating_data
-    )
-
-    design_space = dsc.build(deepcopy(valid_product_design_space_data))
-    with pytest.deprecated_call():
-        design_space.archived = True
-
-    design_space_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
-    entity_path = f"{design_space_path}/{valid_product_design_space_data['id']}"
-    expected_calls = [
-        FakeCall(method="PUT", path=entity_path, json=design_space.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/archive", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/validate", json={}),
-    ]
-
-    archived_design_space = dsc.update(design_space)
-
-    assert session.calls == expected_calls
-    assert archived_design_space.is_archived is True
-    assert archived_design_space._archived is None
-
-def test_deprecated_restore_via_update(valid_product_design_space_data):
-    session = FakeSession()
-    dsc = DesignSpaceCollection(uuid.uuid4(), session)
-    archived_data = deepcopy(valid_product_design_space_data)
-    archived_data["metadata"]["archived"] = archived_data["metadata"]["created"]
-    validating_data = deepcopy(valid_product_design_space_data)
-    validating_data["metadata"]["status"]["name"] = "VALIDATING"
-    session.set_responses(archived_data, valid_product_design_space_data, validating_data)
-
-    design_space = dsc.build(deepcopy(archived_data))
-    with pytest.deprecated_call():
-        design_space.archived = False
-
-    design_space_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
-    entity_path = f"{design_space_path}/{archived_data['id']}"
-    expected_calls = [
-        FakeCall(method="PUT", path=entity_path, json=design_space.dump()),
-        FakeCall(method="PUT", path=f"{entity_path}/restore", json={}),
-        FakeCall(method="PUT", path=f"{entity_path}/validate", json={}),
-    ]
-
-    restored_design_space = dsc.update(design_space)
-
-    assert session.calls == expected_calls
-    assert restored_design_space.is_archived is False
-    assert restored_design_space._archived is None
-
-
-def test_deprecated_archived_property(valid_product_design_space_data):
-    dsc = DesignSpaceCollection(uuid.uuid4(), FakeSession())
-
-    design_space = dsc.build(valid_product_design_space_data)
-
-    with pytest.deprecated_call():
-        assert design_space.archived == design_space.is_archived
-
-    with pytest.deprecated_call():
-        design_space.archived = True
-    
-    assert design_space._archived is True
 
 
 def test_failed_register(valid_product_design_space_data):

@@ -1,6 +1,6 @@
 from typing import Mapping, Optional, Set
 
-from citrine._rest.engine_resource import ModuleEngineResource
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -9,7 +9,7 @@ from citrine.informatics.design_spaces.design_space import DesignSpace
 __all__ = ['FormulationDesignSpace']
 
 
-class FormulationDesignSpace(ModuleEngineResource['FormulationDesignSpace'], DesignSpace):
+class FormulationDesignSpace(EngineResource['FormulationDesignSpace'], DesignSpace):
     """Design space composed of mixtures of ingredients.
 
     Parameters
