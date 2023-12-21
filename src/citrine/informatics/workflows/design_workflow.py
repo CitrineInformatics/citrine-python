@@ -1,8 +1,6 @@
 from typing import Optional, Union
 from uuid import UUID
 
-from deprecation import deprecated
-
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.workflows.workflow import Workflow
@@ -35,7 +33,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     predictor_version = properties.Optional(
         properties.Union([properties.Integer(), properties.String()]), 'predictor_version')
     _branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id')
-    """:Optional[UUID]: Unique ID of the branch that contains this workflow."""
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
@@ -73,27 +70,13 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
             project_id=self.project_id, session=self._session, workflow_id=self.uid)
 
     @property
-    @deprecated(deprecated_in="2.42.0", removed_in="3.0.0",
-                details="Please use the branch_root_id and branch_version instead.")
-    def branch_id(self):
-        """[deprecated] Retrieve the version ID of the branch this workflow is on."""
-        return self._branch_id
-
-    @branch_id.setter
-    @deprecated(deprecated_in="2.42.0", removed_in="3.0.0",
-                details="Please set the branch_root_id and branch_version instead.")
-    def branch_id(self, value):
-        self._branch_id = value
-        self._branch_root_id = None
-        self._branch_version = None
-
-    @property
     def branch_root_id(self):
         """Retrieve the root ID of the branch this workflow is on."""
         return self._branch_root_id
 
     @branch_root_id.setter
     def branch_root_id(self, value):
+        """Set the root ID of the branch this workflow is on."""
         self._branch_root_id = value
         self._branch_id = None
 
@@ -104,5 +87,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     @branch_version.setter
     def branch_version(self, value):
+        """Set the version of the branch this workflow is on."""
         self._branch_version = value
         self._branch_id = None

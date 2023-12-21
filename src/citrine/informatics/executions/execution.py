@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -8,9 +8,6 @@ from citrine._rest.paginator import Paginator
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.status_detail import StatusDetail
-
-
-from deprecation import deprecated
 
 
 class Execution(Pageable, AsynchronousObject, ABC):
@@ -48,12 +45,6 @@ class Execution(Pageable, AsynchronousObject, ABC):
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
     """:Optional[datetime]: date and time at which the resource was most recently updated,
     if it has been updated"""
-
-    @property
-    @deprecated(deprecated_in="2.2.0", removed_in="3.0.0", details="Use status_detail instead.")
-    def status_info(self) -> List[str]:
-        """:List[str]: human-readable explanations of the status."""
-        return [detail.msg for detail in self.status_detail]
 
     def __str__(self):
         return f'<{self.__class__.__name__} {str(self.uid)!r}>'

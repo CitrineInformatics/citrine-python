@@ -1,5 +1,4 @@
 """Tools for working with Descriptors."""
-import warnings
 from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
@@ -7,7 +6,7 @@ from uuid import UUID
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine.informatics.descriptors import Descriptor, FormulationDescriptor
+from citrine.informatics.descriptors import Descriptor
 from citrine.resources.file_link import FileLink
 
 __all__ = ['DataSource',
@@ -109,19 +108,9 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     def __init__(self,
                  *,
                  table_id: UUID,
-                 table_version: Union[int, str],
-                 formulation_descriptor: Optional[FormulationDescriptor] = None):
+                 table_version: Union[int, str]):
         self.table_id: UUID = table_id
         self.table_version: Union[int, str] = table_version
-
-        if formulation_descriptor is not None:
-            warnings.warn(
-                "The field `formulation_descriptor` on a GemTableDataSource is deprecated "
-                "and will be ignored. The Citrine Platform will automatically generate a "
-                "FormulationDescriptor with key 'Formulation' for tables containing formulations.",
-                DeprecationWarning
-            )
-        self.formulation_descriptor = None
 
 
 class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):

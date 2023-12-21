@@ -7,7 +7,6 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import PredictorNode
-from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['AutoMLPredictor', 'AutoMLEstimator']
 
@@ -91,8 +90,6 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         self.inputs: List[Descriptor] = inputs
         self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.outputs = outputs
-
-        _check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):

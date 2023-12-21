@@ -1,6 +1,4 @@
 from abc import ABCMeta
-from deprecation import deprecated
-import inspect
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence, Union
@@ -221,15 +219,6 @@ def generate_shared_meta(target: type):
         class _CustomMeta(MigratedClassMeta, type(target)):
             pass
         return _CustomMeta
-
-
-@deprecated(deprecated_in="2.22.1", removed_in="3.0.0",
-            details="Use MigratedClassMeta to explicitly deprecate migrated classes.")
-def shadow_classes_in_module(source_module, target_module):
-    """Shadow classes from a source to a target module, for backwards compatibility purposes."""
-    for c in [cls for _, cls in inspect.getmembers(source_module, inspect.isclass) if
-              cls.__module__ == source_module.__name__]:
-        setattr(target_module, c.__qualname__, c)
 
 
 def migrate_deprecated_argument(

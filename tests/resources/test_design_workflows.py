@@ -42,16 +42,6 @@ def collection(branch_data, collection_without_branch) -> DesignWorkflowCollecti
 
 
 @pytest.fixture
-def collection_with_branch_id(branch_data, collection_without_branch) -> DesignWorkflowCollection:
-    with pytest.deprecated_call():
-        return DesignWorkflowCollection(
-            project_id=collection_without_branch.project_id,
-            session=collection_without_branch.session,
-            branch_id=uuid.UUID(branch_data['id']),
-        )
-
-
-@pytest.fixture
 def workflow(collection, branch_data, design_workflow_dict) -> DesignWorkflow:
     design_workflow_dict["branch_id"] = branch_data["id"]
 
@@ -106,20 +96,6 @@ def test_basic_methods(workflow, collection, design_workflow_dict):
     assert workflow.design_executions.project_id == workflow.project_id
 
 
-def test_collection_branch_id(session) -> DesignWorkflowCollection:
-    with pytest.deprecated_call():
-        DesignWorkflowCollection(project_id=uuid.uuid4(), session=session, branch_id=uuid.uuid4())
-
-
-def test_collection_both_ids(session) -> DesignWorkflowCollection:
-    with pytest.deprecated_call():
-        with pytest.raises(ValueError):
-            DesignWorkflowCollection(project_id=uuid.uuid4(),
-                                     session=session,
-                                     branch_id=uuid.uuid4(),
-                                     branch_root_id=uuid.uuid4())
-
-
 @pytest.mark.parametrize("optional_args", all_combination_lengths(OPTIONAL_ARGS))
 def test_register(session, branch_data, workflow_minimal, collection, optional_args):
     workflow = workflow_minimal
@@ -149,37 +125,6 @@ def test_register(session, branch_data, workflow_minimal, collection, optional_a
 
     assert new_workflow.branch_root_id == collection.branch_root_id
     assert new_workflow.branch_version == collection.branch_version
-    assert_workflow(new_workflow, workflow)
-
-
-@pytest.mark.parametrize("optional_args", all_combination_lengths(OPTIONAL_ARGS))
-def test_register_with_branch_id_deprecated(session, branch_data, workflow_minimal, collection_with_branch_id, optional_args):
-    collection = collection_with_branch_id
-    workflow = workflow_minimal
-    branch_id = branch_data['id']
-
-    # Set a random value for all optional args selected for this run.
-    for name, factory in optional_args:
-        setattr(workflow, name, factory())
-
-    # Given
-    post_dict = {**workflow.dump(), "branch_id": str(branch_id)}
-    session.set_responses({**post_dict, 'status_description': 'status'}, branch_data)
-
-    # When
-    with pytest.deprecated_call():
-        new_workflow = collection.register(workflow)
-
-    # Then
-    assert session.calls == [
-        FakeCall(method='POST', path=workflow_path(collection), json=post_dict),
-        FakeCall(method='GET', path=branches_path(collection, branch_id)),
-    ]
-
-    with pytest.deprecated_call():
-        assert str(new_workflow.branch_id) == branch_id
-    assert str(new_workflow.branch_root_id) == branch_data['metadata']['root_id']
-    assert new_workflow.branch_version == branch_data['metadata']['version']
     assert_workflow(new_workflow, workflow)
 
 
@@ -295,39 +240,6 @@ def test_update(session, branch_data, workflow, collection_without_branch):
     assert_workflow(new_workflow, workflow)
 
 
-def test_update_branch_id_deprecated(session, branch_data, workflow, collection_with_branch_id):
-    # Given
-    collection = collection_with_branch_id
-    workflow.branch_root_id = None
-    workflow.branch_version = None
-    with pytest.deprecated_call():
-        workflow.branch_id = branch_data['id']
-
-    post_dict = workflow.dump()
-    session.set_responses(
-        {"per_page": 1, "next": "", "response": []},
-        {**post_dict, 'status_description': 'status'},
-        branch_data
-    )
-
-    # When
-    with pytest.deprecated_call():
-        new_workflow = collection.update(workflow)
-
-    # Then
-    executions_path = f'/projects/{collection.project_id}/design-workflows/{workflow.uid}/executions'
-    assert session.calls == [
-        FakeCall(method='GET', path=executions_path, params={'page': 1, 'per_page': 100}),
-        FakeCall(method='PUT', path=workflow_path(collection, workflow), json=post_dict),
-        FakeCall(method='GET', path=branches_path(collection, branch_data["id"])),
-    ]
-    assert_workflow(new_workflow, workflow)
-    with pytest.deprecated_call():
-        assert new_workflow.branch_id == workflow.branch_id
-    assert new_workflow.branch_root_id == uuid.UUID(branch_data['metadata']['root_id'])
-    assert new_workflow.branch_version == branch_data['metadata']['version']
-
-
 def test_update_failure_with_existing_execution(session, branch_data, workflow, collection_without_branch, design_execution_dict):
     branch_data_get_resp = {"response": [branch_data]}
     workflow.branch_root_id = uuid.uuid4()
@@ -348,17 +260,6 @@ def test_update_with_mismatched_branch_root_ids(session, workflow, collection):
     # Then/When
     with pytest.raises(ValueError):
         collection.update(workflow)
-
-
-def test_update_with_mismatched_branch_ids(session, workflow, collection_with_branch_id):
-    # Given
-    with pytest.deprecated_call():
-        workflow.branch_id = uuid.uuid4()
-
-    # Then/When
-    with pytest.deprecated_call():
-        with pytest.raises(ValueError):
-            collection_with_branch_id.update(workflow)
 
 
 def test_update_model_missing_branch_root_id(session, workflow, collection_without_branch):

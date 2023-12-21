@@ -1,6 +1,6 @@
 from typing import List, Mapping, Any
 
-from citrine._rest.engine_resource import ModuleEngineResource
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -8,7 +8,7 @@ from citrine.informatics.design_spaces.design_space import DesignSpace
 __all__ = ['EnumeratedDesignSpace']
 
 
-class EnumeratedDesignSpace(ModuleEngineResource['EnumeratedDesignSpace'], DesignSpace):
+class EnumeratedDesignSpace(EngineResource['EnumeratedDesignSpace'], DesignSpace):
     """An explicit enumeration of candidate materials to score.
 
     Enumerated design spaces are intended to capture small spaces with fewer than
