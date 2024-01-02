@@ -1,5 +1,5 @@
 import warnings
-from typing import Set, Mapping, Optional, Tuple, Union
+from typing import Set, Optional, Tuple
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -64,8 +64,8 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
                  max: float,
                  ingredient: Optional[Tuple[str, float]] = None,
                  label: Optional[Tuple[str, float]] = None,
-                 basis_ingredients: Union[Set[str], Mapping[str, float]] = set(),
-                 basis_labels: Union[Set[str], Mapping[str, float]] = set()):
+                 basis_ingredients: Set[str] = set(),
+                 basis_labels: Set[str] = set()):
         self.formulation_descriptor = formulation_descriptor
         self.min = min
         self.max = max
@@ -95,50 +95,54 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         self._labels = self._numerator_validate(value, "Label")
 
     @property
-    def basis_ingredients(self) -> Mapping[str, float]:
+    def basis_ingredients(self) -> Set[str]:
         """Retrieve the ingredients in the denominator of the ratio."""
-        warnings.warn("basis_ingredients is deprecated as of 2.13.0 and will change in 3.0. "
-                      "Please use basis_ingredient_names instead.", DeprecationWarning)
-        return self._basis_ingredients
+        return set(self._basis_ingredients.keys())
 
     @basis_ingredients.setter
     def basis_ingredients(self, value: Set[str]):
         """Set the ingredients in the denominator of the ratio."""
-        self.basis_ingredient_names = value
+        self._basis_ingredients = dict.fromkeys(value, 1)
 
     @property
     def basis_ingredient_names(self) -> Set[str]:
         """Retrieve the names of all ingredients in the denominator of the ratio."""
-        return set(self._basis_ingredients.keys())
+        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
+                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
+        return self.basis_ingredients
 
     # This is for symmetry; it's not strictly necessary.
     @basis_ingredient_names.setter
     def basis_ingredient_names(self, value: Set[str]):
         """Set the names of all ingredients in the denominator of the ratio."""
-        self._basis_ingredients = dict.fromkeys(value, 1)
+        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
+                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
+        self.basis_ingredients = value
 
     @property
-    def basis_labels(self) -> Mapping[str, float]:
+    def basis_labels(self) -> Set[str]:
         """Retrieve the labels in the denominator of the ratio."""
-        warnings.warn("basis_labels is deprecated as of 2.13.0 and will change in 3.0. Please use "
-                      "basis_label_names instead.", DeprecationWarning)
-        return self._basis_labels
+        return set(self._basis_labels.keys())
 
     @basis_labels.setter
     def basis_labels(self, value: Set[str]):
         """Set the labels in the denominator of the ratio."""
-        self.basis_label_names = value
+        self._basis_labels = dict.fromkeys(value, 1)
 
     @property
     def basis_label_names(self) -> Set[str]:
         """Retrieve the names of all labels in the denominator of the ratio."""
-        return set(self._basis_labels.keys())
+        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
+                      "Please use basis_labels instead.", DeprecationWarning)
+        return self.basis_labels
 
     # This is for symmetry; it's not strictly necessary.
     @basis_label_names.setter
     def basis_label_names(self, value: Set[str]):
         """Set the names of all labels in the denominator of the ratio."""
-        self._basis_labels = dict.fromkeys(value, 1)
+        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
+                      "Please use basis_labels instead.", DeprecationWarning)
+        self.basis_labels = value
 
     def _numerator_read(self, num_dict):
         if num_dict:
