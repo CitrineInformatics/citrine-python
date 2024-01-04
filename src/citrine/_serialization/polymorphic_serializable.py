@@ -1,9 +1,10 @@
-from typing import Generic, TypeVar, Type
 from abc import abstractmethod
+from typing import Generic, TypeVar, Type
+
 from citrine._serialization.serializable import Serializable
 
 
-SelfType = TypeVar('SelfType', bound='Resource')
+SelfType = TypeVar('SelfType', bound='PolymorphicSerializable')
 
 
 class PolymorphicSerializable(Generic[SelfType]):

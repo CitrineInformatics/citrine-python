@@ -5,14 +5,14 @@ from uuid import UUID
 
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import ResourceRef
+from citrine._rest.resource import Resource, ResourceRef
 from citrine._utils.functions import resource_path
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
 logger = getLogger(__name__)
 
-ResourceType = TypeVar('ResourceType', bound='Resource')
+ResourceType = TypeVar('ResourceType', bound=Resource)
 
 # Python does not support a TypeVar being used as a bound for another TypeVar.
 # Thus, this will never be particularly type safe on its own. The solution is to
