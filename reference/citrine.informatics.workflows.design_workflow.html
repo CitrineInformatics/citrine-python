@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>citrine.informatics.workflows.design_workflow module &mdash; Citrine Python 2.41.0 documentation</title>
+  <title>citrine.informatics.workflows.design_workflow module &mdash; Citrine Python 2.42.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -31,7 +31,7 @@
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                2.41.0
+                2.42.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -162,15 +162,25 @@ if it has been archived</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_id">
-<span class="sig-name descname"><span class="pre">branch_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_id" title="Permalink to this definition"></a></dt>
-<dd><p>Unique ID of the branch that contains this workflow.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">branch_id</span></span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_id" title="Permalink to this definition"></a></dt>
+<dd><p>[deprecated] Retrieve the version ID of the branch this workflow is on.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 2.42.0: </span>This will be removed in 3.0.0. Please use the branch_root_id and branch_version instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_root_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">branch_root_id</span></span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_root_id" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve the root ID of the branch this workflow is on.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_version">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">branch_version</span></span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.branch_version" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve the version of the branch this workflow is on.</p>
 </dd></dl>
 
 <dl class="py attribute">
