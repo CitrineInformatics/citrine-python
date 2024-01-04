@@ -125,7 +125,7 @@ def test_data_source_build(valid_data_source_design_space_dict):
     ds = DesignSpace.build(valid_data_source_design_space_dict)
     assert ds.name == valid_data_source_design_space_dict["data"]["instance"]["name"]
     assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data"]["instance"]["data_source"])
-    assert str(ds) == f'<DataSourceDesignSpace \'{ds.name}\'>'
+    assert str(ds) == f"<DataSourceDesignSpace '{ds.name}'>"
 
 
 def test_data_source_create(valid_data_source_design_space_dict):

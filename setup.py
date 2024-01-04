@@ -33,13 +33,9 @@ setup(name='citrine',
           "tqdm>=4.62.3,<5"
       ],
       extras_require={
-          "builders": [
-              "pandas>=1.3.5,<3"
-          ],
           "../tests": [
               "factory-boy>=2.12.0,<4",
               "mock>=3.0.5,<5",
-              "pandas>=1.3.5,<3",
               "pytest>=6.2.5,<8",
               "pytz>=2020.1",
               "requests-mock>=1.7.0,<2",
