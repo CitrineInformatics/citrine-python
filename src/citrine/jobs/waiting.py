@@ -8,7 +8,6 @@ from citrine.informatics.executions.design_execution import DesignExecution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 from citrine.informatics.executions import PredictorEvaluationExecution
-from citrine.informatics.modules import Module
 
 
 class ConditionTimeoutError(RuntimeError):
@@ -90,20 +89,20 @@ def wait_for_asynchronous_object(
 
 def wait_while_validating(
     *,
-    collection: Collection[Module],
-    module: Module,
+    collection: Collection[AsynchronousObject],
+    module: AsynchronousObject,
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-) -> Module:
+) -> AsynchronousObject:
     """
     Wait until module is validated.
 
     Parameters
     ----------
-    collection : Collection[Module]
+    collection : Collection[AsynchronousObject,]
         Collection containing module
-    module : Module
+    module : AsynchronousObject,
         Module in Collection
     print_status_info : bool, optional
         Whether to print status info, by default False
@@ -114,7 +113,7 @@ def wait_while_validating(
 
     Returns
     -------
-    Module
+    AsynchronousObject
         Module in Collection after validation
 
     Raises
