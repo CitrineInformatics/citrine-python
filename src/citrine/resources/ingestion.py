@@ -107,19 +107,13 @@ class IngestionErrorTrace(Resource['IngestionErrorTrace']):
 
 
 class IngestionException(CitrineException):
-    """
-    [ALPHA] An exception that contains details of a failed ingestion.
-
-    Attributes
-    ----------
-    uid: Optional[UUID]
-    errors: List[IngestionErrorTrace]
-
-    """
+    """[ALPHA] An exception that contains details of a failed ingestion."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    """Optional[UUID]"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+    """List[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
@@ -147,20 +141,14 @@ class IngestionException(CitrineException):
 
 
 class IngestionStatus(Resource['IngestionStatus']):
-    """
-    [ALPHA] An object that represents the outcome of an ingestion event.
-
-    Attributes
-    ----------
-    uid: String
-    status: IngestionStatusType
-    errors: List[IngestionErrorTrace]
-
-    """
+    """[ALPHA] An object that represents the outcome of an ingestion event."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    """UUID"""
     status = properties.Enumeration(IngestionStatusType, "status")
+    """IngestionStatusType"""
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+    """List[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
@@ -190,14 +178,10 @@ class Ingestion(Resource['Ingestion']):
     every object in that dataset. A user with write access to a dataset can create, update,
     and delete objects in the dataset.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this ingestion.
-
     """
 
     uid = properties.UUID('ingestion_id')
+    """UUID: Unique uuid4 identifier of this ingestion."""
     project_id = properties.UUID('project_id')
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)

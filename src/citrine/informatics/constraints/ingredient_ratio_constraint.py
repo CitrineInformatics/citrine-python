@@ -13,8 +13,10 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
     """A formulation constraint operating on the ratio of quantities of ingredients and a basis.
 
     Example: "6 to 7 parts ingredient A per 100 parts ingredient B" becomes
+
     .. code:: python
-        IngredientRatioConstraint(min=6, max=7, ingredient=("A", 100), basis_ingredients=["B"])
+
+       IngredientRatioConstraint(min=6, max=7, ingredient=("A", 100), basis_ingredients=["B"])
 
     Parameters
     ----------

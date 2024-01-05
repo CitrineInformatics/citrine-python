@@ -130,7 +130,7 @@ The ML models are independently registered on-platform, but the expression predi
 
     graph_predictor = project.predictors.register(
         GraphPredictor(
-            name = "Big elastic constant predictor,
+            name = "Big elastic constant predictor",
             description = ""
             predictors = [
                 bulk_modulus_predictor.uid,
@@ -144,6 +144,7 @@ The ML models are independently registered on-platform, but the expression predi
 For another example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 .. _Expression Predictor:
+
 Expression predictor
 --------------------
 

@@ -121,17 +121,6 @@ class Team(Resource['Team']):
     session: Session, optional
         The Citrine session used to connect to the database.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this team.
-    created_at: int
-        Time the team was created, in seconds since epoch.
-    name: str
-        Name of the Team
-    description: str
-        Description of the Team
-
     """
 
     _response_key = 'team'
@@ -139,9 +128,13 @@ class Team(Resource['Team']):
     _api_version = "v3"
 
     name = properties.String('name')
+    """str: Name of the Team"""
     description = properties.Optional(properties.String(), 'description')
+    """str: Description of the Team"""
     uid = properties.Optional(properties.UUID(), 'id')
+    """UUID: Unique uuid4 identifier of this team."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
+    """int: Time the team was created, in seconds since epoch."""
 
     def __init__(self,
                  name: str,

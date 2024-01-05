@@ -50,12 +50,6 @@ class MaterialRun(
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
-    Attributes
-    ----------
-    measurements: List[MeasurementRun], optional
-        Measurements performed on this material. The link is established by creating the
-        measurement run and settings its `material` field to this material run.
-
     """
 
     _response_key = GEMDMaterialRun.typ  # 'material_run'

@@ -63,15 +63,6 @@ class Project(Resource['Project']):
     session: Session, optional
         The Citrine session used to connect to the database.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this project.
-    status: str
-        Status of the project.
-    created_at: int
-        Time the project was created, in seconds since epoch.
-
     """
 
     _response_key = 'project'
@@ -80,8 +71,11 @@ class Project(Resource['Project']):
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
     uid = properties.Optional(properties.UUID(), 'id')
+    """UUID: Unique uuid4 identifier of this project."""
     status = properties.Optional(properties.String(), 'status')
+    """str: Status of the project."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
+    """int: Time the project was created, in seconds since epoch."""
     team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
