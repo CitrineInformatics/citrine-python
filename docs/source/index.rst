@@ -41,6 +41,7 @@ Table of Contents
    formulations_example
    molecular_generation
    FAQ/index
+   API Reference <reference/modules>
 
 Indices and tables
 ==================
