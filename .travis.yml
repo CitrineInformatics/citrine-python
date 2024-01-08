@@ -31,8 +31,8 @@ deploy:
       python: '3.10' # only need this to run once
       env: UPGRADES=""
   - provider: pypi
-    user: CitrineInformatics
-    password: "$PYPI_PASSWORD"
+    user: "__token__"
+    password: "$PYPI_API_TOKEN"
     distributions: sdist bdist_wheel
     skip_existing: true
     on:
