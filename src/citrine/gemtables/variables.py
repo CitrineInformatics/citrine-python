@@ -65,7 +65,7 @@ class Variable(PolymorphicSerializable['Variable']):
         pass  # pragma: no cover
 
     def __eq__(self, other):
-        return type(self) == type(other) and all([
+        return type(self) is type(other) and all([
             getattr(self, key) == getattr(other, key) for key in self._attrs()
         ])
 
