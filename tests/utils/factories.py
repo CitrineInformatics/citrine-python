@@ -252,6 +252,7 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     archived = False
     design_space_id = factory.Faker("uuid4")
     predictor_id = factory.Faker("uuid4")
+    branch_id = factory.Faker("uuid4")
     status = "SUCCEEDED"
     status_description = "READY"
     status_detail = []

@@ -6,8 +6,7 @@ import pytest
 from citrine.informatics.constraints import IngredientCountConstraint
 from citrine.informatics.data_sources import DataSource, GemTableDataSource
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor, \
-    CategoricalDescriptor, \
-    IntegerDescriptor
+    CategoricalDescriptor, IntegerDescriptor
 from citrine.informatics.design_spaces import *
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension, \
     IntegerDimension
@@ -124,14 +123,17 @@ def test_hierarchical_initialization(hierarchical_design_space):
 def test_data_source_build(valid_data_source_design_space_dict):
     ds = DesignSpace.build(valid_data_source_design_space_dict)
     assert ds.name == valid_data_source_design_space_dict["data"]["instance"]["name"]
+    assert ds.description == valid_data_source_design_space_dict["data"]["description"]
     assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data"]["instance"]["data_source"])
-    assert str(ds) == f'<DataSourceDesignSpace \'{ds.name}\'>'
+    assert str(ds) == f"<DataSourceDesignSpace '{ds.name}'>"
 
 
-def test_data_source_create(valid_data_source_design_space_dict):
-    ds = valid_data_source_design_space_dict
-    round_robin = DesignSpace.build(ds)
-    assert ds["data"]["name"] == round_robin.name
-    assert ds["data"]["description"] == round_robin.description
-    assert ds["data"]["instance"]["data_source"] == round_robin.data_source.dump()
-    assert "DataSource" in str(ds)
+def test_data_source_initialization(valid_data_source_design_space_dict):
+    data = valid_data_source_design_space_dict["data"]
+    data_source = DataSource.build(data["instance"]["data_source"])
+    ds = DataSourceDesignSpace(name=data["instance"]["name"],
+                               description=data["description"],
+                               data_source=data_source)
+    assert ds.name == data["instance"]["name"]
+    assert ds.description == data["description"]
+    assert ds.data_source.dump() == data["instance"]["data_source"]
