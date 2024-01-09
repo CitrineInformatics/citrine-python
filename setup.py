@@ -13,7 +13,7 @@ with open(path.join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as
 setup(name='citrine',
       # Update this in src/citrine/__version__.py
       version=about['__version__'],
-      python_requires='>=3.7',
+      python_requires='>=3.8',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       long_description=long_description,
@@ -47,7 +47,6 @@ setup(name='citrine',
       },
       classifiers=[
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
           'Programming Language :: Python :: 3.9',
           'Programming Language :: Python :: 3.10',
