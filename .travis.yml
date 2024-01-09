@@ -6,7 +6,7 @@ python:
   - '3.10'
   - '3.11'
 env:
-  - UPGRADES="-U gemd pandas arrow urllib3 requests pytest boto3"
+  - UPGRADES="-U gemd arrow urllib3 requests pytest boto3"
   - UPGRADES=""
 install:
   - pip install --only-binary ':all:' -r requirements.txt
