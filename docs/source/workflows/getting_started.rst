@@ -1,4 +1,4 @@
-.. _getting-started:
+.. _ai-engine-getting-started:
 
 Getting Started
 ===============

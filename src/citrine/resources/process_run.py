@@ -47,16 +47,6 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
     source: PerformedSource, optional
         Information about the person who performed the run and when.
 
-    Attributes
-    ----------
-    output_material: MaterialRun
-        The material run that this process run produces. The link is established by creating
-        the material run and settings its `process` field to this process run.
-
-    ingredients: List[IngredientRun]
-        Ingredient runs that act as inputs to this process run. The link is established by
-        creating each ingredient run and setting its `process` field to this process run.
-
     """
 
     _response_key = GEMDProcessRun.typ  # 'process_run'

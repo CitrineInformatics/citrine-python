@@ -74,7 +74,7 @@ Assume you have a "band gaps project" with known id, ``band_gaps_project_id``, a
    
 
 Dataset Access, Sharing, and Transfer
-------------------------------------
+-------------------------------------
 
 When a Dataset is created on the Citrine Platform, only members of the project in which it was created can see it and interact with it.
 If a Dataset is made public, it (and its entire contents) can be retrieved by any user using any project.

@@ -8,7 +8,7 @@ A GEM Table is defined on a set of material histories, and the rows in the resul
 Columns correspond to data about the material histories, such as the temperature measured in a kiln used at a specific manufacturing step.
 
 Defining rows and columns
-------------------------
+-------------------------
 
 A Row object describes a mapping from a list of Datasets to rows of a table by selecting a set of Material Histories.
 Each Material History corresponds to exactly one row, though the Material Histories may overlap such that the same objects contribute data to multiple rows.

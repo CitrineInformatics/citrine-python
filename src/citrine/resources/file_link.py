@@ -132,26 +132,6 @@ class FileLink(
     url: str
         URL that can be used to access the file.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this file; consistent across versions.
-    version: UUID
-        Unique uuid4 identifier of this version of this file
-    version_number: Integer
-        How many times this file has been uploaded;
-        files are the "same" if the share a filename and dataset
-    created_time: Datetime
-        Time the file was created on platform.
-    created_by: UUID
-        Unique uuid4 identifier of this User who loaded this file
-    mime_type: String
-        Encoded string representing the type of the file (IETF RFC 2045)
-    size: Integer
-        Size in bytes of the file
-    description: String
-        A human-readable description of the file
-
     """
 
     # NOTE: skipping the "metadata" field since it appears to be unused
@@ -160,13 +140,22 @@ class FileLink(
     filename = properties.String('filename')
     url = properties.String('url')
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """UUID: Unique uuid4 identifier of this file; consistent across versions."""
     version = properties.Optional(properties.UUID, 'version', serializable=False)
+    """UUID: Unique uuid4 identifier of this version of this file."""
     created_time = properties.Optional(properties.Datetime, 'created_time', serializable=False)
+    """datetime: Time the file was created on platform."""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    """UUID: Unique uuid4 identifier of this User who loaded this file."""
     mime_type = properties.Optional(properties.String, 'mime_type', serializable=False)
+    """str: Encoded string representing the type of the file (IETF RFC 2045)."""
     size = properties.Optional(properties.Integer, 'size', serializable=False)
+    """int: Size in bytes of the file."""
     description = properties.Optional(properties.String, 'description', serializable=False)
+    """str: A human-readable description of the file."""
     version_number = properties.Optional(properties.Integer, 'version_number', serializable=False)
+    """int: How many times this file has been uploaded; files are the "same" if they share a
+            filename and dataset."""
 
     def __init__(self, filename: str, url: str):
         GEMDFileLink.__init__(self, filename, url)

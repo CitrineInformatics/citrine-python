@@ -124,11 +124,11 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
     referencing other sub-nodes, allowing for the linkage of complex material history shapes
     in the resulting candidates.
 
-    Every node also contains a set of :class:`~citrine.informatics.dimensions.Dimension`s
+    Every node also contains a set of :class:`~citrine.informatics.dimensions.Dimension`\\s
     used to define any attributes (i.e., properties, processing parameters)
     that will appear on the materials produced by that node.
 
-    :class:`~citrine.informatics.data_sources.DataSource`s can be included on the configuration
+    :class:`~citrine.informatics.data_sources.DataSource`\\s can be included on the configuration
     to allow for design over "known" materials. The Citrine Platform will look up
     the ingredient names from formulation subspaces on the design space nodes
     in order to inject their composition/properties into the material history of the candidates.

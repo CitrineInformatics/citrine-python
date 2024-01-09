@@ -49,16 +49,6 @@ class ProcessSpec(
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
-    Attributes
-    ----------
-    output_material: MaterialSpec
-        The material spec that this process spec produces. The link is established by creating
-        the material spec and settings its `process` field to this process spec.
-
-    ingredients: List[IngredientSpec], optional
-        Ingredient specs that act as inputs to this process spec. The link is established by
-        creating each ingredient spec and setting its `process` field to this process spec.
-
     """
 
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
