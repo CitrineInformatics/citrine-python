@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-from logging import getLogger
 
 import pytest
 from dateutil import tz
@@ -13,8 +12,6 @@ from tests.utils.factories import BranchDataFactory, BranchRootDataFactory, \
     CandidateExperimentSnapshotDataFactory, ExperimentDataSourceDataFactory, \
     BranchDataFieldFactory, BranchMetadataFieldFactory, BranchDataUpdateFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
-
-logger = getLogger(__name__)
 
 
 LATEST_VER = "latest"

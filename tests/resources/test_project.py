@@ -1,5 +1,4 @@
 import uuid
-from logging import getLogger, WARNING
 from unittest import mock
 
 import pytest
@@ -17,8 +16,6 @@ from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession, FakeRequestResponse
 from citrine.resources.team import  READ, TeamMember
-
-logger = getLogger(__name__)
 
 
 @pytest.fixture

@@ -1,9 +1,5 @@
-from logging import getLogger
 from typing import Optional, Iterable, Dict, Tuple, Callable, Union, Sequence
 from uuid import UUID
-
-
-logger = getLogger(__name__)
 
 
 class Pageable():
