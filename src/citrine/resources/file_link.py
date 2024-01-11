@@ -2,7 +2,6 @@
 import mimetypes
 import os
 from pathlib import Path
-from logging import getLogger
 from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
@@ -25,8 +24,6 @@ from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
 from gemd.enumeration.base_enumeration import BaseEnumeration
-
-logger = getLogger(__name__)
 
 
 class SearchFileFilterTypeEnum(BaseEnumeration):

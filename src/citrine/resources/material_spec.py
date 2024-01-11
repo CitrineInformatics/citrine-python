@@ -1,5 +1,4 @@
 """Resources that represent material spec data objects."""
-from logging import getLogger
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
@@ -14,8 +13,6 @@ from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
-
-logger = getLogger(__name__)
 
 
 class MaterialSpec(

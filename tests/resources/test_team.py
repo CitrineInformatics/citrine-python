@@ -1,5 +1,4 @@
 import uuid
-from logging import getLogger
 
 import pytest
 from dateutil.parser import parse
@@ -10,8 +9,6 @@ from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, Tea
 from citrine.resources.user import User
 from tests.utils.factories import UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
-
-logger = getLogger(__name__)
 
 
 @pytest.fixture
