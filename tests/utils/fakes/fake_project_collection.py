@@ -1,5 +1,5 @@
-from typing import Optional
-from uuid import uuid4
+from typing import Optional, Union
+from uuid import UUID, uuid4
 
 from citrine.exceptions import NotFound
 from citrine.resources.project import Project, ProjectCollection
@@ -14,8 +14,8 @@ from tests.utils.session import FakeSession
 
 class FakeProjectCollection(ProjectCollection):
 
-    def __init__(self, search_implemented: bool = True):
-        ProjectCollection.__init__(self, session=FakeSession)
+    def __init__(self, search_implemented: bool = True, team_id: Optional[Union[UUID, str]] = None):
+        ProjectCollection.__init__(self, session=FakeSession, team_id=team_id)
         self.projects = []
         self.search_implemented = search_implemented
 

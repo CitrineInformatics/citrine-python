@@ -1,6 +1,5 @@
-import uuid
-from typing import Optional, Callable
-from uuid import UUID
+from typing import Callable, Optional, Union
+from uuid import UUID, uuid4
 
 import pytest
 from citrine._rest.collection import Collection
@@ -71,8 +70,8 @@ def session() -> FakeSession:
 @pytest.fixture
 def project_collection() -> Callable[[bool], ProjectCollection]:
 
-    def _make_project(search_implemented: bool = True):
-        projects = FakeProjectCollection(search_implemented)
+    def _make_project(search_implemented: bool = True, team_id: Optional[Union[UUID, str]] = uuid4()):
+        projects = FakeProjectCollection(search_implemented, team_id)
         for i in range(0, 5):
             projects.register("project " + str(i))
         for i in range(0, 2):
@@ -212,8 +211,7 @@ def test_find_or_create_project_no_exist(project_collection):
     # test when project doesn't exist
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    with pytest.warns(DeprecationWarning):
-        result = find_or_create_project(project_collection=collection, project_name=absent_name)
+    result = find_or_create_project(project_collection=collection, project_name=absent_name)
     new_project_count = len(list(collection.list()))
     assert result.name == absent_name
     assert new_project_count == old_project_count + 1
@@ -223,8 +221,7 @@ def test_find_or_create_project_exist(project_collection):
     # test when project exists
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    with pytest.warns(DeprecationWarning):
-        result = find_or_create_project(project_collection=collection, project_name="project 2")
+    result = find_or_create_project(project_collection=collection, project_name="project 2")
     new_project_count = len(list(collection.list()))
     assert result.name == "project 2"
     assert new_project_count == old_project_count
@@ -234,8 +231,7 @@ def test_find_or_create_project_exist_no_search(project_collection):
     # test when project exists
     collection = project_collection(False)
     old_project_count = len(list(collection.list()))
-    with pytest.warns(DeprecationWarning):
-        result = find_or_create_project(project_collection=collection, project_name="project 2")
+    result = find_or_create_project(project_collection=collection, project_name="project 2")
     new_project_count = len(list(collection.list()))
     assert result.name == "project 2"
     assert new_project_count == old_project_count
@@ -243,24 +239,21 @@ def test_find_or_create_project_exist_no_search(project_collection):
 
 def test_find_or_create_project_exist_multiple(project_collection):
     # test when project exists multiple times
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            find_or_create_project(project_collection=project_collection(), project_name=duplicate_name)
+    with pytest.raises(ValueError):
+        find_or_create_project(project_collection=project_collection(), project_name=duplicate_name)
 
 
 def test_find_or_create_raise_error_project_no_exist(project_collection):
     # test when project doesn't exist and raise_error flag is on
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            find_or_create_project(project_collection=project_collection(), project_name=absent_name, raise_error=True)
+    with pytest.raises(ValueError):
+        find_or_create_project(project_collection=project_collection(), project_name=absent_name, raise_error=True)
 
 
 def test_find_or_create_raise_error_project_exist(project_collection):
     # test when project exists and raise_error flag is on
     collection = project_collection()
     old_project_count = len(list(collection.list()))
-    with pytest.warns(DeprecationWarning):
-        result = find_or_create_project(project_collection=collection, project_name="project 3", raise_error=True)
+    result = find_or_create_project(project_collection=collection, project_name="project 3", raise_error=True)
     new_project_count = len(list(collection.list()))
     assert result.name == "project 3"
     assert new_project_count == old_project_count
@@ -268,9 +261,15 @@ def test_find_or_create_raise_error_project_exist(project_collection):
 
 def test_find_or_create_raise_error_project_exist_multiple(project_collection):
     # test when project exists multiple times and raise_error flag is on
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(ValueError):
-            find_or_create_project(project_collection=project_collection(), project_name=duplicate_name, raise_error=True)
+    with pytest.raises(ValueError):
+        find_or_create_project(project_collection=project_collection(), project_name=duplicate_name, raise_error=True)
+
+
+def test_find_or_create_project_no_team(project_collection):
+    # test when project collection has no team
+    collection = project_collection(team_id=None)
+    with pytest.raises(NotImplementedError):
+        find_or_create_project(project_collection=collection, project_name="project 2")
 
 
 def test_find_or_create_dataset_no_exist(dataset_collection):
@@ -367,7 +366,7 @@ def test_create_or_update_unique_found_design_workflow(session):
         branch_data  # Lookup the updated design workflow branch root ID and version
     )
 
-    collection = LocalDesignWorkflowCollection(project_id=uuid.uuid4(), session=session, branch_root_id=root_id, branch_version=version)
+    collection = LocalDesignWorkflowCollection(project_id=uuid4(), session=session, branch_root_id=root_id, branch_version=version)
     dw2 = collection.build(dw2_dict)
 
     #verify that the returned object is updated
