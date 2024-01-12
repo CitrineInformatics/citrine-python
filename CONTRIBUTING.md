@@ -65,32 +65,6 @@ pytest tests/ --cov=src/
 It is not uncommon to have path issues when running pytest from the command line.
 Ensure that your $PATH variable contains the directory with the citrine-python repo.
 
-#### Docker
-
-Running tests in Docker will ensure the same development environment as used by Travis CI, our continuous integration server.
-See the file .travis.yml in the repository root for more information.
-
-To build the container, run this command from the repository root.
-It will tag the image as "citrine-python":
-```bash
-docker build -f scripts/Dockerfile.pytest -t citrine-python .
-```
-
-To get an interactive bash shell in the Docker container, overriding the default entrypoint, run the following:
-```bash
-docker run --rm -it --entrypoint bash citrine-python
-```
-
-To run all unit tests in the Docker container with default parameters:
-```bash
-docker run --rm -it citrine-python
-```
-
-To run all tests in a module or run a specific test, run a command like the following (note that this will result in a reported test coverage that is low):
-```bash
-docker run --rm -it citrine-python tests/serialization/test_table.py
-docker run --rm -it citrine-python tests/serialization/test_table.py::test_simple_deserialization
-```
 
 ### Logging<a name="logging"></a>
 
@@ -196,15 +170,16 @@ PR descriptions should describe the motivation and context of the code changes i
 both for the reviewer and also for future developers.
 If there's a JIRA ticket or Github issue, the PR should be linked to the ticket/issue to provide that context.
 
-Travis runs the tests in `scripts/run_tests.sh`, which gives a convenient one-line invocation for testing.
-
 As it can be easy to forget to verify these prior to pushing, it's possible to use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to enforce compliance during normal workflows.
 Consider editing `.git/hooks/pre-commit` or `.git/hooks/pre-push` (or adding them and marking them as executable: `chmod +x <file>`).
 For example, you could set your local `.git/hooks/pre-commit` to be
 ```shell
-scripts/run_tests.sh
+python $REPO_DIR/scripts/validate_version_bump.py                        || exit 1;
+flake8 $REPO_DIR/src                                                          || exit 1;
+derp $REPO_DIR/src $REPO_DIR/src/citrine/__version__.py                       || exit 1;
+pytest --cov=src --cov-report term-missing:skip-covered --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100  tests     
 ```
-to make sure you're not on the `main` branch, you've incremented the package version, you pass the linter and you have complete, passing tests.
+to make sure you've incremented the package version, you pass the linter, nothing is deprecated past its major version, and you have complete, passing tests.
 
 ## Documentation<a name="documentation"></a>
 

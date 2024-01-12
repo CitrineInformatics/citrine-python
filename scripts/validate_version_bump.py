@@ -18,7 +18,7 @@ def main():
         raise ValueError(f"Couldn't extract version from {version_path}") from e
 
     try:
-        with popen(f"git show main:src/citrine/__version__.py", mode="r") as fh:
+        with popen(f"git show origin/main:src/citrine/__version__.py", mode="r") as fh:
             old_version = extract_version(fh)
     except Exception as e:
         raise ValueError(f"Couldn't extract version from main branch") from e
