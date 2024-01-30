@@ -49,3 +49,21 @@ jobs:
         uses: ./.github/actions/initialize
       - name: Execute unit tests
         run: pytest --cov=src --cov-report term-missing:skip-covered --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100  tests/
+  run-tests-against-latest:
+    name: Safety - Execute unit tests against latest version of dependencies
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
+      - name: Initialize the environment
+        uses: ./.github/actions/initialize
+        with:
+          setuptools: 'true'
+      - name: Execute unit tests
+        run: pytest tests/
