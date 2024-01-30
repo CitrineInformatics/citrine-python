@@ -51,7 +51,6 @@ jobs:
         run: pytest --cov=src --cov-report term-missing:skip-covered --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100  tests/
   run-tests-against-latest:
     name: Safety - Execute unit tests against latest version of dependencies
-    continue-on-error: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
