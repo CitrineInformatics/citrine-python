@@ -30,8 +30,7 @@ setup(name='citrine',
           "deprecation>=2.1.0,<3",
           "urllib3>=1.26.18,<3",
           "tqdm>=4.62.3,<5",
-          "urllib3>=1.26.18,<2",
-          "pint>=0.18,<=0.20"
+          "urllib3>=1.26.18,<2"
       ],
       extras_require={
           "builders": [
