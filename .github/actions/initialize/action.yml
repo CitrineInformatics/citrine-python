@@ -13,7 +13,7 @@ runs:
       run: python -m pip install --upgrade pip
       shell: bash
     - name: Install runtime dependencies
-      run: python -m pip install --only-binary ':all:' -r requirements.txt --upgrade
+      run: python -m pip install --only-binary ':all:' -r requirements.txt
       shell: bash
       if: ${{ inputs.setuptools == 'false' }}
     - name: Install latest version of runtime dependency libraries
@@ -22,8 +22,8 @@ runs:
       continue-on-error: true
       if: ${{ inputs.setuptools == 'true' }}
     - name: Install test dependencies
-      run: python -m pip install --only-binary ':all:' -r test_requirements.txt --upgrade
+      run: python -m pip install --only-binary ':all:' -r test_requirements.txt
       shell: bash
     - name: Install citrine
-      run: python -m pip install --only-binary ':all:' -e . --upgrade
+      run: python -m pip install --only-binary ':all:' -e .
       shell: bash
