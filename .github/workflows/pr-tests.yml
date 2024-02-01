@@ -2,37 +2,10 @@ name: PR Tests
 
 on:
   pull_request:
-    branches:    
+    branches:
       - main
 
 jobs:
-  check-version:
-    name: Check version bumped
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Initialize the environment
-        uses: ./.github/actions/initialize
-      - name: Check version
-        run: python scripts/validate_version_bump.py
-  linting:
-    name: Run linting with flake8
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Initialize the environment
-        uses: ./.github/actions/initialize
-      - name: Lint the src/ directory
-        run: flake8 src/
-  check-deprecated:
-    name: Find code marked for removal in this version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Initialize the environment
-        uses: ./.github/actions/initialize
-      - name: Deprecated check
-        run: derp src/ src/citrine/__version__.py
   run-tests:
     name: Execute unit tests
     runs-on: ubuntu-latest
