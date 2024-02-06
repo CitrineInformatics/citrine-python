@@ -25,20 +25,19 @@ setup(name='citrine',
           "requests>=2.31.0,<3",
           "pyjwt>=2,<3",
           "arrow>=1.0.0,<2",
-          "gemd>=1.16.7,<2",
-          "boto3>=1.34.12,<2",
+          "gemd>=2.0.0,<3",
+          "boto3>=1.34.35,<2",
           "deprecation>=2.1.0,<3",
           "urllib3>=1.26.18,<3",
-          "tqdm>=4.27.0,<5",
-          "pint>=0.18,<=0.20"
+          "tqdm>=4.27.0,<5"
       ],
       extras_require={
           "../tests": [
               "factory-boy>=3.3.0,<4",
               "mock>=5.1.0,<6",
               "pandas>=2.0.3,<3",
-              "pytest>=7.4.4,<8",
-              "pytz>=2023.3.post1",
+              "pytest>=8.0.0,<9",
+              "pytz>=2024.1",
               "requests-mock>=1.11.0,<2",
           ]
       },
