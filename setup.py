@@ -29,7 +29,9 @@ setup(name='citrine',
           "boto3>=1.34.35,<2",
           "deprecation>=2.1.0,<3",
           "urllib3>=1.26.18,<3",
-          "tqdm>=4.27.0,<5"
+          "tqdm>=4.27.0,<5",
+          "pint<=0.20; python_version < '3.9'",
+          "pint<0.24; python_version >= '3.9'"
       ],
       extras_require={
           "../tests": [
