@@ -3,8 +3,6 @@ from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 
-from deprecation import deprecated
-
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -32,7 +30,6 @@ from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.measurement_run import MeasurementRunCollection
 from citrine.resources.measurement_spec import MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
-from citrine.resources.module import ModuleCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation_execution import \
@@ -66,15 +63,6 @@ class Project(Resource['Project']):
     session: Session, optional
         The Citrine session used to connect to the database.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this project.
-    status: str
-        Status of the project.
-    created_at: int
-        Time the project was created, in seconds since epoch.
-
     """
 
     _response_key = 'project'
@@ -83,8 +71,11 @@ class Project(Resource['Project']):
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
     uid = properties.Optional(properties.UUID(), 'id')
+    """UUID: Unique uuid4 identifier of this project."""
     status = properties.Optional(properties.String(), 'status')
+    """str: Status of the project."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
+    """int: Time the project was created, in seconds since epoch."""
     team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
@@ -106,12 +97,6 @@ class Project(Resource['Project']):
 
     def _path(self):
         return format_escaped_url('/projects/{project_id}', project_id=self.uid)
-
-    @property
-    @deprecated(deprecated_in="2.26.0", removed_in="3.0.0", details="Use design_spaces instead.")
-    def modules(self) -> ModuleCollection:
-        """Return a resource representing all visible design spaces."""
-        return ModuleCollection(self.uid, self.session)
 
     @property
     def branches(self) -> BranchCollection:

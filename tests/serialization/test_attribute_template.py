@@ -1,6 +1,5 @@
 """Tests of the attribute template schema."""
 import pytest
-import logging
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate

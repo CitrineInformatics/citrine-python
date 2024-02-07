@@ -61,8 +61,6 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
     assert execution.status_detail
-    with pytest.deprecated_call():
-        assert execution.status_info == [detail.msg for detail in execution.status_detail]
 
 
 def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecution, session,
@@ -156,9 +154,3 @@ def test_restore(workflow_execution, collection):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
-
-
-def test_deprecated():
-    from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
-    with pytest.deprecated_call():
-        PredictorEvaluationExecution()

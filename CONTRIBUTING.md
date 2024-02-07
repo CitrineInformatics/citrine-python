@@ -21,11 +21,11 @@ Clone from github:
 git clone git@github.com:CitrineInformatics/citrine-python
 ```
 
-Create a virtual environment using Python >= 3.7.
+Create a virtual environment using Python >= 3.8.
 One option is to use conda, but it is not required.
 
 ```bash
-conda create -n <environment_name> python=3.7
+conda create -n <environment_name> python=3.8
 conda activate <environment_name>
 ```
 

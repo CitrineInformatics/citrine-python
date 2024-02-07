@@ -1,5 +1,4 @@
-import warnings
-from typing import List, Optional, Union
+from typing import List, Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -72,24 +71,12 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
                  name: str,
                  *,
                  description: str,
-                 predictors: List[Union[UUID, PredictorNode]],
+                 predictors: List[PredictorNode],
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.training_data: List[DataSource] = training_data or []
-
-        uid_predictors = [x for x in predictors if isinstance(x, UUID)]
-        if len(uid_predictors) > 0:
-            warnings.warn(
-                "Referencing predictors by a UUID inside a GraphPredictor is no longer supported "
-                "on the Citrine Platform. Please remove all references to predictors "
-                "and add only PredictorNode objects to the `predictors` field.",
-                DeprecationWarning
-            )
-
-        self.predictors: List[PredictorNode] = [
-            x for x in predictors if isinstance(x, PredictorNode)
-        ]
+        self.predictors: List[PredictorNode] = predictors
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)

@@ -783,7 +783,7 @@ class Object(PropertyCollection[typing.Any, dict]):
 
     def _serialize(self, obj: typing.Any) -> dict:
         serialized = {}
-        if type(obj) != self.klass and isinstance(obj, Serializable):
+        if type(obj) is not self.klass and isinstance(obj, Serializable):
             # If the object class doesn't match this one, then it is a subclass
             # that may have more fields, so defer to them by calling the dump method
             # it must have as a Serializable
@@ -994,7 +994,7 @@ class Mapping(PropertyCollection[dict, dict]):
     def _deserialize(self, value: typing.Union[dict, list]) -> dict:
         deserialized = dict()
 
-        if type(value) == list:
+        if type(value) is list:
             for pair in value:
                 deserialized_key = self.keys_type.deserialize(pair[0])
                 deserialized_value = self.values_type.deserialize(pair[1])

@@ -1,6 +1,8 @@
 from typing import Optional, Iterator, Iterable
 from uuid import UUID
 
+from gemd.enumeration.base_enumeration import BaseEnumeration
+
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -8,7 +10,7 @@ from citrine._session import Session
 from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
-from gemd.enumeration.base_enumeration import BaseEnumeration
+from citrine.resources.file_link import FileLink
 
 
 class IngestionStatusType(BaseEnumeration):
@@ -105,19 +107,13 @@ class IngestionErrorTrace(Resource['IngestionErrorTrace']):
 
 
 class IngestionException(CitrineException):
-    """
-    [ALPHA] An exception that contains details of a failed ingestion.
-
-    Attributes
-    ----------
-    uid: Optional[UUID]
-    errors: List[IngestionErrorTrace]
-
-    """
+    """[ALPHA] An exception that contains details of a failed ingestion."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    """Optional[UUID]"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+    """List[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
@@ -145,20 +141,14 @@ class IngestionException(CitrineException):
 
 
 class IngestionStatus(Resource['IngestionStatus']):
-    """
-    [ALPHA] An object that represents the outcome of an ingestion event.
-
-    Attributes
-    ----------
-    uid: String
-    status: IngestionStatusType
-    errors: List[IngestionErrorTrace]
-
-    """
+    """[ALPHA] An object that represents the outcome of an ingestion event."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    """UUID"""
     status = properties.Enumeration(IngestionStatusType, "status")
+    """IngestionStatusType"""
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
+    """List[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
@@ -188,14 +178,10 @@ class Ingestion(Resource['Ingestion']):
     every object in that dataset. A user with write access to a dataset can create, update,
     and delete objects in the dataset.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this ingestion.
-
     """
 
     uid = properties.UUID('ingestion_id')
+    """UUID: Unique uuid4 identifier of this ingestion."""
     project_id = properties.UUID('project_id')
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
@@ -408,7 +394,7 @@ class FailedIngestion(Ingestion):
         """
         if self.raise_errors:
             raise JobFailureError(
-                message=f"Ingestion creation failed: self.errors",
+                message=f"Ingestion creation failed: {self.errors}",
                 job_id=None,
                 failure_reasons=self.errors
             )
@@ -443,7 +429,7 @@ class IngestionCollection(Collection[Ingestion]):
         self.session = session
 
     def build_from_file_links(self,
-                              file_links: Iterable["FileLink"],
+                              file_links: Iterable[FileLink],
                               *,
                               raise_errors: bool = True) -> Ingestion:
         """
@@ -459,7 +445,7 @@ class IngestionCollection(Collection[Ingestion]):
 
         """
         if len(file_links) == 0:
-            raise ValueError(f"No files passed.")
+            raise ValueError("No files passed.")
         invalid_links = [f for f in file_links if f.uid is None]
         if len(invalid_links) != 0:
             raise ValueError(f"{len(invalid_links)} File Links have no on-platform UID.")

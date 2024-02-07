@@ -1,0 +1,45 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  check-version:
+    name: Check version bumped
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize the environment
+        uses: ./.github/actions/initialize
+      - name: Check version
+        run: python scripts/validate_version_bump.py
+  linting:
+    name: Run linting with flake8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize the environment
+        uses: ./.github/actions/initialize
+      - name: Lint the src/ directory
+        run: flake8 src/
+  check-deprecated:
+    name: Find code marked for removal in this version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize the environment
+        uses: ./.github/actions/initialize
+      - name: Deprecated check
+        run: derp src/ src/citrine/__version__.py
+  check-docs:
+    name: Check docs for warnings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize the environment
+        uses: ./.github/actions/initialize
+      - name: Build Docs
+        run: make -C docs/ html SPHINXOPTS='-W --keep-going'

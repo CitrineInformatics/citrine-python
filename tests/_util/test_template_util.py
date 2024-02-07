@@ -1,10 +1,8 @@
-from numpy.lib.arraysetops import isin
 from citrine._utils.template_util import make_attribute_table
 from gemd.entity.object import *
 from gemd.entity.attribute import *
 from gemd.entity.value import *
 from gemd.entity.link_by_uid import LinkByUID
-import pandas as pd
 
 def _make_list_of_gems():
     faux_gems = [
@@ -135,12 +133,10 @@ def test_attribute_alignment():
     info_dict = make_attribute_table(_make_list_of_gems())
     assert(isinstance(info_dict, list))
     assert(isinstance(info_dict[0], dict))
-    df = pd.DataFrame(info_dict)
-    assert isinstance(df.iloc[0,3], NominalReal)
-    assert isinstance(df.iloc[1,3], NormalReal)
-    assert isinstance(df.iloc[4,3], NominalReal)
-    assert isinstance(df.iloc[0,5], InChI)
-    assert pd.isnull(df.iloc[1,5])
-    # Shape asserts that nestled objects are being flattened and 
-    # "like" attributes are being put into the same column
-    assert df.shape == (6,12)
+    assert isinstance(info_dict[0]["PARAMETER: param 1"], NominalReal)
+    assert isinstance(info_dict[1]["PARAMETER: param 1"], NormalReal)
+    assert isinstance(info_dict[4]["PARAMETER: param 1"], NominalReal)
+    assert isinstance(info_dict[0]["PARAMETER: attr 1"], InChI)
+    assert info_dict[1].get("PARAMETER: attr 1") is None
+    assert len(info_dict) == 6
+    assert len({key for adict in info_dict for key in adict}) == 12

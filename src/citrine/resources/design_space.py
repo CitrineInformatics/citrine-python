@@ -1,6 +1,5 @@
 """Resources that represent collections of design spaces."""
-import warnings
-from typing import List, Optional, TypeVar, Union
+from typing import Optional, TypeVar, Union
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -70,28 +69,11 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                       "in this EnumeratedDesignSpace"
                 raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
 
-    def _hydrate_design_space(self, design_space: DesignSpace) -> List[DesignSpace]:
-        if design_space.typ != "ProductDesignSpace":
-            return design_space
-
-        subspaces = []
-        for subspace in design_space.subspaces:
-            if isinstance(subspace, (str, UUID)):
-                warnings.warn("Support for UUIDs in subspaces is deprecated as of 2.16.0, and "
-                              "will be dropped in 3.0. Please use DesignSpace objects instead.",
-                              DeprecationWarning)
-                subspaces.append(self.get(subspace))
-            else:
-                subspaces.append(subspace)
-        design_space.subspaces = subspaces
-        return design_space
-
     def register(self, design_space: DesignSpace) -> DesignSpace:
         """Create a new design space."""
         self._verify_write_request(design_space)
-        hydrated_ds = self._hydrate_design_space(design_space)
 
-        registered_ds = super().register(hydrated_ds)
+        registered_ds = super().register(design_space)
 
         # If the initial response is invalid, just return it.
         # If not, kick off validation, since we never exposed saving a design space without
@@ -104,18 +86,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     def update(self, design_space: DesignSpace) -> DesignSpace:
         """Update and validate an existing DesignSpace."""
         self._verify_write_request(design_space)
-        hydrated_ds = self._hydrate_design_space(design_space)
-        updated_ds = super().update(hydrated_ds)
-
-        # The /api/v3/design-spaces endpoint switched archiving from a field on the update payload
-        # to their own endpoints. To maintain backwards compatibility, all design spaces have an
-        # _archived field set by the archived property. It will be archived if True, and restored
-        # if False. It defaults to None, which does nothing. The value is reset afterwards.
-        if design_space._archived is True:
-            self.archive(design_space.uid)
-        elif design_space._archived is False:
-            self.restore(design_space.uid)
-        design_space._archived = None
+        updated_ds = super().update(design_space)
 
         # If the initial response is invalid, just return it.
         # If not, kick off validation, since we never exposed saving a design space without

@@ -15,6 +15,7 @@ Metrics are specified as a set of :class:`PredictorEvaluationMetrics <citrine.in
 The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.
 
 .. _Cross-validation evaluator:
+
 Cross-validation evaluator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 

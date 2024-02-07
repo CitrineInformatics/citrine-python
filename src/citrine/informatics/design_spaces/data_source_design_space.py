@@ -1,4 +1,4 @@
-from citrine._rest.engine_resource import ModuleEngineResource
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -6,7 +6,7 @@ from citrine.informatics.design_spaces.design_space import DesignSpace
 __all__ = ['DataSourceDesignSpace']
 
 
-class DataSourceDesignSpace(ModuleEngineResource['DataSourceDesignSpace'], DesignSpace):
+class DataSourceDesignSpace(EngineResource['DataSourceDesignSpace'], DesignSpace):
     """An enumeration of candidates stored in a data source.
 
     Parameters

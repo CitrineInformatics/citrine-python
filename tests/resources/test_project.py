@@ -1,5 +1,4 @@
 import uuid
-from logging import getLogger, WARNING
 from unittest import mock
 
 import pytest
@@ -17,8 +16,6 @@ from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession, FakeRequestResponse
 from citrine.resources.team import  READ, TeamMember
-
-logger = getLogger(__name__)
 
 
 @pytest.fixture
@@ -181,11 +178,6 @@ def test_gemd_resource_get_project_id(project):
 
 def test_design_spaces_get_project_id(project):
     assert project.uid == project.design_spaces.project_id
-
-
-def test_modules_get_project_id_deprecated(project):
-    with pytest.deprecated_call():
-        assert project.uid == project.modules.project_id
 
 
 def test_descriptors_get_project_id(project):

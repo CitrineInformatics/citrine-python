@@ -53,45 +53,33 @@ class Dataset(Resource['Dataset']):
     unique_name: Optional[str]
         An optional, globally unique name that can be used to retrieve the dataset.
 
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this dataset.
-    deleted: bool
-        Flag indicating whether or not this dataset has been deleted.
-    created_by: UUID
-        ID of the user who created the dataset.
-    updated_by: UUID
-        ID of the user who last updated the dataset.
-    deleted_by: UUID
-        ID of the user who deleted the dataset, if it is deleted.
-    create_time: int
-        Time the dataset was created, in seconds since epoch.
-    update_time: int
-        Time the dataset was most recently updated, in seconds since epoch.
-    delete_time: int
-        Time the dataset was deleted, in seconds since epoch, if it is deleted.
-    public: bool
-        Flag indicating whether the dataset is publicly readable.
-
     """
 
     _response_key = 'dataset'
     _resource_type = ResourceTypeEnum.DATASET
 
     uid = properties.Optional(properties.UUID(), 'id')
+    """UUID: Unique uuid4 identifier of this dataset."""
     name = properties.String('name')
     unique_name = properties.Optional(properties.String(), 'unique_name')
     summary = properties.String('summary')
     description = properties.String('description')
     deleted = properties.Optional(properties.Boolean(), 'deleted')
+    """bool: Flag indicating whether or not this dataset has been deleted."""
     created_by = properties.Optional(properties.UUID(), 'created_by')
+    """UUID: ID of the user who created the dataset."""
     updated_by = properties.Optional(properties.UUID(), 'updated_by')
+    """UUID: ID of the user who last updated the dataset."""
     deleted_by = properties.Optional(properties.UUID(), 'deleted_by')
+    """UUID: ID of the user who deleted the dataset, if it is deleted."""
     create_time = properties.Optional(properties.Datetime(), 'create_time')
+    """int: Time the dataset was created, in seconds since epoch."""
     update_time = properties.Optional(properties.Datetime(), 'update_time')
+    """int: Time the dataset was most recently updated, in seconds since epoch."""
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
+    """int: Time the dataset was deleted, in seconds since epoch, if it is deleted."""
     public = properties.Optional(properties.Boolean(), 'public')
+    """bool: Flag indicating whether the dataset is publicly readable."""
     project_id = properties.Optional(properties.UUID(), 'project_id',
                                      serializable=False, deserializable=False)
     session = properties.Optional(properties.Object(Session), 'session',

@@ -8,7 +8,7 @@ Welcome to the Citrine Python client documentation!
 
 This site documents the Python SDK for the Citrine Platform.
 It provides utilities to upload and manage data and design materials using Sequential Learning.
-See the :ref:`getting started <getting-started>` guide for a high-level introduction.
+See the :ref:`getting started <ai-engine-getting-started>` guide for a high-level introduction.
 The :ref:`workflows <workflows>` section documents how to configure and run artificial intelligence (AI) workflows for materials research and development.
 
 Installation
@@ -24,7 +24,7 @@ or a specific version can be installed, for example:
 
 .. code::
 
-  pip install citrine==1.0.0
+  pip install citrine==3.0.0
 
 
 Table of Contents
@@ -41,6 +41,7 @@ Table of Contents
    formulations_example
    molecular_generation
    FAQ/index
+   API Reference <reference/modules>
 
 Indices and tables
 ==================

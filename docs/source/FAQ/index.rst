@@ -7,3 +7,4 @@ FAQ
 
     prohibited_data_patterns
     team_management_migration
+    v3_migration

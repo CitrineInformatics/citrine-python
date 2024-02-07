@@ -9,7 +9,6 @@ from citrine._rest.collection import Collection
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.experiment_values import ExperimentValue
 
 
@@ -107,7 +106,6 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
 
     def list(self, *,
              per_page: int = 100,
-             branch_id: Optional[Union[UUID, str]] = None,
              branch_version_id: Optional[Union[UUID, str]] = None,
              version: Optional[Union[int, str]] = None) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
@@ -118,8 +116,6 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
-        branch_id: UUID, optional
-            [deprecated] Filter the list by the branch version ID.
         branch_version_id: UUID, optional
             Filter the list by the branch version ID.
         version: Union[int, str], optional
@@ -131,13 +127,6 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             An iterator that can be used to loop over all matching experiment data sources.
 
         """
-        # migrate_deprecated_argument requires one argument be provided, but this method does not.
-        if branch_version_id or branch_id:
-            branch_version_id = migrate_deprecated_argument(branch_version_id,
-                                                            "branch_version_id",
-                                                            branch_id,
-                                                            "branch_id")
-
         params = {}
         if branch_version_id:
             params["branch"] = str(branch_version_id)

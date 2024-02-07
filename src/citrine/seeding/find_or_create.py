@@ -1,4 +1,3 @@
-import warnings
 from copy import deepcopy
 from logging import getLogger
 from typing import TypeVar, Optional, Callable
@@ -88,9 +87,9 @@ def find_or_create_project(*,
     If not found, creates a new project with the given name
     """
     if project_collection.team_id is None:
-        warnings.warn("This method should be called through a team, which can be retrieved by "
-                      "find_or_create_team.",
-                      DeprecationWarning)
+        raise NotImplementedError("Collection must have a team ID, such as when retrieved with "
+                                  "find_or_create_team.")
+
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:

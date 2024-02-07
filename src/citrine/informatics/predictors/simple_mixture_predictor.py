@@ -1,12 +1,10 @@
-import warnings
 from typing import List, Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor, FormulationKey
+from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import PredictorNode
-from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['SimpleMixturePredictor']
 
@@ -38,30 +36,10 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
                  name: str,
                  *,
                  description: str,
-                 input_descriptor: Optional[FormulationDescriptor] = None,
-                 output_descriptor: Optional[FormulationDescriptor] = None,
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-
-        _check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
-
-        if input_descriptor is not None:
-            warnings.warn(
-                "The field `input_descriptor` on a SimpleMixturePredictor is deprecated "
-                "and will be ignored. The Citrine Platform will automatically generate a "
-                f"FormulationDescriptor with key '{FormulationKey.HIERARCHICAL.value}' as input.",
-                DeprecationWarning
-            )
-
-        if output_descriptor is not None:
-            warnings.warn(
-                "The field `output_descriptor` on a SimpleMixturePredictor is deprecated "
-                "and will be ignored. The Citrine Platform will automatically generate a "
-                f"FormulationDescriptor with key '{FormulationKey.FLAT.value}' as output.",
-                DeprecationWarning
-            )
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)

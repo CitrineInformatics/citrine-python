@@ -1,4 +1,3 @@
-import warnings
 from copy import deepcopy
 from typing import Callable, Union, Iterable, Optional, Tuple
 from uuid import UUID
@@ -23,21 +22,12 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def __init__(self,
                  project_id: UUID,
                  session: Session,
-                 branch_id: Optional[UUID] = None,
                  *,
                  branch_root_id: Optional[UUID] = None,
                  branch_version: Optional[int] = None):
         self.project_id: UUID = project_id
         self.session: Session = session
 
-        if branch_id:
-            warnings.warn("Constructing the design workflow interface by its parent branch's "
-                          "version ID is deprecated. Please use its root ID and version number.",
-                          DeprecationWarning)
-            if branch_root_id:
-                raise ValueError("Please provide at most one: the version ID or root ID.")
-
-        self.branch_id = branch_id
         self.branch_root_id = branch_root_id
         self.branch_version = branch_version
 
@@ -64,9 +54,9 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         """
         Upload a new design workflow.
 
-        The model's branch ID is ignored in favor of this collection's. If this
-        collection has a null branch ID, then a branch is first created, then
-        the design workflow is created on it.
+        The model's branch root ID and branch version are ignored in favor of this collection's.
+        If this collection has a null branch root ID or branch version, an exception is raised
+        directing the caller to use one.
 
         Parameters
         ----------
@@ -80,18 +70,12 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_root_id is None or self.branch_version is None:
-            if self.branch_id is None:
-                # There are a number of contexts in which hitting design workflow endpoints without
-                # a branch ID is valid, so only this particular usage is deprecated.
-                msg = ('A design workflow must be created with a branch. Please use '
-                       'branch.design_workflows.register() instead of '
-                       'project.design_workflows.register().')
-                raise RuntimeError(msg)
-            else:
-                warnings.warn("Registering a design workflow to a branch by its parent's version "
-                              "ID is deprecated. Please use its root ID and version number.",
-                              DeprecationWarning)
-                branch_id = self.branch_id
+            # There are a number of contexts in which hitting design workflow endpoints without
+            # a branch ID is valid, so only this particular usage is disallowed.
+            msg = ('A design workflow must be created with a branch. Please use '
+                   'branch.design_workflows.register() instead of '
+                   'project.design_workflows.register().')
+            raise RuntimeError(msg)
         else:
             # branch_id is in the body of design workflow endpoints, so it must be serialized.
             # This means the collection branch_id might not match the workflow branch_id. The
@@ -99,10 +83,10 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             # represented by this collection.
             # To avoid modifying the parameter, and to ensure the only change is the branch_id, we
             # deepcopy, modify, then register it.
-            branch_id = self._resolve_branch_id(self.branch_root_id, self.branch_version)
-        model_copy = deepcopy(model)
-        model_copy._branch_id = branch_id
-        return super().register(model_copy)
+            model_copy = deepcopy(model)
+            model_copy._branch_id = self._resolve_branch_id(self.branch_root_id,
+                                                            self.branch_version)
+            return super().register(model_copy)
 
     def build(self, data: dict) -> DesignWorkflow:
         """
@@ -128,9 +112,9 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def update(self, model: DesignWorkflow) -> DesignWorkflow:
         """Update a design workflow.
 
-        Identifies the workflow by the model's uid. It must have a branch_id, and if this
-        collection also has a branch_id, they must match. Prefer updating a workflow through
-        Project.design_workflows.update.
+        Identifies the workflow by its uid. It must have a branch_root_id and branch_version, and
+        if this collection also has a branch_root_id and branch_version, they must match. Prefer
+        updating a workflow through Project.design_workflows.update.
 
         Parameters
         ----------
@@ -148,24 +132,17 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                     self.branch_version != model.branch_version:
                 raise ValueError('To move a design workflow to another branch, please use '
                                  'Project.design_workflows.update')
-        elif self.branch_id is not None:
-            warnings.warn("Updating a design workflow by its parent's branch version ID is "
-                          "deprecated. Please use its root ID and version number.",
-                          DeprecationWarning)
-            if self.branch_id != model._branch_id:
-                raise ValueError('To move a design workflow to another branch, please use '
-                                 'Project.design_workflows.update')
 
-        if model.branch_root_id is not None and model.branch_version is not None:
-            try:
-                model._branch_id = self._resolve_branch_id(model.branch_root_id,
-                                                           model.branch_version)
-            except NotFound:
-                raise ValueError('Cannot update a design workflow unless its branch_root_id and '
-                                 'branch_version exists.')
-        elif model._branch_id is None:
+        if model.branch_root_id is None or model.branch_version is None:
             raise ValueError('Cannot update a design workflow unless its branch_root_id and '
                              'branch_version are set.')
+
+        try:
+            model._branch_id = self._resolve_branch_id(model.branch_root_id,
+                                                       model.branch_version)
+        except NotFound:
+            raise ValueError('Cannot update a design workflow unless its branch_root_id and '
+                             'branch_version exists.')
 
         # If executions have already been done, warn about future behavior change
         executions = model.design_executions.list()

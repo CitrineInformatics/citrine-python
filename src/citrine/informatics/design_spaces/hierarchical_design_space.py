@@ -1,10 +1,7 @@
-import warnings
 from typing import Optional, List
 from uuid import UUID
 
-from deprecation import deprecated
-
-from citrine._rest.engine_resource import ModuleEngineResource
+from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.data_sources import DataSource
@@ -46,28 +43,12 @@ class TemplateLink(Serializable["TemplateLink"]):
             material_template: UUID,
             process_template: UUID,
             material_template_name: Optional[str] = None,
-            process_template_name: Optional[str] = None,
-            template_name: Optional[str] = None
+            process_template_name: Optional[str] = None
     ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
         self.material_template_name: Optional[str] = material_template_name
         self.process_template_name: Optional[str] = process_template_name
-
-        if template_name is not None:
-            warnings.warn(
-                "The field 'template_name' has been deprecated in v2.36.0 and will be removed "
-                "in v3.0.0. Please use the field 'material_template_name' instead.",
-                DeprecationWarning
-            )
-
-    @property
-    @deprecated(
-        deprecated_in="2.36.0", removed_in="3.0.0", details="Use material_template_name instead."
-    )
-    def template_name(self) -> str:
-        """Return the name of the material template."""
-        return self.material_template_name
 
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
@@ -126,7 +107,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         return f"<MaterialNodeDefinition {display_name}>"
 
 
-class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], DesignSpace):
+class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignSpace):
     """A design space that produces hierarchical candidates representing a material history.
 
     A hierarchical design space always contains a root node that defines the
@@ -143,11 +124,11 @@ class HierarchicalDesignSpace(ModuleEngineResource["HierarchicalDesignSpace"], D
     referencing other sub-nodes, allowing for the linkage of complex material history shapes
     in the resulting candidates.
 
-    Every node also contains a set of :class:`~citrine.informatics.dimensions.Dimension`s
+    Every node also contains a set of :class:`~citrine.informatics.dimensions.Dimension`\\s
     used to define any attributes (i.e., properties, processing parameters)
     that will appear on the materials produced by that node.
 
-    :class:`~citrine.informatics.data_sources.DataSource`s can be included on the configuration
+    :class:`~citrine.informatics.data_sources.DataSource`\\s can be included on the configuration
     to allow for design over "known" materials. The Citrine Platform will look up
     the ingredient names from formulation subspaces on the design space nodes
     in order to inject their composition/properties into the material history of the candidates.

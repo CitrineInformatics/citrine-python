@@ -7,7 +7,6 @@ from citrine.informatics.descriptors import (
     FormulationDescriptor, RealDescriptor, CategoricalDescriptor
 )
 from citrine.informatics.predictors import PredictorNode
-from citrine.informatics.predictors.node import _check_deprecated_training_data
 
 __all__ = ['MeanPropertyPredictor']
 
@@ -105,8 +104,6 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
         self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
-
-        _check_deprecated_training_data(training_data)
         self.training_data: List[DataSource] = training_data or []
 
     def __str__(self):

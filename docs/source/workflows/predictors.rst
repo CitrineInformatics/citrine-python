@@ -28,7 +28,7 @@ Each AutoMLPredictor is defined by a set of inputs and outputs.
 Inputs are used as input features to the machine learning model.
 The outputs are the properties that you would like the model to predict.
 Currently, only one output per AutoML predictor is supported, and there must be at least one input.
-Unlike the `SimpleMLPredictor <#simple-ml-predictor>`__, only one model is trained from inputs to the outputs.
+Only one model is trained from inputs to the outputs.
 
 AutoMLPredictors support both regression and classification.
 For each :class:`~citrine.informatics.descriptors.RealDescriptor` output, regression is performed.
@@ -130,7 +130,7 @@ The ML models are independently registered on-platform, but the expression predi
 
     graph_predictor = project.predictors.register(
         GraphPredictor(
-            name = "Big elastic constant predictor,
+            name = "Big elastic constant predictor",
             description = ""
             predictors = [
                 bulk_modulus_predictor.uid,
@@ -144,6 +144,7 @@ The ML models are independently registered on-platform, but the expression predi
 For another example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 .. _Expression Predictor:
+
 Expression predictor
 --------------------
 
@@ -685,125 +686,6 @@ This predictor will compute 2 responses, ``solute share in formulation`` and ``s
     label_fractions_descriptors = project.descriptors.from_predictor_responses(
         predictor=label_fractions,
         inputs=[formulation_descriptor]
-    )
-
-
-Simple ML predictor
--------------------
-
-.. Warning::
-    Simple ML Predictors are not supported on the Web UI and will be deprecated as of v2.0.
-    For analogous behavior use the build_simple_ml method to construct a Graph Predictor.
-    Use the convert_and_update (`source <https://github.com/CitrineInformatics/citrine-python/blob/main/src/citrine/resources/predictor.py#L193>`_).
-    method to convert existing Simple ML Predictors to Graph Predictors.
-
-
-The :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs, outputs, and latent variables.
-Inputs are used as input features to the machine learning model.
-Outputs are the properties that you would like the model to predict.
-There must be at least one input and one output.
-Latent variables are properties that you would like the model to predict and you think could also be useful in predicting the outputs.
-If defined, latent variables are used to build hierarchical models.
-One model is trained from inputs to latent variables, and another is trained from inputs and latent variables to outputs.
-Thus, all inputs and latent variables are used to predict outputs.
-
-Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
-
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`, register the predictor to a project and wait for validation:
-
-.. code:: python
-
-   from citrine import Citrine
-   from citrine.seeding.find_or_create import (find_or_create_project,
-                                               create_or_update
-                                              )
-   from citrine.jobs.waiting import wait_while_validating
-   from citrine.informatics.predictors import SimpleMLPredictor
-   from citrine.informatics.data_sources import GemTableDataSource
-
-   # create a session with citrine using your API key
-   session = Citrine(api_key=API_KEY)
-
-   # find project by name 'Example project' or create it if not found
-   project = find_or_create_project(project_collection=session.projects,
-                                    project_name='Example project'
-                                   )
-
-   # create SimpleMLPredictor (assumes descriptors for
-   # inputs/outputs/latent variables have already been created)
-   simple_ml_predictor = SimpleMLPredictor(
-       name = 'Predictor name',
-       description = 'Predictor description',
-       inputs = [input_descriptor_1, input_descriptor_2],
-       outputs = [output_descriptor_1, output_descriptor_2],
-       latent_variables = [latent_variable_descriptor_1],
-       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
-   )
-
-   # register predictor or update predictor of same name if it already
-   # exists in the project.
-   predictor = create_or_update(collection=project.predictors,
-                                resource=simple_ml_predictor
-                               )
-
-   # wait while the predictor is validating and print status information
-   # while waiting.
-   predictor = wait_while_validating(collection=project.predictors,
-                                     module=predictor,
-                                     print_status_info=True
-                                    )
-
-Often, a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
-Instead of entering these manually, outputs from a predictor can be retrieved programmatically using ``outputs = project.descriptors.from_predictor_responses(predictor, inputs)``, where ``outputs`` is the list of descriptors returned by the ``predictor`` given a list of descriptors as ``inputs``.
-
-The following demonstrates how to create an :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor` and use its outputs as inputs to a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`.
-
-.. code:: python
-
-    from citrine import Citrine
-    from citrine.seeding.find_or_create import find_or_create_project
-    from citrine.informatics.predictors import SimpleMLPredictor
-    from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.predictors import IngredientFractionsPredictor
-    from citrine.informatics.descriptors import FormulationDescriptor
-
-    # create a session with citrine using your API key
-    session = Citrine(api_key=API_KEY)
-
-    # find project by name 'Example project' or create it if not found
-    project = find_or_create_project(project_collection=session.projects,
-                                     project_name='Example project'
-                                    )
-
-    # create a descriptor to store formulations
-    formulation_descriptor = FormulationDescriptor.flat()
-
-    # create a predictor that computes ingredient fractions
-    ingredient_fractions = IngredientFractionsPredictor(
-        name = 'Ingredient Fractions Predictor',
-        description = 'Computes fractions of provided ingredients',
-        input_descriptor = formulation_descriptor,
-        ingredients = ['water', 'salt', 'boric acid']
-    )
-
-    # get the descriptors the ingredient fractions predictor returns given the formulation descriptor
-    ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
-        predictor=ingredient_fractions,
-        inputs=[formulation_descriptor]
-    )
-    # ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient
-
-    simple_ml_predictor = SimpleMLPredictor(
-        name = 'Predictor name',
-        description = 'Predictor description',
-        inputs = ingredient_fraction_descriptors,
-        outputs = [output_descriptor],
-        latent_variables = [],
-        training_data = GemTableDataSource(
-            table_id=training_data_table_uid,
-            table_version=1
-        )
     )
 
 
