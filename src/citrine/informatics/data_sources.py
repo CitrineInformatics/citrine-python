@@ -1,5 +1,4 @@
 """Tools for working with Descriptors."""
-from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
 
@@ -23,16 +22,10 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
     """
 
-    @abstractmethod
-    def _attrs(self) -> List[str]:
-        pass  # pragma: no cover
-
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
             return False
 
     @classmethod
@@ -72,9 +65,6 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
         properties.String, properties.Object(Descriptor), "column_definitions")
     identifiers = properties.Optional(properties.List(properties.String), "identifiers")
 
-    def _attrs(self) -> List[str]:
-        return ["file_link", "column_definitions", "identifiers", "typ"]
-
     def __init__(self,
                  *,
                  file_link: FileLink,
@@ -102,9 +92,6 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
 
-    def _attrs(self) -> List[str]:
-        return ["table_id", "table_version", "typ"]
-
     def __init__(self,
                  *,
                  table_id: UUID,
@@ -125,9 +112,6 @@ class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSourc
 
     typ = properties.String('type', default='experiments_data_source', deserializable=False)
     datasource_id = properties.UUID("datasource_id")
-
-    def _attrs(self) -> List[str]:
-        return ["datasource_id", "typ"]
 
     def __init__(self, *, datasource_id: UUID):
         self.datasource_id: UUID = datasource_id

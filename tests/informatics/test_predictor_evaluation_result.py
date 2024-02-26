@@ -5,7 +5,7 @@ from citrine.informatics.predictor_evaluation_metrics import *
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult, \
     PredictedVsActualRealPoint, \
     PredictedVsActualCategoricalPoint
-from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
+from citrine.informatics.predictor_evaluator import CrossValidationEvaluator, HoldoutSetEvaluator
 
 
 @pytest.fixture
@@ -38,12 +38,23 @@ def test_holdout_serde(example_holdout_result, example_holdout_result_dict):
     round_trip = PredictorEvaluationResult.build(json.loads(json.dumps(example_holdout_result_dict)))
     assert example_holdout_result.evaluator == round_trip.evaluator
 
-def test_evaluator(example_cv_result, example_cv_evaluator_dict):
+
+def test_ev_evaluator(example_cv_result, example_cv_evaluator_dict):
     args = example_cv_evaluator_dict
     del args["type"]
     expected = CrossValidationEvaluator(**args)
+    assert expected.responses == set(example_cv_evaluator_dict['responses'])
     assert example_cv_result.evaluator == expected
     assert example_cv_result.evaluator != 0  # make sure eq does something for mismatched classes
+
+
+def test_holdout_set_evaluator(example_holdout_result, example_holdout_evaluator_dict):
+    args = example_holdout_evaluator_dict
+    del args["type"]
+    expected = HoldoutSetEvaluator(**args)
+    assert expected.responses == set(example_holdout_evaluator_dict['responses'])
+    assert example_holdout_result.evaluator == expected
+    assert example_holdout_result.evaluator != 0  # make sure eq does something for mismatched classes
 
 
 def test_check_rmse(example_cv_result, example_rmse_metrics):
@@ -52,7 +63,7 @@ def test_check_rmse(example_cv_result, example_rmse_metrics):
     # check eq method does something
     assert example_cv_result["saltiness"][RMSE()] != 0
     with pytest.raises(TypeError):
-        foo = example_cv_result["saltiness"][0]
+        _ = example_cv_result["saltiness"][0]
 
 
 def test_real_pva(example_cv_result, example_real_pva_metrics):

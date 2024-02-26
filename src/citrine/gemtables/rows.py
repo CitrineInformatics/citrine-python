@@ -1,6 +1,5 @@
 """Row definitions for GEM Tables."""
 from typing import Type, List, Set, Union
-from abc import abstractmethod
 from uuid import UUID
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -19,16 +18,10 @@ class Row(PolymorphicSerializable['Row']):
     Abstract type that returns the proper type given a serialized dict.
     """
 
-    @abstractmethod
-    def _attrs(self) -> List[str]:
-        pass  # pragma: no cover
-
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
             return False
 
     @classmethod
@@ -63,9 +56,6 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     tags = properties.Optional(properties.Set(properties.String), "tags")
 
     template_type = Union[UUID, str, LinkByUID, MaterialTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["templates", "typ", "tags"]
 
     def __init__(self, *,
                  templates: List[template_type],

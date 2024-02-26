@@ -1,5 +1,4 @@
 """Variable definitions for GEM Tables."""
-from abc import abstractmethod
 from typing import Type, Optional, List, Union, Tuple
 from uuid import UUID
 
@@ -60,14 +59,11 @@ class Variable(PolymorphicSerializable['Variable']):
     Abstract type that returns the proper type given a serialized dict.
     """
 
-    @abstractmethod
-    def _attrs(self) -> List[str]:
-        pass  # pragma: no cover
-
     def __eq__(self, other):
-        return type(self) is type(other) and all([
-            getattr(self, key) == getattr(other, key) for key in self._attrs()
-        ])
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
+            return False
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -110,9 +106,6 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
     headers = properties.List(properties.String, 'headers')
     field = properties.String('field')
     typ = properties.String('type', default="root_info", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "field", "typ"]
 
     def __init__(self,
                  name: str, *,
@@ -158,9 +151,6 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     constraint_type = Tuple[attribute_type, BaseBounds]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "template", "attribute_constraints", "type_selector", "typ"]
 
     def __init__(self,
                  name: str,
@@ -217,10 +207,6 @@ class AttributeByTemplateAfterProcessTemplate(
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
     constraint_type = Tuple[attribute_type, BaseBounds]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "attribute_template", "process_template",
-                "attribute_constraints", "type_selector", "typ"]
 
     def __init__(self,
                  name: str,
@@ -285,10 +271,6 @@ class AttributeByTemplateAndObjectTemplate(
     object_type = Union[UUID, str, LinkByUID, BaseTemplate]
     constraint_type = Tuple[attribute_type, BaseBounds]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "attribute_template", "object_template",
-                "attribute_constraints", "type_selector", "typ"]
-
     def __init__(self,
                  name: str,
                  *,
@@ -342,9 +324,6 @@ class LocalAttribute(Serializable['LocalAttribute'], Variable):
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     constraint_type = Tuple[attribute_type, BaseBounds]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "template", "attribute_constraints", "type_selector", "typ"]
-
     def __init__(self,
                  name: str,
                  *,
@@ -390,10 +369,6 @@ class IngredientIdentifierByProcessTemplateAndName(
     typ = properties.String('type', default="ing_id_by_process_and_name", deserializable=False)
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_template", "ingredient_name", "scope",
-                "type_selector", "typ"]
 
     def __init__(self,
                  name: str,
@@ -447,10 +422,6 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_template", "ingredient_name", "label",
-                "type_selector", "typ"]
-
     def __init__(self,
                  name: str,
                  *,
@@ -497,9 +468,6 @@ class IngredientLabelsSetByProcessAndName(
                             deserializable=False)
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_template", "ingredient_name", "typ"]
 
     def __init__(self,
                  name: str,
@@ -552,10 +520,6 @@ class IngredientQuantityByProcessAndName(
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension",
-                "type_selector", "typ"]
-
     def __init__(self,
                  name: str,
                  *,
@@ -602,9 +566,6 @@ class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Var
     headers = properties.List(properties.String, 'headers')
     scope = properties.String('scope')
     typ = properties.String('type', default="root_id", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "scope", "typ"]
 
     def __init__(self,
                  name: str,
@@ -675,10 +636,6 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
     constraint_type = Tuple[attribute_type, BaseBounds]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "attribute_template", "process_templates",
-                "attribute_constraints", "type_selector", "typ"]
 
     def __init__(self,
                  name: str,
@@ -753,10 +710,6 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "process_templates", "scope",
-                "type_selector", "typ"]
-
     def __init__(self,
                  name: str, *,
                  headers: List[str],
@@ -822,9 +775,6 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     typ = properties.String('type', default="ing_label_set_in_output", deserializable=False)
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_templates", "ingredient_name", "typ"]
 
     def __init__(self,
                  name: str, *,
@@ -902,15 +852,6 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
 
-    def _attrs(self) -> List[str]:
-        return ["name",
-                "headers",
-                "ingredient_name",
-                "process_templates",
-                "type_selector",
-                "unit",
-                "typ"]
-
     def __init__(self,
                  name: str, *,
                  headers: List[str],
@@ -972,9 +913,6 @@ class LocalIngredientIdentifier(Serializable['LocalIngredientIdentifier'], Varia
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
 
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "scope", "type_selector", "typ"]
-
     def __init__(self,
                  name: str, *,
                  headers: List[str],
@@ -1015,9 +953,6 @@ class LocalIngredientLabelsSet(Serializable['LocalIngredientLabelsSet'], Variabl
     typ = properties.String('type', default="local_ing_label_set", deserializable=False)
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "typ"]
 
     def __init__(self,
                  name: str, *,
@@ -1067,9 +1002,6 @@ class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable)
     typ = properties.String('type', default="local_ing_quantity", deserializable=False)
 
     process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "type_selector", "unit", "typ"]
 
     def __init__(self,
                  name: str, *,
@@ -1129,9 +1061,6 @@ class XOR(Serializable['XOR'], Variable):
     headers = properties.List(properties.String, 'headers')
     variables = properties.List(properties.Object(Variable), 'variables')
     typ = properties.String('type', default="xor", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["name", "headers", "variables", "typ"]
 
     def __init__(self, name, *, headers, variables):
         self.name = name

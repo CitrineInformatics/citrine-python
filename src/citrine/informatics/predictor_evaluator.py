@@ -1,4 +1,5 @@
-from typing import Optional, Set, Type, List
+from abc import abstractmethod
+from typing import Optional, Set, Type
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -23,28 +24,24 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             "HoldoutSetEvaluator": HoldoutSetEvaluator
         }[data["type"]]
 
-    def _attrs(self) -> List[str]:
-        raise NotImplementedError  # pragma: no cover
-
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
             return False
 
     @property
+    @abstractmethod
     def responses(self) -> Set[str]:
         """Responses to compute metrics for."""
-        raise NotImplementedError  # pragma: no cover
 
     @property
+    @abstractmethod
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics to compute for each response."""
-        raise NotImplementedError  # pragma: no cover
 
     @property
+    @abstractmethod
     def name(self) -> str:
         """Name of the evaluator.
 
@@ -53,7 +50,6 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
         As such, the names of all evaluators within a single workflow must be unique.
         """
-        raise NotImplementedError  # pragma: no cover
 
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
@@ -92,10 +88,6 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
         for all other descriptors will be in the same group.
 
     """
-
-    def _attrs(self) -> List[str]:
-        return ["typ", "name", "description",
-                "responses", "n_folds", "n_trials", "metrics", "ignore_when_grouping"]
 
     name = properties.String("name")
     description = properties.String("description")
@@ -154,9 +146,6 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
         Optional set of metrics to compute for each response. Default is all metrics.
 
     """
-
-    def _attrs(self) -> List[str]:
-        return ["typ", "name", "responses", "data_source", "metrics"]
 
     name = properties.String("name")
     description = properties.String("description")
