@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from typing import Optional, Set, Type
 
 from citrine._serialization import properties
@@ -43,17 +42,16 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             return False
 
     @property
-    @abstractmethod
     def responses(self) -> Set[str]:
         """Responses to compute metrics for."""
+        raise NotImplementedError  # pragma: no cover
 
     @property
-    @abstractmethod
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics to compute for each response."""
+        raise NotImplementedError  # pragma: no cover
 
     @property
-    @abstractmethod
     def name(self) -> str:
         """Name of the evaluator.
 
@@ -62,6 +60,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
         As such, the names of all evaluators within a single workflow must be unique.
         """
+        raise NotImplementedError  # pragma: no cover
 
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
