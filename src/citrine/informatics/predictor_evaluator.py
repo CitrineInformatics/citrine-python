@@ -26,7 +26,19 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 
     def __eq__(self, other):
         if isinstance(other, Serializable):
-            return self.dump() == other.dump()
+            self_dict = self.dump()
+            other_dict = other.dump()
+
+            self_dict['responses'] = set(self_dict.get('responses', []))
+            self_dict['metrics'] = frozenset(
+                frozenset((k, v) for k, v in dct.items()) for dct in self_dict.get('metrics', [])
+            )
+            other_dict['responses'] = set(other_dict.get('responses', []))
+            other_dict['metrics'] = frozenset(
+                frozenset((k, v) for k, v in dct.items()) for dct in other_dict.get('metrics', [])
+            )
+
+            return self_dict == other_dict
         else:
             return False
 
