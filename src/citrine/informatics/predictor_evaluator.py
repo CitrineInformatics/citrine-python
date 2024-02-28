@@ -1,4 +1,4 @@
-from typing import Optional, Set, Type, List
+from typing import Optional, Set, Type
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -23,15 +23,22 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             "HoldoutSetEvaluator": HoldoutSetEvaluator
         }[data["type"]]
 
-    def _attrs(self) -> List[str]:
-        raise NotImplementedError  # pragma: no cover
-
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            self_dict = self.dump()
+            other_dict = other.dump()
+
+            self_dict['responses'] = set(self_dict.get('responses', []))
+            self_dict['metrics'] = frozenset(
+                frozenset((k, v) for k, v in dct.items()) for dct in self_dict.get('metrics', [])
+            )
+            other_dict['responses'] = set(other_dict.get('responses', []))
+            other_dict['metrics'] = frozenset(
+                frozenset((k, v) for k, v in dct.items()) for dct in other_dict.get('metrics', [])
+            )
+
+            return self_dict == other_dict
+        else:
             return False
 
     @property
@@ -93,10 +100,6 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
 
     """
 
-    def _attrs(self) -> List[str]:
-        return ["typ", "name", "description",
-                "responses", "n_folds", "n_trials", "metrics", "ignore_when_grouping"]
-
     name = properties.String("name")
     description = properties.String("description")
     _responses = properties.Set(properties.String, "responses")
@@ -154,9 +157,6 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
         Optional set of metrics to compute for each response. Default is all metrics.
 
     """
-
-    def _attrs(self) -> List[str]:
-        return ["typ", "name", "responses", "data_source", "metrics"]
 
     name = properties.String("name")
     description = properties.String("description")

@@ -1,6 +1,5 @@
 """Column definitions for GEM Tables."""
 from typing import Type, Optional, List, Union
-from abc import abstractmethod
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -57,16 +56,10 @@ class Column(PolymorphicSerializable['Column']):
     Abstract type that returns the proper type given a serialized dict.
     """
 
-    @abstractmethod
-    def _attrs(self) -> List[str]:
-        pass  # pragma: no cover
-
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
             return False
 
     @classmethod
@@ -108,9 +101,6 @@ class MeanColumn(Serializable['MeanColumn'], Column):
     target_units = properties.Optional(properties.String, "target_units")
     typ = properties.String('type', default="mean_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "target_units", "typ"]
-
     def __init__(self, *,
                  data_source: Union[str, Variable],
                  target_units: Optional[str] = None):
@@ -137,9 +127,6 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
     data_source = properties.String('data_source')
     target_units = properties.Optional(properties.String, "target_units")
     typ = properties.String('type', default="std_dev_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "target_units", "typ"]
 
     def __init__(self, *,
                  data_source: Union[str, Variable],
@@ -185,9 +172,6 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
     target_units = properties.Optional(properties.String, "target_units")
     typ = properties.String('type', default="quantile_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "quantile", "target_units", "typ"]
-
     def __init__(self, *,
                  data_source: Union[str, Variable],
                  quantile: float,
@@ -210,9 +194,6 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
     data_source = properties.String('data_source')
     typ = properties.String('type', default="original_units_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "typ"]
-
     def __init__(self, *, data_source: Union[str, Variable]):
         self.data_source = _make_data_source(data_source)
 
@@ -230,9 +211,6 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_category_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "typ"]
-
     def __init__(self, *, data_source: Union[str, Variable]):
         self.data_source = _make_data_source(data_source)
 
@@ -249,9 +227,6 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
 
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_probability_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "typ"]
 
     def __init__(self, *, data_source: Union[str, Variable]):
         self.data_source = _make_data_source(data_source)
@@ -276,9 +251,6 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
     data_source = properties.String('data_source')
     sort_order = properties.Enumeration(CompositionSortOrder, 'sort_order')
     typ = properties.String('type', default="flat_composition_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "sort_order", "typ"]
 
     def __init__(self, *,
                  data_source: Union[str, Variable],
@@ -308,9 +280,6 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
     normalize = properties.Boolean("normalize")
     typ = properties.String('type', default="component_quantity_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "component_name", "normalize", "typ"]
-
     def __init__(self, *,
                  data_source: Union[str, Variable],
                  component_name: str,
@@ -337,9 +306,6 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
     data_source = properties.String('data_source')
     n = properties.Integer("n")
     typ = properties.String('type', default="biggest_component_name_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "n", "typ"]
 
     def __init__(self, *,
                  data_source: Union[str, Variable],
@@ -370,9 +336,6 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
     typ = properties.String('type',
                             default="biggest_component_quantity_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "n", "normalize", "typ"]
-
     def __init__(self, *,
                  data_source: Union[str, Variable],
                  n: int,
@@ -395,9 +358,6 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     data_source = properties.String('data_source')
     typ = properties.String('type', default="identity_column", deserializable=False)
 
-    def _attrs(self) -> List[str]:
-        return ["data_source", "typ"]
-
     def __init__(self, *, data_source: Union[str, Variable]):
         self.data_source = _make_data_source(data_source)
 
@@ -417,9 +377,6 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
     data_source = properties.String('data_source')
     format = properties.Enumeration(ChemicalDisplayFormat, 'format')
     typ = properties.String('type', default="molecular_structure_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "format", "typ"]
 
     def __init__(self, *, data_source: Union[str, Variable], format: ChemicalDisplayFormat):
         self.data_source = _make_data_source(data_source)
@@ -445,9 +402,6 @@ class ConcatColumn(Serializable['ConcatColumn'], Column):
     data_source = properties.String('data_source')
     subcolumn = properties.Object(Column, 'subcolumn')
     typ = properties.String('type', default="concat_column", deserializable=False)
-
-    def _attrs(self) -> List[str]:
-        return ["data_source", "typ"]
 
     def __init__(self, *, data_source: Union[str, Variable], subcolumn: Column):
         self.data_source = _make_data_source(data_source)

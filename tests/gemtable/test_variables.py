@@ -34,10 +34,6 @@ def test_deser_from_parent(variable):
     # Serialize and deserialize the variables, making sure they are round-trip serializable
     variable_data = variable.dump()
     variable_deserialized = Variable.build(variable_data)
-    for attr in variable._attrs():
-        variable_attr = getattr(variable, attr)
-        variable_deser_attr = getattr(variable_deserialized, attr)
-        assert variable_attr == variable_deser_attr
     assert variable == variable_deserialized
 
 

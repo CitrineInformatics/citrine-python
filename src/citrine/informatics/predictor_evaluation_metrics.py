@@ -1,6 +1,6 @@
 from logging import getLogger
 from math import isclose
-from typing import Type, Union, List
+from typing import Type, Union
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -25,22 +25,14 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
     Abstract type that returns the proper type given a serialized dict.
     """
 
-    def _attrs(self) -> List[str]:
-        return ["typ"]
-
     def __hash__(self):
-        return hash(self.__getattribute__("typ"))
+        return hash(self.typ)
 
     def __eq__(self, other):
-        try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
-            ])
-        except AttributeError:
+        if isinstance(other, Serializable):
+            return self.dump() == other.dump()
+        else:
             return False
-
-    def __init__(self):
-        pass
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -202,9 +194,6 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                 ))
 
         self._level_str = "{:5.3f}".format(_level_float)
-
-    def _attrs(self) -> List[str]:
-        return ["typ", "_level_str"]
 
     def __repr__(self):
         return "coverage_probability_{}".format(self._level_str)
