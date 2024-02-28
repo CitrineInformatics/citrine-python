@@ -46,10 +46,10 @@ class Dataset(Resource['Dataset']):
     ----------
     name: str
         Name of the dataset. Can be used for searching.
-    summary: str
-        A summary of this dataset.
-    description: str
-        Long-form description of the dataset.
+    summary: Optional[str]
+        An optional summary of this dataset.
+    description: Optional[str]
+        An optional long-form description of the dataset.
     unique_name: Optional[str]
         An optional, globally unique name that can be used to retrieve the dataset.
 
@@ -62,8 +62,8 @@ class Dataset(Resource['Dataset']):
     """UUID: Unique uuid4 identifier of this dataset."""
     name = properties.String('name')
     unique_name = properties.Optional(properties.String(), 'unique_name')
-    summary = properties.String('summary')
-    description = properties.String('description')
+    summary = properties.Optional(properties.String, 'summary')
+    description = properties.Optional(properties.String, 'description')
     deleted = properties.Optional(properties.Boolean(), 'deleted')
     """bool: Flag indicating whether or not this dataset has been deleted."""
     created_by = properties.Optional(properties.UUID(), 'created_by')
@@ -85,11 +85,11 @@ class Dataset(Resource['Dataset']):
     session = properties.Optional(properties.Object(Session), 'session',
                                   serializable=False, deserializable=False)
 
-    def __init__(self, name: str, *, summary: str,
-                 description: str, unique_name: Optional[str] = None):
+    def __init__(self, name: str, *, summary: Optional[str] = None,
+                 description: Optional[str] = None, unique_name: Optional[str] = None):
         self.name: str = name
-        self.summary: str = summary
-        self.description: str = description
+        self.summary: Optional[str] = summary
+        self.description: Optional[str] = description
         self.unique_name = unique_name
 
         # The attributes below should not be set by the user. Instead they will be updated as the
