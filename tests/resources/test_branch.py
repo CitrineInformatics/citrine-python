@@ -509,7 +509,6 @@ def test_experiment_datasource(session, collection):
     erds_path = f'projects/{collection.project_id}/candidate-experiment-datasources'
 
     erds = ExperimentDataSourceDataFactory()
-    erds['data']['experiments'] = [CandidateExperimentSnapshotDataFactory()]
 
     branch = collection.build(BranchDataFactory())
     session.set_response({'response': [erds]})

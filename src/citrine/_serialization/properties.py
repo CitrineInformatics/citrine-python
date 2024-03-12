@@ -408,7 +408,8 @@ class Datetime(Property[datetime, int]):
         raise TypeError("{} must be an int or a string".format(value))
 
     def _serialize(self, value: datetime) -> int:
-        return int(arrow.get(value).float_timestamp * 1000)
+        # Add 100 nanoseconds to avoid floating point truncation issues from microseconds
+        return int(arrow.get(value).float_timestamp * 1000 + 0.0001)
 
 
 class List(PropertyCollection[list, list]):

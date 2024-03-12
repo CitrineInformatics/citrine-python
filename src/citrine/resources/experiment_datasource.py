@@ -65,8 +65,8 @@ class ExperimentDataSource(Serializable['ExperimentDataSource']):
     def read(self) -> str:
         """Read this experiment data source into a CSV.
 
-        Each row will be a single experiement from this data source, and each column is a variable
-        which is overriden in any of the experiements in this data source. If an experiement did
+        Each row will be a single experiment from this data source, and each column is a variable
+        which is overriden in any of the experiments in this data source. If an experiment did
         not override a variable, its cell will be left empty.
 
         All cells can be deserialized as JSON. Most of them will simply be strings or numbers. But
@@ -74,7 +74,7 @@ class ExperimentDataSource(Serializable['ExperimentDataSource']):
         deserialize into a mapping from ingredient names to floating-point values.
         """
         overrides = [experiment._overrides_json() for experiment in self.experiments]
-        columns = {key for override in overrides for key in override.keys()}
+        columns = {key for override in overrides for key in override}
         sorted_columns = sorted(list(columns), key=str.lower)
 
         buffer = StringIO()

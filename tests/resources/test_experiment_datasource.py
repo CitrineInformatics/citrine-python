@@ -5,26 +5,10 @@ import uuid
 
 import pytest
 
-from citrine.informatics.experiment_values import CategoricalExperimentValue, \
-                                                  ChemicalFormulaExperimentValue, \
-                                                  IntegerExperimentValue, \
-                                                  MixtureExperimentValue, \
-                                                  MolecularStructureExperimentValue, \
-                                                  RealExperimentValue
-from citrine.resources.experiment_datasource import ExperimentDataSourceCollection
-from tests.utils.factories import CandidateExperimentSnapshotDataFactory, \
-                                  CategoricalExperimentValueDataFactory, \
-                                  ChemicalFormulaExperimentValueDataFactory, \
-                                  ExperimentDataSourceDataDataFactory, \
-                                  ExperimentDataSourceDataFactory, \
-                                  IntegerExperimentValueDataFactory, \
-                                  MixtureExperimentValueDataFactory, \
-                                  MolecularStructureExperimentValueDataFactory, \
-                                  RealExperimentValueDataFactory
+from citrine.resources.experiment_datasource import ExperimentDataSource, ExperimentDataSourceCollection
+from tests.utils.factories import ExperimentDataSourceDataFactory
 from tests.utils.session import (
     FakeCall,
-    FakeRequest,
-    FakeRequestResponse,
     FakeSession
 )
 
@@ -38,7 +22,7 @@ def session():
 
 
 @pytest.fixture
-def collection(session):
+def collection(session) -> ExperimentDataSourceCollection:
     return ExperimentDataSourceCollection(uuid.uuid4(), session)
 
 
@@ -47,35 +31,22 @@ def erds_base_path(collection):
     return f'projects/{collection.project_id}/candidate-experiment-datasources'
 
 
-@pytest.fixture
-def erds_dict():
-    overrides = {
-        "ingredient1": CategoricalExperimentValueDataFactory(),
-        "ingredient2": ChemicalFormulaExperimentValueDataFactory(value="(Ca)1(O)3(Si)1"),
-        "ingredient3": IntegerExperimentValueDataFactory(),
-        "Formulation": MixtureExperimentValueDataFactory(value={"ingredient1": 0.3, "ingredient2": 0.7}),
-        "ingredient4": MolecularStructureExperimentValueDataFactory(value="CC1(CC(CC(N1)(C)C)NCCCCCCNC2CC(NC(C2)(C)C)(C)C)C.C1COCCN1C2=NC(=NC(=N2)Cl)Cl"),
-        "ingredient5": RealExperimentValueDataFactory()
-    }
-    experiments = [CandidateExperimentSnapshotDataFactory(overrides=overrides)]
-    data = ExperimentDataSourceDataDataFactory(experiments=experiments)
-    return ExperimentDataSourceDataFactory(data=data)
-
-
 def assert_erds_csv(erds_csv, erds_dict):
     for row, expt in zip(csv.DictReader(io.StringIO(erds_csv)), erds_dict["data"]["experiments"]):
         for variable, actual_value_raw in row.items():
             assert expt["overrides"][variable]["value"] == json.loads(actual_value_raw)
 
 
-def test_build(collection, erds_dict):
-    actual_erds = collection.build(erds_dict)
+def test_build(collection):
+    erds_dict = ExperimentDataSourceDataFactory()
+    actual_erds: ExperimentDataSource = collection.build(erds_dict)
 
     assert str(actual_erds.uid) == erds_dict["id"]
     assert str(actual_erds.branch_root_id) == erds_dict["metadata"]["branch_root_id"]
     assert actual_erds.version == erds_dict["metadata"]["version"]
     assert str(actual_erds.created_by) == erds_dict["metadata"]["created"]["user"]
-    assert actual_erds.create_time.replace(tzinfo=None).isoformat() == erds_dict["metadata"]["created"]["time"]
+    # TODO: It'd be better to actually invoke the Datetime._serialize method
+    assert int(actual_erds.create_time.timestamp() * 1000 + 0.0001) == erds_dict["metadata"]["created"]["time"]
 
     for actual_experiment, erds_experiment in zip(actual_erds.experiments, erds_dict["data"]["experiments"]):
         assert str(actual_experiment.uid) == erds_experiment["experiment_id"]
@@ -83,7 +54,8 @@ def test_build(collection, erds_dict):
         assert str(actual_experiment.workflow_id) == erds_experiment["workflow_id"]
         assert actual_experiment.name == erds_experiment["name"]
         assert actual_experiment.description == erds_experiment["description"]
-        assert actual_experiment.updated_time.replace(tzinfo=None).isoformat() == erds_experiment["updated_time"]
+        # TODO: It'd be better to actually invoke the Datetime._serialize method
+        assert int(actual_experiment.updated_time.timestamp() * 1000 + 0.0001) == erds_experiment["updated_time"]
 
         for actual_override, erds_override in zip(actual_experiment.overrides.items(), erds_experiment["overrides"].items()):
             actual_override_key, actual_override_value = actual_override
@@ -115,7 +87,8 @@ def test_list(session, collection, erds_base_path):
     ]
 
 
-def test_read_and_retrieve(session, collection, erds_dict, erds_base_path):
+def test_read_and_retrieve(session, collection, erds_base_path):
+    erds_dict = ExperimentDataSourceDataFactory()
     erds_id = uuid.uuid4()
     erds_path = f"{erds_base_path}/{erds_id}"
 
@@ -127,7 +100,8 @@ def test_read_and_retrieve(session, collection, erds_dict, erds_base_path):
     assert_erds_csv(erds_csv, erds_dict)
 
 
-def test_read_from_obj(session, collection, erds_dict):
+def test_read_from_obj(session, collection):
+    erds_dict = ExperimentDataSourceDataFactory()
     erds_obj = collection.build(erds_dict)
 
     erds_csv = collection.read(erds_obj)

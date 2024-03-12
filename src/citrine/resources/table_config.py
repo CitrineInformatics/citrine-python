@@ -35,6 +35,17 @@ class TableBuildAlgorithm(BaseEnumeration):
     FORMULATIONS = "formulations"
 
 
+class TableConfigInitiator(BaseEnumeration):
+    """Which client registered this table config.
+
+    * CITRINE_PYTHON corresponds to this library
+    * UI corresponds to the Citrine Platform browser interface
+    """
+
+    CITRINE_PYTHON = "CITRINE_PYTHON"
+    UI = "UI"
+
+
 class TableConfig(Resource["TableConfig"]):
     """
     The Table Configuration used to build GEM Tables.

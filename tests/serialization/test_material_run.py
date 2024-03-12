@@ -20,24 +20,25 @@ from gemd.entity.object import ProcessSpec as GEMDProcessSpec
 from gemd.entity.object import ProcessRun as GEMDProcessRun
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
 from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
+from gemd.entity.file_link import FileLink
 
 from tests.utils.factories import MaterialRunDataFactory
 
 
 def test_simple_deserialization():
     """Ensure that a deserialized Material Run looks sane."""
-    valid_data: dict = MaterialRunDataFactory(name='Cake 1')
+    valid_data: dict = MaterialRunDataFactory(name='Cake 1', notes=None, spec=None)
     material_run: MaterialRun = MaterialRun.build(valid_data)
-    assert material_run.uids == {'id': valid_data['uids']['id']}
-    assert material_run.name == 'Cake 1'
-    assert material_run.tags == ["color"]
+    assert isinstance(material_run, MaterialRun)
+    assert material_run.uids == valid_data['uids']
+    assert material_run.name == valid_data['name']
+    assert material_run.tags == valid_data['tags']
     assert material_run.notes is None
-    assert material_run.process == LinkByUID('id', valid_data['process']['id'])
-    assert material_run.sample_type == 'experimental'
+    assert material_run.process == LinkByUID.build(valid_data['process'])
+    assert material_run.sample_type == valid_data['sample_type']
     assert material_run.template is None
     assert material_run.spec is None
-    assert material_run.file_links == []
-    assert material_run.typ == 'material_run'
+    assert material_run.file_links == [FileLink.build(x) for x in valid_data['file_links']]
 
 
 def test_serialization():
