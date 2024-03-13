@@ -7,6 +7,9 @@
 from random import randrange, random
 
 import factory
+from citrine.gemd_queries.gemd_query import *
+from citrine.gemd_queries.criteria import *
+from citrine.gemd_queries.filter import *
 from citrine.informatics.scores import LIScore
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import _Uploader
@@ -114,6 +117,57 @@ class ListGemTableVersionsDataFactory(factory.DictFactory):
     tables[2]["version"] = 2
 
 
+class PropertiesCriteriaDataFactory(factory.DictFactory):
+    type = PropertiesCriteria.typ
+    property_templates_filter = factory.List([factory.Faker('uuid4')])
+    classifications = factory.Faker('random_element', elements=[str(x) for x in MaterialClassification])
+
+
+class NameCriteriaDataFactory(factory.DictFactory):
+    type = NameCriteria.typ
+    name = factory.Faker('word')
+    search_type = factory.Faker('random_element', elements=[str(x) for x in TextSearchType])
+
+
+class MaterialRunClassificationCriteriaDataFactory(factory.DictFactory):
+    type = MaterialRunClassificationCriteria.typ
+    classifications = factory.Faker(
+        'random_elements',
+        elements=[str(x) for x in MaterialClassification],
+        unique=True
+    )
+
+
+class MaterialTemplatesCriteriaDataFactory(factory.DictFactory):
+    type = MaterialTemplatesCriteria.typ
+    material_templates_identifiers = factory.List([factory.Faker('uuid4')])
+    tag_filters = factory.Faker('words', unique=True)
+
+
+class AndOperatorCriteriaDataFactory(factory.DictFactory):
+    type = AndOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(NameCriteriaDataFactory),
+        factory.SubFactory(MaterialRunClassificationCriteriaDataFactory),
+        factory.SubFactory(MaterialTemplatesCriteriaDataFactory)
+    ])
+
+
+class OrOperatorCriteriaDataFactory(factory.DictFactory):
+    type = OrOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(PropertiesCriteriaDataFactory),
+        factory.SubFactory(AndOperatorCriteriaDataFactory)
+    ])
+
+
+class GemdQueryDataFactory(factory.DictFactory):
+    criteria = factory.List([factory.SubFactory(OrOperatorCriteriaDataFactory)])
+    datasets = factory.List([factory.Faker('uuid4')])
+    object_types = factory.List([str(x) for x in GemdObjectType])
+    schema_version = 1
+
+
 class TableConfigJSONDataFactory(factory.DictFactory):
     """ This is simply the JSON Blob stored in an Table Config Version"""
     name = factory.Faker("company")
@@ -122,6 +176,7 @@ class TableConfigJSONDataFactory(factory.DictFactory):
     columns = []
     variables = []
     datasets = []
+    gemd_query = factory.SubFactory(GemdQueryDataFactory)
 
 
 class TableConfigVersionJSONDataFactory(factory.DictFactory):
