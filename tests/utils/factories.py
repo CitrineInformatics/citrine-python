@@ -117,16 +117,51 @@ class ListGemTableVersionsDataFactory(factory.DictFactory):
     tables[2]["version"] = 2
 
 
+class RealFilterDataFactory(factory.DictFactory):
+    type = AllRealFilter.typ
+    unit = 'dimensionless'
+
+    class Params:
+        midpoint = factory.Faker("pyfloat")
+
+    lower = factory.LazyAttribute(lambda o: min(0., 2. * o.midpoint) + random() * o.midpoint)
+    upper = factory.LazyAttribute(lambda o: max(0., 2. * o.midpoint) - random() * o.midpoint)
+
+
+class IntegerFilterDataFactory(factory.DictFactory):
+    type = AllIntegerFilter.typ
+
+    class Params:
+        midpoint = factory.Faker("pyint")
+
+    lower = factory.LazyAttribute(lambda o: randrange(min(0, 2 * o.midpoint), o.midpoint + 1))
+    upper = factory.LazyAttribute(lambda o: randrange(o.midpoint, max(0, 2 * o.midpoint) + 1))
+
+
+class CategoryFilterDataFactory(factory.DictFactory):
+    type = NominalCategoricalFilter.typ
+    categories = factory.Faker('words', unique=True)
+
+
 class PropertiesCriteriaDataFactory(factory.DictFactory):
     type = PropertiesCriteria.typ
     property_templates_filter = factory.List([factory.Faker('uuid4')])
-    classifications = factory.Faker('random_element', elements=[str(x) for x in MaterialClassification])
+    value_type_filter = factory.SubFactory(RealFilterDataFactory)
+    classifications = factory.Faker('enum', enum_cls=MaterialClassification)
+
+    class Params:
+        integer = factory.Trait(
+            value_type_filter=factory.SubFactory(IntegerFilterDataFactory)
+        )
+        category = factory.Trait(
+            value_type_filter=factory.SubFactory(CategoryFilterDataFactory)
+        )
 
 
 class NameCriteriaDataFactory(factory.DictFactory):
     type = NameCriteria.typ
     name = factory.Faker('word')
-    search_type = factory.Faker('random_element', elements=[str(x) for x in TextSearchType])
+    search_type = factory.Faker('enum', enum_cls=TextSearchType)
 
 
 class MaterialRunClassificationCriteriaDataFactory(factory.DictFactory):
@@ -157,6 +192,8 @@ class OrOperatorCriteriaDataFactory(factory.DictFactory):
     type = OrOperator.typ
     criteria = factory.List([
         factory.SubFactory(PropertiesCriteriaDataFactory),
+        factory.SubFactory(PropertiesCriteriaDataFactory, integer=True),
+        factory.SubFactory(PropertiesCriteriaDataFactory, category=True),
         factory.SubFactory(AndOperatorCriteriaDataFactory)
     ])
 

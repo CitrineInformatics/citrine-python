@@ -9,10 +9,9 @@ from citrine._serialization import properties
 from citrine.gemd_queries.filter import PropertyFilterType
 
 __all__ = ['MaterialClassification', 'TextSearchType',
-           'Criteria',
            'AndOperator', 'OrOperator',
-           'PropertiesCriteria', 'NameCriteria', 'MaterialRunClassificationCriteria',
-           'MaterialTemplatesCriteria'
+           'PropertiesCriteria', 'NameCriteria',
+           'MaterialRunClassificationCriteria', 'MaterialTemplatesCriteria'
            ]
 
 
