@@ -14,6 +14,7 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
+from citrine.gemd_queries.gemd_query import GemdQuery
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn, \
     ConcatColumn
 from citrine.gemtables.rows import Row
@@ -53,6 +54,8 @@ class TableConfig(Resource["TableConfig"]):
         List of row definitions that define the rows of the table
     columns: list[Column]
         Column definitions, which describe how the variables are shaped into the table
+    gemd_query: Optional[GemdQuery]
+        The query used to define the materials underpinning this table
 
     """
 
@@ -79,6 +82,7 @@ class TableConfig(Resource["TableConfig"]):
     variables = properties.List(properties.Object(Variable), "variables")
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
+    gemd_query = properties.Optional(properties.Object(GemdQuery), "gemd_query")
 
     def __init__(self, name: str, *, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column]):

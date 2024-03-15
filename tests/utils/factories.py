@@ -7,6 +7,9 @@
 from random import randrange, random
 
 import factory
+from citrine.gemd_queries.gemd_query import *
+from citrine.gemd_queries.criteria import *
+from citrine.gemd_queries.filter import *
 from citrine.informatics.scores import LIScore
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import _Uploader
@@ -114,6 +117,94 @@ class ListGemTableVersionsDataFactory(factory.DictFactory):
     tables[2]["version"] = 2
 
 
+class RealFilterDataFactory(factory.DictFactory):
+    type = AllRealFilter.typ
+    unit = 'dimensionless'
+
+    class Params:
+        midpoint = factory.Faker("pyfloat")
+
+    lower = factory.LazyAttribute(lambda o: min(0., 2. * o.midpoint) + random() * o.midpoint)
+    upper = factory.LazyAttribute(lambda o: max(0., 2. * o.midpoint) - random() * o.midpoint)
+
+
+class IntegerFilterDataFactory(factory.DictFactory):
+    type = AllIntegerFilter.typ
+
+    class Params:
+        midpoint = factory.Faker("pyint")
+
+    lower = factory.LazyAttribute(lambda o: randrange(min(0, 2 * o.midpoint), o.midpoint + 1))
+    upper = factory.LazyAttribute(lambda o: randrange(o.midpoint, max(0, 2 * o.midpoint) + 1))
+
+
+class CategoryFilterDataFactory(factory.DictFactory):
+    type = NominalCategoricalFilter.typ
+    categories = factory.Faker('words', unique=True)
+
+
+class PropertiesCriteriaDataFactory(factory.DictFactory):
+    type = PropertiesCriteria.typ
+    property_templates_filter = factory.List([factory.Faker('uuid4')])
+    value_type_filter = factory.SubFactory(RealFilterDataFactory)
+    classifications = factory.Faker('enum', enum_cls=MaterialClassification)
+
+    class Params:
+        integer = factory.Trait(
+            value_type_filter=factory.SubFactory(IntegerFilterDataFactory)
+        )
+        category = factory.Trait(
+            value_type_filter=factory.SubFactory(CategoryFilterDataFactory)
+        )
+
+
+class NameCriteriaDataFactory(factory.DictFactory):
+    type = NameCriteria.typ
+    name = factory.Faker('word')
+    search_type = factory.Faker('enum', enum_cls=TextSearchType)
+
+
+class MaterialRunClassificationCriteriaDataFactory(factory.DictFactory):
+    type = MaterialRunClassificationCriteria.typ
+    classifications = factory.Faker(
+        'random_elements',
+        elements=[str(x) for x in MaterialClassification],
+        unique=True
+    )
+
+
+class MaterialTemplatesCriteriaDataFactory(factory.DictFactory):
+    type = MaterialTemplatesCriteria.typ
+    material_templates_identifiers = factory.List([factory.Faker('uuid4')])
+    tag_filters = factory.Faker('words', unique=True)
+
+
+class AndOperatorCriteriaDataFactory(factory.DictFactory):
+    type = AndOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(NameCriteriaDataFactory),
+        factory.SubFactory(MaterialRunClassificationCriteriaDataFactory),
+        factory.SubFactory(MaterialTemplatesCriteriaDataFactory)
+    ])
+
+
+class OrOperatorCriteriaDataFactory(factory.DictFactory):
+    type = OrOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(PropertiesCriteriaDataFactory),
+        factory.SubFactory(PropertiesCriteriaDataFactory, integer=True),
+        factory.SubFactory(PropertiesCriteriaDataFactory, category=True),
+        factory.SubFactory(AndOperatorCriteriaDataFactory)
+    ])
+
+
+class GemdQueryDataFactory(factory.DictFactory):
+    criteria = factory.List([factory.SubFactory(OrOperatorCriteriaDataFactory)])
+    datasets = factory.List([factory.Faker('uuid4')])
+    object_types = factory.List([str(x) for x in GemdObjectType])
+    schema_version = 1
+
+
 class TableConfigJSONDataFactory(factory.DictFactory):
     """ This is simply the JSON Blob stored in an Table Config Version"""
     name = factory.Faker("company")
@@ -122,6 +213,7 @@ class TableConfigJSONDataFactory(factory.DictFactory):
     columns = []
     variables = []
     datasets = []
+    gemd_query = factory.SubFactory(GemdQueryDataFactory)
 
 
 class TableConfigVersionJSONDataFactory(factory.DictFactory):
