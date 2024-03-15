@@ -7,8 +7,12 @@
 import arrow
 import factory
 from faker.providers.date_time import Provider
+from random import random, randint
 from typing import Set, Optional
 
+from citrine.gemd_queries.gemd_query import *
+from citrine.gemd_queries.criteria import *
+from citrine.gemd_queries.filter import *
 from citrine.informatics.scores import LIScore
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import _Uploader
@@ -23,10 +27,6 @@ from gemd.enumeration import SampleType
 
 
 class AugmentedProvider(Provider):
-    def random_float(self, min: float = 0.0, max: float = 1.0) -> float:
-        """Generate a random float between two floating point values ``min`` and ``max`` inclusive."""
-        return min + (max - min) * self.generator.random.random()
-
     def random_formula(self, count: int = None, elements: Set[str] = None) -> str:
         """Generate a random, well-formed chemical formula.  Likely non-physical."""
         if elements is None or len(elements) == 0:
@@ -234,6 +234,86 @@ class ListGemTableVersionsDataFactory(factory.DictFactory):
     ])
 
 
+class RealFilterDataFactory(factory.DictFactory):
+    type = AllRealFilter.typ
+    unit = 'dimensionless'
+    lower = factory.LazyAttribute(lambda o: min(0, 2 * o.upper) + random() * o.upper)
+    upper = factory.Faker("pyfloat")
+
+
+class IntegerFilterDataFactory(factory.DictFactory):
+    type = AllIntegerFilter.typ
+    lower = factory.LazyAttribute(lambda o: randint(min(0, 2 * o.upper), o.upper))
+    upper = factory.Faker("pyint")
+
+
+class CategoryFilterDataFactory(factory.DictFactory):
+    type = NominalCategoricalFilter.typ
+    categories = factory.Faker('words', unique=True)
+
+
+class PropertiesCriteriaDataFactory(factory.DictFactory):
+    type = PropertiesCriteria.typ
+    property_templates_filter = factory.List([factory.Faker('uuid4')])
+    value_type_filter = factory.SubFactory(RealFilterDataFactory)
+    classifications = factory.Faker('enum', enum_cls=MaterialClassification)
+
+    class Params:
+        integer = factory.Trait(
+            value_type_filter=factory.SubFactory(IntegerFilterDataFactory)
+        )
+        category = factory.Trait(
+            value_type_filter=factory.SubFactory(CategoryFilterDataFactory)
+        )
+
+
+class NameCriteriaDataFactory(factory.DictFactory):
+    type = NameCriteria.typ
+    name = factory.Faker('word')
+    search_type = factory.Faker('enum', enum_cls=TextSearchType)
+
+
+class MaterialRunClassificationCriteriaDataFactory(factory.DictFactory):
+    type = MaterialRunClassificationCriteria.typ
+    classifications = factory.Faker(
+        'random_elements',
+        elements=[str(x) for x in MaterialClassification],
+        unique=True
+    )
+
+
+class MaterialTemplatesCriteriaDataFactory(factory.DictFactory):
+    type = MaterialTemplatesCriteria.typ
+    material_templates_identifiers = factory.List([factory.Faker('uuid4')])
+    tag_filters = factory.Faker('words', unique=True)
+
+
+class AndOperatorCriteriaDataFactory(factory.DictFactory):
+    type = AndOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(NameCriteriaDataFactory),
+        factory.SubFactory(MaterialRunClassificationCriteriaDataFactory),
+        factory.SubFactory(MaterialTemplatesCriteriaDataFactory)
+    ])
+
+
+class OrOperatorCriteriaDataFactory(factory.DictFactory):
+    type = OrOperator.typ
+    criteria = factory.List([
+        factory.SubFactory(PropertiesCriteriaDataFactory),
+        factory.SubFactory(PropertiesCriteriaDataFactory, integer=True),
+        factory.SubFactory(PropertiesCriteriaDataFactory, category=True),
+        factory.SubFactory(AndOperatorCriteriaDataFactory)
+    ])
+
+
+class GemdQueryDataFactory(factory.DictFactory):
+    criteria = factory.List([factory.SubFactory(OrOperatorCriteriaDataFactory)])
+    datasets = factory.List([factory.Faker('uuid4')])
+    object_types = factory.List([str(x) for x in GemdObjectType])
+    schema_version = 1
+
+
 class TableConfigMainMetaDataDataFactory(factory.DictFactory):
     """This is the metadata for the primary definition ID of the TableConfig."""
     id = factory.Faker('uuid4')
@@ -253,6 +333,7 @@ class TableConfigDataFactory(factory.DictFactory):
     columns = []
     variables = []
     datasets = factory.List([factory.Faker('uuid4')])
+    gemd_query = factory.SubFactory(GemdQueryDataFactory)
 
 
 class TableConfigVersionMetaDataDataFactory(factory.DictFactory):
@@ -489,7 +570,7 @@ class MaterialRunFactory(factory.Factory):
     tags = factory.List([factory.Faker('color_name'), factory.Faker('color_name')])
     notes = factory.Faker('catch_phrase')
     process = factory.SubFactory(LinkByUIDFactory)
-    sample_type = factory.Faker("random_element", elements=list(SampleType))
+    sample_type = factory.Faker("enum", enum_cls=SampleType)
     spec = factory.SubFactory(LinkByUIDFactory)
     file_links = factory.List([factory.SubFactory(FileLinkFactory)])
 
@@ -593,7 +674,7 @@ class MolecularStructureExperimentValueDataFactory(factory.DictFactory):
 
 class RealExperimentValueDataFactory(factory.DictFactory):
     type = "RealValue"
-    value = factory.Faker('random_float', min=0, max=100)
+    value = factory.Faker('pyfloat', min_value=0, max_value=100)
 
 
 class CandidateExperimentSnapshotDataFactory(factory.DictFactory):
