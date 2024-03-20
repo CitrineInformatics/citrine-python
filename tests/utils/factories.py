@@ -29,7 +29,7 @@ from gemd.enumeration import SampleType
 class AugmentedProvider(Provider):
     def random_formula(self, count: int = None, elements: Set[str] = None) -> str:
         """Generate a random, well-formed chemical formula.  Likely non-physical."""
-        if elements is None or len(elements) == 0:
+        if not elements:  # None or empty
             elements = list(EmpiricalFormula.all_elements())  # Must be Sequence
         if count is None:
             count = self.generator.random.randrange(1, 5)
@@ -66,12 +66,12 @@ class AugmentedProvider(Provider):
         }
         bonds = ['', '=', '#', '$']
 
-        elements = [x for x in element_weights]
-        weights = [element_weights[x] for x in element_weights]
+        elements = list(element_weights)
+        weights = list(element_weights.values())
 
         smiles = self.generator.random.choices(elements, weights=weights)[0]
         remain = [valence[smiles[0]]]
-        while len(remain) != 0:
+        while not remain:
             die = self.generator.random.randrange(100 - len(smiles)) // 3 ** len(remain)
             if remain[-1] == 0 or die == 0:
                 # Drop a layer
