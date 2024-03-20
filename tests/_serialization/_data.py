@@ -11,6 +11,7 @@ VALID_SERIALIZATIONS = [
     (properties.Boolean, True, True),
     (properties.Boolean, False, False),
     (properties.UUID, uuid.UUID('284e6cec-dd05-4f8e-9a94-4abb298bde82'), '284e6cec-dd05-4f8e-9a94-4abb298bde82'),
+    (properties.Datetime, arrow.get(269815509154).datetime, 269815509154),
     (properties.Datetime, arrow.get('2019-07-19T10:46:08+00:00').datetime, 1563533168000),
 ]
 

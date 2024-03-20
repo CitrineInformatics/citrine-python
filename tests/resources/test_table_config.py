@@ -18,6 +18,7 @@ from citrine.seeding.find_or_create import create_or_update
 from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
@@ -41,13 +42,6 @@ def collection(session) -> TableConfigCollection:
     )
 
 
-@pytest.fixture
-def table_config() -> TableConfig:
-    def _table_config():
-        return TableConfig.build(TableConfigResponseDataFactory())
-    return _table_config
-
-
 def empty_defn() -> TableConfig:
     return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[], columns=[])
 
@@ -56,7 +50,6 @@ def test_get_table_config(collection, session):
     """Get table config, with or without version"""
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     table_config_response = TableConfigResponseDataFactory()
     session.set_response(table_config_response)
     defn_id = table_config_response["definition"]["id"]
@@ -69,7 +62,7 @@ def test_get_table_config(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/ara-definitions/{}/versions/{}".format(project_id, defn_id, ver_number)
+        path=collection._get_path(defn_id, action=["versions", ver_number])
     )
     assert session.last_call == expect_call
     assert str(retrieved_table_config.config_uid) == defn_id
@@ -88,7 +81,7 @@ def test_get_table_config(collection, session):
     assert 2 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/ara-definitions/{}".format(project_id, defn_id)
+        path=collection._get_path(defn_id)
     )
     assert session.last_call == expect_call
     assert str(retrieved_table_config.config_uid) == defn_id
@@ -118,6 +111,7 @@ def test_uid_aliases_config_uid():
     new_uid = uuid4()
     table_config.uid = new_uid
     assert table_config.config_uid == new_uid
+
 
 def test_create_or_update_config(collection, session):
     initial_config = TableConfig(
