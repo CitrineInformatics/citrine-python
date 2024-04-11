@@ -82,6 +82,8 @@ class Dataset(Resource['Dataset']):
     """bool: Flag indicating whether the dataset is publicly readable."""
     project_id = properties.Optional(properties.UUID(), 'project_id',
                                      serializable=False, deserializable=False)
+    team_id = properties.Optional(properties.UUID(), 'team_id',
+                                    serializable=False, deserializable=False)
     session = properties.Optional(properties.Object(Session), 'session',
                                   serializable=False, deserializable=False)
 
@@ -104,6 +106,7 @@ class Dataset(Resource['Dataset']):
         self.delete_time = None
         self.public = None
         self.project_id = None
+        self.team_id = None
         self.session = None
 
     def __str__(self):
