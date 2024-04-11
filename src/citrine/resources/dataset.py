@@ -383,6 +383,95 @@ class Dataset(Resource['Dataset']):
         return self.gemd.batch_delete(id_list, timeout=timeout, polling_delay=polling_delay)
 
 
+class TeamDatasetCollection(Collection[Dataset]):
+    """
+    Represents the collection of all datasets associated with a team.
+
+    Parameters
+    ----------
+    team_id: UUID
+        Unique ID of the team this dataset collection belongs to.
+    session: Session
+        The Citrine session used to connect to the database.
+
+    """
+
+    _path_template = 'teams/{team_id}/datasets'
+    _individual_key = None
+    _collection_key = None
+    _resource = Dataset
+
+    def __init__(self, team_id: UUID, session: Session):
+        self.team_id = team_id
+        self.session: Session = session
+
+    def build(self, data: dict):
+        """
+        Build an individual dataset from a dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary representing the dataset.
+
+        Returns
+        -------
+        Dataset
+            The dataset created from data.
+
+        """
+        dataset = Dataset.build(data)
+        dataset.team_id = self.team_id
+        dataset.session = self.session
+        return dataset
+
+    def register(self, model: Dataset) -> Dataset:
+        """
+        Create a new dataset in the collection, or update an existing one.
+        
+        If the Dataset has an ID present, then we update the existing resource,
+        else we create a new one.
+        
+        This differs from super().register() in that None fields are scrubbed, and the json
+        response is not assumed to come in a dictionary with a single entry 'dataset'.
+        Both of these behaviors are in contrast to the behavior of projects. Eventually they
+        will be unified in the backend, and one register() method will suffice.
+        
+        Parameters
+        ----------
+        model: Dataset
+            The dataset to register.
+            
+        Returns
+        -------
+        Dataset
+            A copy of the registered dataset as it now exists in the database.
+        
+        """
+        path = self._get_path()
+        dumped_dataset = model.dump()
+        dumped_dataset["deleted"] = None
+
+        # Only use the idempotent put approach if a) a unique name is provided, and b)
+        # the session is configured to use it (default to False for backwards compatibility).
+        if model.unique_name is not None and self.session.use_idempotent_dataset_put:
+            # Leverage the create-or-update endpoint if we've got a unique name
+            data = self.session.put_resource(path, scrub_none(dumped_dataset))
+        else:
+
+            if model.uid is None:
+                # POST to create a new one if a UID is not assigned
+                data = self.session.post_resource(path, scrub_none(dumped_dataset))
+
+            else:
+                # Otherwise PUT to update it
+                data = self.session.put_resource(
+                    self._get_path(model.uid), scrub_none(dumped_dataset))
+
+        full_model = self.build(data)
+        full_model.team_id = self.team_id
+        return full_model        
+
 class DatasetCollection(Collection[Dataset]):
     """
     Represents the collection of all datasets associated with a project.
