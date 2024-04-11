@@ -473,6 +473,42 @@ class TeamDatasetCollection(Collection[Dataset]):
         full_model.team_id = self.team_id
         return full_model
 
+    def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:
+        """
+        List datasets using pagination.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        per_page: int, optional
+            Max number of results to return per page. Default is 1000.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterator[Dataset]
+            Datasets in this collection.
+
+        """
+        return super().list(per_page=per_page
+
+    def get_by_unique_name(self, unique_name: str) -> Dataset:
+        """Get a Dataset with the given unique name."""
+        if unique_name is None:
+            raise ValueError("You must supply a unique_name")
+        path = self._get_path(query_terms={"unique_name": unique_name})
+        data = self.session.get_resource(path)
+
+        if len(data) == 1:
+            return self.build(data[0])
+        elif len(data) > 1:
+            raise RuntimeError("Received multiple results when requesting a unique dataset")
+        else:
+            raise NotFound(path)
+
 
 class DatasetCollection(Collection[Dataset]):
     """
