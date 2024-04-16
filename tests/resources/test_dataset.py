@@ -7,6 +7,7 @@ from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.demo.cake import make_cake, get_demo_scope, get_template_scope
 from gemd.util import recursive_flatmap, flatten
 
+from citrine._utils.either import Left
 from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
@@ -40,7 +41,7 @@ def paginated_session() -> FakePaginatedSession:
 @pytest.fixture
 def collection(session) -> DatasetCollection:
     return DatasetCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        project_or_team=Left(UUID('6b608f78-e341-422c-8076-35adc8828545')),
         session=session
     )
 
@@ -48,7 +49,7 @@ def collection(session) -> DatasetCollection:
 @pytest.fixture
 def paginated_collection(paginated_session) -> DatasetCollection:
     return DatasetCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        project_or_team=Left(UUID('6b608f78-e341-422c-8076-35adc8828545')),
         session=paginated_session
     )
 
