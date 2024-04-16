@@ -14,11 +14,17 @@ class Either(Generic[A, B]):
     def __init__(self, value: Union[A,B]):
         raise NotImplementedError
 
-    @abstractmethod
-    def value(self) -> Union[A,B]:
-        raise NotImplementedError
+    """
+    Bi-functor implementation for Either type.
 
-    """Bi-functor implementation for Either type."""
+    Parameters:
+    -----------
+    f: Callable[[A], C]
+        Function to apply to the left value.
+    g: Callable[[B], D]
+        Function to apply to the right value.
+
+    """
     def bimap(this, f: Callable[[A], C], g: Callable[[B], D]) -> "Either[C, D]":
         if (isinstance(this, Left)):
             return Left(f(this.value()))
@@ -43,13 +49,6 @@ class Left(Either[A, B]):
     def __init__(self, value: Union[A,B]):
         self._value = value
 
-    def value(self) -> A:
-        return self._value
-
-
 class Right(Either[A, B]):
     def __init__(self, value: Union[A,B]):
         self._value = value
-
-    def value(self) -> B:
-        return self._value
