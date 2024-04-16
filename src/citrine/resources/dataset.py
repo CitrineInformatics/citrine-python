@@ -5,6 +5,7 @@ from uuid import UUID
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine._utils.either import Either
 from citrine._utils.functions import format_escaped_url
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -32,7 +33,6 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
-
 
 class Dataset(Resource['Dataset']):
     """
@@ -382,134 +382,6 @@ class Dataset(Resource['Dataset']):
         """
         return self.gemd.batch_delete(id_list, timeout=timeout, polling_delay=polling_delay)
 
-
-class TeamDatasetCollection(Collection[Dataset]):
-    """
-    Represents the collection of all datasets associated with a team.
-
-    Parameters
-    ----------
-    team_id: UUID
-        Unique ID of the team this dataset collection belongs to.
-    session: Session
-        The Citrine session used to connect to the database.
-
-    """
-
-    _path_template = 'teams/{team_id}/datasets'
-    _individual_key = None
-    _collection_key = None
-    _resource = Dataset
-
-    def __init__(self, team_id: UUID, session: Session):
-        self.team_id = team_id
-        self.session: Session = session
-
-    def build(self, data: dict):
-        """
-        Build an individual dataset from a dictionary.
-
-        Parameters
-        ----------
-        data: dict
-            A dictionary representing the dataset.
-
-        Returns
-        -------
-        Dataset
-            The dataset created from data.
-
-        """
-        dataset = Dataset.build(data)
-        dataset.team_id = self.team_id
-        dataset.session = self.session
-        return dataset
-
-    def register(self, model: Dataset) -> Dataset:
-        """
-        Create a new dataset in the collection, or update an existing one.
-
-        If the Dataset has an ID present, then we update the existing resource,
-        else we create a new one.
-
-        This differs from super().register() in that None fields are scrubbed, and the json
-        response is not assumed to come in a dictionary with a single entry 'dataset'.
-        Both of these behaviors are in contrast to the behavior of projects. Eventually they
-        will be unified in the backend, and one register() method will suffice.
-
-        Parameters
-        ----------
-        model: Dataset
-            The dataset to register.
-
-        Returns
-        -------
-        Dataset
-            A copy of the registered dataset as it now exists in the database.
-
-        """
-        path = self._get_path()
-        dumped_dataset = model.dump()
-        dumped_dataset["deleted"] = None
-
-        # Only use the idempotent put approach if a) a unique name is provided, and b)
-        # the session is configured to use it (default to False for backwards compatibility).
-        if model.unique_name is not None and self.session.use_idempotent_dataset_put:
-            # Leverage the create-or-update endpoint if we've got a unique name
-            data = self.session.put_resource(path, scrub_none(dumped_dataset))
-        else:
-
-            if model.uid is None:
-                # POST to create a new one if a UID is not assigned
-                data = self.session.post_resource(path, scrub_none(dumped_dataset))
-
-            else:
-                # Otherwise PUT to update it
-                data = self.session.put_resource(
-                    self._get_path(model.uid), scrub_none(dumped_dataset)
-                )
-
-        full_model = self.build(data)
-        full_model.team_id = self.team_id
-        return full_model
-
-    def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:
-        """
-        List datasets using pagination.
-
-        Leaving page and per_page as default values will yield all elements in the
-        collection, paginating over all available pages.
-
-        Parameters
-        ---------
-        per_page: int, optional
-            Max number of results to return per page. Default is 1000.  This parameter
-            is used when making requests to the backend service.  If the page parameter
-            is specified it limits the maximum number of elements in the response.
-
-        Returns
-        -------
-        Iterator[Dataset]
-            Datasets in this collection.
-
-        """
-        return super().list(per_page=per_page
-
-    def get_by_unique_name(self, unique_name: str) -> Dataset:
-        """Get a Dataset with the given unique name."""
-        if unique_name is None:
-            raise ValueError("You must supply a unique_name")
-        path = self._get_path(query_terms={"unique_name": unique_name})
-        data = self.session.get_resource(path)
-
-        if len(data) == 1:
-            return self.build(data[0])
-        elif len(data) > 1:
-            raise RuntimeError("Received multiple results when requesting a unique dataset")
-        else:
-            raise NotFound(path)
-
-
 class DatasetCollection(Collection[Dataset]):
     """
     Represents the collection of all datasets associated with a project.
@@ -522,15 +394,17 @@ class DatasetCollection(Collection[Dataset]):
         The Citrine session used to connect to the database.
 
     """
-
-    _path_template = 'projects/{project_id}/datasets'
+    _path_template = None
     _individual_key = None
     _collection_key = None
     _resource = Dataset
 
-    def __init__(self, project_id: UUID, session: Session):
-        self.project_id = project_id
-        self.session: Session = session
+    def __init__(self, project_or_team: Either[UUID,UUID], session: Session):
+        self.project_or_team = project_or_team
+        self.session: Session
+        mk_project_path_template = lambda project_id: 'projects/{project_id}/datasets'
+        mk_team_path_template = lambda team_id: 'teams/{team_id}/datasets'
+        self._path_template = project_or_team.bimap(mk_project_path_template, mk_team_path_template).value
 
     def build(self, data: dict) -> Dataset:
         """
@@ -548,7 +422,8 @@ class DatasetCollection(Collection[Dataset]):
 
         """
         dataset = Dataset.build(data)
-        dataset.project_id = self.project_id
+        dataset.project_id = self.project_or_team.left()
+        dataset.team_id = self.project_or_team.right()
         dataset.session = self.session
         return dataset
 
