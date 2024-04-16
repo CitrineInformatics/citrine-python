@@ -76,7 +76,7 @@ def test_register_dataset(collection, session):
 
     expected_call = FakeCall(
         method='POST',
-        path='projects/{}/datasets'.format(collection.project_id),
+        path='projects/{}/datasets'.format(collection.project_or_team.left()),
         json={'name': name, 'summary': summary, 'description': description}
     )
     assert session.num_calls == 1
@@ -98,7 +98,7 @@ def test_register_dataset_with_idempotent_put(collection, session):
 
     expected_call = FakeCall(
         method='PUT',
-        path='projects/{}/datasets'.format(collection.project_id),
+        path='projects/{}/datasets'.format(collection.project_or_team.left()),
         json={'name': name, 'summary': summary, 'description': description, 'unique_name': unique_name}
     )
     assert session.num_calls == 1
@@ -123,7 +123,7 @@ def test_register_dataset_with_existing_id(collection, session):
 
     expected_call = FakeCall(
         method='PUT',
-        path='projects/{}/datasets/{}'.format(collection.project_id, ds_uid),
+        path='projects/{}/datasets/{}'.format(collection.project_or_team.left(), ds_uid),
         json={'name': name, 'summary': summary, 'description': description,
               'id': str(ds_uid)}
     )
@@ -144,7 +144,7 @@ def test_get_by_unique_name_with_single_result(collection, session):
     # Then
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/datasets?unique_name={}'.format(collection.project_id, unique_name)
+        path='projects/{}/datasets?unique_name={}'.format(collection.project_or_team.left(), unique_name)
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -189,9 +189,9 @@ def test_list_datasets(paginated_collection, paginated_session):
 
     # Then
     assert 3 == paginated_session.num_calls
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_or_team.left()),
                                    params={'per_page': 20, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_or_team.left()),
                                   params={'page': 3, 'per_page': 20})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -215,9 +215,9 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
 
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_or_team.left()),
                                    params={'per_page': batch_size, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_or_team.left()),
                                   params={'page': 2, 'per_page': batch_size})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -238,7 +238,7 @@ def test_delete_dataset(collection, session, dataset):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='DELETE', path='projects/{}/datasets/{}'.format(
-        collection.project_id, uid))
+        collection.project_or_team.left(), uid))
     assert expected_call == session.last_call
 
 

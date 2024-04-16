@@ -401,10 +401,10 @@ class DatasetCollection(Collection[Dataset]):
 
     def __init__(self, project_or_team: Either[UUID,UUID], session: Session):
         self.project_or_team = project_or_team
-        self.session: Session
-        mk_project_path_template = lambda project_id: 'projects/{project_id}/datasets'
-        mk_team_path_template = lambda team_id: 'teams/{team_id}/datasets'
-        self._path_template = project_or_team.bimap(mk_project_path_template, mk_team_path_template).value
+        self.session: Session = session
+        mk_project_path_template = lambda project_id: f'projects/{project_id}/datasets'
+        mk_team_path_template = lambda team_id: f'teams/{team_id}/datasets'
+        self._path_template = project_or_team.bimap(mk_project_path_template, mk_team_path_template).value()
 
     def build(self, data: dict) -> Dataset:
         """
@@ -471,7 +471,8 @@ class DatasetCollection(Collection[Dataset]):
                     self._get_path(model.uid), scrub_none(dumped_dataset))
 
         full_model = self.build(data)
-        full_model.project_id = self.project_id
+        full_model.project_id = self.project_or_team.left()
+        full_model.team_id = self.project_or_team.right()
         return full_model
 
     def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:
