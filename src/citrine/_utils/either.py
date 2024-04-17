@@ -25,30 +25,40 @@ class Either(Generic[A, B]):
         Function to apply to the right value.
 
     """
-    def bimap(this, f: Callable[[A], C], g: Callable[[B], D]) -> "Either[C, D]":
-        if (isinstance(this, Left)):
-            return Left(f(this.value()))
+    def bimap(self, f: Callable[[A], C], g: Callable[[B], D]) -> "Either[C, D]":
+        if isinstance(self, Left):
+            return Left(f(self.value()))
         else:
-            return Right(g(this.value()))
+            return Right(g(self.value()))
 
     """Left projection of Either type."""
-    def left(this) -> A:
-        if (isinstance(this, Left)):
-            return this.value()
+    def left(self) -> A:
+        if isinstance(self, Left):
+            return self.value()
         else:
             return None
 
     """Right projection of Either type."""
-    def right(this) -> B:
-        if (isinstance(this, Right)):
-            return this.value()
+    def right(self) -> B:
+        if isinstance(self, Right):
+            return self.value()
         else:
             return None
+
+    def value(self) -> Union[A, B]:
+        raise NotImplementedError
+
 
 class Left(Either[A, B]):
     def __init__(self, value: Union[A,B]):
         self._value = value
 
+    def value(self) -> A:
+        return self._value
+
 class Right(Either[A, B]):
     def __init__(self, value: Union[A,B]):
         self._value = value
+
+    def value(self) -> B:
+        return self._value
