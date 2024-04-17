@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of projects."""
+import deprecation
 from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
@@ -140,6 +141,9 @@ class Project(Resource['Project']):
         return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
+    @deprecation.deprecated(deprecated_in="3.2.0", removed_in="4.0.0",
+                            details="""Datasets are being moved to the team level. Use the dataset
+                            collection of the team object instead.""")
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
         return DatasetCollection(Left(self.uid), self.session)
