@@ -36,3 +36,29 @@ def test_bimap():
     g = lambda x: "Some" + x
     assert my_value.bimap(f, g).value() == "SomeString"
     assert my_other_value.bimap(f, g).value() == 2
+
+def test_bifunctor():
+    """
+    Testing that the bifunctor follows functor laws.
+    """
+    my_value = Right("String")
+    my_other_value = Left(1)
+
+    """Identity - both sides"""
+    assert my_value.bimap(lambda x: x, lambda x: x).value() == my_value.value()
+    assert (
+        my_other_value.bimap(lambda x: x, lambda x: x).value()
+        == my_other_value.value()
+    )
+
+    """Composition of functions - both sides"""
+    f1 = lambda x: x + 1
+    f2 = lambda x: x * 2
+    g1 = lambda x: "Some" + x
+    g2 = lambda x: x + "Concatenated"
+
+    assert my_value.bimap(f1, g1).bimap(f2, g2).value() == my_value.bimap(lambda x: f2(f1(x)), lambda x: g2(g1(x))).value()
+    assert (
+        my_other_value.bimap(f1, g1).bimap(f2, g2).value()
+        == my_other_value.bimap(lambda x: f2(f1(x)), lambda x: g2(g1(x))).value()
+    )
