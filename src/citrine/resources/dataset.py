@@ -34,6 +34,7 @@ from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
 
+
 class Dataset(Resource['Dataset']):
     """
     A collection of data objects.
@@ -83,7 +84,7 @@ class Dataset(Resource['Dataset']):
     project_id = properties.Optional(properties.UUID(), 'project_id',
                                      serializable=False, deserializable=False)
     team_id = properties.Optional(properties.UUID(), 'team_id',
-                                    serializable=False, deserializable=False)
+                                  serializable=False, deserializable=False)
     session = properties.Optional(properties.Object(Session), 'session',
                                   serializable=False, deserializable=False)
 
@@ -382,6 +383,7 @@ class Dataset(Resource['Dataset']):
         """
         return self.gemd.batch_delete(id_list, timeout=timeout, polling_delay=polling_delay)
 
+
 class DatasetCollection(Collection[Dataset]):
     """
     Represents the collection of all datasets associated with a project.
@@ -394,17 +396,19 @@ class DatasetCollection(Collection[Dataset]):
         The Citrine session used to connect to the database.
 
     """
+
     _path_template = None
     _individual_key = None
     _collection_key = None
     _resource = Dataset
 
-    def __init__(self, project_or_team: Either[UUID,UUID], session: Session):
+    def __init__(self, project_or_team: Either[UUID, UUID], session: Session):
         self.project_or_team = project_or_team
         self.session: Session = session
-        mk_project_path_template = lambda project_id: f'projects/{project_id}/datasets'
-        mk_team_path_template = lambda team_id: f'teams/{team_id}/datasets'
-        self._path_template = project_or_team.bimap(mk_project_path_template, mk_team_path_template).value()
+        self._path_template = project_or_team.bimap(
+            lambda project_id: f"projects/{project_id}/datasets",
+            lambda team_id: f"teams/{team_id}/datasets",
+        ).value()
 
     def build(self, data: dict) -> Dataset:
         """

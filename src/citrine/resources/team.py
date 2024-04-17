@@ -467,4 +467,3 @@ class TeamCollection(AdminCollection[Team]):
         user_id = UserCollection(self.session).me().uid
         team.update_user_action(user_id=user_id, actions=[READ, WRITE, SHARE])
         return team
-
