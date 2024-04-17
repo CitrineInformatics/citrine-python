@@ -45,9 +45,6 @@ class Either(Generic[A, B]):
         else:
             return None
 
-    def value(self) -> Union[A, B]:
-        raise NotImplementedError
-
 
 class Left(Either[A, B]):
     def __init__(self, value: Union[A,B]):
