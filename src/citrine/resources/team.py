@@ -6,6 +6,7 @@ from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.either import Right
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.project import ProjectCollection
@@ -387,6 +388,11 @@ class Team(Resource['Team']):
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
 
+    @property
+    def datasets(self) -> DatasetCollection:
+        """Return a resource representing all visible datasets in this team."""
+        return DatasetCollection(Right(self.uid), self.session)
+
 
 class TeamCollection(AdminCollection[Team]):
     """
@@ -462,7 +468,3 @@ class TeamCollection(AdminCollection[Team]):
         team.update_user_action(user_id=user_id, actions=[READ, WRITE, SHARE])
         return team
 
-    @property
-    def datasets(self) -> DatasetCollection:
-        """Return a resource representing all visible datasets in this team."""
-        return DatasetCollection(self.uuid, self.session)
