@@ -361,3 +361,7 @@ def test_list_resource_ids(team, session, resource_type, method):
     assert readable_ids == read_response['ids']
     assert writeable_ids == write_response['ids']
     assert shareable_ids == share_response['ids']
+
+
+def test_analyses_get_team_id(team):
+    assert team.uid == team.analyses.team_id

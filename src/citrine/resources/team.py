@@ -7,6 +7,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.resources.analysis_workflow import AnalysisWorkflowCollection
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import User, UserCollection
 
@@ -357,6 +358,11 @@ class Team(Resource['Team']):
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects in this team."""
         return ProjectCollection(self.session, team_id=self.uid)
+
+    @property
+    def analyses(self) -> AnalysisWorkflowCollection:
+        """Return a resource representing all visible analysis workflows in this team."""
+        return AnalysisWorkflowCollection(session=self.session, team_id=self.uid)
 
     @property
     def dataset_ids(self) -> TeamResourceIDs:

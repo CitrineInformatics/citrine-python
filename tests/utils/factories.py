@@ -709,3 +709,60 @@ class ExperimentDataSourceDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     data = factory.SubFactory(ExperimentDataSourceDataDataFactory)
     metadata = factory.SubFactory(ExperimentDataSourceMetadataDataFactory)
+
+
+class AnalysisPlotMetadataDataFactory(factory.DictFactory):
+    rank = factory.Faker('random_int', min=1, max=10)
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+
+
+class AnalysisPlotDataDataFactory(factory.DictFactory):
+    name = factory.Faker('company')
+    description = factory.Faker('catch_phrase')
+    plot_type = factory.Faker('random_element', elements=('SCATTER', 'VIOLIN'))
+    config = {}
+
+
+class AnalysisPlotEntityDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    data = factory.SubFactory(AnalysisPlotDataDataFactory)
+    metadata = factory.SubFactory(AnalysisPlotMetadataDataFactory)
+
+
+class LatestBuildDataFactory(factory.DictFactory):
+    class Params:
+        is_failed = factory.LazyAttribute(lambda o: o.status == 'FAILED')
+
+    status = factory.Faker('random_element', elements=('INPROGRESS', 'SUCCEEDED', 'FAILED'))
+    failure_reason = factory.Maybe('is_failed', ['This is a test failure message'], [])
+    query = factory.SubFactory(GemdQueryDataFactory)
+
+
+class AnalysisWorkflowMetadataDataFactory(factory.DictFactory):
+    class Meta:
+        exclude = ('is_archived', 'has_build')
+
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+    archived = factory.Maybe('is_archived', factory.SubFactory(UserTimestampDataFactory), None)
+    latest_build = factory.Maybe('has_build', factory.SubFactory(LatestBuildDataFactory), None)
+
+
+class AnalysisWorkflowDataDataFactory(factory.DictFactory):
+    class Meta:
+        exclude = ('has_snapshot', 'plot_count')
+
+    class Params:
+        plot_count = 1
+
+    name = factory.Faker('company')
+    description = factory.Faker('catch_phrase')
+    snapshot_id = factory.Maybe('has_snapshot', factory.Faker('uuid4'), None)
+    plots = factory.LazyAttribute(lambda self: [AnalysisPlotEntityDataFactory() for _ in range(self.plot_count)])
+
+
+class AnalysisWorkflowEntityDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    data = factory.SubFactory(AnalysisWorkflowDataDataFactory)
+    metadata = factory.SubFactory(AnalysisWorkflowMetadataDataFactory)
