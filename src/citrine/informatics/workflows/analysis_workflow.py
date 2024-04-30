@@ -27,7 +27,7 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
     name = properties.String('data.name')
     description = properties.String('data.description')
     snapshot_id = properties.Optional(properties.UUID, 'data.snapshot_id')
-    plots = properties.List(properties.Raw, 'data.plots', default=[])
+    _plots = properties.List(properties.Raw, 'data.plots', default=[])
 
     latest_build = properties.Optional(properties.Object(LatestBuild), 'metadata.latest_build',
                                        serializable=False)
@@ -41,7 +41,7 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
         self.name = name
         self.description = description
         self.snapshot_id = snapshot_id
-        self.plots = plots
+        self._plots = plots
 
     @property
     def status(self) -> str:

@@ -53,7 +53,7 @@ def _assert_aw_equals_dict(aw, aw_dict):
         assert aw.archived_by is None
         assert aw.archive_time is None
 
-    for plot, plot_dict in zip(aw.plots, aw_dict['data'].get('plots')):
+    for plot, plot_dict in zip(aw._plots, aw_dict['data'].get('plots')):
         _assert_aw_plot_equals_dict(plot, plot_dict)
 
 
