@@ -8,9 +8,7 @@ from citrine.resources.status_detail import StatusDetail
 Self = TypeVar('Self', bound='Resource')
 
 
-# This class is the base type for the new module endpoints which do not support versions. If/once
-# they support versioning, they should be switched to inherit from VersionedEngineResource.
-class EngineResource(Resource[Self]):
+class EngineResourceWithoutStatus(Resource[Self]):
     """Base resource for metadata from stand-alone AI Engine modules."""
 
     created_by = properties.Optional(properties.UUID, 'metadata.created.user', serializable=False)
@@ -36,12 +34,6 @@ class EngineResource(Resource[Self]):
     """:Optional[datetime]: date and time at which the resource was archived,
     if it has been archived"""
 
-    status = properties.Optional(properties.String(), 'metadata.status.name', serializable=False)
-    """:Optional[str]: short description of the resource's status"""
-    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
-                                    default=[], serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
-
     _resource_type = ResourceTypeEnum.MODULE
 
     @property
@@ -53,11 +45,29 @@ class EngineResource(Resource[Self]):
         # Only the data portion of an entity is sent to the server.
         data = data["data"]
 
-        # Currently, name and description exists on both the data envelope and the config.
-        data["instance"]["name"] = data["name"]
-        data["instance"]["description"] = data["description"]
+        if "instance" in data:
+            # Currently, name and description exists on both the data envelope and the config.
+            data["instance"]["name"] = data["name"]
+            data["instance"]["description"] = data["description"]
 
         return super()._post_dump(data)
+
+
+# This class is the base type for the new module endpoints which do not support versions. If/once
+# they support versioning, they should be switched to inherit from VersionedEngineResource.
+class EngineResource(EngineResourceWithoutStatus[Self], IncludeParentProperties[Self]):
+    """Base resource for metadata from stand-alone AI Engine modules."""
+
+    status = properties.Optional(properties.String(), 'metadata.status.name', serializable=False)
+    """:Optional[str]: short description of the resource's status"""
+    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
+                                    default=[], serializable=False)
+    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+
+    @classmethod
+    def build(cls, data: dict):
+        """Build an instance of this object from given data."""
+        return super().build_with_parent(data, __class__)
 
 
 class VersionedEngineResource(EngineResource[Self], IncludeParentProperties[Self]):
