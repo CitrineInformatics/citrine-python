@@ -6,7 +6,6 @@ from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.either import Right
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.project import ProjectCollection
@@ -391,7 +390,7 @@ class Team(Resource['Team']):
     @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets in this team."""
-        return DatasetCollection(Right(self.uid), self.session)
+        return DatasetCollection(project_id=None, team_id=self.uid, session=self.session)
 
 
 class TeamCollection(AdminCollection[Team]):

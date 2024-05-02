@@ -11,7 +11,6 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.either import Left
 from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
@@ -146,7 +145,7 @@ class Project(Resource['Project']):
                             collection of the team object instead.""")
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        return DatasetCollection(Left(self.uid), self.session)
+        return DatasetCollection(project_id=self.uid, session=self.session)
 
     @property
     def tables(self) -> GemTableCollection:

@@ -41,7 +41,7 @@ def paginated_session() -> FakePaginatedSession:
 @pytest.fixture
 def collection(session) -> DatasetCollection:
     return DatasetCollection(
-        project_or_team=Left(UUID('6b608f78-e341-422c-8076-35adc8828545')),
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
 
@@ -49,7 +49,7 @@ def collection(session) -> DatasetCollection:
 @pytest.fixture
 def paginated_collection(paginated_session) -> DatasetCollection:
     return DatasetCollection(
-        project_or_team=Left(UUID('6b608f78-e341-422c-8076-35adc8828545')),
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=paginated_session
     )
 
