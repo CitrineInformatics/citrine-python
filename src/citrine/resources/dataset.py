@@ -436,7 +436,8 @@ class DatasetCollection(Collection[Dataset]):
                 self.project_or_team = Left(project_id)
 
         if deprecated_session is not None:
-            warn("position parameter session is deprecated. Use keyword parameter session instead.",
+            warn("position parameter session is deprecated. Use keyword parameter session"
+                 "instead.",
                  DeprecationWarning)
             self.session: Session = deprecated_session
         elif session is not None:
