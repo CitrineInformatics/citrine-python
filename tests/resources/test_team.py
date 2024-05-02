@@ -363,5 +363,9 @@ def test_list_resource_ids(team, session, resource_type, method):
     assert shareable_ids == share_response['ids']
 
 
+def test_analyses_get_team_id(team):
+    assert team.uid == team.analyses.team_id
+
+
 def test_datasets_get_team_id(team):
     assert team.uid == team.datasets.project_or_team.right()
