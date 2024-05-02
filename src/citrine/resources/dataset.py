@@ -435,7 +435,15 @@ class DatasetCollection(Collection[Dataset]):
                      DeprecationWarning)
                 self.project_or_team = Left(project_id)
 
-        self.session: Session = session
+        if deprecated_session is not None:
+            warn("position parameter session is deprecated. Use keyword parameter session instead.",
+                 DeprecationWarning)
+            self.session: Session = deprecated_session
+        elif session is not None:
+            self.session: Session = session
+        else:
+            raise TypeError("session must be provided")
+
         self._path_template = self.project_or_team.bimap(
             lambda project_id: f"projects/{project_id}/datasets",
             lambda team_id: f"teams/{team_id}/datasets",
