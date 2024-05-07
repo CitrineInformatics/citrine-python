@@ -412,28 +412,7 @@ class DatasetCollection(Collection[Dataset]):
                  deprecated_session: Session = None,
                  *,
                  session: Session = None,
-                 project_id: UUID = None,
                  team_id: UUID = None):
-
-        if (deprecated_project_id is None):
-            if project_id is None and team_id is None:
-                raise TypeError("project_id or team_id must be provided")
-            elif project_id is not None and team_id is not None:
-                raise TypeError("Only one of project_id or team_id should be provided")
-            elif project_id is not None:
-                self.project_or_team = Left(project_id)
-            else:
-                self.project_or_team = Right(team_id)
-        else:
-            if (team_id is not None):
-                raise TypeError("Only one of project_id or team_id should be provided")
-            elif (project_id is not None):
-                raise TypeError("the deprecated project_id can't be used with the new project_id")
-            else:
-                warn("position parameter project_id is deprecated. Use keyword parameter"
-                     "project_id instead.",
-                     DeprecationWarning)
-                self.project_or_team = Left(project_id)
 
         if deprecated_session is not None:
             warn("position parameter session is deprecated. Use keyword parameter session"
@@ -444,6 +423,21 @@ class DatasetCollection(Collection[Dataset]):
             self.session: Session = session
         else:
             raise TypeError("session must be provided")
+
+        if (deprecated_project_id is None):
+            if team_id is None:
+                raise TypeError("Either project_id or team_id must be provided")
+            else:
+                self.project_or_team = Right(team_id)
+        else:
+            if (team_id is not None):
+                raise TypeError("Only one of project_id or team_id should be provided")
+            else:
+                warn("position parameter project_id is deprecated. Use keyword parameter"
+                     "project_id instead.",
+                     DeprecationWarning)
+                session.checked_get()
+                self.project_or_team = Left(project_id)
 
         self._path_template = self.project_or_team.bimap(
             lambda project_id: f"projects/{project_id}/datasets",
