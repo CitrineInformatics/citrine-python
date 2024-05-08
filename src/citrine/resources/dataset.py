@@ -408,7 +408,7 @@ class DatasetCollection(Collection[Dataset]):
     _resource = Dataset
 
     def __init__(self,
-                 deprecated_project_id: UUID = None,
+                 project_id: UUID = None,
                  deprecated_session: Session = None,
                  *,
                  session: Session = None,
@@ -424,11 +424,12 @@ class DatasetCollection(Collection[Dataset]):
         else:
             raise TypeError("session must be provided")
 
-        if (deprecated_project_id is None):
+        self._team_id = None
+        if (project_id is None):
             if team_id is None:
                 raise TypeError("Either project_id or team_id must be provided")
             else:
-                self.project_or_team = Right(team_id)
+                self._team_id = team_id
         else:
             if (team_id is not None):
                 raise TypeError("Only one of project_id or team_id should be provided")
@@ -436,13 +437,15 @@ class DatasetCollection(Collection[Dataset]):
                 warn("position parameter project_id is deprecated. Use keyword parameter"
                      "project_id instead.",
                      DeprecationWarning)
-                session.checked_get()
-                self.project_or_team = Left(project_id)
+                self._project_id = project_id
 
-        self._path_template = self.project_or_team.bimap(
-            lambda project_id: f"projects/{project_id}/datasets",
-            lambda team_id: f"teams/{team_id}/datasets",
-        ).value()
+        self._path_template = f"teams/{team_id}/datasets"
+
+    @property
+    def team_id(self) -> UUID:
+        if self._team_id is None:
+            self._team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
+        return self._team_id
 
     def build(self, data: dict) -> Dataset:
         """
@@ -460,8 +463,7 @@ class DatasetCollection(Collection[Dataset]):
 
         """
         dataset = Dataset.build(data)
-        dataset.project_id = self.project_or_team.left()
-        dataset.team_id = self.project_or_team.right()
+        dataset.team_id = self.team_id
         dataset.session = self.session
         return dataset
 
@@ -509,8 +511,7 @@ class DatasetCollection(Collection[Dataset]):
                     self._get_path(model.uid), scrub_none(dumped_dataset))
 
         full_model = self.build(data)
-        full_model.project_id = self.project_or_team.left()
-        full_model.team_id = self.project_or_team.right()
+        full_model.team_id = self.team_id
         return full_model
 
     def list(self, *, per_page: int = 1000) -> Iterator[Dataset]:

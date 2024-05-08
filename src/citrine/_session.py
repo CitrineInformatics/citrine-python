@@ -5,6 +5,7 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
+from uuid import UUID
 
 import jwt
 import requests
@@ -302,6 +303,9 @@ class Session(requests.Session):
     def checked_get(self, path: str, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, **kwargs)
+
+    def get_team_id_from_project_id(self, *, project_id: UUID) -> UUID:
+        return self.get_resource(path = 'projects/{}'.format(project_id), version = "v3")['team']['id']
 
 
 class BearerAuth(requests.auth.AuthBase):
