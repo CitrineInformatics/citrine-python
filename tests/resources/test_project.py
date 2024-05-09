@@ -112,7 +112,7 @@ def test_un_publish_resource(project, session):
     assert expected_call == session.last_call
 
 
-def test_datasets_get_project_id(project):
+def test_datasets_get_team_id(project):
     assert project.team_id == project.datasets.team_id
 
 
