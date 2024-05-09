@@ -20,7 +20,7 @@ class FakeProjectCollection(ProjectCollection):
         self.search_implemented = search_implemented
 
     def register(self, name: str, description: Optional[str] = None) -> Project:
-        project = FakeProject(name=name)
+        project = FakeProject(name=name, team_id=self.team_id)
         self.projects.append(project)
         return project
 

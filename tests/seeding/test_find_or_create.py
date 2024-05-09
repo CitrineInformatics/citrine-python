@@ -208,7 +208,7 @@ def test_find_or_create_raise_error_team_no_exist(team_collection):
 
 def test_find_or_create_project_no_exist(project_collection):
     # test when project doesn't exist
-    collection = project_collection()
+    collection = project_collection(team_id = uuid4())
     old_project_count = len(list(collection.list()))
     result = find_or_create_project(project_collection=collection, project_name=absent_name)
     new_project_count = len(list(collection.list()))
@@ -266,8 +266,8 @@ def test_find_or_create_raise_error_project_exist_multiple(project_collection):
 
 def test_find_or_create_project_no_team(project_collection):
     # test when project collection has no team
-    collection = project_collection(team_id=None)
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(TypeError):
+        collection = project_collection(team_id=None)
         find_or_create_project(project_collection=collection, project_name="project 2")
 
 
