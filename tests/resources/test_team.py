@@ -368,4 +368,4 @@ def test_analyses_get_team_id(team):
 
 
 def test_datasets_get_team_id(team):
-    assert team.uid == team.datasets.project_or_team.right()
+    assert team.uid == team.datasets.team_id

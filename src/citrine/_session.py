@@ -305,7 +305,8 @@ class Session(requests.Session):
         return self.checked_request('GET', path, **kwargs)
 
     def get_team_id_from_project_id(self, *, project_id: UUID) -> UUID:
-        return self.get_resource(path = 'projects/{}'.format(project_id), version = "v3")['team']['id']
+        """Returns the team owning a given project."""
+        return self.get_resource(path='projects/{}'.format(project_id), version="v3")['team']['id']
 
 
 class BearerAuth(requests.auth.AuthBase):

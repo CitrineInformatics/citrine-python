@@ -113,7 +113,7 @@ def test_un_publish_resource(project, session):
 
 
 def test_datasets_get_project_id(project):
-    assert project.uid == project.datasets.project_or_team.left()
+    assert project.team_id == project.datasets.team_id
 
 
 def test_property_templates_get_project_id(project):

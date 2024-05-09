@@ -7,7 +7,6 @@ from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.demo.cake import make_cake, get_demo_scope, get_template_scope
 from gemd.util import recursive_flatmap, flatten
 
-from citrine._utils.either import Left
 from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection

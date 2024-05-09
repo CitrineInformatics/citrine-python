@@ -3,7 +3,6 @@ from uuid import UUID, uuid4
 
 import pytest
 from citrine._rest.collection import Collection
-from citrine._utils.either import Left
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
@@ -95,10 +94,9 @@ def team_collection() -> Callable[[bool], TeamCollection]:
 
     return _make_team
 
-
 @pytest.fixture
 def dataset_collection() -> DatasetCollection:
-    datasets = FakeDatasetCollection(Left(UUID('6b608f78-e341-422c-8076-35adc8828545')), session)
+    datasets = FakeDatasetCollection(team_id = UUID('6b608f78-e341-422c-8076-35adc8828545'), session=session)
     for i in range(0, 5):
         num_string = str(i)
         datasets.register(Dataset("dataset " + num_string, summary="summ " + num_string, description="desc " + num_string))

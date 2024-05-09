@@ -1,7 +1,6 @@
 from typing import Optional, Union
 from uuid import UUID, uuid4
 
-from citrine._utils.either import Left
 from citrine.exceptions import NotFound
 from citrine.resources.project import Project, ProjectCollection
 from tests.utils.fakes import FakeDatasetCollection
@@ -59,13 +58,13 @@ class FakeProjectCollection(ProjectCollection):
 
 class FakeProject(Project):
 
-    def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
-        Project.__init__(self, name=name, description=description, session=session)
+    def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession(), team_id:Optional[UUID] = None):
+        Project.__init__(self, name=name, description=description, session=session,team_id=team_id)
         self.uid = uuid4()
         self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
         self._design_workflows = FakeDesignWorkflowCollection(self.uid, self.session)
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
-        self._datasets = FakeDatasetCollection(Left(self.uid), self.session)
+        self._datasets = FakeDatasetCollection(self.team_id, self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
         self._pees = FakePredictorEvaluationExecutionCollection(self.uid, self.session)
         self._pews = FakePredictorEvaluationWorkflowCollection(self.uid, self.session)

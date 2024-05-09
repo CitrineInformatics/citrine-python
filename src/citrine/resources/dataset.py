@@ -6,7 +6,6 @@ from warnings import warn
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine._utils.either import Left, Right
 from citrine._utils.functions import format_escaped_url
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -443,6 +442,7 @@ class DatasetCollection(Collection[Dataset]):
 
     @property
     def team_id(self) -> UUID:
+        """Returns the unique team identifier owner of the dataset."""
         if self._team_id is None:
             self._team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
         return self._team_id
