@@ -141,9 +141,6 @@ class Project(Resource['Project']):
     @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        if self.team_id is None:
-            raise NotImplementedError("Cannot retrieve the collection of datasets "
-                                      "if the team_id is not present.")
         return DatasetCollection(session=self.session, team_id=self.team_id)
 
     @property

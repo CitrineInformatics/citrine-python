@@ -68,7 +68,7 @@ def test_legacy_collection_constructor(session: FakeSession):
     project_id = uuid4()
     session.set_response({'team': {'id' : str(team_id)}})
 
-    # When
+    # When instantiated with a project_id
     collection = DatasetCollection(
         project_id=project_id,
         session=session
@@ -84,6 +84,40 @@ def test_legacy_collection_constructor(session: FakeSession):
     assert session.num_calls == 1
     assert expected_call == session.last_call
 
+    # When using the deprecated positional argument session
+    with pytest.warns(DeprecationWarning):
+        collection = DatasetCollection(
+            project_id,
+            session
+        )
+
+    # When both sessions are provided
+    with pytest.raises(TypeError):
+        collection = DatasetCollection(
+            project_id,
+            session,
+            session=session
+        )
+
+    # When session not provided
+    with pytest.raises(TypeError):
+        collection = DatasetCollection(
+            project_id=project_id
+        )
+
+    # When neither project_id or team_id is provided
+    with pytest.raises(TypeError):
+        collection = DatasetCollection(
+            session=session
+        )
+
+    # When both team_id and project_id are provided
+    with pytest.raises(TypeError):
+        collection = DatasetCollection(
+            session=session,
+            project_id=project_id,
+            team_id=team_id
+        )
 
 def test_register_dataset(collection, session):
     # Given

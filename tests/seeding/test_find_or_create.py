@@ -264,13 +264,6 @@ def test_find_or_create_raise_error_project_exist_multiple(project_collection):
         find_or_create_project(project_collection=project_collection(), project_name=duplicate_name, raise_error=True)
 
 
-def test_find_or_create_project_no_team(project_collection):
-    # test when project collection has no team
-    with pytest.raises(TypeError):
-        collection = project_collection(team_id=None)
-        find_or_create_project(project_collection=collection, project_name="project 2")
-
-
 def test_find_or_create_dataset_no_exist(dataset_collection):
     # test when dataset doesn't exist
     old_dataset_count = len(list(dataset_collection.list()))

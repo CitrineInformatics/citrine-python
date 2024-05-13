@@ -413,9 +413,11 @@ class DatasetCollection(Collection[Dataset]):
                  session: Session = None,
                  team_id: UUID = None):
 
-        if deprecated_session is not None:
-            warn("position parameter session is deprecated. Use keyword parameter session"
-                 "instead.",
+        if (deprecated_session is not None) and (session is not None):
+            raise TypeError("Only one of deprecated_session or session should be provided")
+        elif deprecated_session is not None:
+            warn("position parameter session is deprecated. Use keyword parameter"
+                 "session instead.",
                  DeprecationWarning)
             self.session: Session = deprecated_session
         elif session is not None:
