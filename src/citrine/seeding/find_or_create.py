@@ -86,6 +86,12 @@ def find_or_create_project(*,
 
     If not found, creates a new project with the given name
     """
+    if project_collection.team_id is None:
+        raise NotImplementedError(
+            "Collection must have a team ID, such as when retrieved with "
+            "find_or_create_team."
+        )
+
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:
