@@ -7,3 +7,5 @@ on:
 jobs:
   publish:
     uses: CitrineInformatics/common-gh-actions/.github/workflows/deploy.yml@v1
+    permissions:
+      id-token: write
