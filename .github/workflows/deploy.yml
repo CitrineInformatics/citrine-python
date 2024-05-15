@@ -1,3 +1,5 @@
+# Cannot use a shared workflow to deploy to PyPI currently: https://github.com/pypi/warehouse/issues/11096
+
 name: Deploy to PyPI
 
 on:
@@ -6,6 +8,14 @@ on:
 
 jobs:
   publish:
-    uses: CitrineInformatics/common-gh-actions/.github/workflows/deploy.yml@v1
-    permissions:
-      id-token: write
+    name: Publish package to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build
+        run: python setup.py sdist bdist_wheel
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
