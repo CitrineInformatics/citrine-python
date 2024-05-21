@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
+from citrine.informatics.descriptors import MolecularStructureDescriptor
 from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['MolecularStructureFeaturizer']
@@ -78,7 +78,7 @@ class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], Pre
 
     """
 
-    input_descriptor = _properties.Object(Descriptor, 'descriptor')
+    input_descriptor = _properties.Object(MolecularStructureDescriptor, 'descriptor')
     features = _properties.List(_properties.String, 'features')
     excludes = _properties.List(_properties.String, 'excludes')
 
