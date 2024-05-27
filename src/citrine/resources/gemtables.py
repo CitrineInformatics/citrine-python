@@ -209,17 +209,19 @@ class GemTableCollection(Collection[GemTable]):
             if version is None:
                 raise ValueError('Version must be specified when building by config uid.')
             uid = config
+        logger.info(f'Submitting table build for config {uid} version {version}...')
         path = format_escaped_url('projects/{}/ara-definitions/{}/versions/{}/build',
                                   self.project_id, uid, version
                                   )
         response = self.session.post_resource(
             path=path,
-            json={},
-            params={}
+            json={}
         )
         submission = JobSubmissionResponse.build(response)
-        logger.info('Table build job submitted from config {} version {} with job ID {}'
-                    .format(uid, version, submission.job_id))
+        logger.info(
+            f'Table build job submitted from config {uid} '
+            f'version {version} with job ID {submission.job_id}'
+        )
         return submission
 
     def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
