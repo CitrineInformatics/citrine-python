@@ -1,7 +1,6 @@
 import json
 from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
-from uuid import uuid4
 
 import requests
 
