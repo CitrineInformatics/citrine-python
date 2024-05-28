@@ -7,42 +7,7 @@ on:
       - 'release/**'
 
 jobs:
-  run-tests:
-    name: Execute unit tests
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-    steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: actions/checkout@v4
-      - name: Initialize the environment
-        uses: ./.github/actions/initialize
-      - name: Execute unit tests
-        run: pytest --cov=src --cov-report term-missing:skip-covered --cov-config=tox.ini --no-cov-on-fail --cov-fail-under=100  tests/
-  run-tests-against-latest:
-    # These runs are intended to confirm the latest minor version of our dependencies we claim to
-    # support don't break with our latest changes. Since they're not the versions we directly state
-    # you should use (i.e. in requirements.txt), they argubly aren't critical, hence not blocking.
-    name: Non-blocking - Execute unit tests against latest version of dependencies
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
-    steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - uses: actions/checkout@v4
-      - name: Initialize the environment
-        uses: ./.github/actions/initialize
-        with:
-          setuptools: 'true'
-      - name: Execute unit tests
-        run: pytest tests/
+  pr-tests:
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-tests.yml@v1
+    with:
+      src: src/citrine

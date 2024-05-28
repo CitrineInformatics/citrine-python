@@ -16,6 +16,7 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
 
     """
 
+    _api_version = 'v3'
     design_space_id: Optional[UUID] = None
 
     def _path(self):

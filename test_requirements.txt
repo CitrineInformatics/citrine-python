@@ -7,6 +7,9 @@ pytest==8.0.0
 pytest-cov==4.1.0
 pytz==2024.1
 requests-mock==1.11.0
-sphinx==7.1.2
-sphinx-rtd-theme==2.0.0
-sphinxcontrib-apidoc==0.4.0
+
+# faker is a dependency of factory-boy, but factory-boy sets a very low floor
+# for the supported version. There's a long-resolved bug revealed by using the
+# "enum" provider which is solved by upgrading faker. This ensures the latest
+# supported is installed.
+faker

@@ -1,0 +1,15 @@
+name: Build and Deploy Docs
+
+on:
+  release:
+    types: [published]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-docs:
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/deploy-docs.yml@v1
