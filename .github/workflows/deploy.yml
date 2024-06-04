@@ -1,3 +1,5 @@
+# Cannot use a shared workflow to deploy to PyPI currently: https://github.com/pypi/warehouse/issues/11096
+
 name: Deploy to PyPI
 
 on:
