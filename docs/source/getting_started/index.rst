@@ -16,3 +16,4 @@ Getting Started
     data_model
     ai_modules
     code_examples
+    request_throttling
