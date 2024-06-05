@@ -564,8 +564,8 @@ We also use ``blend time`` as an input.
 
 Where did the descriptor keys ``margarita~blend time`` and ``margarita~tastiness`` come from?
 They came from concatenating the headers in the variables in the table, and the bounds and units came from the attribute templates.
-It's a lot to keep track of, which is why there is the :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` method.
-Calling ``project.descriptors.descriptors_from_data_source(data_source)`` returns a list of all of the descriptors emitted by the data source.
+It's a lot to keep track of, which is why there is the :func:`~citrine.resources.descriptors.DescriptorMethods.from_data_source` method.
+Calling ``project.descriptors.from_data_source(data_source)`` returns a list of all of the descriptors emitted by the data source.
 Make sure that these are the descriptors you are using as inputs to your predictor.
 
 
