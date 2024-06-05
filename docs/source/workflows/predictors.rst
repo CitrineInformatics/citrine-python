@@ -38,7 +38,7 @@ Both binary and multi-class classification are supported automatically based on 
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
 There are two important helper methods in this regard.
-:func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` can provide all of the descriptors that are present in the training data.
+:func:`~citrine.resources.descriptors.DescriptorMethods.from_data_source` can provide all of the descriptors that are present in the training data.
 :func:`~citrine.resources.descriptors.DescriptorMethods.from_predictor_responses` can tell you what the outputs of a predictor will be, which is especially useful for featurizers.
 
 The following example demonstrates how to use the Citrine Python client to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
