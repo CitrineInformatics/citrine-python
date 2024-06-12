@@ -1,3 +1,4 @@
+import json
 import uuid
 from unittest import mock
 
@@ -7,7 +8,7 @@ from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.exceptions import NotFound, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError, ValidationError
-from citrine.resources.dataset import Dataset
+from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
@@ -51,36 +52,49 @@ def collection(session) -> ProjectCollection:
     return ProjectCollection(session, team_id=uuid.uuid4())
 
 
+@pytest.fixture
+def datasets(project) -> DatasetCollection:
+    with pytest.deprecated_call():
+        return project.datasets
+
+
+def test_get_team_id_from_project(session):
+    team_id = uuid.UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project': {'team': {'id': team_id}}}
+    session.set_response(check_project)
+    p = Project(name='Test Project', session=session)
+    assert p.team_id == team_id
+
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
 
-def test_publish_resource(project, session):
+def test_publish_resource(project, datasets, session):
     dataset_id = str(uuid.uuid4())
-    dataset = project.datasets.build(dict(
+    dataset = datasets.build(dict(
         id=dataset_id,
         name="public dataset", summary="test", description="test"
     ))
-    assert project.publish(resource=dataset)
+    with pytest.deprecated_call():
+        assert project.publish(resource=dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
         path='/projects/{}/published-resources/{}/batch-publish'.format(project.uid, 'DATASET'),
-        json={
-            'ids': [dataset_id]
-        }
+        json={'ids': [dataset_id]}
     )
     assert expected_call == session.last_call
 
 
-def test_pull_in_resource(project, session):
+def test_pull_in_resource(project, datasets, session):
     dataset_id = str(uuid.uuid4())
-    dataset = project.datasets.build(dict(
+    dataset = datasets.build(dict(
         id=dataset_id,
         name="public dataset", summary="test", description="test"
     ))
-    assert project.pull_in_resource(resource=dataset)
+    with pytest.deprecated_call():
+        assert project.pull_in_resource(resource=dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
@@ -93,13 +107,14 @@ def test_pull_in_resource(project, session):
     assert expected_call == session.last_call
 
 
-def test_un_publish_resource(project, session):
+def test_un_publish_resource(project, datasets, session):
     dataset_id = str(uuid.uuid4())
-    dataset = project.datasets.build(dict(
+    dataset = datasets.build(dict(
         id=dataset_id,
         name="public dataset", summary="test", description="test"
     ))
-    assert project.un_publish(resource=dataset)
+    with pytest.deprecated_call():
+        assert project.un_publish(resource=dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
@@ -113,67 +128,115 @@ def test_un_publish_resource(project, session):
 
 
 def test_datasets_get_project_id(project):
-    assert project.uid == project.datasets.project_id
+    with pytest.deprecated_call():
+        collection = project.datasets
+
+    assert project.uid == collection.project_id
 
 
 def test_property_templates_get_project_id(project):
-    assert project.uid == project.property_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.property_templates
+    
+    assert project.uid == collection.project_id
 
 
 def test_condition_templates_get_project_id(project):
-    assert project.uid == project.condition_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.condition_templates
+
+    assert project.uid == collection.project_id
 
 
 def test_parameter_templates_get_project_id(project):
-    assert project.uid == project.parameter_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.parameter_templates
+
+    assert project.uid == collection.project_id
 
 
 def test_material_templates_get_project_id(project):
-    assert project.uid == project.material_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.material_templates
+
+    assert project.uid == collection.project_id
 
 
 def test_measurement_templates_get_project_id(project):
-    assert project.uid == project.measurement_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.measurement_templates
+
+    assert project.uid == collection.project_id
 
 
 def test_process_templates_get_project_id(project):
-    assert project.uid == project.process_templates.project_id
+    with pytest.deprecated_call():
+        collection = project.process_templates
+
+    assert project.uid == collection.project_id
 
 
 def test_process_runs_get_project_id(project):
-    assert project.uid == project.process_runs.project_id
+    with pytest.deprecated_call():
+        collection = project.process_runs
+
+    assert project.uid == collection.project_id
 
 
 def test_measurement_runs_get_project_id(project):
-    assert project.uid == project.measurement_runs.project_id
+    with pytest.deprecated_call():
+        collection = project.measurement_runs
+
+    assert project.uid == collection.project_id
 
 
 def test_material_runs_get_project_id(project):
-    assert project.uid == project.material_runs.project_id
+    with pytest.deprecated_call():
+        collection = project.material_runs
+
+    assert project.uid == collection.project_id
 
 
 def test_ingredient_runs_get_project_id(project):
-    assert project.uid == project.ingredient_runs.project_id
+    with pytest.deprecated_call():
+        collection = project.ingredient_runs
+
+    assert project.uid == collection.project_id
 
 
 def test_process_specs_get_project_id(project):
-    assert project.uid == project.process_specs.project_id
+    with pytest.deprecated_call():
+        collection = project.process_specs
+
+    assert project.uid == collection.project_id
 
 
 def test_measurement_specs_get_project_id(project):
-    assert project.uid == project.measurement_specs.project_id
+    with pytest.deprecated_call():
+        collection = project.measurement_specs
+
+    assert project.uid == collection.project_id
 
 
 def test_material_specs_get_project_id(project):
-    assert project.uid == project.material_specs.project_id
+    with pytest.deprecated_call():
+        collection = project.material_specs
+
+    assert project.uid == collection.project_id
 
 
 def test_ingredient_specs_get_project_id(project):
-    assert project.uid == project.ingredient_specs.project_id
+    with pytest.deprecated_call():
+        collection = project.ingredient_specs
+
+    assert project.uid == collection.project_id
 
 
 def test_gemd_resource_get_project_id(project):
-    assert project.uid == project.gemd.project_id
+    with pytest.deprecated_call():
+        collection = project.gemd
+
+    assert project.uid == collection.project_id
 
 
 def test_design_spaces_get_project_id(project):
@@ -446,14 +509,11 @@ def test_search_projects_no_search_params(collection: ProjectCollection):
     # Then
     result = list(collection.search())
 
-    expected_call = FakeCall(method='POST',
-                             path='/projects/search',
-                             params={'userId': ''},
-                             json={})
+    expected_call = FakeCall(method='POST', path='/projects/search', params={'userId': ''}, json={})
 
     assert 1 == collection.session.num_calls
     assert expected_call == collection.session.last_call
-    assert len(projects_data)== len(result)
+    assert len(projects_data) == len(result)
 
 
 def test_delete_project(collection, session):
@@ -526,8 +586,8 @@ def test_project_batch_delete_no_errors(project, session):
     session.set_responses(job_resp, successful_job_resp)
 
     # When
-    del_resp = project.gemd_batch_delete([uuid.UUID(
-        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    with pytest.deprecated_call():
+        del_resp = project.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
 
     # Then
     assert len(del_resp) == 0
@@ -535,7 +595,8 @@ def test_project_batch_delete_no_errors(project, session):
     # When trying with entities
     session.set_responses(job_resp, successful_job_resp)
     entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
-    del_resp = project.gemd_batch_delete([entity])
+    with pytest.deprecated_call():
+        del_resp = project.gemd_batch_delete([entity])
 
     # Then
     assert len(del_resp) == 0
@@ -546,7 +607,6 @@ def test_project_batch_delete(project, session):
         'job_id': '1234'
     }
 
-    import json
     failures_escaped_json = json.dumps([
         {
             "id": {
@@ -578,8 +638,8 @@ def test_project_batch_delete(project, session):
     session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
 
     # When
-    del_resp = project.gemd_batch_delete([uuid.UUID(
-        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    with pytest.deprecated_call():
+        del_resp = project.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
 
     # Then
     assert 2 == session.num_calls
@@ -597,8 +657,8 @@ def test_project_batch_delete(project, session):
     assert first_failure[1].dump() == expected_api_error.dump()
 
     # And again with tuples of (scope, id)
-    del_resp = project.gemd_batch_delete([LinkByUID('id',
-                                                    '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    with pytest.deprecated_call():
+        del_resp = project.gemd_batch_delete([LinkByUID('id', '16fd2706-8baf-433b-82eb-8c7fada847da')])
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
@@ -607,26 +667,28 @@ def test_project_batch_delete(project, session):
 
 
 def test_batch_delete_bad_input(project):
-    with pytest.raises(TypeError):
-        project.gemd_batch_delete([True])
+    with pytest.deprecated_call():
+        with pytest.raises(TypeError):
+            project.gemd_batch_delete([True])
 
 
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
 
 
-def test_owned_dataset_ids(project):
+def test_owned_dataset_ids(project, datasets):
     # Create a set of datasets in the project
     ids = {uuid.uuid4() for _ in range(5)}
     for d_id in ids:
         dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
-        project.datasets.register(dataset)
+        datasets.register(dataset)
 
     # Set the session response to have the list of dataset IDs
     project.session.set_response({'ids': list(ids)})
 
     # Fetch the list of UUID owned by the current project
-    owned_ids = project.owned_dataset_ids()
+    with pytest.deprecated_call():
+        owned_ids = project.owned_dataset_ids()
 
     # Let's mock our expected API call so we can compare and ensure that the one made is the same
     expect_call = FakeCall(method='GET',

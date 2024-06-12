@@ -2,7 +2,11 @@ from uuid import UUID
 
 import pytest
 
+from gemd.entity.object import IngredientSpec as GEMDIngredientSpec
+from gemd.entity.value import NominalReal
+
 from citrine.resources.ingredient_spec import IngredientSpecCollection
+from citrine.resources.ingredient_spec import IngredientSpec as CitrineIngredientSpec
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.session import FakeSession
 
@@ -15,9 +19,18 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> IngredientSpecCollection:
     return IngredientSpecCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
         session=session)
+
+
+def test_create_deprecated_collection(session):
+    with pytest.deprecated_call():
+        IngredientSpecCollection(
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
+            session=session)
 
 
 def test_list_by_material(collection: IngredientSpecCollection):
@@ -40,10 +53,6 @@ def test_list_by_process(collection: IngredientSpecCollection):
 
 def test_equals():
     """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
-    from citrine.resources.ingredient_spec import IngredientSpec as CitrineIngredientSpec
-    from gemd.entity.object import IngredientSpec as GEMDIngredientSpec
-    from gemd.entity.value import NominalReal
-
     gemd_obj = GEMDIngredientSpec(
         name="My Name",
         labels=["nice", "words"],

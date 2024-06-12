@@ -7,23 +7,23 @@ from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
 
-import requests
-from boto3 import client as boto3_client
-from boto3.session import Config
-from botocore.exceptions import ClientError
 from citrine._rest.collection import Collection
 from citrine._rest.resource import GEMDResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import rewrite_s3_links_locally
-from citrine._utils.functions import write_file_locally
-
+from citrine._utils.functions import _data_manager_deprecation_checks, _pad_positional_args, \
+    rewrite_s3_links_locally, write_file_locally
 from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
 from gemd.enumeration.base_enumeration import BaseEnumeration
+
+import requests
+from boto3 import client as boto3_client
+from boto3.session import Config
+from botocore.exceptions import ClientError
 
 
 class SearchFileFilterTypeEnum(BaseEnumeration):
@@ -192,14 +192,32 @@ class FileLink(
 class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/files'
     _collection_key = 'files'
     _resource = FileLink
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        self.project_id = project_id
-        self.dataset_id = dataset_id
-        self.session = session
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        dataset_id: UUID = None,
+        team_id: Optional[UUID] = None,
+        project_id: Optional[UUID] = None
+    ):
+        args = _pad_positional_args(args, 3)
+        self.project_id = project_id or args[0]
+        self.dataset_id = dataset_id or args[1]
+        self.session = session or args[2]
+        if self.session is None:
+            raise TypeError("Missing one required argument: session.")
+        if self.dataset_id is None:
+            raise TypeError("Missing one required argument: dataset_id.")
+
+        self.team_id = _data_manager_deprecation_checks(
+            session=self.session,
+            project_id=self.project_id,
+            team_id=team_id,
+            obj_type="File Links")
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
@@ -733,7 +751,7 @@ class FileCollection(Collection[FileLink]):
             raise ValueError(f"All files must be on-platform to load them.  "
                              f"The following are not: {offplatform}")
 
-        ingestion_collection = IngestionCollection(project_id=self.project_id,
+        ingestion_collection = IngestionCollection(team_id=self.team_id,
                                                    dataset_id=self.dataset_id,
                                                    session=self.session)
         ingestion = ingestion_collection.build_from_file_links(

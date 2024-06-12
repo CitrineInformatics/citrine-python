@@ -10,8 +10,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
-from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally, \
-    format_escaped_url
+from citrine._utils.functions import format_escaped_url, _pad_positional_args, \
+    rewrite_s3_links_locally, write_file_locally
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig, TableConfigCollection
 
@@ -44,6 +44,7 @@ class GemTable(Resource['Table']):
     _description = properties.Optional(properties.String, "description", serializable=False)
 
     def __init__(self):
+        self._team_id = None
         self._project_id = None
         self._session = None
 
@@ -54,7 +55,9 @@ class GemTable(Resource['Table']):
     def config(self) -> TableConfig:
         """Configuration used to build the table."""
         if self._config is None:
-            config_collection = TableConfigCollection(self._project_id, self._session)
+            config_collection = TableConfigCollection(team_id=self._team_id,
+                                                      project_id=self._project_id,
+                                                      session=self._session)
             self._config = config_collection.get_for_table(self)
         return self._config
 
@@ -93,9 +96,11 @@ class GemTableCollection(Collection[GemTable]):
     _paginator: Paginator = GemTableVersionPaginator()
     _resource = GemTable
 
-    def __init__(self, project_id: UUID, session: Session):
-        self.project_id = project_id
-        self.session: Session = session
+    def __init__(self, *args, team_id: UUID, project_id: UUID = None, session: Session = None):
+        args = _pad_positional_args(args, 2)
+        self.project_id = project_id or args[0]
+        self.session: Session = session or args[1]
+        self.team_id = team_id
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
@@ -195,8 +200,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         if isinstance(config, TableConfig):
             if version is not None:
-                logger.warning('Ignoring version {} since config object was provided.'
-                               .format(version))
+                logger.warning('Ignoring version %s since config object was provided.', version)
             if config.version_number is None:
                 raise ValueError('Cannot build table from config which has no version. '
                                  'Try registering the config before building.')
@@ -211,12 +215,10 @@ class GemTableCollection(Collection[GemTable]):
             uid = config
         logger.info(f'Submitting table build for config {uid} version {version}...')
         path = format_escaped_url('projects/{}/ara-definitions/{}/versions/{}/build',
-                                  self.project_id, uid, version
-                                  )
-        response = self.session.post_resource(
-            path=path,
-            json={}
-        )
+                                  self.project_id,
+                                  uid,
+                                  version)
+        response = self.session.post_resource(path=path, json={})
         submission = JobSubmissionResponse.build(response)
         logger.info(
             f'Table build job submitted from config {uid} '
@@ -244,7 +246,12 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        status = _poll_for_job_completion(self.session, self.project_id, job, timeout=timeout)
+        # TODO: Should this use the project or team version?
+        status = _poll_for_job_completion(
+            session=self.session,
+            project_id=self.project_id,
+            job=job,
+            timeout=timeout)
 
         table_id = status.output['display_table_id']
         table_version = status.output['display_table_version']
@@ -257,8 +264,7 @@ class GemTableCollection(Collection[GemTable]):
                 warn_lines.extend(limited_results)
                 total_count = warning.get('total_count', 0)
                 if total_count > len(limited_results):
-                    warn_lines.append('and {} more similar.'
-                                      .format(total_count - len(limited_results)))
+                    warn_lines.append('and {total_count - len(limited_results)} more similar.')
             logger.warning('\n\t'.join(warn_lines))
         return self.get(table_id, version=table_version)
 
@@ -291,6 +297,7 @@ class GemTableCollection(Collection[GemTable]):
     def build(self, data: dict) -> GemTable:
         """Build an individual Table from a dictionary."""
         table = GemTable.build(data)
+        table._team_id = self.team_id
         table._project_id = self.project_id
         table._session = self.session
         return table

@@ -10,6 +10,22 @@ from citrine._utils.functions import format_escaped_url
 from citrine.resources.analysis_workflow import AnalysisWorkflowCollection
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import User, UserCollection
+from citrine.resources.dataset import DatasetCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
+from citrine.resources.ingredient_run import IngredientRunCollection
+from citrine.resources.ingredient_spec import IngredientSpecCollection
+from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpecCollection
+from citrine.resources.measurement_template import MeasurementTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
 
 WRITE = "WRITE"
 READ = "READ"
@@ -354,6 +370,21 @@ class Team(Resource['Team']):
         )
         return True
 
+    def owned_dataset_ids(self) -> List[str]:
+        """
+        List all the ids of the datasets owned by the current team.
+
+        Returns
+        -------
+        List[str]
+            The ids of the modules owned by current team
+
+        """
+        query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
+        return self.session.get_resource("/DATASET/authorized-ids",
+                                         params=query_params,
+                                         version="v3")['ids']
+
     @property
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects in this team."""
@@ -370,6 +401,11 @@ class Team(Resource['Team']):
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.DATASET.value)
+
+    @property
+    def datasets(self) -> DatasetCollection:
+        """Return a resource representing all visible datasets."""
+        return DatasetCollection(team_id=self.uid, session=self.session)
 
     @property
     def module_ids(self) -> TeamResourceIDs:
@@ -391,6 +427,84 @@ class Team(Resource['Team']):
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
+
+    @property
+    def property_templates(self) -> PropertyTemplateCollection:
+        """Return a resource representing all property templates in this dataset."""
+        return PropertyTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def condition_templates(self) -> ConditionTemplateCollection:
+        """Return a resource representing all condition templates in this dataset."""
+        return ConditionTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def parameter_templates(self) -> ParameterTemplateCollection:
+        """Return a resource representing all parameter templates in this dataset."""
+        return ParameterTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def material_templates(self) -> MaterialTemplateCollection:
+        """Return a resource representing all material templates in this dataset."""
+        return MaterialTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def measurement_templates(self) -> MeasurementTemplateCollection:
+        """Return a resource representing all measurement templates in this dataset."""
+        return MeasurementTemplateCollection(
+            team_id=self.uid,
+            dataset_id=None,
+            session=self.session)
+
+    @property
+    def process_templates(self) -> ProcessTemplateCollection:
+        """Return a resource representing all process templates in this dataset."""
+        return ProcessTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def process_runs(self) -> ProcessRunCollection:
+        """Return a resource representing all process runs in this dataset."""
+        return ProcessRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def measurement_runs(self) -> MeasurementRunCollection:
+        """Return a resource representing all measurement runs in this dataset."""
+        return MeasurementRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def material_runs(self) -> MaterialRunCollection:
+        """Return a resource representing all material runs in this dataset."""
+        return MaterialRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def ingredient_runs(self) -> IngredientRunCollection:
+        """Return a resource representing all ingredient runs in this dataset."""
+        return IngredientRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def process_specs(self) -> ProcessSpecCollection:
+        """Return a resource representing all process specs in this dataset."""
+        return ProcessSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def measurement_specs(self) -> MeasurementSpecCollection:
+        """Return a resource representing all measurement specs in this dataset."""
+        return MeasurementSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def material_specs(self) -> MaterialSpecCollection:
+        """Return a resource representing all material specs in this dataset."""
+        return MaterialSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def ingredient_specs(self) -> IngredientSpecCollection:
+        """Return a resource representing all ingredient specs in this dataset."""
+        return IngredientSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+
+    @property
+    def gemd(self) -> GEMDResourceCollection:
+        """Return a resource representing all GEMD objects/templates in this dataset."""
+        return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
 
 
 class TeamCollection(AdminCollection[Team]):

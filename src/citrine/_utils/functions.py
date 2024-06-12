@@ -319,3 +319,25 @@ def resource_path(*,
     new_url = base._replace(path='/'.join(path), query=query).geturl()
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)
+
+
+def _data_manager_deprecation_checks(session, project_id: UUID, team_id: UUID, obj_type: str):
+    if project_id is None and team_id is None:
+        raise TypeError("Missing one required argument: team_id.")
+    elif project_id is not None:
+        warn(f"{obj_type} now belong to Teams. Access through projects has been deprecated since "
+             "3.4.0, and will be removed in 4.0. Please go through your Team or Dataset.",
+             DeprecationWarning)
+        if team_id is None:
+            # avoiding a circular import
+            from citrine.resources.project import Project
+            team_id = Project.get_team_id_from_project_id(session=session, project_id=project_id)
+    return team_id
+
+
+def _pad_positional_args(args, n):
+    if len(args) > 0:
+        warn("Positional arguments are deprecated and will be removed in v4.0. Please use keyword "
+             "arguments instead.",
+             DeprecationWarning)
+    return args + (None, ) * (n - len(args))

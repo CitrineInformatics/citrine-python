@@ -1,6 +1,7 @@
 import json
 from typing import List, Union, Tuple, Optional
 from uuid import UUID
+from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -14,9 +15,10 @@ from citrine.resources.data_concepts import _make_link_by_uid
 
 def _async_gemd_batch_delete(
         id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-        project_id: UUID,
         session: Session,
-        dataset_id: Optional[UUID],
+        project_id: Optional[UUID] = None,
+        team_id: Optional[UUID] = None,
+        dataset_id: Optional[UUID] = None,
         timeout: float = 2 * 60,
         polling_delay: float = 1.0
 ) -> List[Tuple[LinkByUID, ApiError]]:
@@ -36,7 +38,7 @@ def _async_gemd_batch_delete(
         or string is assumed to be a Citrine ID, whereas a LinkByUID or
         BaseEntity can also be used to provide an external ID.
 
-    project_id: UUID
+    team_id: UUID
         The Project ID to use in the delete request.
 
     session: Session
@@ -71,31 +73,45 @@ def _async_gemd_batch_delete(
 
     if dataset_id is not None:
         body.update({'dataset_id': str(dataset_id)})
-
-    path = format_escaped_url('/projects/{project_id}/gemd/async-batch-delete',
-                              project_id=project_id
-                              )
+    if team_id is not None:
+        path = format_escaped_url('/teams/{team_id}/gemd/async-batch-delete',
+                                  team_id=team_id)
+    elif project_id is not None:
+        warn("project_id is deprecated as of 3.4.0, and will be removed in 4.0.0. Please provide "
+             "team_id instead",
+             DeprecationWarning)
+        path = format_escaped_url('/projects/{project_id}/gemd/async-batch-delete',
+                                  project_id=project_id)
+    else:
+        raise TypeError("Missing one required argument: team_id")
     response = session.post_resource(path, body)
 
     job_id = response["job_id"]
 
-    return _poll_for_async_batch_delete_result(project_id, session, job_id, timeout, polling_delay)
+    return _poll_for_async_batch_delete_result(
+        team_id=team_id,
+        session=session,
+        job_id=job_id,
+        project_id=project_id,
+        timeout=timeout,
+        polling_delay=polling_delay)
 
 
 def _poll_for_async_batch_delete_result(
-        project_id: UUID,
+        team_id: UUID,
         session: Session,
         job_id: str,
         timeout: float,
-        polling_delay: float
+        polling_delay: float,
+        project_id: UUID = None
 ) -> List[Tuple[LinkByUID, ApiError]]:
     """
     Poll for the result of an asynchronous batch delete (or a deletion of dataset contents).
 
     Parameters
     ----------
-    project_id: UUID
-        The Project ID to use in the delete request.
+    team_id: UUID
+        The team ID to use in the delete request.
 
     session: Session
         The Citrine session.
@@ -119,8 +135,13 @@ def _poll_for_async_batch_delete_result(
         deleted.
 
     """
-    response = _poll_for_job_completion(session, project_id, job_id, timeout=timeout,
-                                        polling_delay=polling_delay)
+    response = _poll_for_job_completion(
+        session=session,
+        team_id=team_id,
+        project_id=project_id,
+        job=job_id,
+        timeout=timeout,
+        polling_delay=polling_delay)
 
     return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.build(f['cause']))
             for f in json.loads(response.output.get('failures', '[]'))]

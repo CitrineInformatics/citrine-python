@@ -57,11 +57,23 @@ def session() -> FakeSession:
 @pytest.fixture
 def gemd_collection(session) -> GEMDResourceCollection:
     return GEMDResourceCollection(
-        project_id=uuid4(),
+        team_id=uuid4(),
         dataset_id=uuid4(),
         session=session
     )
 
+def test_invalid_collection_construction():
+    with pytest.raises(TypeError):
+        return GEMDResourceCollection(
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            session=session)
+
+def test_deprecation_of_positional_arguments(session):
+    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project': {'team': {'id': team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        fcol = GEMDResourceCollection(uuid4(), uuid4(), session)
 
 def sample_gems(nsamples, **kwargs):
     factories = [MaterialRunDataFactory, MaterialSpecDataFactory]
@@ -86,7 +98,7 @@ def test_list(gemd_collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=format_escaped_url('projects/{}/storables', gemd_collection.project_id),
+        path=format_escaped_url('teams/{}/storables', gemd_collection.team_id, gemd_collection.dataset_id),
         params={
             'dataset_id': str(gemd_collection.dataset_id),
             'forward': True,
@@ -500,7 +512,7 @@ def test_batch_delete(gemd_collection, session):
     import json
     failures_escaped_json = json.dumps([
         {
-            "id":{
+            "id": {
                 'scope': 'somescope',
                 'id': 'abcd-1234'
             },
@@ -610,7 +622,7 @@ def test_type_passthrough(gemd_collection, session):
     ]
     session.set_response({"objects": [dict(x.dump(), **metadata) for x in arr]})
     pspecs = gemd_collection.register_all(arr)
-    assert([s.name for s in pspecs] == ['foo', 'bar', 'baz'])
+    assert [s.name for s in pspecs] == ['foo', 'bar', 'baz']
     assert pspecs == arr
 
 

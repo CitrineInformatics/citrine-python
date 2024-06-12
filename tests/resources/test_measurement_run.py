@@ -15,9 +15,18 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> MeasurementRunCollection:
     return MeasurementRunCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
         session=session)
+
+
+def test_create_deprecated_collection(session):
+    with pytest.deprecated_call():
+        MeasurementRunCollection(
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
+            session=session)
 
 
 def test_list_by_template(collection: MeasurementRunCollection):

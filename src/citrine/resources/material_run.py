@@ -90,8 +90,6 @@ class MaterialRun(
 class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     """Represents the collection of all material runs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/material-runs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/material-runs'
     _individual_key = 'material_run'
     _collection_key = 'material_runs'
     _resource = MaterialRun
@@ -123,12 +121,24 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         link = _make_link_by_uid(id)
-        path = format_escaped_url("projects/{}/material-history/{}/{}",
-                                  self.project_id,
-                                  link.scope,
-                                  link.id
-                                  )
-        data = self.session.get_resource(path)
+        path = format_escaped_url(
+            "teams/{}/gemd/query/material-histories?filter_nonroot_materials=true",
+            self.team_id)
+        query = {
+            "criteria": [
+                {
+                    "datasets": [str(self.dataset_id)],
+                    "type": "terminal_material_run_identifiers_criteria",
+                    "terminal_material_ids": [
+                        {
+                            "scope": link.scope,
+                            "id": link.id
+                        }
+                    ]
+                }
+            ]
+        }
+        data = self.session.post_resource(path, json=query)
 
         return MaterialRun.build(data)
 
@@ -190,7 +200,11 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The material runs using the specified material template.
 
         """
-        spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
+        spec_collection = MaterialSpecCollection(
+            team_id=self.team_id,
+            dataset_id=self.dataset_id,
+            session=self.session
+        )
         specs = spec_collection.list_by_template(uid=_make_link_by_uid(uid))
         return (run for runs in (self.list_by_spec(spec) for spec in specs)
                 for run in runs)
