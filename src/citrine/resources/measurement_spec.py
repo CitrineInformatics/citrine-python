@@ -86,8 +86,8 @@ class MeasurementSpec(
 class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     """Represents the collection of all measurement specs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/measurement-specs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/measurement-specs'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/measurement-specs'
+    _dataset_agnostic_path_template = 'teams/{team_id}/measurement-specs'
     _individual_key = 'measurement_spec'
     _collection_key = 'measurement_specs'
     _resource = MeasurementSpec

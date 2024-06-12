@@ -112,8 +112,8 @@ class IngredientRun(
 class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     """Represents the collection of all ingredient runs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/ingredient-runs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-runs'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/ingredient-runs'
+    _dataset_agnostic_path_template = 'teams/{team_id}/ingredient-runs'
     _individual_key = 'ingredient_run'
     _collection_key = 'ingredient_runs'
     _resource = IngredientRun

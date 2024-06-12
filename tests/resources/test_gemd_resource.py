@@ -57,7 +57,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def gemd_collection(session) -> GEMDResourceCollection:
     return GEMDResourceCollection(
-        project_id=uuid4(),
+        team_id=uuid4(),
         dataset_id=uuid4(),
         session=session
     )

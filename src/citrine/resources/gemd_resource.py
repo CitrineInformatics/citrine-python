@@ -22,15 +22,15 @@ BATCH_SIZE = 50
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/storables'
-    _dataset_agnostic_path_template = 'projects/{project_id}/storables'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/storables'
+    _dataset_agnostic_path_template = 'teams/{team_id}/storables'
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
+    def __init__(self, team_id: UUID, dataset_id: UUID, session: Session):
         DataConceptsCollection.__init__(self,
-                                        project_id=project_id,
+                                        team_id=team_id,
                                         dataset_id=dataset_id,
                                         session=session)
-        self.project_id = project_id
+        self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session
 
@@ -41,7 +41,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def _collection_for(self, model):
         collection = DataConcepts.get_collection_type(model)
-        return collection(self.project_id, self.dataset_id, self.session)
+        return collection(self.team_id, self.dataset_id, self.session)
 
     def build(self, data: dict) -> DataConcepts:
         """
@@ -216,5 +216,5 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list, self.project_id, self.session, self.dataset_id,
+        return _async_gemd_batch_delete(id_list=id_list, team_id = self.team_id, session = self.session, dataset_id = self.dataset_id,
                                         timeout=timeout, polling_delay=polling_delay)

@@ -6,6 +6,8 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
+from warnings import warn
+
 
 import requests
 from boto3 import client as boto3_client
@@ -192,14 +194,31 @@ class FileLink(
 class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/files'
     _collection_key = 'files'
     _resource = FileLink
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        self.project_id = project_id
+    def __init__(self, dataset_id: UUID, session: Session, team_id: UUID = None, project_id: UUID = None):
+        self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session
+        self._project_id = project_id
+        if project_id is None and team_id is None:
+            raise RuntimeError("A team_id must be provided.")
+        elif project_id is not None and team_id is not None:
+            warn(
+                "Datasets and their Files now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+                "Using team_id and ignoring the provided project_id.",
+                DeprecationWarning
+            )
+        elif project_id is not None and team_id is None:
+            warn(
+                "Datasets and their Files now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+                "Please use team_id instead.",
+                DeprecationWarning
+            )
+            if team_id is None:
+                self.team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
@@ -733,7 +752,7 @@ class FileCollection(Collection[FileLink]):
             raise ValueError(f"All files must be on-platform to load them.  "
                              f"The following are not: {offplatform}")
 
-        ingestion_collection = IngestionCollection(project_id=self.project_id,
+        ingestion_collection = IngestionCollection(team_id=self.team_id,
                                                    dataset_id=self.dataset_id,
                                                    session=self.session)
         ingestion = ingestion_collection.build_from_file_links(

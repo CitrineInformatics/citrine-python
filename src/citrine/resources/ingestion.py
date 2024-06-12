@@ -1,5 +1,7 @@
 from typing import Optional, Iterator, Iterable
 from uuid import UUID
+from warnings import warn
+
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -186,7 +188,8 @@ class Ingestion(Resource['Ingestion']):
 
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
-    project_id = properties.UUID('project_id')
+    # project_id = properties.UUID('project_id')
+    team_id = properties.UUID('team_id')
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
@@ -268,7 +271,7 @@ class Ingestion(Resource['Ingestion']):
             The object for the submitted job
 
         """
-        collection = IngestionCollection(project_id=self.project_id,
+        collection = IngestionCollection(team_id=self.team_id,
                                          dataset_id=self.dataset_id,
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="gemd-objects-async")
@@ -322,7 +325,7 @@ class Ingestion(Resource['Ingestion']):
 
         _poll_for_job_completion(
             session=self.session,
-            project_id=self.project_id,
+            team_id=self.team_id,
             job=job,
             raise_errors=False,  # JobFailureError doesn't contain the error
             **kwargs
@@ -339,7 +342,7 @@ class Ingestion(Resource['Ingestion']):
             The result of the ingestion attempt
 
         """
-        collection = IngestionCollection(project_id=self.project_id,
+        collection = IngestionCollection(team_id=self.team_id,
                                          dataset_id=self.dataset_id,
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="status")
@@ -415,22 +418,38 @@ class IngestionCollection(Collection[Ingestion]):
 
     Parameters
     ----------
-    project_id: UUID
-        Unique ID of the project this dataset collection belongs to.
+    team_id: UUID
+        Unique ID of the team this dataset collection belongs to.
     session: Session
         The Citrine session used to connect to the database.
 
     """
 
-    _path_template = 'projects/{project_id}/ingestions'
+    _path_template = 'teams/{team_id}/ingestions'
     _individual_key = None
     _collection_key = None
     _resource = Ingestion
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        self.project_id = project_id
+    def __init__(self, dataset_id: UUID, session: Session, team_id: UUID = None, project_id: UUID = None):
         self.dataset_id = dataset_id
+        self.team_id = team_id
         self.session = session
+        if project_id is None and team_id is None:
+            raise RuntimeError("A team_id must be provided.")
+        elif project_id is not None and team_id is not None:
+            warn(
+                "Datasets now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+                "Using team_id and ignoring the provided project_id.",
+                DeprecationWarning
+            )
+        elif project_id is not None and team_id is None:
+            warn(
+                "Datasets now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+                "Please use team_id instead.",
+                DeprecationWarning
+            )
+            if team_id is None:
+                self.team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
 
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],
@@ -456,7 +475,7 @@ class IngestionCollection(Collection[Ingestion]):
 
         req = {
             "dataset_id": str(self.dataset_id),
-            "project_id": str(self.project_id),
+            "team_id": str(self.team_id),
             "files": [
                 {"dataset_file_id": str(f.uid), "file_version_uuid": str(f.version)}
                 for f in file_links

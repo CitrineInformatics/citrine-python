@@ -111,8 +111,8 @@ class IngredientSpec(
 class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     """Represents the collection of all ingredient specs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/ingredient-specs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-specs'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/ingredient-specs'
+    _dataset_agnostic_path_template = 'teams/{team_id}/ingredient-specs'
     _individual_key = 'ingredient_spec'
     _collection_key = 'ingredient_specs'
     _resource = IngredientSpec

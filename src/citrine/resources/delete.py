@@ -14,7 +14,7 @@ from citrine.resources.data_concepts import _make_link_by_uid
 
 def _async_gemd_batch_delete(
         id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-        project_id: UUID,
+        team_id: UUID,
         session: Session,
         dataset_id: Optional[UUID],
         timeout: float = 2 * 60,
@@ -36,7 +36,7 @@ def _async_gemd_batch_delete(
         or string is assumed to be a Citrine ID, whereas a LinkByUID or
         BaseEntity can also be used to provide an external ID.
 
-    project_id: UUID
+    team_id: UUID
         The Project ID to use in the delete request.
 
     session: Session
@@ -72,18 +72,18 @@ def _async_gemd_batch_delete(
     if dataset_id is not None:
         body.update({'dataset_id': str(dataset_id)})
 
-    path = format_escaped_url('/projects/{project_id}/gemd/async-batch-delete',
-                              project_id=project_id
+    path = format_escaped_url('/teams/{team_id}/gemd/async-batch-delete',
+                              team_id=team_id
                               )
     response = session.post_resource(path, body)
 
     job_id = response["job_id"]
 
-    return _poll_for_async_batch_delete_result(project_id, session, job_id, timeout, polling_delay)
+    return _poll_for_async_batch_delete_result(team_id=team_id, session=session, job_id=job_id, timeout = timeout, polling_delay = polling_delay)
 
 
 def _poll_for_async_batch_delete_result(
-        project_id: UUID,
+        team_id: UUID,
         session: Session,
         job_id: str,
         timeout: float,
@@ -94,8 +94,8 @@ def _poll_for_async_batch_delete_result(
 
     Parameters
     ----------
-    project_id: UUID
-        The Project ID to use in the delete request.
+    team_id: UUID
+        The team ID to use in the delete request.
 
     session: Session
         The Citrine session.
@@ -119,7 +119,7 @@ def _poll_for_async_batch_delete_result(
         deleted.
 
     """
-    response = _poll_for_job_completion(session, project_id, job_id, timeout=timeout,
+    response = _poll_for_job_completion(session=session, team_id = team_id, job = job_id, timeout=timeout,
                                         polling_delay=polling_delay)
 
     return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.build(f['cause']))

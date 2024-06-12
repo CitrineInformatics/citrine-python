@@ -59,7 +59,7 @@ def test_register_all(collection, session):
     assert [r.name for r in runs] == [r.name for r in registered]
     assert len(session.calls) == 1
     assert session.calls[0].method == 'PUT'
-    assert GEMDResourceCollection(collection.project_id, collection.dataset_id, collection.session)._get_path() \
+    assert GEMDResourceCollection(team_id = collection.team_id, dataset_id = collection.dataset_id, session = collection.session)._get_path() \
            in session.calls[0].path
     with pytest.raises(RuntimeError):
         MaterialRunCollection(collection.project_id, dataset_id=None, session=session).register_all([])

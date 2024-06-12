@@ -591,7 +591,7 @@ def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
         assert local_file not in file_links
         return Ingestion.build({
             "ingestion_id": uuid4(),
-            "project_id": self.project_id,
+            "team_id": self.team_id,
             "dataset_id": self.dataset_id,
             "session": self.session,
             "raise_errors": raise_errors

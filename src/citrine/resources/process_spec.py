@@ -86,8 +86,8 @@ class ProcessSpec(
 class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     """Represents the collection of all process specs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/process-specs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/process-specs'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/process-specs'
+    _dataset_agnostic_path_template = 'teams/{team_id}/process-specs'
     _individual_key = 'process_spec'
     _collection_key = 'process_specs'
     _resource = ProcessSpec
