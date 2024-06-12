@@ -26,7 +26,7 @@ def run_noop_gemd_relation_search_test(search_for, search_with, collection, sear
     assert collection.session.num_calls == 1
     assert collection.session.last_call == FakeCall(
         method="GET",
-        path="projects/{}/{}/{}/{}/{}".format(collection.project_id, search_with, test_scope, test_id, search_for),
+        path="teams/{}/{}/{}/{}/{}".format(collection.team_id, search_with, test_scope, test_id, search_for),
         params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": per_page}
     )
 

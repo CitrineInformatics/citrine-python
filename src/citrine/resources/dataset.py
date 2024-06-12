@@ -405,6 +405,7 @@ class DatasetCollection(Collection[Dataset]):
     def __init__(self, team_id: UUID = None, session: Session = None, project_id: UUID = None):
         self.team_id = team_id
         self.session: Session = session
+        self._project_id = project_id
         if project_id is None and team_id is None:
             raise RuntimeError("A team_id must be provided.")
         elif project_id is not None and team_id is not None:
