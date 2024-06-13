@@ -502,7 +502,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         job_id = response_json["job_id"]
 
         if wait_for_response:
-            self.poll_async_update_job(job_id, timeout=timeout,
+            self.poll_async_update_job(job_id=job_id, timeout=timeout,
                                        polling_delay=polling_delay)
 
             # That worked, return nothing or return the object
@@ -545,7 +545,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        _poll_for_job_completion(self.session, self.team_id, job_id, timeout=timeout,
+        _poll_for_job_completion(session=self.session,team_id=self.team_id, job=job_id, timeout=timeout,
                                  polling_delay=polling_delay)
 
         # That worked, nothing returned in this case

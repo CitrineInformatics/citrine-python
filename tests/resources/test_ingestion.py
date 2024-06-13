@@ -90,6 +90,7 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
     def _mock_poll_for_job_completion(
             session,
             project_id,
+            team_id,
             job,
             *,
             timeout=-1.0,
