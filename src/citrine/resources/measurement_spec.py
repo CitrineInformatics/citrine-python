@@ -87,10 +87,16 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     """Represents the collection of all measurement specs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/measurement-specs'
-    _dataset_agnostic_path_template = 'teams/{team_id}/measurement-specs'
     _individual_key = 'measurement_spec'
     _collection_key = 'measurement_specs'
     _resource = MeasurementSpec
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/measurement-specs'
+        else:
+            return 'projects/{self.project_id}/measurement-specs'
 
     @classmethod
     def get_type(cls) -> Type[MeasurementSpec]:

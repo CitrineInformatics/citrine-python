@@ -1,7 +1,9 @@
 """Resources that represent condition templates."""
 from typing import List, Dict, Optional, Type
+from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
+from citrine._session import Session
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.condition_template import ConditionTemplate as GEMDConditionTemplate
@@ -59,10 +61,16 @@ class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]
     """A collection of condition templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/condition-templates'
-    _dataset_agnostic_path_template = 'teams/{team_id}/condition-templates'
     _individual_key = 'condition_template'
     _collection_key = 'condition_templates'
     _resource = ConditionTemplate
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/condition-templates'
+        else:
+            return 'projects/{self.project_id}/condition-templates'
 
     @classmethod
     def get_type(cls) -> Type[ConditionTemplate]:

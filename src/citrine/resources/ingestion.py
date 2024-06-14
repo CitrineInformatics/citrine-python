@@ -434,6 +434,8 @@ class IngestionCollection(Collection[Ingestion]):
         self.dataset_id = dataset_id
         self.team_id = team_id
         self.session = session
+        self.project_id = project_id
+
         if project_id is None and team_id is None:
             raise RuntimeError("A team_id must be provided.")
         elif project_id is not None and team_id is not None:
@@ -449,7 +451,7 @@ class IngestionCollection(Collection[Ingestion]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
+                self.team_id = self.session.get_team_id_from_project_id(project_id=self.project_id)
 
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],

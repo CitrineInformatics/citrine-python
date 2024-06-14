@@ -88,10 +88,16 @@ class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     """A collection of material templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/material-templates'
-    _dataset_agnostic_path_template = 'teams/{team_id}/material-templates'
     _individual_key = 'material_template'
     _collection_key = 'material_templates'
     _resource = MaterialTemplate
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/material-templates'
+        else:
+            return 'projects/{self.project_id}/material-templates'
 
     @classmethod
     def get_type(cls) -> Type[MaterialTemplate]:

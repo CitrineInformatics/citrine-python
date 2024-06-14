@@ -23,16 +23,24 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/storables'
-    _dataset_agnostic_path_template = 'teams/{team_id}/storables'
 
-    def __init__(self, team_id: UUID, dataset_id: UUID, session: Session):
+    def __init__(self, dataset_id: UUID, session: Session, team_id: UUID = None, project_id: UUID = None):
         DataConceptsCollection.__init__(self,
                                         team_id=team_id,
                                         dataset_id=dataset_id,
-                                        session=session)
+                                        session=session,
+                                        project_id=project_id)
         self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session
+        self.project_id = project_id
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/storables'
+        else:
+            return 'projects/{self.project_id}/storables'
 
     @classmethod
     def get_type(cls) -> Type[DataConcepts]:
@@ -41,7 +49,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def _collection_for(self, model):
         collection = DataConcepts.get_collection_type(model)
-        return collection(self.team_id, self.dataset_id, self.session)
+        return collection(team_id=self.team_id, dataset_id=self.dataset_id, session=self.session)
 
     def build(self, data: dict) -> DataConcepts:
         """

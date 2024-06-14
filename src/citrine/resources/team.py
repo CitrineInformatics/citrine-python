@@ -10,6 +10,7 @@ from citrine._utils.functions import format_escaped_url
 from citrine.resources.analysis_workflow import AnalysisWorkflowCollection
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import User, UserCollection
+from citrine.resources.dataset import DatasetCollection
 
 WRITE = "WRITE"
 READ = "READ"
@@ -370,6 +371,11 @@ class Team(Resource['Team']):
         return TeamResourceIDs(session=self.session,
                                team_id=self.uid,
                                resource_type=ResourceTypeEnum.DATASET.value)
+
+    @property
+    def datasets(self) -> DatasetCollection:
+        """Return a resource representing all visible datasets."""
+        return DatasetCollection(team_id= self.uid, session=self.session)
 
     @property
     def module_ids(self) -> TeamResourceIDs:

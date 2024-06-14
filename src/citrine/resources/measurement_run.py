@@ -104,10 +104,16 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     """Represents the collection of all measurement runs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/measurement-runs'
-    _dataset_agnostic_path_template = 'teams/{team_id}/measurement-runs'
     _individual_key = 'measurement_run'
     _collection_key = 'measurement_runs'
     _resource = MeasurementRun
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/measurement-runs'
+        else:
+            return 'projects/{self.project_id}/measurement-runs'
 
     @classmethod
     def get_type(cls) -> Type[MeasurementRun]:

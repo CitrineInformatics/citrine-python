@@ -87,10 +87,16 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     """Represents the collection of all process specs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/process-specs'
-    _dataset_agnostic_path_template = 'teams/{team_id}/process-specs'
     _individual_key = 'process_spec'
     _collection_key = 'process_specs'
     _resource = ProcessSpec
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/process-specs'
+        else:
+            return 'projects/{self.project_id}/process-specs'
 
     @classmethod
     def get_type(cls) -> Type[ProcessSpec]:

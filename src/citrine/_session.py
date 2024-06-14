@@ -306,7 +306,8 @@ class Session(requests.Session):
 
     def get_team_id_from_project_id(self, *, project_id: UUID) -> UUID:
         """Returns the team owning a given project."""
-        return self.get_resource(path='projects/{}'.format(project_id), version="v3")['team']['id']
+        print(self.get_resource(path='projects/{}'.format(project_id), version="v3"))
+        return self.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
 
 
 class BearerAuth(requests.auth.AuthBase):

@@ -101,27 +101,27 @@ class Project(Resource['Project']):
     @property
     def branches(self) -> BranchCollection:
         """Return a resource representing all visible branches."""
-        return BranchCollection(self.uid, self.session)
+        return BranchCollection(project_id=self.uid, session=self.session)
 
     @property
     def design_spaces(self) -> DesignSpaceCollection:
         """Return a resource representing all visible design spaces."""
-        return DesignSpaceCollection(self.uid, self.session)
+        return DesignSpaceCollection(project_id=self.uid, session=self.session)
 
     @property
     def predictors(self) -> PredictorCollection:
         """Return a resource representing all visible predictors."""
-        return PredictorCollection(self.uid, self.session)
+        return PredictorCollection(project_id=self.uid, session=self.session)
 
     @property
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
-        return DescriptorMethods(self.uid, self.session)
+        return DescriptorMethods(project_id=self.uid, session=self.session)
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
         """Return a collection representing all visible predictor evaluation workflows."""
-        return PredictorEvaluationWorkflowCollection(self.uid, self.session)
+        return PredictorEvaluationWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
@@ -141,82 +141,82 @@ class Project(Resource['Project']):
     @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        return DatasetCollection(self.uid, self.session)
+        return DatasetCollection(team_id= self.team_id, project_id=self.uid, session=self.session)
 
     @property
     def tables(self) -> GemTableCollection:
         """Return a resource representing all visible Tables."""
-        return GemTableCollection(self.uid, self.session)
+        return GemTableCollection(project_id=self.uid, session=self.session)
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
         """Return a resource representing all property templates in this dataset."""
-        return PropertyTemplateCollection(self.uid, None, self.session)
+        return PropertyTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        return ConditionTemplateCollection(self.uid, None, self.session)
+        return ConditionTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def parameter_templates(self) -> ParameterTemplateCollection:
         """Return a resource representing all parameter templates in this dataset."""
-        return ParameterTemplateCollection(self.uid, None, self.session)
+        return ParameterTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def material_templates(self) -> MaterialTemplateCollection:
         """Return a resource representing all material templates in this dataset."""
-        return MaterialTemplateCollection(self.uid, None, self.session)
+        return MaterialTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(self.uid, None, self.session)
+        return MeasurementTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
         """Return a resource representing all process templates in this dataset."""
-        return ProcessTemplateCollection(self.uid, None, self.session)
+        return ProcessTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def process_runs(self) -> ProcessRunCollection:
         """Return a resource representing all process runs in this dataset."""
-        return ProcessRunCollection(self.uid, None, self.session)
+        return ProcessRunCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def measurement_runs(self) -> MeasurementRunCollection:
         """Return a resource representing all measurement runs in this dataset."""
-        return MeasurementRunCollection(self.uid, None, self.session)
+        return MeasurementRunCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def material_runs(self) -> MaterialRunCollection:
         """Return a resource representing all material runs in this dataset."""
-        return MaterialRunCollection(self.uid, None, self.session)
+        return MaterialRunCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def ingredient_runs(self) -> IngredientRunCollection:
         """Return a resource representing all ingredient runs in this dataset."""
-        return IngredientRunCollection(self.uid, None, self.session)
+        return IngredientRunCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def process_specs(self) -> ProcessSpecCollection:
         """Return a resource representing all process specs in this dataset."""
-        return ProcessSpecCollection(self.uid, None, self.session)
+        return ProcessSpecCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def measurement_specs(self) -> MeasurementSpecCollection:
         """Return a resource representing all measurement specs in this dataset."""
-        return MeasurementSpecCollection(self.uid, None, self.session)
+        return MeasurementSpecCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def material_specs(self) -> MaterialSpecCollection:
         """Return a resource representing all material specs in this dataset."""
-        return MaterialSpecCollection(self.uid, None, self.session)
+        return MaterialSpecCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
-        return IngredientSpecCollection(self.uid, None, self.session)
+        return IngredientSpecCollection(project_id=self.uid, dataset_id=None, session=self.session)
 
     @property
     def gemd(self) -> GEMDResourceCollection:
@@ -226,7 +226,7 @@ class Project(Resource['Project']):
     @property
     def table_configs(self) -> TableConfigCollection:
         """Return a resource representing all Table Configs in the project."""
-        return TableConfigCollection(self.uid, self.session)
+        return TableConfigCollection(project_id=self.uid, session=self.session)
 
     def publish(self, *, resource: Resource):
         """

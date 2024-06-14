@@ -112,10 +112,16 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     """Represents the collection of all ingredient specs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/ingredient-specs'
-    _dataset_agnostic_path_template = 'teams/{team_id}/ingredient-specs'
     _individual_key = 'ingredient_spec'
     _collection_key = 'ingredient_specs'
     _resource = IngredientSpec
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/ingredient-specs'
+        else:
+            return 'projects/{self.project_id}/ingredient-specs'
 
     @classmethod
     def get_type(cls) -> Type[IngredientSpec]:

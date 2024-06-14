@@ -107,6 +107,7 @@ class Dataset(Resource['Dataset']):
         self.update_time = None
         self.delete_time = None
         self.public = None
+        self.project_id = None
         self.team_id = None
         self.session = None
 
@@ -116,87 +117,88 @@ class Dataset(Resource['Dataset']):
     @property
     def property_templates(self) -> PropertyTemplateCollection:
         """Return a resource representing all property templates in this dataset."""
-        return PropertyTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return PropertyTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        return ConditionTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        print(f"Team ID: {self.team_id}")
+        return ConditionTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def parameter_templates(self) -> ParameterTemplateCollection:
         """Return a resource representing all parameter templates in this dataset."""
-        return ParameterTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return ParameterTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def material_templates(self) -> MaterialTemplateCollection:
         """Return a resource representing all material templates in this dataset."""
-        return MaterialTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MaterialTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MeasurementTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
         """Return a resource representing all process templates in this dataset."""
-        return ProcessTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return ProcessTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def process_runs(self) -> ProcessRunCollection:
         """Return a resource representing all process runs in this dataset."""
-        return ProcessRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return ProcessRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def measurement_runs(self) -> MeasurementRunCollection:
         """Return a resource representing all measurement runs in this dataset."""
-        return MeasurementRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MeasurementRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def material_runs(self) -> MaterialRunCollection:
         """Return a resource representing all material runs in this dataset."""
-        return MaterialRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MaterialRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def ingredient_runs(self) -> IngredientRunCollection:
         """Return a resource representing all ingredient runs in this dataset."""
-        return IngredientRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return IngredientRunCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def process_specs(self) -> ProcessSpecCollection:
         """Return a resource representing all process specs in this dataset."""
-        return ProcessSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return ProcessSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def measurement_specs(self) -> MeasurementSpecCollection:
         """Return a resource representing all measurement specs in this dataset."""
-        return MeasurementSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MeasurementSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def material_specs(self) -> MaterialSpecCollection:
         """Return a resource representing all material specs in this dataset."""
-        return MaterialSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return MaterialSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
-        return IngredientSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return IngredientSpecCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return GEMDResourceCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def files(self) -> FileCollection:
         """Return a resource representing all files in the dataset."""
-        return FileCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return FileCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
     def ingestions(self) -> IngestionCollection:
         """Return a resource representing all files in the dataset."""
-        return IngestionCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session)
+        return IngestionCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
         """Register a data model object to the appropriate collection."""
@@ -396,8 +398,7 @@ class DatasetCollection(Collection[Dataset]):
         The Citrine session used to connect to the database.
 
     """
-
-    _path_template = 'teams/{team_id}/datasets'
+    _path_template = 'teams/{self.team_id}/datasets'
     _individual_key = None
     _collection_key = None
     _resource = Dataset
@@ -405,7 +406,7 @@ class DatasetCollection(Collection[Dataset]):
     def __init__(self, team_id: UUID = None, session: Session = None, project_id: UUID = None):
         self.team_id = team_id
         self.session: Session = session
-        self._project_id = project_id
+        self.project_id = project_id
         if project_id is None and team_id is None:
             raise RuntimeError("A team_id must be provided.")
         elif project_id is not None and team_id is not None:
@@ -421,8 +422,14 @@ class DatasetCollection(Collection[Dataset]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
+                self.team_id = self.session.get_team_id_from_project_id(project_id=self.project_id)
 
+    @property
+    def _path_template(self):
+        if self.project_id is None:
+            return f'teams/{self.team_id}/datasets'
+        else:
+            return f'projects/{self.project_id}/datasets'
 
 
     def build(self, data: dict) -> Dataset:

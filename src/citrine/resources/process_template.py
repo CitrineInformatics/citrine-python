@@ -116,10 +116,16 @@ class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     """A collection of process templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/process-templates'
-    _dataset_agnostic_path_template = 'teams/{team_id}/process-templates'
     _individual_key = 'process_template'
     _collection_key = 'process_templates'
     _resource = ProcessTemplate
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/process-templates'
+        else:
+            return 'projects/{self.project_id}/process-templates'
 
     @classmethod
     def get_type(cls) -> Type[ProcessTemplate]:

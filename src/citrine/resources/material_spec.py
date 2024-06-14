@@ -91,10 +91,16 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     """Represents the collection of all material specs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/material-specs'
-    _dataset_agnostic_path_template = 'teams/{team_id}/material-specs'
     _individual_key = 'material_spec'
     _collection_key = 'material_specs'
     _resource = MaterialSpec
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/material-specs'
+        else:
+            return 'projects/{self.project_id}/material-specs'
 
     @classmethod
     def get_type(cls) -> Type[MaterialSpec]:

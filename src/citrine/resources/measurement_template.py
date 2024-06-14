@@ -133,10 +133,16 @@ class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate
     """A collection of measurement templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/measurement-templates'
-    _dataset_agnostic_path_template = 'teams/{team_id}/measurement-templates'
     _individual_key = 'measurement_template'
     _collection_key = 'measurement_templates'
     _resource = MeasurementTemplate
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return 'teams/{self.team_id}/measurement-templates'
+        else:
+            return 'projects/{self.project_id}/measurement-templates'
 
     @classmethod
     def get_type(cls) -> Type[MeasurementTemplate]:

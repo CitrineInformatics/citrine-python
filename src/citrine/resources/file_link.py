@@ -202,7 +202,7 @@ class FileCollection(Collection[FileLink]):
         self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session
-        self._project_id = project_id
+        self.project_id = project_id
         if project_id is None and team_id is None:
             raise RuntimeError("A team_id must be provided.")
         elif project_id is not None and team_id is not None:
@@ -218,7 +218,7 @@ class FileCollection(Collection[FileLink]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = self.session.get_team_id_from_project_id(project_id=self._project_id)
+                self.team_id = self.session.get_team_id_from_project_id(project_id=self.project_id)
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
