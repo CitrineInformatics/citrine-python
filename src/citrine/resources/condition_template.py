@@ -61,6 +61,9 @@ class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]
     """A collection of condition templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/condition-templates'
+    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property.
+    # This allows for either path to be accessed depending on the user's instantiation of the class.
+    # Post-deprication, both can be Class Variables again, using the `teams/...` path.
     _individual_key = 'condition_template'
     _collection_key = 'condition_templates'
     _resource = ConditionTemplate

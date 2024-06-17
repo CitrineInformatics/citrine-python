@@ -23,6 +23,9 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/storables'
+    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property.
+    # This allows for either path to be accessed depending on the user's instantiation of the class.
+    # Post-deprication, both can be Class Variables again, using the `teams/...` path.
 
     def __init__(self, dataset_id: UUID, session: Session, team_id: UUID = None, project_id: UUID = None):
         DataConceptsCollection.__init__(self,
