@@ -25,7 +25,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> FileCollection:
     return FileCollection(
-        project_id=uuid4(),
+        team_id=uuid4(),
         dataset_id=uuid4(),
         session=session
     )

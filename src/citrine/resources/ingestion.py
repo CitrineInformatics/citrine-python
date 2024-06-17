@@ -189,7 +189,9 @@ class Ingestion(Resource['Ingestion']):
 
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
-    team_id = properties.UUID('team_id')
+    team_id = properties.Optional(properties.UUID('team_id'), default=None)
+
+    project_id = properties.Optional(properties.UUID('project_id'), default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
@@ -459,7 +461,7 @@ class IngestionCollection(Collection[Ingestion]):
             return f'teams/{self.team_id}/ingestions'
         else:
             return f'projects/{self.project_id}/ingestions'
-    
+
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],
                               *,

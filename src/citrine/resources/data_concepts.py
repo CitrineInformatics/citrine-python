@@ -235,6 +235,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         self.project_id=project_id
         if session == None:
             raise TypeError("A session must be provided.")
+        print(f"Provided Team ID is: {team_id}")
         self.team_id = _data_manager_deprication_checks(session=session,project_id=project_id,team_id=team_id,obj_type="GEMD Objects")
 
 
@@ -245,13 +246,15 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     @property
     def _path_template(self):
-        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
+        # return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
+        return f'datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
 
     # After Data Manager deprication, both can use the `teams/...` path.
     @property
     def _dataset_agnostic_path_template(self):
         if self.project_id is None:
-            return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
+            raise NotImplementedError(f'{self._collection_key.replace("_"," ")} must be retrieved from the Dataset level.')
+            # return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
         else:
             return f'projects/{self.project_id}/{self._collection_key.replace("_","-")}'
 
@@ -304,7 +307,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params['dataset_id'] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            self._get_path(ignore_dataset=True),
+            self._get_path(ignore_dataset=self.dataset_id==None),
             forward=forward,
             per_page=per_page,
             params=params)

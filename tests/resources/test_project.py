@@ -42,6 +42,13 @@ def project(session) -> Project:
         session=session,
         team_id=uuid.UUID('11111111-8baf-433b-82eb-8c7fada847da')
     )
+    session.set_response({
+        'project': {
+            'team': {
+                'id': '16fd2706-8baf-433b-82eb-8c7fada847da'
+            }
+        }
+    })
     project.uid = uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
     return project
 

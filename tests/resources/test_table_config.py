@@ -28,9 +28,17 @@ def session() -> FakeSession:
 def project(session) -> Project:
     project = Project(
         name="Test GEM Table project",
-        session=session
+        session=session,
+        team_id=uuid4()
     )
     project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    session.set_response({
+        'project': {
+            'team': {
+                'id': '16fd2706-8baf-433b-82eb-8c7fada847da'
+            }
+        }
+    })
     return project
 
 
