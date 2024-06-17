@@ -9,6 +9,7 @@ from warnings import warn
 from gemd.entity.link_by_uid import LinkByUID
 
 
+
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
     from gemd.entity.attribute.base_attribute import BaseAttribute
@@ -319,3 +320,23 @@ def resource_path(*,
     new_url = base._replace(path='/'.join(path), query=query).geturl()
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)
+
+def _data_manager_deprication_checks(session, project_id:UUID, team_id:UUID, obj_type:str):
+    if project_id is None and team_id is None:
+        raise TypeError("A team_id must be provided.")
+    elif project_id is not None and team_id is not None:
+        warn(
+            f"{obj_type} now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+            "Using team_id and ignoring the provided project_id.",
+            DeprecationWarning
+        )
+    elif project_id is not None and team_id is None:
+        warn(
+            f"{obj_type} now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
+            "Please use team_id instead.",
+            DeprecationWarning
+        )
+        if team_id is None:
+            from citrine.resources.project import Project
+            team_id = Project.get_team_id_from_project_id(session=session,project_id=project_id)
+    return team_id

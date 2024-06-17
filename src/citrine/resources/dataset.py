@@ -11,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import scrub_none
+from citrine._utils.functions import scrub_none, _data_manager_deprication_checks
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 # from citrine.resources.project import Project
@@ -399,32 +399,29 @@ class DatasetCollection(Collection[Dataset]):
         The Citrine session used to connect to the database.
 
     """
-    # _path_template = 'teams/{self.team_id}/datasets'
     _individual_key = None
     _collection_key = None
     _resource = Dataset
 
-    def __init__(self, team_id: UUID = None, session: Session = None, project_id: UUID = None):
-        self.team_id = team_id
+    def __init__(self, *args,  session: Session = None, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+            # Handle positional arguments for backward compatibility
+            if len(args) >= 1:
+                project_id = args[0]
+            if len(args) >= 2:
+                session = args[1]
+        self.session = session
+        self.project_id=project_id
         self.session: Session = session
         self.project_id = project_id
-        if project_id is None and team_id is None:
-            raise RuntimeError("A team_id must be provided.")
-        elif project_id is not None and team_id is not None:
-            warn(
-                "Datasets now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
-                "Using team_id and ignoring the provided project_id.",
-                DeprecationWarning
-            )
-        elif project_id is not None and team_id is None:
-            warn(
-                "Datasets now belong to Teams and not Projects. Providing a project_id is deprecated and will be removed in future versions."
-                "Please use team_id instead.",
-                DeprecationWarning
-            )
-            if team_id is None:
-                from citrine.resources.project import Project
-                self.team_id = Project.get_team_id_from_project_id(session=self.session, project_id=self.uid)
+        if session == None:
+            raise TypeError("A session must be provided.")
+        self.team_id = _data_manager_deprication_checks(session=session, project_id=project_id, team_id=team_id, obj_type="Datasets")
 
     @property
     def _path_template(self):

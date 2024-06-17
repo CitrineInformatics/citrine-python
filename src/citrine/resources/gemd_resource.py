@@ -1,8 +1,9 @@
 """Collection class for generic GEMD objects and templates."""
-from typing import Type, Union, List, Tuple, Iterable
+from typing import Type, Union, List, Tuple, Iterable, Optional
 from uuid import UUID, uuid4
 import re
 from tqdm.auto import tqdm
+from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -24,17 +25,26 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _collection_key = 'storables'
 
-    _path_template = 'teams/{team_id}/datasets/{dataset_id}/storables'
-    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property within DataConceptsCollection.
-    # This allows for either path to be accessed depending on the user's instantiation of the class.
-    # Post-deprication, both can be Class Variables again, using the `teams/...` path.
-
-    def __init__(self, dataset_id: UUID, session: Session, team_id: UUID = None, project_id: UUID = None):
+    def __init__(self, *args, dataset_id: UUID = None, session: Session = None, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
         DataConceptsCollection.__init__(self,
+                                        *args,
                                         team_id=team_id,
                                         dataset_id=dataset_id,
                                         session=session,
                                         project_id=project_id)
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+        # Handle positional arguments for backward compatibility
+        if len(args) >= 1:
+            project_id = args[0]
+        if len(args) >= 2:
+            dataset_id = args[1]
+        if len(args) >= 3:
+            session = args[2]
         self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session

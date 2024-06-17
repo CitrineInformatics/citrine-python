@@ -87,10 +87,6 @@ class MaterialTemplate(
 class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     """A collection of material templates."""
 
-    _path_template = 'teams/{team_id}/datasets/{dataset_id}/material-templates'
-    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property within DataConceptsCollection.
-    # This allows for either path to be accessed depending on the user's instantiation of the class.
-    # Post-deprication, both can be Class Variables again, using the `teams/...` path.
     _individual_key = 'material_template'
     _collection_key = 'material_templates'
     _resource = MaterialTemplate
