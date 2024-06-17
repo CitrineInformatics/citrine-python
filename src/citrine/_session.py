@@ -304,11 +304,6 @@ class Session(requests.Session):
         """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, **kwargs)
 
-    def get_team_id_from_project_id(self, *, project_id: UUID) -> UUID:
-        """Returns the team owning a given project."""
-        print(self.get_resource(path='projects/{}'.format(project_id), version="v3"))
-        return self.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
-
 
 class BearerAuth(requests.auth.AuthBase):
     """A lightweight Auth class to support Bearer tokens."""

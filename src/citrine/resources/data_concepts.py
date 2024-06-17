@@ -26,6 +26,7 @@ from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
+from citrine.resources.project import Project
 
 CITRINE_SCOPE = 'id'
 CITRINE_TAG_PREFIX = 'citr_auto'
@@ -236,8 +237,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                 DeprecationWarning
             )
             if team_id is None:
-                print(f"Project ID: {self.project_id}")
-                self.team_id = self.session.get_team_id_from_project_id(project_id=self.project_id)
+                self.team_id = Project.get_team_id_from_project_id(sesion=self.session,project_id=self.project_id)
 
 
     @classmethod

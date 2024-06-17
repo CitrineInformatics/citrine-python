@@ -78,6 +78,10 @@ class Project(Resource['Project']):
     """int: Time the project was created, in seconds since epoch."""
     team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
+    @classmethod
+    def get_team_id_from_project_id(cls, sesion:Session, project_id:UUID):
+        return sesion.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
+
     def __init__(self,
                  name: str,
                  *,
@@ -228,6 +232,12 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(project_id=self.uid, session=self.session)
 
+    @property
+    def team_id(self):
+        if self.team_id == None:
+            self.team_id = Project.get_team_id_from_project_id(sesion=self.session, project_id=self.uid)
+        return self.team_id
+
     def publish(self, *, resource: Resource):
         """
         Publish a resource from a project to its encompassing team.
@@ -253,6 +263,7 @@ class Project(Resource['Project']):
             f"{self._path()}/published-resources/{resource_type}/batch-publish",
             version='v3', json={'ids': [resource_access["id"]]})
         return True
+
 
     def un_publish(self, *, resource: Resource):
         """

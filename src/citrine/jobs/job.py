@@ -1,6 +1,6 @@
 from logging import getLogger
 from time import time, sleep
-from typing import Union
+from typing import Union, Optional
 from uuid import UUID
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
@@ -61,8 +61,8 @@ class JobStatusResponse(Resource['JobStatusResponse']):
 def _poll_for_job_completion(session: Session,
                              job: Union[JobSubmissionResponse, UUID, str],
                              *,
-                             team_id: Union[UUID, str] = None,
-                             project_id: Union[UUID, str] = None,
+                             team_id: Optional[Union[UUID, str]] = None,
+                             project_id: Optional[Union[UUID, str]] = None,
                              timeout: float = 2 * 60,
                              polling_delay: float = 2.0,
                              raise_errors: bool = True,

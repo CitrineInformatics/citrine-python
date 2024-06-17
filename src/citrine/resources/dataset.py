@@ -14,6 +14,7 @@ from citrine._session import Session
 from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
+from citrine.resources.project import Project
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.delete import _poll_for_async_batch_delete_result
@@ -422,7 +423,7 @@ class DatasetCollection(Collection[Dataset]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = self.session.get_team_id_from_project_id(project_id=self.project_id)
+                self.team_id = Project.get_team_id_from_project_id(sesion=self.session, project_id=self.uid)
 
     @property
     def _path_template(self):
