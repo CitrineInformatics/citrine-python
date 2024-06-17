@@ -14,7 +14,6 @@ from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.file_link import FileLink
-# from citrine.resources.project import Project
 
 
 class IngestionStatusType(BaseEnumeration):
@@ -190,7 +189,6 @@ class Ingestion(Resource['Ingestion']):
 
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
-    # project_id = properties.UUID('project_id')
     team_id = properties.UUID('team_id')
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
@@ -427,7 +425,6 @@ class IngestionCollection(Collection[Ingestion]):
 
     """
 
-    _path_template = 'teams/{team_id}/ingestions'
     _individual_key = None
     _collection_key = None
     _resource = Ingestion
@@ -455,6 +452,14 @@ class IngestionCollection(Collection[Ingestion]):
             raise TypeError("A dataset_id must be provided.")
         self.team_id = _data_manager_deprication_checks(session = session, project_id=project_id, team_id=team_id, obj_type="Ingestions")
 
+    # After the Data Manager Deprication, this can be a Class Variable using the `teams/...` endpoint
+    @property
+    def _path_template(self):
+        if self.project_id is None:
+            return f'teams/{self.team_id}/ingestions'
+        else:
+            return f'projects/{self.project_id}/ingestions'
+    
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],
                               *,

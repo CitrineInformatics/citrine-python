@@ -14,7 +14,6 @@ from citrine._session import Session
 from citrine._utils.functions import scrub_none, _data_manager_deprication_checks
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
-# from citrine.resources.project import Project
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.delete import _poll_for_async_batch_delete_result
@@ -123,7 +122,6 @@ class Dataset(Resource['Dataset']):
     @property
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        print(f"Team ID: {self.team_id}")
         return ConditionTemplateCollection(team_id = self.team_id, dataset_id = self.uid, session = self.session, project_id=self.project_id)
 
     @property
@@ -417,12 +415,11 @@ class DatasetCollection(Collection[Dataset]):
                 session = args[1]
         self.session = session
         self.project_id=project_id
-        self.session: Session = session
-        self.project_id = project_id
         if session == None:
             raise TypeError("A session must be provided.")
         self.team_id = _data_manager_deprication_checks(session=session, project_id=project_id, team_id=team_id, obj_type="Datasets")
 
+    # After the Data Manager Deprication, this can be a Class Variable using the `teams/...` endpoint
     @property
     def _path_template(self):
         if self.project_id is None:
@@ -449,6 +446,7 @@ class DatasetCollection(Collection[Dataset]):
         dataset = Dataset.build(data)
         dataset.team_id = self.team_id
         dataset.session = self.session
+        dataset.project_id = self.project_id
         return dataset
 
     def register(self, model: Dataset) -> Dataset:

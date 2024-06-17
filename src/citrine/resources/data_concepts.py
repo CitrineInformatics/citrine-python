@@ -247,7 +247,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
     def _path_template(self):
         return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
 
-    # After Data Manager deprication, both can be Class Properties again, using the `teams/...` path.
+    # After Data Manager deprication, both can use the `teams/...` path.
     @property
     def _dataset_agnostic_path_template(self):
         if self.project_id is None:

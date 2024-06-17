@@ -22,7 +22,6 @@ from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally, _data_manager_deprication_checks
 
 from citrine.resources.response import Response
-# from citrine.resources.project import Project
 from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
@@ -213,13 +212,9 @@ class FileCollection(Collection[FileLink]):
                 dataset_id = args[1]
             if len(args) >= 3:
                 session = args[2]
-        self.team_id = team_id
         self.session = session
         self.project_id=project_id
         self.dataset_id=dataset_id
-        self.dataset_id = dataset_id
-        self.session = session
-        self.project_id = project_id
         if session == None:
             raise TypeError("A session must be provided.")
         if dataset_id == None:
