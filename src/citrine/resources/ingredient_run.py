@@ -113,19 +113,12 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     """Represents the collection of all ingredient runs associated with a dataset."""
 
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/ingredient-runs'
-    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property.
+    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property within DataConceptsCollection.
     # This allows for either path to be accessed depending on the user's instantiation of the class.
     # Post-deprication, both can be Class Variables again, using the `teams/...` path.
     _individual_key = 'ingredient_run'
     _collection_key = 'ingredient_runs'
     _resource = IngredientRun
-
-    @property
-    def _dataset_agnostic_path_template(self):
-        if self.project_id is None:
-            return 'teams/{self.team_id}/ingredient-runs'
-        else:
-            return 'projects/{self.project_id}/ingredient-runs'
 
     @classmethod
     def get_type(cls) -> Type[IngredientRun]:

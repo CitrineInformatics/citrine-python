@@ -13,7 +13,7 @@ from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.file_link import FileLink
-from citrine.resources.project import Project
+# from citrine.resources.project import Project
 
 
 class IngestionStatusType(BaseEnumeration):
@@ -452,7 +452,8 @@ class IngestionCollection(Collection[Ingestion]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = Project.get_team_id_from_project_id(sesion=self.session,project_id=self.project_id)
+                from citrine.resources.project import Project
+                self.team_id = Project.get_team_id_from_project_id(session=self.session,project_id=self.project_id)
 
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],

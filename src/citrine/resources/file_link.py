@@ -22,7 +22,7 @@ from citrine._utils.functions import rewrite_s3_links_locally
 from citrine._utils.functions import write_file_locally
 
 from citrine.resources.response import Response
-from citrine.resources.project import Project
+# from citrine.resources.project import Project
 from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.file_link import FileLink as GEMDFileLink
@@ -219,7 +219,8 @@ class FileCollection(Collection[FileLink]):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = self.team_id = Project.get_team_id_from_project_id(sesion=self.session,project_id=self.project_id)
+                from citrine.resources.project import Project
+                self.team_id = self.team_id = Project.get_team_id_from_project_id(session=self.session,project_id=self.project_id)
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,

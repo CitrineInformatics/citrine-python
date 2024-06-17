@@ -5,7 +5,6 @@ from logging import getLogger
 from os import environ
 from typing import Optional, Callable, Iterator
 from urllib.parse import urlunsplit
-from uuid import UUID
 
 import jwt
 import requests

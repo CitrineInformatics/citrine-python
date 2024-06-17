@@ -26,7 +26,6 @@ from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
-from citrine.resources.project import Project
 
 CITRINE_SCOPE = 'id'
 CITRINE_TAG_PREFIX = 'citr_auto'
@@ -237,13 +236,21 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                 DeprecationWarning
             )
             if team_id is None:
-                self.team_id = Project.get_team_id_from_project_id(sesion=self.session,project_id=self.project_id)
+                from citrine.resources.project import Project
+                self.team_id = Project.get_team_id_from_project_id(session=self.session,project_id=self.project_id)
 
 
     @classmethod
     @abstractmethod
     def get_type(cls) -> Type[Serializable]:
         """Return the resource type in the collection."""
+
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
+        else:
+            return f'projects/{self.project_id}/{self._collection_key.replace("_","-")}'
 
     def build(self, data: dict) -> ResourceType:
         """

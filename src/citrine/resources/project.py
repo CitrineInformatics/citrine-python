@@ -14,7 +14,6 @@ from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
-from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
@@ -31,6 +30,11 @@ from citrine.resources.measurement_run import MeasurementRunCollection
 from citrine.resources.measurement_spec import MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
@@ -38,11 +42,7 @@ from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
 from citrine.resources.generative_design_execution import \
     GenerativeDesignExecutionCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.project_member import ProjectMember
-from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 
@@ -76,11 +76,8 @@ class Project(Resource['Project']):
     """str: Status of the project."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
     """int: Time the project was created, in seconds since epoch."""
-    team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
+    _team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
-    @classmethod
-    def get_team_id_from_project_id(cls, sesion:Session, project_id:UUID):
-        return sesion.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
 
     def __init__(self,
                  name: str,
@@ -91,7 +88,7 @@ class Project(Resource['Project']):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
-        self.team_id: Optional[UUID] = team_id
+        self._team_id: Optional[UUID] = team_id
 
     def _post_dump(self, data: dict) -> dict:
         return {key: value for key, value in data.items() if value is not None}
@@ -101,6 +98,20 @@ class Project(Resource['Project']):
 
     def _path(self):
         return format_escaped_url('/projects/{project_id}', project_id=self.uid)
+
+    @property
+    def team_id(self):
+        if self._team_id == None:
+            self._team_id = self.get_team_id_from_project_id(session=self.session, project_id=self.uid)
+        return self._team_id
+
+    @team_id.setter
+    def team_id(self, value: Optional[UUID]):
+        self._team_id = value
+
+    @classmethod
+    def get_team_id_from_project_id(cls, session:Session, project_id:UUID):
+        return session.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
 
     @property
     def branches(self) -> BranchCollection:
@@ -232,11 +243,6 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(project_id=self.uid, session=self.session)
 
-    @property
-    def team_id(self):
-        if self.team_id == None:
-            self.team_id = Project.get_team_id_from_project_id(sesion=self.session, project_id=self.uid)
-        return self.team_id
 
     def publish(self, *, resource: Resource):
         """

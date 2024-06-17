@@ -22,8 +22,10 @@ BATCH_SIZE = 50
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
+    _collection_key = 'storables'
+
     _path_template = 'teams/{team_id}/datasets/{dataset_id}/storables'
-    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property.
+    # During this "Projects in Teams" deprication `_path_template` is defined as a Class Variable whereas `_dataset_agnostic_path_template` is defined as a Class Property within DataConceptsCollection.
     # This allows for either path to be accessed depending on the user's instantiation of the class.
     # Post-deprication, both can be Class Variables again, using the `teams/...` path.
 
@@ -38,12 +40,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         self.session = session
         self.project_id = project_id
 
-    @property
-    def _dataset_agnostic_path_template(self):
-        if self.project_id is None:
-            return 'teams/{self.team_id}/storables'
-        else:
-            return 'projects/{self.project_id}/storables'
 
     @classmethod
     def get_type(cls) -> Type[DataConcepts]:
