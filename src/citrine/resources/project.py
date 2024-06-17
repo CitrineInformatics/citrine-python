@@ -45,6 +45,7 @@ from citrine.resources.generative_design_execution import \
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
+from warnings import warn
 
 
 class Project(Resource['Project']):
@@ -265,6 +266,10 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets are no longer owned by Projects and therefore can no longer be published by a Project.",
+                 DeprecationWarning)
+            return False
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-publish",
             version='v3', json={'ids': [resource_access["id"]]})
@@ -288,6 +293,9 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets will no longer owned by Projects and therefore will no longer be un-published by a Project in future versions.",
+                 DeprecationWarning)
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
             version='v3', json={'ids': [resource_access["id"]]})
@@ -310,6 +318,9 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets will no longer owned by Projects and therefore will no longer be pulled-in by a Project in future versions.",
+                 DeprecationWarning)
         base_url = f'/teams/{self.team_id}{self._path()}'
         self.session.checked_post(
             f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
@@ -326,6 +337,8 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
+        warn("Datasets will no longer owned by Projects and therefore projects will no longer have owned_dataset_ids in future versions.",
+                 DeprecationWarning)
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
         return self.session.get_resource("/DATASET/authorized-ids",
                                          params=query_params,
@@ -348,48 +361,50 @@ class Project(Resource['Project']):
         parent_team = team_collection.get(self.team_id)
         return parent_team.list_members()
 
-    # def gemd_batch_delete(
-    #         self,
-    #         id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-    #         *,
-    #         timeout: float = 2 * 60,
-    #         polling_delay: float = 1.0
-    # ) -> List[Tuple[LinkByUID, ApiError]]:
-    #     """
-    #     Remove a set of GEMD objects.
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
+        """
+        Remove a set of GEMD objects.
 
-    #     You may provide GEMD objects that reference each other, and the objects
-    #     will be removed in the appropriate order.
+        You may provide GEMD objects that reference each other, and the objects
+        will be removed in the appropriate order.
 
-    #     A failure will be returned if the object cannot be deleted due to an external
-    #     reference.
+        A failure will be returned if the object cannot be deleted due to an external
+        reference.
 
-    #     You must have Write access on the associated datasets for each object.
+        You must have Write access on the associated datasets for each object.
 
-    #     Parameters
-    #     ----------
-    #     id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
-    #         A list of the IDs of data objects to be removed. They can be passed
-    #         as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
-    #         or string is assumed to be a Citrine ID, whereas a LinkByUID or
-    #         BaseEntity can also be used to provide an external ID.
-    #     timeout: float
-    #         Amount of time to wait on the job (in seconds) before giving up. Defaults
-    #         to 2 minutes. Note that this number has no effect on the underlying job
-    #         itself, which can also time out server-side.
-    #     polling_delay: float
-    #         How long to delay between each polling retry attempt (in seconds).
+        Parameters
+        ----------
+        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+            A list of the IDs of data objects to be removed. They can be passed
+            as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+            or string is assumed to be a Citrine ID, whereas a LinkByUID or
+            BaseEntity can also be used to provide an external ID.
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up. Defaults
+            to 2 minutes. Note that this number has no effect on the underlying job
+            itself, which can also time out server-side.
+        polling_delay: float
+            How long to delay between each polling retry attempt (in seconds).
 
-    #     Returns
-    #     -------
-    #     List[Tuple[LinkByUID, ApiError]]
-    #         A list of (LinkByUID, api_error) for each failure to delete an object.
-    #         Note that this method doesn't raise an exception if an object fails to be
-    #         deleted.
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
 
-    #     """
-    #     return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
-    #                                     timeout=timeout, polling_delay=polling_delay)
+        """
+        warn("Datasets will no longer owned by Projects and therefore projects will no longer be able to batch delete GEMD objects future versions.",
+                 DeprecationWarning)
+        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
+                                        timeout=timeout, polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):
