@@ -17,8 +17,8 @@ class FakeDataset(Dataset):
 
 class FakeDatasetCollection(DatasetCollection):
 
-    def __init__(self, project_id, session):
-        DatasetCollection.__init__(self, project_id=project_id, session=session)
+    def __init__(self, project_id, session, team_id):
+        DatasetCollection.__init__(self, team_id = team_id, project_id=project_id, session=session)
         self.datasets = []
 
     def register(self, model: Dataset) -> Dataset:

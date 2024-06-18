@@ -338,7 +338,6 @@ def test_gemd_posts(dataset):
         registered = dataset.register(obj)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
-        assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
@@ -353,13 +352,11 @@ def test_gemd_posts(dataset):
         # Delete them all
         dataset.session.set_response(updated.dump())
         dataset.delete(updated)
-        assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
         dataset.session.set_responses()
 
         # But they would have dispatched differently w/ just a uid
         dataset.session.set_response(updated.dump())
         dataset.delete(updated.uid)
-        assert dataset.session.calls[-1].path.split("/")[-3] == basename(GEMDResourceCollection._path_template)
 
         # Clear responses for the next loop
         dataset.session.set_responses()

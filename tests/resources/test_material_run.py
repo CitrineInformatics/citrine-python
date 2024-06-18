@@ -32,20 +32,12 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def legacy_collection(session) -> MaterialRunCollection:
-    return MaterialRunCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-        team_id=UUID('03395aa9-f8df-4ebd-ac87-839f0b92bcda'),
-        session=session
-    )
-
-@pytest.fixture
 def collection(session) -> MaterialRunCollection:
     return MaterialRunCollection(
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-        team_id=UUID('03395aa9-f8df-4ebd-ac87-839f0b92bcda'),
-        session=session
+        session=session,
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
     )
 
 
@@ -103,7 +95,7 @@ def test_nomutate_gemd(collection, session):
     assert registered.uid is not None
 
 
-def test_get_history(legacy_collection, collection, session):
+def test_get_history(collection, session):
 
     # Given
     cake = make_cake()
@@ -115,22 +107,10 @@ def test_get_history(legacy_collection, collection, session):
     session.set_response(cake_json)
 
     # When
-    run = legacy_collection.get_history(id=root_link)
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='GET',
-        path=f'projects/{legacy_collection.project_id}/material-history/{root_link.scope}/{root_link.id}'
-    )
-    assert expected_call == session.last_call
-    assert run == cake
-
-    # When
     run = collection.get_history(id=root_link)
 
     # Then
-    assert 2 == session.num_calls
+    assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
         path=f'teams/{collection.team_id}/material-history/{root_link.scope}/{root_link.id}'
@@ -139,29 +119,17 @@ def test_get_history(legacy_collection, collection, session):
     assert run == cake
 
 
-def test_get_material_run(collection, legacy_collection, session):
+def test_get_material_run(collection, session):
     # Given
     run_data = MaterialRunDataFactory(name='Cake 2')
     mr_id = run_data['uids']['id']
     session.set_response(run_data)
 
     # When
-    run = legacy_collection.get(mr_id)
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='GET',
-        path='teams/{}/datasets/{}/material-runs/id/{}'.format(legacy_collection.team_id, legacy_collection.dataset_id, mr_id)
-    )
-    assert expected_call == session.last_call
-    assert 'Cake 2' == run.name
-
-    # When
     run = collection.get(mr_id)
 
     # Then
-    assert 2 == session.num_calls
+    assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
         path='teams/{}/datasets/{}/material-runs/id/{}'.format(collection.team_id, collection.dataset_id, mr_id)
@@ -170,7 +138,7 @@ def test_get_material_run(collection, legacy_collection, session):
     assert 'Cake 2' == run.name
 
 
-def test_list_material_runs(legacy_collection,collection, session):
+def test_list_material_runs(collection, session):
     # Given
     sample_run = MaterialRunDataFactory()
     session.set_response({
@@ -178,57 +146,24 @@ def test_list_material_runs(legacy_collection,collection, session):
     })
 
     # When
-    print("legacy collelction")
-    print(legacy_collection.project_id)
-    print("INITIAL LIST")
-    runs = list(legacy_collection.list())
+    runs = list(collection.list())
 
     # Then
     assert 1 == session.num_calls
-    # expected_call = FakeCall(
-    #     method='GET',
-    #     path='projects/{}/material-runs'.format(legacy_collection.project_id),
-    #     params={
-    #         'dataset_id': str(legacy_collection.dataset_id),
-    #         'forward': True,
-    #         'ascending': True,
-    #         'per_page': 100
-    #     }
-    # )
+
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/material-runs'.format(legacy_collection.project_id),
+        path='teams/{}/datasets/{}/material-runs'.format(collection.team_id,collection.dataset_id),
         params={
-            'dataset_id': str(legacy_collection.dataset_id),
+            'dataset_id': str(collection.dataset_id),
             'forward': True,
             'ascending': True,
             'per_page': 100
         }
     )
-    print("Expected")
-    print(expected_call)
     assert expected_call == session.last_call
     assert 1 == len(runs)
     assert sample_run['uids'] == runs[0].uids
-
-    # # When
-    # runs = list(collection.list())
-
-    # # Then
-    # assert 2 == session.num_calls
-    # expected_call = FakeCall(
-    #     method='GET',
-    #     path='teams/{}/material-runs'.format(collection.team_id),
-    #     params={
-    #         'dataset_id': str(collection.dataset_id),
-    #         'forward': True,
-    #         'ascending': True,
-    #         'per_page': 100
-    #     }
-    # )
-    # assert expected_call == session.last_call
-    # assert 1 == len(runs)
-    # assert sample_run['uids'] == runs[0].uids
 
 
 def test_cursor_paginated_searches(collection, session):
@@ -277,8 +212,8 @@ def test_delete_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/material-runs/{}/{}'.format(
-            collection.project_id,
+        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+            collection.team_id,
             collection.dataset_id,
             material_run_scope,
             material_run_uid
@@ -300,8 +235,8 @@ def test_dry_run_delete_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/material-runs/{}/{}'.format(
-            collection.project_id,
+        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+            collection.team_id,
             collection.dataset_id,
             material_run_scope,
             material_run_uid

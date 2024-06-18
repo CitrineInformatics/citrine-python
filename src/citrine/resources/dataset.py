@@ -13,7 +13,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import scrub_none, _data_manager_deprication_checks
+from citrine._utils.functions import scrub_none, _data_manager_deprecation_checks
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -85,7 +85,7 @@ class Dataset(Resource['Dataset']):
     """bool: Flag indicating whether the dataset is publicly readable."""
     project_id = properties.Optional(properties.UUID(), 'project_id',
                                      serializable=False, deserializable=False)
-    """project_id will be needed here until deprication is complete. This class property will be removed post deprication"""
+    """project_id will be needed here until deprecation is complete. This class property will be removed post deprecation"""
     team_id = properties.Optional(properties.UUID(), 'team_id',
                                   serializable=False, deserializable=False)
     session = properties.Optional(properties.Object(Session), 'session',
@@ -419,9 +419,9 @@ class DatasetCollection(Collection[Dataset]):
         self.project_id=project_id
         if session == None:
             raise TypeError("A session must be provided.")
-        self.team_id = _data_manager_deprication_checks(session=session, project_id=project_id, team_id=team_id, obj_type="Datasets")
+        self.team_id = _data_manager_deprecation_checks(session=session, project_id=project_id, team_id=team_id, obj_type="Datasets")
 
-    # After the Data Manager Deprication, this can be a Class Variable using the `teams/...` endpoint
+    # After the Data Manager deprecation, this can be a Class Variable using the `teams/...` endpoint
     @property
     def _path_template(self):
         if self.project_id is None:

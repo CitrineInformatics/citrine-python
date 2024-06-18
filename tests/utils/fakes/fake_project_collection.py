@@ -61,10 +61,11 @@ class FakeProject(Project):
     def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
         Project.__init__(self, name=name, description=description, session=session)
         self.uid = uuid4()
+        self.team_id = uuid4()
         self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
         self._design_workflows = FakeDesignWorkflowCollection(self.uid, self.session)
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
-        self._datasets = FakeDatasetCollection(self.uid, self.session)
+        self._datasets = FakeDatasetCollection(project_id = self.uid, team_id=self.team_id, session=self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
         self._pees = FakePredictorEvaluationExecutionCollection(self.uid, self.session)
         self._pews = FakePredictorEvaluationWorkflowCollection(self.uid, self.session)

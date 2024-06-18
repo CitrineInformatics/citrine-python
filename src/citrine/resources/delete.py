@@ -91,11 +91,11 @@ def _async_gemd_batch_delete(
 
 def _poll_for_async_batch_delete_result(
         team_id: UUID,
-        project_id:UUID,
         session: Session,
         job_id: str,
         timeout: float,
-        polling_delay: float
+        polling_delay: float,
+        project_id:UUID = None
 ) -> List[Tuple[LinkByUID, ApiError]]:
     """
     Poll for the result of an asynchronous batch delete (or a deletion of dataset contents).

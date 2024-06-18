@@ -23,7 +23,7 @@ from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links, \
-    format_escaped_url, _data_manager_deprication_checks
+    format_escaped_url, _data_manager_deprecation_checks
 from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
@@ -237,8 +237,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         self.project_id=project_id
         if session == None:
             raise TypeError("A session must be provided.")
-        print(f"Provided Team ID is: {team_id}")
-        self.team_id = _data_manager_deprication_checks(session=session,project_id=project_id,team_id=team_id,obj_type="GEMD Objects")
+        self.team_id = _data_manager_deprecation_checks(session=session,project_id=project_id,team_id=team_id,obj_type="GEMD Objects")
 
 
     @classmethod
@@ -251,7 +250,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
         # return f'datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
 
-    # After Data Manager deprication, both can use the `teams/...` path.
+    # After Data Manager deprecation, both can use the `teams/...` path.
     @property
     def _dataset_agnostic_path_template(self):
         if self.project_id is None:

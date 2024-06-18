@@ -11,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprication_checks
+from citrine._utils.functions import _data_manager_deprecation_checks
 from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
@@ -191,9 +191,8 @@ class Ingestion(Resource['Ingestion']):
 
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
-    team_id = properties.Optional(properties.UUID('team_id'), default=None)
-
-    project_id = properties.Optional(properties.UUID('project_id'), default=None)
+    team_id = properties.Optional(properties.UUID, 'team_id', default=None)
+    project_id = properties.Optional(properties.UUID, 'project_id', default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
@@ -454,9 +453,9 @@ class IngestionCollection(Collection[Ingestion]):
             raise TypeError("A session must be provided.")
         if dataset_id == None:
             raise TypeError("A dataset_id must be provided.")
-        self.team_id = _data_manager_deprication_checks(session = session, project_id=project_id, team_id=team_id, obj_type="Ingestions")
+        self.team_id = _data_manager_deprecation_checks(session = session, project_id=project_id, team_id=team_id, obj_type="Ingestions")
 
-    # After the Data Manager Deprication, this can be a Class Variable using the `teams/...` endpoint
+    # After the Data Manager deprecation, this can be a Class Variable using the `teams/...` endpoint
     @property
     def _path_template(self):
         if self.project_id is None:

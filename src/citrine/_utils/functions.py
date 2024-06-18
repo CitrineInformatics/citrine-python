@@ -323,19 +323,11 @@ def resource_path(*,
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)
 
-def _data_manager_deprication_checks(session, project_id:UUID, team_id:UUID, obj_type:str):
+def _data_manager_deprecation_checks(session, project_id:UUID, team_id:UUID, obj_type:str):
     if project_id is None and team_id is None:
         raise TypeError("A team_id must be provided.")
-    elif project_id is not None and team_id is not None:
-        warn(
-            f"{obj_type} now belong to Teams and not Projects. Providing a project_id/accessing via a project is deprecated and will be removed in future versions."
-            "Using team_id and ignoring the provided project_id.",
-            DeprecationWarning
-        )
-    elif project_id is not None and team_id is None:
-        warn(
-            f"{obj_type} now belong to Teams and not Projects. Providing a project_id/accessing via a project is deprecated and will be removed in future versions."
-            "Please use team_id/access via the team instead.",
+    elif project_id is not None:
+        warn(f"{obj_type} now belong to Teams and not Projects. Providing a project_id/accessing via a project is deprecated and will be removed in future versions.",
             DeprecationWarning
         )
         if team_id is None:

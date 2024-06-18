@@ -22,7 +22,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def dataset(session: Session):
     dataset = DatasetFactory(name='Test Dataset')
-    dataset.project_id = uuid4()
+    dataset.team_id = uuid4()
     dataset.uid = uuid4()
     dataset.session = session
 
@@ -45,7 +45,7 @@ def file_link(dataset: Dataset) -> FileLink:
 def ingest(collection) -> Ingestion:
     return collection.build({
         "ingestion_id": uuid4(),
-        "project_id": collection.project_id,
+        "team_id": collection.team_id,
         "dataset_id": collection.dataset_id
     })
 
@@ -89,10 +89,10 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
 
     def _mock_poll_for_job_completion(
             session,
-            project_id,
             team_id,
             job,
             *,
+            project_id=None,
             timeout=-1.0,
             polling_delay=-2.0,
             raise_errors=True):

@@ -59,6 +59,7 @@ def gemd_collection(session) -> GEMDResourceCollection:
     return GEMDResourceCollection(
         team_id=uuid4(),
         dataset_id=uuid4(),
+        project_id=uuid4(),
         session=session
     )
 
@@ -86,7 +87,7 @@ def test_list(gemd_collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=format_escaped_url('projects/{}/storables', gemd_collection.project_id),
+        path=format_escaped_url('teams/{}/datasets/{}/storables', gemd_collection.team_id, gemd_collection.dataset_id),
         params={
             'dataset_id': str(gemd_collection.dataset_id),
             'forward': True,

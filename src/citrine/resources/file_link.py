@@ -21,7 +21,7 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
-from citrine._utils.functions import write_file_locally, _data_manager_deprication_checks
+from citrine._utils.functions import write_file_locally, _data_manager_deprecation_checks
 
 from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializableMeta
@@ -221,7 +221,7 @@ class FileCollection(Collection[FileLink]):
             raise TypeError("A session must be provided.")
         if dataset_id == None:
             raise TypeError("A dataset_id must be provided.")
-        self.team_id = _data_manager_deprication_checks(session=session, project_id=project_id, team_id=team_id, obj_type="File Links")
+        self.team_id = _data_manager_deprecation_checks(session=session, project_id=project_id, team_id=team_id, obj_type="File Links")
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
