@@ -255,8 +255,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
     @property
     def _dataset_agnostic_path_template(self):
         if self.project_id is None:
-            raise NotImplementedError(f'{self._collection_key.replace("_"," ")} must be retrieved from the Dataset level.')
-            # return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
+            return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
         else:
             return f'projects/{self.project_id}/{self._collection_key.replace("_","-")}'
 
