@@ -7,6 +7,8 @@ from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 
 import requests

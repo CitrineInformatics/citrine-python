@@ -4,6 +4,8 @@ import re
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
@@ -246,8 +248,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     @property
     def _path_template(self):
-        # return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
-        return f'datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
+        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
+        # return f'datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
 
     # After Data Manager deprication, both can use the `teams/...` path.
     @property
@@ -559,7 +561,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        _poll_for_job_completion(session=self.session,team_id=self.team_id, job=job_id, timeout=timeout,
+        _poll_for_job_completion(session=self.session,team_id=self.team_id, project_id=self.project_id, job=job_id, timeout=timeout,
                                  polling_delay=polling_delay)
 
         # That worked, nothing returned in this case

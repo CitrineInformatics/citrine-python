@@ -2,6 +2,8 @@
 from typing import List, Optional, Union, Tuple, Iterator, Iterable
 from uuid import UUID
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID

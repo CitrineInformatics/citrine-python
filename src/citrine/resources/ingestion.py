@@ -1,6 +1,8 @@
 from typing import Optional, Iterator, Iterable
 from uuid import UUID
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 
 from gemd.enumeration.base_enumeration import BaseEnumeration

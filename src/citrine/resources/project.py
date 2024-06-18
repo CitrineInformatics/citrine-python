@@ -46,6 +46,8 @@ from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 
 class Project(Resource['Project']):
@@ -269,7 +271,6 @@ class Project(Resource['Project']):
         if resource_type == ResourceTypeEnum.DATASET:
             warn("Datasets are no longer owned by Projects and therefore can no longer be published by a Project.",
                  DeprecationWarning)
-            return False
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-publish",
             version='v3', json={'ids': [resource_access["id"]]})
@@ -403,7 +404,7 @@ class Project(Resource['Project']):
         """
         warn("Datasets will no longer owned by Projects and therefore projects will no longer be able to batch delete GEMD objects future versions.",
                  DeprecationWarning)
-        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
+        return _async_gemd_batch_delete(id_list=id_list, project_id=self.uid, session=self.session, dataset_id=None,
                                         timeout=timeout, polling_delay=polling_delay)
 
 

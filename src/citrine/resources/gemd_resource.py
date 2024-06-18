@@ -4,6 +4,8 @@ from uuid import UUID, uuid4
 import re
 from tqdm.auto import tqdm
 from warnings import warn
+import warnings
+warnings.filterwarnings('always', category=DeprecationWarning)
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
