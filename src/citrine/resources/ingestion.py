@@ -48,6 +48,10 @@ class IngestionErrorType(BaseEnumeration):
     INVALID_PROCESS_REFERENCE = "invalid_process_reference"
     COLLIDING_ID = "colliding_id"
     UNKNOWN_ERROR = "unknown_error"
+    INVALID_ANNOTATION = "invalid_annotation_on_aspect"
+    INCOMPATIBLE_UNITS = "incompatible_units"
+    EXISTING_TEMPLATE_WITH_REAL_BOUNDS = "existing_template_with_real_bounds"
+    EMPTY_ASPECT_NAME = "empty_aspect_name"
 
 
 class IngestionErrorLevel(BaseEnumeration):
