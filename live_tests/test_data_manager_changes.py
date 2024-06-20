@@ -81,6 +81,9 @@ def test_sharing():
     with pytest.deprecated_call():
         project.publish(resource=with_p_dataset)
 
+    with pytest.deprecated_call():
+        project.un_publish(resource=with_p_dataset)
+
     # Make sure that post Data-Manager Datasets can still be "pulled into" a project for now
     with pytest.deprecated_call():
         project_2.pull_in_resource(resource=no_p_dataset)
