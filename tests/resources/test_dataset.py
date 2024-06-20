@@ -24,6 +24,7 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
+from citrine.resources.delete import _async_gemd_batch_delete
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
 
@@ -62,6 +63,14 @@ def dataset():
 
     return dataset
 
+def test_deprecation_of_positional_arguments(session):
+    team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project':{'team':{'id':team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        dset = DatasetCollection(uuid4(),session)
+    with pytest.raises(TypeError):
+        dset = DatasetCollection(uuid4(),None)
 
 def test_register_dataset(collection, session):
     # Given
@@ -413,6 +422,9 @@ def test_register_all_iterable(dataset):
         del wet_dict[c.to_link(scope)]
     assert len(wet_dict) == 0, f"{len(wet_dict)} unmatched objects"
 
+def test_batch_delete_malformed(session):
+    with pytest.raises(TypeError):
+        _async_gemd_batch_delete(id_list=[uuid4()],session=session,team_id=None,project_id=None,dataset_id=None)
 
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""

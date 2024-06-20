@@ -85,6 +85,16 @@ def uploader() -> _Uploader:
     """An _Uploader object with all of its fields filled in."""
     return _UploaderFactory()
 
+def test_deprecation_of_positional_arguments(session):
+    team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project':{'team':{'id':team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        fcol = FileCollection(uuid4(),uuid4(),session)
+    with pytest.raises(TypeError):
+        fcol = FileCollection(uuid4(),uuid4(),None)
+    with pytest.raises(TypeError):
+        fcol = FileCollection(uuid4(),None,session)
 
 def test_delete(collection: FileCollection, session):
     """Test that deletion calls the expected endpoint and checks the url structure."""

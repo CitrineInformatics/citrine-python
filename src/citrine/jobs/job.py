@@ -98,7 +98,7 @@ def _poll_for_job_completion(session: Session,
     else:
         job_id = job  # pragma: no cover
     if project_id is None and team_id is None:
-        raise BadRequest('Either a project_id or team_id must be provided to poll a job.')
+        raise TypeError('Either a project_id or team_id must be provided to poll a job.')
     if team_id is not None:
         path = format_escaped_url('teams/{}/execution/job-status', team_id)
     else:

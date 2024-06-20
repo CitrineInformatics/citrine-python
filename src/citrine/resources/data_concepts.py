@@ -307,7 +307,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params['dataset_id'] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            self._get_path(ignore_dataset=self.dataset_id==None),
+            self._get_path(ignore_dataset=True),
             forward=forward,
             per_page=per_page,
             params=params)

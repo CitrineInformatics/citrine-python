@@ -432,7 +432,7 @@ class IngestionCollection(Collection[Ingestion]):
     _collection_key = None
     _resource = Ingestion
 
-    def __init__(self, *args, dataset_id: UUID, session: Session, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
+    def __init__(self, *args, session: Session = None, team_id: Optional[UUID] = None, dataset_id: UUID = None, project_id: Optional[UUID] = None):
         if len(args) > 0:
             warn(
                 "Positional arguments are deprecated and will be removed in a future version. "

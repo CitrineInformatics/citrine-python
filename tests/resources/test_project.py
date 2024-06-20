@@ -1,4 +1,5 @@
 import uuid
+from uuid import UUID
 from unittest import mock
 
 import pytest
@@ -50,6 +51,14 @@ def project(session) -> Project:
 def collection(session) -> ProjectCollection:
     return ProjectCollection(session, team_id=uuid.uuid4())
 
+def test_get_team_id_from_project(session):
+    team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project':{'team':{'id':team_id}}}
+    session.set_response(check_project)
+    p = Project(name='Test Project',
+        session=session,
+    )
+    assert p.team_id == team_id
 
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)

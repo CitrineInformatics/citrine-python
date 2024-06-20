@@ -1,17 +1,18 @@
 from collections.abc import Iterator
 
 import pytest
-from uuid import uuid4
+
+from uuid import uuid4, UUID
 
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.template import ProcessTemplate as GEMDTemplate
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid, CITRINE_SCOPE, DataConceptsCollection
 from citrine.resources.process_run import ProcessRun
-from citrine.resources.process_spec import ProcessSpec
-from tests.utils.session import FakeCall
+from citrine.resources.process_spec import ProcessSpec, ProcessSpecCollection
+from tests.utils.session import FakeCall, FakeSession
 
 
 def run_noop_gemd_relation_search_test(search_for, search_with, collection, search_fn, per_page=100):
@@ -30,6 +31,15 @@ def run_noop_gemd_relation_search_test(search_for, search_with, collection, sear
         params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": per_page}
     )
 
+def test_deprication_of_positional_arguments():
+    session = FakeSession()
+    team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project':{'team':{'id':team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        ProcessSpecCollection(uuid4(),uuid4(),session)
+    with pytest.raises(TypeError):
+        ProcessSpecCollection(uuid4(),uuid4(),None)
 
 def test_assign_audit_info():
     """Test that audit_info can be injected with build but not set"""

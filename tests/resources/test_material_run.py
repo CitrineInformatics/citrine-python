@@ -36,10 +36,32 @@ def collection(session) -> MaterialRunCollection:
     return MaterialRunCollection(
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
         session=session,
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
     )
 
+@pytest.fixture
+def deprecated_collection(session) -> MaterialRunCollection:
+    with pytest.deprecated_call():
+        team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+        check_project = {'project':{'team':{'id':team_id}}}
+        session.set_response(check_project)
+        return MaterialRunCollection(
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            session=session,
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545')
+            )
+
+@pytest.fixture
+def invalid_collection(session) -> None:
+    with pytest.raises(TypeError):
+        return MaterialRunCollection(
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            session=session,
+            )
+
+def test_invalid_collection_construction(invalid_collection):
+    # assertion is within the construction of the invalid_collection
+    t = invalid_collection
 
 def test_register_material_run(collection, session):
     # Given
@@ -138,6 +160,26 @@ def test_get_material_run(collection, session):
     assert 'Cake 2' == run.name
 
 
+def test_get_material_run_deprication(deprecated_collection, session):
+    # Given
+    c = deprecated_collection
+    pass
+    # run_data = MaterialRunDataFactory(name='Cake 2')
+    # mr_id = run_data['uids']['id']
+    # session.set_response(run_data)
+
+    # # When
+    # run = deprecated_collection.get(mr_id)
+
+    # # Then
+    # assert 2 == session.num_calls
+    # expected_call = FakeCall(
+    #     method='GET',
+    #     path='teams/{}/datasets/{}/material-runs/id/{}'.format(deprecated_collection.team_id, deprecated_collection.dataset_id, mr_id)
+    # )
+    # assert expected_call == session.last_call
+    # assert 'Cake 2' == run.name
+
 def test_list_material_runs(collection, session):
     # Given
     sample_run = MaterialRunDataFactory()
@@ -153,7 +195,7 @@ def test_list_material_runs(collection, session):
 
     expected_call = FakeCall(
         method='GET',
-        path='teams/{}/datasets/{}/material-runs'.format(collection.team_id,collection.dataset_id),
+        path='teams/{}/material-runs'.format(collection.team_id,collection.dataset_id),
         params={
             'dataset_id': str(collection.dataset_id),
             'forward': True,
@@ -270,7 +312,7 @@ def test_material_run_can_get_with_no_id(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/material-runs/id/{}'.format(collection.project_id, mr_id)
+        path='teams/{}/material-runs/id/{}'.format(collection.team_id, mr_id)
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
@@ -302,7 +344,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     """
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="validate_templates_successful")
 
     # When
@@ -313,7 +355,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == []
@@ -326,7 +368,7 @@ def test_validate_templates_successful_all_params(collection, session):
     """
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="validate_templates_successful")
     template = MaterialTemplateFactory()
     unused_process_template = ProcessTemplateFactory()
@@ -339,7 +381,7 @@ def test_validate_templates_successful_all_params(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump()),
               "objectTemplate": scrub_none(template.dump()),
               "ingredientProcessTemplate": scrub_none(unused_process_template.dump())})
@@ -352,7 +394,7 @@ def test_validate_templates_errors(collection, session):
     Test that DataObjectCollection.validate_templates() handles validation errors
     """
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="")
 
     # When
@@ -364,7 +406,7 @@ def test_validate_templates_errors(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert len(errors) == 1

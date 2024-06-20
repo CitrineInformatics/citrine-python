@@ -391,48 +391,48 @@ class Team(Resource['Team']):
                                          params=query_params,
                                          version="v3")['ids']
 
-    def gemd_batch_delete(
-            self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
-        """
-        Remove a set of GEMD objects.
+    # def gemd_batch_delete(
+    #         self,
+    #         id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+    #         *,
+    #         timeout: float = 2 * 60,
+    #         polling_delay: float = 1.0
+    # ) -> List[Tuple[LinkByUID, ApiError]]:
+    #     """
+    #     Remove a set of GEMD objects.
 
-        You may provide GEMD objects that reference each other, and the objects
-        will be removed in the appropriate order.
+    #     You may provide GEMD objects that reference each other, and the objects
+    #     will be removed in the appropriate order.
 
-        A failure will be returned if the object cannot be deleted due to an external
-        reference.
+    #     A failure will be returned if the object cannot be deleted due to an external
+    #     reference.
 
-        You must have Write access on the associated datasets for each object.
+    #     You must have Write access on the associated datasets for each object.
 
-        Parameters
-        ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
-            A list of the IDs of data objects to be removed. They can be passed
-            as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
-            or string is assumed to be a Citrine ID, whereas a LinkByUID or
-            BaseEntity can also be used to provide an external ID.
-        timeout: float
-            Amount of time to wait on the job (in seconds) before giving up. Defaults
-            to 2 minutes. Note that this number has no effect on the underlying job
-            itself, which can also time out server-side.
-        polling_delay: float
-            How long to delay between each polling retry attempt (in seconds).
+    #     Parameters
+    #     ----------
+    #     id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+    #         A list of the IDs of data objects to be removed. They can be passed
+    #         as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+    #         or string is assumed to be a Citrine ID, whereas a LinkByUID or
+    #         BaseEntity can also be used to provide an external ID.
+    #     timeout: float
+    #         Amount of time to wait on the job (in seconds) before giving up. Defaults
+    #         to 2 minutes. Note that this number has no effect on the underlying job
+    #         itself, which can also time out server-side.
+    #     polling_delay: float
+    #         How long to delay between each polling retry attempt (in seconds).
 
-        Returns
-        -------
-        List[Tuple[LinkByUID, ApiError]]
-            A list of (LinkByUID, api_error) for each failure to delete an object.
-            Note that this method doesn't raise an exception if an object fails to be
-            deleted.
+    #     Returns
+    #     -------
+    #     List[Tuple[LinkByUID, ApiError]]
+    #         A list of (LinkByUID, api_error) for each failure to delete an object.
+    #         Note that this method doesn't raise an exception if an object fails to be
+    #         deleted.
 
-        """
-        return _async_gemd_batch_delete(id_list=id_list, team_id=self.uid, session=self.session, dataset_id=None,
-                                        timeout=timeout, polling_delay=polling_delay)
+    #     """
+    #     return _async_gemd_batch_delete(id_list=id_list, team_id=self.uid, session=self.session, dataset_id=None,
+    #                                     timeout=timeout, polling_delay=polling_delay)
 
     @property
     def projects(self) -> ProjectCollection:
@@ -626,3 +626,4 @@ class TeamCollection(AdminCollection[Team]):
         user_id = UserCollection(self.session).me().uid
         team.update_user_action(user_id=user_id, actions=[READ, WRITE, SHARE])
         return team
+

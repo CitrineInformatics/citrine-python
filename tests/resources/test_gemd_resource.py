@@ -59,10 +59,27 @@ def gemd_collection(session) -> GEMDResourceCollection:
     return GEMDResourceCollection(
         team_id=uuid4(),
         dataset_id=uuid4(),
-        project_id=uuid4(),
         session=session
     )
 
+@pytest.fixture
+def invalid_collection(session) -> None:
+    with pytest.raises(TypeError):
+        return GEMDResourceCollection(
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            session=session,
+            )
+
+def test_invalid_collection_construction(invalid_collection):
+    # assertion is within the construction of the invalid_collection
+    t = invalid_collection
+
+def test_deprecation_of_positional_arguments(session):
+    team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project':{'team':{'id':team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        fcol = GEMDResourceCollection(uuid4(),uuid4(),session)
 
 def sample_gems(nsamples, **kwargs):
     factories = [MaterialRunDataFactory, MaterialSpecDataFactory]
@@ -87,7 +104,7 @@ def test_list(gemd_collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=format_escaped_url('teams/{}/datasets/{}/storables', gemd_collection.team_id, gemd_collection.dataset_id),
+        path=format_escaped_url('teams/{}/storables', gemd_collection.team_id, gemd_collection.dataset_id),
         params={
             'dataset_id': str(gemd_collection.dataset_id),
             'forward': True,

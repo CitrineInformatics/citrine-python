@@ -1,13 +1,14 @@
 import uuid
+from uuid import UUID
 
 import pytest
 from dateutil.parser import parse
 
 from citrine._rest.resource import ResourceTypeEnum
-from citrine.resources.dataset import Dataset
+from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, TeamMember
 from citrine.resources.user import User
-from tests.utils.factories import UserDataFactory, TeamDataFactory
+from tests.utils.factories import UserDataFactory, TeamDataFactory, DatasetDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 
@@ -47,6 +48,12 @@ def other_team(session) -> Team:
 def collection(session) -> TeamCollection:
     return TeamCollection(session)
 
+# @pytest.fixture
+# def dataset_collection(session, team) -> DatasetCollection:
+#     return DatasetCollection(
+#         team_id=team.uid,
+#         session=session
+#     )
 
 def test_team_member_string_representation(team):
     user = User.build(UserDataFactory())
@@ -144,6 +151,19 @@ def test_list_teams(collection, session):
     assert expected_call == session.last_call
     assert 5 == len(teams)
 
+# def test_list_datasets(team, session, dataset_collection):
+#     # team.datasets = dataset_collection
+#     dataset_data = DatasetDataFactory.create_batch(5)
+#     session.set_response({'datasets':dataset_data})
+
+#     # When
+#     datasets = list(team.datasets.list())
+
+#     # Then
+#     assert 1 == session.num_calls
+#     expected_call = FakeCall(method='GET', path='/datasets', params={'per_page': 100, 'page': 1})
+#     assert expected_call == session.last_call
+#     assert 5 == len(datasets)
 
 def test_list_teams_as_admin(collection, session):
     # Given
@@ -365,3 +385,90 @@ def test_list_resource_ids(team, session, resource_type, method):
 
 def test_analyses_get_team_id(team):
     assert team.uid == team.analyses.team_id
+
+def test_owned_dataset_ids(team):
+    # Create a set of datasets in the project
+    ids = {uuid.uuid4() for _ in range(5)}
+    for d_id in ids:
+        dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
+        team.datasets.register(dataset)
+
+    # Set the session response to have the list of dataset IDs
+    team.session.set_response({'ids': list(ids)})
+
+    # Fetch the list of UUID owned by the current project
+    owned_ids = team.owned_dataset_ids()
+
+    # Let's mock our expected API call so we can compare and ensure that the one made is the same
+    expect_call = FakeCall(method='GET',
+                           path='/DATASET/authorized-ids',
+                           params={'userId': '',
+                                   'domain': '/teams/16fd2706-8baf-433b-82eb-8c7fada847da',
+                                   'action': 'WRITE'})
+    # Compare our calls
+    assert expect_call == team.session.last_call
+    assert team.session.num_calls == len(ids) + 1
+    assert ids == set(owned_ids)
+
+def test_datasets_get_team_id(team):
+    assert team.uid == team.datasets.team_id
+
+
+def test_property_templates_get_team_id(team):
+    assert team.uid == team.property_templates.team_id
+
+
+def test_condition_templates_get_team_id(team):
+    assert team.uid == team.condition_templates.team_id
+
+
+def test_parameter_templates_get_team_id(team):
+    assert team.uid == team.parameter_templates.team_id
+
+
+def test_material_templates_get_team_id(team):
+    assert team.uid == team.material_templates.team_id
+
+
+def test_measurement_templates_get_team_id(team):
+    assert team.uid == team.measurement_templates.team_id
+
+
+def test_process_templates_get_team_id(team):
+    assert team.uid == team.process_templates.team_id
+
+
+def test_process_runs_get_team_id(team):
+    assert team.uid == team.process_runs.team_id
+
+
+def test_measurement_runs_get_team_id(team):
+    assert team.uid == team.measurement_runs.team_id
+
+
+def test_material_runs_get_team_id(team):
+    assert team.uid == team.material_runs.team_id
+
+
+def test_ingredient_runs_get_team_id(team):
+    assert team.uid == team.ingredient_runs.team_id
+
+
+def test_process_specs_get_team_id(team):
+    assert team.uid == team.process_specs.team_id
+
+
+def test_measurement_specs_get_team_id(team):
+    assert team.uid == team.measurement_specs.team_id
+
+
+def test_material_specs_get_team_id(team):
+    assert team.uid == team.material_specs.team_id
+
+
+def test_ingredient_specs_get_team_id(team):
+    assert team.uid == team.ingredient_specs.team_id
+
+
+def test_gemd_resource_get_team_id(team):
+    assert team.uid == team.gemd.team_id
