@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Optional, Iterable, Dict, Tuple, Callable, Union, Sequence
 from uuid import UUID
 
@@ -69,14 +70,14 @@ class Pageable():
         """
         # To avoid setting defaults -> reduce mutation risk, and to make more extensible
         path = self._get_path() if path is None else path
-        fetch_func = self.session.get_resource if fetch_func is None else fetch_func
+        fetch_func = fetch_func or partial(self.session.get_resource, version=self._api_version)
         json_body = {} if json_body is None else json_body
 
         module_type = getattr(self, '_module_type', None)
         params = self._page_params(page, per_page, module_type)
         params.update(additional_params or {})
 
-        data = fetch_func(path, params=params, version=self._api_version, **json_body)
+        data = fetch_func(path, params=params, **json_body)
 
         try:
             next_uri = data.get('next', "")
