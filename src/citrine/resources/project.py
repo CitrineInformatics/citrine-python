@@ -295,7 +295,7 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets will no longer owned by Projects and therefore will no longer be un-published by a Project in future versions.",
+            warn("Datasets will no be longer owned by Projects and therefore will no longer be un-published by a Project in future versions.",
                  DeprecationWarning)
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
@@ -320,7 +320,7 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets will no longer owned by Projects and therefore will no longer be pulled-in by a Project in future versions.",
+            warn("Datasets will no be longer owned by Projects and therefore will no longer be pulled-in by a Project in future versions.",
                  DeprecationWarning)
         base_url = f'/teams/{self.team_id}{self._path()}'
         self.session.checked_post(
@@ -338,7 +338,7 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        warn("Datasets will no longer owned by Projects and therefore projects will no longer have owned_dataset_ids in future versions.",
+        warn("Datasets will no be longer owned by Projects and therefore projects will no longer have owned_dataset_ids in future versions. You can see what datasets are owned by your Team by using Team.owned_dataset_ids().",
                  DeprecationWarning)
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
         return self.session.get_resource("/DATASET/authorized-ids",
@@ -402,7 +402,7 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        warn("Datasets will no longer owned by Projects and therefore projects will no longer be able to batch delete GEMD objects future versions.",
+        warn("Datasets will no be longer owned by Projects and therefore projects will no longer be able to batch delete GEMD objects future versions.",
                  DeprecationWarning)
         return _async_gemd_batch_delete(id_list=id_list, project_id=self.uid, session=self.session, dataset_id=None,
                                         timeout=timeout, polling_delay=polling_delay)
