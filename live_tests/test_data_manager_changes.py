@@ -4,6 +4,9 @@ from citrine.resources.dataset import Dataset
 from gemd.builders.impl import make_node
 from gemd.util.impl import flatten
 from citrine.seeding.find_or_create import find_or_create_team,find_or_create_dataset,find_or_create_project
+from gemd.entity.link_by_uid import LinkByUID
+from citrine.resources.data_concepts import _make_link_by_uid
+
 
 from citrine import Citrine
 
@@ -13,11 +16,11 @@ def seed_registration_no_project(team):
     dataset = find_or_create_dataset(dataset_collection=team.datasets, dataset_name="dataset 1", raise_error=True)
     gemds = []
     for i in range(1,5):
-        this_node = make_node(name = f"material {str(i)}", process_name= "fake process")
-        this_node.add_uid(scope=TESTING_SCOPE,uid=f"Mat Run {str(i)}")
-        this_node.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec {str(i)}")
-        this_node.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec {str(i)}")
-        this_node.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run {str(i)}")
+        this_node = make_node(name = f"material {i}", process_name= "fake process")
+        this_node.add_uid(scope=TESTING_SCOPE,uid=f"Mat Run {i}")
+        this_node.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec {i}")
+        this_node.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec {i}")
+        this_node.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run {i}")
         gemds.extend(flatten(this_node))
     dataset.delete_contents(prompt_to_confirm=False)
     dataset.register_all(gemds)
@@ -29,11 +32,11 @@ def seed_registration_with_project(project):
         dataset = find_or_create_dataset(dataset_collection=project.datasets, dataset_name="project dataset 2", raise_error=True)
     gemds = []
     for i in range(6,11):
-        this_node = make_node(name = f"material {str(i)}", process_name= "fake process")
-        this_node.add_uid(scope=TESTING_SCOPE,uid=f"Mat Run {str(i)}")
-        this_node.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec {str(i)}")
-        this_node.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec {str(i)}")
-        this_node.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run {str(i)}")
+        this_node = make_node(name = f"material {i}", process_name= "fake process")
+        this_node.add_uid(scope=TESTING_SCOPE,uid=f"Mat Run {i}")
+        this_node.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec {i}")
+        this_node.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec {i}")
+        this_node.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run {i}")
         gemds.extend(flatten(this_node))
     dataset.delete_contents(prompt_to_confirm=False)
     dataset.register_all(gemds)
@@ -56,10 +59,16 @@ def test_registration_and_listing():
     with pytest.deprecated_call():
         assert len(project.owned_dataset_ids())==2
 
-    assert no_p_dataset.project_id == None
+    assert no_p_dataset.project_id is None
     assert with_p_dataset.project_id == project.uid
 
     assert len([x for x in no_p_dataset.gemd.list()]) == 20
+    mr = no_p_dataset.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
+    assert isinstance(mr, MaterialRun)
+    assert mr == team.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
+    mr_link = _make_link_by_uid(mr)
+    mat_history = no_p_dataset.material_runs.get_history(mr_link)
+    assert len(flatten(mat_history)) == 4
     assert len([x for x in no_p_dataset.material_runs.list()]) == 5
 
     assert len([x for x in with_p_dataset.gemd.list()]) == 20
@@ -106,6 +115,7 @@ def test_sharing():
     assert len([x for x in team_2.datasets.list()]) == 2
     assert len([x for x in team_2.gemd.list()]) == 40
     assert len([x for x in team_2.owned_dataset_ids()]) == 0
+    assert isinstance(team_2.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1")))
 
     team.un_share(resource=no_p_dataset,target_team_id=team_2.uid)
     team.un_share(resource=with_p_dataset,target_team_id=team_2.uid)

@@ -119,7 +119,6 @@ class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     _collection_key = 'process_templates'
     _resource = ProcessTemplate
 
-
     @classmethod
     def get_type(cls) -> Type[ProcessTemplate]:
         """Return the resource type in the collection."""

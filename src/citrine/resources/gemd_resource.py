@@ -4,8 +4,6 @@ from uuid import UUID, uuid4
 import re
 from tqdm.auto import tqdm
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -27,7 +25,14 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _collection_key = 'storables'
 
-    def __init__(self, *args, dataset_id: UUID = None, session: Session = None, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
+    def __init__(
+        self,
+        *args,
+        dataset_id: UUID = None,
+        session: Session = None,
+        team_id: Optional[UUID] = None,
+        project_id: Optional[UUID] = None
+    ):
         DataConceptsCollection.__init__(self,
                                         *args,
                                         team_id=team_id,
@@ -51,7 +56,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         self.dataset_id = dataset_id
         self.session = session
         self.project_id = project_id
-
 
     @classmethod
     def get_type(cls) -> Type[DataConcepts]:
@@ -235,5 +239,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list=id_list, team_id = self.team_id, session = self.session, dataset_id = self.dataset_id,
-                                        timeout=timeout, polling_delay=polling_delay)
+        return _async_gemd_batch_delete(
+            id_list=id_list,
+            team_id=self.team_id,
+            session=self.session,
+            dataset_id=self.dataset_id,
+            timeout=timeout,
+            polling_delay=polling_delay
+        )

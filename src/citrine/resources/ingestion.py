@@ -1,9 +1,6 @@
 from typing import Optional, Iterator, Iterable
 from uuid import UUID
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
-
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -432,7 +429,14 @@ class IngestionCollection(Collection[Ingestion]):
     _collection_key = None
     _resource = Ingestion
 
-    def __init__(self, *args, session: Session = None, team_id: Optional[UUID] = None, dataset_id: UUID = None, project_id: Optional[UUID] = None):
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        team_id: Optional[UUID] = None,
+        dataset_id: UUID = None,
+        project_id: Optional[UUID] = None
+    ):
         if len(args) > 0:
             warn(
                 "Positional arguments are deprecated and will be removed in a future version. "
@@ -449,13 +453,18 @@ class IngestionCollection(Collection[Ingestion]):
         self.dataset_id = dataset_id
         self.session = session
         self.project_id = project_id
-        if session == None:
+        if session is None:
             raise TypeError("A session must be provided.")
-        if dataset_id == None:
+        if dataset_id is None:
             raise TypeError("A dataset_id must be provided.")
-        self.team_id = _data_manager_deprecation_checks(session = session, project_id=project_id, team_id=team_id, obj_type="Ingestions")
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id, obj_type="Ingestions"
+        )
 
-    # After the Data Manager deprecation, this can be a Class Variable using the `teams/...` endpoint
+    # After the Data Manager deprecation,
+    # this can be a Class Variable using the `teams/...` endpoint
     @property
     def _path_template(self):
         if self.project_id is None:

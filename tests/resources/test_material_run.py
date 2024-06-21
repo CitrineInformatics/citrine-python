@@ -39,29 +39,23 @@ def collection(session) -> MaterialRunCollection:
         team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'),
     )
 
-@pytest.fixture
-def deprecated_collection(session) -> MaterialRunCollection:
+def test_deprecated_collection_construction(session):
     with pytest.deprecated_call():
         team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
         check_project = {'project':{'team':{'id':team_id}}}
         session.set_response(check_project)
-        return MaterialRunCollection(
+        mr =  MaterialRunCollection(
             dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
             session=session,
             project_id=UUID('6b608f78-e341-422c-8076-35adc8828545')
             )
 
-@pytest.fixture
-def invalid_collection(session) -> None:
+def test_invalid_collection_construction():
     with pytest.raises(TypeError):
-        return MaterialRunCollection(
+        mr = MaterialRunCollection(
             dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
             session=session,
             )
-
-def test_invalid_collection_construction(invalid_collection):
-    # assertion is within the construction of the invalid_collection
-    t = invalid_collection
 
 def test_register_material_run(collection, session):
     # Given
@@ -135,7 +129,15 @@ def test_get_history(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=f'teams/{collection.team_id}/material-history/{root_link.scope}/{root_link.id}'
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        params={
+            'criteria': [
+                {'datasets': str(collection.dataset_id),
+                 'type': 'terminal_material_run_identifiers_criteria',
+                 'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                 }
+            ]
+        }
     )
     assert expected_call == session.last_call
     assert run == cake
@@ -158,27 +160,6 @@ def test_get_material_run(collection, session):
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
-
-
-def test_get_material_run_deprication(deprecated_collection, session):
-    # Given
-    c = deprecated_collection
-    pass
-    # run_data = MaterialRunDataFactory(name='Cake 2')
-    # mr_id = run_data['uids']['id']
-    # session.set_response(run_data)
-
-    # # When
-    # run = deprecated_collection.get(mr_id)
-
-    # # Then
-    # assert 2 == session.num_calls
-    # expected_call = FakeCall(
-    #     method='GET',
-    #     path='teams/{}/datasets/{}/material-runs/id/{}'.format(deprecated_collection.team_id, deprecated_collection.dataset_id, mr_id)
-    # )
-    # assert expected_call == session.last_call
-    # assert 'Cake 2' == run.name
 
 def test_list_material_runs(collection, session):
     # Given

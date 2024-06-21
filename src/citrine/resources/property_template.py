@@ -61,7 +61,6 @@ class PropertyTemplateCollection(AttributeTemplateCollection[PropertyTemplate]):
     _collection_key = 'property_templates'
     _resource = PropertyTemplate
 
-
     @classmethod
     def get_type(cls) -> Type[PropertyTemplate]:
         """Return the resource type in the collection."""

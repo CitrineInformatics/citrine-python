@@ -90,7 +90,6 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     _collection_key = 'process_specs'
     _resource = ProcessSpec
 
-
     @classmethod
     def get_type(cls) -> Type[ProcessSpec]:
         """Return the resource type in the collection."""

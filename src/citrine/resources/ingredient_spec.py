@@ -115,7 +115,6 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     _collection_key = 'ingredient_specs'
     _resource = IngredientSpec
 
-
     @classmethod
     def get_type(cls) -> Type[IngredientSpec]:
         """Return the resource type in the collection."""

@@ -5,11 +5,8 @@ from typing import Any, Dict, Optional, Sequence, Union
 from urllib.parse import quote, urlencode, urlparse
 from uuid import UUID
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
 
 from gemd.entity.link_by_uid import LinkByUID
-
 
 
 def get_object_id(object_or_id):
@@ -323,14 +320,19 @@ def resource_path(*,
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)
 
-def _data_manager_deprecation_checks(session, project_id:UUID, team_id:UUID, obj_type:str):
+
+def _data_manager_deprecation_checks(session, project_id: UUID, team_id: UUID, obj_type: str):
     if project_id is None and team_id is None:
         raise TypeError("A team_id must be provided.")
     elif project_id is not None:
-        warn(f"{obj_type} now belong to Teams and not Projects. Providing a project_id/accessing via a project is deprecated and will be removed in future versions.",
+        warn(
+            f"{obj_type} now belong to Teams and not Projects.",
+            "Providing a project_id/accessing via a project is",
+            "deprecated and will be removed in future versions.",
             DeprecationWarning
         )
         if team_id is None:
+            # avoiding a circular import
             from citrine.resources.project import Project
-            team_id = Project.get_team_id_from_project_id(session=session,project_id=project_id)
+            team_id = Project.get_team_id_from_project_id(session=session, project_id=project_id)
     return team_id

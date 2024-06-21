@@ -4,9 +4,6 @@ import re
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
-
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
 from gemd.entity.base_entity import BaseEntity
@@ -218,7 +215,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self, *args, dataset_id: UUID = None, session: Session = None, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
+    def __init__(self,
+                 *args,
+                 dataset_id: UUID = None,
+                 session: Session = None,
+                 team_id: Optional[UUID] = None,
+                 project_id: Optional[UUID] = None):
         if len(args) > 0:
             warn(
                 "Positional arguments are deprecated and will be removed in a future version. "
@@ -234,11 +236,15 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                 session = args[2]
         self.dataset_id = dataset_id
         self.session = session
-        self.project_id=project_id
-        if session == None:
+        self.project_id = project_id
+        if session is None:
             raise TypeError("A session must be provided.")
-        self.team_id = _data_manager_deprecation_checks(session=session,project_id=project_id,team_id=team_id,obj_type="GEMD Objects")
-
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id,
+            obj_type="GEMD Objects"
+        )
 
     @classmethod
     @abstractmethod
@@ -247,8 +253,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     @property
     def _path_template(self):
-        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
-        # return f'datasets/{self.dataset_id}/{self._collection_key.replace("_","-")}'
+        collection_key = self._collection_key.replace("_", "-")
+        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{collection_key}'
 
     # After Data Manager deprecation, both can use the `teams/...` path.
     @property
@@ -424,7 +430,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         from citrine.resources.gemd_resource import GEMDResourceCollection
-        gemd_collection = GEMDResourceCollection(team_id = self.team_id, dataset_id = self.dataset_id, session = self.session)
+        gemd_collection = GEMDResourceCollection(team_id=self.team_id,
+                                                 dataset_id=self.dataset_id,
+                                                 session=self.session)
         return gemd_collection.register_all(
             models,
             dry_run=dry_run,
@@ -559,8 +567,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        _poll_for_job_completion(session=self.session,team_id=self.team_id, project_id=self.project_id, job=job_id, timeout=timeout,
-                                 polling_delay=polling_delay)
+        _poll_for_job_completion(
+            session=self.session,
+            team_id=self.team_id,
+            project_id=self.project_id,
+            job=job_id, timeout=timeout,
+            polling_delay=polling_delay)
 
         # That worked, nothing returned in this case
         return None

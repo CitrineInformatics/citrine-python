@@ -90,7 +90,6 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     _collection_key = 'measurement_specs'
     _resource = MeasurementSpec
 
-
     @classmethod
     def get_type(cls) -> Type[MeasurementSpec]:
         """Return the resource type in the collection."""

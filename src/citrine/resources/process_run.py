@@ -86,7 +86,6 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     _collection_key = 'process_runs'
     _resource = ProcessRun
 
-
     @classmethod
     def get_type(cls) -> Type[ProcessRun]:
         """Return the resource type in the collection."""

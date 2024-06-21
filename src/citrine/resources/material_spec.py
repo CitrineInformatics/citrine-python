@@ -94,7 +94,6 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     _collection_key = 'material_specs'
     _resource = MaterialSpec
 
-
     @classmethod
     def get_type(cls) -> Type[MaterialSpec]:
         """Return the resource type in the collection."""

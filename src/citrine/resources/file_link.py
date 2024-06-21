@@ -7,9 +7,6 @@ from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
-
 
 import requests
 from boto3 import client as boto3_client
@@ -200,7 +197,14 @@ class FileCollection(Collection[FileLink]):
     _collection_key = 'files'
     _resource = FileLink
 
-    def __init__(self, *args, session: Session = None, dataset_id: UUID = None, team_id: Optional[UUID] = None, project_id: Optional[UUID] = None):
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        dataset_id: UUID = None,
+        team_id: Optional[UUID] = None,
+        project_id: Optional[UUID] = None
+    ):
         if len(args) > 0:
             warn(
                 "Positional arguments are deprecated and will be removed in a future version. "
@@ -215,13 +219,18 @@ class FileCollection(Collection[FileLink]):
             if len(args) >= 3:
                 session = args[2]
         self.session = session
-        self.project_id=project_id
-        self.dataset_id=dataset_id
-        if session == None:
+        self.project_id = project_id
+        self.dataset_id = dataset_id
+        if session is None:
             raise TypeError("A session must be provided.")
-        if dataset_id == None:
+        if dataset_id is None:
             raise TypeError("A dataset_id must be provided.")
-        self.team_id = _data_manager_deprecation_checks(session=session, project_id=project_id, team_id=team_id, obj_type="File Links")
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id,
+            obj_type="File Links"
+        )
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,

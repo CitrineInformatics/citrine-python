@@ -1,9 +1,7 @@
 """Resources that represent condition templates."""
 from typing import List, Dict, Optional, Type
-from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._session import Session
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.condition_template import ConditionTemplate as GEMDConditionTemplate

@@ -1,11 +1,6 @@
 """Resources that represent both individual and collections of teams."""
-from typing import Optional, Union, List, Tuple
+from typing import Optional, Union, List
 from uuid import UUID
-from gemd.entity.base_entity import BaseEntity
-from gemd.entity.link_by_uid import LinkByUID
-from citrine.resources.api_error import ApiError
-from citrine.resources.delete import _async_gemd_batch_delete
-
 
 from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -375,7 +370,6 @@ class Team(Resource['Team']):
         )
         return True
 
-
     def owned_dataset_ids(self) -> List[str]:
         """
         List all the ids of the datasets owned by the current team.
@@ -390,49 +384,6 @@ class Team(Resource['Team']):
         return self.session.get_resource("/DATASET/authorized-ids",
                                          params=query_params,
                                          version="v3")['ids']
-
-    # def gemd_batch_delete(
-    #         self,
-    #         id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-    #         *,
-    #         timeout: float = 2 * 60,
-    #         polling_delay: float = 1.0
-    # ) -> List[Tuple[LinkByUID, ApiError]]:
-    #     """
-    #     Remove a set of GEMD objects.
-
-    #     You may provide GEMD objects that reference each other, and the objects
-    #     will be removed in the appropriate order.
-
-    #     A failure will be returned if the object cannot be deleted due to an external
-    #     reference.
-
-    #     You must have Write access on the associated datasets for each object.
-
-    #     Parameters
-    #     ----------
-    #     id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
-    #         A list of the IDs of data objects to be removed. They can be passed
-    #         as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
-    #         or string is assumed to be a Citrine ID, whereas a LinkByUID or
-    #         BaseEntity can also be used to provide an external ID.
-    #     timeout: float
-    #         Amount of time to wait on the job (in seconds) before giving up. Defaults
-    #         to 2 minutes. Note that this number has no effect on the underlying job
-    #         itself, which can also time out server-side.
-    #     polling_delay: float
-    #         How long to delay between each polling retry attempt (in seconds).
-
-    #     Returns
-    #     -------
-    #     List[Tuple[LinkByUID, ApiError]]
-    #         A list of (LinkByUID, api_error) for each failure to delete an object.
-    #         Note that this method doesn't raise an exception if an object fails to be
-    #         deleted.
-
-    #     """
-    #     return _async_gemd_batch_delete(id_list=id_list, team_id=self.uid, session=self.session, dataset_id=None,
-    #                                     timeout=timeout, polling_delay=polling_delay)
 
     @property
     def projects(self) -> ProjectCollection:
@@ -454,7 +405,7 @@ class Team(Resource['Team']):
     @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        return DatasetCollection(team_id= self.uid, session=self.session)
+        return DatasetCollection(team_id=self.uid, session=self.session)
 
     @property
     def module_ids(self) -> TeamResourceIDs:
@@ -500,7 +451,10 @@ class Team(Resource['Team']):
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MeasurementTemplateCollection(
+            team_id=self.uid,
+            dataset_id=None,
+            session=self.session)
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
@@ -550,7 +504,7 @@ class Team(Resource['Team']):
     @property
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(team_id = self.uid, dataset_id = None, session = self.session)
+        return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
 
 
 class TeamCollection(AdminCollection[Team]):
@@ -626,4 +580,3 @@ class TeamCollection(AdminCollection[Team]):
         user_id = UserCollection(self.session).me().uid
         team.update_user_action(user_id=user_id, actions=[READ, WRITE, SHARE])
         return team
-

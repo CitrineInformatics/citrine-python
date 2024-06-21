@@ -107,7 +107,6 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     _collection_key = 'measurement_runs'
     _resource = MeasurementRun
 
-
     @classmethod
     def get_type(cls) -> Type[MeasurementRun]:
         """Return the resource type in the collection."""

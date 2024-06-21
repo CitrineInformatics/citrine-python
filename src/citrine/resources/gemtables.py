@@ -244,7 +244,12 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        status = _poll_for_job_completion(session=self.session, project_id=self.project_id, job=job, timeout=timeout)
+        status = _poll_for_job_completion(
+            session=self.session,
+            project_id=self.project_id,
+            job=job,
+            timeout=timeout
+        )
 
         table_id = status.output['display_table_id']
         table_version = status.output['display_table_version']

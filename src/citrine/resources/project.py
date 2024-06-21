@@ -46,8 +46,6 @@ from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 from warnings import warn
-import warnings
-warnings.filterwarnings('always', category=DeprecationWarning)
 
 
 class Project(Resource['Project']):
@@ -81,7 +79,6 @@ class Project(Resource['Project']):
     """int: Time the project was created, in seconds since epoch."""
     _team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
-
     def __init__(self,
                  name: str,
                  *,
@@ -104,8 +101,12 @@ class Project(Resource['Project']):
 
     @property
     def team_id(self):
-        if self._team_id == None:
-            self._team_id = self.get_team_id_from_project_id(session=self.session, project_id=self.uid)
+        """Returns the Team's id-scoped UUID."""
+        if self._team_id is None:
+            self._team_id = self.get_team_id_from_project_id(
+                session=self.session,
+                project_id=self.uid
+            )
         return self._team_id
 
     @team_id.setter
@@ -113,8 +114,11 @@ class Project(Resource['Project']):
         self._team_id = value
 
     @classmethod
-    def get_team_id_from_project_id(cls, session:Session, project_id:UUID):
-        return session.get_resource(path='projects/{}'.format(project_id), version="v3")['project']['team']['id']
+    def get_team_id_from_project_id(cls, session: Session, project_id: UUID):
+        """Returns the UUID of the Team that owns the project with the provided project_id."""
+        return session.get_resource(
+            path='projects/{}'.format(project_id),
+            version="v3")['project']['team']['id']
 
     @property
     def branches(self) -> BranchCollection:
@@ -159,7 +163,7 @@ class Project(Resource['Project']):
     @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        return DatasetCollection(team_id= self.team_id, project_id=self.uid, session=self.session)
+        return DatasetCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
 
     @property
     def tables(self) -> GemTableCollection:
@@ -169,83 +173,129 @@ class Project(Resource['Project']):
     @property
     def property_templates(self) -> PropertyTemplateCollection:
         """Return a resource representing all property templates in this dataset."""
-        return PropertyTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return PropertyTemplateCollection(project_id=self.uid,
+                                          dataset_id=None,
+                                          session=self.session,
+                                          team_id=self.team_id)
 
     @property
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        return ConditionTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return ConditionTemplateCollection(project_id=self.uid,
+                                           dataset_id=None,
+                                           session=self.session,
+                                           team_id=self.team_id)
 
     @property
     def parameter_templates(self) -> ParameterTemplateCollection:
         """Return a resource representing all parameter templates in this dataset."""
-        return ParameterTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return ParameterTemplateCollection(project_id=self.uid,
+                                           dataset_id=None,
+                                           session=self.session,
+                                           team_id=self.team_id)
 
     @property
     def material_templates(self) -> MaterialTemplateCollection:
         """Return a resource representing all material templates in this dataset."""
-        return MaterialTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MaterialTemplateCollection(project_id=self.uid,
+                                          dataset_id=None,
+                                          session=self.session,
+                                          team_id=self.team_id)
 
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MeasurementTemplateCollection(project_id=self.uid,
+                                             dataset_id=None,
+                                             session=self.session,
+                                             team_id=self.team_id)
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
         """Return a resource representing all process templates in this dataset."""
-        return ProcessTemplateCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return ProcessTemplateCollection(project_id=self.uid,
+                                         dataset_id=None,
+                                         session=self.session,
+                                         team_id=self.team_id)
 
     @property
     def process_runs(self) -> ProcessRunCollection:
         """Return a resource representing all process runs in this dataset."""
-        return ProcessRunCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return ProcessRunCollection(project_id=self.uid,
+                                    dataset_id=None,
+                                    session=self.session,
+                                    team_id=self.team_id)
 
     @property
     def measurement_runs(self) -> MeasurementRunCollection:
         """Return a resource representing all measurement runs in this dataset."""
-        return MeasurementRunCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MeasurementRunCollection(project_id=self.uid,
+                                        dataset_id=None,
+                                        session=self.session,
+                                        team_id=self.team_id)
 
     @property
     def material_runs(self) -> MaterialRunCollection:
         """Return a resource representing all material runs in this dataset."""
-        return MaterialRunCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MaterialRunCollection(project_id=self.uid,
+                                     dataset_id=None,
+                                     session=self.session,
+                                     team_id=self.team_id)
 
     @property
     def ingredient_runs(self) -> IngredientRunCollection:
         """Return a resource representing all ingredient runs in this dataset."""
-        return IngredientRunCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return IngredientRunCollection(project_id=self.uid,
+                                       dataset_id=None,
+                                       session=self.session,
+                                       team_id=self.team_id)
 
     @property
     def process_specs(self) -> ProcessSpecCollection:
         """Return a resource representing all process specs in this dataset."""
-        return ProcessSpecCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return ProcessSpecCollection(project_id=self.uid,
+                                     dataset_id=None,
+                                     session=self.session,
+                                     team_id=self.team_id)
 
     @property
     def measurement_specs(self) -> MeasurementSpecCollection:
         """Return a resource representing all measurement specs in this dataset."""
-        return MeasurementSpecCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MeasurementSpecCollection(project_id=self.uid,
+                                         dataset_id=None,
+                                         session=self.session,
+                                         team_id=self.team_id)
 
     @property
     def material_specs(self) -> MaterialSpecCollection:
         """Return a resource representing all material specs in this dataset."""
-        return MaterialSpecCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return MaterialSpecCollection(project_id=self.uid,
+                                      dataset_id=None,
+                                      session=self.session,
+                                      team_id=self.team_id)
 
     @property
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
-        return IngredientSpecCollection(project_id=self.uid, dataset_id=None, session=self.session, team_id=self.team_id)
+        return IngredientSpecCollection(project_id=self.uid,
+                                        dataset_id=None,
+                                        session=self.session,
+                                        team_id=self.team_id)
 
     @property
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(project_id = self.uid, dataset_id = None, session = self.session, team_id=self.team_id)
+        return GEMDResourceCollection(
+            project_id=self.uid,
+            dataset_id=None,
+            session=self.session,
+            team_id=self.team_id
+        )
 
     @property
     def table_configs(self) -> TableConfigCollection:
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(project_id=self.uid, session=self.session)
-
 
     def publish(self, *, resource: Resource):
         """
@@ -269,13 +319,15 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets are no longer owned by Projects and therefore can no longer be published by a Project.",
-                 DeprecationWarning)
+            warn(
+                "Datasets are no longer owned by Projects and therefore",
+                "can no longer be published by a Project.",
+                DeprecationWarning
+            )
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-publish",
             version='v3', json={'ids': [resource_access["id"]]})
         return True
-
 
     def un_publish(self, *, resource: Resource):
         """
@@ -295,8 +347,11 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets will no be longer owned by Projects and therefore will no longer be un-published by a Project in future versions.",
-                 DeprecationWarning)
+            warn(
+                "Datasets will no be longer owned by Projects and therefore",
+                "will no longer be un-published by a Project in future versions.",
+                DeprecationWarning
+            )
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
             version='v3', json={'ids': [resource_access["id"]]})
@@ -320,8 +375,11 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets will no be longer owned by Projects and therefore will no longer be pulled-in by a Project in future versions.",
-                 DeprecationWarning)
+            warn(
+                "Datasets will no be longer owned by Projects and therefore",
+                "will no longer be pulled-in by a Project in future versions.",
+                DeprecationWarning
+            )
         base_url = f'/teams/{self.team_id}{self._path()}'
         self.session.checked_post(
             f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
@@ -338,8 +396,12 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
-        warn("Datasets will no be longer owned by Projects and therefore projects will no longer have owned_dataset_ids in future versions. You can see what datasets are owned by your Team by using Team.owned_dataset_ids().",
-                 DeprecationWarning)
+        warn(
+            "Datasets will no be longer owned by Projects and therefore projects will no longer",
+            "have owned_dataset_ids in future versions.",
+            "You can see what datasets are owned by your Team by using Team.owned_dataset_ids().",
+            DeprecationWarning
+        )
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
         return self.session.get_resource("/DATASET/authorized-ids",
                                          params=query_params,
@@ -402,10 +464,17 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        warn("Datasets will no be longer owned by Projects and therefore projects will no longer be able to batch delete GEMD objects future versions.",
-                 DeprecationWarning)
-        return _async_gemd_batch_delete(id_list=id_list, project_id=self.uid, session=self.session, dataset_id=None,
-                                        timeout=timeout, polling_delay=polling_delay)
+        warn(
+            "Datasets will no be longer owned by Projects and therefore projects will ",
+            "no longer be able to batch delete GEMD objects future versions.",
+            DeprecationWarning
+        )
+        return _async_gemd_batch_delete(id_list=id_list,
+                                        project_id=self.uid,
+                                        session=self.session,
+                                        dataset_id=None,
+                                        timeout=timeout,
+                                        polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):

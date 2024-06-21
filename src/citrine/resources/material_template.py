@@ -91,7 +91,6 @@ class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     _collection_key = 'material_templates'
     _resource = MaterialTemplate
 
-
     @classmethod
     def get_type(cls) -> Type[MaterialTemplate]:
         """Return the resource type in the collection."""
