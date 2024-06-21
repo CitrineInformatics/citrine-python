@@ -1,11 +1,12 @@
 from gemd.entity.object import *
 import pytest
 from citrine.resources.dataset import Dataset
-from gemd.builders.impl import make_node
+from gemd.builders.impl import make_node, add_edge
 from gemd.util.impl import flatten
 from citrine.seeding.find_or_create import find_or_create_team,find_or_create_dataset,find_or_create_project
 from gemd.entity.link_by_uid import LinkByUID
 from citrine.resources.data_concepts import _make_link_by_uid
+from gemd.entity.value import NominalReal
 
 
 from citrine import Citrine
@@ -21,7 +22,25 @@ def seed_registration_no_project(team):
         this_node.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec {i}")
         this_node.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec {i}")
         this_node.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run {i}")
+        if 1 == i:
+            input_mat = this_node
         gemds.extend(flatten(this_node))
+    # Make one more complex Material History to ensure get_history works correctly later
+    extension = make_node(name = "second material", process_name="second step")
+    extension.add_uid(scope=TESTING_SCOPE,uid=f"Mat Run 2-1")
+    extension.spec.add_uid(scope=TESTING_SCOPE,uid=f"Mat Spec 2-1")
+    extension.process.spec.add_uid(scope=TESTING_SCOPE,uid=f"Process Spec 2-1")
+    extension.process.add_uid(scope=TESTING_SCOPE,uid=f"Process Run 2-1")
+    gemds.extend(flatten(extension))
+    ingreds = add_edge(
+        input_material=input_mat,
+        output_material=extension,
+        mass_fraction=NominalReal(nominal=1,units="")
+    )
+    ingreds.add_uid(scope=TESTING_SCOPE,id="Ing Run 2-1")
+    ingreds.spec.add_uid(scope=TESTING_SCOPE,id="Ing Spec 2-1")
+    gemds.extend(flatten(ingreds))
+
     dataset.delete_contents(prompt_to_confirm=False)
     dataset.register_all(gemds)
     return dataset
@@ -66,16 +85,16 @@ def test_registration_and_listing():
     mr = no_p_dataset.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
     assert isinstance(mr, MaterialRun)
     assert mr == team.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
-    mr_link = _make_link_by_uid(mr)
+    mr_link = LinkByUID(scope=TESTING_SCOPE, id="Mat Run 2-1")
     mat_history = no_p_dataset.material_runs.get_history(mr_link)
-    assert len(flatten(mat_history)) == 4
-    assert len([x for x in no_p_dataset.material_runs.list()]) == 5
+    assert len(flatten(mat_history)) == 10
+    assert len([x for x in no_p_dataset.material_runs.list()]) == 6
 
-    assert len([x for x in with_p_dataset.gemd.list()]) == 20
-    assert len([x for x in with_p_dataset.material_runs.list()]) == 5
-    assert len([x for x in project.gemd.list()]) == 20
-    assert len([x for x in project.material_runs.list()]) == 5
-    assert len([x for x in team.gemd.list()]) == 40
+    assert len([x for x in with_p_dataset.gemd.list()]) == 26
+    assert len([x for x in with_p_dataset.material_runs.list()]) == 6
+    assert len([x for x in project.gemd.list()]) == 26
+    assert len([x for x in project.material_runs.list()]) == 6
+    assert len([x for x in team.gemd.list()]) == 46
 
 def test_sharing():
     client = Citrine()
@@ -108,12 +127,12 @@ def test_sharing():
 
     team.share(resource=no_p_dataset,target_team_id=team_2.uid)
     assert len([x for x in team_2.datasets.list()]) == 1
-    assert len([x for x in team_2.gemd.list()]) == 20
+    assert len([x for x in team_2.gemd.list()]) == 26
     assert len([x for x in team_2.owned_dataset_ids()]) == 0
 
     team.share(resource=with_p_dataset,target_team_id=team_2.uid)
     assert len([x for x in team_2.datasets.list()]) == 2
-    assert len([x for x in team_2.gemd.list()]) == 40
+    assert len([x for x in team_2.gemd.list()]) == 46
     assert len([x for x in team_2.owned_dataset_ids()]) == 0
     assert isinstance(team_2.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1")))
 

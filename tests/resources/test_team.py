@@ -48,12 +48,6 @@ def other_team(session) -> Team:
 def collection(session) -> TeamCollection:
     return TeamCollection(session)
 
-# @pytest.fixture
-# def dataset_collection(session, team) -> DatasetCollection:
-#     return DatasetCollection(
-#         team_id=team.uid,
-#         session=session
-#     )
 
 def test_team_member_string_representation(team):
     user = User.build(UserDataFactory())
@@ -151,19 +145,6 @@ def test_list_teams(collection, session):
     assert expected_call == session.last_call
     assert 5 == len(teams)
 
-# def test_list_datasets(team, session, dataset_collection):
-#     # team.datasets = dataset_collection
-#     dataset_data = DatasetDataFactory.create_batch(5)
-#     session.set_response({'datasets':dataset_data})
-
-#     # When
-#     datasets = list(team.datasets.list())
-
-#     # Then
-#     assert 1 == session.num_calls
-#     expected_call = FakeCall(method='GET', path='/datasets', params={'per_page': 100, 'page': 1})
-#     assert expected_call == session.last_call
-#     assert 5 == len(datasets)
 
 def test_list_teams_as_admin(collection, session):
     # Given
