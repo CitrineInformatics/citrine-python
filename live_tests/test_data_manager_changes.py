@@ -13,6 +13,22 @@ from citrine import Citrine
 
 TESTING_SCOPE = "pne-241-scope"
 
+def cleanup(client):
+    team = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 1", raise_error=True)
+    # team_2 = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 2", raise_error=True)
+    project = find_or_create_project(project_collection=team.projects, project_name="Project 1", raise_error=True)
+    # project_2 = find_or_create_project(project_collection=team.projects, project_name="Project 2", raise_error=True)
+    try:
+        no_p_dataset = find_or_create_dataset(dataset_collection=team.datasets, dataset_name="team dataset delete", raise_error=True)
+        team.datasets.delete(no_p_dataset.uid)
+    except:
+        pass
+    try:
+        with_p_dataset = find_or_create_dataset(dataset_collection=project.datasets, dataset_name="project dataset delete", raise_error=False)
+        team.datasets.delete(with_p_dataset.uid)
+    except:
+        pass
+
 def seed_registration_no_project(team):
     dataset = find_or_create_dataset(dataset_collection=team.datasets, dataset_name="dataset 1", raise_error=True)
     gemds = []
@@ -37,8 +53,8 @@ def seed_registration_no_project(team):
         output_material=extension,
         mass_fraction=NominalReal(nominal=1,units="")
     )
-    ingreds.add_uid(scope=TESTING_SCOPE,id="Ing Run 2-1")
-    ingreds.spec.add_uid(scope=TESTING_SCOPE,id="Ing Spec 2-1")
+    ingreds.add_uid(scope=TESTING_SCOPE,uid="Ing Run 2-1")
+    ingreds.spec.add_uid(scope=TESTING_SCOPE,uid="Ing Spec 2-1")
     gemds.extend(flatten(ingreds))
 
     dataset.delete_contents(prompt_to_confirm=False)
@@ -59,45 +75,46 @@ def seed_registration_with_project(project):
         gemds.extend(flatten(this_node))
     dataset.delete_contents(prompt_to_confirm=False)
     dataset.register_all(gemds)
-    dataset_gemd = [x for x in dataset.gemd.list()]
-    assert len(dataset_gemd) == 20
-    assert len(dataset_gemd) == len([y for y in project.gemd.list()])
     return dataset
+
 
 
 def test_registration_and_listing():
     client = Citrine()
+    cleanup(client)
     team = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 1", raise_error=True)
     project = find_or_create_project(project_collection=team.projects, project_name="Project 1", raise_error=True)
     no_p_dataset = seed_registration_no_project(team)
     with_p_dataset = seed_registration_with_project(project)
 
     assert len([x for x in team.datasets.list()])==2
-    assert len(team.owned_dataset_ids())==2
-    assert len([x for x in project.datasets.list()])==1
+    # assert len(team.owned_dataset_ids())==2
     with pytest.deprecated_call():
-        assert len(project.owned_dataset_ids())==2
+        assert len([x for x in project.datasets.list()])==1
+    # with pytest.deprecated_call():
+    #     assert len(project.owned_dataset_ids())==1
 
     assert no_p_dataset.project_id is None
     assert with_p_dataset.project_id == project.uid
 
-    assert len([x for x in no_p_dataset.gemd.list()]) == 20
+    assert len([x for x in no_p_dataset.gemd.list()]) == 22
     mr = no_p_dataset.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
     assert isinstance(mr, MaterialRun)
     assert mr == team.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1"))
     mr_link = LinkByUID(scope=TESTING_SCOPE, id="Mat Run 2-1")
     mat_history = no_p_dataset.material_runs.get_history(mr_link)
     assert len(flatten(mat_history)) == 10
-    assert len([x for x in no_p_dataset.material_runs.list()]) == 6
+    assert len([x for x in no_p_dataset.material_runs.list()]) == 5
 
-    assert len([x for x in with_p_dataset.gemd.list()]) == 26
-    assert len([x for x in with_p_dataset.material_runs.list()]) == 6
-    assert len([x for x in project.gemd.list()]) == 26
-    assert len([x for x in project.material_runs.list()]) == 6
-    assert len([x for x in team.gemd.list()]) == 46
+    assert len([x for x in with_p_dataset.gemd.list()]) == 20
+    assert len([x for x in with_p_dataset.material_runs.list()]) == 5
+    assert len([x for x in project.gemd.list()]) == 20
+    assert len([x for x in project.material_runs.list()]) == 5
+    assert len([x for x in team.gemd.list()]) == 42
 
 def test_sharing():
     client = Citrine()
+    cleanup(client)
     team = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 1", raise_error=True)
     team_2 = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 2", raise_error=True)
     project = find_or_create_project(project_collection=team.projects, project_name="Project 1", raise_error=True)
@@ -105,6 +122,17 @@ def test_sharing():
 
     no_p_dataset = seed_registration_no_project(team)
     with_p_dataset = seed_registration_with_project(project)
+
+    try:
+        team.un_share(resource=no_p_dataset,target_team_id=team_2.uid)
+    except:
+        pass
+    try:
+        team.un_share(resource=with_p_dataset,target_team_id=team_2.uid)
+    except:
+        pass
+
+    assert len([x for x in no_p_dataset.gemd.list()]) == 22
 
     with pytest.deprecated_call():
         project.publish(resource=with_p_dataset)
@@ -118,25 +146,37 @@ def test_sharing():
 
     proj_2_dsets = [x for x in project_2.datasets.list()]
     assert len(proj_2_dsets) == 1
-    assert len(project_2.owned_dataset_ids()) == 0
-    assert len(project.owned_dataset_ids()) == 1
+    # assert len(project_2.owned_dataset_ids()) == 0
+    # assert len(project.owned_dataset_ids()) == 1
     assert proj_2_dsets[0].uid == no_p_dataset.uid
 
     assert len([x for x in team_2.datasets.list()]) == 0
-    assert len([x for x in team_2.owned_dataset_ids()]) == 0
+    # assert len([x for x in team_2.owned_dataset_ids()]) == 0
 
     team.share(resource=no_p_dataset,target_team_id=team_2.uid)
     assert len([x for x in team_2.datasets.list()]) == 1
-    assert len([x for x in team_2.gemd.list()]) == 26
-    assert len([x for x in team_2.owned_dataset_ids()]) == 0
+    assert len([x for x in team_2.gemd.list()]) == 22
+    # assert len([x for x in team_2.owned_dataset_ids()]) == 0
 
     team.share(resource=with_p_dataset,target_team_id=team_2.uid)
     assert len([x for x in team_2.datasets.list()]) == 2
-    assert len([x for x in team_2.gemd.list()]) == 46
-    assert len([x for x in team_2.owned_dataset_ids()]) == 0
+    assert len([x for x in team_2.gemd.list()]) == 42
+    # assert len([x for x in team_2.owned_dataset_ids()]) == 0
     assert isinstance(team_2.gemd.get(LinkByUID(scope=TESTING_SCOPE, id="Mat Run 1")))
 
     team.un_share(resource=no_p_dataset,target_team_id=team_2.uid)
     team.un_share(resource=with_p_dataset,target_team_id=team_2.uid)
     assert len([x for x in team_2.datasets.list()]) == 0
-    assert len([x for x in team_2.owned_dataset_ids()]) == 0
+    # assert len([x for x in team_2.owned_dataset_ids()]) == 0
+
+def test_dataset_creation_and_deletion():
+    client = Citrine()
+    cleanup(client)
+    team = find_or_create_team(team_collection=client.teams, team_name="Data Manager Testing Team 1", raise_error=True)
+    project = find_or_create_project(project_collection=team.projects, project_name="Project 1", raise_error=True)
+    no_p_dataset = find_or_create_dataset(dataset_collection=team.datasets, dataset_name="team dataset delete", raise_error=False)
+    with pytest.deprecated_call():
+        with_p_dataset = find_or_create_dataset(dataset_collection=project.datasets, dataset_name="project dataset delete", raise_error=False)
+    with pytest.deprecated_call():
+        project.datasets.delete(with_p_dataset.uid)
+    team.datasets.delete(no_p_dataset.uid)

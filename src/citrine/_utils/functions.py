@@ -326,9 +326,11 @@ def _data_manager_deprecation_checks(session, project_id: UUID, team_id: UUID, o
         raise TypeError("A team_id must be provided.")
     elif project_id is not None:
         warn(
-            f"{obj_type} now belong to Teams and not Projects.",
-            "Providing a project_id/accessing via a project is",
-            "deprecated and will be removed in future versions.",
+            f"{obj_type} now belong to Teams and not Projects. "
+            f"Providing a project_id/accessing {obj_type} via a project is "
+            "deprecated and will be removed in future versions. "
+            f"You should access {obj_type} from your Team or Dataset "
+            "(depending on your desired scope).",
             DeprecationWarning
         )
         if team_id is None:

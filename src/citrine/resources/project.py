@@ -320,7 +320,7 @@ class Project(Resource['Project']):
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
             warn(
-                "Datasets are no longer owned by Projects and therefore",
+                "Datasets are no longer owned by Projects and therefore "
                 "can no longer be published by a Project.",
                 DeprecationWarning
             )
@@ -348,7 +348,7 @@ class Project(Resource['Project']):
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
             warn(
-                "Datasets will no be longer owned by Projects and therefore",
+                "Datasets will no be longer owned by Projects and therefore "
                 "will no longer be un-published by a Project in future versions.",
                 DeprecationWarning
             )
@@ -376,7 +376,7 @@ class Project(Resource['Project']):
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
             warn(
-                "Datasets will no be longer owned by Projects and therefore",
+                "Datasets will no be longer owned by Projects and therefore "
                 "will no longer be pulled-in by a Project in future versions.",
                 DeprecationWarning
             )
@@ -397,8 +397,8 @@ class Project(Resource['Project']):
 
         """
         warn(
-            "Datasets will no be longer owned by Projects and therefore projects will no longer",
-            "have owned_dataset_ids in future versions.",
+            "Datasets will no be longer owned by Projects and therefore projects will no longer "
+            "have owned_dataset_ids in future versions. "
             "You can see what datasets are owned by your Team by using Team.owned_dataset_ids().",
             DeprecationWarning
         )
@@ -465,7 +465,7 @@ class Project(Resource['Project']):
 
         """
         warn(
-            "Datasets will no be longer owned by Projects and therefore projects will ",
+            "Datasets will no be longer owned by Projects and therefore projects will "
             "no longer be able to batch delete GEMD objects future versions.",
             DeprecationWarning
         )
