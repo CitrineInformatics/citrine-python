@@ -367,19 +367,36 @@ class PredictorCollection(Collection[GraphPredictor]):
         raise NotImplementedError("The restore() method is no longer supported. You most likely "
                                   "want restore_root(), or possibly restore_version().")
 
+    def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
+        filters = {}
+        if archived is not None:
+            filters["archived"] = archived
+
+        fetcher = partial(self._fetch_page,
+                          additional_params=filters,
+                          version="v4")
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page)
+
+    def list_all(self, *, per_page: int = 20) -> Iterable[GraphPredictor]:
+        """List the most recent version of all predictors."""
+        return self._list_base(per_page=per_page)
+
+    def list(self, *, per_page: int = 20) -> Iterable[GraphPredictor]:
+        """List the most recent version of all non-archived predictors."""
+        return self._list_base(per_page=per_page, archived=False)
+
+    def list_archived(self, *, per_page: int = 20) -> Iterable[GraphPredictor]:
+        """List the most recent version of all archived predictors."""
+        return self._list_base(per_page=per_page, archived=True)
+
     def list_versions(self,
                       uid: Union[UUID, str] = None,
                       *,
                       per_page: int = 100) -> Iterable[GraphPredictor]:
         """List all non-archived versions of the given Predictor."""
         return self._versions_collection.list(uid, per_page=per_page)
-
-    def list_archived(self, *, per_page: int = 20) -> Iterable[GraphPredictor]:
-        """List archived Predictors."""
-        fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
 
     def list_archived_versions(self,
                                uid: Union[UUID, str] = None,
