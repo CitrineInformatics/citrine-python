@@ -157,7 +157,9 @@ class Session(requests.Session):
         for k, v in kwargs.items():
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
-
+        print(f"Full URI is : {uri}")
+        print(f"Method is {method}")
+        print(f"KWARGS are: {kwargs}")
         response = self._request_with_retry(method, uri, **kwargs)
 
         try:

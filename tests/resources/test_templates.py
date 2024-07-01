@@ -49,7 +49,7 @@ def test_template_assignment():
 def test_automatic_async_update():
     """Update on an object that requires an asynchronous check smoothly transitions to async_update."""
     session = FakeSession()
-    collection = PropertyTemplateCollection(project_id=uuid4(), dataset_id=uuid4(), session=session)
+    collection = PropertyTemplateCollection(team_id=uuid4(), dataset_id=uuid4(), session=session)
     this_id = str(uuid4())
     template = PropertyTemplate("dummy template", bounds=RealBounds(0.0, 0.5, ''), uids={'id': this_id})
 
@@ -63,13 +63,13 @@ def test_automatic_async_update():
     assert new_template == template  # Check that resource is returned.
     # First call should be an attempt to POST the resource
     assert session.calls[0].method == "POST"
-    assert session.calls[0].path == f"projects/{collection.project_id}/datasets/{collection.dataset_id}/property-templates"
+    assert session.calls[0].path == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates"
     # Second call should be a PUT to the async route
     assert session.calls[1].method == "PUT"
-    assert session.calls[1].path == f"projects/{collection.project_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}/async"
+    assert session.calls[1].path == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}/async"
     # Last call should get the resource
     assert session.last_call.method == "GET"
-    assert session.last_call.path == f"projects/{collection.project_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}"
+    assert session.last_call.path == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}"
 
 
 def test_process_template_equals():

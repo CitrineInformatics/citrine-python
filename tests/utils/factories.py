@@ -140,6 +140,7 @@ class ProjectDataFactory(factory.DictFactory):
     description = factory.Faker('catch_phrase')
     status = 'CREATED'
     created_at = factory.Faker("unix_milliseconds")
+    team_id = factory.Faker('uuid4')
 
 
 class DataVersionUpdateFactory(factory.DictFactory):

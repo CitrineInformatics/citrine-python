@@ -1,8 +1,9 @@
 """Collection class for generic GEMD objects and templates."""
-from typing import Type, Union, List, Tuple, Iterable
+from typing import Type, Union, List, Tuple, Iterable, Optional
 from uuid import UUID, uuid4
 import re
 from tqdm.auto import tqdm
+from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -22,17 +23,39 @@ BATCH_SIZE = 50
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/storables'
-    _dataset_agnostic_path_template = 'projects/{project_id}/storables'
+    _collection_key = 'storables'
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
+    def __init__(
+        self,
+        *args,
+        dataset_id: UUID = None,
+        session: Session = None,
+        team_id: Optional[UUID] = None,
+        project_id: Optional[UUID] = None
+    ):
         DataConceptsCollection.__init__(self,
-                                        project_id=project_id,
+                                        *args,
+                                        team_id=team_id,
                                         dataset_id=dataset_id,
-                                        session=session)
-        self.project_id = project_id
+                                        session=session,
+                                        project_id=project_id)
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+        # Handle positional arguments for backward compatibility
+        if len(args) >= 1:
+            project_id = args[0]
+        if len(args) >= 2:
+            dataset_id = args[1]
+        if len(args) >= 3:
+            session = args[2]
+        self.team_id = team_id
         self.dataset_id = dataset_id
         self.session = session
+        self.project_id = project_id
 
     @classmethod
     def get_type(cls) -> Type[DataConcepts]:
@@ -41,7 +64,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def _collection_for(self, model):
         collection = DataConcepts.get_collection_type(model)
-        return collection(self.project_id, self.dataset_id, self.session)
+        return collection(team_id=self.team_id, dataset_id=self.dataset_id, session=self.session)
 
     def build(self, data: dict) -> DataConcepts:
         """
@@ -216,5 +239,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list, self.project_id, self.session, self.dataset_id,
-                                        timeout=timeout, polling_delay=polling_delay)
+        return _async_gemd_batch_delete(
+            id_list=id_list,
+            team_id=self.team_id,
+            session=self.session,
+            dataset_id=self.dataset_id,
+            timeout=timeout,
+            polling_delay=polling_delay
+        )

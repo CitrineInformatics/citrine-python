@@ -319,3 +319,22 @@ def resource_path(*,
     new_url = base._replace(path='/'.join(path), query=query).geturl()
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)
+
+
+def _data_manager_deprecation_checks(session, project_id: UUID, team_id: UUID, obj_type: str):
+    if project_id is None and team_id is None:
+        raise TypeError("A team_id must be provided.")
+    elif project_id is not None:
+        warn(
+            f"{obj_type} now belong to Teams and not Projects. "
+            f"Providing a project_id/accessing {obj_type} via a project is "
+            "deprecated and will be removed in future versions. "
+            f"You should access {obj_type} from your Team or Dataset "
+            "(depending on your desired scope).",
+            DeprecationWarning
+        )
+        if team_id is None:
+            # avoiding a circular import
+            from citrine.resources.project import Project
+            team_id = Project.get_team_id_from_project_id(session=session, project_id=project_id)
+    return team_id

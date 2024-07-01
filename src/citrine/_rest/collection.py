@@ -42,6 +42,7 @@ class Collection(Generic[ResourceType], Pageable):
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
         base = self._dataset_agnostic_path_template if ignore_dataset else self._path_template
+        print(f"Base path is: {base}")
         return resource_path(path_template=base, uid=uid, action=action, query_terms=query_terms,
                              **self.__dict__)
 

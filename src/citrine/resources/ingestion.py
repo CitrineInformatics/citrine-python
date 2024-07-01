@@ -1,5 +1,6 @@
 from typing import Optional, Iterator, Iterable
 from uuid import UUID
+from warnings import warn
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -7,6 +8,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import _data_manager_deprecation_checks
 from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
@@ -186,7 +188,8 @@ class Ingestion(Resource['Ingestion']):
 
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
-    project_id = properties.UUID('project_id')
+    team_id = properties.Optional(properties.UUID, 'team_id', default=None)
+    project_id = properties.Optional(properties.UUID, 'project_id', default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
@@ -268,7 +271,7 @@ class Ingestion(Resource['Ingestion']):
             The object for the submitted job
 
         """
-        collection = IngestionCollection(project_id=self.project_id,
+        collection = IngestionCollection(team_id=self.team_id,
                                          dataset_id=self.dataset_id,
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="gemd-objects-async")
@@ -322,7 +325,7 @@ class Ingestion(Resource['Ingestion']):
 
         _poll_for_job_completion(
             session=self.session,
-            project_id=self.project_id,
+            team_id=self.team_id,
             job=job,
             raise_errors=False,  # JobFailureError doesn't contain the error
             **kwargs
@@ -339,7 +342,7 @@ class Ingestion(Resource['Ingestion']):
             The result of the ingestion attempt
 
         """
-        collection = IngestionCollection(project_id=self.project_id,
+        collection = IngestionCollection(team_id=self.team_id,
                                          dataset_id=self.dataset_id,
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="status")
@@ -415,22 +418,59 @@ class IngestionCollection(Collection[Ingestion]):
 
     Parameters
     ----------
-    project_id: UUID
-        Unique ID of the project this dataset collection belongs to.
+    team_id: UUID
+        Unique ID of the team this dataset collection belongs to.
     session: Session
         The Citrine session used to connect to the database.
 
     """
 
-    _path_template = 'projects/{project_id}/ingestions'
     _individual_key = None
     _collection_key = None
     _resource = Ingestion
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        self.project_id = project_id
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        team_id: Optional[UUID] = None,
+        dataset_id: UUID = None,
+        project_id: Optional[UUID] = None
+    ):
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+        # Handle positional arguments for backward compatibility
+        if len(args) >= 1:
+            project_id = args[0]
+        if len(args) >= 2:
+            dataset_id = args[1]
+        if len(args) >= 3:
+            session = args[2]
         self.dataset_id = dataset_id
         self.session = session
+        self.project_id = project_id
+        if session is None:
+            raise TypeError("A session must be provided.")
+        if dataset_id is None:
+            raise TypeError("A dataset_id must be provided.")
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id, obj_type="Ingestions"
+        )
+
+    # After the Data Manager deprecation,
+    # this can be a Class Variable using the `teams/...` endpoint
+    @property
+    def _path_template(self):
+        if self.project_id is None:
+            return f'teams/{self.team_id}/ingestions'
+        else:
+            return f'projects/{self.project_id}/ingestions'
 
     def build_from_file_links(self,
                               file_links: Iterable[FileLink],
@@ -456,7 +496,7 @@ class IngestionCollection(Collection[Ingestion]):
 
         req = {
             "dataset_id": str(self.dataset_id),
-            "project_id": str(self.project_id),
+            "team_id": str(self.team_id),
             "files": [
                 {"dataset_file_id": str(f.uid), "file_version_uuid": str(f.version)}
                 for f in file_links

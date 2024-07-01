@@ -3,6 +3,7 @@ from abc import abstractmethod, ABC
 import re
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
+from warnings import warn
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
 from gemd.entity.base_entity import BaseEntity
@@ -19,7 +20,7 @@ from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links, \
-    format_escaped_url
+    format_escaped_url, _data_manager_deprecation_checks
 from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
@@ -202,11 +203,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     Parameters
     ----------
-    project_id: UUID
-        The uid of the project that this collection belongs to.
+    team_id: UUID
+        The uid of the team that this collection belongs to.
     dataset_id: UUID
         The uid of the dataset that this collection belongs to. If None then the collection
-        ranges over all datasets in the project. Note that this is only allowed for certain
+        ranges over all datasets in the team. Note that this is only allowed for certain
         actions. For example, you can use :func:`list_by_tag` to search over all datasets,
         but when using :func:`register` to upload or update an object, a dataset must be specified.
     session: Session
@@ -214,15 +215,54 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        self.project_id = project_id
+    def __init__(self,
+                 *args,
+                 dataset_id: UUID = None,
+                 session: Session = None,
+                 team_id: Optional[UUID] = None,
+                 project_id: Optional[UUID] = None):
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+            # Handle positional arguments for backward compatibility
+            if len(args) >= 1:
+                project_id = args[0]
+            if len(args) >= 2:
+                dataset_id = args[1]
+            if len(args) >= 3:
+                session = args[2]
         self.dataset_id = dataset_id
         self.session = session
+        self.project_id = project_id
+        if session is None:
+            raise TypeError("A session must be provided.")
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id,
+            obj_type="GEMD Objects"
+        )
 
     @classmethod
     @abstractmethod
     def get_type(cls) -> Type[Serializable]:
         """Return the resource type in the collection."""
+
+    @property
+    def _path_template(self):
+        collection_key = self._collection_key.replace("_", "-")
+        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{collection_key}'
+
+    # After Data Manager deprecation, both can use the `teams/...` path.
+    @property
+    def _dataset_agnostic_path_template(self):
+        if self.project_id is None:
+            return f'teams/{self.team_id}/{self._collection_key.replace("_","-")}'
+        else:
+            return f'projects/{self.project_id}/{self._collection_key.replace("_","-")}'
 
     def build(self, data: dict) -> ResourceType:
         """
@@ -390,7 +430,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         from citrine.resources.gemd_resource import GEMDResourceCollection
-        gemd_collection = GEMDResourceCollection(self.project_id, self.dataset_id, self.session)
+        gemd_collection = GEMDResourceCollection(team_id=self.team_id,
+                                                 dataset_id=self.dataset_id,
+                                                 session=self.session)
         return gemd_collection.register_all(
             models,
             dry_run=dry_run,
@@ -482,7 +524,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         job_id = response_json["job_id"]
 
         if wait_for_response:
-            self.poll_async_update_job(job_id, timeout=timeout,
+            self.poll_async_update_job(job_id=job_id, timeout=timeout,
                                        polling_delay=polling_delay)
 
             # That worked, return nothing or return the object
@@ -525,8 +567,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        _poll_for_job_completion(self.session, self.project_id, job_id, timeout=timeout,
-                                 polling_delay=polling_delay)
+        _poll_for_job_completion(
+            session=self.session,
+            team_id=self.team_id,
+            project_id=self.project_id,
+            job=job_id, timeout=timeout,
+            polling_delay=polling_delay)
 
         # That worked, nothing returned in this case
         return None
@@ -675,8 +721,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         link = _make_link_by_uid(uid)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            format_escaped_url('projects/{}/{}/{}/{}/{}',
-                               self.project_id,
+            format_escaped_url('teams/{}/{}/{}/{}/{}',
+                               self.team_id,
                                relation,
                                link.scope,
                                link.id,

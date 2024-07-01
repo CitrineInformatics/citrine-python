@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
 from uuid import UUID
+from warnings import warn
 
 import requests
 from boto3 import client as boto3_client
@@ -17,7 +18,7 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally
-from citrine._utils.functions import write_file_locally
+from citrine._utils.functions import write_file_locally, _data_manager_deprecation_checks
 
 from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializableMeta
@@ -192,14 +193,44 @@ class FileLink(
 class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
+    _path_template = 'teams/{team_id}/datasets/{dataset_id}/files'
     _collection_key = 'files'
     _resource = FileLink
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        dataset_id: UUID = None,
+        team_id: Optional[UUID] = None,
+        project_id: Optional[UUID] = None
+    ):
+        if len(args) > 0:
+            warn(
+                "Positional arguments are deprecated and will be removed in a future version. "
+                "Please use keyword arguments instead.",
+                DeprecationWarning
+            )
+            # Handle positional arguments for backward compatibility
+            if len(args) >= 1:
+                project_id = args[0]
+            if len(args) >= 2:
+                dataset_id = args[1]
+            if len(args) >= 3:
+                session = args[2]
+        self.session = session
         self.project_id = project_id
         self.dataset_id = dataset_id
-        self.session = session
+        if session is None:
+            raise TypeError("A session must be provided.")
+        if dataset_id is None:
+            raise TypeError("A dataset_id must be provided.")
+        self.team_id = _data_manager_deprecation_checks(
+            session=session,
+            project_id=project_id,
+            team_id=team_id,
+            obj_type="File Links"
+        )
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
@@ -733,7 +764,7 @@ class FileCollection(Collection[FileLink]):
             raise ValueError(f"All files must be on-platform to load them.  "
                              f"The following are not: {offplatform}")
 
-        ingestion_collection = IngestionCollection(project_id=self.project_id,
+        ingestion_collection = IngestionCollection(team_id=self.team_id,
                                                    dataset_id=self.dataset_id,
                                                    session=self.session)
         ingestion = ingestion_collection.build_from_file_links(

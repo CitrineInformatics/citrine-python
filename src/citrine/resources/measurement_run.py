@@ -103,8 +103,6 @@ class MeasurementRun(
 class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     """Represents the collection of all measurement runs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/measurement-runs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/measurement-runs'
     _individual_key = 'measurement_run'
     _collection_key = 'measurement_runs'
     _resource = MeasurementRun

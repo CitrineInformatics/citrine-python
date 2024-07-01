@@ -15,9 +15,11 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> IngredientRunCollection:
     return IngredientRunCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-        session=session)
+        session=session,
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+    )
 
 
 def test_list_by_spec(collection: IngredientRunCollection):

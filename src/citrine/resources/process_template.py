@@ -115,8 +115,6 @@ class ProcessTemplate(
 class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     """A collection of process templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/process-templates'
-    _dataset_agnostic_path_template = 'projects/{project_id}/process-templates'
     _individual_key = 'process_template'
     _collection_key = 'process_templates'
     _resource = ProcessTemplate
