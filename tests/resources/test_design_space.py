@@ -263,7 +263,45 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
 
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/design-spaces'.format(collection.project_id),
-            params={'per_page': 20, 'page': 1})
+            params={'per_page': 20, 'page': 1, 'archived': False})
+    assert 1 == session.num_calls, session.calls
+    assert expected_call == session.calls[0]
+    assert len(design_spaces) == 2
+
+
+def test_list_all_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+    # Given
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
+    session.set_response({
+        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+    })
+
+    # When
+    design_spaces = list(collection.list_all(per_page=25))
+
+    # Then
+    expected_call = FakeCall(method='GET', path='/projects/{}/design-spaces'.format(collection.project_id),
+            params={'per_page': 25, 'page': 1})
+    assert 1 == session.num_calls, session.calls
+    assert expected_call == session.calls[0]
+    assert len(design_spaces) == 2
+
+
+def test_list_archived_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+    # Given
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
+    session.set_response({
+        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+    })
+
+    # When
+    design_spaces = list(collection.list_archived(per_page=25))
+
+    # Then
+    expected_call = FakeCall(method='GET', path='/projects/{}/design-spaces'.format(collection.project_id),
+            params={'per_page': 25, 'page': 1, 'archived': True})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(design_spaces) == 2

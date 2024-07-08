@@ -110,10 +110,10 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         The structure exclusions used to limit molecule mutations.
         If None, no structure exclusions will be used.
     min_substructure_counts: Dict[str, int]
-        Dictionary for constraining which substructures (represented by SMILES strings)
-        must appear in each mutated molecule, along with integer values representing the
-        minimum number of times each substructure must appear in a molecule to be
-        considered a valid mutation.
+        Dictionary for constraining which substructures (represented by SMARTS strings,
+        not SMILES) must appear in each mutated molecule, along with integer values
+        representing the minimum number of times each substructure must appear in a
+        molecule to be considered a valid mutation.
 
     """
 

@@ -278,28 +278,68 @@ def test_train(valid_graph_predictor_data):
     assert session.calls == expected_calls
 
 
-def test_list_predictors(valid_graph_predictor_data, valid_graph_predictor_data_empty):
+def test_list(valid_graph_predictor_data, valid_graph_predictor_data_empty):
     # Given
     session = FakeSession()
     collection = PredictorCollection(uuid.uuid4(), session)
     session.set_responses(
         {
             'response': [valid_graph_predictor_data, valid_graph_predictor_data_empty],
-            'next': ''
+            'page': 1,
+            'per_page': 25
         },
         basic_predictor_report_data,
         basic_predictor_report_data
     )
 
     # When
-    predictors = list(collection.list(per_page=20))
+    predictors = list(collection.list(per_page=25))
 
     # Then
-    expected_call = FakeCall(method='GET', path='/projects/{}/predictors'.format(collection.project_id),
-                                   params={'per_page': 20, 'page': 1})
+    expected_call = FakeCall(method='GET',
+                             path='/projects/{}/predictors'.format(collection.project_id),
+                             params={'per_page': 25, 'page': 1, 'archived': False})
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
+
+
+def test_list_all(valid_graph_predictor_data, valid_graph_predictor_data_empty):
+    # Given
+    session = FakeSession()
+    collection = PredictorCollection(uuid.uuid4(), session)
+    session.set_responses(
+        {'response': [valid_graph_predictor_data, valid_graph_predictor_data_empty]},
+        basic_predictor_report_data,
+        basic_predictor_report_data
+    )
+
+    # When
+    predictors = list(collection.list_all(per_page=25))
+
+    # Then
+    expected_call = FakeCall(method='GET',
+                             path='/projects/{}/predictors'.format(collection.project_id),
+                             params={'per_page': 25, 'page': 1})
+    assert 1 == session.num_calls, session.calls
+    assert expected_call == session.calls[0]
+    assert len(predictors) == 2
+
+
+def test_list_archived(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+    session.set_response({'response': [valid_graph_predictor_data]})
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    list(pc.list_archived())
+
+    # Then
+    assert session.num_calls == 1
+    assert session.last_call == FakeCall(method='GET',
+                                         path=f"/projects/{pc.project_id}/predictors",
+                                         params={'per_page': 20, 'page': 1, 'archived': True})
 
 
 def test_get(valid_graph_predictor_data):
@@ -443,20 +483,6 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 5
     assert isinstance(result.predictors[0], SimpleMixturePredictor)
     assert isinstance(result.predictors[-1], AutoMLPredictor)
-
-
-def test_predictor_list_archived(valid_graph_predictor_data):
-    # Given
-    session = FakeSession()
-    session.set_response({'response': [valid_graph_predictor_data]})
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    # When
-    list(pc.list_archived())
-
-    # Then
-    assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=f"/projects/{pc.project_id}/predictors", params={"filter": "archived eq 'true'", 'per_page': 20, 'page': 1})
 
 
 def test_list_versions(valid_graph_predictor_data):

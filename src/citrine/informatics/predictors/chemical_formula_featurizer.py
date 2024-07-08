@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
+from citrine.informatics.descriptors import ChemicalFormulaDescriptor
 from citrine.informatics.predictors import PredictorNode
 
 __all__ = ['ChemicalFormulaFeaturizer']
@@ -130,7 +130,7 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
 
     """
 
-    input_descriptor = properties.Object(Descriptor, 'input')
+    input_descriptor = properties.Object(ChemicalFormulaDescriptor, 'input')
     features = properties.List(properties.String, 'features')
     excludes = properties.List(properties.String, 'excludes', default=[])
     powers = properties.List(properties.Integer, 'powers')

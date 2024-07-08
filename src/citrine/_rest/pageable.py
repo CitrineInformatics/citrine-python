@@ -25,6 +25,8 @@ class Pageable():
                     per_page: Optional[int] = None,
                     json_body: Optional[dict] = None,
                     additional_params: Optional[dict] = None,
+                    *,
+                    version: Optional[str] = None
                     ) -> Tuple[Iterable[dict], str]:
         """
         Fetch visible elements.  This does not handle pagination.
@@ -58,6 +60,9 @@ class Pageable():
             }
         additional_params: dict, optional
             A dict that allows extra parameters to be added to the request parameters
+        version: str, optional
+            A string denoting which version of the underlying API endpoint will be called. Defaults
+            to the collection's API version.
 
         Returns
         -------
@@ -68,15 +73,16 @@ class Pageable():
 
         """
         # To avoid setting defaults -> reduce mutation risk, and to make more extensible
-        path = self._get_path() if path is None else path
-        fetch_func = self.session.get_resource if fetch_func is None else fetch_func
-        json_body = {} if json_body is None else json_body
+        path = path or self._get_path()
+        fetch_func = fetch_func or self.session.get_resource
+        json_body = json_body or {}
 
-        module_type = getattr(self, '_module_type', None)
-        params = self._page_params(page, per_page, module_type)
+        params = self._page_params(page, per_page)
         params.update(additional_params or {})
 
-        data = fetch_func(path, params=params, version=self._api_version, **json_body)
+        version = version or self._api_version
+
+        data = fetch_func(path, params=params, version=version, **json_body)
 
         try:
             next_uri = data.get('next', "")

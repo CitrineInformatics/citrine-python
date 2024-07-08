@@ -1,5 +1,6 @@
 """Resources that represent collections of design spaces."""
-from typing import Optional, TypeVar, Union
+from functools import partial
+from typing import Iterable, Optional, TypeVar, Union
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -126,6 +127,30 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         url = self._get_path(uid, action="restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
+
+    def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
+        filters = {}
+        if archived is not None:
+            filters["archived"] = archived
+
+        fetcher = partial(self._fetch_page,
+                          fetch_func=partial(self.session.get_resource, version="v4"),
+                          additional_params=filters)
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page)
+
+    def list_all(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+        """List the most recent version of all design spaces."""
+        return self._list_base(per_page=per_page)
+
+    def list(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+        """List the most recent version of all non-archived design spaces."""
+        return self._list_base(per_page=per_page, archived=False)
+
+    def list_archived(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+        """List the most recent version of all archived predictors."""
+        return self._list_base(per_page=per_page, archived=True)
 
     def create_default(self,
                        *,
