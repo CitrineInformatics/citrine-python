@@ -130,7 +130,7 @@ def test_get_history(collection, session):
     expected_call = FakeCall(
         method='POST',
         path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
-        params={
+        json={
             'criteria': [
                 {'datasets': str(collection.dataset_id),
                  'type': 'terminal_material_run_identifiers_criteria',
