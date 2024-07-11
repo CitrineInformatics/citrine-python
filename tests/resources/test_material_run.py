@@ -128,7 +128,7 @@ def test_get_history(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='GET',
+        method='POST',
         path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
         params={
             'criteria': [

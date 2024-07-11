@@ -144,7 +144,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
                 }
             ]
         }
-        data = self.session.get_resource(path, params=query)
+        data = self.session.post_resource(path, params=query)
 
         return MaterialRun.build(data)
 
