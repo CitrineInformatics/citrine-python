@@ -26,6 +26,26 @@ def collection(session) -> GemTableCollection:
     )
 
 
+def test_deprecated_create_collection(session):
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        )
+
+
 @pytest.fixture
 def table():
     def _table(download_url: str) -> GemTable:

@@ -139,8 +139,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             ]
         }
         data = self.session.post_resource(path, json=query)
-
-        return MaterialRun.build(data)
+        if data and data[0]["roots"]:
+            # Since the above query presents a single dataset to the endpoint, the response will be
+            # a list of length one, with a single route.
+            history_data = data[0]
+            history_data["roots"] = history_data["roots"][0]
+            return MaterialRun.build(history_data)
+        else:
+            return None
 
     def get_by_process(self,
                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]

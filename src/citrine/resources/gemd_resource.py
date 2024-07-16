@@ -31,7 +31,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         *args,
         dataset_id: UUID = None,
         session: Session = None,
-        team_id: Optional[UUID] = None,
+        team_id: UUID = None,
         project_id: Optional[UUID] = None
     ):
         super().__init__(*args,

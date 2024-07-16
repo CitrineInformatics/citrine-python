@@ -11,7 +11,7 @@ from citrine.resources.ingestion import Ingestion, IngestionCollection, Ingestio
 from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError, _poll_for_job_completion
 
 from tests.utils.factories import DatasetFactory
-from tests.utils.session import FakeSession, FakeRequestResponseApiError
+from tests.utils.session import FakeCall, FakeSession, FakeRequestResponseApiError
 
 
 @pytest.fixture
@@ -32,7 +32,6 @@ def dataset(session: Session):
 @pytest.fixture
 def deprecated_dataset(session: Session):
     dataset = DatasetFactory(name='Test Dataset')
-    dataset.team_id = uuid4()
     dataset.uid = uuid4()
     dataset.session = session
     dataset.project_id = uuid4()
@@ -76,10 +75,13 @@ def status() -> IngestionStatus:
     })
 
 
-def test_create_deprecated_collection(deprecated_dataset):
+def test_create_deprecated_collection(session, deprecated_dataset):
+    check_project = {'project': {'team': {'id': str(uuid4())}}}
+    session.set_response(check_project)
     with pytest.deprecated_call():
         ingestions = deprecated_dataset.ingestions
 
+    assert session.calls == [FakeCall(method="GET", path=f'projects/{ingestions.project_id}')]
     assert ingestions._path_template == f'projects/{ingestions.project_id}/ingestions'
 
 

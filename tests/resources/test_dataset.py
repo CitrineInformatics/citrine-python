@@ -424,7 +424,7 @@ def test_register_all_iterable(dataset):
 
 def test_batch_delete_malformed(session):
     with pytest.raises(TypeError):
-        _async_gemd_batch_delete(id_list=[uuid4()], session=session, team_id=None, project_id=None, dataset_id=None)
+        _async_gemd_batch_delete(id_list=[uuid4()], session=session, team_id=None, dataset_id=None)
 
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""

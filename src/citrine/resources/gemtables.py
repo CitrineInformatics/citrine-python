@@ -96,11 +96,21 @@ class GemTableCollection(Collection[GemTable]):
     _paginator: Paginator = GemTableVersionPaginator()
     _resource = GemTable
 
-    def __init__(self, *args, team_id: UUID, project_id: UUID = None, session: Session = None):
+    def __init__(self,
+                 *args,
+                 team_id: UUID = None,
+                 project_id: UUID = None,
+                 session: Session = None):
         args = _pad_positional_args(args, 2)
         self.project_id = project_id or args[0]
         self.session: Session = session or args[1]
         self.team_id = team_id
+        if self.project_id is None:
+            raise TypeError("Missing one required argument: project_id.")
+        if self.team_id is None:
+            raise TypeError("Missing one required argument: team_id.")
+        if self.session is None:
+            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
@@ -246,10 +256,9 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        # TODO: Should this use the project or team version?
         status = _poll_for_job_completion(
             session=self.session,
-            project_id=self.project_id,
+            team_id=self.team_id,
             job=job,
             timeout=timeout)
 

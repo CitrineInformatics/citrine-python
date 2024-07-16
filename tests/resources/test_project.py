@@ -7,6 +7,7 @@ from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.exceptions import NotFound, ModuleRegistrationFailedException
+from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.gemtables import GemTableCollection
@@ -65,11 +66,28 @@ def test_get_team_id_from_project(session):
     p = Project(name='Test Project', session=session)
     assert p.team_id == team_id
 
+
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
 
-def test_publish_resource(project, datasets, session):
+def test_publish_resource(project, session):
+    predictor = GraphPredictor(name="foo", description="foo", predictors=[])
+    predictor.uid = uuid.uuid4()
+    assert project.publish(resource=predictor)
+
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'/projects/{project.uid}/published-resources/MODULE/batch-publish',
+        json={
+            'ids': [str(predictor.uid)]
+        }
+    )
+    assert expected_call == session.last_call
+
+
+def test_publish_resource_deprecated(project, datasets, session):
     dataset_id = str(uuid.uuid4())
     dataset = datasets.build(dict(
         id=dataset_id,
@@ -78,13 +96,7 @@ def test_publish_resource(project, datasets, session):
     with pytest.deprecated_call():
         assert project.publish(resource=dataset)
 
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/published-resources/{}/batch-publish'.format(project.uid, 'DATASET'),
-        json={'ids': [dataset_id]}
-    )
-    assert expected_call == session.last_call
+    assert 0 == session.num_calls
 
 
 def test_pull_in_resource(project, datasets, session):

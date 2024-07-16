@@ -218,7 +218,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                  *args,
                  session: Session = None,
                  dataset_id: Optional[UUID] = None,
-                 team_id: Optional[UUID] = None,
+                 team_id: UUID = None,
                  project_id: Optional[UUID] = None):
         # Handle positional arguments for backward compatibility
         args = _pad_positional_args(args, 3)
@@ -559,7 +559,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         _poll_for_job_completion(
             session=self.session,
             team_id=self.team_id,
-            project_id=self.project_id,
             job=job_id, timeout=timeout,
             polling_delay=polling_delay)
 

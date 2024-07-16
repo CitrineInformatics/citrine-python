@@ -426,7 +426,7 @@ class DatasetCollection(Collection[Dataset]):
     def __init__(self,
                  *args,
                  session: Session = None,
-                 team_id: Optional[UUID] = None,
+                 team_id: UUID = None,
                  project_id: Optional[UUID] = None):
         # Handle positional arguments for backward compatibility
         args = _pad_positional_args(args, 2)

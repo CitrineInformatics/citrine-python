@@ -118,7 +118,7 @@ class Project(Resource['Project']):
     def get_team_id_from_project_id(cls, session: Session, project_id: UUID):
         """Returns the UUID of the Team that owns the project with the provided project_id."""
         return session.get_resource(
-            path='projects/{}'.format(project_id),
+            path=f'projects/{project_id}',
             version="v3")['project']['team']['id']
 
     @property
@@ -354,11 +354,13 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets are no longer owned by Projects, so cannot be published by a Project.",
+            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
+                 "publishing is no longer necessary.",
                  DeprecationWarning)
-        self.session.checked_post(
-            f"{self._path()}/published-resources/{resource_type}/batch-publish",
-            version='v3', json={'ids': [resource_access["id"]]})
+        else:
+            self.session.checked_post(
+                f"{self._path()}/published-resources/{resource_type}/batch-publish",
+                version='v3', json={'ids': [resource_access["id"]]})
         return True
 
     def un_publish(self, *, resource: Resource):
@@ -449,6 +451,8 @@ class Project(Resource['Project']):
         parent_team = team_collection.get(self.team_id)
         return parent_team.list_members()
 
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'TeamCollection.gemd_batch_delete' instead.'")
     def gemd_batch_delete(
             self,
             id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
@@ -489,10 +493,8 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        warn("Datasets are no longer owned by Projects, so object can't be deleted via a Project.",
-             DeprecationWarning)
         return _async_gemd_batch_delete(id_list=id_list,
-                                        project_id=self.uid,
+                                        team_id=self.team_id,
                                         session=self.session,
                                         dataset_id=None,
                                         timeout=timeout,

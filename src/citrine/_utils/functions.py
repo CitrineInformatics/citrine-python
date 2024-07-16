@@ -322,16 +322,16 @@ def resource_path(*,
 
 
 def _data_manager_deprecation_checks(session, project_id: UUID, team_id: UUID, obj_type: str):
-    if project_id is None and team_id is None:
-        raise TypeError("Missing one required argument: team_id.")
-    elif project_id is not None:
-        warn(f"{obj_type} now belong to Teams. Access through projects has been deprecated since "
-             "3.4.0, and will be removed in 4.0. Please go through your Team or Dataset.",
+    if team_id is None:
+        if project_id is None:
+            raise TypeError("Missing one required argument: team_id.")
+
+        warn(f"{obj_type} now belong to Teams, so the project_id parameter was deprecated in "
+             "3.4.0, and will be removed in 4.0. Please provide the team_id instead.",
              DeprecationWarning)
-        if team_id is None:
-            # avoiding a circular import
-            from citrine.resources.project import Project
-            team_id = Project.get_team_id_from_project_id(session=session, project_id=project_id)
+        # avoiding a circular import
+        from citrine.resources.project import Project
+        team_id = Project.get_team_id_from_project_id(session=session, project_id=project_id)
     return team_id
 
 

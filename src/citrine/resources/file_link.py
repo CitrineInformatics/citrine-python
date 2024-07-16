@@ -201,7 +201,7 @@ class FileCollection(Collection[FileLink]):
         *args,
         session: Session = None,
         dataset_id: UUID = None,
-        team_id: Optional[UUID] = None,
+        team_id: UUID = None,
         project_id: Optional[UUID] = None
     ):
         args = _pad_positional_args(args, 3)

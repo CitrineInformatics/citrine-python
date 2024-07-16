@@ -432,7 +432,7 @@ class IngestionCollection(Collection[Ingestion]):
         self,
         *args,
         session: Session = None,
-        team_id: Optional[UUID] = None,
+        team_id: UUID = None,
         dataset_id: UUID = None,
         project_id: Optional[UUID] = None
     ):

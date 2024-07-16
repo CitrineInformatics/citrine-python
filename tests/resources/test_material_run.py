@@ -108,15 +108,15 @@ def test_nomutate_gemd(collection, session):
 
 
 def test_get_history(collection, session):
-
     # Given
     cake = make_cake()
     cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
     root_link = LinkByUID.build(cake_json.pop('object'))
-    cake_json['root'] = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
-    cake_json['context'].remove(cake_json['root'])
+    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
+    cake_json['roots'] = [root_obj]
+    cake_json['context'].remove(root_obj)
 
-    session.set_response(cake_json)
+    session.set_response([cake_json])
 
     # When
     run = collection.get_history(id=root_link)
@@ -138,6 +138,67 @@ def test_get_history(collection, session):
     )
     assert expected_call == session.last_call
     assert run == cake
+
+
+def test_get_history_no_histories(collection, session):
+    # Given
+    root_id = UUID("b1037885-d46e-49aa-867f-2a2372b6dc63")
+
+    session.set_response([])
+
+    # When
+    run = collection.get_history(id=root_id)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        json={
+            'criteria': [
+                {
+                    'datasets': [str(collection.dataset_id)],
+                    'type': 'terminal_material_run_identifiers_criteria',
+                    'terminal_material_ids': [{'scope': CITRINE_SCOPE, 'id': str(root_id)}]
+                }
+            ]
+        }
+    )
+    assert expected_call == session.last_call
+    assert run is None
+
+
+def test_get_history_no_roots(collection, session):
+    # Given
+    cake = make_cake()
+    cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
+    root_link = LinkByUID.build(cake_json.pop('object'))
+    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
+    cake_json['roots'] = []
+    cake_json['context'].remove(root_obj)
+
+    session.set_response([cake_json])
+
+    # When
+    run = collection.get_history(id=root_link)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        json={
+            'criteria': [
+                {
+                    'datasets': [str(collection.dataset_id)],
+                    'type': 'terminal_material_run_identifiers_criteria',
+                    'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                }
+            ]
+        }
+    )
+    assert expected_call == session.last_call
+    assert run is None
 
 
 def test_get_material_run(collection, session):
