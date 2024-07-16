@@ -100,6 +100,22 @@ def test_publish_resource_deprecated(project, datasets, session):
 
 
 def test_pull_in_resource(project, datasets, session):
+    predictor = GraphPredictor(name="foo", description="foo", predictors=[])
+    predictor.uid = uuid.uuid4()
+    assert project.pull_in_resource(resource=predictor)
+
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'/teams/{project.team_id}/projects/{project.uid}/outside-resources/MODULE/batch-pull-in',
+        json={
+            'ids': [str(predictor.uid)]
+        }
+    )
+    assert expected_call == session.last_call
+
+
+def test_pull_in_resource_deprecated(project, datasets, session):
     dataset_id = str(uuid.uuid4())
     dataset = datasets.build(dict(
         id=dataset_id,
@@ -108,18 +124,26 @@ def test_pull_in_resource(project, datasets, session):
     with pytest.deprecated_call():
         assert project.pull_in_resource(resource=dataset)
 
+    assert 0 == session.num_calls
+
+
+def test_un_publish_resource(project, datasets, session):
+    predictor = GraphPredictor(name="foo", description="foo", predictors=[])
+    predictor.uid = uuid.uuid4()
+    assert project.un_publish(resource=predictor)
+
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
-        path=f'/teams/{project.team_id}/projects/{project.uid}/outside-resources/DATASET/batch-pull-in',
+        path=f'/projects/{project.uid}/published-resources/MODULE/batch-un-publish',
         json={
-            'ids': [dataset_id]
+            'ids': [str(predictor.uid)]
         }
     )
     assert expected_call == session.last_call
 
 
-def test_un_publish_resource(project, datasets, session):
+def test_un_publish_resource_deprecated(project, datasets, session):
     dataset_id = str(uuid.uuid4())
     dataset = datasets.build(dict(
         id=dataset_id,
@@ -128,15 +152,7 @@ def test_un_publish_resource(project, datasets, session):
     with pytest.deprecated_call():
         assert project.un_publish(resource=dataset)
 
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path='/projects/{}/published-resources/{}/batch-un-publish'.format(project.uid, 'DATASET'),
-        json={
-            'ids': [dataset_id]
-        }
-    )
-    assert expected_call == session.last_call
+    assert 0 == session.num_calls
 
 
 def test_datasets_get_project_id(project):

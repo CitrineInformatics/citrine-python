@@ -1,11 +1,15 @@
+import json
 import uuid
 from uuid import UUID
 
 import pytest
 from dateutil.parser import parse
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.resource import ResourceTypeEnum
+from citrine.resources.api_error import ApiError
 from citrine.resources.dataset import Dataset, DatasetCollection
+from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, TeamMember
 from citrine.resources.user import User
 from tests.utils.factories import UserDataFactory, TeamDataFactory, DatasetDataFactory
@@ -453,3 +457,105 @@ def test_ingredient_specs_get_team_id(team):
 
 def test_gemd_resource_get_team_id(team):
     assert team.uid == team.gemd.team_id
+
+
+def test_team_batch_delete_no_errors(team, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    # Actual response-like data - note there is no 'failures' array within 'output'
+    successful_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [
+            {
+                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
+                "status": "Success", "dependencies": []
+             }
+            ],
+        'output': {}
+    }
+
+    session.set_responses(job_resp, successful_job_resp)
+
+    # When
+    del_resp = team.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert len(del_resp) == 0
+
+    # When trying with entities
+    session.set_responses(job_resp, successful_job_resp)
+    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
+    del_resp = team.gemd_batch_delete([entity])
+
+    # Then
+    assert len(del_resp) == 0
+
+
+def test_team_batch_delete(team, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    failures_escaped_json = json.dumps([
+        {
+            "id": {
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ])
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            'failures': failures_escaped_json
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
+
+    # When
+    del_resp = team.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 2 == session.num_calls
+
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    expected_api_error = ApiError.build({
+        "code": "400",
+        "message": "",
+        "validation_errors": [{"failure_message": "fail msg", "failure_id": "identifier.coreid.missing"}]
+    })
+
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
+
+    # And again with tuples of (scope, id)
+    del_resp = team.gemd_batch_delete([LinkByUID('id', '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
+
+
+def test_batch_delete_bad_input(team):
+    with pytest.raises(TypeError):
+        team.gemd_batch_delete([True])
