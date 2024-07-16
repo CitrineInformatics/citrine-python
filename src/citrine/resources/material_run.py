@@ -146,7 +146,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         }
         data = self.session.post_resource(path, json=query)
 
-        return MaterialRun.build(data)
+        # the new material history endpoint returns a list of one
+        return MaterialRun.build(data[0])
 
     def get_by_process(self,
                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]

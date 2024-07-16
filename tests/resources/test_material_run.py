@@ -120,7 +120,8 @@ def test_get_history(collection, session):
     cake_json['root'] = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
     cake_json['context'].remove(cake_json['root'])
 
-    session.set_response(cake_json)
+    # the new material history endpoint returns a list of one
+    session.set_response([cake_json])
 
     # When
     run = collection.get_history(id=root_link)
