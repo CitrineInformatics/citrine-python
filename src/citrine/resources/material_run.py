@@ -139,11 +139,13 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             ]
         }
         data = self.session.post_resource(path, json=query)
-        if data and data[0]["roots"]:
+        if data and data[0].get("roots"):
             # Since the above query presents a single dataset to the endpoint, the response will be
             # a list of length one, with a single route.
+            # Note that "object" is used to match gemd-python expectations, although that library
+            # can handle different names.
             history_data = data[0]
-            history_data["roots"] = history_data["roots"][0]
+            history_data["object"] = history_data.pop("roots")[0]
             return MaterialRun.build(history_data)
         else:
             return None

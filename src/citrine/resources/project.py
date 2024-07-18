@@ -117,9 +117,8 @@ class Project(Resource['Project']):
     @classmethod
     def get_team_id_from_project_id(cls, session: Session, project_id: UUID):
         """Returns the UUID of the Team that owns the project with the provided project_id."""
-        return session.get_resource(
-            path=f'projects/{project_id}',
-            version="v3")['project']['team']['id']
+        response = session.get_resource(path=f'projects/{project_id}', version="v3")
+        return response['project']['team']['id']
 
     @property
     def branches(self) -> BranchCollection:
@@ -318,12 +317,10 @@ class Project(Resource['Project']):
                 details="Please use 'Team.gemd' instead.'")
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(
-            project_id=self.uid,
-            dataset_id=None,
-            session=self.session,
-            team_id=self.team_id
-        )
+        return GEMDResourceCollection(project_id=self.uid,
+                                      dataset_id=None,
+                                      session=self.session,
+                                      team_id=self.team_id)
 
     @property
     def table_configs(self) -> TableConfigCollection:
@@ -360,7 +357,8 @@ class Project(Resource['Project']):
         else:
             self.session.checked_post(
                 f"{self._path()}/published-resources/{resource_type}/batch-publish",
-                version='v3', json={'ids': [resource_access["id"]]})
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def un_publish(self, *, resource: Resource):
@@ -387,7 +385,8 @@ class Project(Resource['Project']):
         else:
             self.session.checked_post(
                 f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
-                version='v3', json={'ids': [resource_access["id"]]})
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def pull_in_resource(self, *, resource: Resource):
@@ -415,7 +414,8 @@ class Project(Resource['Project']):
             base_url = f'/teams/{self.team_id}{self._path()}'
             self.session.checked_post(
                 f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
-                version='v3', json={'ids': [resource_access["id"]]})
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def owned_dataset_ids(self) -> List[str]:
@@ -434,9 +434,10 @@ class Project(Resource['Project']):
             DeprecationWarning
         )
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-        return self.session.get_resource("/DATASET/authorized-ids",
-                                         params=query_params,
-                                         version="v3")['ids']
+        response = self.session.get_resource("/DATASET/authorized-ids",
+                                             params=query_params,
+                                             version="v3")
+        return response['ids']
 
     def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
         """
@@ -449,6 +450,7 @@ class Project(Resource['Project']):
             containing the project if teams have been released.
 
         """
+        # Preventing a cyclical import.
         from citrine.resources.team import TeamCollection
 
         team_collection = TeamCollection(self.session)
@@ -457,13 +459,11 @@ class Project(Resource['Project']):
 
     @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
                 details="Please use 'Team.gemd_batch_delete' instead.'")
-    def gemd_batch_delete(
-            self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(self,
+                          id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+                          *,
+                          timeout: float = 2 * 60,
+                          polling_delay: float = 1.0) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -550,7 +550,7 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    def register(self, name: str, *, description: Optional[str] = None):
+    def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.
 
@@ -659,7 +659,9 @@ class ProjectCollection(Collection[Project]):
 
         return collections
 
-    def search(self, *, search_params: Optional[dict] = None,
+    def search(self,
+               *,
+               search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.

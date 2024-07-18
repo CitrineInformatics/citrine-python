@@ -186,8 +186,8 @@ class Team(Resource['Team']):
             The members of the current team
 
         """
-        members = self.session.get_resource(self._path() + "/users",
-                                            version=self._api_version)["users"]
+        response = self.session.get_resource(self._path() + "/users", version=self._api_version)
+        members = response["users"]
         return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
     def get_member(self, user_id: Union[str, UUID, User]) -> TeamMember:
@@ -387,9 +387,10 @@ class Team(Resource['Team']):
 
         """
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-        return self.session.get_resource("/DATASET/authorized-ids",
-                                         params=query_params,
-                                         version="v3")['ids']
+        response = self.session.get_resource("/DATASET/authorized-ids",
+                                             params=query_params,
+                                             version="v3")
+        return response['ids']
 
     @property
     def projects(self) -> ProjectCollection:
@@ -457,10 +458,9 @@ class Team(Resource['Team']):
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(
-            team_id=self.uid,
-            dataset_id=None,
-            session=self.session)
+        return MeasurementTemplateCollection(team_id=self.uid,
+                                             dataset_id=None,
+                                             session=self.session)
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
@@ -512,13 +512,11 @@ class Team(Resource['Team']):
         """Return a resource representing all GEMD objects/templates in this dataset."""
         return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
 
-    def gemd_batch_delete(
-            self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(self,
+                          id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+                          *,
+                          timeout: float = 2 * 60,
+                          polling_delay: float = 1.0) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
