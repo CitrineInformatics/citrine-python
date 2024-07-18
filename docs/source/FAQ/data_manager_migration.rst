@@ -54,12 +54,22 @@ assets of teams, sharing within a team is unnecessary. All of the publish, un-pu
 pull_in_resource endpoints, when applied to Datasets, will return a deprecation warning version
 3.4 and above, and be removed in version 4.0.
 
-Table 1. Result of publish/pull endpoints on Datasets based on Citrine Python version
+.. list-table:: Table 1. Result of publish/pull endpoints on Datasets based on Citrine Python version
+   :widths: 50 25 25 25
+   :header-rows: 1
 
-| Endpoint | <=3.4 | 3.4>=v<4.0 | >=4.0 |
-| -------- | ----- | ---------- | ----- |
-| project.[publish/un_publish](<br>     resource=dataset<br>) | No-op | ←, but with a Deprecation Warning | Will return an error |
-| project.project.pull_in_resource(<br>     resource=dataset<br>) | Will pull dataset into project | ←, but with a Deprecation Warning | Will return an error |
+    * - Endpoint
+      - <=3.4
+      - 3.4>=v<4.0
+      - >=4.0
+    * - project.[publish/un_publish](<br>     resource=dataset<br>)
+      - No-op
+      - ←, but with a Deprecation Warning
+      - Will return an error
+    * - project.project.pull_in_resource(<br>     resource=dataset<br>)
+      - Will pull dataset into project
+      - ←, but with a Deprecation Warning
+      - Will return an error
 
 **Between Teams**
 
@@ -70,23 +80,23 @@ Project. With Data Manager, only the sharing action is needed.
 Previous code for sharing My Dataset from Project A in Team A to eventually use in a Training Set
 in Project B in Team B:
 
-```
-project_a.publish(resource=my_dataset)
-team_a.share(
-	resource=my_datset,
-	target_team_id=team_b.uid,
-)
-project_b.pull_in_resource(resource=my_dataset)
-```
+.. code-block:: python
+
+    project_a.publish(resource=my_dataset)
+    team_a.share(
+        resource=my_datset,
+        target_team_id=team_b.uid,
+    )
+    project_b.pull_in_resource(resource=my_dataset)
 
 Is now:
 
-```
-team_a.share(
-	resource=my_datset,
-	target_team_id=team_b.uid,
-)
-```
+.. code-block:: python
+
+    team_a.share(
+        resource=my_datset,
+        target_team_id=team_b.uid,
+    )
 
 Project-based Collections
 -------------------------
@@ -97,26 +107,24 @@ endpoints will still work as usual with a deprecation warning, but will be remov
 therefore recommended to migrate your code from all project-based listing endpoints as soon as
 possible to adhere to supported patterns and avoid any costly errors.
 
-Table 2: Project-based endpoints for data object collections that will be deprecated
+.. list-table:: Table 2: Project-based endpoints for data object collections that will be deprecated
+   :widths: 50 50
+   :header-rows: 1
 
-Existing Code
-Prefered Method (Available in version>=3.4)
-
-project.[datasets/gemd_objects].list()
-team.[datasets/gemd_objects].list()
- -or-
-dataset.[gemd_objects].list()
-project.[datasets/gemd_objects].get()
-
-
-team.[datasets/gemd_objects].get()
- -or-
-dataset.[gemd_objects].get()
-project.[datasets/gemd_objects]....
-team.[datasets/gemd_objects]....
- -or-
-dataset.[gemd_objects]....
-
+    * - Existing Code
+      - Prefered Method (Available in version>=3.4)
+    * - project.[datasets/gemd_objects].list()
+      - team.[datasets/gemd_objects].list()
+         -or-
+        dataset.[gemd_objects].list()
+    * - project.[datasets/gemd_objects].get()
+      - team.[datasets/gemd_objects].get()
+         -or-
+        dataset.[gemd_objects].get()
+    * - project.[datasets/gemd_objects]....
+      - team.[datasets/gemd_objects]....
+         -or-
+        dataset.[gemd_objects]....
 
 Note again that even though these endpoints will still be operational, registration of any new
 Datasets will be at a Team level and thus inaccessible via these Project-based collections,
