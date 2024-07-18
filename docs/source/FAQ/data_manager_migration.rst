@@ -32,7 +32,7 @@ GemTable.
 
 After Data Manager is activated, any new Datasets created, either via Citrine Python or the
 Citrine Platform web UI, will be created at a Team level, and will not be accessible via the
-typical  `project.<Collection> endpoints`* . New collections, at both the Team and Dataset level,
+typical  `project.<Collection> endpoints`\* . New collections, at both the Team and Dataset level,
 will be available in v3.4 of Citrine Python.
 
 \*Newly-registered Datasets can be accessible via Project-based methods if pulled into a project
@@ -52,8 +52,8 @@ Sharing
 
 Previously, sharing a Dataset from one Project to another was a 2-step process: first publishing
 the Dataset to a Team, then pulling the Dataset into the new project. Now that all Datasets are
-assets of teams, sharing within a team is unnecessary. All of the publish, un-publish, and
-pull_in_resource endpoints, when applied to Datasets will undergo deprecation. To be precise, the
+assets of teams, sharing within a team is unnecessary. All of the `publish`, `un_publish`, and
+`pull_in_resource` endpoints, when applied to Datasets will undergo deprecation. To be precise, the
 following calls will return a deprecation warning version for Citrine Python versions 3.4 and
 above, and be removed in version 4.0:
 
@@ -63,7 +63,7 @@ above, and be removed in version 4.0:
     project.publish(resource=dataset)
 
     # Un-publishing a Dataset will similarly be a no-op with Data Manager activated
-    project.un-publish(resource=dataset)
+    project.un_publish(resource=dataset)
 
     # Pulling a Team into a Project can still be done with Data Manager activated, but not
     # recommended and will be deprecated
