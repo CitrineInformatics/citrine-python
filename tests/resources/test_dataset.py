@@ -24,6 +24,7 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
+from citrine.resources.delete import _async_gemd_batch_delete
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
 
@@ -40,7 +41,7 @@ def paginated_session() -> FakePaginatedSession:
 @pytest.fixture
 def collection(session) -> DatasetCollection:
     return DatasetCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
 
@@ -48,7 +49,7 @@ def collection(session) -> DatasetCollection:
 @pytest.fixture
 def paginated_collection(paginated_session) -> DatasetCollection:
     return DatasetCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=paginated_session
     )
 
@@ -56,12 +57,20 @@ def paginated_collection(paginated_session) -> DatasetCollection:
 @pytest.fixture(scope="function")
 def dataset():
     dataset = DatasetFactory(name='Test Dataset')
-    dataset.project_id = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    dataset.team_id = UUID('6b608f78-e341-422c-8076-35adc8828545')
     dataset.uid = UUID("503d7bf6-8e2d-4d29-88af-257af0d4fe4a")
     dataset.session = FakeSession()
 
     return dataset
 
+def test_deprecation_of_positional_arguments(session):
+    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project': {'team': {'id': team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        dset = DatasetCollection(uuid4(), session)
+    with pytest.raises(TypeError):
+        dset = DatasetCollection(project_id=uuid4(), session=None)
 
 def test_register_dataset(collection, session):
     # Given
@@ -75,7 +84,7 @@ def test_register_dataset(collection, session):
 
     expected_call = FakeCall(
         method='POST',
-        path='projects/{}/datasets'.format(collection.project_id),
+        path='teams/{}/datasets'.format(collection.team_id),
         json={'name': name, 'summary': summary, 'description': description}
     )
     assert session.num_calls == 1
@@ -97,7 +106,7 @@ def test_register_dataset_with_idempotent_put(collection, session):
 
     expected_call = FakeCall(
         method='PUT',
-        path='projects/{}/datasets'.format(collection.project_id),
+        path='teams/{}/datasets'.format(collection.team_id),
         json={'name': name, 'summary': summary, 'description': description, 'unique_name': unique_name}
     )
     assert session.num_calls == 1
@@ -122,7 +131,7 @@ def test_register_dataset_with_existing_id(collection, session):
 
     expected_call = FakeCall(
         method='PUT',
-        path='projects/{}/datasets/{}'.format(collection.project_id, ds_uid),
+        path='teams/{}/datasets/{}'.format(collection.team_id, ds_uid),
         json={'name': name, 'summary': summary, 'description': description,
               'id': str(ds_uid)}
     )
@@ -143,7 +152,7 @@ def test_get_by_unique_name_with_single_result(collection, session):
     # Then
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/datasets?unique_name={}'.format(collection.project_id, unique_name)
+        path='teams/{}/datasets?unique_name={}'.format(collection.team_id, unique_name)
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -188,9 +197,9 @@ def test_list_datasets(paginated_collection, paginated_session):
 
     # Then
     assert 3 == paginated_session.num_calls
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_first_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
                                    params={'per_page': 20, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_last_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
                                   params={'page': 3, 'per_page': 20})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -214,9 +223,9 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
 
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_first_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
                                    params={'per_page': batch_size, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+    expected_last_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
                                   params={'page': 2, 'per_page': batch_size})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -236,8 +245,8 @@ def test_delete_dataset(collection, session, dataset):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='DELETE', path='projects/{}/datasets/{}'.format(
-        collection.project_id, uid))
+    expected_call = FakeCall(method='DELETE', path='teams/{}/datasets/{}'.format(
+        collection.team_id, uid))
     assert expected_call == session.last_call
 
 
@@ -245,72 +254,72 @@ def test_string_representation(dataset):
     assert "<Dataset 'Test Dataset'>" == str(dataset)
 
 
-def test_property_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.property_templates.project_id
+def test_property_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.property_templates.team_id
 
 
-def test_condition_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.condition_templates.project_id
+def test_condition_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.condition_templates.team_id
 
 
-def test_parameter_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.parameter_templates.project_id
+def test_parameter_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.parameter_templates.team_id
 
 
-def test_material_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.material_templates.project_id
+def test_material_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.material_templates.team_id
 
 
-def test_measurement_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.measurement_templates.project_id
+def test_measurement_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.measurement_templates.team_id
 
 
-def test_process_templates_get_project_id(dataset):
-    assert dataset.project_id == dataset.process_templates.project_id
+def test_process_templates_get_team_id(dataset):
+    assert dataset.team_id == dataset.process_templates.team_id
 
 
-def test_process_runs_get_project_id(dataset):
-    assert dataset.project_id == dataset.process_runs.project_id
+def test_process_runs_get_team_id(dataset):
+    assert dataset.team_id == dataset.process_runs.team_id
 
 
-def test_measurement_runs_get_project_id(dataset):
-    assert dataset.project_id == dataset.measurement_runs.project_id
+def test_measurement_runs_get_team_id(dataset):
+    assert dataset.team_id == dataset.measurement_runs.team_id
 
 
-def test_material_runs_get_project_id(dataset):
-    assert dataset.project_id == dataset.material_runs.project_id
+def test_material_runs_get_team_id(dataset):
+    assert dataset.team_id == dataset.material_runs.team_id
 
 
-def test_ingredient_runs_get_project_id(dataset):
-    assert dataset.project_id == dataset.ingredient_runs.project_id
+def test_ingredient_runs_get_team_id(dataset):
+    assert dataset.team_id == dataset.ingredient_runs.team_id
 
 
-def test_process_specs_get_project_id(dataset):
-    assert dataset.project_id == dataset.process_specs.project_id
+def test_process_specs_get_team_id(dataset):
+    assert dataset.team_id == dataset.process_specs.team_id
 
 
-def test_measurement_specs_get_project_id(dataset):
-    assert dataset.project_id == dataset.measurement_specs.project_id
+def test_measurement_specs_get_team_id(dataset):
+    assert dataset.team_id == dataset.measurement_specs.team_id
 
 
-def test_material_specs_get_project_id(dataset):
-    assert dataset.project_id == dataset.material_specs.project_id
+def test_material_specs_get_team_id(dataset):
+    assert dataset.team_id == dataset.material_specs.team_id
 
 
-def test_ingredient_specs_get_project_id(dataset):
-    assert dataset.project_id == dataset.ingredient_specs.project_id
+def test_ingredient_specs_get_team_id(dataset):
+    assert dataset.team_id == dataset.ingredient_specs.team_id
 
 
-def test_gemd_resource_get_project_id(dataset):
-    assert dataset.project_id == dataset.gemd.project_id
+def test_gemd_resource_get_team_id(dataset):
+    assert dataset.team_id == dataset.gemd.team_id
 
 
-def test_files_get_project_id(dataset):
-    assert dataset.project_id == dataset.files.project_id
+def test_files_get_team_id(dataset):
+    assert dataset.team_id == dataset.files.team_id
 
 
-def test_ingestion_get_project_id(dataset):
-    assert dataset.project_id == dataset.ingestions.project_id
+def test_ingestion_get_team_id(dataset):
+    assert dataset.team_id == dataset.ingestions.team_id
 
 
 def test_gemd_posts(dataset):
@@ -338,7 +347,6 @@ def test_gemd_posts(dataset):
         registered = dataset.register(obj)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
-        assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
@@ -353,13 +361,11 @@ def test_gemd_posts(dataset):
         # Delete them all
         dataset.session.set_response(updated.dump())
         dataset.delete(updated)
-        assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
         dataset.session.set_responses()
 
         # But they would have dispatched differently w/ just a uid
         dataset.session.set_response(updated.dump())
         dataset.delete(updated.uid)
-        assert dataset.session.calls[-1].path.split("/")[-3] == basename(GEMDResourceCollection._path_template)
 
         # Clear responses for the next loop
         dataset.session.set_responses()
@@ -416,6 +422,9 @@ def test_register_all_iterable(dataset):
         del wet_dict[c.to_link(scope)]
     assert len(wet_dict) == 0, f"{len(wet_dict)} unmatched objects"
 
+def test_batch_delete_malformed(session):
+    with pytest.raises(TypeError):
+        _async_gemd_batch_delete(id_list=[uuid4()], session=session, team_id=None, dataset_id=None)
 
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""
@@ -451,7 +460,7 @@ def test_delete_contents(dataset, prompt_to_confirm, remove_templates):
     assert len(del_resp) == 0
 
     # Ensure we made the expected delete call
-    path = f"projects/{dataset.project_id}/datasets/{dataset.uid}/contents"
+    path = f"teams/{dataset.team_id}/datasets/{dataset.uid}/contents"
     params = {"remove_templates": remove_templates}
     expected_call = FakeCall(
         method='DELETE',
@@ -493,7 +502,7 @@ def test_delete_contents_ok(dataset, monkeypatch):
     # Ensure we made the expected delete call
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid),
+        path='teams/{}/datasets/{}/contents'.format(dataset.team_id, dataset.uid),
         params={"remove_templates": True}
     )
     assert len(session.calls) == 2

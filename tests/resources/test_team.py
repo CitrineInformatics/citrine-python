@@ -1,13 +1,18 @@
+import json
 import uuid
+from uuid import UUID
 
 import pytest
 from dateutil.parser import parse
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.resource import ResourceTypeEnum
-from citrine.resources.dataset import Dataset
+from citrine.resources.api_error import ApiError
+from citrine.resources.dataset import Dataset, DatasetCollection
+from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, TeamMember
 from citrine.resources.user import User
-from tests.utils.factories import UserDataFactory, TeamDataFactory
+from tests.utils.factories import UserDataFactory, TeamDataFactory, DatasetDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 
@@ -80,7 +85,7 @@ def test_team_registration(collection: TeamCollection, session):
     session.set_responses(
         {'team': team_data},
         user,
-        {'id': user['id'], 'actions': ['READ','WRITE', 'SHARE']}
+        {'id': user['id'], 'actions': ['READ', 'WRITE', 'SHARE']}
     )
 
     # When
@@ -365,3 +370,192 @@ def test_list_resource_ids(team, session, resource_type, method):
 
 def test_analyses_get_team_id(team):
     assert team.uid == team.analyses.team_id
+
+def test_owned_dataset_ids(team):
+    # Create a set of datasets in the project
+    ids = {uuid.uuid4() for _ in range(5)}
+    for d_id in ids:
+        dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
+        team.datasets.register(dataset)
+
+    # Set the session response to have the list of dataset IDs
+    team.session.set_response({'ids': list(ids)})
+
+    # Fetch the list of UUID owned by the current project
+    owned_ids = team.owned_dataset_ids()
+
+    # Let's mock our expected API call so we can compare and ensure that the one made is the same
+    expect_call = FakeCall(method='GET',
+                           path='/DATASET/authorized-ids',
+                           params={'userId': '',
+                                   'domain': '/teams/16fd2706-8baf-433b-82eb-8c7fada847da',
+                                   'action': 'WRITE'})
+    # Compare our calls
+    assert expect_call == team.session.last_call
+    assert team.session.num_calls == len(ids) + 1
+    assert ids == set(owned_ids)
+
+def test_datasets_get_team_id(team):
+    assert team.uid == team.datasets.team_id
+
+
+def test_property_templates_get_team_id(team):
+    assert team.uid == team.property_templates.team_id
+
+
+def test_condition_templates_get_team_id(team):
+    assert team.uid == team.condition_templates.team_id
+
+
+def test_parameter_templates_get_team_id(team):
+    assert team.uid == team.parameter_templates.team_id
+
+
+def test_material_templates_get_team_id(team):
+    assert team.uid == team.material_templates.team_id
+
+
+def test_measurement_templates_get_team_id(team):
+    assert team.uid == team.measurement_templates.team_id
+
+
+def test_process_templates_get_team_id(team):
+    assert team.uid == team.process_templates.team_id
+
+
+def test_process_runs_get_team_id(team):
+    assert team.uid == team.process_runs.team_id
+
+
+def test_measurement_runs_get_team_id(team):
+    assert team.uid == team.measurement_runs.team_id
+
+
+def test_material_runs_get_team_id(team):
+    assert team.uid == team.material_runs.team_id
+
+
+def test_ingredient_runs_get_team_id(team):
+    assert team.uid == team.ingredient_runs.team_id
+
+
+def test_process_specs_get_team_id(team):
+    assert team.uid == team.process_specs.team_id
+
+
+def test_measurement_specs_get_team_id(team):
+    assert team.uid == team.measurement_specs.team_id
+
+
+def test_material_specs_get_team_id(team):
+    assert team.uid == team.material_specs.team_id
+
+
+def test_ingredient_specs_get_team_id(team):
+    assert team.uid == team.ingredient_specs.team_id
+
+
+def test_gemd_resource_get_team_id(team):
+    assert team.uid == team.gemd.team_id
+
+
+def test_team_batch_delete_no_errors(team, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    # Actual response-like data - note there is no 'failures' array within 'output'
+    successful_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [
+            {
+                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
+                "status": "Success", "dependencies": []
+             }
+            ],
+        'output': {}
+    }
+
+    session.set_responses(job_resp, successful_job_resp)
+
+    # When
+    del_resp = team.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert len(del_resp) == 0
+
+    # When trying with entities
+    session.set_responses(job_resp, successful_job_resp)
+    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
+    del_resp = team.gemd_batch_delete([entity])
+
+    # Then
+    assert len(del_resp) == 0
+
+
+def test_team_batch_delete(team, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    failures_escaped_json = json.dumps([
+        {
+            "id": {
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ])
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            'failures': failures_escaped_json
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
+
+    # When
+    del_resp = team.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 2 == session.num_calls
+
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    expected_api_error = ApiError.build({
+        "code": "400",
+        "message": "",
+        "validation_errors": [{"failure_message": "fail msg", "failure_id": "identifier.coreid.missing"}]
+    })
+
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
+
+    # And again with tuples of (scope, id)
+    del_resp = team.gemd_batch_delete([LinkByUID('id', '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[1].dump() == expected_api_error.dump()
+
+
+def test_batch_delete_bad_input(team):
+    with pytest.raises(TypeError):
+        team.gemd_batch_delete([True])

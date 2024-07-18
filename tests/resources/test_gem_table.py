@@ -20,9 +20,30 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> GemTableCollection:
     return GemTableCollection(
+        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
+
+
+def test_deprecated_create_collection(session):
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        return GemTableCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        )
 
 
 @pytest.fixture
@@ -35,7 +56,6 @@ def table():
 
 def test_get_table_metadata(collection, session):
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     gem_table = GemTableDataFactory()
     session.set_response(gem_table)
 
@@ -46,7 +66,7 @@ def test_get_table_metadata(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/display-tables/{}/versions/{}".format(project_id, gem_table["id"], gem_table["version"])
+        path=f"projects/{collection.project_id}/display-tables/{gem_table['id']}/versions/{gem_table['version']}"
     )
     assert session.last_call == expect_call
     assert str(retrieved_table.uid) == gem_table["id"]
@@ -81,8 +101,7 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.description == config.description
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/display-tables/{}/versions/{}/definition".format(project_id, retrieved_table.uid,
-                                                                           retrieved_table.version)
+        path=f"projects/{collection.project_id}/display-tables/{retrieved_table.uid}/versions/{retrieved_table.version}/definition"
     )
     assert session.last_call == expect_call
 

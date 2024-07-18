@@ -3,6 +3,7 @@ from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 
+from deprecation import deprecated
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -14,7 +15,6 @@ from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
-from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
@@ -31,6 +31,11 @@ from citrine.resources.measurement_run import MeasurementRunCollection
 from citrine.resources.measurement_spec import MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
@@ -38,13 +43,10 @@ from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
 from citrine.resources.generative_design_execution import \
     GenerativeDesignExecutionCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.project_member import ProjectMember
-from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
+from warnings import warn
 
 
 class Project(Resource['Project']):
@@ -76,7 +78,7 @@ class Project(Resource['Project']):
     """str: Status of the project."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
     """int: Time the project was created, in seconds since epoch."""
-    team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
+    _team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
                  name: str,
@@ -87,7 +89,7 @@ class Project(Resource['Project']):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
-        self.team_id: Optional[UUID] = team_id
+        self._team_id: Optional[UUID] = team_id
 
     def _post_dump(self, data: dict) -> dict:
         return {key: value for key, value in data.items() if value is not None}
@@ -99,29 +101,49 @@ class Project(Resource['Project']):
         return format_escaped_url('/projects/{project_id}', project_id=self.uid)
 
     @property
+    def team_id(self):
+        """Returns the Team's id-scoped UUID."""
+        if self._team_id is None:
+            self._team_id = self.get_team_id_from_project_id(
+                session=self.session,
+                project_id=self.uid
+            )
+        return self._team_id
+
+    @team_id.setter
+    def team_id(self, value: Optional[UUID]):
+        self._team_id = value
+
+    @classmethod
+    def get_team_id_from_project_id(cls, session: Session, project_id: UUID):
+        """Returns the UUID of the Team that owns the project with the provided project_id."""
+        response = session.get_resource(path=f'projects/{project_id}', version="v3")
+        return response['project']['team']['id']
+
+    @property
     def branches(self) -> BranchCollection:
         """Return a resource representing all visible branches."""
-        return BranchCollection(self.uid, self.session)
+        return BranchCollection(project_id=self.uid, session=self.session)
 
     @property
     def design_spaces(self) -> DesignSpaceCollection:
         """Return a resource representing all visible design spaces."""
-        return DesignSpaceCollection(self.uid, self.session)
+        return DesignSpaceCollection(project_id=self.uid, session=self.session)
 
     @property
     def predictors(self) -> PredictorCollection:
         """Return a resource representing all visible predictors."""
-        return PredictorCollection(self.uid, self.session)
+        return PredictorCollection(project_id=self.uid, session=self.session)
 
     @property
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
-        return DescriptorMethods(self.uid, self.session)
+        return DescriptorMethods(project_id=self.uid, session=self.session)
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
         """Return a collection representing all visible predictor evaluation workflows."""
-        return PredictorEvaluationWorkflowCollection(self.uid, self.session)
+        return PredictorEvaluationWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
@@ -139,94 +161,173 @@ class Project(Resource['Project']):
         return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.datasets' instead.'")
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
-        return DatasetCollection(self.uid, self.session)
+        return DatasetCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
 
     @property
     def tables(self) -> GemTableCollection:
         """Return a resource representing all visible Tables."""
-        return GemTableCollection(self.uid, self.session)
+        return GemTableCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.property_templates' instead.'")
     def property_templates(self) -> PropertyTemplateCollection:
         """Return a resource representing all property templates in this dataset."""
-        return PropertyTemplateCollection(self.uid, None, self.session)
+        return PropertyTemplateCollection(project_id=self.uid,
+                                          dataset_id=None,
+                                          session=self.session,
+                                          team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.condition_templates' instead.'")
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        return ConditionTemplateCollection(self.uid, None, self.session)
+        return ConditionTemplateCollection(project_id=self.uid,
+                                           dataset_id=None,
+                                           session=self.session,
+                                           team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.parameter_templates' instead.'")
     def parameter_templates(self) -> ParameterTemplateCollection:
         """Return a resource representing all parameter templates in this dataset."""
-        return ParameterTemplateCollection(self.uid, None, self.session)
+        return ParameterTemplateCollection(project_id=self.uid,
+                                           dataset_id=None,
+                                           session=self.session,
+                                           team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.material_templates' instead.'")
     def material_templates(self) -> MaterialTemplateCollection:
         """Return a resource representing all material templates in this dataset."""
-        return MaterialTemplateCollection(self.uid, None, self.session)
+        return MaterialTemplateCollection(project_id=self.uid,
+                                          dataset_id=None,
+                                          session=self.session,
+                                          team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.measurement_templates' instead.'")
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(self.uid, None, self.session)
+        return MeasurementTemplateCollection(project_id=self.uid,
+                                             dataset_id=None,
+                                             session=self.session,
+                                             team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.process_templates' instead.'")
     def process_templates(self) -> ProcessTemplateCollection:
         """Return a resource representing all process templates in this dataset."""
-        return ProcessTemplateCollection(self.uid, None, self.session)
+        return ProcessTemplateCollection(project_id=self.uid,
+                                         dataset_id=None,
+                                         session=self.session,
+                                         team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.process_runs' instead.'")
     def process_runs(self) -> ProcessRunCollection:
         """Return a resource representing all process runs in this dataset."""
-        return ProcessRunCollection(self.uid, None, self.session)
+        return ProcessRunCollection(project_id=self.uid,
+                                    dataset_id=None,
+                                    session=self.session,
+                                    team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.measurement_runs' instead.'")
     def measurement_runs(self) -> MeasurementRunCollection:
         """Return a resource representing all measurement runs in this dataset."""
-        return MeasurementRunCollection(self.uid, None, self.session)
+        return MeasurementRunCollection(project_id=self.uid,
+                                        dataset_id=None,
+                                        session=self.session,
+                                        team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.material_runs' instead.'")
     def material_runs(self) -> MaterialRunCollection:
         """Return a resource representing all material runs in this dataset."""
-        return MaterialRunCollection(self.uid, None, self.session)
+        return MaterialRunCollection(project_id=self.uid,
+                                     dataset_id=None,
+                                     session=self.session,
+                                     team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.ingredient_runs' instead.'")
     def ingredient_runs(self) -> IngredientRunCollection:
         """Return a resource representing all ingredient runs in this dataset."""
-        return IngredientRunCollection(self.uid, None, self.session)
+        return IngredientRunCollection(project_id=self.uid,
+                                       dataset_id=None,
+                                       session=self.session,
+                                       team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.process_specs' instead.'")
     def process_specs(self) -> ProcessSpecCollection:
         """Return a resource representing all process specs in this dataset."""
-        return ProcessSpecCollection(self.uid, None, self.session)
+        return ProcessSpecCollection(project_id=self.uid,
+                                     dataset_id=None,
+                                     session=self.session,
+                                     team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.measurement_specs' instead.'")
     def measurement_specs(self) -> MeasurementSpecCollection:
         """Return a resource representing all measurement specs in this dataset."""
-        return MeasurementSpecCollection(self.uid, None, self.session)
+        return MeasurementSpecCollection(project_id=self.uid,
+                                         dataset_id=None,
+                                         session=self.session,
+                                         team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.material_specs' instead.'")
     def material_specs(self) -> MaterialSpecCollection:
         """Return a resource representing all material specs in this dataset."""
-        return MaterialSpecCollection(self.uid, None, self.session)
+        return MaterialSpecCollection(project_id=self.uid,
+                                      dataset_id=None,
+                                      session=self.session,
+                                      team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.ingredient_specs' instead.'")
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
-        return IngredientSpecCollection(self.uid, None, self.session)
+        return IngredientSpecCollection(project_id=self.uid,
+                                        dataset_id=None,
+                                        session=self.session,
+                                        team_id=self.team_id)
 
     @property
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.gemd' instead.'")
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(self.uid, None, self.session)
+        return GEMDResourceCollection(project_id=self.uid,
+                                      dataset_id=None,
+                                      session=self.session,
+                                      team_id=self.team_id)
 
     @property
     def table_configs(self) -> TableConfigCollection:
         """Return a resource representing all Table Configs in the project."""
-        return TableConfigCollection(self.uid, self.session)
+        return TableConfigCollection(team_id=self.team_id,
+                                     project_id=self.uid,
+                                     session=self.session)
 
     def publish(self, *, resource: Resource):
         """
@@ -249,9 +350,15 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
-        self.session.checked_post(
-            f"{self._path()}/published-resources/{resource_type}/batch-publish",
-            version='v3', json={'ids': [resource_access["id"]]})
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
+                 "publishing is no longer necessary.",
+                 DeprecationWarning)
+        else:
+            self.session.checked_post(
+                f"{self._path()}/published-resources/{resource_type}/batch-publish",
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def un_publish(self, *, resource: Resource):
@@ -271,9 +378,15 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
-        self.session.checked_post(
-            f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
-            version='v3', json={'ids': [resource_access["id"]]})
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
+                 "unpublishing doesn't do anything.",
+                 DeprecationWarning)
+        else:
+            self.session.checked_post(
+                f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def pull_in_resource(self, *, resource: Resource):
@@ -293,10 +406,16 @@ class Project(Resource['Project']):
         """
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
-        base_url = f'/teams/{self.team_id}{self._path()}'
-        self.session.checked_post(
-            f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
-            version='v3', json={'ids': [resource_access["id"]]})
+        if resource_type == ResourceTypeEnum.DATASET:
+            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
+                 "pulling them in is unnecessary.",
+                 DeprecationWarning)
+        else:
+            base_url = f'/teams/{self.team_id}{self._path()}'
+            self.session.checked_post(
+                f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
+                version='v3',
+                json={'ids': [resource_access["id"]]})
         return True
 
     def owned_dataset_ids(self) -> List[str]:
@@ -309,10 +428,16 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
+        warn(
+            "Datasets are no be longer owned by Projects. To find the Datasets owned by your "
+            "Team, use Team.owned_dataset_ids().",
+            DeprecationWarning
+        )
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-        return self.session.get_resource("/DATASET/authorized-ids",
-                                         params=query_params,
-                                         version="v3")['ids']
+        response = self.session.get_resource("/DATASET/authorized-ids",
+                                             params=query_params,
+                                             version="v3")
+        return response['ids']
 
     def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
         """
@@ -325,19 +450,20 @@ class Project(Resource['Project']):
             containing the project if teams have been released.
 
         """
+        # Preventing a cyclical import.
         from citrine.resources.team import TeamCollection
 
         team_collection = TeamCollection(self.session)
         parent_team = team_collection.get(self.team_id)
         return parent_team.list_members()
 
-    def gemd_batch_delete(
-            self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    @deprecated(deprecated_in="3.4.0", removed_in="4.0.0",
+                details="Please use 'Team.gemd_batch_delete' instead.'")
+    def gemd_batch_delete(self,
+                          id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+                          *,
+                          timeout: float = 2 * 60,
+                          polling_delay: float = 1.0) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -371,8 +497,12 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
-                                        timeout=timeout, polling_delay=polling_delay)
+        return _async_gemd_batch_delete(id_list=id_list,
+                                        team_id=self.team_id,
+                                        session=self.session,
+                                        dataset_id=None,
+                                        timeout=timeout,
+                                        polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):
@@ -420,7 +550,7 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    def register(self, name: str, *, description: Optional[str] = None):
+    def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.
 
@@ -529,7 +659,9 @@ class ProjectCollection(Collection[Project]):
 
         return collections
 
-    def search(self, *, search_params: Optional[dict] = None,
+    def search(self,
+               *,
+               search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.

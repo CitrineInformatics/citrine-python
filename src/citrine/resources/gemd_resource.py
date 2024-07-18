@@ -1,20 +1,22 @@
 """Collection class for generic GEMD objects and templates."""
-from typing import Type, Union, List, Tuple, Iterable
-from uuid import UUID, uuid4
 import re
-from tqdm.auto import tqdm
+from typing import Type, Union, List, Tuple, Iterable, Optional
+from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.util import recursive_flatmap, recursive_foreach, set_uuids, \
     make_index, substitute_objects
+from tqdm.auto import tqdm
 
 from citrine.resources.api_error import ApiError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, \
     CITRINE_SCOPE, CITRINE_TAG_PREFIX
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
-from citrine._utils.functions import scrub_none, replace_objects_with_links
+from citrine._utils.batcher import Batcher
+from citrine._utils.functions import _pad_positional_args, replace_objects_with_links, scrub_none
+
 
 BATCH_SIZE = 50
 
@@ -22,17 +24,26 @@ BATCH_SIZE = 50
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/storables'
-    _dataset_agnostic_path_template = 'projects/{project_id}/storables'
+    _collection_key = 'storables'
 
-    def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
-        DataConceptsCollection.__init__(self,
-                                        project_id=project_id,
-                                        dataset_id=dataset_id,
-                                        session=session)
-        self.project_id = project_id
-        self.dataset_id = dataset_id
-        self.session = session
+    def __init__(
+        self,
+        *args,
+        dataset_id: UUID = None,
+        session: Session = None,
+        team_id: UUID = None,
+        project_id: Optional[UUID] = None
+    ):
+        super().__init__(*args,
+                         team_id=team_id,
+                         dataset_id=dataset_id,
+                         session=session,
+                         project_id=project_id)
+        args = _pad_positional_args(args, 3)
+        self.project_id = project_id or args[0]
+        self.dataset_id = dataset_id or args[1]
+        self.session = session or args[2]
+        self.team_id = team_id
 
     @classmethod
     def get_type(cls) -> Type[DataConcepts]:
@@ -41,7 +52,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def _collection_for(self, model):
         collection = DataConcepts.get_collection_type(model)
-        return collection(self.project_id, self.dataset_id, self.session)
+        return collection(team_id=self.team_id, dataset_id=self.dataset_id, session=self.session)
 
     def build(self, data: dict) -> DataConcepts:
         """
@@ -108,8 +119,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             The registered versions
 
         """
-        from citrine._utils.batcher import Batcher
-
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
@@ -216,5 +225,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list, self.project_id, self.session, self.dataset_id,
-                                        timeout=timeout, polling_delay=polling_delay)
+        return _async_gemd_batch_delete(
+            id_list=id_list,
+            team_id=self.team_id,
+            session=self.session,
+            dataset_id=self.dataset_id,
+            timeout=timeout,
+            polling_delay=polling_delay)

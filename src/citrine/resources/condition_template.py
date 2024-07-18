@@ -58,8 +58,6 @@ class ConditionTemplate(
 class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]):
     """A collection of condition templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/condition-templates'
-    _dataset_agnostic_path_template = 'projects/{project_id}/condition-templates'
     _individual_key = 'condition_template'
     _collection_key = 'condition_templates'
     _resource = ConditionTemplate

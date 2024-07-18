@@ -132,8 +132,6 @@ class MeasurementTemplate(
 class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate]):
     """A collection of measurement templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/measurement-templates'
-    _dataset_agnostic_path_template = 'projects/{project_id}/measurement-templates'
     _individual_key = 'measurement_template'
     _collection_key = 'measurement_templates'
     _resource = MeasurementTemplate
