@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse, unquote_plus
+from urllib.request import url2pathname
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -647,7 +648,7 @@ class FileCollection(Collection[FileLink]):
         file_link = self._resolve_file_link(file_link)
 
         if self._is_local_url(file_link.url):  # Read the local file
-            path = Path(unquote_plus(urlparse(file_link.url).path))
+            path = Path(unquote_plus(url2pathname(urlparse(file_link.url).path)))
             return path.read_bytes()
 
         if self._is_external_url(file_link.url):  # Pull it from where ever it lives
