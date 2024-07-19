@@ -33,9 +33,8 @@ either via Citrine Python or the Citrine Platform web UI, will be created at a T
 and will not be accessible via the typical  `project.<Collection> endpoints`\* .
 New collections, at both the Team and Dataset level, will be available in v3.4 of Citrine Python.
 
-\*Newly-registered Datasets can be accessible via Project-based methods if pulled into a project
-with `project.pull_in_resource(resource=dataset)`. However, this is not recommended as endpoints
-listing data by projects and the “pull_in” endpoint for datasets will be removed in 4.0.
+\*Newly-registered Datasets can be accessible via Project-based methods if pulled into a project with `project.pull_in_resource(resource=dataset)`.
+However, this is not recommended as endpoints listing data by projects and the “pull_in” endpoint for datasets will be removed in 4.0.
 
 How does this change my code?
 =============================
