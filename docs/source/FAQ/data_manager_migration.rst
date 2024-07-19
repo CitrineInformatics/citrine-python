@@ -111,7 +111,9 @@ Moreover, they will not reference Datasets or their contents that are registered
     ...
 
     # Getting Datasets or GEMD Assets via their UID and a Project
-    project.[datasets/gemd_objects].get(UID)
+    project.datasets.get(uid)
+    project.measurement_specs.get(uid)
+    ...
 
     # Doing any operations (updating, deleting, dumping, etc.) to Datasets or GEMD Assets via a
     # Project collection
