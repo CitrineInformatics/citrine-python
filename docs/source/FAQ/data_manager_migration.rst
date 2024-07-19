@@ -133,6 +133,6 @@ The following new methods introduced in citrine python v3.4 are preferred:
     #or
     dataset.[gemd_objects]....
 
-Note again that even though these endpoints will still be operational, registration of any new
-Datasets will be at a Team level and thus inaccessible via these Project-based collections,
+Note again that even though these endpoints will still be operational, 
+registration of any new Datasets will be at a Team level and thus inaccessible via these Project-based collections,
 unless “pulled in” to a specific Project in that Team.
