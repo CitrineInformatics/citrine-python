@@ -39,8 +39,8 @@ However, this is not recommended as endpoints listing data by projects and the â
 How does this change my code?
 =============================
 
-The change in behavior is most localized to two sets of operations on Datasets and their
-constituent GEMD data objects: Sharing and Project-based Collections.
+The change in behavior is most localized to two sets of operations on Datasets and their constituent GEMD data objects:
+Sharing and Project-based Collections.
 
 Sharing
 -------
