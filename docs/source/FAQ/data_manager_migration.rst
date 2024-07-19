@@ -124,9 +124,10 @@ The following new methods introduced in citrine python v3.4 are preferred:
 .. code-block:: python
 
     # Listing Datasets or their Contents
-    team.[datasets/gemd_objects].list()
-    #or
-    dataset.[gemd_objects].list()
+    team.datasets.list()
+    team.gemd.list()
+    dataset.property_templates.list()
+    ...
 
     # Getting Datasets or GEMD Assets via their UID
     team.[datasets/gemd_objects].get()
