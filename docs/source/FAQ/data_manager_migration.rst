@@ -99,9 +99,8 @@ As of v3.4, these endpoints will still work as usual with a deprecation warning,
 It is therefore recommended to migrate your code from all project-based listing endpoints as soon as possible
 to adhere to supported patterns and avoid any costly errors.
 
-The following endpoints will return a return a deprecation warning version for Citrine Python
-versions 3.4 and above, and be removed in version 4.0. Moreover, they will not reference Datasets
-or their contents that are registered after Data Manager has been activated:
+The following endpoints will return a return a deprecation warning version for Citrine Python versions 3.4 and above, and be removed in version 4.0.
+Moreover, they will not reference Datasets or their contents that are registered after Data Manager has been activated:
 
 .. code-block:: python
 
