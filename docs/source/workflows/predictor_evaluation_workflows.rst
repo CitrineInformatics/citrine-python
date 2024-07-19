@@ -188,10 +188,11 @@ Next, create a project and register the predictor:
 
     import os
     from citrine.jobs.waiting import wait_while_validating
-    from citrine.seeding.find_or_create import find_or_create_project
+    from citrine.seeding.find_or_create import find_or_create_team, find_or_create_project
 
     client = Citrine(api_key=os.environ.get('CITRINE_API_KEY'))
-    project = find_or_create_project(project_collection=client.projects, project_name='example project')
+    team = find_or_create_team(team_collection=client.teams, team_name='example team')
+    project = find_or_create_project(project_collection=team.projects, project_name='example project')
 
     predictor = project.predictors.register(predictor)
     wait_while_validating(collection=project.predictors, module=predictor)
