@@ -25,10 +25,8 @@ the primary change that will affect Citrine Python code is that Datasets,
 formerly contained within a Project, are rather assets of a Team.
 In other words, Teams contain both Datasets and Projects.
 
-Projects still contain assets such as GEMTables, Predictors, DesignSpaces, etc., but Datasets and
-their contents are now at the level of a Team. Data within a Dataset (in the form of GEMD Objects,
-Attributes, and Templates, as well as files) are only leveraged within a Project by creating a
-GemTable.
+Projects still contain assets such as GEMTables, Predictors, DesignSpaces, etc., but Datasets and their contents are now at the level of a Team.
+Data within a Dataset (in the form of GEMD Objects, Attributes, and Templates, as well as files) are only leveraged within a Project by creating a GemTable.
 
 After Data Manager is activated, any new Datasets created, either via Citrine Python or the
 Citrine Platform web UI, will be created at a Team level, and will not be accessible via the
