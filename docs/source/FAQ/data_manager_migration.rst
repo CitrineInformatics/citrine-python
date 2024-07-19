@@ -20,9 +20,10 @@ do not hesitate to reach out to your Citrine customer support team.
 What’s new?
 ===========
 
-Once Data Manager has been enabled on your deployment of the Citrine Platform, the primary change
-that will affect Citrine Python code is that Datasets, formerly contained within a Project, are
-rather assets of a Team. In other words, Teams contain both Datasets and Projects.
+Once Data Manager has been enabled on your deployment of the Citrine Platform,
+the primary change that will affect Citrine Python code is that Datasets,
+formerly contained within a Project, are rather assets of a Team.
+In other words, Teams contain both Datasets and Projects.
 
 Projects still contain assets such as GEMTables, Predictors, DesignSpaces, etc., but Datasets and
 their contents are now at the level of a Team. Data within a Dataset (in the form of GEMD Objects,
