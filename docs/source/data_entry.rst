@@ -49,7 +49,8 @@ Equivalent behavior is available through the type-agnostic ``gemd`` collection a
     dataset.register(ProcessSpec(...))
 
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
-The data model object collections that are defined with the team scope (such as `team.process_specs`) are read-only and will throw an error if their register method is called.
+The data model object collections that are defined with the team scope (such as `team.process_specs`) are read-only.
+Attempts to register, update, etc. via those collections will throw an error.
 
 If you are registering several objects at the same time, you can use the ``register_all`` method that is available via the same objects:
 
