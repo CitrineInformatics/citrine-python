@@ -469,7 +469,7 @@ class TableConfigCollection(Collection[TableConfig]):
     def build(self, data: dict) -> TableConfig:
         """Build an individual Table Config from a dictionary."""
         version_data = data['version']
-        table_config = TableConfig.build(version_data['ara_definition'])
+        table_config = TableConfig.build(version_data['table_configs'])
         table_config.version_number = version_data['version_number']
         table_config.version_uid = version_data['id']
         table_config.config_uid = data['definition']['id']
