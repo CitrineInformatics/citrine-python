@@ -351,14 +351,15 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
-                 "publishing is no longer necessary.",
+            warn("Newly created datasets belong to a team, making this is unncessary. If it was "
+                 "created before 3.4.0, publish will work as before. Calling publish on datasets "
+                 "will be disabled in 4.0.0, at which time all datasets will be automatically "
+                 "published.",
                  DeprecationWarning)
-        else:
-            self.session.checked_post(
-                f"{self._path()}/published-resources/{resource_type}/batch-publish",
-                version='v3',
-                json={'ids': [resource_access["id"]]})
+        self.session.checked_post(
+            f"{self._path()}/published-resources/{resource_type}/batch-publish",
+            version='v3',
+            json={'ids': [resource_access["id"]]})
         return True
 
     def un_publish(self, *, resource: Resource):
@@ -379,14 +380,15 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
-                 "unpublishing doesn't do anything.",
+            warn("Newly created datasets belong to a team, making un_publish a no-op. If it was "
+                 "created before 3.4.0, un_publish will work as before. Calling un_publish on "
+                 "datasets will be disabled in 4.0.0, at which time all datasets will be "
+                 "automatically published.",
                  DeprecationWarning)
-        else:
-            self.session.checked_post(
-                f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
-                version='v3',
-                json={'ids': [resource_access["id"]]})
+        self.session.checked_post(
+            f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
+            version='v3',
+            json={'ids': [resource_access["id"]]})
         return True
 
     def pull_in_resource(self, *, resource: Resource):
@@ -407,15 +409,16 @@ class Project(Resource['Project']):
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
         if resource_type == ResourceTypeEnum.DATASET:
-            warn("Datasets are now auotmatically accessible to all projects in a given team, so "
-                 "pulling them in is unnecessary.",
+            warn("Newly created datasets belong to a team, making pull_in_resource a no-op. If it "
+                 "was created before 3.4.0, pull_in_resource will work as before. Calling "
+                 "pull_in_resource on datasets will be disabled in 4.0.0, at which time all "
+                 "datasets will be automatically published.",
                  DeprecationWarning)
-        else:
-            base_url = f'/teams/{self.team_id}{self._path()}'
-            self.session.checked_post(
-                f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
-                version='v3',
-                json={'ids': [resource_access["id"]]})
+        base_url = f'/teams/{self.team_id}{self._path()}'
+        self.session.checked_post(
+            f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
+            version='v3',
+            json={'ids': [resource_access["id"]]})
         return True
 
     def owned_dataset_ids(self) -> List[str]:
