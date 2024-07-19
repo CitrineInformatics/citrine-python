@@ -47,12 +47,10 @@ Sharing
 
 **Within a Team**
 
-Previously, sharing a Dataset from one Project to another was a 2-step process: first publishing
-the Dataset to a Team, then pulling the Dataset into the new project. Now that all Datasets are
-assets of teams, sharing within a team is unnecessary. All of the `publish`, `un_publish`, and
-`pull_in_resource` endpoints, when applied to Datasets will undergo deprecation. To be precise, the
-following calls will return a deprecation warning version for Citrine Python versions 3.4 and
-above, and be removed in version 4.0:
+Previously, sharing a Dataset from one Project to another was a 2-step process: first publishing the Dataset to a Team, then pulling the Dataset into the new project.
+Now that all Datasets are assets of teams, sharing within a team is unnecessary.
+All of the `publish`, `un_publish`, and `pull_in_resource` endpoints, when applied to Datasets will undergo deprecation.
+To be precise, the following calls will return a deprecation warning version for Citrine Python versions 3.4 and above, and be removed in version 4.0:
 
 .. code-block:: python
 
