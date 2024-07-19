@@ -115,9 +115,8 @@ Moreover, they will not reference Datasets or their contents that are registered
     project.measurement_specs.get(uid)
     ...
 
-    # Doing any operations (updating, deleting, dumping, etc.) to Datasets or GEMD Assets via a
-    # Project collection
-    project.[datasets/gemd_objects]....
+     # Doing any operations (updating, deleting, etc.) to Datasets via a Project collection
+    project.datasets.update()
 
 The following new methods introduced in citrine python v3.4 are preferred:
 
