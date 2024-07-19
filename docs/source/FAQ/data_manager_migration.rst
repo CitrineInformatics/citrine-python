@@ -94,11 +94,10 @@ Is now:
 Project-based Collections
 -------------------------
 
-As Datasets are now assets of Teams, typical ways to `list()`, `get()`, or otherwise manipulate
-Datasets or data objects within a Project will undergo a deprecation cycle. As of v3.4, these
-endpoints will still work as usual with a deprecation warning, but will be removed in v4.0. It is
-therefore recommended to migrate your code from all project-based listing endpoints as soon as
-possible to adhere to supported patterns and avoid any costly errors.
+As Datasets are now assets of Teams, typical ways to `list()`, `get()`, or otherwise manipulate Datasets or data objects within a Project will undergo a deprecation cycle.
+As of v3.4, these endpoints will still work as usual with a deprecation warning, but will be removed in v4.0.
+It is therefore recommended to migrate your code from all project-based listing endpoints as soon as possible
+to adhere to supported patterns and avoid any costly errors.
 
 The following endpoints will return a return a deprecation warning version for Citrine Python
 versions 3.4 and above, and be removed in version 4.0. Moreover, they will not reference Datasets
