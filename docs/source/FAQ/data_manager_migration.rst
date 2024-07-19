@@ -14,8 +14,8 @@ of :py:class:`Teams <citrine.resources.team.Team>`,
 rather than :py:class:`Projects <citrine.resources.project.Project>`.
 The bulk of code changes will be migrating calls that access collections of data objects and Datasets from a Project-based method to a Team or Dataset-based method.
 
-If you require any additional assistance migrating your Citrine Python code, do not hesitate to
-reach out to your Citrine customer support team.
+If you require any additional assistance migrating your Citrine Python code,
+do not hesitate to reach out to your Citrine customer support team.
 
 What’s new?
 ===========
