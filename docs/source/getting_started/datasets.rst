@@ -76,7 +76,7 @@ Assume you have a "band gaps team" with known id, ``band_gaps_team_id``, and are
 Dataset Access, Sharing, and Transfer
 -------------------------------------
 
-When a Dataset is created on the Citrine Platform, only members of the Team in which it was created can see it and interact with it.
+Immediately after a Dataset is created on the Citrine Platform, only members of the Team in which it was created can see it and interact with it.
 
 Sharing With a Specific Project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
