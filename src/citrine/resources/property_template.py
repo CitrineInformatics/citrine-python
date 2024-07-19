@@ -57,8 +57,6 @@ class PropertyTemplate(
 class PropertyTemplateCollection(AttributeTemplateCollection[PropertyTemplate]):
     """A collection of property templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/property-templates'
-    _dataset_agnostic_path_template = 'projects/{project_id}/property-templates'
     _individual_key = 'property_template'
     _collection_key = 'property_templates'
     _resource = PropertyTemplate

@@ -52,9 +52,9 @@ def fake_collection() -> Collection:
             else:
                 return self.resources[(page - 1)*per_page:page*per_page]
 
-    collection = FakeCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
-                                UUID('6b608f78-e341-422c-8076-35adc8828545'),
-                                session)
+    collection = FakeCollection(dataset_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+                                team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+                                session=FakeSession())
     for i in range(0, 5):
         collection.register(ProcessSpec("resource " + str(i)))
     for i in range(0, 2):
@@ -97,7 +97,7 @@ def team_collection() -> Callable[[bool], TeamCollection]:
 
 @pytest.fixture
 def dataset_collection() -> DatasetCollection:
-    datasets = FakeDatasetCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
+    datasets = FakeDatasetCollection(team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'), session=FakeSession())
     for i in range(0, 5):
         num_string = str(i)
         datasets.register(Dataset("dataset " + num_string, summary="summ " + num_string, description="desc " + num_string))
@@ -107,7 +107,7 @@ def dataset_collection() -> DatasetCollection:
 
 @pytest.fixture
 def predictor_collection() -> PredictorCollection:
-    predictors = FakePredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
+    predictors = FakePredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), FakeSession())
 
     # Adding a few predictors in the collection to have something to update
     for i in range(0, 5):

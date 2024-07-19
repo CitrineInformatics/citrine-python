@@ -82,8 +82,6 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
 class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     """Represents the collection of all process runs associated with a dataset."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/process-runs'
-    _dataset_agnostic_path_template = 'projects/{project_id}/process-runs'
     _individual_key = 'process_run'
     _collection_key = 'process_runs'
     _resource = ProcessRun

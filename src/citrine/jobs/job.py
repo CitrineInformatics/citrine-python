@@ -3,8 +3,8 @@ from time import time, sleep
 from typing import Union
 from uuid import UUID
 
-from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._rest.resource import Resource
+from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
@@ -59,9 +59,9 @@ class JobStatusResponse(Resource['JobStatusResponse']):
 
 
 def _poll_for_job_completion(session: Session,
-                             project_id: Union[UUID, str],
                              job: Union[JobSubmissionResponse, UUID, str],
                              *,
+                             team_id: Union[UUID, str],
                              timeout: float = 2 * 60,
                              polling_delay: float = 2.0,
                              raise_errors: bool = True,
@@ -96,7 +96,7 @@ def _poll_for_job_completion(session: Session,
         job_id = job.job_id
     else:
         job_id = job  # pragma: no cover
-    path = format_escaped_url('projects/{}/execution/job-status', project_id)
+    path = format_escaped_url('teams/{}/execution/job-status', team_id)
     params = {'job_id': job_id}
     start_time = time()
     while True:

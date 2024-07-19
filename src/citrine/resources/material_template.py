@@ -87,8 +87,6 @@ class MaterialTemplate(
 class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     """A collection of material templates."""
 
-    _path_template = 'projects/{project_id}/datasets/{dataset_id}/material-templates'
-    _dataset_agnostic_path_template = 'projects/{project_id}/material-templates'
     _individual_key = 'material_template'
     _collection_key = 'material_templates'
     _resource = MaterialTemplate

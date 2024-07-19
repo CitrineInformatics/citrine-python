@@ -1,5 +1,5 @@
 import pytest
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from citrine._session import Session
 from citrine.exceptions import BadRequest
@@ -8,10 +8,10 @@ from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import FileLink
 from citrine.resources.ingestion import Ingestion, IngestionCollection, IngestionStatus, IngestionStatusType, \
     IngestionException, IngestionErrorTrace, IngestionErrorType, IngestionErrorFamily, IngestionErrorLevel
-from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError
+from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError, _poll_for_job_completion
 
 from tests.utils.factories import DatasetFactory
-from tests.utils.session import FakeSession, FakeRequestResponseApiError
+from tests.utils.session import FakeCall, FakeSession, FakeRequestResponseApiError
 
 
 @pytest.fixture
@@ -22,9 +22,19 @@ def session() -> FakeSession:
 @pytest.fixture
 def dataset(session: Session):
     dataset = DatasetFactory(name='Test Dataset')
-    dataset.project_id = uuid4()
+    dataset.team_id = uuid4()
     dataset.uid = uuid4()
     dataset.session = session
+
+    return dataset
+
+
+@pytest.fixture
+def deprecated_dataset(session: Session):
+    dataset = DatasetFactory(name='Test Dataset')
+    dataset.uid = uuid4()
+    dataset.session = session
+    dataset.project_id = uuid4()
 
     return dataset
 
@@ -45,7 +55,7 @@ def file_link(dataset: Dataset) -> FileLink:
 def ingest(collection) -> Ingestion:
     return collection.build({
         "ingestion_id": uuid4(),
-        "project_id": collection.project_id,
+        "team_id": collection.team_id,
         "dataset_id": collection.dataset_id
     })
 
@@ -65,6 +75,16 @@ def status() -> IngestionStatus:
     })
 
 
+def test_create_deprecated_collection(session, deprecated_dataset):
+    check_project = {'project': {'team': {'id': str(uuid4())}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        ingestions = deprecated_dataset.ingestions
+
+    assert session.calls == [FakeCall(method="GET", path=f'projects/{ingestions.project_id}')]
+    assert ingestions._path_template == f'projects/{ingestions.project_id}/ingestions'
+
+
 def test_not_implementeds(collection):
     """Test that unimplemented methods are still that."""
     with pytest.raises(NotImplementedError):
@@ -80,6 +100,18 @@ def test_not_implementeds(collection):
         collection.list()
 
 
+def test_deprecation_of_positional_arguments(session):
+    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project': {'team': {'id': team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        ingestion_collection = IngestionCollection(uuid4(), uuid4(), session)
+    with pytest.raises(TypeError):
+        ingestion_collection = IngestionCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
+    with pytest.raises(TypeError):
+        ingestion_collection = IngestionCollection(project_id=uuid4(), dataset_id=None, session=session)
+
+
 def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatch):
     """Test calls on polling."""
 
@@ -89,9 +121,10 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
 
     def _mock_poll_for_job_completion(
             session,
-            project_id,
+            team_id,
             job,
             *,
+            project_id=None,
             timeout=-1.0,
             polling_delay=-2.0,
             raise_errors=True):
@@ -291,3 +324,8 @@ def test_ingestion_flow(session: FakeSession,
     )
     with pytest.raises(IngestionException, match="Missing ingredient"):
         ingest.build_objects()
+
+
+def test_invalid_poll_for_job_completion(session):
+    with pytest.raises(TypeError):
+        _poll_for_job_completion(session=session, job=uuid4(), project_id=None, team_id=None)

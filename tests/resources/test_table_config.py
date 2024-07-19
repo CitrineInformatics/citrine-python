@@ -14,6 +14,7 @@ from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
+from citrine.resources.team import Team
 from citrine.seeding.find_or_create import create_or_update
 from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -25,18 +26,34 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def project(session) -> Project:
+def team(session) -> Team:
+    team = Team(name='Test Team', session=session)
+    team.uid = UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    return team
+
+
+@pytest.fixture
+def project(session, team) -> Project:
     project = Project(
         name="Test GEM Table project",
-        session=session
+        session=session,
+        team_id=team.uid
     )
     project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    session.set_response({
+        'project': {
+            'team': {
+                'id': str(team.uid)
+            }
+        }
+    })
     return project
 
 
 @pytest.fixture
 def collection(session) -> TableConfigCollection:
     return TableConfigCollection(
+        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
@@ -199,17 +216,12 @@ def test_dump_example():
 
 def test_preview(collection, session):
     """Test that preview hits the right route"""
-    # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-
-    # When
     collection.preview(table_config=empty_defn(), preview_materials=[])
 
-    # Then
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="POST",
-        path="projects/{}/ara-definitions/preview".format(project_id),
+        path=f"projects/{collection.project_id}/ara-definitions/preview",
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
@@ -218,7 +230,6 @@ def test_preview(collection, session):
 def test_default_for_material(collection: TableConfigCollection, session):
     """Test that default for material hits the right route"""
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     dummy_resp = {
         'config': TableConfig(
             name='foo',
@@ -246,7 +257,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
+        path=f"projects/{collection.project_id}/table-configs/default",
         params={
             'id': 'my_id',
             'scope': CITRINE_SCOPE,
@@ -268,7 +279,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
+        path=f"projects/{collection.project_id}/table-configs/default",
         params={
             'id': 'id',
             'scope': 'scope',
@@ -318,7 +329,7 @@ def test_add_columns():
     assert "already used" in str(excinfo.value)
 
 
-def test_add_all_ingredients(session, project):
+def test_add_all_ingredients_via_project_deprecated(session, project):
     """Test the behavior of AraDefinition.add_all_ingredients."""
     # GIVEN
     process_id = '3a308f78-e341-f39c-8076-35a2c88292ad'
@@ -331,7 +342,76 @@ def test_add_all_ingredients(session, project):
 
     # WHEN we add all ingredients in a volume basis
     empty = empty_defn()
-    def1 = empty.add_all_ingredients(process_template=process_link, project=project,
+    with pytest.deprecated_call():
+        def1 = empty.add_all_ingredients(process_template=process_link, project=project,
+                                         quantity_dimension=IngredientQuantityDimension.VOLUME)
+    def1.config_uid = uuid4()
+
+    # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
+    assert len(def1.variables) == len(allowed_names) * 3
+    assert len(def1.columns) == len(def1.variables)
+    for name in allowed_names:
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientIdentifierByProcessTemplateAndName)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientLabelsSetByProcessAndName)), None) is not None
+
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
+    # WHEN we add all ingredients to the same Table Config as absolute quantities
+    with pytest.deprecated_call():
+        def2 = def1.add_all_ingredients(process_template=process_link, project=project,
+                                        quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+                                        unit='kg')
+    # THEN there should be 1 new variable for each name, corresponding to the quantity
+    #   There is already a variable for id and labels
+    #   There should be 2 new columns for each name, one for the quantity and one for the units
+    new_variables = def2.variables[len(def1.variables):]
+    new_columns = def2.columns[len(def1.columns):]
+    assert len(new_variables) == len(allowed_names)
+    assert len(new_columns) == len(allowed_names) * 2
+    assert def2.config_uid == def1.config_uid
+    for name in allowed_names:
+        assert next((var for var in new_variables if name in var.headers
+                     and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
+
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
+    # WHEN we add all ingredients to the same Table Config in a volume basis
+    # THEN it raises an exception because these variables and columns already exist
+    with pytest.deprecated_call():
+        with pytest.raises(ValueError):
+            def2.add_all_ingredients(process_template=process_link, project=project,
+                                     quantity_dimension=IngredientQuantityDimension.VOLUME)
+
+    # If the process template has an empty allowed_names list then an error should be raised
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}).dump()
+    )
+    with pytest.deprecated_call():
+        with pytest.raises(RuntimeError):
+            empty_defn().add_all_ingredients(process_template=process_link, project=project,
+                                             quantity_dimension=IngredientQuantityDimension.VOLUME)
+
+
+def test_add_all_ingredients_via_team(session, team):
+    """Test the behavior of AraDefinition.add_all_ingredients."""
+    # GIVEN
+    process_id = '3a308f78-e341-f39c-8076-35a2c88292ad'
+    process_name = 'mixing'
+    allowed_names = ["gold nanoparticles", "methanol", "acetone"]
+    process_link = LinkByUID('id', process_id)
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
+
+    # WHEN we add all ingredients in a volume basis
+    empty = empty_defn()
+    def1 = empty.add_all_ingredients(process_template=process_link, team=team,
                                      quantity_dimension=IngredientQuantityDimension.VOLUME)
     def1.config_uid = uuid4()
 
@@ -350,7 +430,7 @@ def test_add_all_ingredients(session, project):
         ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
     )
     # WHEN we add all ingredients to the same Table Config as absolute quantities
-    def2 = def1.add_all_ingredients(process_template=process_link, project=project,
+    def2 = def1.add_all_ingredients(process_template=process_link, team=team,
                                     quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
                                     unit='kg')
     # THEN there should be 1 new variable for each name, corresponding to the quantity
@@ -371,7 +451,7 @@ def test_add_all_ingredients(session, project):
     # WHEN we add all ingredients to the same Table Config in a volume basis
     # THEN it raises an exception because these variables and columns already exist
     with pytest.raises(ValueError):
-        def2.add_all_ingredients(process_template=process_link, project=project,
+        def2.add_all_ingredients(process_template=process_link, team=team,
                                  quantity_dimension=IngredientQuantityDimension.VOLUME)
 
     # If the process template has an empty allowed_names list then an error should be raised
@@ -379,11 +459,142 @@ def test_add_all_ingredients(session, project):
         ProcessTemplate(process_name, uids={'id': process_id}).dump()
     )
     with pytest.raises(RuntimeError):
-        empty_defn().add_all_ingredients(process_template=process_link, project=project,
+        empty_defn().add_all_ingredients(process_template=process_link, team=team,
                                          quantity_dimension=IngredientQuantityDimension.VOLUME)
 
 
-def test_add_all_ingredients_in_output(session, project):
+def test_add_all_ingredients_no_principal(session):
+    """Test the behavior of AraDefinition.add_all_ingredients."""
+    process_link = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad')
+    with pytest.raises(TypeError):
+        empty_defn().add_all_ingredients(process_template=process_link,
+                                         quantity_dimension=IngredientQuantityDimension.VOLUME)
+
+
+def test_add_all_ingredients_in_output_via_project_deprecated(session, project):
+    """Test the behavior of TableConfig.add_all_ingredients_in_output."""
+    # GIVEN
+    process1_id = '3a308f78-e341-f39c-8076-35a2c88292ad'
+    process1_name = 'mixing'
+    allowed_names1 = ["gold nanoparticles", "methanol", "acetone"]
+    process1_link = LinkByUID('id', process1_id)
+
+    process2_id = '519ab440-fbda-4768-ad63-5e09b420285c'
+    process2_name = 'solvent_mixing'
+    allowed_names2 = ["methanol", "acetone", "ethanol", "water"]
+    process2_link = LinkByUID('id', process2_id)
+
+    union_allowed_names = list(set(allowed_names1) | set(allowed_names2))
+
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
+        ).dump()
+    )
+
+    # WHEN we add all ingredients in a volume basis
+    empty = empty_defn()
+    with pytest.deprecated_call():
+        def1 = empty.add_all_ingredients_in_output(
+            process_templates=[process1_link, process2_link],
+            project=project,
+            quantity_dimension=IngredientQuantityDimension.VOLUME
+        )
+    def1.config_uid = uuid4()
+
+    # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
+    assert len(def1.variables) == len(union_allowed_names) * 3
+    assert len(def1.columns) == len(def1.variables)
+    for name in union_allowed_names:
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientQuantityInOutput)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientIdentifierInOutput)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientLabelsSetInOutput)), None) is not None
+
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
+        ).dump()
+    )
+    # WHEN we add all ingredients to the same Table Config as absolute quantities
+    with pytest.deprecated_call():
+        def2 = def1.add_all_ingredients_in_output(
+            process_templates=[process1_link, process2_link],
+            project=project,
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+            unit='kg'
+        )
+    # THEN there should be 1 new variable for each name, corresponding to the quantity
+    #   There is already a variable for id and labels
+    #   There should be 2 new columns for each name, one for the quantity and one for the units
+    new_variables = def2.variables[len(def1.variables):]
+    new_columns = def2.columns[len(def1.columns):]
+    assert len(new_variables) == len(union_allowed_names)
+    assert len(new_columns) == len(union_allowed_names) * 2
+    assert def2.config_uid == def1.config_uid
+    for name in union_allowed_names:
+        assert next((var for var in new_variables if name in var.headers
+                     and isinstance(var, IngredientQuantityInOutput)), None) is not None
+
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
+        ).dump()
+    )
+    # WHEN we add all ingredients to the same Table Config in a volume basis
+    # THEN it raises an exception because these variables and columns already exist
+    with pytest.deprecated_call():
+        with pytest.raises(ValueError):
+            def2.add_all_ingredients_in_output(
+                process_templates=[process1_link, process2_link],
+                project=project,
+                quantity_dimension=IngredientQuantityDimension.VOLUME
+            )
+
+    # If the process template has an empty allowed_names list then an error should be raised
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+        ).dump()
+    )
+    with pytest.deprecated_call():
+        with pytest.raises(RuntimeError):
+            empty_defn().add_all_ingredients_in_output(
+                process_templates=[process1_link, process2_link],
+                project=project,
+                quantity_dimension=IngredientQuantityDimension.VOLUME
+            )
+
+
+def test_add_all_ingredients_in_output_via_team(session, team):
     """Test the behavior of TableConfig.add_all_ingredients_in_output."""
     # GIVEN
     process1_id = '3a308f78-e341-f39c-8076-35a2c88292ad'
@@ -415,7 +626,7 @@ def test_add_all_ingredients_in_output(session, project):
     empty = empty_defn()
     def1 = empty.add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
-        project=project,
+        team=team,
         quantity_dimension=IngredientQuantityDimension.VOLUME
     )
     def1.config_uid = uuid4()
@@ -446,7 +657,7 @@ def test_add_all_ingredients_in_output(session, project):
     # WHEN we add all ingredients to the same Table Config as absolute quantities
     def2 = def1.add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
-        project=project,
+        team=team,
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         unit='kg'
     )
@@ -479,7 +690,7 @@ def test_add_all_ingredients_in_output(session, project):
     with pytest.raises(ValueError):
         def2.add_all_ingredients_in_output(
             process_templates=[process1_link, process2_link],
-            project=project,
+            team=team,
             quantity_dimension=IngredientQuantityDimension.VOLUME
         )
 
@@ -497,16 +708,24 @@ def test_add_all_ingredients_in_output(session, project):
     with pytest.raises(RuntimeError):
         empty_defn().add_all_ingredients_in_output(
             process_templates=[process1_link, process2_link],
-            project=project,
+            team=team,
             quantity_dimension=IngredientQuantityDimension.VOLUME
         )
+
+
+def test_add_all_ingredients_in_output_no_principal(session):
+    """Test the behavior of AraDefinition.add_all_ingredients."""
+    process_link1 = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad')
+    process_link2 = LinkByUID('id', '519ab440-fbda-4768-ad63-5e09b420285c')
+    with pytest.raises(TypeError):
+        empty_defn().add_all_ingredients_in_output(process_templates=[process_link1, process_link2],
+                                                   quantity_dimension=IngredientQuantityDimension.VOLUME)
 
 
 def test_register_new(collection, session):
     """Test the behavior of AraDefinitionCollection.register() on an unregistered AraDefinition"""
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
 
     table_config_response = TableConfigResponseDataFactory()
@@ -524,16 +743,12 @@ def test_register_new(collection, session):
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "POST"
-    assert session.last_call.path == "projects/{}/ara-definitions".format(project_id)
+    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions"
 
 
 def test_register_existing(collection, session):
     """Test the behavior of AraDefinitionCollection.register() on a registered AraDefinition"""
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    # table_config = TableConfigResponseDataFactory()
-    # config_uid = table_config["definition_id"]
-
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
     table_config.config_uid = uuid4()
 
@@ -551,13 +766,12 @@ def test_register_existing(collection, session):
 
     # Ensure we PUT if we were called with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
+    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
 
 
 def test_update(collection, session):
     """Test the behavior of AraDefinitionCollection.update() on a registered AraDefinition"""
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
     table_config.config_uid = uuid4()
 
@@ -576,7 +790,7 @@ def test_update(collection, session):
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
+    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
 
 
 def test_update_unregistered_fail(collection, session):

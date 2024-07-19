@@ -60,8 +60,8 @@ class VersionedResourceStorage(Generic[ResourceType]):
 
 class FakeTableConfigCollection(TableConfigCollection):
 
-    def __init__(self, project_id: UUID, session: Session):
-        super().__init__(project_id, session)
+    def __init__(self, team_id: UUID, project_id: UUID, session: Session):
+        super().__init__(team_id=team_id, project_id=project_id, session=session)
         self._storage = VersionedResourceStorage[TableConfig]()
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
@@ -109,8 +109,8 @@ class FakeTableConfigCollection(TableConfigCollection):
 
 class FakeGemTableCollection(GemTableCollection):
 
-    def __init__(self, project_id: UUID, session: Session):
-        super().__init__(project_id, session)
+    def __init__(self, team_id: UUID, project_id: UUID, session: Session):
+        super().__init__(team_id=team_id, project_id=project_id, session=session)
         self._config_map = {}  # Map config UID to table UID
         self._table_storage = VersionedResourceStorage[GemTable]()
 

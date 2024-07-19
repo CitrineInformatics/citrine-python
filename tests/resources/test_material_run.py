@@ -34,11 +34,24 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> MaterialRunCollection:
     return MaterialRunCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-        session=session
-    )
+        session=session,
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'))
 
+def test_deprecated_collection_construction(session):
+    with pytest.deprecated_call():
+        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+        check_project = {'project': {'team': {'id': team_id}}}
+        session.set_response(check_project)
+        mr =  MaterialRunCollection(
+            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            session=session,
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'))
+
+def test_invalid_collection_construction():
+    with pytest.raises(TypeError):
+        mr = MaterialRunCollection(dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+                                   session=session)
 
 def test_register_material_run(collection, session):
     # Given
@@ -59,10 +72,10 @@ def test_register_all(collection, session):
     assert [r.name for r in runs] == [r.name for r in registered]
     assert len(session.calls) == 1
     assert session.calls[0].method == 'PUT'
-    assert GEMDResourceCollection(collection.project_id, collection.dataset_id, collection.session)._get_path() \
+    assert GEMDResourceCollection(team_id = collection.team_id, dataset_id = collection.dataset_id, session = collection.session)._get_path() \
            in session.calls[0].path
     with pytest.raises(RuntimeError):
-        MaterialRunCollection(collection.project_id, dataset_id=None, session=session).register_all([])
+        MaterialRunCollection(team_id=collection.team_id, dataset_id=None, session=session).register_all([])
 
 
 def test_dry_run_register_material_run(collection, session):
@@ -95,15 +108,15 @@ def test_nomutate_gemd(collection, session):
 
 
 def test_get_history(collection, session):
-
     # Given
     cake = make_cake()
     cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
     root_link = LinkByUID.build(cake_json.pop('object'))
-    cake_json['root'] = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
-    cake_json['context'].remove(cake_json['root'])
+    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
+    cake_json['roots'] = [root_obj]
+    cake_json['context'].remove(root_obj)
 
-    session.set_response(cake_json)
+    session.set_response([cake_json])
 
     # When
     run = collection.get_history(id=root_link)
@@ -111,11 +124,81 @@ def test_get_history(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='GET',
-        path=f'projects/{collection.project_id}/material-history/{root_link.scope}/{root_link.id}'
+        method='POST',
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        json={
+            'criteria': [
+                {
+                    'datasets': [str(collection.dataset_id)],
+                    'type': 'terminal_material_run_identifiers_criteria',
+                    'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                }
+            ]
+        }
     )
     assert expected_call == session.last_call
     assert run == cake
+
+
+def test_get_history_no_histories(collection, session):
+    # Given
+    root_id = UUID("b1037885-d46e-49aa-867f-2a2372b6dc63")
+
+    session.set_response([])
+
+    # When
+    run = collection.get_history(id=root_id)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        json={
+            'criteria': [
+                {
+                    'datasets': [str(collection.dataset_id)],
+                    'type': 'terminal_material_run_identifiers_criteria',
+                    'terminal_material_ids': [{'scope': CITRINE_SCOPE, 'id': str(root_id)}]
+                }
+            ]
+        }
+    )
+    assert expected_call == session.last_call
+    assert run is None
+
+
+def test_get_history_no_roots(collection, session):
+    # Given
+    cake = make_cake()
+    cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
+    root_link = LinkByUID.build(cake_json.pop('object'))
+    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
+    cake_json['roots'] = []
+    cake_json['context'].remove(root_obj)
+
+    session.set_response([cake_json])
+
+    # When
+    run = collection.get_history(id=root_link)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        json={
+            'criteria': [
+                {
+                    'datasets': [str(collection.dataset_id)],
+                    'type': 'terminal_material_run_identifiers_criteria',
+                    'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                }
+            ]
+        }
+    )
+    assert expected_call == session.last_call
+    assert run is None
 
 
 def test_get_material_run(collection, session):
@@ -131,11 +214,10 @@ def test_get_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/datasets/{}/material-runs/id/{}'.format(collection.project_id, collection.dataset_id, mr_id)
+        path='teams/{}/datasets/{}/material-runs/id/{}'.format(collection.team_id, collection.dataset_id, mr_id)
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
-
 
 def test_list_material_runs(collection, session):
     # Given
@@ -149,9 +231,10 @@ def test_list_material_runs(collection, session):
 
     # Then
     assert 1 == session.num_calls
+
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/material-runs'.format(collection.project_id),
+        path='teams/{}/material-runs'.format(collection.team_id, collection.dataset_id),
         params={
             'dataset_id': str(collection.dataset_id),
             'forward': True,
@@ -210,8 +293,8 @@ def test_delete_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/material-runs/{}/{}'.format(
-            collection.project_id,
+        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+            collection.team_id,
             collection.dataset_id,
             material_run_scope,
             material_run_uid
@@ -233,8 +316,8 @@ def test_dry_run_delete_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='DELETE',
-        path='projects/{}/datasets/{}/material-runs/{}/{}'.format(
-            collection.project_id,
+        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+            collection.team_id,
             collection.dataset_id,
             material_run_scope,
             material_run_uid
@@ -268,7 +351,7 @@ def test_material_run_can_get_with_no_id(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/material-runs/id/{}'.format(collection.project_id, mr_id)
+        path='teams/{}/material-runs/id/{}'.format(collection.team_id, mr_id)
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
@@ -300,7 +383,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     """
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="validate_templates_successful")
 
     # When
@@ -311,7 +394,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == []
@@ -324,7 +407,7 @@ def test_validate_templates_successful_all_params(collection, session):
     """
 
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="validate_templates_successful")
     template = MaterialTemplateFactory()
     unused_process_template = ProcessTemplateFactory()
@@ -337,7 +420,7 @@ def test_validate_templates_successful_all_params(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump()),
               "objectTemplate": scrub_none(template.dump()),
               "ingredientProcessTemplate": scrub_none(unused_process_template.dump())})
@@ -350,7 +433,7 @@ def test_validate_templates_errors(collection, session):
     Test that DataObjectCollection.validate_templates() handles validation errors
     """
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    team_id = collection.team_id
     run = MaterialRunFactory(name="")
 
     # When
@@ -362,7 +445,7 @@ def test_validate_templates_errors(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
-        path="projects/{}/material-runs/validate-templates".format(project_id),
+        path="teams/{}/material-runs/validate-templates".format(team_id),
         json={"dataObject": scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert len(errors) == 1

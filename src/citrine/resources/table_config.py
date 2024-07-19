@@ -1,6 +1,7 @@
 from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
+from warnings import warn
 
 from gemd.entity.object import MaterialRun
 
@@ -11,7 +12,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url
+from citrine._utils.functions import format_escaped_url, _pad_positional_args
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemd_queries.gemd_query import GemdQuery
@@ -22,6 +23,11 @@ from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessT
     IngredientQuantityByProcessAndName, IngredientQuantityDimension, \
     IngredientIdentifierInOutput, IngredientQuantityInOutput, \
     IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:   # pragma: no cover
+    from citrine.resources.project import Project
+    from citrine.resources.team import Team
 
 
 class TableBuildAlgorithm(BaseEnumeration):
@@ -180,7 +186,8 @@ class TableConfig(Resource["TableConfig"]):
 
     def add_all_ingredients(self, *,
                             process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
-                            project,
+                            project: 'Project' = None,
+                            team: 'Team' = None,
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
                             unit: Optional[str] = None
@@ -205,6 +212,16 @@ class TableConfig(Resource["TableConfig"]):
             the units for the quantity, if selecting Absolute Quantity
 
         """
+        if project is not None:
+            warn("Adding ingredients to a table config through a project is deprecated as of "
+                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
+                 DeprecationWarning)
+            principal = project
+        elif team is not None:
+            principal = team
+        else:
+            raise TypeError("Missing 1 required argument: team")
+
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -212,7 +229,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
         link = _make_link_by_uid(process_template)
-        process: ProcessTemplate = project.process_templates.get(uid=link)
+        process: ProcessTemplate = principal.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -276,7 +293,8 @@ class TableConfig(Resource["TableConfig"]):
 
     def add_all_ingredients_in_output(self, *,
                                       process_templates: List[LinkByUID],
-                                      project,
+                                      project: 'Project' = None,
+                                      team: 'Team' = None,
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
                                       unit: Optional[str] = None
@@ -304,6 +322,16 @@ class TableConfig(Resource["TableConfig"]):
             the units for the quantity, if selecting Absolute Quantity
 
         """
+        if project is not None:
+            warn("Adding ingredients to a table config through a project is deprecated as of "
+                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
+                 DeprecationWarning)
+            principal = project
+        elif team is not None:
+            principal = team
+        else:
+            raise TypeError("Missing 1 required argument: team")
+
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -312,7 +340,7 @@ class TableConfig(Resource["TableConfig"]):
         }
         union_allowed_names = []
         for process_template_link in process_templates:
-            process: ProcessTemplate = project.process_templates.get(process_template_link)
+            process: ProcessTemplate = principal.process_templates.get(process_template_link)
             if not process.allowed_names:
                 raise RuntimeError(
                     f"Cannot add ingredients for process template '{process.name}' "
@@ -388,9 +416,11 @@ class TableConfigCollection(Collection[TableConfig]):
     # definition) are necessary
     _individual_key = None
 
-    def __init__(self, project_id: UUID, session: Session):
-        self.project_id = project_id
-        self.session: Session = session
+    def __init__(self, *args, team_id: UUID, project_id: UUID = None, session: Session = None):
+        args = _pad_positional_args(args, 2)
+        self.project_id = project_id or args[0]
+        self.session: Session = session or args[1]
+        self.team_id = team_id
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """Get a table config.
@@ -427,8 +457,8 @@ class TableConfigCollection(Collection[TableConfig]):
 
         """
         # the route to fetch the config is built off the display table route tree
-        path = 'projects/{project_id}/display-tables/{uid}/versions/{version}/definition'.format(
-            project_id=self.project_id, uid=table.uid, version=table.version)
+        path = (f'projects/{self.project_id}/display-tables/{table.uid}/versions/{table.version}'
+                '/definition')
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -439,6 +469,7 @@ class TableConfigCollection(Collection[TableConfig]):
         table_config.version_number = version_data['version_number']
         table_config.version_uid = version_data['id']
         table_config.config_uid = data['definition']['id']
+        table_config.team_id = self.team_id
         table_config.project_id = self.project_id
         table_config.session = self.session
         return table_config

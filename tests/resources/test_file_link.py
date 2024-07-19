@@ -1,11 +1,11 @@
-from boto3 import Session
-from botocore.exceptions import ClientError
 from pathlib import Path
-import pytest
 from typing import Iterable
 from uuid import uuid4, UUID
 
+import pytest
 import requests_mock
+from boto3 import Session
+from botocore.exceptions import ClientError
 
 from citrine.resources.api_error import ValidationError
 from citrine.resources.file_link import FileCollection, FileLink, GEMDFileLink, _Uploader, \
@@ -25,7 +25,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> FileCollection:
     return FileCollection(
-        project_id=uuid4(),
+        team_id=uuid4(),
         dataset_id=uuid4(),
         session=session
     )
@@ -85,6 +85,16 @@ def uploader() -> _Uploader:
     """An _Uploader object with all of its fields filled in."""
     return _UploaderFactory()
 
+def test_deprecation_of_positional_arguments(session):
+    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
+    check_project = {'project': {'team': {'id': team_id}}}
+    session.set_response(check_project)
+    with pytest.deprecated_call():
+        fcol = FileCollection(uuid4(), uuid4(), session)
+    with pytest.raises(TypeError):
+        fcol = FileCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
+    with pytest.raises(TypeError):
+        fcol = FileCollection(project_id=uuid4(), dataset_id=None, session=session)
 
 def test_delete(collection: FileCollection, session):
     """Test that deletion calls the expected endpoint and checks the url structure."""
@@ -160,8 +170,8 @@ def test_upload(collection: FileCollection, session, tmpdir, monkeypatch):
         session.set_responses(uploads_response, file_info_response)
         file_link = collection.upload(file_path=tmp_path)
 
-        url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
-            .format(collection.project_id, collection.dataset_id, file_id, version)
+        url = 'teams/{}/datasets/{}/files/{}/versions/{}'\
+            .format(collection.team_id, collection.dataset_id, file_id, version)
         assert file_link.dump() == FileLink(dest_name, url=url).dump()
 
     assert session.num_calls == 2 * len(dest_names)
@@ -346,8 +356,8 @@ def test_list_file_links(collection: FileCollection, session, valid_data):
     )
     assert expected_call == session.last_call
     assert len(files) == 1
-    expected_url = "projects/{}/datasets/{}/files/{}/versions/{}".format(
-        collection.project_id, collection.dataset_id, file_id, version
+    expected_url = "teams/{}/datasets/{}/files/{}/versions/{}".format(
+        collection.team_id, collection.dataset_id, file_id, version
     )
     expected_file = FileLinkDataFactory(url=expected_url, filename=filename)
     assert files[0].dump() == FileLink.build(expected_file).dump()
@@ -364,7 +374,7 @@ def test_file_download(collection: FileCollection, session, tmpdir):
     filename = 'diagram.pdf'
     file_uid = str(uuid4())
     version_uid = str(uuid4())
-    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
+    url = f"teams/{collection.team_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
@@ -417,13 +427,13 @@ def test_read(collection: FileCollection, session, tmp_path):
     filename = 'diagram.pdf'
     file_uid = str(uuid4())
     version_uid = str(uuid4())
-    url = f"projects/{collection.project_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
+    url = f"teams/{collection.team_id}/datasets/{collection.dataset_id}/files/{file_uid}/versions/{version_uid}"
     file = FileLink.build(FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid))
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
     session.set_response({
         'pre_signed_read_link': pre_signed_url,
     })
-   
+
     with requests_mock.mock() as mock_get:
         mock_get.get(pre_signed_url, text="lorem ipsum")
         # When
@@ -527,7 +537,7 @@ def test_ingest(collection: FileCollection, session):
     bad_file = FileLink(filename="bad.csv", url="http://files.com/input.csv")
 
     ingest_create_resp = {
-        "project_id": str(uuid4()),
+        "team_id": str(uuid4()),
         "dataset_id": str(uuid4()),
         "ingestion_id": str(uuid4())
     }
@@ -591,10 +601,10 @@ def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
         assert local_file not in file_links
         return Ingestion.build({
             "ingestion_id": uuid4(),
-            "project_id": self.project_id,
+            "team_id": self.team_id,
             "dataset_id": self.dataset_id,
             "session": self.session,
-            "raise_errors": raise_errors
+            "raise_errors": raise_errors,
         })
 
     def _mock_build_objects(self, **_):
@@ -718,18 +728,18 @@ def test_resolve_file_link(collection: FileCollection, session):
 
 def test_get_ids_from_url(collection: FileCollection):
     good = [
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
+        f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
         f"/files/{uuid4()}/versions/{uuid4()}",
     ]
     file = [
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}",
+        f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}",
         f"/files/{uuid4()}",
     ]
     bad = [
-        f"/projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
-        f"/projects/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?query=param",
-        f"projects/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?#fragment",
+        f"/teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
+        f"/teams/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
+        f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?query=param",
+        f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}?#fragment",
         "http://customer.com/data-lake/files/123/versions/456",
         "/files/uuid4/versions/uuid4",
     ]
