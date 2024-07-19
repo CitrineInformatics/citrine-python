@@ -32,7 +32,7 @@ If no objective is provided, the score is the probability of satisfying all cons
 
 EI is calculated from two components: predicted value and uncertainty.
 Higher scores result from a more optimal predicted value, higher uncertainty or both.
-Higher predicted values exploit information known about the current dataset, e.g., materials of a given type are known to perform well.
+Higher predicted values exploit information known about the current training set, e.g., materials of a given type are known to perform well.
 Higher uncertainty leads to exploration of a design space, e.g., little is known about a certain class materials, but materials from this region of the design space could perform well.
 
 Likelihood of improvement

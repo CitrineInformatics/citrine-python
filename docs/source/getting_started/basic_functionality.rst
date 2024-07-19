@@ -83,11 +83,11 @@ Get
 ^^^
 
 Get retrieves a specific resource with a known unique identifier string.
-If the project ``ceramic_resistors_project`` has a dataset with an id that you have saved as ``special_dataset_id``, then you could retrieve it with:
+If the team ``ceramic_resistors_team`` has a dataset with an id that you have saved as ``special_dataset_id``, then you could retrieve it with:
 
 .. code-block:: python
 
-    ceramic_resistors_project.datasets.get(special_dataset_id)
+    ceramic_resistors_team.datasets.get(special_dataset_id)
 
 List
 ^^^^
