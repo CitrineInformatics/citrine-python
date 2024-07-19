@@ -86,7 +86,8 @@ A Dataset can be shared with another team using the :func:`~citrine.resources.te
 Example
 ^^^^^^^
 
-Assume you have a "band gaps team" with known id, ``band_gaps_team_id``, and an associated Dataset with known id, ``strehlow_cook_dataset_id``. You would like to share the "strehlow cook Dataset" with another team, "semiconductors team" with a known id ``semiconductors_id``.
+Assume you have a "band gaps team" with known id, ``band_gaps_team_id``, and an associated Dataset with known id, ``strehlow_cook_dataset_id``.
+You would like to share the "strehlow cook Dataset" with another team, "semiconductors team" with a known id ``semiconductors_id``.
 
 Sharing a Dataset:
 
