@@ -105,7 +105,10 @@ Moreover, they will not reference Datasets or their contents that are registered
 .. code-block:: python
 
     # Listing Datasets or their Contents (such as MaterialSpecs or ProcessTemplates) from a Project
-    project.[datasets/gemd_objects].list()
+    project.datasets.list()
+    project.gemd.list()
+    project.process_runs.list()
+    ...
 
     # Getting Datasets or GEMD Assets via their UID and a Project
     project.[datasets/gemd_objects].get(UID)
