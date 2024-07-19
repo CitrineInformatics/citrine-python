@@ -130,9 +130,10 @@ The following new methods introduced in citrine python v3.4 are preferred:
     ...
 
     # Getting Datasets or GEMD Assets via their UID
-    team.[datasets/gemd_objects].get()
-    #or
-    dataset.[gemd_objects].get()
+    team.datasets.get(uid)
+    team.ingredient_runs.get(uid)
+    dataset.process_specs.get(uid)
+    ...
 
     # Doing any operations (updating, deleting, dumping, etc.) to Datasets or GEMD Assets
     team.[datasets/gemd_objects]....
