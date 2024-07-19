@@ -49,7 +49,7 @@ Equivalent behavior is available through the type-agnostic ``gemd`` collection a
     dataset.register(ProcessSpec(...))
 
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
-The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
+The data model object collections that are defined with the team scope (such as `team.process_specs`) are read-only and will throw an error if their register method is called.
 
 If you are registering several objects at the same time, you can use the ``register_all`` method that is available via the same objects:
 
@@ -73,20 +73,19 @@ For example:
 
 .. code-block:: python
 
-    project.process_templates.get(LinkByUID(scope="standard-templates", id="milling"))
+    team.process_templates.get(LinkByUID(scope="standard-templates", id="milling"))
 
 If you know the CitrineID, you do not need to specify a scope:
 
 .. code-block:: python
 
-    project.process_templates.get(CitrineID)
-
+    team.process_templates.get(CitrineID)
 
 If you don't know any of the data model object's unique identifiers, then you can list the data model objects and find your object in that list:
 
 .. code-block:: python
 
-    project.process_templates.list()
+    team.process_templates.list()
 
 These results can be further constrained by dataset:
 

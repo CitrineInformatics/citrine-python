@@ -21,44 +21,44 @@ Assuming that your Citrine deployment is ``https://matsci.citrine-platform.com``
     citrine = Citrine(API_KEY, API_SCHEME, API_HOST, API_PORT)
 
 
-Create a Project and Dataset
+Create a Team and Dataset
 ----------------------------
 
-One of your first actions might be to create a new Project and a Dataset, which you and your collaborators can populate.
-The code below creates a Project and one Dataset associated with it.
-It also inspects the newly registered Project to get its unique id.
+One of your first actions might be to create a new Team and a Dataset, which you and your collaborators can populate.
+The code below creates a Team and one Dataset associated with it.
+It also inspects the newly registered Team to get its unique id.
 Note that all resources are given descriptive names and summaries.
 
 .. code-block:: python
 
-    from citrine.resources.project import Project
+    from citrine.resources.team import Team
     from citrine.resources.dataset import Dataset
-    band_gaps_project = citrine.projects.register(name="Band gaps",
+    band_gaps_team = citrine.teams.register(name="Band gaps",
         description="Actual and DFT computed band gaps")
-    print("My new project has name {} and id {}".format(
-        band_gaps_project.name, band_gaps_project.uid))
+    print("My new team has name {} and id {}".format(
+        band_gaps_team.name, band_gaps_team.uid))
 
     Strehlow_Cook_description = "Band gaps for elemental and binary " \
         "semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
     Strehlow_Cook_dataset = Dataset(name="Strehlow and Cook",
         summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
-    Strehlow_Cook_dataset = band_gaps_project.datasets.register(Strehlow_Cook_dataset)
+    Strehlow_Cook_dataset = band_gaps_team.datasets.register(Strehlow_Cook_dataset)
 
-Find an existing Project and Dataset
+Find an existing Team and Dataset
 ------------------------------------
 
 Often you will work with existing resources.
-The code below retrieves a Project with the name "Copper oxides project" and a datset with a known unique id that is stored as ``dataset_A_uid``.
+The code below retrieves a Team with the name "Copper oxides team" and a dataset with a known unique id that is stored as ``dataset_A_uid``.
 For more information on retrieving resources, see :ref:`Reading Resources <functionality_reading_label>`.
 
 .. code-block:: python
 
-    project_name = "Copper oxides project"
-    all_projects = citrine.projects.list()
-    copper_oxides_project = next((project for project in all_projects
-        if project.name == project_name), None)
-    assert copper_oxides_project is not None
-    dataset_A = copper_oxides_project.datasets.get(uid=dataset_A_uid)
+    team_name = "Copper oxides team"
+    all_teams = citrine.teams.list()
+    copper_oxides_team = next((team for team in all_teams
+        if team.name == team_name), None)
+    assert copper_oxides_team is not None
+    dataset_A = copper_oxides_team.datasets.get(uid=dataset_A_uid)
 
 Find a template
 ---------------
@@ -69,7 +69,7 @@ The example below searches for a process template with the tag "Oven_17" and ass
 
 .. code-block:: python
 
-    firing_templates = list(band_gaps_project.process_templates.list_by_tag(tag="Oven_17"))
+    firing_templates = list(band_gaps_team.process_templates.list_by_tag(tag="Oven_17"))
     assert len(firing_templates) == 1
     firing_template_17 = firing_templates[0]
 
