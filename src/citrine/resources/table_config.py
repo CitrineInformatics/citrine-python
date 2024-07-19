@@ -408,7 +408,7 @@ class TableConfigCollection(Collection[TableConfig]):
     """Represents the collection of all Table Configs associated with a project."""
 
     # FIXME (DML): use newly named properties when they're available
-    _path_template = 'projects/{project_id}/ara-definitions'
+    _path_template = 'projects/{project_id}/table-configs'
     _collection_key = 'definitions'
     _resource = TableConfig
 
@@ -421,6 +421,10 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id or args[0]
         self.session: Session = session or args[1]
         self.team_id = team_id
+        if self.project_id is None:
+            raise TypeError("Missing one required argument: project_id.")
+        if self.session is None:
+            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """Get a table config.

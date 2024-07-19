@@ -63,6 +63,27 @@ def empty_defn() -> TableConfig:
     return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[], columns=[])
 
 
+def test_deprecation_of_positional_arguments(session):
+    with pytest.deprecated_call():
+        TableConfigCollection(
+            UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session,
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        )
+
+    with pytest.raises(TypeError):
+        TableConfigCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        TableConfigCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545')
+        )
+
+
 def test_get_table_config(collection, session):
     """Get table config, with or without version"""
 
@@ -221,7 +242,7 @@ def test_preview(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="POST",
-        path=f"projects/{collection.project_id}/ara-definitions/preview",
+        path=f"projects/{collection.project_id}/table-configs/preview",
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
@@ -743,7 +764,7 @@ def test_register_new(collection, session):
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "POST"
-    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions"
+    assert session.last_call.path == f"projects/{collection.project_id}/table-configs"
 
 
 def test_register_existing(collection, session):
@@ -766,7 +787,7 @@ def test_register_existing(collection, session):
 
     # Ensure we PUT if we were called with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
+    assert session.last_call.path == f"projects/{collection.project_id}/table-configs/{table_config.config_uid}"
 
 
 def test_update(collection, session):
@@ -790,7 +811,7 @@ def test_update(collection, session):
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
+    assert session.last_call.path == f"projects/{collection.project_id}/table-configs/{table_config.config_uid}"
 
 
 def test_update_unregistered_fail(collection, session):

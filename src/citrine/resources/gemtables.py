@@ -224,7 +224,8 @@ class GemTableCollection(Collection[GemTable]):
                 raise ValueError('Version must be specified when building by config uid.')
             uid = config
         logger.info(f'Submitting table build for config {uid} version {version}...')
-        path = format_escaped_url('projects/{}/ara-definitions/{}/versions/{}/build',
+        path = format_escaped_url('teams/{}/projects/{}/table-configs/{}/versions/{}/build',
+                                  self.team_id,
                                   self.project_id,
                                   uid,
                                   version)
