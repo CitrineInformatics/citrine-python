@@ -5,9 +5,9 @@ Migrating to Use Data Manager
 Summary
 =======
 
-This guide provides users of Citrine Python background and instructions for migrating code to take
-full advantage of Data Manager features and prepare for the future removal of endpoints that will
-occur with Citrine Python v4.0.
+This guide provides users of Citrine Python background and instructions for migrating code to 
+take full advantage of Data Manager features and
+prepare for the future removal of endpoints that will occur with Citrine Python v4.0.
 
 The key change will be that :py:class:`Datasets <citrine.resources.dataset.Dataset>` are now assets
 of :py:class:`Teams <citrine.resources.team.Team>`,
