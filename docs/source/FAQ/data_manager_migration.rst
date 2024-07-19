@@ -66,9 +66,9 @@ To be precise, the following calls will return a deprecation warning version for
 
 **Between Teams**
 
-Sharing a Dataset from one project to another where those projects are in different Teams was a
-3-step process: publishing to the Team, sharing from one Team to another, then pulling into a
-Project. With Data Manager, only the sharing action is needed.
+Sharing a Dataset from one project to another where those projects are in different Teams was a 3-step process:
+publishing to the Team, sharing from one Team to another, then pulling into a Project.
+With Data Manager, only the sharing action is needed.
 
 Previous code for sharing My Dataset from Project A in Team A to eventually use in a Training Set
 in Project B in Team B:
