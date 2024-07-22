@@ -242,7 +242,7 @@ def test_preview(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="POST",
-        path=f"projects/{collection.project_id}/ara-definitions/preview",
+        path=f"teams/{collection.team_id}/ara-definitions/preview",
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
@@ -278,7 +278,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/table-configs/default",
+        path=f"teams/{collection.team_id}/table-configs/default",
         params={
             'id': 'my_id',
             'scope': CITRINE_SCOPE,
@@ -300,7 +300,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/table-configs/default",
+        path=f"teams/{collection.team_id}/table-configs/default",
         params={
             'id': 'id',
             'scope': 'scope',
