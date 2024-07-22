@@ -34,7 +34,7 @@ setup(name='citrine',
           "pint<0.24; python_version >= '3.9'"
       ],
       extras_require={
-          "../tests": [
+          "tests": [
               "factory-boy>=3.3.0,<4",
               "mock>=5.1.0,<6",
               "pandas>=2.0.3,<3",
