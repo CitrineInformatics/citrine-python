@@ -63,6 +63,27 @@ def empty_defn() -> TableConfig:
     return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[], columns=[])
 
 
+def test_deprecation_of_positional_arguments(session):
+    with pytest.deprecated_call():
+        TableConfigCollection(
+            UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session,
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        )
+
+    with pytest.raises(TypeError):
+        TableConfigCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            session=session
+        )
+
+    with pytest.raises(TypeError):
+        TableConfigCollection(
+            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545')
+        )
+
+
 def test_get_table_config(collection, session):
     """Get table config, with or without version"""
 
@@ -221,7 +242,7 @@ def test_preview(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="POST",
-        path=f"projects/{collection.project_id}/ara-definitions/preview",
+        path=f"teams/{collection.team_id}/ara-definitions/preview",
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
@@ -257,7 +278,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/table-configs/default",
+        path=f"teams/{collection.team_id}/table-configs/default",
         params={
             'id': 'my_id',
             'scope': CITRINE_SCOPE,
@@ -279,7 +300,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/table-configs/default",
+        path=f"teams/{collection.team_id}/table-configs/default",
         params={
             'id': 'id',
             'scope': 'scope',
