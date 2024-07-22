@@ -421,6 +421,10 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id or args[0]
         self.session: Session = session or args[1]
         self.team_id = team_id
+        if self.project_id is None:
+            raise TypeError("Missing one required argument: project_id.")
+        if self.session is None:
+            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """Get a table config.
