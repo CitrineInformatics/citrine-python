@@ -138,14 +138,14 @@ def test_design_space_limits():
         "foo",
         description="bar",
         descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{"R-{}".format(i): random.random() for i in range(128)} for _ in range(2001)]
+        data=[{f"R-{i}": str(random.random()) for i in range(128)} for _ in range(2001)]
     )
 
     just_right = EnumeratedDesignSpace(
         "foo",
         description="bar",
         descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{"R-{}".format(i): random.random() for i in range(128)} for _ in range(2000)]
+        data=[{f"R-{i}": str(random.random()) for i in range(128)} for _ in range(2000)]
     )
 
     # create mock post response by setting the status

@@ -149,8 +149,8 @@ def valid_enumerated_design_space_data():
                     )
                 ],
                 data=[
-                    dict(x=1, color='red', formula='C44H54Si2'),
-                    dict(x=2.0, color='green', formula='V2O3')
+                    dict(x='1', color='red', formula='C44H54Si2'),
+                    dict(x='2.0', color='green', formula='V2O3')
                 ]
             )
         ),
