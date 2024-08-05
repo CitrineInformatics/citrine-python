@@ -31,7 +31,8 @@ setup(name='citrine',
           "urllib3>=1.26.18,<3",
           "tqdm>=4.27.0,<5",
           "pint<=0.20; python_version < '3.9'",
-          "pint<0.24; python_version >= '3.9'"
+          "pint<0.24; python_version >= '3.9'",
+          "pint>=0.21,<0.24"
       ],
       extras_require={
           "tests": [
