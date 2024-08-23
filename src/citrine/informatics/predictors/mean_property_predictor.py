@@ -1,10 +1,12 @@
-from typing import List, Optional, Mapping, Union
+from typing import List, Mapping, Optional, Union
+
+from deprecation import deprecated
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
-    FormulationDescriptor, RealDescriptor, CategoricalDescriptor
+    CategoricalDescriptor, FormulationDescriptor, RealDescriptor
 )
 from citrine.informatics.predictors import PredictorNode
 
@@ -79,7 +81,7 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         ),
         'default_properties'
     )
-    training_data = _properties.List(
+    _training_data = _properties.List(
         _properties.Object(DataSource), 'training_data', default=[]
     )
 
@@ -104,7 +106,22 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
         self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
-        self.training_data: List[DataSource] = training_data or []
+        # self.training_data: List[DataSource] = training_data or []
+        if training_data:
+            self.training_data: List[DataSource] = training_data
 
     def __str__(self):
         return '<MeanPropertyPredictor {!r}>'.format(self.name)
+
+    @property
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data must be accessed through the top-level GraphPredictor.'")
+    def training_data(self):
+        """[DEPRECATED] Retrieve training data associated with this node."""
+        return self._training_data
+
+    @training_data.setter
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data should only be added to the top-level GraphPredictor.'")
+    def training_data(self, value):
+        self._training_data = value

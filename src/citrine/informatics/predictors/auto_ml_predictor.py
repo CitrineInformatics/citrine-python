@@ -1,5 +1,6 @@
 from typing import List, Optional, Set
 
+from deprecation import deprecated
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.resource import Resource
@@ -52,7 +53,7 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
     estimators: Optional[Set[AutoMLEstimator]]
         Set of estimators to consider during during AutoML model selection.
         If None is provided, defaults to AutoMLEstimator.RANDOM_FOREST.
-    training_data: Optional[List[DataSource]]
+    training_data: Optional[List[DataSource]] (deprecated)
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
         identifiers. De-duplication is performed if a uid or identifier is shared between two or
@@ -69,7 +70,7 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         'estimators',
         default={AutoMLEstimator.RANDOM_FOREST}
     )
-    training_data = _properties.List(
+    _training_data = _properties.List(
         _properties.Object(DataSource),
         'training_data',
         default=[]
@@ -90,7 +91,22 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         self.inputs: List[Descriptor] = inputs
         self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.outputs = outputs
-        self.training_data: List[DataSource] = training_data or []
+        # self.training_data: List[DataSource] = training_data or []
+        if training_data:
+            self.training_data: List[DataSource] = training_data
+
+    @property
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data must be accessed through the top-level GraphPredictor.'")
+    def training_data(self):
+        """[DEPRECATED] Retrieve training data associated with this node."""
+        return self._training_data
+
+    @training_data.setter
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data should only be added to the top-level GraphPredictor.'")
+    def training_data(self, value):
+        self._training_data = value
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)
