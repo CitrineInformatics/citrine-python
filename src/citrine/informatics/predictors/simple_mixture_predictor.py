@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from deprecation import deprecated
+
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
@@ -28,7 +30,7 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
 
     """
 
-    training_data = properties.List(properties.Object(DataSource), 'training_data', default=[])
+    _training_data = properties.List(properties.Object(DataSource), 'training_data', default=[])
 
     typ = properties.String('type', default='SimpleMixture', deserializable=False)
 
@@ -39,7 +41,8 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
                  training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-        self.training_data: List[DataSource] = training_data or []
+        if training_data:
+            self.training_data: List[DataSource] = training_data
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)
@@ -53,3 +56,16 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
     def output_descriptor(self) -> FormulationDescriptor:
         """The output formulation descriptor with key 'Flat Formulation'."""
         return FormulationDescriptor.flat()
+
+    @property
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data must be accessed through the top-level GraphPredictor.'")
+    def training_data(self):
+        """[DEPRECATED] Retrieve training data associated with this node."""
+        return self._training_data
+
+    @training_data.setter
+    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
+                details="Training data should only be added to the top-level GraphPredictor.'")
+    def training_data(self, value):
+        self._training_data = value

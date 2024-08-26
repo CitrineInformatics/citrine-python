@@ -19,7 +19,8 @@ def test_auto_ml_deserialization(valid_auto_ml_predictor_data):
     assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
     assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    assert len(predictor.training_data) == 0
+    with pytest.deprecated_call():
+        assert len(predictor.training_data) == 0
 
 
 def test_polymorphic_auto_ml_deserialization(valid_auto_ml_predictor_data):
@@ -31,7 +32,8 @@ def test_polymorphic_auto_ml_deserialization(valid_auto_ml_predictor_data):
     assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
     assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
-    assert len(predictor.training_data) == 0
+    with pytest.deprecated_call():
+        assert len(predictor.training_data) == 0
 
 
 def test_legacy_serialization(valid_auto_ml_predictor_data):
