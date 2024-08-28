@@ -837,3 +837,6 @@ def test_exceptions(collection: FileCollection, session):
     )
     with pytest.raises(NotFound):
         collection.get(uid="name")
+
+    with pytest.raises(ValueError, match="Windows"):
+        collection.read(file_link=FileLink('File', 'file://remote/network/file.txt'))

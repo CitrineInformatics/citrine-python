@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
-from urllib.parse import urlparse, unquote_plus
+from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID
 
@@ -648,7 +648,11 @@ class FileCollection(Collection[FileLink]):
         file_link = self._resolve_file_link(file_link)
 
         if self._is_local_url(file_link.url):  # Read the local file
-            path = Path(unquote_plus(url2pathname(urlparse(file_link.url).path)))
+            parsed_url = urlparse(file_link.url)
+            if parsed_url.netloc not in {'', '.', 'localhost'}:
+                raise ValueError("Non-local UNCs (e.g., Windows network paths) are not supported.")
+            # Space should have been encoded as %20, but just in case it was a +
+            path = Path(url2pathname(parsed_url.path.replace('+', '%20')))
             return path.read_bytes()
 
         if self._is_external_url(file_link.url):  # Pull it from where ever it lives
