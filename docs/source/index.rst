@@ -39,7 +39,6 @@ Table of Contents
    data_extraction
    workflows/index
    formulations_example
-   molecular_generation
    FAQ/index
    API Reference <reference/modules>
 

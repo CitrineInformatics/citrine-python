@@ -2,6 +2,8 @@
 from copy import copy, deepcopy
 from uuid import UUID
 
+import pytest
+
 from . import design_space_serialization_check, valid_serialization_output
 from citrine.informatics.constraints import IngredientCountConstraint
 from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor,\
@@ -67,8 +69,20 @@ def test_enumerated_deserialization(valid_enumerated_design_space_data):
         assert formula.key == 'formula'
 
         assert len(design_space.data) == 2
-        assert design_space.data[0] == {'x': 1.0, 'color': 'red', 'formula': 'C44H54Si2'}
-        assert design_space.data[1] == {'x': 2.0, 'color': 'green', 'formula': 'V2O3'}
+        assert design_space.data[0] == {'x': '1', 'color': 'red', 'formula': 'C44H54Si2'}
+        assert design_space.data[1] == {'x': '2.0', 'color': 'green', 'formula': 'V2O3'}
+
+
+def test_enumerated_serialization_data_int_deprecated(valid_enumerated_design_space_data):
+    design_space = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
+    with pytest.deprecated_call():
+        design_space.data = [dict(x=1, color='red', formula='C44H54Si2')]
+
+
+def test_enumerated_serialization_data_float_deprecated(valid_enumerated_design_space_data):
+    design_space = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
+    with pytest.deprecated_call():
+        design_space.data = [dict(x=1.0, color='red', formula='C44H54Si2')]
 
 
 def test_enumerated_serialization(valid_enumerated_design_space_data):

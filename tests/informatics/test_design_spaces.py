@@ -31,7 +31,7 @@ def enumerated_design_space() -> EnumeratedDesignSpace:
     """Build an EnumeratedDesignSpace for testing."""
     x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
     color = CategoricalDescriptor('color', categories=['r', 'g', 'b'])
-    data = [dict(x=0, color='r'), dict(x=1.0, color='b')]
+    data = [dict(x='0', color='r'), dict(x='1.0', color='b')]
     return EnumeratedDesignSpace('enumerated', description='desc', descriptors=[x, color], data=data)
 
 
@@ -105,7 +105,7 @@ def test_enumerated_initialization(enumerated_design_space):
     assert len(enumerated_design_space.descriptors) == 2
     assert enumerated_design_space.descriptors[0].key == 'x'
     assert enumerated_design_space.descriptors[1].key == 'color'
-    assert enumerated_design_space.data == [{'x': 0.0, 'color': 'r'}, {'x': 1.0, 'color': 'b'}]
+    assert enumerated_design_space.data == [{'x': '0', 'color': 'r'}, {'x': '1.0', 'color': 'b'}]
 
 
 def test_hierarchical_initialization(hierarchical_design_space):

@@ -421,6 +421,10 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id or args[0]
         self.session: Session = session or args[1]
         self.team_id = team_id
+        if self.project_id is None:
+            raise TypeError("Missing one required argument: project_id.")
+        if self.session is None:
+            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """Get a table config.
@@ -527,7 +531,7 @@ class TableConfigCollection(Collection[TableConfig]):
             else:  # Not per spec, but be forgiving
                 params['algorithm'] = str(algorithm)
         data = self.session.get_resource(
-            format_escaped_url('projects/{}/table-configs/default', self.project_id),
+            format_escaped_url('teams/{}/table-configs/default', self.team_id),
             params=params,
         )
         config = TableConfig.build(data['config'])
@@ -548,7 +552,10 @@ class TableConfigCollection(Collection[TableConfig]):
             List of links to the material runs to use as terminal materials in the preview
 
         """
-        path = self._get_path(action="preview")
+        path = path = format_escaped_url(
+            "teams/{}/ara-definitions/preview",
+            self.team_id
+        )
         body = {
             "definition": table_config.dump(),
             "rows": [x.as_dict() for x in preview_materials]

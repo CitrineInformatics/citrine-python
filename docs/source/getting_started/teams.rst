@@ -141,11 +141,11 @@ complete resource objects.
     team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
     project1 = team.projects.get("8ad2f784-5c49-45ad-b525-6af859651acf")
 
-    dataset_ids = team.dataset_ids.list_readable()
+    dataset_ids = team.module_ids.list_readable()
 
     # Use one of the IDs to get a handle to the resource from it's origin project:
-    dataset = project1.datasets.get(dataset_ids[0])
+    predictor = project1.predictors.get(dataset_ids[0])
 
     # Pull this published resource into another project:
     project2 = team.projects.get("9ecb5610-6f69-4175-a1f8-bbfd7d711826")
-    project2.pull_in_resource(resource=dataset)
+    project2.pull_in_resource(resource=predictor)
