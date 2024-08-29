@@ -1,19 +1,15 @@
-import json
-
 import jwt
 import pytest
-import unittest
 
 from citrine.exceptions import (
     BadRequest,
-    CitrineException,
     Conflict,
     NonRetryableException,
     WorkflowNotReadyException,
     RetryableException)
 
-from datetime import datetime, timedelta
-import pytz
+from datetime import datetime, timedelta, timezone
+
 import mock
 import requests
 import requests_mock
@@ -32,7 +28,7 @@ def refresh_token(expiration: datetime = None) -> dict:
 
 @pytest.fixture
 def session():
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         session = Session(
@@ -43,13 +39,13 @@ def session():
     # Default behavior is to *not* require a refresh - those tests can clear this out
     # As rule of thumb, we should be using freezegun or similar to never rely on the system clock
     # for these scenarios, but I thought this is light enough to postpone that for the time being
-    session.access_token_expiration = datetime.utcnow() + timedelta(minutes=3)
+    session.access_token_expiration = datetime.now(timezone.utc) + timedelta(minutes=3)
 
     return session
 
 
 def test_session_signature(monkeypatch):
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
     with requests_mock.Mocker() as m:
         m.post('ftp://citrine-testing.fake:8080/api/v1/tokens/refresh', json=token_refresh_response)
 
@@ -77,8 +73,8 @@ def test_session_signature(monkeypatch):
 
 
 def test_get_refreshes_token(session: Session):
-    session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    session.access_token_expiration = datetime.now(timezone.utc) - timedelta(minutes=1)
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
 
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
@@ -89,11 +85,11 @@ def test_get_refreshes_token(session: Session):
         resp = session.get_resource('/foo')
 
     assert {'foo': 'bar'} == resp
-    assert datetime(2019, 3, 14) == session.access_token_expiration
+    assert datetime(2019, 3, 14, tzinfo=timezone.utc) == session.access_token_expiration
 
 
 def test_get_refresh_token_failure(session: Session):
-    session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
+    session.access_token_expiration = datetime.now(timezone.utc) - timedelta(minutes=1)
 
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
@@ -197,7 +193,7 @@ def test_connection_error(session: Session):
 
 
 def test_post_refreshes_token_when_denied(session: Session):
-    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
 
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
@@ -209,7 +205,7 @@ def test_post_refreshes_token_when_denied(session: Session):
         resp = session.post_resource('/foo', json={'data': 'hi'})
 
     assert {'foo': 'bar'} == resp
-    assert datetime(2019, 3, 14) == session.access_token_expiration
+    assert datetime(2019, 3, 14, tzinfo=timezone.utc) == session.access_token_expiration
 
 
 # this test exists to provide 100% coverage for the legacy 401 status on Unauthorized responses

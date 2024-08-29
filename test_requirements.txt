@@ -5,7 +5,6 @@ flake8-docstrings==1.7.0
 mock==5.1.0
 pytest==8.0.0
 pytest-cov==4.1.0
-pytz==2024.1
 requests-mock==1.11.0
 
 # faker is a dependency of factory-boy, but factory-boy sets a very low floor

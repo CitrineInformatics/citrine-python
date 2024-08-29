@@ -1,9 +1,8 @@
 import platform
-from datetime import datetime
+from datetime import datetime, timezone
 
 import jwt
 import pytest
-import pytz
 import requests_mock
 
 from citrine import Citrine
@@ -17,7 +16,7 @@ def refresh_token(expiration: datetime = None) -> dict:
     return {'access_token': token}
 
 
-token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
 
 
 def test_citrine_creation():
