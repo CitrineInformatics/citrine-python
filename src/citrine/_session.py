@@ -1,5 +1,5 @@
 import platform
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from json.decoder import JSONDecodeError
 from logging import getLogger
 from os import environ
@@ -25,7 +25,7 @@ from citrine.exceptions import (
 
 # Choose a 5-second buffer so that there's no chance of the access token
 # expiring during the check for expiration
-EXPIRATION_BUFFER_MILLIS: timedelta = timedelta(milliseconds=5000)
+EXPIRATION_BUFFER: timedelta = timedelta(seconds=5)
 logger = getLogger(__name__)
 
 
@@ -53,7 +53,7 @@ class Session(requests.Session):
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))
         self.refresh_token: str = refresh_token
         self.access_token: Optional[str] = None
-        self.access_token_expiration: datetime = datetime.utcnow()
+        self.access_token_expiration: datetime = datetime.now(timezone.utc)
 
         agent = "{}/{} python-requests/{} citrine-python/{}".format(
             platform.python_implementation(),
@@ -106,7 +106,8 @@ class Session(requests.Session):
         ))
 
     def _is_access_token_expired(self):
-        return self.access_token_expiration - EXPIRATION_BUFFER_MILLIS <= datetime.utcnow()
+        buffered_expire = self.access_token_expiration - EXPIRATION_BUFFER
+        return datetime.now(timezone.utc) > buffered_expire
 
     def _refresh_access_token(self) -> None:
         """Optionally refresh our access token (if the previous one is about to expire)."""
@@ -118,10 +119,13 @@ class Session(requests.Session):
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
-        self.access_token_expiration = datetime.utcfromtimestamp(
-            jwt.decode(self.access_token,
-                       options={"verify_signature": False},
-                       algorithms=["HS256"])['exp']
+        self.access_token_expiration = datetime.fromtimestamp(
+            jwt.decode(
+                self.access_token,
+                options={"verify_signature": False},
+                algorithms=["HS256"]
+            )['exp'],
+            timezone.utc
         )
 
         # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.
