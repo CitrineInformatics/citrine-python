@@ -30,7 +30,6 @@ setup(name='citrine',
           "deprecation>=2.1.0,<3",
           "urllib3>=1.26.18,<3",
           "tqdm>=4.27.0,<5",
-          "pytz>=2024.1; python_version<'3.9'",
       ],
       extras_require={
           "tests": [

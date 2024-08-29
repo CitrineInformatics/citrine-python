@@ -3,7 +3,6 @@ boto3==1.34.35
 deprecation==2.1.0
 gemd==2.1.9
 pyjwt==2.8.0
-pytz==2024.1; python_version < "3.9"
 requests==2.32.2
 tqdm==4.66.3
 

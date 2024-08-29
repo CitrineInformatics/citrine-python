@@ -1,9 +1,5 @@
 import platform
-from datetime import datetime
-try:
-    from datetime import UTC
-except ImportError:  # Only available starting Python 3.9
-    from pytz import utc as UTC
+from datetime import datetime, timezone
 
 import jwt
 import pytest
@@ -20,7 +16,7 @@ def refresh_token(expiration: datetime = None) -> dict:
     return {'access_token': token}
 
 
-token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=UTC))
+token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=timezone.utc))
 
 
 def test_citrine_creation():
