@@ -276,7 +276,7 @@ class GemTableCollection(Collection[GemTable]):
                 warn_lines.extend(limited_results)
                 total_count = warning.get('total_count', 0)
                 if total_count > len(limited_results):
-                    warn_lines.append('and {total_count - len(limited_results)} more similar.')
+                    warn_lines.append(f'and {total_count - len(limited_results)} more similar.')
             logger.warning('\n\t'.join(warn_lines))
         return self.get(table_id, version=table_version)
 
