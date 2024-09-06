@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.exceptions import NotFound
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
@@ -30,25 +29,6 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         self.branch_root_id = branch_root_id
         self.branch_version = branch_version
-
-    def _resolve_branch_root_and_version(self, workflow):
-        from citrine.resources.branch import BranchCollection
-
-        workflow_copy = deepcopy(workflow)
-        bc = BranchCollection(self.project_id, self.session)
-        branch = bc.get_by_version_id(version_id=workflow_copy._branch_id)
-        workflow_copy._branch_root_id = branch.root_id
-        workflow_copy._branch_version = branch.version
-        return workflow_copy
-
-    def _resolve_branch_id(self, root_id, version):
-        from citrine.resources.branch import BranchCollection
-
-        if root_id and version:
-            bc = BranchCollection(self.project_id, self.session)
-            branch = bc.get(root_id=root_id, version=version)
-            return branch.uid
-        return None
 
     def register(self, model: DesignWorkflow) -> DesignWorkflow:
         """
@@ -77,15 +57,15 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                    'project.design_workflows.register().')
             raise RuntimeError(msg)
         else:
-            # branch_id is in the body of design workflow endpoints, so it must be serialized.
-            # This means the collection branch_id might not match the workflow branch_id. The
-            # collection should win out, since the user is explicitly referencing the branch
-            # represented by this collection.
-            # To avoid modifying the parameter, and to ensure the only change is the branch_id, we
-            # deepcopy, modify, then register it.
+            # branch_root_id and branch_version are in the body of design workflow endpoints, so
+            # they must be serialized. This means the collection fields might not match the
+            # workflow fields. The collection should win out, since the user is explicitly
+            # referencing the branch represented by this collection.
+            # To avoid modifying the parameter, and to ensure the only changes are the
+            # branch_root_id and branch_version, we deepcopy, modify, then register it.
             model_copy = deepcopy(model)
-            model_copy._branch_id = self._resolve_branch_id(self.branch_root_id,
-                                                            self.branch_version)
+            model_copy.branch_root_id = self.branch_root_id
+            model_copy.branch_version = self.branch_version
             return super().register(model_copy)
 
     def build(self, data: dict) -> DesignWorkflow:
@@ -104,7 +84,6 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         workflow = DesignWorkflow.build(data)
-        workflow = self._resolve_branch_root_and_version(workflow)
         workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
@@ -136,13 +115,6 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         if model.branch_root_id is None or model.branch_version is None:
             raise ValueError('Cannot update a design workflow unless its branch_root_id and '
                              'branch_version are set.')
-
-        try:
-            model._branch_id = self._resolve_branch_id(model.branch_root_id,
-                                                       model.branch_version)
-        except NotFound:
-            raise ValueError('Cannot update a design workflow unless its branch_root_id and '
-                             'branch_version exists.')
 
         # If executions have already been done, warn about future behavior change
         executions = model.design_executions.list()
@@ -197,7 +169,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                     additional_params: Optional[dict] = None,
                     ) -> Tuple[Iterable[dict], str]:
         params = additional_params or {}
-        params["branch"] = self._resolve_branch_id(self.branch_root_id, self.branch_version)
+        params["branch_root_id"] = self.branch_root_id
+        params["branch_version"] = self.branch_version
         return super()._fetch_page(path=path,
                                    fetch_func=fetch_func,
                                    page=page,

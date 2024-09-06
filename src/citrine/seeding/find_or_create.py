@@ -175,8 +175,8 @@ def create_or_update(*,
         # Locally created design workflows likely won't have a branch ID but
         # need one to be updated.
         if isinstance(old_resource, DesignWorkflow):
-            new_resource._branch_root_id = old_resource.branch_root_id
-            new_resource._branch_version = old_resource.branch_version
+            new_resource.branch_root_id = old_resource.branch_root_id
+            new_resource.branch_version = old_resource.branch_version
         return collection.update(new_resource)
     else:
         logger.info("Registering new module:  {}".format(resource.name))

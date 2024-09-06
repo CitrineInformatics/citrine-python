@@ -353,17 +353,11 @@ def test_create_or_update_unique_found_design_workflow(session):
     dw2_dict = DesignWorkflowDataFactory(branch_root_id=root_id, branch_version=version)
     dw3_dict = DesignWorkflowDataFactory()
     session.set_responses(
-        # Build (setup)
-        branch_data,  # Find the model's branch root ID and version
         # List
-        {"response": [branch_data]},  # Find the collection's branch version ID
         {"response": [dw1_dict, dw2_dict, dw3_dict]},  # Return the design workflows
-        branch_data, branch_data, branch_data,  # Lookup the branch root ID and version of each design workflow.
         # Update
-        {"response": [branch_data]},  # Lookup the module's branch version ID
         {"response": []},  # Check if there are any executions
         dw2_dict,  # Return the updated design workflow
-        branch_data  # Lookup the updated design workflow branch root ID and version
     )
 
     collection = LocalDesignWorkflowCollection(project_id=uuid4(), session=session, branch_root_id=root_id, branch_version=version)
