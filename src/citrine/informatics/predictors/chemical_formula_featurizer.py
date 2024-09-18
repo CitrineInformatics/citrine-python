@@ -157,7 +157,7 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
     def powers(self) -> List[int]:
         """The list of powers when computing generalized weighted means of element properties."""
         warn("The type of 'powers' will change to a list of floats in v4.0.0. To retrieve them as "
-             "floats now, use 'powers_float'.")
+             "floats now, use 'powers_as_float'.")
         return [int(p) for p in self._powers]
 
     @powers.setter
@@ -165,9 +165,9 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
         self._powers = value
 
     @property
-    def powers_float(self) -> List[float]:
+    def powers_as_float(self) -> List[float]:
         """Powers when computing generalized weighted means of element properties."""
-        warn("'powers_float' will be deprecated in v4.0.0 for 'powers', and removed in v5.0.0",
+        warn("'powers_as_float' will be deprecated in v4.0.0 for 'powers', and removed in v5.0.0",
              PendingDeprecationWarning)
         return self._powers
 

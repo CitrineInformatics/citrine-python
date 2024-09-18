@@ -262,7 +262,7 @@ def test_chemical_featurizer(chemical_featurizer):
     with pytest.warns(UserWarning):
         assert chemical_featurizer.powers == [1, 2]
     with pytest.warns(PendingDeprecationWarning):
-        assert chemical_featurizer.powers_float == [1.0, 2.0]
+        assert chemical_featurizer.powers_as_float == [1.0, 2.0]
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
 
@@ -275,6 +275,12 @@ def test_chemical_featurizer(chemical_featurizer):
         'powers': [1, 2],
         'type': 'ChemicalFormulaFeaturizer'
     }
+    
+    chemical_featurizer.powers = [0.5, -1.5]
+    with pytest.warns(PendingDeprecationWarning):
+        assert chemical_featurizer.powers_as_float == [0.5, -1.5]
+    with pytest.warns(UserWarning):
+        assert chemical_featurizer.powers == [0, -1]
 
 
 def test_auto_ml(auto_ml):
