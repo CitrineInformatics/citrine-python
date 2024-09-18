@@ -259,7 +259,10 @@ def test_chemical_featurizer(chemical_featurizer):
     assert chemical_featurizer.input_descriptor == ChemicalFormulaDescriptor("formula")
     assert chemical_featurizer.features == ["standard"]
     assert chemical_featurizer.excludes == []
-    assert chemical_featurizer.powers == [1, 2]
+    with pytest.warns(UserWarning):
+        assert chemical_featurizer.powers == [1, 2]
+    with pytest.warns(PendingDeprecationWarning):
+        assert chemical_featurizer.powers_float == [1.0, 2.0]
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
 
