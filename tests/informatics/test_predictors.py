@@ -276,9 +276,9 @@ def test_chemical_featurizer(chemical_featurizer):
         'type': 'ChemicalFormulaFeaturizer'
     }
     
-    chemical_featurizer.powers = [0.5, -1.5]
+    chemical_featurizer.powers = [0.5, -1]
     with pytest.warns(PendingDeprecationWarning):
-        assert chemical_featurizer.powers_as_float == [0.5, -1.5]
+        assert chemical_featurizer.powers_as_float == [0.5, -1.0]
     with pytest.warns(UserWarning):
         assert chemical_featurizer.powers == [0, -1]
 
