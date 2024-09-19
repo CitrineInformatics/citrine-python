@@ -158,7 +158,11 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
         """The list of powers when computing generalized weighted means of element properties."""
         warn("The type of 'powers' will change to a list of floats in v4.0.0. To retrieve them as "
              "floats now, use 'powers_as_float'.")
-        return [int(p) for p in self._powers]
+        truncated = [int(p) for p in self._powers]
+        if truncated != self._powers:
+            diffs = [f"{x} => {y}" for x, y in zip(self._powers, truncated) if x != y]
+            warn(f"The following powers were cast to ints: {'; '.join(diffs)}.")
+        return truncated
 
     @powers.setter
     def powers(self, value: List[Union[int, float]]):
