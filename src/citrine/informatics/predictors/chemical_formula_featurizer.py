@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import List, Optional, Union
+from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -133,7 +134,7 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
     input_descriptor = properties.Object(ChemicalFormulaDescriptor, 'input')
     features = properties.List(properties.String, 'features')
     excludes = properties.List(properties.String, 'excludes', default=[])
-    powers = properties.List(properties.Integer, 'powers')
+    _powers = properties.List(properties.Float, 'powers')
 
     typ = properties.String('type', default='ChemicalFormulaFeaturizer', deserializable=False)
 
@@ -151,6 +152,28 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
         self.powers = powers if powers is not None else [1]
+
+    @property
+    def powers(self) -> List[int]:
+        """The list of powers when computing generalized weighted means of element properties."""
+        warn("The type of 'powers' will change to a list of floats in v4.0.0. To retrieve them as "
+             "floats now, use 'powers_as_float'.")
+        truncated = [int(p) for p in self._powers]
+        if truncated != self._powers:
+            diffs = [f"{x} => {y}" for x, y in zip(self._powers, truncated) if x != y]
+            warn(f"The following powers were cast to ints: {'; '.join(diffs)}.")
+        return truncated
+
+    @powers.setter
+    def powers(self, value: List[Union[int, float]]):
+        self._powers = value
+
+    @property
+    def powers_as_float(self) -> List[float]:
+        """Powers when computing generalized weighted means of element properties."""
+        warn("'powers_as_float' will be deprecated in v4.0.0 for 'powers', and removed in v5.0.0",
+             PendingDeprecationWarning)
+        return self._powers
 
     def __str__(self):
         return '<ChemicalFormulaFeaturizer {!r}>'.format(self.name)
