@@ -62,12 +62,8 @@ def test_build_design_workflow(session, basic_design_workflow_data):
 
 def test_list_workflows(session, basic_design_workflow_data):
     #Given
-    branch_data = BranchDataFactory()
-    branch_data_get_resp = {"response": [branch_data]}
-    session.set_response(branch_data)
-
     workflow_collection = DesignWorkflowCollection(project_id=uuid.uuid4(), session=session)
-    session.set_responses({'response': [basic_design_workflow_data], 'page': 1, 'per_page': 20}, branch_data)
+    session.set_responses({'response': [basic_design_workflow_data], 'page': 1, 'per_page': 20})
 
     # When
     workflows = list(workflow_collection.list(per_page=20))
@@ -75,6 +71,6 @@ def test_list_workflows(session, basic_design_workflow_data):
     # Then
     expected_design_call = FakeCall(method='GET', path='/projects/{}/modules'.format(workflow_collection.project_id),
                                    params={'per_page': 20, 'module_type': 'DESIGN_WORKFLOW'})
-    assert 2 == session.num_calls
+    assert 1 == session.num_calls
     assert len(workflows) == 1
     assert isinstance(workflows[0], DesignWorkflow)

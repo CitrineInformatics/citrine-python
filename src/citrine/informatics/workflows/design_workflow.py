@@ -32,18 +32,17 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     predictor_id = properties.Optional(properties.UUID, 'predictor_id')
     predictor_version = properties.Optional(
         properties.Union([properties.Integer(), properties.String()]), 'predictor_version')
-    _branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id')
+    branch_root_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_root_id')
+    """:Optional[UUID]: Root ID of the branch that contains this workflow."""
+    branch_version: Optional[int] = properties.Optional(properties.Integer, 'branch_version')
+    """:Optional[int]: Version number of the branch that contains this workflow."""
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
-    _branch_root_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_root_id',
-                                                          serializable=False, deserializable=False)
-    """:Optional[UUID]: Root ID of the branch that contains this workflow."""
-    _branch_version: Optional[int] = properties.Optional(properties.Integer, 'branch_version',
-                                                         serializable=False, deserializable=False)
-    """:Optional[int]: Version number of the branch that contains this workflow."""
+    _branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id',
+                                                     serializable=False)
 
     def __init__(self,
                  name: str,
@@ -68,25 +67,3 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
             raise AttributeError('Cannot initialize execution without project reference!')
         return DesignExecutionCollection(
             project_id=self.project_id, session=self._session, workflow_id=self.uid)
-
-    @property
-    def branch_root_id(self):
-        """Retrieve the root ID of the branch this workflow is on."""
-        return self._branch_root_id
-
-    @branch_root_id.setter
-    def branch_root_id(self, value):
-        """Set the root ID of the branch this workflow is on."""
-        self._branch_root_id = value
-        self._branch_id = None
-
-    @property
-    def branch_version(self):
-        """Retrieve the version of the branch this workflow is on."""
-        return self._branch_version
-
-    @branch_version.setter
-    def branch_version(self, value):
-        """Set the version of the branch this workflow is on."""
-        self._branch_version = value
-        self._branch_id = None

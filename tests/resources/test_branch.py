@@ -107,6 +107,29 @@ def test_branch_get(session, collection, branch_path):
     assert session.last_call == FakeCall(method='GET', path=branch_path, params={'page': 1, 'per_page': 1, 'root': root_id, 'version': version})
 
 
+def test_branch_get_not_found(session, collection, branch_path):
+    # Given
+    session.set_response({"response": []})
+
+    # When
+    with pytest.raises(NotFound):
+        collection.get(root_id=uuid.uuid4(), version=1)
+
+
+def test_branch_get_by_version_id(session, collection, branch_path):
+    # Given
+    branch_data = BranchDataFactory()
+    version_id = branch_data['id']
+    session.set_response(branch_data)
+
+    # When
+    branch = collection.get_by_version_id(version_id=version_id)
+
+    # Then
+    assert session.num_calls == 1
+    assert session.last_call == FakeCall(method='GET', path=f"{branch_path}/{version_id}")
+
+
 def test_branch_list(session, collection, branch_path):
     # Given
     branch_count = 5

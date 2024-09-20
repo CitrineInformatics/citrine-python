@@ -43,7 +43,8 @@ def collection(branch_data, collection_without_branch) -> DesignWorkflowCollecti
 
 @pytest.fixture
 def workflow(collection, branch_data, design_workflow_dict) -> DesignWorkflow:
-    design_workflow_dict["branch_id"] = branch_data["id"]
+    design_workflow_dict["branch_root_id"] = branch_data["metadata"]["root_id"]
+    design_workflow_dict["branch_version"] = branch_data["metadata"]["version"]
 
     collection.session.set_response(branch_data)
     workflow = collection.build(design_workflow_dict)
@@ -71,12 +72,6 @@ def workflow_path(collection, workflow=None):
         path = f'{path}/{workflow.uid}'
     return path
 
-def branches_path(collection, branch_id=None):
-    path = f'/projects/{collection.project_id}/branches'
-    if branch_id:
-        path = f'{path}/{branch_id}'
-    return path
-
 def assert_workflow(actual, expected, *, include_branch=False):
     assert actual.name == expected.name
     assert actual.description == expected.description
@@ -86,7 +81,7 @@ def assert_workflow(actual, expected, *, include_branch=False):
     assert actual.predictor_version == expected.predictor_version
     assert actual.project_id == expected.project_id
     if include_branch:
-        assert actual.branch_id == expected.branch_id
+        assert actual._branch_id == expected._branch_id
         assert actual.branch_root_id == expected.branch_root_id
         assert actual.branch_version == expected.branch_version
 
@@ -99,29 +94,22 @@ def test_basic_methods(workflow, collection, design_workflow_dict):
 @pytest.mark.parametrize("optional_args", all_combination_lengths(OPTIONAL_ARGS))
 def test_register(session, branch_data, workflow_minimal, collection, optional_args):
     workflow = workflow_minimal
-    branch_id = branch_data['id']
-    branch_data_get_resp = {"response": [branch_data]}
-    branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(collection.branch_root_id), 'version': collection.branch_version
-    }
+    branch_root_id = branch_data['metadata']['root_id']
+    branch_version = branch_data['metadata']['version']
 
     # Set a random value for all optional args selected for this run.
     for name, factory in optional_args:
         setattr(workflow, name, factory())
 
     # Given
-    post_dict = {**workflow.dump(), "branch_id": str(branch_id)}
-    session.set_responses(branch_data_get_resp, {**post_dict, 'status_description': 'status'}, branch_data)
+    post_dict = {**workflow.dump(), "branch_root_id": str(branch_root_id), "branch_version": branch_version}
+    session.set_responses({**post_dict, 'status_description': 'status'})
 
     # When
     new_workflow = collection.register(workflow)
 
     # Then
-    assert session.calls == [
-        FakeCall(method='GET', path=branches_path(collection), params=branch_data_get_params),
-        FakeCall(method='POST', path=workflow_path(collection), json=post_dict),
-        FakeCall(method='GET', path=branches_path(collection, branch_id)),
-    ]
+    assert session.calls == [FakeCall(method='POST', path=workflow_path(collection), json=post_dict)]
 
     assert new_workflow.branch_root_id == collection.branch_root_id
     assert new_workflow.branch_version == collection.branch_version
@@ -133,23 +121,18 @@ def test_register_conflicting_branches(session, branch_data, workflow, collectio
     old_branch_root_id = uuid.uuid4()
     workflow.branch_root_id = old_branch_root_id
     assert workflow.branch_root_id != collection.branch_root_id
+    
+    new_branch_root_id = str(branch_data["metadata"]["root_id"])
+    new_branch_version = branch_data["metadata"]["version"]
 
-    branch_data_get_resp = {"response": [branch_data]}
-    branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(collection.branch_root_id), 'version': collection.branch_version
-    }
-    post_dict = {**workflow.dump(), "branch_id": str(branch_data["id"])}
-    session.set_responses(branch_data_get_resp, {**post_dict, 'status_description': 'status'}, branch_data)
+    post_dict = {**workflow.dump(), "branch_root_id": new_branch_root_id, "branch_version": new_branch_version}
+    session.set_responses({**post_dict, 'status_description': 'status'})
 
     # When
     new_workflow = collection.register(workflow)
 
     # Then
-    assert session.calls == [
-        FakeCall(method='GET', path=branches_path(collection), params=branch_data_get_params),
-        FakeCall(method='POST', path=workflow_path(collection), json=post_dict),
-        FakeCall(method='GET', path=branches_path(collection, branch_data["id"])),
-    ]
+    assert session.calls == [FakeCall(method='POST', path=workflow_path(collection), json=post_dict)]
 
     assert workflow.branch_root_id == old_branch_root_id
     assert new_workflow.branch_root_id == collection.branch_root_id
@@ -180,10 +163,10 @@ def test_delete(collection):
 
 
 def test_list_archived(branch_data, workflow, collection: DesignWorkflowCollection):
-    branch_data_get_resp = {"response": [branch_data]}
-    branch_id = uuid.UUID(branch_data['id'])
+    branch_root_id = uuid.UUID(branch_data['metadata']['root_id'])
+    branch_version = branch_data['metadata']['version']
 
-    collection.session.set_responses(branch_data_get_resp, {"response": []})
+    collection.session.set_responses({"response": []})
 
     lst = list(collection.list_archived(per_page=10))
     assert len(lst) == 0
@@ -192,7 +175,7 @@ def test_list_archived(branch_data, workflow, collection: DesignWorkflowCollecti
     assert collection.session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={'page': 1, 'per_page': 10, 'filter': "archived eq 'true'", 'branch': branch_id},
+        params={'page': 1, 'per_page': 10, 'filter': "archived eq 'true'", 'branch_root_id': branch_root_id, 'branch_version': branch_version},
         json=None
     )
 
@@ -213,17 +196,10 @@ def test_missing_project(design_workflow_dict):
 
 def test_update(session, branch_data, workflow, collection_without_branch):
     # Given
-    branch_data_get_resp = {"response": [branch_data]}
-    branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(workflow.branch_root_id), 'version': workflow.branch_version
-    }
-
     post_dict = workflow.dump()
     session.set_responses(
-        branch_data_get_resp,
         {"per_page": 1, "next": "", "response": []},
         {**post_dict, 'status_description': 'status'},
-        branch_data
     )
 
     # When
@@ -232,20 +208,16 @@ def test_update(session, branch_data, workflow, collection_without_branch):
     # Then
     executions_path = f'/projects/{collection_without_branch.project_id}/design-workflows/{workflow.uid}/executions'
     assert session.calls == [
-        FakeCall(method='GET', path=branches_path(collection_without_branch), params=branch_data_get_params),
         FakeCall(method='GET', path=executions_path, params={'page': 1, 'per_page': 100}),
         FakeCall(method='PUT', path=workflow_path(collection_without_branch, workflow), json=post_dict),
-        FakeCall(method='GET', path=branches_path(collection_without_branch, branch_data["id"])),
     ]
     assert_workflow(new_workflow, workflow)
 
 
 def test_update_failure_with_existing_execution(session, branch_data, workflow, collection_without_branch, design_execution_dict):
-    branch_data_get_resp = {"response": [branch_data]}
     workflow.branch_root_id = uuid.uuid4()
     post_dict = workflow.dump()
     session.set_responses(
-        branch_data_get_resp,
         {"per_page": 1, "next": "", "response": [design_execution_dict]},
         {**post_dict, 'status_description': 'status'})
 
