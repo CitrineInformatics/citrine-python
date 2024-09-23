@@ -49,7 +49,6 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         Descriptors that represent inputs to the model
     outputs: list[Descriptor]
         Descriptors that represents the output(s) of the model.
-        Currently, only one output Descriptor is supported.
     estimators: Optional[Set[AutoMLEstimator]]
         Set of estimators to consider during during AutoML model selection.
         If None is provided, defaults to AutoMLEstimator.RANDOM_FOREST.
