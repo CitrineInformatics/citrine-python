@@ -52,11 +52,14 @@ class AllIntegerFilter(Serializable['AllIntegerFilter'], PropertyFilterType):
         The lower bound on this filter range.
     upper: int
         The upper bound on this filter range.
+    inclusive: bool
+        Whether the lower & upper bounds are included in the range.
 
     """
 
     lower = properties.Integer('lower')
     upper = properties.Integer('upper')
+    inclusive = properties.Optional(properties.Boolean, 'inclusive', default=True)
     typ = properties.String('type', default="all_integer_filter", deserializable=False)
 
 

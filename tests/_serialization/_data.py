@@ -5,6 +5,7 @@ from citrine._serialization import properties
 
 VALID_SERIALIZATIONS = [
     (properties.Integer, 5, 5),
+    (properties.Integer, 5, 5.),  # Accept passing a float-representation of an int to the setter
     (properties.Float, 3.0, 3.0),
     (properties.Raw, 1234, 1234),
     (properties.String, 'foo', 'foo'),
