@@ -13,16 +13,18 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url, _pad_positional_args
+from citrine.resources.dataset import DatasetCollection
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemd_queries.gemd_query import GemdQuery
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn, \
     ConcatColumn
 from citrine.gemtables.rows import Row
-from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
-    IngredientQuantityByProcessAndName, IngredientQuantityDimension, \
-    IngredientIdentifierInOutput, IngredientQuantityInOutput, \
+from citrine.gemtables.variables import (
+    Variable, IngredientIdentifierByProcessTemplateAndName, IngredientQuantityByProcessAndName,
+    IngredientQuantityDimension, IngredientIdentifierInOutput, IngredientQuantityInOutput,
     IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
+)
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:   # pragma: no cover
@@ -53,6 +55,17 @@ class TableConfigInitiator(BaseEnumeration):
     UI = "UI"
 
 
+class TableFromGemdQueryAlgorithm(BaseEnumeration):
+    """The algorithm to use in automatically building a Table Configuration.
+
+    * UNSPECIFIED corresponds to initial default state; includes bubbling up process attributes
+    * MULTISTEP_MATERIALS corresponds keeping all attributes local to a material node / row
+    """
+
+    UNSPECIFIED = "unspecified"
+    MULTISTEP_MATERIALS = "multistep_materials"
+
+
 class TableConfig(Resource["TableConfig"]):
     """
     The Table Configuration used to build GEM Tables.
@@ -73,7 +86,8 @@ class TableConfig(Resource["TableConfig"]):
         Column definitions, which describe how the variables are shaped into the table
     gemd_query: Optional[GemdQuery]
         The query used to define the materials underpinning this table
-
+    generation_algorithm: TableFromGemdQueryAlgorithm
+        Which algorithm was used to generate the config based on the GemdQuery results
     """
 
     # FIXME (DML): rename this (this is dependent on the server side)
@@ -100,15 +114,27 @@ class TableConfig(Resource["TableConfig"]):
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
     gemd_query = properties.Optional(properties.Object(GemdQuery), "gemd_query")
+    generation_algorithm = properties.Optional(
+        properties.Enumeration(TableFromGemdQueryAlgorithm), "generation_algorithm"
+    )
 
-    def __init__(self, name: str, *, description: str, datasets: List[UUID],
-                 variables: List[Variable], rows: List[Row], columns: List[Column]):
+    def __init__(self, name: str,
+                 *,
+                 description: str,
+                 datasets: List[UUID],
+                 variables: List[Variable],
+                 rows: List[Row],
+                 columns: List[Column],
+                 gemd_query: GemdQuery = None,
+                 generation_algorithm: Optional[TableFromGemdQueryAlgorithm] = None):
         self.name = name
         self.description = description
         self.datasets = datasets
         self.rows = rows
         self.variables = variables
         self.columns = columns
+        self.gemd_query = gemd_query
+        self.generation_algorithm = generation_algorithm
 
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
@@ -461,8 +487,9 @@ class TableConfigCollection(Collection[TableConfig]):
 
         """
         # the route to fetch the config is built off the display table route tree
-        path = (f'projects/{self.project_id}/display-tables/{table.uid}/versions/{table.version}'
-                '/definition')
+        path = format_escaped_url(
+            'projects/{}/display-tables/{}/versions/{}/definition',
+            self.project_id, table.uid, table.version)
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -538,6 +565,65 @@ class TableConfigCollection(Collection[TableConfig]):
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
+    def from_query(
+            self,
+            gemd_query: GemdQuery,
+            *,
+            name: str = None,
+            description: str = None,
+            algorithm: Optional[TableFromGemdQueryAlgorithm] = None,
+            register_config: bool = False
+    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+        """
+        Build a TableConfig based on the results of a database query.
+
+        Parameters
+        ----------
+        gemd_query: GemdQuery
+            What content should end up in the table
+        name: str, optional
+            The name for the table config. Defaults to autogenerated message.
+        description: str, optional
+            The description of the table config. Defaults to autogenerated message.
+        algorithm: TableBuildAlgorithm, optional
+            The algorithm to use in generating a Table Configuration from the sample material
+            history.  If unspecified, uses the webservice's default.
+        register_config: bool, optional
+            Whether to register the config
+
+        Returns
+        -------
+        List[Tuple[Variable, Column]]
+            A table config as well as addition variables/columns which would result in
+            ambiguous matches if included in the config.
+
+        """
+        if name is None:
+            collection = DatasetCollection(
+                session=self.session,
+                team_id=self.team_id
+            )
+            name = (f"Automatic Table for Dataset: "
+                    f"{', '.join([collection.get(x).name for x in gemd_query.datasets])}")
+
+        params = {"name": name}
+        if description is not None:
+            params['description'] = description
+        if algorithm is not None:
+            params['algorithm'] = algorithm
+        data = self.session.post_resource(
+            format_escaped_url('teams/{}/table-configs/from-query', self.team_id),
+            params=params,
+            json=gemd_query.dump()
+        )
+        config = TableConfig.build(data['config'])
+        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
+
+        if register_config:
+            return self.register(config), ambiguous
+        else:
+            return config, ambiguous
+
     def preview(self, *,
                 table_config: TableConfig,
                 preview_materials: List[LinkByUID] = None
@@ -552,7 +638,7 @@ class TableConfigCollection(Collection[TableConfig]):
             List of links to the material runs to use as terminal materials in the preview
 
         """
-        path = path = format_escaped_url(
+        path = format_escaped_url(
             "teams/{}/ara-definitions/preview",
             self.team_id
         )

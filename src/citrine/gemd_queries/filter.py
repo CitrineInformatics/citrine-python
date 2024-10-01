@@ -27,9 +27,9 @@ class AllRealFilter(Serializable['AllRealFilter'], PropertyFilterType):
 
     Parameters
     ----------
-    lower: str
+    lower: float
         The lower bound on this filter range.
-    upper: str
+    upper: float
         The upper bound on this filter range.
     unit: str
         The units associated with the floating point values for this filter.
@@ -48,15 +48,15 @@ class AllIntegerFilter(Serializable['AllIntegerFilter'], PropertyFilterType):
 
     Parameters
     ----------
-    lower: str
+    lower: int
         The lower bound on this filter range.
-    upper: str
+    upper: int
         The upper bound on this filter range.
 
     """
 
-    lower = properties.Float('lower')
-    upper = properties.Float('upper')
+    lower = properties.Integer('lower')
+    upper = properties.Integer('upper')
     typ = properties.String('type', default="all_integer_filter", deserializable=False)
 
 

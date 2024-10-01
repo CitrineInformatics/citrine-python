@@ -257,7 +257,6 @@ class PropertiesCriteriaDataFactory(factory.DictFactory):
     type = PropertiesCriteria.typ
     property_templates_filter = factory.List([factory.Faker('uuid4')])
     value_type_filter = factory.SubFactory(RealFilterDataFactory)
-    classifications = factory.Faker('enum', enum_cls=MaterialClassification)
 
     class Params:
         integer = factory.Trait(

@@ -2,6 +2,7 @@ from uuid import UUID, uuid4
 import pytest
 
 from gemd.entity.link_by_uid import LinkByUID
+from citrine.gemd_queries.gemd_query import GemdQuery
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.gemtables.rows import MaterialRunByTemplate
 from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInfo, \
@@ -9,14 +10,16 @@ from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInf
     IngredientIdentifierByProcessTemplateAndName, TerminalMaterialIdentifier, \
     IngredientQuantityInOutput, IngredientIdentifierInOutput, \
     IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
-from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
+from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm, \
+    TableFromGemdQueryAlgorithm
 from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.team import Team
 from citrine.seeding.find_or_create import create_or_update
-from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
+from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory, \
+    GemdQueryDataFactory, TableConfigDataFactory, DatasetDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -252,14 +255,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
     """Test that default for material hits the right route"""
     # Given
     dummy_resp = {
-        'config': TableConfig(
-            name='foo',
-            description='foo',
-            variables=[],
-            columns=[],
-            rows=[],
-            datasets=[]
-        ).dump(),
+        'config': TableConfigDataFactory(),
         'ambiguous': [
             [
                 TerminalMaterialIdentifier(name='foo', headers=['foo'], scope='id').dump(),
@@ -317,6 +313,81 @@ def test_default_for_material_failure(collection: TableConfigCollection):
             material=MaterialRun('foo'),
             name='foo'
         )
+
+
+def test_from_query(collection: TableConfigCollection, session):
+    """Test that default for material hits the right route"""
+    query = GemdQueryDataFactory()
+    config = TableConfigDataFactory()
+
+    config_resp = {
+        'config': config,
+        'ambiguous': [
+            [
+                TerminalMaterialIdentifier(name='foo', headers=['foo'], scope='id').dump(),
+                IdentityColumn(data_source='foo').dump(),
+            ]
+        ],
+    }
+    session.responses.append(config_resp)
+    fake_call = FakeCall(
+        method='POST',
+        path=f'teams/{collection.team_id}/table-configs/from-query',
+        params={
+            'name': config['name'],
+            'description': config['description'],
+            'algorithm': TableFromGemdQueryAlgorithm.MULTISTEP_MATERIALS,
+        },
+        json=query,
+    )
+
+    collection.from_query(
+        name=config['name'],
+        description=config['description'],
+        gemd_query=GemdQuery.build(query),
+        algorithm=TableFromGemdQueryAlgorithm.MULTISTEP_MATERIALS
+    )
+    assert 1 == session.num_calls
+    assert session.last_call.method == fake_call.method
+    assert session.last_call.path == fake_call.path
+    assert session.last_call.params == fake_call.params
+    last_query: GemdQuery = GemdQuery.build(session.last_call.json)
+    fake_query: GemdQuery = GemdQuery.build(fake_call.json)
+    assert last_query.datasets == fake_query.datasets
+    assert last_query.object_types == fake_query.object_types
+    assert last_query.schema_version == fake_query.schema_version
+    assert last_query.dump() == fake_query.dump()  # Ordering issues
+
+
+def test_from_nameless_query_and_register(collection: TableConfigCollection, session):
+    """Test that default for material hits the right route"""
+    query = GemdQueryDataFactory()
+    config = TableConfigDataFactory(generation_algorithm=TableFromGemdQueryAlgorithm.MULTISTEP_MATERIALS)
+
+    dataset_resps = [DatasetDataFactory(id=dataset) for dataset in query['datasets']]
+    config_resp = {
+        'config': config,
+        'ambiguous': [
+            [
+                TerminalMaterialIdentifier(name='foo', headers=['foo'], scope='id').dump(),
+                IdentityColumn(data_source='foo').dump(),
+            ]
+        ],
+    }
+    register_resp = TableConfigResponseDataFactory(version__ara_definition=config)
+
+    session.responses.extend(dataset_resps)
+    session.responses.append(config_resp)
+    session.responses.append(register_resp)
+
+    generated, _ = collection.from_query(
+        gemd_query=GemdQuery.build(query),
+        description='my_description',
+        register_config=True
+    )
+    assert session.num_calls == len(query['datasets']) + 1 + 1
+    assert generated != TableConfig.build(config)  # Because it has ids
+    assert generated.variables == TableConfig.build(config).variables
 
 
 def test_add_columns():

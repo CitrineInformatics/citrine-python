@@ -72,7 +72,7 @@ class Variable(PolymorphicSerializable['Variable']):
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
             TerminalMaterialInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
-            AttributeByTemplateAndObjectTemplate, LocalAttribute,
+            AttributeByTemplateAndObjectTemplate, LocalAttribute, LocalAttributeAndObject,
             IngredientIdentifierByProcessTemplateAndName, IngredientLabelByProcessAndName,
             IngredientLabelsSetByProcessAndName, IngredientQuantityByProcessAndName,
             TerminalMaterialIdentifier, AttributeInOutput,
@@ -334,6 +334,63 @@ class LocalAttribute(Serializable['LocalAttribute'], Variable):
         self.name = name
         self.headers = headers
         self.template = _make_link_by_uid(template)
+        self.attribute_constraints = None if attribute_constraints is None \
+            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
+        self.type_selector = type_selector
+
+
+class LocalAttributeAndObject(Serializable['LocalAttributeAndObject'], Variable):
+    """[ALPHA] Attribute marked by an attribute template for the root of a material history tree.
+
+    Parameters
+    ----------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    template: Union[UUID, str, LinkByUID, AttributeTemplate]
+        attribute template that identifies the attribute to assign to the variable
+    object_template: Union[UUID, str, LinkByUID, AttributeTemplate]
+        attribute template that identifies the attribute to assign to the variable
+    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+        Optional
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
+        variable is being set to may be the target of a constraint as well.
+    type_selector: DataObjectTypeSelector
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    template = properties.Object(LinkByUID, 'template')
+    object_template = properties.Object(LinkByUID, 'object_template')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
+        ), 'attribute_constraints')
+    type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
+    typ = properties.String('type', default="local_attribute_and_object", deserializable=False)
+
+    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
+    object_type = Union[UUID, str, LinkByUID, BaseTemplate]
+    constraint_type = Tuple[attribute_type, BaseBounds]
+
+    def __init__(self,
+                 name: str,
+                 *,
+                 headers: List[str],
+                 template: attribute_type,
+                 object_template: object_type,
+                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
+        self.name = name
+        self.headers = headers
+        self.template = _make_link_by_uid(template)
+        self.object_template = _make_link_by_uid(object_template)
         self.attribute_constraints = None if attribute_constraints is None \
             else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
         self.type_selector = type_selector
