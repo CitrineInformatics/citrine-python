@@ -264,17 +264,11 @@ class Integer(Property[int, SerializedInteger]):
 
     @property
     def serialized_types(self):
-        return float, int, str
+        return int, str
 
     def _deserialize(self, value: SerializedInteger) -> int:
         if isinstance(value, bool):
             raise TypeError('value must be a Number, not a boolean.')
-        elif isinstance(value, float):
-            cast = round(value)
-            if cast == value:
-                return cast
-            else:
-                raise ValueError(f'{value} cannot be cast to an integer.')
         else:
             return int(value)
 
