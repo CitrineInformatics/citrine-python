@@ -14,6 +14,7 @@ from citrine.gemd_queries.gemd_query import *
 from citrine.gemd_queries.criteria import *
 from citrine.gemd_queries.filter import *
 from citrine.informatics.scores import LIScore
+from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import _Uploader
 from citrine.resources.material_run import MaterialRun
@@ -376,6 +377,18 @@ class TableDataSourceDataFactory(factory.DictFactory):
     table_id = factory.Faker("uuid4")
     table_version = factory.Faker('random_digit_not_null')
 
+from citrine.informatics.data_sources import GemTableDataSource
+
+class TableDataSourceFactory(factory.Factory):
+    class Meta:
+        model = GemTableDataSource
+
+    class Params:
+        data_factory = factory.SubFactory(TableDataSourceDataFactory)
+
+    table_id = factory.LazyAttribute(lambda o: o.data_factory["table_id"])
+    table_version = factory.LazyAttribute(lambda o: o.data_factory["table_version"])
+
 
 class StatusDataFactory(factory.DictFactory):
     # TODO  Create trait and info / detail content
@@ -470,17 +483,46 @@ class DesignSpaceDataFactory(factory.DictFactory):
 
 
 class DesignWorkflowDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    class Params:
+        data_source = factory.SubFactory(TableDataSourceFactory)
+        branch = factory.SubFactory(BranchDataFactory)
+        times = factory.List([factory.Faker("unix_milliseconds") for i in range(3)])
+        register = factory.Trait(
+            id = factory.Faker('uuid4'),
+            branch_id = factory.LazyAttribute(lambda o: o.branch["id"]),
+            created_by = factory.Faker('uuid4'),
+            updated_by = factory.LazyAttribute(lambda o: o.created_by),
+            create_time = factory.LazyAttribute(lambda o: sorted(o.times)[0]),
+            update_time = factory.LazyAttribute(lambda o: sorted(o.times)[0]),
+            # TODO: Create a Trait for statuses
+            status = "SUCCEEDED",
+            status_description = "READY",
+            status_info = [],
+            status_detail = []
+        )
+        update = factory.Trait(
+            register = True,
+            updated_by = factory.Faker('uuid4'),
+            update_time = factory.LazyAttribute(lambda o: sorted(o.times)[1])
+        )
+        archive = factory.Trait(
+            update = True,
+            archived = True,
+            archived_by = factory.Faker('uuid4'),
+            archive_time = factory.LazyAttribute(lambda o: sorted(o.times)[2]),
+        )
+
+    type = DesignWorkflow.typ
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
-    archived = False
     design_space_id = factory.Faker("uuid4")
     predictor_id = factory.Faker("uuid4")
-    branch_id = factory.Faker("uuid4")
-    # TODO  Create Trait and status_detail content
-    status = "SUCCEEDED"
-    status_description = "READY"
-    status_detail = []
+    predictor_version = factory.Faker("random_digit_not_null")
+    data_source_id = factory.LazyAttribute(lambda o: o.data_source.to_data_source_id())
+    branch_root_id = factory.LazyAttribute(lambda o: o.branch["metadata"]["root_id"])
+    branch_version = factory.LazyAttribute(lambda o: o.branch["metadata"]["version"])
+    archived = False
+    status_description = ""  # TODO: Should be None, but property not defined as Optional
 
 
 class JobSubmissionResponseFactory(factory.DictFactory):
@@ -488,6 +530,9 @@ class JobSubmissionResponseFactory(factory.DictFactory):
 
 
 class DatasetDataFactory(factory.DictFactory):
+    class Params:
+        times = factory.List([factory.Faker("unix_milliseconds") for i in range(3)])
+
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
     summary = factory.Faker('catch_phrase')
@@ -497,10 +542,9 @@ class DatasetDataFactory(factory.DictFactory):
     updated_by = factory.Faker('uuid4')
     deleted_by = factory.Faker('uuid4')
     unique_name = None  # TODO Update tests to include unique_name
-    # Unfortunately, this does not respect chronology
-    update_time = factory.Faker("unix_milliseconds")
-    create_time = factory.Faker("unix_milliseconds")
-    delete_time = factory.Faker("unix_milliseconds")
+    create_time = factory.LazyAttribute(lambda o: sorted(o.times)[0])
+    update_time = factory.LazyAttribute(lambda o: sorted(o.times)[1])
+    delete_time = factory.LazyAttribute(lambda o: sorted(o.times)[2])
     public = False
 
 
