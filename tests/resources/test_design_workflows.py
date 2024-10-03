@@ -86,7 +86,7 @@ def test_basic_methods(workflow, collection):
 @pytest.mark.parametrize("optional_args", all_combination_lengths(OPTIONAL_ARGS))
 def test_register(session, branch_data, collection, optional_args):
     kw_args = {argument: None for argument, factory in OPTIONAL_ARGS}
-    kw_args |= {argument: factory() for argument, factory in optional_args}
+    kw_args.update({argument: factory() for argument, factory in optional_args})
     workflow_data = DesignWorkflowDataFactory(**kw_args, branch=branch_data)
 
     # Given
