@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Collection
 from uuid import uuid4, UUID
 
 import pytest
@@ -90,11 +90,11 @@ def test_deprecation_of_positional_arguments(session):
     check_project = {'project': {'team': {'id': team_id}}}
     session.set_response(check_project)
     with pytest.deprecated_call():
-        fcol = FileCollection(uuid4(), uuid4(), session)
+        _ = FileCollection(uuid4(), uuid4(), session)
     with pytest.raises(TypeError):
-        fcol = FileCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
+        _ = FileCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
     with pytest.raises(TypeError):
-        fcol = FileCollection(project_id=uuid4(), dataset_id=None, session=session)
+        _ = FileCollection(project_id=uuid4(), dataset_id=None, session=session)
 
 def test_delete(collection: FileCollection, session):
     """Test that deletion calls the expected endpoint and checks the url structure."""
@@ -569,6 +569,15 @@ def test_ingest(collection: FileCollection, session):
     with pytest.raises(TypeError):
         collection.ingest([Path(good_file1.url)])
 
+    with pytest.raises(ValueError):
+        collection.ingest([good_file1], build_table=True)
+
+    session.set_responses(ingest_create_resp, job_id_resp, job_status_resp, ingest_status_resp)
+    coll_with_project_id = FileCollection(team_id=uuid4(), dataset_id=uuid4(), session=session)
+    coll_with_project_id.project_id = uuid4()
+    with pytest.deprecated_call():
+        coll_with_project_id.ingest([good_file1], build_table=True)
+
 
 def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
     """Test more advanced workflows, patching to avoid unnecessary complexity."""
@@ -591,7 +600,7 @@ def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):
         return FileLink(url='relative/path', filename=file_path.name)
 
     def _mock_build_from_file_links(self: IngestionCollection,
-                                    file_links: Iterable[FileLink],
+                                    file_links: Collection[FileLink],
                                     *,
                                     raise_errors: bool = True
                                     ):
