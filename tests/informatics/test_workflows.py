@@ -1,20 +1,18 @@
 """Tests for citrine.informatics.workflows."""
-import json
+from multiprocessing.reduction import register
 from uuid import uuid4, UUID
 
-import mock
 import pytest
 
-from citrine._session import Session
-from citrine.informatics.design_candidate import DesignMaterial, DesignVariable, DesignCandidate, ChemicalFormula, \
+from citrine.informatics.design_candidate import DesignMaterial, DesignCandidate, ChemicalFormula, \
     MeanAndStd, TopCategories, Mixture, MolecularStructure
 from citrine.informatics.executions import DesignExecution
 from citrine.informatics.predict_request import PredictRequest
-from citrine.informatics.workflows import DesignWorkflow, Workflow
+from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_execution import DesignExecutionCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 
-from tests.utils.factories import BranchDataFactory
+from tests.utils.factories import BranchDataFactory, DesignWorkflowDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -48,10 +46,8 @@ PROJECT_ID = uuid4()
 
 
 @pytest.fixture
-def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
-    workflow = collection.build(design_workflow_dict)
-    collection.session.calls.clear()
-    return workflow
+def design_workflow(collection) -> DesignWorkflow:
+    return collection.build(DesignWorkflowDataFactory(register=True))
 
 @pytest.fixture
 def design_execution(execution_collection, design_execution_dict) -> DesignExecution:

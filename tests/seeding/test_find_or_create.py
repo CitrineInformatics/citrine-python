@@ -349,9 +349,9 @@ def test_create_or_update_unique_found_design_workflow(session):
     branch_data = BranchDataFactory()
     root_id = UUID(branch_data["metadata"]["root_id"])
     version = branch_data["metadata"]["version"]
-    dw1_dict = DesignWorkflowDataFactory()
-    dw2_dict = DesignWorkflowDataFactory(branch_root_id=root_id, branch_version=version)
-    dw3_dict = DesignWorkflowDataFactory()
+    dw1_dict = DesignWorkflowDataFactory(register=True)
+    dw2_dict = DesignWorkflowDataFactory(register=True, branch=branch_data)
+    dw3_dict = DesignWorkflowDataFactory(register=True)
     session.set_responses(
         # List
         {"response": [dw1_dict, dw2_dict, dw3_dict]},  # Return the design workflows

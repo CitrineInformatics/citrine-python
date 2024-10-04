@@ -949,16 +949,3 @@ def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict
         "evaluators": [example_cv_evaluator_dict, example_holdout_evaluator_dict]
     })
     return ret
-
-@pytest.fixture
-def design_workflow_dict(generic_entity):
-    ret = generic_entity.copy()
-    ret.update({
-        "name": "Example Design Workflow",
-        "description": "A description! Of the Design Workflow! So you know what it's for!",
-        "design_space_id": str(uuid.uuid4()),
-        "predictor_id": str(uuid.uuid4()),
-        "predictor_version": random.randint(1, 10),
-        "branch_id": str(uuid.uuid4()),
-    })
-    return ret
