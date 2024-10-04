@@ -7,6 +7,7 @@ from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID
+from warnings import warn
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import GEMDResource
@@ -676,7 +677,8 @@ class FileCollection(Collection[FileLink]):
                delete_dataset_contents: bool = False,
                delete_templates: bool = True,
                timeout: float = None,
-               polling_delay: Optional[float] = None
+               polling_delay: Optional[float] = None,
+               project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
                ) -> "IngestionStatus":  # noqa: F821
         """
         [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
@@ -702,6 +704,8 @@ class FileCollection(Collection[FileLink]):
         build_table: bool
             Whether to trigger a regeneration of the table config and building the table
             after ingestion.  Default: False
+        project: Optional[Project, UUID, or str]
+            Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete old objects prior to creating new ones.  Default: False
         delete_templates: bool
@@ -721,6 +725,18 @@ class FileCollection(Collection[FileLink]):
 
         """
         from citrine.resources.ingestion import IngestionCollection
+        from citrine.resources.project import Project  # noqa: F401
+
+        if build_table and project is None:
+            if self.project_id is None:
+                raise ValueError("Building a table requires a target project.")
+            else:
+                warn(
+                    "Building a table with an implicit project is deprecated "
+                    "and will be removed in v4. Please pass a project explicitly.",
+                    DeprecationWarning
+                )
+                project = self.project_id
 
         def resolve_with_local(candidate: Union[FileLink, Path, str]) -> FileLink:
             """Resolve Path, str or FileLink to an absolute reference."""
@@ -765,6 +781,7 @@ class FileCollection(Collection[FileLink]):
         )
         return ingestion.build_objects(
             build_table=build_table,
+            project=project,
             delete_dataset_contents=delete_dataset_contents,
             delete_templates=delete_templates,
             timeout=timeout,
