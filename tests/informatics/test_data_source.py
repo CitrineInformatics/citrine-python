@@ -49,7 +49,8 @@ def test_invalid_deser():
 def test_data_source_id(data_source):
     if isinstance(data_source, CSVDataSource):
         # TODO: There's no obvious way to recover the column_definitions & identifiers from the ID
-        transformed = DataSource.from_data_source_id(data_source.to_data_source_id())
+        with pytest.warns(UserWarning):
+            transformed = DataSource.from_data_source_id(data_source.to_data_source_id())
         assert isinstance(data_source, CSVDataSource)
         assert transformed.file_link == data_source.file_link
     else:

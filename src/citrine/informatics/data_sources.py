@@ -2,6 +2,7 @@
 from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
+from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -31,14 +32,15 @@ class DataSource(PolymorphicSerializable['DataSource']):
             return False
 
     @classmethod
+    def _subclass_list(self) -> List[Type[Serializable]]:
+        return [CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
+
+    @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
-        types: List[Type[Serializable]] = [
-            CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource
-        ]
-        res = next((x for x in types if x.typ == data["type"]), None)
+        res = next((x for x in cls._subclass_list() if x.typ == data["type"]), None)
         if res is None:
             raise ValueError("Unrecognized type: {}".format(data["type"]))
         return res
@@ -52,10 +54,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
     def from_data_source_id(cls, data_source_id: str) -> "DataSource":
         """Build a DataSource from a datasource_id."""
         terms = data_source_id.split("::")
-        types: List[Type[Serializable]] = [
-            CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource
-        ]
-        res = next((x for x in types if x._data_source_type == terms[0]), None)
+        res = next((x for x in cls._subclass_list() if x._data_source_type == terms[0]), None)
         if res is None:
             raise ValueError("Unrecognized type: {}".format(terms[0]))
         return res._data_source_id_builder(*terms[1:])
@@ -107,6 +106,9 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
     @classmethod
     def _data_source_id_builder(cls, *args) -> DataSource:
         # TODO Figure out how to populate the column definitions
+        warn("A CSVDataSource was derived from a data_source_id "
+             "but is missing its column_definitions and identities",
+             UserWarning)
         return CSVDataSource(
             file_link=FileLink(url=args[0], filename=args[1]),
             column_definitions={}
@@ -114,9 +116,7 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
 
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-        return "::".join(
-            str(x) for x in [self._data_source_type, self.file_link.url, self.file_link.filename]
-        )
+        return f"{self._data_source_type}::{self.file_link.url}::{self.file_link.filename}"
 
 
 class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
@@ -151,9 +151,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-        return "::".join(
-            str(x) for x in [self._data_source_type, self.table_id, self.table_version]
-        )
+        return f"{self._data_source_type}::{self.table_id}::{self.table_version}"
 
     @classmethod
     def from_gemtable(cls, table: GemTable) -> "GemTableDataSource":
@@ -192,7 +190,7 @@ class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSourc
 
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-        return "::".join(str(x) for x in [self._data_source_type, self.datasource_id])
+        return f"{self._data_source_type}::{self.datasource_id}"
 
 
 class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
@@ -219,4 +217,4 @@ class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
 
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-        return "::".join(str(x) for x in [self._data_source_type, self.snapshot_id])
+        return f"{self._data_source_type}::{self.snapshot_id}"
