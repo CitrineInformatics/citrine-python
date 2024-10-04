@@ -11,10 +11,13 @@ from citrine.informatics.descriptors import Descriptor
 from citrine.resources.file_link import FileLink
 from citrine.resources.gemtables import GemTable
 
-__all__ = ['DataSource',
-           'CSVDataSource',
-           'GemTableDataSource',
-           'ExperimentDataSourceRef']
+__all__ = [
+    'DataSource',
+    'CSVDataSource',
+    'GemTableDataSource',
+    'ExperimentDataSourceRef',
+    'SnapshotDataSource',
+]
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
@@ -42,7 +45,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
             raise ValueError("Can only get types from dicts with a 'type' key")
         res = next((x for x in cls._subclass_list() if x.typ == data["type"]), None)
         if res is None:
-            raise ValueError("Unrecognized type: {}".format(data["type"]))
+            raise ValueError(f"Unrecognized type: {data['type']}")
         return res
 
     @property
@@ -56,7 +59,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         terms = data_source_id.split("::")
         res = next((x for x in cls._subclass_list() if x._data_source_type == terms[0]), None)
         if res is None:
-            raise ValueError("Unrecognized type: {}".format(terms[0]))
+            raise ValueError(f"Unrecognized type: {terms[0]}")
         return res._data_source_id_builder(*terms[1:])
 
     @classmethod
