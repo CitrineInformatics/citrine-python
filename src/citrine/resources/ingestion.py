@@ -1,5 +1,7 @@
-from typing import Optional, Iterator, Iterable
+from deprecation import deprecated
+from typing import Optional, Union, Iterator, Iterable, Collection as TypingCollection
 from uuid import UUID
+from warnings import warn
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -188,14 +190,26 @@ class Ingestion(Resource['Ingestion']):
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
     team_id = properties.Optional(properties.UUID, 'team_id', default=None)
-    project_id = properties.Optional(properties.UUID, 'project_id', default=None)
+    _project_id = properties.Optional(properties.UUID, 'project_id', default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
 
+    @property
+    def project_id(self) -> Optional[UUID]:
+        """[DEPRECATED] The project ID associated with this ingest."""
+        return self._project_id
+
+    @project_id.setter
+    @deprecated(deprecated_in='3.9.0', removed_in='4.0.0',
+                details="Use the project argument instead of setting the project_id attribute.")
+    def project_id(self, value: Optional[UUID]):
+        self._project_id = value
+
     def build_objects(self,
                       *,
                       build_table: bool = False,
+                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
@@ -211,6 +225,8 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
+        project: Optional[Project, UUID, or str]
+            Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
         delete_templates: bool
@@ -231,6 +247,7 @@ class Ingestion(Resource['Ingestion']):
         """
         try:
             job = self.build_objects_async(build_table=build_table,
+                                           project=project,
                                            delete_dataset_contents=delete_dataset_contents,
                                            delete_templates=delete_templates)
         except IngestionException as e:
@@ -249,6 +266,7 @@ class Ingestion(Resource['Ingestion']):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
+                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """
@@ -258,6 +276,8 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
+        project: Optional[Project, UUID, or str]
+            Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
         delete_templates: bool
@@ -270,12 +290,35 @@ class Ingestion(Resource['Ingestion']):
             The object for the submitted job
 
         """
+        from citrine.resources.project import Project
         collection = IngestionCollection(team_id=self.team_id,
                                          dataset_id=self.dataset_id,
                                          session=self.session)
         path = collection._get_path(uid=self.uid, action="gemd-objects-async")
+
+        # Project resolution logic
+        if not build_table:
+            project_id = None
+        elif project is None:
+            if self.project_id is None:
+                raise ValueError("Building a table requires a target project.")
+            else:
+                warn(
+                    "Building a table with an implicit project is deprecated "
+                    "and will be removed in v4. Please pass a project explicitly.",
+                    DeprecationWarning
+                )
+                project_id = self.project_id
+        elif isinstance(project, Project):
+            project_id = project.uid
+        elif isinstance(project, UUID):
+            project_id = project
+        else:
+            project_id = UUID(project)
+
         params = {
             "build_table": build_table,
+            "project_id": project_id,
             "delete_dataset_contents": delete_dataset_contents,
             "delete_templates": delete_templates,
         }
@@ -358,20 +401,25 @@ class FailedIngestion(Ingestion):
     def build_objects(self,
                       *,
                       build_table: bool = False,
+                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
-                      delete_templates: bool = True) -> IngestionStatus:
+                      delete_templates: bool = True,
+                      timeout: float = None,
+                      polling_delay: Optional[float] = None
+                      ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         return self.status()
 
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
+                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(
             message=f"Errors: {[e.msg for e in self.errors]}",
-            job_id=None,
+            job_id=UUID('0' * 32),  # Nil UUID
             failure_reasons=[e.msg for e in self.errors]
         )
 
@@ -384,7 +432,7 @@ class FailedIngestion(Ingestion):
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(
             message=f"Errors: {[e.msg for e in self.errors]}",
-            job_id=None,
+            job_id=UUID('0' * 32),  # Nil UUID
             failure_reasons=[e.msg for e in self.errors]
         )
 
@@ -401,8 +449,8 @@ class FailedIngestion(Ingestion):
         if self.raise_errors:
             raise JobFailureError(
                 message=f"Ingestion creation failed: {self.errors}",
-                job_id=None,
-                failure_reasons=self.errors
+                job_id=UUID('0' * 32),  # Nil UUID
+                failure_reasons=[str(x) for x in self.errors]
             )
         else:
             return IngestionStatus.build({
@@ -461,7 +509,7 @@ class IngestionCollection(Collection[Ingestion]):
             return f'projects/{self.project_id}/ingestions'
 
     def build_from_file_links(self,
-                              file_links: Iterable[FileLink],
+                              file_links: TypingCollection[FileLink],
                               *,
                               raise_errors: bool = True) -> Ingestion:
         """

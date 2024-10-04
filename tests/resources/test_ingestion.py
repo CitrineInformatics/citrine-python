@@ -8,7 +8,8 @@ from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import FileLink
 from citrine.resources.ingestion import Ingestion, IngestionCollection, IngestionStatus, IngestionStatusType, \
     IngestionException, IngestionErrorTrace, IngestionErrorType, IngestionErrorFamily, IngestionErrorLevel
-from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError, _poll_for_job_completion
+from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError
+from citrine.resources.project import Project
 
 from tests.utils.factories import DatasetFactory
 from tests.utils.session import FakeCall, FakeSession, FakeRequestResponseApiError
@@ -31,12 +32,12 @@ def dataset(session: Session):
 
 @pytest.fixture
 def deprecated_dataset(session: Session):
-    dataset = DatasetFactory(name='Test Dataset')
-    dataset.uid = uuid4()
-    dataset.session = session
-    dataset.project_id = uuid4()
+    deprecated_dataset = DatasetFactory(name='Test Dataset')
+    deprecated_dataset.uid = uuid4()
+    deprecated_dataset.session = session
+    deprecated_dataset.project_id = uuid4()
 
-    return dataset
+    return deprecated_dataset
 
 
 @pytest.fixture
@@ -105,11 +106,11 @@ def test_deprecation_of_positional_arguments(session):
     check_project = {'project': {'team': {'id': team_id}}}
     session.set_response(check_project)
     with pytest.deprecated_call():
-        ingestion_collection = IngestionCollection(uuid4(), uuid4(), session)
+        IngestionCollection(uuid4(), uuid4(), session)
     with pytest.raises(TypeError):
-        ingestion_collection = IngestionCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
+        IngestionCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
     with pytest.raises(TypeError):
-        ingestion_collection = IngestionCollection(project_id=uuid4(), dataset_id=None, session=session)
+        IngestionCollection(project_id=uuid4(), dataset_id=None, session=session)
 
 
 def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatch):
@@ -262,6 +263,38 @@ def test_processing_exceptions(session, ingest, monkeypatch):
     assert any('Sad' in e.msg for e in result.errors)
 
 
+def test_ingestion_with_table_build(session: FakeSession,
+                                    ingest: Ingestion,
+                                    dataset: Dataset,
+                                    deprecated_dataset: Dataset,
+                                    file_link: FileLink):
+    # build_objects_async will always approve, if we get that far
+    session.set_responses(
+        {"job_id": str(uuid4())}
+    )
+
+    with pytest.raises(ValueError):
+        ingest.build_objects_async(build_table=True)
+
+    with pytest.deprecated_call():
+        ingest.project_id = uuid4()
+    with pytest.deprecated_call():
+        ingest.build_objects_async(build_table=True)
+    with pytest.deprecated_call():
+        ingest.project_id = None
+
+    project_uuid = uuid4()
+    project = Project("Testing", session=session, team_id=dataset.team_id)
+    project.uid = project_uuid
+    ingest.build_objects_async(build_table=True, project=project)
+    assert session.last_call.params["project_id"] == project_uuid
+
+    ingest.build_objects_async(build_table=True, project=project_uuid)
+    assert session.last_call.params["project_id"] == project_uuid
+
+    ingest.build_objects_async(build_table=True, project=str(project_uuid))
+    assert session.last_call.params["project_id"] == project_uuid
+
 def test_ingestion_flow(session: FakeSession,
                         ingest: Ingestion,
                         collection: IngestionCollection,
@@ -324,8 +357,3 @@ def test_ingestion_flow(session: FakeSession,
     )
     with pytest.raises(IngestionException, match="Missing ingredient"):
         ingest.build_objects()
-
-
-def test_invalid_poll_for_job_completion(session):
-    with pytest.raises(TypeError):
-        _poll_for_job_completion(session=session, job=uuid4(), project_id=None, team_id=None)
