@@ -7,8 +7,6 @@ import sys
 import time
 
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.executions.predictor_evaluation_execution import (
-    PredictorEvaluationExecution)
 from citrine.jobs.waiting import (
     wait_for_asynchronous_object,
     wait_while_executing,
@@ -53,7 +51,7 @@ def test_wait_while_validating_timeout(sleep_mock, time_mock):
     module.in_progress.return_value = True
     collection.get.return_value = module
 
-    with pytest.raises(ConditionTimeoutError) as exceptio:
+    with pytest.raises(ConditionTimeoutError):
         wait_while_validating(collection=collection, module=module, timeout=1.0)
 
 @mock.patch('time.sleep', return_value=None)

@@ -196,6 +196,9 @@ class Ingestion(Resource['Ingestion']):
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
 
     @property
+    @deprecated(deprecated_in='3.11.0', removed_in='4.0.0',
+                details="The project_id attribute is deprecated since "
+                        "dataset access is now controlled through teams.")
     def project_id(self) -> Optional[UUID]:
         """[DEPRECATED] The project ID associated with this ingest."""
         return self._project_id
@@ -300,7 +303,7 @@ class Ingestion(Resource['Ingestion']):
         if not build_table:
             project_id = None
         elif project is None:
-            if self.project_id is None:
+            if self._project_id is None:
                 raise ValueError("Building a table requires a target project.")
             else:
                 warn(
@@ -308,7 +311,7 @@ class Ingestion(Resource['Ingestion']):
                     "and will be removed in v4. Please pass a project explicitly.",
                     DeprecationWarning
                 )
-                project_id = self.project_id
+                project_id = self._project_id
         elif isinstance(project, Project):
             project_id = project.uid
         elif isinstance(project, UUID):
@@ -365,18 +368,26 @@ class Ingestion(Resource['Ingestion']):
         if polling_delay is not None:
             kwargs["polling_delay"] = polling_delay
 
-        _poll_for_job_completion(
+        build_job_status = _poll_for_job_completion(
             session=self.session,
             team_id=self.team_id,
             job=job,
             raise_errors=False,  # JobFailureError doesn't contain the error
             **kwargs
         )
+        if build_job_status.output is not None and "table_build_job_id" in build_job_status.output:
+            _poll_for_job_completion(
+                session=self.session,
+                team_id=self.team_id,
+                job=build_job_status.output["table_build_job_id"],
+                raise_errors=False,  # JobFailureError doesn't contain the error
+                **kwargs
+            )
         return self.status()
 
     def status(self) -> IngestionStatus:
         """
-        [ALPHA] Retrieve the status of the ingestion  from platform.
+        [ALPHA] Retrieve the status of the ingestion from platform.
 
         Returns
         ----------
@@ -438,7 +449,7 @@ class FailedIngestion(Ingestion):
 
     def status(self) -> IngestionStatus:
         """
-        [ALPHA] Retrieve the status of the ingestion  from platform.
+        [ALPHA] Retrieve the status of the ingestion from platform.
 
         Returns
         ----------

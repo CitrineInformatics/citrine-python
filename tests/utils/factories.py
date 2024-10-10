@@ -15,8 +15,10 @@ from citrine.gemd_queries.criteria import *
 from citrine.gemd_queries.filter import *
 from citrine.informatics.scores import LIScore
 from citrine.informatics.workflows import DesignWorkflow
+from citrine.jobs.job import JobStatus
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import _Uploader
+from citrine.resources.ingestion import IngestionStatusType
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
@@ -525,8 +527,55 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     status_description = ""  # TODO: Should be None, but property not defined as Optional
 
 
-class JobSubmissionResponseFactory(factory.DictFactory):
+class IngestFilesResponseDataFactory(factory.DictFactory):
+    team_id = factory.Faker('uuid4')
+    dataset_id = factory.Faker('uuid4')
+    ingestion_id = factory.Faker('uuid4')
+
+
+class IngestionStatusResponseDataFactory(factory.DictFactory):
+    ingestion_id = factory.Faker('uuid4')
+    status = IngestionStatusType.INGESTION_CREATED
+    errors = factory.List([])
+
+
+class JobSubmissionResponseDataFactory(factory.DictFactory):
     job_id = factory.Faker('uuid4')
+
+
+class TaskNodeDataFactory(factory.DictFactory):
+    class Params:
+        failure = False
+
+    id = factory.Faker('uuid4')
+    task_type = factory.Faker('word')
+    status = factory.Maybe(
+        "failure",
+        yes_declaration=JobStatus.FAILURE,
+        no_declaration=JobStatus.SUCCESS
+    )
+    dependencies = factory.List([])
+    failure_reason = factory.Maybe(
+        "failure",
+        yes_declaration=factory.Faker('sentence'),
+        no_declaration=None
+    )
+
+
+class JobStatusResponseDataFactory(factory.DictFactory):
+    class Params:
+        failure = False
+
+    job_type = factory.Faker('word')
+    status = factory.Maybe(
+        "failure",
+        yes_declaration=JobStatus.FAILURE,
+        no_declaration=JobStatus.SUCCESS
+    )
+    tasks = factory.List([
+        factory.RelatedFactory(TaskNodeDataFactory, failure=factory.SelfAttribute('...failure'))
+    ])
+    output = factory.Dict({})
 
 
 class DatasetDataFactory(factory.DictFactory):

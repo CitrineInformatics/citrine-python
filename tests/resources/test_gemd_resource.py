@@ -45,7 +45,7 @@ from citrine.resources.property_template import PropertyTemplate
 from citrine._utils.functions import format_escaped_url
 
 from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
-from tests.utils.factories import JobSubmissionResponseFactory
+from tests.utils.factories import JobSubmissionResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -409,7 +409,7 @@ def test_async_update(gemd_collection, session):
         'output': {}
     }
 
-    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+    session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
 
     # This returns None on successful update with wait.
     gemd_collection.async_update(obj, wait_for_response=True)
@@ -423,7 +423,7 @@ def test_async_update_and_no_dataset_id(gemd_collection, session):
         uids={'id': str(uuid4())}
     )
 
-    session.set_response(JobSubmissionResponseFactory())
+    session.set_response(JobSubmissionResponseDataFactory())
     gemd_collection.dataset_id = None
 
     with pytest.raises(RuntimeError):
@@ -444,7 +444,7 @@ def test_async_update_timeout(gemd_collection, session):
         'output': {}
     }
 
-    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+    session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
 
     with pytest.raises(PollingTimeoutError):
         gemd_collection.async_update(obj, wait_for_response=True,
@@ -465,7 +465,7 @@ def test_async_update_and_wait(gemd_collection, session):
         'output': {}
     }
 
-    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+    session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
 
     # This returns None on successful update with wait.
     gemd_collection.async_update(obj, wait_for_response=True)
@@ -485,7 +485,7 @@ def test_async_update_and_wait_failure(gemd_collection, session):
         'output': {}
     }
 
-    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+    session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
 
     with pytest.raises(JobFailureError):
         gemd_collection.async_update(obj, wait_for_response=True)
@@ -499,7 +499,7 @@ def test_async_update_with_no_wait(gemd_collection, session):
         uids={'id': str(uuid4())}
     )
 
-    session.set_response(JobSubmissionResponseFactory())
+    session.set_response(JobSubmissionResponseDataFactory())
     job_id = gemd_collection.async_update(obj, wait_for_response=False)
     assert job_id is not None
 
