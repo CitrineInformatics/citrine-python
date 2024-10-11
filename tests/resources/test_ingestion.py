@@ -6,12 +6,17 @@ from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.dataset import Dataset
 from citrine.resources.file_link import FileLink
-from citrine.resources.ingestion import Ingestion, IngestionCollection, IngestionStatus, IngestionStatusType, \
-    IngestionException, IngestionErrorTrace, IngestionErrorType, IngestionErrorFamily, IngestionErrorLevel
+from citrine.resources.ingestion import (
+    Ingestion, IngestionCollection, IngestionStatus, IngestionStatusType, IngestionException,
+    IngestionErrorTrace, IngestionErrorType, IngestionErrorFamily, IngestionErrorLevel
+)
 from citrine.jobs.job import JobSubmissionResponse, JobStatusResponse, JobFailureError
 from citrine.resources.project import Project
 
-from tests.utils.factories import DatasetFactory
+from tests.utils.factories import (
+    DatasetFactory, IngestionStatusResponseDataFactory, JobSubmissionResponseDataFactory,
+    JobStatusResponseDataFactory
+)
 from tests.utils.session import FakeCall, FakeSession, FakeRequestResponseApiError
 
 
@@ -136,6 +141,8 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
         outer_polling_delay = polling_delay
         outer_raise_errors = raise_errors
 
+        return JobStatusResponse.build(JobStatusResponseDataFactory())
+
     def _mock_status(self) -> IngestionStatus:
         return status
 
@@ -156,13 +163,7 @@ def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatc
 def test_processing_exceptions(session, ingest, monkeypatch):
 
     def _mock_poll_for_job_completion(**_):
-        response = {
-            "job_type": "Ingestion!!!!! :D",
-            "status": "Success",
-            "tasks": [],
-            "output": dict()
-        }
-        return JobStatusResponse.build(response)
+        return JobStatusResponse.build(JobStatusResponseDataFactory())
 
     # This is mocked equivalently for all tests
     monkeypatch.setattr("citrine.resources.ingestion._poll_for_job_completion", _mock_poll_for_job_completion)
@@ -269,15 +270,15 @@ def test_ingestion_with_table_build(session: FakeSession,
                                     deprecated_dataset: Dataset,
                                     file_link: FileLink):
     # build_objects_async will always approve, if we get that far
-    session.set_responses(
-        {"job_id": str(uuid4())}
-    )
+    session.set_responses(JobSubmissionResponseDataFactory())
 
     with pytest.raises(ValueError):
         ingest.build_objects_async(build_table=True)
 
     with pytest.deprecated_call():
         ingest.project_id = uuid4()
+    with pytest.deprecated_call():
+        assert ingest.project_id is not None
     with pytest.deprecated_call():
         ingest.build_objects_async(build_table=True)
     with pytest.deprecated_call():
@@ -294,6 +295,27 @@ def test_ingestion_with_table_build(session: FakeSession,
 
     ingest.build_objects_async(build_table=True, project=str(project_uuid))
     assert session.last_call.params["project_id"] == project_uuid
+
+    # full build_objects
+    full_build_job = JobSubmissionResponseDataFactory()
+    output = {
+        'ingestion_id': str(ingest.uid),
+        'gemd_table_config_version': '1',
+        'table_build_job_id': str(uuid4()),
+        'gemd_table_config_id': str(uuid4())
+    }
+    session.set_responses(
+        full_build_job,
+        JobStatusResponseDataFactory(
+            job_id=full_build_job["job_id"],
+            output=output,
+        ),
+        JobStatusResponseDataFactory(),
+        IngestionStatusResponseDataFactory()
+    )
+    status = ingest.build_objects(build_table=True, project=str(project_uuid))
+    assert status.success
+
 
 def test_ingestion_flow(session: FakeSession,
                         ingest: Ingestion,
@@ -342,18 +364,16 @@ def test_ingestion_flow(session: FakeSession,
 
     ingest.raise_errors = True
     session.set_responses(
-        {"job_id": uuid4()},
-        {"job_type": "Ingestion!!!!! :D", "status": "Success", "tasks": [], "output": dict()},
-        {
-            "ingestion_id": ingest.uid,
-            "status": IngestionStatusType.INGESTION_CREATED,
-            "errors": [{
+        JobSubmissionResponseDataFactory(),
+        JobStatusResponseDataFactory(),
+        IngestionStatusResponseDataFactory(
+            errors=[{
                 "family": IngestionErrorFamily.DATA,
                 "error_type": IngestionErrorType.MISSING_RAW_FOR_INGREDIENT,
                 "level": IngestionErrorLevel.ERROR,
                 "msg": "Missing ingredient: \"myristic (14:0)\" (Note ingredient IDs are case sensitive)"
             }]
-        }
+        ),
     )
     with pytest.raises(IngestionException, match="Missing ingredient"):
         ingest.build_objects()

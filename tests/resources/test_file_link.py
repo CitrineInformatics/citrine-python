@@ -13,7 +13,10 @@ from citrine.resources.file_link import FileCollection, FileLink, GEMDFileLink, 
 from citrine.resources.ingestion import Ingestion, IngestionCollection
 from citrine.exceptions import NotFound
 
-from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
+from tests.utils.factories import (
+    FileLinkDataFactory, _UploaderFactory, JobStatusResponseDataFactory,
+    IngestionStatusResponseDataFactory, IngestFilesResponseDataFactory, JobSubmissionResponseDataFactory
+)
 from tests.utils.session import FakeSession, FakeS3Client, FakeCall, FakeRequestResponseApiError
 
 
@@ -536,31 +539,15 @@ def test_ingest(collection: FileCollection, session):
     good_file2 = collection.build({"filename": "also.csv", "id": str(uuid4()), "version": str(uuid4())})
     bad_file = FileLink(filename="bad.csv", url="http://files.com/input.csv")
 
-    ingest_create_resp = {
-        "team_id": str(uuid4()),
-        "dataset_id": str(uuid4()),
-        "ingestion_id": str(uuid4())
-    }
-    job_id_resp = {
-        'job_id': str(uuid4())
-    }
-    job_status_resp = {
-        'job_id': job_id_resp['job_id'],
-        'job_type': 'create-gemd-objects',
-        'status': 'Success',
-        'tasks': [{'id': f'create-gemd-objects-{uuid4()}',
-                   'task_type': 'create-gemd-objects-task',
-                   'status': 'Success',
-                   'dependencies': [],
-                   'failure_reason': None}],
-        'output': {}
-    }
-    ingest_status_resp = {
-        "ingestion_id": ingest_create_resp["ingestion_id"],
-        "status": "ingestion_created",
-        "errors": [],
-    }
-    session.set_responses(ingest_create_resp, job_id_resp, job_status_resp, ingest_status_resp)
+    ingest_files_resp = IngestFilesResponseDataFactory()
+    job_id_resp = JobSubmissionResponseDataFactory()
+    job_status_resp = JobStatusResponseDataFactory(
+        job_id=job_id_resp['job_id'],
+        job_type='create-gemd-objects',
+    )
+    ingest_status_resp = IngestionStatusResponseDataFactory()
+
+    session.set_responses(ingest_files_resp, job_id_resp, job_status_resp, ingest_status_resp)
     collection.ingest([good_file1, good_file2])
 
     with pytest.raises(ValueError, match=bad_file.url):
@@ -572,7 +559,7 @@ def test_ingest(collection: FileCollection, session):
     with pytest.raises(ValueError):
         collection.ingest([good_file1], build_table=True)
 
-    session.set_responses(ingest_create_resp, job_id_resp, job_status_resp, ingest_status_resp)
+    session.set_responses(ingest_files_resp, job_id_resp, job_status_resp, ingest_status_resp)
     coll_with_project_id = FileCollection(team_id=uuid4(), dataset_id=uuid4(), session=session)
     coll_with_project_id.project_id = uuid4()
     with pytest.deprecated_call():
