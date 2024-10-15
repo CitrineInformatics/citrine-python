@@ -9,7 +9,8 @@ from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInf
     IngredientQuantityDimension, IngredientQuantityByProcessAndName, \
     IngredientIdentifierByProcessTemplateAndName, TerminalMaterialIdentifier, \
     IngredientQuantityInOutput, IngredientIdentifierInOutput, \
-    IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
+    IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput, AttributeByTemplateAndObjectTemplate, \
+    LocalAttribute, LocalAttributeAndObject
 from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm, \
     TableFromGemdQueryAlgorithm
 from citrine.resources.data_concepts import CITRINE_SCOPE
@@ -900,3 +901,20 @@ def test_update_unregistered_fail(collection, session):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(empty_defn().config_uid)
+
+
+def test__convert_to_multistep():
+    variables = [
+        AttributeByTemplate("One", headers=["one"], template=uuid4()),
+        AttributeByTemplateAndObjectTemplate("Two", headers=["two"], attribute_template=uuid4(), object_template=uuid4()),
+        LocalAttribute("Three", headers=["three"], template=uuid4()),
+        LocalAttributeAndObject("Four", headers=["four"], template=uuid4(), object_template=uuid4()),
+    ]
+    columns = [MeanColumn(data_source=v.name, target_units="") for v in variables]
+    config: TableConfig = TableConfig.build(TableConfigDataFactory(
+        variables=[v.dump() for v in variables],
+        columns=[c.dump() for c in columns],
+    ))
+    updated = config._convert_to_multistep()
+    assert len(config.variables) == len(config.variables)
+    assert not any(isinstance(x, AttributeByTemplateAndObjectTemplate) for x in updated.variables)

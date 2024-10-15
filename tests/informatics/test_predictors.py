@@ -200,6 +200,28 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     )
 
 
+@pytest.fixture
+def input_accumulation_predictor(auto_ml) -> AttributeAccumulationPredictor:
+    """Build an accumulation node for model inputs."""
+    return AttributeAccumulationPredictor(
+        name='Input accumulation predictor',
+        description='Bubbles attributes up through the graph',
+        attributes=auto_ml.inputs,
+        sequential=False
+    )
+
+
+@pytest.fixture
+def output_accumulation_predictor(auto_ml) -> AttributeAccumulationPredictor:
+    """Build an accumulation node for model outputs."""
+    return AttributeAccumulationPredictor(
+        name='Output accumulation predictor',
+        description='Bubbles attributes up through the graph',
+        attributes=auto_ml.outputs,
+        sequential=True
+    )
+
+
 def test_simple_report(graph_predictor):
     """Ensures we get a report from a simple predictor post_build call"""
     with pytest.raises(ValueError):
@@ -453,6 +475,17 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert str(ingredient_fractions_predictor) == expected_str
 
 
+def test_attribute_accumulation_predictor_initialization(input_accumulation_predictor, output_accumulation_predictor):
+    """Make sure the correct fields go to the correct places for an attribute accumulation predictor."""
+    assert len(input_accumulation_predictor.attributes) == 2
+    expected_input = f"<AttributeAccumulationPredictor '{input_accumulation_predictor.name}'>"
+    assert str(input_accumulation_predictor) == expected_input
+
+    assert len(output_accumulation_predictor.attributes) == 1
+    expected_output = f"<AttributeAccumulationPredictor '{output_accumulation_predictor.name}'>"
+    assert str(output_accumulation_predictor) == expected_output
+
+
 def test_status(graph_predictor, valid_graph_predictor_data):
     """Ensure we can check the status of predictor validation."""
     # A locally built predictor should be "False" for all status checks
@@ -485,3 +518,31 @@ def test_single_predict(graph_predictor):
     prediction_out = graph_predictor.predict(request)
     assert prediction_out.dump() == prediction_in.dump()
     assert session.post_resource.call_count == 1
+
+def test__convert_to_multistep(molecule_featurizer, auto_ml, mean_property_predictor, ingredient_fractions_predictor,
+                               label_fractions_predictor, expression_predictor, output_accumulation_predictor,
+                               input_accumulation_predictor):
+    """Verify graph predictor multistep material update."""
+    graph_predictor = GraphPredictor(
+        name='Graph predictor',
+        description='description',
+        predictors=[molecule_featurizer, auto_ml, mean_property_predictor, ingredient_fractions_predictor, label_fractions_predictor],
+        training_data=[data_source, formulation_data_source]
+    )
+    updated = graph_predictor._convert_to_multistep()
+    assert len(updated.predictors) == len(graph_predictor.predictors) + 2
+    generated_accumulation = [p for p in updated.predictors if isinstance(p, AttributeAccumulationPredictor)]
+    assert generated_accumulation[0].attributes == output_accumulation_predictor.attributes
+    assert generated_accumulation[1].attributes == input_accumulation_predictor.attributes
+
+    with pytest.raises(ValueError):
+        updated._convert_to_multistep()
+
+
+    with pytest.raises(NotImplementedError):
+        GraphPredictor(
+            name='Graph predictor',
+            description='description',
+            predictors=[expression_predictor],
+            training_data=[data_source, formulation_data_source]
+        )._convert_to_multistep()

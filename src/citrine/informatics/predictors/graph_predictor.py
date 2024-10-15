@@ -118,3 +118,72 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         path = self._path() + '/predict'
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
         return SinglePrediction.build(res)
+
+    def _convert_to_multistep(self) -> "GraphPredictor":
+        """Make the GraphPredictor look as if generated with a MULTISTEP_MATERIALS datasource."""
+        from citrine.informatics.predictors import (
+            AttributeAccumulationPredictor, MolecularStructureFeaturizer,
+            LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor,
+            AutoMLPredictor, MeanPropertyPredictor, ChemicalFormulaFeaturizer
+        )
+
+        automl_outputs = {}
+        featurizer_outputs = set()
+        automl_inputs = {}
+
+        for predictor in self.predictors:
+            if isinstance(predictor, AttributeAccumulationPredictor):
+                raise ValueError("Graph already contains Attribute Accumulation nodes")
+            elif isinstance(predictor, AutoMLPredictor):
+                for descriptor in predictor.outputs:
+                    automl_outputs[descriptor.key] = descriptor
+                for descriptor in predictor.inputs:
+                    automl_inputs[descriptor.key] = descriptor
+            elif isinstance(predictor, MeanPropertyPredictor):
+                for descriptor in predictor.properties:
+                    featurizer_outputs.add(
+                        f"mean of property {descriptor.key} in {predictor.input_descriptor.key}"
+                    )
+            elif isinstance(predictor, IngredientFractionsPredictor):
+                for ingredient in predictor.ingredients:
+                    featurizer_outputs.add(
+                        f"{ingredient} share in {predictor.input_descriptor.key}"
+                    )
+            elif isinstance(predictor, LabelFractionsPredictor):
+                for label in predictor.labels:
+                    featurizer_outputs.add(
+                        f"{label} share in {predictor.input_descriptor.key}"
+                    )
+            elif isinstance(predictor, (SimpleMixturePredictor, ChemicalFormulaFeaturizer,
+                                        MolecularStructureFeaturizer)):
+                pass
+            else:
+                # IngredientsToFormulationRelation, ExpressionPredictor,
+                # IngredientsToFormulationPredictor
+                raise NotImplementedError(f"Unhandled predictor type: {type(predictor)}")
+
+        output_accumulator = AttributeAccumulationPredictor(
+            name="Output variable accumulation",
+            description="Output variables encountered in the material history. "
+                        "Only sequential mixing steps are considered.",
+            attributes=list(automl_outputs.values()),
+            sequential=True
+        )
+        input_accumulator = AttributeAccumulationPredictor(
+            name="Attribute accumulation",
+            description="Parameters/conditions encountered in the material history. "
+                        "Most recent values are selected first.",
+            attributes=[automl_inputs[key] for key in automl_inputs
+                        if key not in featurizer_outputs],
+            sequential=False
+        )
+
+        update = GraphPredictor(
+            name=self.name,
+            description=self.description,
+            predictors=self.predictors + [output_accumulator, input_accumulator],
+            training_data=self.training_data
+        )
+        update.uid = self.uid
+
+        return update
