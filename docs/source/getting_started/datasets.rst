@@ -78,8 +78,8 @@ Dataset Access, Sharing, and Transfer
 
 Immediately after a Dataset is created on the Citrine Platform, only members of the Team in which it was created can see it and interact with it.
 
-Sharing With a Specific Project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sharing With a Specific Team
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A Dataset can be shared with another team using the :func:`~citrine.resources.team.Team.share` method on the original project.
 
