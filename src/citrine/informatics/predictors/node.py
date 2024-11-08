@@ -19,6 +19,7 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     @classmethod
     def get_type(cls, data) -> Type['PredictorNode']:
         """Return the subtype."""
+        from .attribute_accumulation_predictor import AttributeAccumulationPredictor
         from .expression_predictor import ExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
         from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
@@ -30,6 +31,7 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
         from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
         type_dict = {
             "AnalyticExpression": ExpressionPredictor,
+            "AttributeAccumulation": AttributeAccumulationPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
             "MeanProperty": MeanPropertyPredictor,
