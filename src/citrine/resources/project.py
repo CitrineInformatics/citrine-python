@@ -647,7 +647,11 @@ class ProjectCollection(Collection[Project]):
 
         """
         collections = []
-        path = self._get_path(action="search")
+        if self.team_id is None:
+            path = "/projects/search"
+        else:
+            path = format_escaped_url("/teams/{team_id}/projects/search", team_id=self.team_id)
+
         query_params = {'userId': ""}
 
         json = {} if search_params is None else {'search_params': search_params}

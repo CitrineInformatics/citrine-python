@@ -490,7 +490,7 @@ def test_search_all(collection: ProjectCollection):
     results = list(collection.search_all(search_params=search_params))
 
     expected_call = FakeCall(method='POST',
-                             path='/projects/search',
+                             path=f'/teams/{collection.team_id}/projects/search',
                              params={'userId': ''},
                              json={'search_params': {
                                  'name': {
@@ -513,7 +513,7 @@ def test_search_all_no_search_params(collection: ProjectCollection):
     result = list(collection.search_all(search_params=None))
 
     expected_call = FakeCall(method='POST',
-                             path='/projects/search',
+                             path=f'/teams/{collection.team_id}/projects/search',
                              params={'userId': ''},
                              json={})
 
@@ -539,7 +539,7 @@ def test_search_projects(collection: ProjectCollection):
     result = list(collection.search(search_params=search_params))
 
     expected_call = FakeCall(method='POST',
-                             path='/projects/search',
+                             path=f'/teams/{collection.team_id}/projects/search',
                              params={'userId': ''},
                              json={'search_params': {
                                  'name': {
@@ -561,7 +561,7 @@ def test_search_projects_no_search_params(collection: ProjectCollection):
     # Then
     result = list(collection.search())
 
-    expected_call = FakeCall(method='POST', path='/projects/search', params={'userId': ''}, json={})
+    expected_call = FakeCall(method='POST', path=f'/teams/{collection.team_id}/projects/search', params={'userId': ''}, json={})
 
     assert 1 == collection.session.num_calls
     assert expected_call == collection.session.last_call
