@@ -1,9 +1,9 @@
 """Resources that represent both individual and collections of projects."""
-from functools import partial
+from deprecation import deprecated
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
+from warnings import warn
 
-from deprecation import deprecated
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -46,7 +46,6 @@ from citrine.resources.generative_design_execution import \
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
-from warnings import warn
 
 
 class Project(Resource['Project']):
@@ -519,14 +518,16 @@ class ProjectCollection(Collection[Project]):
 
     """
 
-    _path_template = '/projects'
+    @property
+    def _path_template(self):
+        if self.team_id is None:
+            return '/projects'
+        else:
+            return '/teams/{team_id}/projects'
     _individual_key = 'project'
     _collection_key = 'projects'
     _resource = Project
-
-    @property
-    def _api_version(self):
-        return 'v3'
+    _api_version = 'v3'
 
     def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
         self.session = session
@@ -553,6 +554,22 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
+    def get(self, uid: Union[UUID, str]) -> Project:
+        """
+        Get a particular project.
+
+        Parameters
+        ----------
+        uid: UUID or str
+            The uid of the project to get.
+
+        """
+        # Only the team-agnostic project get is implemented
+        if self.team_id is None:
+            return super().get(uid)
+        else:
+            return ProjectCollection(session=self.session).get(uid)
+
     def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.
@@ -564,15 +581,19 @@ class ProjectCollection(Collection[Project]):
         description: str
             Long-form description of the project to be created.
 
+        Return
+        -------
+        Project
+            The newly registered project.
+
         """
         if self.team_id is None:
             raise NotImplementedError("Cannot register a project without a team ID. "
                                       "Use team.projects.register.")
 
-        path = format_escaped_url('teams/{team_id}/projects', team_id=self.team_id)
         project = Project(name, description=description)
         try:
-            data = self.session.post_resource(path, project.dump(), version=self._api_version)
+            data = self.session.post_resource(self._get_path(), project.dump())
             data = data[self._individual_key]
             return self.build(data)
         except NonRetryableException as e:
@@ -595,15 +616,7 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        if self.team_id is None:
-            path = '/projects'
-        else:
-            path = format_escaped_url('/teams/{team_id}/projects', team_id=self.team_id)
-
-        fetcher = partial(self._fetch_page, path=path)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return super().list(per_page=per_page)
 
     def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
         """
@@ -647,19 +660,13 @@ class ProjectCollection(Collection[Project]):
 
         """
         collections = []
-        if self.team_id is None:
-            path = "/projects/search"
-        else:
-            path = format_escaped_url("/teams/{team_id}/projects/search", team_id=self.team_id)
-
         query_params = {'userId': ""}
 
         json = {} if search_params is None else {'search_params': search_params}
 
-        data = self.session.post_resource(path,
+        data = self.session.post_resource(self._get_path(action="search"),
                                           params=query_params,
-                                          json=json,
-                                          version=self._api_version)
+                                          json=json)
 
         if self._collection_key is not None:
             collections = data[self._collection_key]
@@ -734,7 +741,11 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
-        return super().delete(uid)
+        # Only the team-agnostic project get is implemented
+        if self.team_id is None:
+            return super().delete(uid)
+        else:
+            return ProjectCollection(session=self.session).delete(uid)
 
     def update(self, model: Project) -> Project:
         """Projects cannot be updated."""

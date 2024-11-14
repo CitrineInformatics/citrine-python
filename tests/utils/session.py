@@ -36,11 +36,13 @@ class FakeCall:
         if not isinstance(other, FakeCall):
             return NotImplemented
 
-        return self.method == other.method and \
-            self.path == other.path and \
-            self.json == other.json and \
-            self.params == other.params and \
-            (not self.version or not other.version or self.version == other.version) # Allows users to check the URL version without forcing everyone to.
+        return (
+                self.method == other.method and
+                self.path.lstrip('/') == other.path.lstrip('/') and  # Leading slashes don't affect results
+                self.json == other.json and
+                self.params == other.params and
+            (not self.version or not other.version or self.version == other.version)  # Allows users to check the URL version without forcing everyone to.
+        )
 
 
 class FakeSession(Session):
