@@ -64,6 +64,8 @@ class TableFromGemdQueryAlgorithm(BaseEnumeration):
 
     UNSPECIFIED = "unspecified"
     MULTISTEP_MATERIALS = "multistep_materials"
+    PNE6353_CONDITION_COLLISION = "pne6353_condition_collision"
+    PNE6353_CONDITION_COLLISION_MULTI = "pne6353_condition_collision_multi"
 
 
 class TableConfig(Resource["TableConfig"]):
