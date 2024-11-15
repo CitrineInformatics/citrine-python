@@ -12,7 +12,6 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
 from citrine.resources.dataset import DatasetCollection
@@ -592,12 +591,7 @@ class ProjectCollection(Collection[Project]):
                                       "Use team.projects.register.")
 
         project = Project(name, description=description)
-        try:
-            data = self.session.post_resource(self._get_path(), project.dump())
-            data = data[self._individual_key]
-            return self.build(data)
-        except NonRetryableException as e:
-            raise ModuleRegistrationFailedException(project.__class__.__name__, e)
+        return super().register(project)
 
     def list(self, *, per_page: int = 1000) -> Iterator[Project]:
         """
@@ -741,7 +735,7 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
-        # Only the team-agnostic project get is implemented
+        # Only the team-agnostic project delete is implemented
         if self.team_id is None:
             return super().delete(uid)
         else:
