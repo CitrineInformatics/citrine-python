@@ -660,7 +660,8 @@ class ProjectCollection(Collection[Project]):
 
         data = self.session.post_resource(self._get_path(action="search"),
                                           params=query_params,
-                                          json=json)
+                                          json=json,
+                                          version=self._api_version)
 
         if self._collection_key is not None:
             collections = data[self._collection_key]
