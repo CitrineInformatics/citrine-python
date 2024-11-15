@@ -151,8 +151,6 @@ class Session(requests.Session):
         logger.debug('\tmethod: {}'.format(method))
         logger.debug('\tpath: {}'.format(path))
         logger.debug('\tversion: {}'.format(version))
-        for k, v in kwargs.items():
-            logger.debug(f'\t{k}: {v}')
 
         if self._is_access_token_expired():
             self._refresh_access_token()

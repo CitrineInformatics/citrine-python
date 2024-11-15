@@ -362,6 +362,36 @@ def test_project_registration(collection: ProjectCollection, session):
         created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
     )
     session.set_response({'project': project_data})
+
+    # When
+    with pytest.warns(DeprecationWarning):
+        created_project = collection.register('testing')
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects',
+        json={
+            'name': 'testing'
+        }
+    )
+    assert expected_call == session.last_call
+
+    assert 'A sample project' == created_project.description
+    assert 'CREATED' == created_project.status
+    assert create_time == created_project.created_at
+
+
+def test_project_registration(collection: ProjectCollection, session):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session.set_response({'project': project_data})
     team_id = collection.team_id
 
     # When
@@ -424,7 +454,7 @@ def test_list_no_team(session):
     projects = list(project_collection.list())
 
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000, 'page': 1})
+    expected_call = FakeCall(method='GET', path=f'/projects', params={'per_page': 1000, 'page': 1})
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -442,27 +472,6 @@ def test_list_projects_with_page_params(collection, session):
     expected_call = FakeCall(method='GET', path=f'/teams/{collection.team_id}/projects', params={'per_page': 10, 'page': 1})
     assert expected_call == session.last_call
 
-def test_search_all_no_team(session):
-    project_collection = ProjectCollection(session=session)
-    projects_data = ProjectDataFactory.create_batch(2)
-    project_name_to_match = projects_data[0]['name']
-
-    search_params = {
-        'name': {
-            'value': project_name_to_match,
-            'search_method': 'EXACT'}}
-    expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
-
-    project_collection.session.set_response({'projects': expected_response})
-
-    # Then
-    results = list(project_collection.search_all(search_params=search_params))
-
-    expected_call = FakeCall(method='POST', path='/projects/search', params={'userId': ''}, json={'search_params': search_params})
-
-    assert 1 == project_collection.session.num_calls
-    assert expected_call == project_collection.session.last_call
-    assert 1 == len(results)
 
 def test_search_all(collection: ProjectCollection):
     # Given
@@ -481,7 +490,7 @@ def test_search_all(collection: ProjectCollection):
     results = list(collection.search_all(search_params=search_params))
 
     expected_call = FakeCall(method='POST',
-                             path=f'/teams/{collection.team_id}/projects/search',
+                             path='/projects/search',
                              params={'userId': ''},
                              json={'search_params': {
                                  'name': {
@@ -504,7 +513,7 @@ def test_search_all_no_search_params(collection: ProjectCollection):
     result = list(collection.search_all(search_params=None))
 
     expected_call = FakeCall(method='POST',
-                             path=f'/teams/{collection.team_id}/projects/search',
+                             path='/projects/search',
                              params={'userId': ''},
                              json={})
 
@@ -530,7 +539,7 @@ def test_search_projects(collection: ProjectCollection):
     result = list(collection.search(search_params=search_params))
 
     expected_call = FakeCall(method='POST',
-                             path=f'/teams/{collection.team_id}/projects/search',
+                             path='/projects/search',
                              params={'userId': ''},
                              json={'search_params': {
                                  'name': {
@@ -552,7 +561,7 @@ def test_search_projects_no_search_params(collection: ProjectCollection):
     # Then
     result = list(collection.search())
 
-    expected_call = FakeCall(method='POST', path=f'/teams/{collection.team_id}/projects/search', params={'userId': ''}, json={})
+    expected_call = FakeCall(method='POST', path='/projects/search', params={'userId': ''}, json={})
 
     assert 1 == collection.session.num_calls
     assert expected_call == collection.session.last_call
@@ -568,7 +577,7 @@ def test_delete_project(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='DELETE', path=f'/projects/{uid}')
+    expected_call = FakeCall(method='DELETE', path='/projects/{}'.format(uid))
     assert expected_call == session.last_call
 
 
@@ -598,8 +607,11 @@ def test_list_members(project, session):
 
     # Then
     assert 2 == session.num_calls
-    expect_call_1 = FakeCall(method='GET', path=f'/teams/{team_data["id"]}')
-    expect_call_2 = FakeCall(method='GET', path=f'/teams/{project.team_id}/users')
+    expect_call_1 = FakeCall(
+        method='GET',
+        path='/teams/{}'.format(team_data['id']),
+    )
+    expect_call_2 = FakeCall(method='GET', path='/teams/{}/users'.format(project.team_id))
     assert expect_call_1 == session.calls[0]
     assert expect_call_2 == session.calls[1]
     assert isinstance(members[0], TeamMember)
