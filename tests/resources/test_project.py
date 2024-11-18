@@ -473,6 +473,30 @@ def test_list_projects_with_page_params(collection, session):
     assert expected_call == session.last_call
 
 
+def test_search_all_no_team(session):
+    project_collection = ProjectCollection(session=session)
+    projects_data = ProjectDataFactory.create_batch(2)
+    project_name_to_match = projects_data[0]["name"]
+
+    search_params = {"name": {"value": project_name_to_match, "search_method": "EXACT"}}
+    expected_response = [p for p in projects_data if p["name"] == project_name_to_match]
+
+    project_collection.session.set_response({"projects": expected_response})
+
+    # Then
+    results = list(project_collection.search_all(search_params=search_params))
+
+    expected_call = FakeCall(
+        method="POST",
+        path="/projects/search",
+        params={"userId": ""},
+        json={"search_params": search_params},
+    )
+
+    assert 1 == project_collection.session.num_calls
+    assert expected_call == project_collection.session.last_call
+    assert 1 == len(results)
+
 def test_search_all(collection: ProjectCollection):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
