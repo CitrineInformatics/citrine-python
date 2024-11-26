@@ -859,3 +859,43 @@ class AnalysisWorkflowEntityDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     data = factory.SubFactory(AnalysisWorkflowDataDataFactory)
     metadata = factory.SubFactory(AnalysisWorkflowMetadataDataFactory)
+
+
+class FeatureEffectsResponseResultFactory(factory.DictFactory):
+    materials = factory.List([
+        factory.Faker('uuid4', cast_to=None),
+        factory.Faker('uuid4', cast_to=None),
+        factory.Faker('uuid4', cast_to=None)
+    ])
+    outputs = factory.Dict({
+        "output1": factory.Dict({
+            "feature1": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")])
+        }),
+        "output2": factory.Dict({
+            "feature1": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")]),
+            "feature2": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")])
+        })
+    })
+
+class FeatureEffectsMetadataFactory(factory.DictFactory):
+    predictor_id = factory.Faker('uuid4')
+    predictor_version = factory.Faker('random_digit_not_null')
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+    status = 'SUCCEEDED'
+
+
+class FeatureEffectsResponseFactory(factory.DictFactory):
+    query = {}  # Presently, querying from the SDK is not allowed.
+    metadata = factory.SubFactory(FeatureEffectsMetadataFactory)
+    result = factory.SubFactory(FeatureEffectsResponseResultFactory)
+    _result_as_dict = factory.LazyAttribute(lambda obj: _expand_condensed(obj.result))
+
+
+def _expand_condensed(result_obj):
+    whole_dict = {}
+    for output, feature_dict in result_obj["outputs"].items():
+        whole_dict[output] = {}
+        for feature, values in feature_dict.items():
+            whole_dict[output][feature] = dict(zip(result_obj["materials"], values))
+    return whole_dict

@@ -88,6 +88,7 @@ class TableConfig(Resource["TableConfig"]):
         The query used to define the materials underpinning this table
     generation_algorithm: TableFromGemdQueryAlgorithm
         Which algorithm was used to generate the config based on the GemdQuery results
+
     """
 
     # FIXME (DML): rename this (this is dependent on the server side)

@@ -7,9 +7,11 @@ from citrine._serialization import properties as properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
+from citrine.informatics.feature_effects import FeatureEffects
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
 from citrine.informatics.predictors import PredictorNode, Predictor
+from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 
 __all__ = ['GraphPredictor']
@@ -104,7 +106,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         }
 
     @property
-    def report(self):
+    def report(self) -> Report:
         """Fetch the predictor report."""
         if self.uid is None or self._session is None or self._project_id is None \
                 or getattr(self, "version", None) is None:
@@ -112,6 +114,13 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
             raise ValueError(msg)
         report_resource = ReportResource(self._project_id, self._session)
         return report_resource.get(predictor_id=self.uid, predictor_version=self.version)
+
+    @property
+    def feature_effects(self) -> FeatureEffects:
+        """Retrieve the feature effects for all outputs in the predictor's training data.."""
+        path = self._path() + '/shapley/query'
+        response = self._session.post_resource(path, {}, version=self._api_version)
+        return FeatureEffects.build(response)
 
     def predict(self, predict_request: SinglePredictRequest) -> SinglePrediction:
         """Make a one-off prediction with this predictor."""
