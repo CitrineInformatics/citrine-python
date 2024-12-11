@@ -1,7 +1,8 @@
 """Tests for citrine.informatics.predictors."""
-import uuid
-import pytest
 import mock
+import pytest
+import uuid
+from random import random
 
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, IntegerDescriptor, \
@@ -11,6 +12,10 @@ from citrine.informatics.predictors import *
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
 from citrine.informatics.design_candidate import DesignMaterial
+
+from tests.utils.factories import FeatureEffectsResponseFactory
+from tests.utils.session import FakeCall, FakeSession
+
 
 w = IntegerDescriptor("w", lower_bound=0, upper_bound=100)
 x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
@@ -485,3 +490,21 @@ def test_single_predict(graph_predictor):
     prediction_out = graph_predictor.predict(request)
     assert prediction_out.dump() == prediction_in.dump()
     assert session.post_resource.call_count == 1
+
+
+def test_feature_effects(graph_predictor):
+    feature_effects_response = FeatureEffectsResponseFactory()
+    feature_effects_as_dict = feature_effects_response.pop("_result_as_dict")
+
+    session = FakeSession()
+    session.set_response(feature_effects_response)
+    
+    graph_predictor._session = session
+    graph_predictor._project_id = uuid.uuid4()
+
+    fe = graph_predictor.feature_effects
+
+    expected_path = f"/projects/{graph_predictor._project_id}/predictors/{graph_predictor.uid}" + \
+        f"/versions/{graph_predictor.version}/shapley/query"
+    assert session.calls == [FakeCall(method='POST', path=expected_path, json={})]
+    assert fe.as_dict == feature_effects_as_dict
