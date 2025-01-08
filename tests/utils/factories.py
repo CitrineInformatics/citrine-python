@@ -893,6 +893,9 @@ class FeatureEffectsResponseFactory(factory.DictFactory):
 
 
 def _expand_condensed(result_obj):
+    if not result_obj:
+        return None
+
     whole_dict = {}
     for output, feature_dict in result_obj["outputs"].items():
         whole_dict[output] = {}

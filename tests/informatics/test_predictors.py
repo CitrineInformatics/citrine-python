@@ -508,3 +508,21 @@ def test_feature_effects(graph_predictor):
         f"/versions/{graph_predictor.version}/shapley/query"
     assert session.calls == [FakeCall(method='POST', path=expected_path, json={})]
     assert fe.as_dict == feature_effects_as_dict
+
+
+def test_feature_effects_in_progress(graph_predictor):
+    feature_effects_response = FeatureEffectsResponseFactory(metadata__status="INPROGRESS", result=None)
+
+    session = FakeSession()
+    session.set_response(feature_effects_response)
+    
+    graph_predictor._session = session
+    graph_predictor._project_id = uuid.uuid4()
+
+    fe = graph_predictor.feature_effects
+
+    expected_path = f"/projects/{graph_predictor._project_id}/predictors/{graph_predictor.uid}" + \
+        f"/versions/{graph_predictor.version}/shapley/query"
+    assert session.calls == [FakeCall(method='POST', path=expected_path, json={})]
+    assert fe.outputs is None
+    assert fe.as_dict == {}
