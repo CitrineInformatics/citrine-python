@@ -196,6 +196,14 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         entity = self.session.put_resource(path, json, version=self._api_version)
         return self.build(entity)
 
+    def generate_feature_effects(self,
+                                 uid: Union[UUID, str],
+                                 *,
+                                 version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+        path = self._construct_path(uid, version, "shapley/generate")
+        self.session.put_resource(path, {}, version=self._api_version)
+        return self.get(uid, version=version)
+
     def delete(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         """Predictor versions cannot be deleted at this time."""
         msg = "Predictor versions cannot be deleted. Use 'archive_version' instead."
@@ -577,6 +585,26 @@ class PredictorCollection(Collection[GraphPredictor]):
         return self._versions_collection.rename(
             uid, version=version, name=name, description=description
         )
+
+    def generate_feature_effects_async(self,
+                                       uid: Union[UUID, str],
+                                       *,
+                                       version: Union[int, str]) -> GraphPredictor:
+        """Begin generation of feature effects.
+
+        version can be any numerical version (which exists), "latest", or "most_recent". Although
+        note that this will fail if the predictor is not already trained.
+
+        Feature effects are automatically generated for all new predictors after a successful
+        training as of the end of 2024. This call allows either regenerating those values, or
+        generating them for older predictors.
+
+        This call just begins the process; generation usually takes a few minutes, but can take
+        much longer. As soon as the call completes, the old values will be inaccessible. To wait
+        for the generation to complete, and to retrieve the new values once they're ready, use
+        GraphPredictor.feature_effects.
+        """
+        return self._versions_collection.generate_feature_effects(uid, version=version)
 
     def delete(self, uid: Union[UUID, str]):
         """Predictors cannot be deleted at this time."""

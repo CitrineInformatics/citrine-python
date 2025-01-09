@@ -51,7 +51,10 @@ class FeatureEffects(Resource):
 
     @classmethod
     def _pre_build(cls, data: dict) -> Dict:
-        shapley = data["result"]
+        shapley = data.get("result")
+        if not shapley:
+            return data
+
         material_ids = shapley["materials"]
 
         outputs = []
@@ -73,4 +76,7 @@ class FeatureEffects(Resource):
     @property
     def as_dict(self) -> Dict[str, Dict[str, Dict[UUID, float]]]:
         """Presents the feature effects as a dictionary by output."""
-        return {output.output: output.feature_dict for output in self.outputs}
+        if self.outputs:
+            return {output.output: output.feature_dict for output in self.outputs}
+        else:
+            return {}
