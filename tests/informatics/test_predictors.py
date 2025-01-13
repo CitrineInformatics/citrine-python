@@ -205,6 +205,16 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     )
 
 
+@pytest.fixture
+def attribute_accumulation_predictor() -> AttributeAccumulationPredictor:
+    return AttributeAccumulationPredictor(
+        name="Attribute accumulation predictor",
+        description="Aid training",
+        attributes=[x, y],
+        sequential=True
+    )
+
+
 def test_simple_report(graph_predictor):
     """Ensures we get a report from a simple predictor post_build call"""
     with pytest.raises(ValueError):
@@ -456,6 +466,15 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
+
+
+def test_attribute_accumulation_property_initialization(attribute_accumulation_predictor):
+    """Make sure the correct fields go to the correct places for an attribute accumulation predictor."""
+    assert attribute_accumulation_predictor.name == 'Attribute accumulation predictor'
+    assert attribute_accumulation_predictor.attributes == [x, y]
+    assert attribute_accumulation_predictor.sequential is True
+    expected_str = '<AttributeAccumulationPredictor \'Attribute accumulation predictor\'>'
+    assert str(attribute_accumulation_predictor) == expected_str
 
 
 def test_status(graph_predictor, valid_graph_predictor_data):

@@ -19,25 +19,27 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     @classmethod
     def get_type(cls, data) -> Type['PredictorNode']:
         """Return the subtype."""
+        from .auto_ml_predictor import AutoMLPredictor
+        from .attribute_accumulation_predictor import AttributeAccumulationPredictor
+        from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
         from .expression_predictor import ExpressionPredictor
-        from .molecular_structure_featurizer import MolecularStructureFeaturizer
+        from .ingredient_fractions_predictor import IngredientFractionsPredictor
         from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
         from .label_fractions_predictor import LabelFractionsPredictor
-        from .simple_mixture_predictor import SimpleMixturePredictor
-        from .ingredient_fractions_predictor import IngredientFractionsPredictor
-        from .auto_ml_predictor import AutoMLPredictor
         from .mean_property_predictor import MeanPropertyPredictor
-        from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
+        from .molecular_structure_featurizer import MolecularStructureFeaturizer
+        from .simple_mixture_predictor import SimpleMixturePredictor
         type_dict = {
             "AnalyticExpression": ExpressionPredictor,
-            "MoleculeFeaturizer": MolecularStructureFeaturizer,
-            "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
-            "MeanProperty": MeanPropertyPredictor,
-            "LabelFractions": LabelFractionsPredictor,
-            "SimpleMixture": SimpleMixturePredictor,
-            "IngredientFractions": IngredientFractionsPredictor,
-            "ChemicalFormulaFeaturizer": ChemicalFormulaFeaturizer,
+            "AttributeAccumulation": AttributeAccumulationPredictor,
             "AutoML": AutoMLPredictor,
+            "ChemicalFormulaFeaturizer": ChemicalFormulaFeaturizer,
+            "IngredientFractions": IngredientFractionsPredictor,
+            "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
+            "LabelFractions": LabelFractionsPredictor,
+            "MeanProperty": MeanPropertyPredictor,
+            "MoleculeFeaturizer": MolecularStructureFeaturizer,
+            "SimpleMixture": SimpleMixturePredictor,
         }
         typ = type_dict.get(data['type'])
         if typ is not None:
