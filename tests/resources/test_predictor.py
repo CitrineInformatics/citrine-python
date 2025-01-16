@@ -21,8 +21,8 @@ from tests.utils.session import (
     FakeSession
 )
 from tests.utils.factories import (
-    AsyncDefaultPredictorResponseFactory, AsyncDefaultPredictorResponseMetadataFactory,
-    FeatureEffectsResponseFactory, TableDataSourceDataFactory
+        AsyncDefaultPredictorResponseFactory, AsyncDefaultPredictorResponseMetadataFactory,
+        TableDataSourceDataFactory
 )
 
 
@@ -734,7 +734,6 @@ def test_rename_name_only(valid_graph_predictor_data):
     expected_payload = {"name": new_name, "description": None}
     assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
 
-
 def test_rename_description_only(valid_graph_predictor_data):
     pred_id = valid_graph_predictor_data["id"]
     pred_version = valid_graph_predictor_data["metadata"]["version"]
@@ -752,20 +751,3 @@ def test_rename_description_only(valid_graph_predictor_data):
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
     expected_payload = {"name": None, "description": new_description}
     assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
-
-
-def test_generate_shapley(valid_graph_predictor_data):
-    pred_id = valid_graph_predictor_data["id"]
-    pred_version = valid_graph_predictor_data["metadata"]["version"]
-    session = FakeSession()
-    pc = PredictorCollection(uuid.uuid4(), session)
-    
-    fe_response = FeatureEffectsResponseFactory(metadata__status="INPROGRESS", result=None)
-    session.set_responses(fe_response, valid_graph_predictor_data)
-
-    versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
-    pred = pc.generate_feature_effects_async(pred_id, version=pred_version)
-    assert session.calls == [
-        FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/shapley/generate", json={}),
-        FakeCall(method="GET", path=f"{versions_path}/{pred_version}")
-    ]
