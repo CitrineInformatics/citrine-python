@@ -133,23 +133,37 @@ def test_design_space_limits():
     # Given
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
-
-    too_big = EnumeratedDesignSpace(
-        "foo",
-        description="bar",
-        descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{f"R-{i}": str(random.random()) for i in range(128)} for _ in range(2001)]
-    )
+        
+    descriptors = [RealDescriptor(f"R-{i}", lower_bound=0, upper_bound=1, units="") for i in range(128)]
+    descriptor_values = {f"R-{i}": str(random.random()) for i in range(128)}
 
     just_right = EnumeratedDesignSpace(
-        "foo",
-        description="bar",
-        descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
-        data=[{f"R-{i}": str(random.random()) for i in range(128)} for _ in range(2000)]
+        "just right",
+        description="just right desc",
+        descriptors=descriptors,
+        data=[descriptor_values] * 2000
     )
 
-    # create mock post response by setting the status
-    mock_response = _ds_to_response(just_right, status="READY")
+    too_big = EnumeratedDesignSpace(
+        "too big",
+        description="too big desc",
+        descriptors=just_right.descriptors,
+        data=[descriptor_values] * 2001
+    )
+
+    # create mock post response by setting the status.
+    # Deserializing that huge dict takes a long time, and it's done twice when making a call to
+    # register or update (the second is the automatic validation kick-off). Since we're only
+    # interested in checking the validation pre-request, we can specify a tiny response to speed up
+    # the test execution.
+    dummy_desc = descriptors[0]
+    dummy_resp = EnumeratedDesignSpace(
+        "basic",
+        description="basic desc",
+        descriptors=[dummy_desc],
+        data=[{dummy_desc.key: descriptor_values[dummy_desc.key]}]
+    )
+    mock_response = _ds_to_response(dummy_resp, status="READY")
     session.responses.append(mock_response)
 
     # Then
