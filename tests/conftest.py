@@ -849,7 +849,9 @@ def example_candidates(example_design_material):
             "material_id": str(uuid.uuid4()),
             "identifiers": [],
             "primary_score": 0,
-            "material": example_design_material
+            "material": example_design_material,
+            "name": "Example candidate",
+            "hidden": True
         }]
     }
 

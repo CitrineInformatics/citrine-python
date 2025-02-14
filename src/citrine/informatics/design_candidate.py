@@ -177,6 +177,14 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     and constraints (higher is better)"""
     material = properties.Object(DesignMaterial, 'material')
     """:DesignMaterial: the material returned by the design workflow"""
+    name = properties.String('name')
+    """:str: the name of the candidate"""
+    hidden = properties.Boolean('hidden')
+    """:str: whether the candidate is marked hidden"""
+    pinned_by = properties.Optional(properties.UUID, 'pinned.user')
+    """:Optional[UUID]: id of the user who pinned the candidate, if it's been pinned"""
+    pinned_time = properties.Optional(properties.Datetime, 'pinned.time')
+    """:Optional[datetime]: date and time at which the candidate was pinned, if it's been pinned"""
 
 
 class HierarchicalDesignCandidate(Serializable["HierarchicalDesignCandidate"]):
