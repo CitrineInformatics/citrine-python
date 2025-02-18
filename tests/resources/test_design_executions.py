@@ -1,5 +1,7 @@
 import pytest
 import uuid
+from copy import deepcopy
+from datetime import datetime
 
 from citrine.informatics.executions.design_execution import DesignExecution
 from citrine.resources.design_execution import DesignExecutionCollection
@@ -97,6 +99,31 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
         workflow_execution.uid,
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
+
+
+def test_workflow_execution_results_pinned(workflow_execution: DesignExecution, session, example_candidates):
+    # Given
+    pinned_by = uuid.uuid4()
+    pinned_time = datetime.now()
+    example_candidates_pinned = deepcopy(example_candidates)
+    example_candidates_pinned["response"][0]["pinned"] = {
+        "user": pinned_by,
+        "time": pinned_time
+    }
+    session.set_response(example_candidates_pinned)
+
+    # When
+    candidates = list(workflow_execution.candidates(per_page=4))
+
+    # Then
+    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+        workflow_execution.project_id,
+        workflow_execution.workflow_id,
+        workflow_execution.uid,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
+    assert candidates[0].pinned_by == pinned_by
+    assert candidates[0].pinned_time == pinned_time
 
 
 def test_list(collection: DesignExecutionCollection, session):
