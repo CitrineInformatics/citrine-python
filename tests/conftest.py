@@ -851,7 +851,16 @@ def example_candidates(example_design_material):
             "primary_score": 0,
             "material": example_design_material,
             "name": "Example candidate",
-            "hidden": True
+            "hidden": True,
+            "comments": [
+                {
+                    "message": "a message",
+                    "created": {
+                        "user": str(uuid.uuid4()),
+                        "time": '2025-02-20T10:46:26Z'
+                    }
+                }
+            ]
         }]
     }
 

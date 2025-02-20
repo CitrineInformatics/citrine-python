@@ -20,6 +20,15 @@ __all__ = [
 ]
 
 
+class DesignCandidateComment(Serializable["DesignCandidateComment"]):
+    message = properties.String('message')
+    """:str: the text of the comment"""
+    created_by = properties.UUID('created.user')
+    """:UUID: id of the user who created the comment"""
+    create_time = properties.Datetime('created.time')
+    """:datetime: date and time at which the comment was created"""
+
+
 class DesignVariable(PolymorphicSerializable["DesignVariable"]):
     """Classes containing data corresponding to individual descriptors.
 
@@ -185,6 +194,8 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     """:Optional[UUID]: id of the user who pinned the candidate, if it's been pinned"""
     pinned_time = properties.Optional(properties.Datetime, 'pinned.time')
     """:Optional[datetime]: date and time at which the candidate was pinned, if it's been pinned"""
+    comments = properties.List(properties.Object(DesignCandidateComment), 'comments', default=[])
+    """:list[DesignCandidateComment]: the list of comments on the candidate, with metadata."""
 
 
 class HierarchicalDesignCandidate(Serializable["HierarchicalDesignCandidate"]):
