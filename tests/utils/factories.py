@@ -666,6 +666,9 @@ class MaterialRunFactory(factory.Factory):
     sample_type = factory.Faker("enum", enum_cls=SampleType)
     spec = factory.SubFactory(LinkByUIDFactory)
     file_links = factory.List([factory.SubFactory(FileLinkFactory)])
+    default_labels = factory.List(
+        [factory.Faker("color_name"), factory.Faker("color_name")]
+    )
 
 
 class LinkByUIDDataFactory(factory.DictFactory):
