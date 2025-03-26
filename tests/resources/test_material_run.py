@@ -54,18 +54,42 @@ def test_invalid_collection_construction():
         mr = MaterialRunCollection(dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
                                    session=session)
 
-def test_inject_default_label_tags():
-    original_tags = ["alpha", "beta", "gamma"]
-    default_labels = ["label 0", "label 1"]
-    all_tags = _inject_default_label_tags(original_tags, default_labels)
-    expected = [
-        "alpha",
-        "beta",
-        "gamma",
-        "citr_auto::mat_label::label 0",
-        "citr_auto::mat_label::label 1"
-    ]
-    assert set(all_tags) == set(expected)
+
+@pytest.mark.parametrize(
+    "original_tags, default_labels, expected",
+    [
+        (None, None, None),
+        (None, [], []),
+        ([], None, []),
+        ([], [], []),
+        (
+            None,
+            ["label 0", "label 1"],
+            ["citr_auto::mat_label::label 0", "citr_auto::mat_label::label 1"],
+        ),
+        (
+            [],
+            ["label 0", "label 1"],
+            ["citr_auto::mat_label::label 0", "citr_auto::mat_label::label 1"],
+        ),
+        (["alpha", "beta", "gamma"], None, ["alpha", "beta", "gamma"]),
+        (["alpha", "beta", "gamma"], [], ["alpha", "beta", "gamma"]),
+        (
+            ["alpha", "beta", "gamma"],
+            ["label 0", "label 1"],
+            [
+                "alpha",
+                "beta",
+                "gamma",
+                "citr_auto::mat_label::label 0",
+                "citr_auto::mat_label::label 1",
+            ],
+        ),
+    ],
+)
+def test_inject_default_label_tags(original_tags, default_labels, expected):
+    result = _inject_default_label_tags(original_tags, default_labels)
+    assert result == expected
 
 
 def test_register_material_run(collection, session):
