@@ -9,6 +9,7 @@ from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.material_run import MaterialRun as CitrineRun
+from citrine.resources.material_run import _inject_default_label_tags
 from citrine.resources.gemd_resource import GEMDResourceCollection
 
 from gemd.demo.cake import make_cake, change_scope
@@ -52,6 +53,44 @@ def test_invalid_collection_construction():
     with pytest.raises(TypeError):
         mr = MaterialRunCollection(dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
                                    session=session)
+
+
+@pytest.mark.parametrize(
+    "original_tags, default_labels, expected",
+    [
+        (None, None, None),
+        (None, [], []),
+        ([], None, []),
+        ([], [], []),
+        (
+            None,
+            ["label 0", "label 1"],
+            ["citr_auto::mat_label::label 0", "citr_auto::mat_label::label 1"],
+        ),
+        (
+            [],
+            ["label 0", "label 1"],
+            ["citr_auto::mat_label::label 0", "citr_auto::mat_label::label 1"],
+        ),
+        (["alpha", "beta", "gamma"], None, ["alpha", "beta", "gamma"]),
+        (["alpha", "beta", "gamma"], [], ["alpha", "beta", "gamma"]),
+        (
+            ["alpha", "beta", "gamma"],
+            ["label 0", "label 1"],
+            [
+                "alpha",
+                "beta",
+                "gamma",
+                "citr_auto::mat_label::label 0",
+                "citr_auto::mat_label::label 1",
+            ],
+        ),
+    ],
+)
+def test_inject_default_label_tags(original_tags, default_labels, expected):
+    result = _inject_default_label_tags(original_tags, default_labels)
+    assert result == expected
+
 
 def test_register_material_run(collection, session):
     # Given
