@@ -6,6 +6,7 @@ from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Object
+from citrine.resources._default_labels import _inject_default_label_tags
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
@@ -47,6 +48,11 @@ class MaterialSpec(
         A template bounding the valid values for this material's properties.
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
+    default_labels: List[str], optional
+        An optional set of default labels to apply to this material spec.
+        Default labels are used to:
+          - Populate labels on the ingredient spec, if none are explicitly
+            specified, when the material spec is later used in an ingredient spec
 
     """
 
@@ -75,12 +81,14 @@ class MaterialSpec(
                  process: Optional[GEMDProcessSpec] = None,
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[GEMDMaterialTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 file_links: Optional[List[FileLink]] = None,
+                 default_labels: Optional[List[str]] = None):
         if uids is None:
             uids = dict()
+        all_tags = _inject_default_label_tags(tags, default_labels)
         super(ObjectSpec, self).__init__()
         GEMDMaterialSpec.__init__(self, name=name, uids=uids,
-                                  tags=tags, process=process, properties=properties,
+                                  tags=all_tags, process=process, properties=properties,
                                   template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
