@@ -291,6 +291,18 @@ class MaterialTemplatesCriteriaDataFactory(factory.DictFactory):
     tag_filters = factory.Faker('words', unique=True)
 
 
+class ConnectivityClassCriteriaDataFactory(factory.DictFactory):
+    type = ConnectivityClassCriteria.typ
+    is_consumed = factory.Faker('boolean')
+    is_produced = factory.Faker('boolean')
+
+
+class TagsCriteriaDataFactory(factory.DictFactory):
+    type = TagsCriteria.typ
+    tags = factory.Faker('words', unique=True)
+    filter_type = factory.Faker('enum', enum_cls=TagFilterType)
+
+
 class AndOperatorCriteriaDataFactory(factory.DictFactory):
     type = AndOperator.typ
     criteria = factory.List([
