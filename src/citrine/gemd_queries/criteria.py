@@ -50,7 +50,7 @@ class Criteria(PolymorphicSerializable):
         classes: List[Type[Criteria]] = [
             AndOperator, OrOperator,
             PropertiesCriteria, NameCriteria, MaterialRunClassificationCriteria,
-            MaterialTemplatesCriteria
+            MaterialTemplatesCriteria, TagsCriteria, ConnectivityClassCriteria
         ]
         return {klass.typ: klass for klass in classes}[data['type']]
 
