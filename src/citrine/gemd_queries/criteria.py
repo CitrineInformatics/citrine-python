@@ -8,10 +8,11 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization import properties
 from citrine.gemd_queries.filter import PropertyFilterType
 
-__all__ = ['MaterialClassification', 'TextSearchType',
+__all__ = ['MaterialClassification', 'TextSearchType', 'TagFilterType',
            'AndOperator', 'OrOperator',
            'PropertiesCriteria', 'NameCriteria',
-           'MaterialRunClassificationCriteria', 'MaterialTemplatesCriteria'
+           'MaterialRunClassificationCriteria', 'MaterialTemplatesCriteria',
+           'TagsCriteria', 'ConnectivityClassCriteria'
            ]
 
 
@@ -32,6 +33,14 @@ class TextSearchType(BaseEnumeration):
     SUBSTRING = "substring"
 
 
+class TagFilterType(BaseEnumeration):
+    """The type of filter to apply when searching for tags."""
+
+    AND_TAGS_FILTER_TYPE = "and_tags_filter_type"
+    OR_TAGS_FILTER_TYPE = "or_tags_filter_type"
+    NOT_TAGS_FILTER_TYPE = "not_tags_filter_type"
+
+
 class Criteria(PolymorphicSerializable):
     """Abstract concept of a criteria to apply when searching for materials."""
 
@@ -41,7 +50,7 @@ class Criteria(PolymorphicSerializable):
         classes: List[Type[Criteria]] = [
             AndOperator, OrOperator,
             PropertiesCriteria, NameCriteria, MaterialRunClassificationCriteria,
-            MaterialTemplatesCriteria
+            MaterialTemplatesCriteria, TagsCriteria, ConnectivityClassCriteria
         ]
         return {klass.typ: klass for klass in classes}[data['type']]
 
@@ -159,3 +168,40 @@ class MaterialTemplatesCriteria(Serializable['MaterialTemplatesCriteria'], Crite
     )
     tag_filters = properties.Set(properties.String, 'tag_filters')
     typ = properties.String('type', default="material_template_criteria", deserializable=False)
+
+
+class TagsCriteria(Serializable['TagsCriteria'], Criteria):
+    """
+    Look for materials with particular tags.
+
+    Parameters
+    ----------
+    tags: Set[str]
+        The set of tags to filter by. The meaning of this set depends on the filter_type.
+    filter_type: TagFilterType
+        The type of filter to apply to the tags:
+        - AND_TAGS_FILTER_TYPE: All specified tags must be present
+        - OR_TAGS_FILTER_TYPE: At least one of the specified tags must be present
+        - NOT_TAGS_FILTER_TYPE: None of the specified tags should be present
+    """
+
+    tags = properties.Set(properties.String, 'tags')
+    filter_type = properties.Enumeration(TagFilterType, 'filter_type')
+    typ = properties.String('type', default="tags_criteria", deserializable=False)
+
+
+class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Criteria):
+    """
+    Look for materials with particular connectivity classes.
+
+    Parameters
+    ----------
+    is_consumed: Optional[bool]
+        Whether the material is consumed.
+    is_produced: Optional[bool]
+        Whether the material is produced.
+    """
+
+    is_consumed = properties.Optional(properties.Boolean, 'is_consumed')
+    is_produced = properties.Optional(properties.Boolean, 'is_produced')
+    typ = properties.String('type', default="connectivity_class_criteria", deserializable=False)
