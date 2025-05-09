@@ -6,10 +6,11 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
 from citrine.informatics.data_sources import DataSource
 
-__all__ = ['PredictorEvaluator',
-           'CrossValidationEvaluator',
-           'HoldoutSetEvaluator'
-           ]
+__all__ = [
+    'CrossValidationEvaluator',
+    'HoldoutSetEvaluator',
+    'PredictorEvaluator'
+]
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
@@ -57,7 +58,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 
         A name is required by all evaluators because it is used as the top-level key
         in the results returned by a
-        :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
+        :class:`citrine.informatics.executions.PredictorEvaluation`.
         As such, the names of all evaluators within a single workflow must be unique.
         """
         raise NotImplementedError  # pragma: no cover

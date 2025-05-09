@@ -12,7 +12,7 @@ from citrine.resources.response import Response
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
-    """A collection of PredictorEvaluationExecutions."""
+    """[DEPRECATED] A collection of PredictorEvaluationExecutions."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
