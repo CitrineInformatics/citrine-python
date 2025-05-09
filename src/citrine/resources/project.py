@@ -14,11 +14,14 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.api_error import ApiError
 from citrine.resources.branch import BranchCollection
+from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
+from citrine.resources.generative_design_execution import \
+    GenerativeDesignExecutionCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -30,18 +33,16 @@ from citrine.resources.measurement_run import MeasurementRunCollection
 from citrine.resources.measurement_spec import MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
-from citrine.resources.property_template import PropertyTemplateCollection
-from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
-from citrine.resources.generative_design_execution import \
-    GenerativeDesignExecutionCollection
+from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
@@ -144,9 +145,16 @@ class Project(Resource['Project']):
         return PredictorEvaluationWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use 'ProjectCollection.predictor_evaluations' instead.'")
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
         """Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def predictor_evaluations(self) -> PredictorEvaluationCollection:
+        """Return a collection representing all visible predictor evaluations."""
+        return PredictorEvaluationCollection(project_id=self.uid, session=self.session)
 
     @property
     def design_workflows(self) -> DesignWorkflowCollection:

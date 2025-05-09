@@ -6,10 +6,11 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
 from citrine.informatics.data_sources import DataSource
 
-__all__ = ['PredictorEvaluator',
-           'CrossValidationEvaluator',
-           'HoldoutSetEvaluator'
-           ]
+__all__ = [
+    'CrossValidationEvaluator',
+    'HoldoutSetEvaluator',
+    'PredictorEvaluator'
+]
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):

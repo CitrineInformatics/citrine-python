@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
-from typing import Optional, Union
+from deprecation import deprecated
+from typing import Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -9,7 +10,7 @@ from citrine.resources.response import Response
 
 
 class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkflow]):
-    """A collection of PredictorEvaluationWorkflows."""
+    """[DEPRECATED] A collection of PredictorEvaluationWorkflows."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-workflows'
     _individual_key = None
@@ -21,12 +22,14 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         self.session: Session = session
 
     def build(self, data: dict) -> PredictorEvaluationWorkflow:
-        """Build an individual PredictorEvaluationExecution."""
+        """Build an individual PredictorEvaluationWorkflow."""
         workflow = PredictorEvaluationWorkflow.build(data)
         workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
     def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation workflow.
 
@@ -38,6 +41,8 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """
         return self._put_resource_ref('archive', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
     def restore(self, uid: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
 
@@ -49,11 +54,35 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """
         return self._put_resource_ref('restore', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
+    def get(self, uid: Union[UUID, str]) -> PredictorEvaluationWorkflow:
+        return super().get(uid)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
+    def list(self, *, per_page: int = 100) -> Iterator[PredictorEvaluationWorkflow]:
+        return super().list(per_page=per_page)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
+    def register(model: PredictorEvaluationWorkflow) -> PredictorEvaluationWorkflow:
+        return super().register(model)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
+    def update(model: PredictorEvaluationWorkflow) -> PredictorEvaluationWorkflow:
+        return super().update(model)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Evaluation workflows are being dropped in favor of direct evaluations.")
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Use 'PredictorCollection.evaluate_default' instead.")
     def create_default(self,
                        *,
                        predictor_id: UUID,

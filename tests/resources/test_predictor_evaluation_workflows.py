@@ -33,14 +33,16 @@ def test_basic_methods(workflow, collection):
 
 
 def test_archive(workflow, collection):
-    collection.archive(workflow.uid)
+    with pytest.deprecated_call():
+        collection.archive(workflow.uid)
     expected_path = '/projects/{}/predictor-evaluation-workflows/archive'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(method='PUT', path=expected_path,
                                                     json={"module_uid": str(workflow.uid)})
 
 
 def test_restore(workflow, collection):
-    collection.restore(workflow.uid)
+    with pytest.deprecated_call():
+        collection.restore(workflow.uid)
     expected_path = '/projects/{}/predictor-evaluation-workflows/restore'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(method='PUT', path=expected_path,
                                                     json={"module_uid": str(workflow.uid)})
@@ -48,7 +50,8 @@ def test_restore(workflow, collection):
 
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
-        collection.delete(uuid.uuid4())
+        with pytest.deprecated_call():
+            collection.delete(uuid.uuid4())
 
 
 @pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
@@ -64,7 +67,8 @@ def test_create_default(predictor_evaluation_workflow_dict: dict,
         project_id=project_id,
         session=session
     )
-    default_workflow = collection.create_default(predictor_id=predictor_id, predictor_version=predictor_version)
+    with pytest.deprecated_call():
+        default_workflow = collection.create_default(predictor_id=predictor_id, predictor_version=predictor_version)
 
     url = f'/projects/{collection.project_id}/predictor-evaluation-workflows/default'
 
