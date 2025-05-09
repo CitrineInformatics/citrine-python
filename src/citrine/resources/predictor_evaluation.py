@@ -7,32 +7,28 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import PredictorRef
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.executions import predictor_evaluation_execution
+from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation
 from citrine.resources.response import Response
 
 
-class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
-    """[DEPRECATED] A collection of PredictorEvaluationExecutions."""
+class PredictorEvaluationCollection(Collection["PredictorEvaluation"]):
+    """A collection of PredictorEvaluations."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
-    _resource = predictor_evaluation_execution.PredictorEvaluationExecution
+    _resource = PredictorEvaluation
 
-    def __init__(self,
-                 project_id: UUID,
-                 session: Session,
-                 workflow_id: Optional[UUID] = None):
+    def __init__(self, project_id: UUID, session: Session):
         self.project_id: UUID = project_id
         self.session: Session = session
-        self.workflow_id: Optional[UUID] = workflow_id
 
-    def build(self, data: dict) -> predictor_evaluation_execution.PredictorEvaluationExecution:
-        """Build an individual PredictorEvaluationExecution."""
-        execution = predictor_evaluation_execution.PredictorEvaluationExecution.build(data)
-        execution._session = self.session
-        execution.project_id = self.project_id
-        return execution
+    def build(self, data: dict) -> PredictorEvaluation:
+        """Build an individual PredictorEvaluation."""
+        evaluation = PredictorEvaluation.build(data)
+        evaluation._session = self.session
+        evaluation.project_id = self.project_id
+        return evaluation
 
     def trigger(self,
                 predictor_id: UUID,
@@ -71,64 +67,48 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         return self.build(data)
 
-    def register(self,
-                 model: predictor_evaluation_execution.PredictorEvaluationExecution
-                 ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
-        """Cannot register an execution."""
-        raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
+    def register(self, model: PredictorEvaluation) -> PredictorEvaluation:
+        """Cannot register an evaluation."""
+        raise NotImplementedError("Cannot register a PredictorEvaluation.")
 
-    def update(self,
-               model: predictor_evaluation_execution.PredictorEvaluationExecution
-               ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
-        """Cannot update an execution."""
-        raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
+    def update(self, model: PredictorEvaluation) -> PredictorEvaluation:
+        """Cannot update an evaluation."""
+        raise NotImplementedError("Cannot update a PredictorEvaluation.")
 
     def archive(self, uid: Union[UUID, str]):
-        """Archive a predictor evaluation execution.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str]
-            Unique identifier of the execution to archive
-
-        """
-        self._put_resource_ref('archive', uid)
+        """Cannot archive an evaluation."""
+        raise NotImplementedError("Cannot update a PredictorEvaluation.")
 
     def restore(self, uid: Union[UUID, str]):
-        """Restore an archived predictor evaluation execution.
+        """Cannot restore an evaluation."""
+        raise NotImplementedError("Cannot update a PredictorEvaluation.")
 
-        Parameters
-        ----------
-        uid: Union[UUID, str]
-            Unique identifier of the execution to restore
-
-        """
-        self._put_resource_ref('restore', uid)
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """Cannot delete an evaluation."""
+        raise NotImplementedError("Cannot delete a PredictorEvaluation.")
 
     def list(self,
              *,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None,
              predictor_version: Optional[Union[int, str]] = None
-             ) -> Iterator[predictor_evaluation_execution.PredictorEvaluationExecution]:
+             ) -> Iterator[PredictorEvaluation]:
         """
-        Paginate over the elements of the collection.
+        Paginate over predictor evaluations.
 
         Parameters
         ---------
         per_page: int, optional
-            Max number of results to return per page. Default is 100.  This parameter
-            is used when making requests to the backend service.  If the page parameter
-            is specified it limits the maximum number of elements in the response.
+            Max number of results to return per page. Default is 100.
         predictor_id: uuid, optional
-            list executions that targeted the predictor with this id
+            list evaluations that targeted the predictor with this id
         predictor_version: Union[int, str], optional
-            list executions that targeted the predictor with this version
+            list evaluations that targeted the predictor with this version
 
         Returns
         -------
-        Iterator[PredictorEvaluationExecution]
-            The matching predictor evaluation executions.
+        Iterator[PredictorEvaluation]
+            The matching predictor evaluations.
 
         """
         params = {}
@@ -136,15 +116,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             params["predictor_id"] = str(predictor_id)
         if predictor_version is not None:
             params["predictor_version"] = predictor_version
-        if self.workflow_id is not None:
-            params["workflow_id"] = str(self.workflow_id)
 
         fetcher = partial(self._fetch_page, additional_params=params)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
-
-    def delete(self, uid: Union[UUID, str]) -> Response:
-        """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
-        raise NotImplementedError(
-            "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")
