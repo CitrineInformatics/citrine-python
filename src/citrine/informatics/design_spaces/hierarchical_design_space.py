@@ -8,6 +8,7 @@ from citrine.informatics.data_sources import DataSource
 from citrine.informatics.dimensions import Dimension
 from citrine.informatics.design_spaces import FormulationDesignSpace
 from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 
 __all__ = [
     "TemplateLink",
@@ -150,6 +151,8 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
 
     """
 
+    _settings = properties.Optional(properties.Object(DesignSpaceSettings), "metadata.settings")
+
     root = properties.Object(MaterialNodeDefinition, "data.instance.root")
     subspaces = properties.List(
         properties.Object(MaterialNodeDefinition), "data.instance.subspaces"
@@ -178,6 +181,9 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
 
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)
+
+        if self._settings:
+            data["settings"] = self._settings.dump()
 
         root_node = data["instance"]["root"]
         data["instance"]["root"] = self.__unwrap_node(root_node)

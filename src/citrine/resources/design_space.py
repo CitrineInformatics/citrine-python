@@ -3,26 +3,14 @@ from functools import partial
 from typing import Iterable, Optional, TypeVar, Union
 from uuid import UUID
 
-from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, \
-    HierarchicalDesignSpace
+from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpace, \
+    DesignSpaceSettings, EnumeratedDesignSpace, HierarchicalDesignSpace
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
-
-
-class DefaultDesignSpaceMode(BaseEnumeration):
-    """The type of default design space to create.
-
-    * ATTRIBUTE results in a product design space containing dimensions required by the predictor
-    * HIERARCHICAL results in a hierarchical design space resembling the shape of training data
-    """
-
-    ATTRIBUTE = 'ATTRIBUTE'
-    HIERARCHICAL = 'HIERARCHICAL'
 
 
 class DesignSpaceCollection(Collection[DesignSpace]):
@@ -154,7 +142,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
     def create_default(self,
                        *,
-                       predictor_id: UUID,
+                       predictor_id: Union[UUID, str],
                        predictor_version: Optional[Union[int, str]] = None,
                        mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
@@ -209,19 +197,20 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         """
         path = f'projects/{self.project_id}/design-spaces/default'
-        payload = {
-            "predictor_id": str(predictor_id),
-            "mode": mode.value,
-            "include_ingredient_fraction_constraints": include_ingredient_fraction_constraints,
-            "include_label_fraction_constraints": include_label_fraction_constraints,
-            "include_label_count_constraints": include_label_count_constraints,
-            "include_parameter_constraints": include_parameter_constraints
-        }
-        if predictor_version:
-            payload["predictor_version"] = predictor_version
+        settings = DesignSpaceSettings(
+            predictor_id=predictor_id,
+            predictor_version=predictor_version,
+            mode=mode,
+            include_ingredient_fraction_constraints=include_ingredient_fraction_constraints,
+            include_label_fraction_constraints=include_label_fraction_constraints,
+            include_label_count_constraints=include_label_count_constraints,
+            include_parameter_constraints=include_parameter_constraints
+        )
 
-        data = self.session.post_resource(path, json=payload, version=self._api_version)
-        return self.build(DesignSpace.wrap_instance(data["instance"]))
+        data = self.session.post_resource(path, json=settings.dump(), version=self._api_version)
+        ds = self.build(DesignSpace.wrap_instance(data["instance"]))
+        ds._settings = settings
+        return ds
 
     def convert_to_hierarchical(
             self,

@@ -4,6 +4,7 @@ from uuid import UUID
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 from citrine.informatics.dimensions import Dimension
 
 __all__ = ['ProductDesignSpace']
@@ -28,6 +29,8 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
 
     """
 
+    _settings = properties.Optional(properties.Object(DesignSpaceSettings), "metadata.settings")
+
     subspaces = properties.List(properties.Object(DesignSpace), 'data.instance.subspaces',
                                 default=[])
     dimensions = properties.Optional(
@@ -50,6 +53,10 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
 
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)
+
+        if self._settings:
+            data["settings"] = self._settings.dump()
+
         for i, subspace in enumerate(data['instance']['subspaces']):
             if isinstance(subspace, dict):
                 # embedded design spaces are not modules, so only serialize their config
