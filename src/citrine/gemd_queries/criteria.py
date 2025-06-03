@@ -183,6 +183,7 @@ class TagsCriteria(Serializable['TagsCriteria'], Criteria):
         - AND_TAGS_FILTER_TYPE: All specified tags must be present
         - OR_TAGS_FILTER_TYPE: At least one of the specified tags must be present
         - NOT_TAGS_FILTER_TYPE: None of the specified tags should be present
+
     """
 
     tags = properties.Set(properties.String, 'tags')
@@ -200,6 +201,7 @@ class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Crite
         Whether the material is consumed.
     is_produced: Optional[bool]
         Whether the material is produced.
+
     """
 
     is_consumed = properties.Optional(properties.Boolean, 'is_consumed')

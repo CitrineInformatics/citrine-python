@@ -7,8 +7,9 @@ import pytest
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.descriptors import RealDescriptor, FormulationKey
-from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
-from citrine.resources.design_space import DesignSpaceCollection, DefaultDesignSpaceMode
+from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpace, \
+        DesignSpaceSettings, EnumeratedDesignSpace, HierarchicalDesignSpace, ProductDesignSpace
+from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.session import FakeCall, FakeSession
 
@@ -192,16 +193,15 @@ def test_create_default(predictor_version, valid_product_design_space):
         session=session
     )
 
-    expected_payload = {
-        "predictor_id": str(predictor_id),
-        "include_ingredient_fraction_constraints": False,
-        "include_label_fraction_constraints": False,
-        "include_label_count_constraints": False,
-        "include_parameter_constraints": False,
-        "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
-    }
-    if predictor_version is not None:
-        expected_payload["predictor_version"] = predictor_version
+    expected_payload = DesignSpaceSettings(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        include_ingredient_fraction_constraints=False,
+        include_label_fraction_constraints=False,
+        include_label_count_constraints=False,
+        include_parameter_constraints=False,
+        mode=DefaultDesignSpaceMode.ATTRIBUTE
+    ).dump()
 
     expected_call = FakeCall(
         method='POST',
@@ -215,7 +215,51 @@ def test_create_default(predictor_version, valid_product_design_space):
     assert session.num_calls == 1
     assert session.last_call == expected_call
     
-    assert default_design_space.dump() == valid_product_design_space.dump()
+    expected_response = {**valid_product_design_space.dump(), "settings": expected_payload}
+    assert default_design_space.dump() == expected_response
+
+
+@pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
+def test_create_default_hierarchical(predictor_version, valid_hierarchical_design_space_data):
+    valid_hierarchical_design_space = HierarchicalDesignSpace.build(valid_hierarchical_design_space_data)
+
+    session = FakeSession()
+    session.set_response(valid_hierarchical_design_space.dump())
+   
+    predictor_id = uuid.uuid4()
+    collection = DesignSpaceCollection(
+        project_id=uuid.uuid4(),
+        session=session
+    )
+
+    expected_payload = DesignSpaceSettings(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        include_ingredient_fraction_constraints=False,
+        include_label_fraction_constraints=False,
+        include_label_count_constraints=False,
+        include_parameter_constraints=False,
+        mode=DefaultDesignSpaceMode.HIERARCHICAL
+    ).dump()
+
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{collection.project_id}/design-spaces/default",
+        json=expected_payload,
+        version="v3"
+    )
+
+    default_design_space = collection.create_default(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        mode=DefaultDesignSpaceMode.HIERARCHICAL
+    )
+
+    assert session.num_calls == 1
+    assert session.last_call == expected_call
+    
+    expected_response = {**valid_hierarchical_design_space.dump(), "settings": expected_payload}
+    assert default_design_space.dump() == expected_response
 
 
 @pytest.mark.parametrize("ingredient_fractions", (True, False))
@@ -233,19 +277,21 @@ def test_create_default_with_config(valid_product_design_space, ingredient_fract
         project_id=uuid.uuid4(),
         session=session
     )
+    
+    expected_payload = DesignSpaceSettings(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        include_ingredient_fraction_constraints=ingredient_fractions,
+        include_label_fraction_constraints=label_fractions,
+        include_label_count_constraints=label_count,
+        include_parameter_constraints=parameters,
+        mode=DefaultDesignSpaceMode.ATTRIBUTE
+    ).dump()
 
     expected_call = FakeCall(
         method='POST',
         path=f"projects/{collection.project_id}/design-spaces/default",
-        json={
-            "mode": DefaultDesignSpaceMode.ATTRIBUTE.value,
-            "predictor_id": str(predictor_id),
-            "predictor_version": predictor_version,
-            "include_ingredient_fraction_constraints": ingredient_fractions,
-            "include_label_fraction_constraints": label_fractions,
-            "include_label_count_constraints": label_count,
-            "include_parameter_constraints": parameters
-        },
+        json=expected_payload,
         version="v3"
     )
 
@@ -261,7 +307,8 @@ def test_create_default_with_config(valid_product_design_space, ingredient_fract
     assert session.num_calls == 1
     assert session.last_call == expected_call
     
-    assert default_design_space.dump() == valid_product_design_space.dump()
+    expected_response = {**valid_product_design_space.dump(), "settings": expected_payload}
+    assert default_design_space.dump() == expected_response
 
 
 def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
@@ -408,3 +455,82 @@ def test_delete_not_supported():
     dsc = DesignSpaceCollection(uuid.uuid4(), FakeSession())
     with pytest.raises(NotImplementedError):
         dsc.delete(uuid.uuid4())
+
+
+def test_carrying_settings_from_create_default(valid_product_design_space):
+    predictor_id = uuid.uuid4()
+    predictor_version = 4
+
+    session = FakeSession()
+
+    ds_resp = _ds_to_response(valid_product_design_space)
+    session.set_responses(ds_resp["data"], deepcopy(ds_resp), deepcopy(ds_resp))
+
+    collection = DesignSpaceCollection(project_id=uuid.uuid4(), session=session)
+
+    default_design_space = collection.create_default(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        include_label_count_constraints=True
+    )
+    registered = collection.register(default_design_space)
+
+    expected_settings = DesignSpaceSettings(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        include_ingredient_fraction_constraints=False,
+        include_label_fraction_constraints=False,
+        include_label_count_constraints=True,
+        include_parameter_constraints=False,
+        mode=DefaultDesignSpaceMode.ATTRIBUTE
+    )
+    expected_payload = {**valid_product_design_space.dump(), "settings": expected_settings.dump()}
+
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{collection.project_id}/design-spaces",
+        json=expected_payload,
+        version="v3"
+    )
+
+    assert session.num_calls == 3
+    assert session.calls[1] == expected_call
+
+
+def test_carrying_settings_from_get(valid_product_design_space):
+    predictor_id = uuid.uuid4()
+    predictor_version = 4
+
+    session = FakeSession()
+    
+    expected_settings = DesignSpaceSettings(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        exclude_intermediates=True,
+        include_ingredient_fraction_constraints=False,
+        include_label_fraction_constraints=False,
+        include_label_count_constraints=False,
+        include_parameter_constraints=True,
+        mode=DefaultDesignSpaceMode.ATTRIBUTE
+    )
+
+    ds_resp = _ds_to_response(valid_product_design_space)
+    ds_resp["metadata"]["settings"] = expected_settings.dump()
+    session.set_responses(deepcopy(ds_resp), deepcopy(ds_resp), deepcopy(ds_resp))
+
+    collection = DesignSpaceCollection(project_id=uuid.uuid4(), session=session)
+
+    retrieved = collection.get(uuid.uuid4())
+    registered = collection.register(retrieved)
+
+    expected_payload = {**valid_product_design_space.dump(), "settings": expected_settings.dump()}
+
+    expected_call = FakeCall(
+        method='POST',
+        path=f"projects/{collection.project_id}/design-spaces",
+        json=expected_payload,
+        version="v3"
+    )
+
+    assert session.num_calls == 3
+    assert session.calls[1] == expected_call
