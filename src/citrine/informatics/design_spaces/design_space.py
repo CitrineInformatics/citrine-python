@@ -26,6 +26,15 @@ class DesignSpace(PolymorphicSerializable['DesignSpace'], AsynchronousObject):
     name = properties.String('data.name')
     description = properties.Optional(properties.String(), 'data.description')
 
+    locked_by = properties.Optional(properties.UUID, 'metadata.locked.user',
+                                    serializable=False)
+    """:Optional[UUID]: id of the user whose action cause the design space to
+    be locked, if it is locked"""
+    lock_time = properties.Optional(properties.Datetime, 'metadata.locked.time',
+                                    serializable=False)
+    """:Optional[datetime]: date and time at which the resource was locked,
+    if it is locked"""
+
     @staticmethod
     def wrap_instance(subspace_data: dict) -> dict:
         """Insert a serialized embedded design space into an entity envelope.
@@ -64,6 +73,11 @@ class DesignSpace(PolymorphicSerializable['DesignSpace'], AsynchronousObject):
             'DataSourceDesignSpace': DataSourceDesignSpace,
             'HierarchicalDesignSpace': HierarchicalDesignSpace
         }[data['data']['instance']['type']]
+
+    @property
+    def is_locked(self) -> bool:
+        """If is_locked is true, edits to the design space will be rejected."""
+        return self.locked_by is not None
 
     @property
     def sample_design_space_executions(self):
