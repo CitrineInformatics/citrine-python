@@ -1,6 +1,7 @@
+import random
 import uuid
 from copy import deepcopy
-import random
+from datetime import datetime, timezone
 
 import mock
 import pytest
@@ -534,3 +535,31 @@ def test_carrying_settings_from_get(valid_product_design_space):
 
     assert session.num_calls == 3
     assert session.calls[1] == expected_call
+
+
+def test_locked(valid_product_design_space_data):
+    session = FakeSession()
+    collection = DesignSpaceCollection(project_id=uuid.uuid4(), session=session)
+
+    session.set_response(deepcopy(valid_product_design_space_data))
+
+    ds = collection.get(uuid.uuid4())
+
+    assert not ds.is_locked
+    assert ds.locked_by is None
+    assert ds.lock_time is None
+
+    lock_user = uuid.uuid4()
+    lock_time = datetime(2020, 4, 23, 15, 46, 23, tzinfo=timezone.utc)
+    lock_timestamp = int(lock_time.timestamp()) * 1000
+
+    response_data = deepcopy(valid_product_design_space_data)
+    response_data['metadata']['locked'] = {'user': str(lock_user), 'time': lock_timestamp}
+
+    session.set_response(response_data)
+
+    ds = collection.get(uuid.uuid4())
+
+    assert ds.is_locked
+    assert ds.locked_by == lock_user
+    assert ds.lock_time == lock_time
