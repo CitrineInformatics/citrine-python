@@ -3,7 +3,7 @@ boto3==1.34.35
 deprecation==2.1.0
 gemd==2.1.9
 pyjwt==2.8.0
-requests==2.32.2
+requests==2.32.4
 tqdm==4.66.3
 
 # boto3 (through botocore) depends on urllib3. Version 1.34.35 requires
