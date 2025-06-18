@@ -9,16 +9,29 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._rest.paginator import Paginator
 from citrine._serialization import properties
+from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_candidate import HierarchicalDesignMaterial
+from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation
+from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.status_detail import StatusDetail
 
 
-# Refers to the most recently edited prediction version. Could be a draft.
+# The most recently edited prediction version. Could be a draft.
 MOST_RECENT_VER = "most_recent"
-LATEST_VER = "latest"  # Refers to the highest saved predictor version.
+# The highest trained predictor version.
+LATEST_VER = "latest"
+
+
+class EvaluatorsPayload(Serializable['EvaluatorsPayload']):
+    """Container object for predictor evaluators."""
+
+    evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
+
+    def __init__(self, evaluators):
+        self.evaluators = evaluators
 
 
 class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
@@ -195,6 +208,38 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         json = {"name": name, "description": description}
         entity = self.session.put_resource(path, json, version=self._api_version)
         return self.build(entity)
+
+    def default_evaluators(self,
+                           uid: Union[UUID, str],
+                           *,
+                           version: Union[int, str]) -> List[PredictorEvaluator]:
+        path = self._construct_path(uid, version, action="default-evaluators")
+        evaluators = self.session.get_resource(path)
+        return EvaluatorsPayload.build(evaluators).evaluators
+
+    def _build_predictor_evaluation(self, data):
+        evaluation = PredictorEvaluation.build(data)
+        evaluation.project_id = self.project_id
+        evaluation._session = self.session
+        return evaluation
+
+    def evaluate(self,
+                 uid: Union[UUID, str],
+                 *,
+                 version: Union[int, str],
+                 evaluators: List[PredictorEvaluator]) -> PredictorEvaluation:
+        path = self._construct_path(uid, version, "evaluate")
+        payload = EvaluatorsPayload(evaluators=evaluators).dump()
+        response = self.session.post_resource(path, payload, version=self._api_version)
+        return self._build_predictor_evaluation(response)
+
+    def evaluate_default(self,
+                         uid: Union[UUID, str],
+                         *,
+                         version: Union[int, str]) -> PredictorEvaluation:
+        path = self._construct_path(uid, version, "evaluate-default")
+        response = self.session.post_resource(path, {}, version=self._api_version)
+        return self._build_predictor_evaluation(response)
 
     def delete(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         """Predictor versions cannot be deleted at this time."""
@@ -577,6 +622,95 @@ class PredictorCollection(Collection[GraphPredictor]):
         return self._versions_collection.rename(
             uid, version=version, name=name, description=description
         )
+
+    def default_evaluators_from_config(self,
+                                       predictor: GraphPredictor) -> List[PredictorEvaluator]:
+        """Retrieve the default evaluators for an arbitrary (but valid) predictor config.
+
+        See :func:`~citrine.resources.PredictorCollection.default_evaluators` for details on the
+        evaluators.
+        """
+        path = self._get_path(action="default-evaluators-from-config")
+        payload = predictor.dump()
+        evaluators = self.session.post_resource(path, json=payload, version=self._api_version)
+        return EvaluatorsPayload.build(evaluators).evaluators
+
+    def default_evaluators(self,
+                           uid: Union[UUID, str],
+                           *,
+                           version: Union[int, str] = MOST_RECENT_VER) -> List[PredictorEvaluator]:
+        """Retrieve the default evaluators for a stored predictor.
+
+        The current default evaluators perform 5-fold, 3-trial cross-validation on all valid
+        predictor responses. Valid responses are those that are **not** produced by the
+        following predictors:
+
+        * :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
+        * :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
+        * :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`
+        * :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor`
+        * :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
+        * :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`
+        * :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
+        * :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            Unique identifier of the predictor to evaluate
+        predictor_version: Option[Union[int, str]]
+            The version of the predictor to evaluate
+
+        Returns
+        -------
+        PredictorEvaluation
+
+        """  # noqa: E501,W505
+        return self._versions_collection.default_evaluators(uid, version=version)
+
+    def evaluate(self,
+                 uid: Union[UUID, str],
+                 *,
+                 version: Union[int, str] = LATEST_VER,
+                 evaluators: List[PredictorEvaluator]) -> PredictorEvaluation:
+        """Evaluate a predictor using the provided evaluators.
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            Unique identifier of the predictor to evaluate
+        predictor_version: Option[Union[int, str]]
+            The version of the predictor to evaluate. Defaults to the latest trained version.
+        evaluators: list
+
+        Returns
+        -------
+        PredictorEvaluation
+
+        """
+        return self._versions_collection.evaluate(uid, version=version, evaluators=evaluators)
+
+    def evaluate_default(self,
+                         uid: Union[UUID, str],
+                         *,
+                         version: Union[int, str] = MOST_RECENT_VER) -> PredictorEvaluation:
+        """Evaluate a predictor using the default evaluators.
+
+        See :func:`~citrine.resources.PredictorCollection.default_evaluators` for details on the evaluators.
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            Unique identifier of the predictor to evaluate
+        predictor_version: Option[Union[int, str]]
+            The version of the predictor to evaluate
+
+        Returns
+        -------
+        PredictorEvaluation
+
+        """  # noqa: E501,W505
+        return self._versions_collection.evaluate_default(uid, version=version)
 
     def delete(self, uid: Union[UUID, str]):
         """Predictors cannot be deleted at this time."""
