@@ -34,6 +34,7 @@ from citrine.resources.measurement_spec import MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
 from citrine.resources.predictor import PredictorCollection
+from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import \
@@ -139,13 +140,18 @@ class Project(Resource['Project']):
         return DescriptorMethods(project_id=self.uid, session=self.session)
 
     @property
+    def predictor_evaluations(self) -> PredictorEvaluationCollection:
+        """Return a collection representing all visible predictor evaluations."""
+        return PredictorEvaluationCollection(project_id=self.uid, session=self.session)
+
+    @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
         """Return a collection representing all visible predictor evaluation workflows."""
         return PredictorEvaluationWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
     @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use 'PredictorCollection.evaluate' instead.'")
+                details="Please use 'PredictorEvaluationCollection' instead.'")
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
         """Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)

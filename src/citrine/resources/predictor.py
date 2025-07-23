@@ -217,6 +217,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         evaluators = self.session.get_resource(path)
         return EvaluatorsPayload.build(evaluators).evaluators
 
+    '''
     def _build_predictor_evaluation(self, data):
         evaluation = PredictorEvaluation.build(data)
         evaluation.project_id = self.project_id
@@ -240,6 +241,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         path = self._construct_path(uid, version, "evaluate-default")
         response = self.session.post_resource(path, {}, version=self._api_version)
         return self._build_predictor_evaluation(response)
+    '''
 
     def delete(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
         """Predictor versions cannot be deleted at this time."""
@@ -668,6 +670,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         """  # noqa: E501,W505
         return self._versions_collection.default_evaluators(uid, version=version)
 
+    '''
     def evaluate(self,
                  uid: Union[UUID, str],
                  *,
@@ -711,6 +714,7 @@ class PredictorCollection(Collection[GraphPredictor]):
 
         """  # noqa: E501,W505
         return self._versions_collection.evaluate_default(uid, version=version)
+    '''
 
     def delete(self, uid: Union[UUID, str]):
         """Predictors cannot be deleted at this time."""
