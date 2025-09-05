@@ -112,7 +112,8 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     typ = properties.String("type", default="CrossValidationEvaluator", deserializable=False)
 
     def __init__(self,
-                 name: str, *,
+                 name: str,
+                 *,
                  description: str = "",
                  responses: Set[str],
                  n_folds: int = 5,

@@ -129,15 +129,15 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                                         per_page=per_page)
 
     def list_all(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all design spaces."""
+        """List all design spaces."""
         return self._list_base(per_page=per_page)
 
     def list(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all non-archived design spaces."""
+        """List non-archived design spaces."""
         return self._list_base(per_page=per_page, archived=False)
 
     def list_archived(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all archived predictors."""
+        """List archived design spaces."""
         return self._list_base(per_page=per_page, archived=True)
 
     def create_default(self,
