@@ -694,7 +694,7 @@ Predictor reports
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include predictor evaluation metrics.
-To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>`.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluation <predictor_evaluation_workflows>`.
 
 Training data
 -------------
