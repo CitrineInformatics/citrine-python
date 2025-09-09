@@ -8,7 +8,7 @@ from citrine._rest.resource import Resource
 
 
 class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Execution):
-    """The execution of a PredictorEvaluationWorkflow.
+    """[DEPRECATED] The execution of a PredictorEvaluationWorkflow.
 
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
     Predictor evaluation executions also have a ``status_description`` field with more information.

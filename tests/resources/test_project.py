@@ -304,14 +304,17 @@ def test_predictors_get_project_id(project):
 
 
 def test_pe_workflows_get_project_id(project):
-    assert project.uid == project.predictor_evaluation_workflows.project_id
+    with pytest.deprecated_call():
+        assert project.uid == project.predictor_evaluation_workflows.project_id
 
 
 def test_pe_executions_get_project_id(project):
-    assert project.uid == project.predictor_evaluation_executions.project_id
+    with pytest.deprecated_call():
+        assert project.uid == project.predictor_evaluation_executions.project_id
     # The resulting collection cannot be used to trigger executions.
-    with pytest.raises(RuntimeError):
-        project.predictor_evaluation_executions.trigger(uuid.uuid4())
+    with pytest.deprecated_call():
+        with pytest.raises(RuntimeError):
+            project.predictor_evaluation_executions.trigger(uuid.uuid4())
 
 
 def test_predictor_evaluations_get_project_id(project):

@@ -6,8 +6,7 @@ from citrine.resources.project import Project, ProjectCollection
 from tests.utils.fakes import FakeDatasetCollection
 from tests.utils.fakes import FakeDesignSpaceCollection, FakeDesignWorkflowCollection
 from tests.utils.fakes import FakeGemTableCollection, FakeTableConfigCollection
-from tests.utils.fakes import FakePredictorCollection, FakePredictorEvaluationWorkflowCollection
-from tests.utils.fakes import FakePredictorEvaluationExecutionCollection
+from tests.utils.fakes import FakePredictorCollection
 from tests.utils.fakes import FakeDescriptorMethods
 from tests.utils.session import FakeSession
 
@@ -67,8 +66,6 @@ class FakeProject(Project):
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
         self._datasets = FakeDatasetCollection(team_id=self.team_id, session=self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
-        self._pees = FakePredictorEvaluationExecutionCollection(self.uid, self.session)
-        self._pews = FakePredictorEvaluationWorkflowCollection(self.uid, self.session)
         self._tables = FakeGemTableCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
         self._table_configs = FakeTableConfigCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
 
@@ -91,14 +88,6 @@ class FakeProject(Project):
     @property
     def predictors(self) -> FakePredictorCollection:
         return self._predictors
-
-    @property
-    def predictor_evaluation_executions(self) -> FakePredictorEvaluationExecutionCollection:
-        return self._pees
-
-    @property
-    def predictor_evaluation_workflows(self) -> FakePredictorEvaluationWorkflowCollection:
-        return self._pews
 
     @property
     def tables(self) -> FakeGemTableCollection:

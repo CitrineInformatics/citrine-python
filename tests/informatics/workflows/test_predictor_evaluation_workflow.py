@@ -36,4 +36,5 @@ def test_execution_error(pew):
         pew.executions
 
     pew.project_id = "foo"
-    assert pew.executions.project_id == "foo"
+    with pytest.deprecated_call():
+        assert pew.executions.project_id == "foo"
