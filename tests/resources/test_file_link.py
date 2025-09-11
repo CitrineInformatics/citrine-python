@@ -1,5 +1,5 @@
-import mimetypes
 from pathlib import Path
+import platform
 from typing import Collection
 from uuid import uuid4, UUID
 
@@ -40,28 +40,27 @@ def valid_data() -> dict:
     return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
 
 
-def test_mime_types(collection: FileCollection):
-    mime_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    mime_xls = "application/vnd.ms-excel"
-    mime_txt = "text/plain"
-    mime_unknown = "application/octet-stream"
-    mime_csv = "text/csv"
-
-    test_names = {
-        "asdf.xlsx": mime_xlsx,
-        "asdf.XLSX": mime_xlsx,
-        "asdf.xls": mime_xls,
-        "asdf.TXT": mime_txt,
-        "asdf.csv": mime_csv,
-        "asdf.FAKE": mime_unknown,
-    }
-
-    fails = []
-    for file, mime in test_names.items():
-        resolved = collection._mime_type(Path(file))
-        if resolved != mime:
-            fails.append(f"{resolved} != {mime} for {file}")
-    assert fails == [], "\n".join(["MIME type mismatch:"] + fails + [f"Known encodings: {mimetypes.encodings_map}"])
+@pytest.mark.parametrize(
+    ("filename", "mimetype"),
+    [
+        pytest.param(
+            "asdf.xlsx", 
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+            marks=pytest.mark.xfail(
+                platform.system() == "Windows", 
+                reason="windows-latest test servers omit xlsx from their registry", 
+                strict=True
+            )
+        ),
+        ("asdf.xls", "application/vnd.ms-excel"),
+        ("asdf.XLS", "application/vnd.ms-excel"),
+        ("asdf.TXT", "text/plain"),
+        ("asdf.csv", "text/csv"),
+        ("asdf.FAKE", "application/octet-stream"),
+    ],
+)
+def test_mime_types(collection: FileCollection, filename, mimetype):
+    assert collection._mime_type(Path(filename)) == mimetype
 
 
 def test_build_equivalence(collection, valid_data):
