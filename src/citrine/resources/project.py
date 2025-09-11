@@ -728,6 +728,24 @@ class ProjectCollection(Collection[Project]):
         return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
+    def archive(self, uid: Union[UUID, str]) -> Response:
+        """Archive a project."""
+        # Only the team-agnostic project archive is implemented
+        if self.team_id is None:
+            path = self._get_path(uid, action="archive")
+            return self.session.post_resource(path, version=self._api_version, json=None)
+        else:
+            return ProjectCollection(session=self.session).archive(uid)
+
+    def restore(self, uid: Union[UUID, str]) -> Response:
+        """Restore an archived project."""
+        # Only the team-agnostic project restore is implemented
+        if self.team_id is None:
+            path = self._get_path(uid, action="restore")
+            return self.session.post_resource(path, version=self._api_version, json=None)
+        else:
+            return ProjectCollection(session=self.session).restore(uid)
+
     def delete(self, uid: Union[UUID, str]) -> Response:
         """
         Delete a particular project.
