@@ -559,6 +559,32 @@ def test_search_projects_no_search_params(collection: ProjectCollection):
     assert len(projects_data) == len(result)
 
 
+def test_archive_project(collection, session):
+    # Given
+    uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
+
+    # When
+    collection.archive(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path=f'/projects/{uid}/archive')
+    assert expected_call == session.last_call
+
+
+def test_restore_project(collection, session):
+    # Given
+    uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
+
+    # When
+    collection.restore(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path=f'/projects/{uid}/restore')
+    assert expected_call == session.last_call
+
+
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
