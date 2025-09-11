@@ -1,3 +1,4 @@
+import mimetypes
 from pathlib import Path
 from typing import Collection
 from uuid import uuid4, UUID
@@ -40,18 +41,27 @@ def valid_data() -> dict:
 
 
 def test_mime_types(collection: FileCollection):
-    expected_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    expected_xls = "application/vnd.ms-excel"
-    expected_txt = "text/plain"
-    expected_unk = "application/octet-stream"
-    expected_csv = "text/csv"
+    mime_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    mime_xls = "application/vnd.ms-excel"
+    mime_txt = "text/plain"
+    mime_unknown = "application/octet-stream"
+    mime_csv = "text/csv"
 
-    assert collection._mime_type(Path("asdf.xlsx")) == expected_xlsx
-    assert collection._mime_type(Path("asdf.XLSX")) == expected_xlsx
-    assert collection._mime_type(Path("asdf.xls")) == expected_xls
-    assert collection._mime_type(Path("asdf.TXT")) == expected_txt
-    assert collection._mime_type(Path("asdf.csv")) == expected_csv
-    assert collection._mime_type(Path("asdf.FAKE")) == expected_unk
+    test_names = {
+        "asdf.xlsx": mime_xlsx,
+        "asdf.XLSX": mime_xlsx,
+        "asdf.xls": mime_xls,
+        "asdf.TXT": mime_txt,
+        "asdf.csv": mime_csv,
+        "asdf.FAKE": mime_unknown,
+    }
+
+    fails = []
+    for file, mime in test_names.items():
+        resolved = collection._mime_type(Path(file))
+        if resolved != mime:
+            fails.append(f"{resolved} != {mime} for {file}")
+    assert fails == [], "\n".join(["MIME type mismatch:"] + fails + [f"Known encodings: {mimetypes.encodings_map}"])
 
 
 def test_build_equivalence(collection, valid_data):
@@ -77,9 +87,9 @@ def test_string_representation(valid_data):
 
 def test_from_path():
     """Test the string representation."""
-    path = '/some/path/with/file.txt'
+    path = Path.cwd() / 'some' / 'path' / 'with' / 'file.txt'
     assert FileLink.from_path(path).filename == 'file.txt'
-    assert FileLink.from_path(Path(path)).url == Path(path).as_uri()
+    assert FileLink.from_path(str(path)).url == path.as_uri()
     assert FileCollection._is_local_url(FileLink.from_path(path).url)
 
 
