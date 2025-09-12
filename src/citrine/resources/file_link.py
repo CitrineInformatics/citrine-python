@@ -518,8 +518,7 @@ class FileCollection(Collection[FileLink]):
 
     @staticmethod
     def _mime_type(file_path: Path):
-        # This string coercion is for supporting pathlib.Path objects in python < 3.8
-        mime_type = mimetypes.guess_type(str(file_path))[0]
+        mime_type, _ = mimetypes.guess_type(file_path)
         if mime_type is None:
             mime_type = "application/octet-stream"
         return mime_type
