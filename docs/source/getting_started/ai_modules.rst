@@ -38,7 +38,7 @@ Design Workflow
 A Design Workflow combines a Design Space to define the materials of interest and a Predictor to predict material properties.
 They also include a :doc:`Score <../workflows/scores>` which codifies goals of the project.
 
-Predictor Evaluation Workflow
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Predictor Evaluation
+^^^^^^^^^^^^^^^^^^^^
 
-:doc:`Predictor Evaluation Workflows <../workflows/predictor_evaluation_workflows>` analyze the quality of a Predictor.
+:doc:`Predictor Evaluations <../workflows/predictor_evaluation_workflows>` analyze the quality of a Predictor.

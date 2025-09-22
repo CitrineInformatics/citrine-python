@@ -40,6 +40,7 @@ from citrine.resources.predictor_evaluation_execution import \
     PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import \
     PredictorEvaluationWorkflowCollection
+from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.resources.generative_design_execution import \
     GenerativeDesignExecutionCollection
 from citrine.resources.project_member import ProjectMember
@@ -147,6 +148,11 @@ class Project(Resource['Project']):
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
         """Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def predictor_evaluations(self) -> PredictorEvaluationCollection:
+        """Return a collection representing all visible predictor evaluations."""
+        return PredictorEvaluationCollection(project_id=self.uid, session=self.session)
 
     @property
     def design_workflows(self) -> DesignWorkflowCollection:

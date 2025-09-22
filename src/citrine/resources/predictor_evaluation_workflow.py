@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
-from typing import Optional, Union
+from deprecation import deprecated
+from typing import Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -16,6 +17,9 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
     _collection_key = 'response'
     _resource = PredictorEvaluationWorkflow
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Predictor evaluation workflows are being eliminated in favor of directly"
+                        "evaluating predictors. Please use Project.predictor_evaluations instead.")
     def __init__(self, project_id: UUID, session: Session):
         self.project_id: UUID = project_id
         self.session: Session = session
@@ -27,6 +31,8 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.project_id = self.project_id
         return workflow
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
     def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation workflow.
 
@@ -38,6 +44,8 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """
         return self._put_resource_ref('archive', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
     def restore(self, uid: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
 
@@ -49,11 +57,15 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """
         return self._put_resource_ref('restore', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations.trigger_default instead. It doesn't store"
+                        " a workflow, but it triggers an evaluation with the default evaluators.")
     def create_default(self,
                        *,
                        predictor_id: UUID,
@@ -95,3 +107,27 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
             payload['predictor_version'] = predictor_version
         data = self.session.post_resource(url, payload)
         return self.build(data)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
+    def register(self, model: PredictorEvaluationWorkflow) -> PredictorEvaluationWorkflow:
+        """Create a new element of the collection by registering an existing resource."""
+        return super().register(model)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
+    def list(self, *, per_page: int = 100) -> Iterator[PredictorEvaluationWorkflow]:
+        """Paginate over the elements of the collection."""
+        return super().list(per_page=per_page)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
+    def update(self, model: PredictorEvaluationWorkflow) -> PredictorEvaluationWorkflow:
+        """Update a particular element of the collection."""
+        return super().update(model)
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluations instead, which doesn't store workflows.")
+    def get(self, uid: Union[UUID, str]) -> PredictorEvaluationWorkflow:
+        """Get a particular element of the collection."""
+        return super().get(uid)

@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
+from deprecation import deprecated
 from functools import partial
 from typing import Optional, Union, Iterator
 from uuid import UUID
@@ -19,6 +20,9 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _collection_key = 'response'
     _resource = predictor_evaluation_execution.PredictorEvaluationExecution
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Predictor evaluation workflows are being eliminated in favor of directly"
+                        "evaluating predictors. Please use Project.predictor_evaluations instead.")
     def __init__(self,
                  project_id: UUID,
                  session: Session,
@@ -34,6 +38,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         execution.project_id = self.project_id
         return execution
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluationCollection.trigger instead.")
     def trigger(self,
                 predictor_id: UUID,
                 *,
@@ -71,18 +77,22 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         return self.build(data)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
     def register(self,
                  model: predictor_evaluation_execution.PredictorEvaluationExecution
                  ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot register an execution."""
         raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
     def update(self,
                model: predictor_evaluation_execution.PredictorEvaluationExecution
                ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluation.archive")
     def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation execution.
 
@@ -94,6 +104,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """
         self._put_resource_ref('archive', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluation.restore")
     def restore(self, uid: Union[UUID, str]):
         """Restore an archived predictor evaluation execution.
 
@@ -105,6 +117,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """
         self._put_resource_ref('restore', uid)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluation.list")
     def list(self,
              *,
              per_page: int = 100,
@@ -144,7 +158,15 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")
+
+    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
+                details="Please use PredictorEvaluation.get")
+    def get(self,
+            uid: Union[UUID, str]) -> predictor_evaluation_execution.PredictorEvaluationExecution:
+        """Get a particular element of the collection."""
+        return super().get(uid)

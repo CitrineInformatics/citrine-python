@@ -1,15 +1,15 @@
-Predictor Evaluation Workflows
-==============================
+Predictor Evaluations
+=====================
 
-A :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow` evaluates the performance of a :doc:`Predictor <predictors>`.
-Each workflow is composed of one or more :class:`PredictorEvaluators <citrine.informatics.predictor_evaluator.PredictorEvaluator>`.
+A :class:`~citrine.informatics.executions.predictor_evaluation.PredictorEvaluation` evaluates the performance of a :doc:`Predictor <predictors>`.
+Each evaluation utilizes one or more :class:`PredictorEvaluators <citrine.informatics.predictor_evaluator.PredictorEvaluator>`.
 
 Predictor evaluators
 --------------------
 
 A predictor evaluator defines a method to evaluate a predictor and any relevant configuration, e.g., k-fold cross-validation evaluation that specifies 3 folds.
 Minimally, each predictor evaluator specifies a name, a set of predictor responses to evaluate and a set of metrics to compute for each response.
-Evaluator names must be unique within a single workflow (more on that `below <#execution-and-results>`__).
+Evaluator names must be unique within a single evaluation (more on that `below <#execution-and-results>`__).
 Responses are specified as a set of strings, where each string corresponds to a descriptor key of a predictor output.
 Metrics are specified as a set of :class:`PredictorEvaluationMetrics <citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric>`.
 The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.
@@ -102,22 +102,21 @@ For categorical responses, performance metrics include the area under the receiv
 Execution and results
 ---------------------
 
-Triggering a Predictor Evaluation Workflow produces a :class:`~citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution`.
-This execution allows you to track the progress using its ``status`` and ``status_info`` properties.
-The ``status`` can be one of ``INPROGRESS``, ``READY``, or ``FAILED``.
-Information about the execution status, e.g., warnings or reasons for failure, can be accessed via ``status_info``.
+Once triggered, you can track the evaluation's progress using its ``status`` and ``status_detail`` properties.
+The ``status`` can be one of ``INPROGRESS``, ``SUCCEEDED``, or ``FAILED``.
+Information about the execution status, e.g., warnings or reasons for failure, can be accessed via ``status_detail``.
 
-When the ``status`` is ``READY``, results for each evaluation defined as part of the workflow can be accessed using the ``results`` method:
-
-.. code:: python
-
-    results = execution.results('evaluator_name')
-
-or by indexing into the execution object directly:
+When the ``status`` is ``SUCCEEDED``, results for each evaluator defined as part of the evaluation can be accessed using the ``results`` method:
 
 .. code:: python
 
-    results = execution['evaluator_name']
+    results = evaluation.results('evaluator_name')
+
+or by indexing into the evaluation object directly:
+
+.. code:: python
+
+    results = evaluation['evaluator_name']
 
 Both methods return a :class:`~citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult`.
 
@@ -153,7 +152,7 @@ Each data point defines properties ``uuid``, ``identifiers``, ``trial``, ``fold`
 Example
 -------
 
-The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator`, add it to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow`, and use it to evaluate a :class:`~citrine.informatics.predictors.predictor.Predictor`.
+The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` and use it to evaluate a :class:`~citrine.informatics.predictors.predictor.Predictor`.
 
 The predictor we'll evaluate is defined below:
 
@@ -215,36 +214,19 @@ In this example we'll create a cross-validation evaluator for the response ``y``
         metrics={RMSE(), PVA()}
     )
 
-Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow`, register it with your project, and wait for validation to finish:
+Then, trigger an evaluation and wait for the results to be ready:
 
 .. code:: python
 
-    from citrine.informatics.workflows import PredictorEvaluationWorkflow
-
-    workflow = PredictorEvaluationWorkflow(
-        name='workflow that evaluates y',
-        evaluators=[evaluator]
-    )
-
-    workflow = project.predictor_evaluation_workflows.register(workflow)
-    wait_while_validating(collection=project.predictor_evaluation_workflows, module=workflow)
-
-Trigger the workflow against a predictor to start an execution.
-Then wait for the results to be ready:
-
-.. code:: python
-
-    from citrine.jobs.waiting import wait_while_executing
-
-    execution = workflow.executions.trigger(predictor.uid, predictor_version=predictor.version)
-    wait_while_executing(collection=project.predictor_evaluation_executions, execution=execution, print_status_info=True)
+    evaluation = project.predictor_evaluations.trigger(evaluators=[evaluator], predictor_id=predictor.uid)
+    wait_while_executing(collection=project.predictor_evaluations, execution=evaluation, print_status_info=True)
 
 Finally, load the results and inspect the metrics and their computed values:
 
 .. code:: python
 
     # load the results computed by the CV evaluator defined above
-    cv_results = execution[evaluator.name]
+    cv_results = evaluation[evaluator.name]
 
     # load results for y
     y_results = cv_results['y']
@@ -280,18 +262,17 @@ Finally, load the results and inspect the metrics and their computed values:
 
 Archive and restore
 -------------------
-Both :class:`PredictorEvaluationWorkflows <citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow>` and :class:`PredictorEvaluationExecutions <citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution>` can be archived and restored.
-To archive a workflow:
+:class:`PredictorEvaluation <citrine.informatics.executions.predictor_evaluation.PredictorEvaluation>` can be archived and restored.
 
 .. code:: python
 
-    project.predictor_evaluation_workflows.archive(workflow.uid)
+    project.predictor_evaluation.archive(evaluation.uid)
 
-and to archive all executions associated with a predictor evaluation workflow:
+and to archive all evaluations associated with a predictor:
 
 .. code:: python
 
-    for execution in workflow.executions.list():
-        project.predictor_evaluation_executions.archive(execution.uid)
+    for evaluation in project.predictor_evaluations.list(predictor_id=predictor.uid):
+        project.predictor_evaluation.archive(evaluation.uid)
 
-To restore a workflow or execution, simply replace ``archive`` with ``restore`` in the code above.
+To restore an evaluation, simply replace ``archive`` with ``restore`` in the code above.

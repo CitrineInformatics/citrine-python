@@ -11,9 +11,8 @@ These capabilities include generating candidates for Sequential Learning, identi
 Workflows Overview
 ------------------
 
-Currently, there are two workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>`.
-Workflows employ reusable modules in order to execute.
-There are three different types of modules, and these are discussed in greater detail below.
+Currently, there are two workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PredictorEvaluation <predictor_evaluation_workflows>`.
+There are two different types of modules, and these are discussed in greater detail below.
 
 Design Workflow
 ***************
@@ -38,11 +37,11 @@ Branches
 A ``Branch`` is a named container which can contain any number of design workflows, and is purely a tool for organization.
 If you do not see branches in the Citrine Platform, you do not need to change how you work with design workflows. They will contain an additional field ``branch_id``, which you can ignore.
 
-Predictor Evaluation Workflow
-*****************************
+Predictor Evaluation
+********************
 
-The :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>` is used to analyze a :doc:`Predictor <predictors>`.
-This workflow helps users understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
+The :doc:`PredictorEvaluation <predictor_evaluation_workflows>` is used to analyze a :doc:`Predictor <predictors>`.
+They helps users understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
 These outcomes are captured in a series of response metrics.
 
 Modules Overview
@@ -80,17 +79,3 @@ Validation status can be one of the following states:
 -  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
 
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
-
-Experimental functionality
-**************************
-
-Both modules and workflows can be used to access experimental functionality on the platform.
-In some cases, the module or workflow type itself may be experimental.
-In other cases, whether a module or workflow represents experimental functionality may depend on the specific configuration of the module or workflow.
-For example, a module might have an experimental option that is turned off by default.
-Another example could be a workflow that contains an experimental module.
-Because the experimental status of a module or workflow may not be known at registration time, it is computed as part
-of the validation process and then returned via two fields:
-
-- `experimental` is a Boolean field that is true when the module or workflow is experimental
-- `experimental_reasons` is a list of strings that describe what about the module or workflow makes it experimental

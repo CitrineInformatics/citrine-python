@@ -49,14 +49,12 @@ It is often useful to know when a resource has completed validating, especially 
     sintering_model = sintering_project.predictors.register(sintering_model)
     wait_while_validating(collection=sintering_project.predictors, module=sintering_model)
     
-Similarly, the ``wait_while_executing`` function will wait for a design or performance evaluation workflow to complete executing.
+Similarly, the ``wait_while_executing`` function will wait for a design or predictor evaluation to complete executing.
 
 .. code-block:: python
     
-    pew_workflow = sintering_project.predictor_evaluation_workflows.register(pew_workflow)
-    pew_workflow = wait_while_validating(collection=sintering_project.predictor_evaluation_workflows, module=pew_workflow)
-    pew_ex = pew_workflow.trigger(sintering_model)
-    wait_while_executing(collection=sintering_project.predictor_evaluation_executions, execution=pew_ex, print_status_info=True)
+    predictor_evaluation = project.predictor_evaluations.trigger_default(predictor_id=sintering_model.uid)
+    wait_while_executing(collection=sintering_project.predictor_evaluations, execution=predictor_evaluation, print_status_info=True)
 
 Checking Status
 ---------------
