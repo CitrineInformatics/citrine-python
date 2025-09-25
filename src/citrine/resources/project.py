@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of projects."""
 from deprecation import deprecated
+from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 from warnings import warn
@@ -77,6 +78,8 @@ class Project(Resource['Project']):
     """str: Status of the project."""
     created_at = properties.Optional(properties.Datetime(), 'created_at')
     """int: Time the project was created, in seconds since epoch."""
+    archived = properties.Optional(properties.Boolean, 'archived')
+    """bool: Whether the project is archived."""
     _team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
@@ -599,9 +602,19 @@ class ProjectCollection(Collection[Project]):
         project = Project(name, description=description)
         return super().register(project)
 
+    def _list_base(self, *, per_page: int = 1000, archived: Optional[bool] = None):
+        filters = {}
+        if archived is not None:
+            filters["archived"] = str(archived).lower()
+
+        fetcher = partial(self._fetch_page, additional_params=filters, version=self._api_version)
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page)
+
     def list(self, *, per_page: int = 1000) -> Iterator[Project]:
         """
-        List projects using pagination.
+        List all projects using pagination.
 
         Parameters
         ---------
@@ -616,7 +629,45 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        return super().list(per_page=per_page)
+        return self._list_base(per_page=per_page)
+
+    def list_active(self, *, per_page: int = 1000) -> Iterator[Project]:
+        """
+        List non-archived projects using pagination.
+
+        Parameters
+        ---------
+        per_page: int, optional
+            Max number of results to return per page. Default is 1000.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterator[Project]
+            Projects in this collection.
+
+        """
+        return self._list_base(per_page=per_page, archived=False)
+
+    def list_archived(self, *, per_page: int = 1000) -> Iterable[Project]:
+        """
+        List archived projects using pagination.
+
+        Parameters
+        ---------
+        per_page: int, optional
+            Max number of results to return per page. Default is 1000.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterator[Project]
+            Projects in this collection.
+
+        """
+        return self._list_base(per_page=per_page, archived=True)
 
     def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
         """
