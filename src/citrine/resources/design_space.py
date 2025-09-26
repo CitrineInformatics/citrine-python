@@ -121,9 +121,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         if archived is not None:
             filters["archived"] = archived
 
-        fetcher = partial(self._fetch_page,
-                          fetch_func=partial(self.session.get_resource, version="v4"),
-                          additional_params=filters)
+        fetcher = partial(self._fetch_page, additional_params=filters, version="v4")
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
