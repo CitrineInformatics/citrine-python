@@ -418,7 +418,46 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path=f'/teams/{collection.team_id}/projects', params={'per_page': 1000, 'page': 1})
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1},
+                             version="v3")
+    assert expected_call == session.last_call
+    assert 5 == len(projects)
+
+
+def test_list_archived_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list_archived())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1, 'archived': "true"},
+                             version="v3")
+    assert expected_call == session.last_call
+    assert 5 == len(projects)
+
+
+def test_list_active_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list_active())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1, 'archived': "false"},
+                             version="v3")
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
