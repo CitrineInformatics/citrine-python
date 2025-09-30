@@ -121,23 +121,21 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         if archived is not None:
             filters["archived"] = archived
 
-        fetcher = partial(self._fetch_page,
-                          fetch_func=partial(self.session.get_resource, version="v4"),
-                          additional_params=filters)
+        fetcher = partial(self._fetch_page, additional_params=filters, version="v4")
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
     def list_all(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all design spaces."""
+        """List all design spaces."""
         return self._list_base(per_page=per_page)
 
     def list(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all non-archived design spaces."""
+        """List non-archived design spaces."""
         return self._list_base(per_page=per_page, archived=False)
 
     def list_archived(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
-        """List the most recent version of all archived predictors."""
+        """List archived design spaces."""
         return self._list_base(per_page=per_page, archived=True)
 
     def create_default(self,

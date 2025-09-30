@@ -304,14 +304,21 @@ def test_predictors_get_project_id(project):
 
 
 def test_pe_workflows_get_project_id(project):
-    assert project.uid == project.predictor_evaluation_workflows.project_id
+    with pytest.deprecated_call():
+        assert project.uid == project.predictor_evaluation_workflows.project_id
 
 
 def test_pe_executions_get_project_id(project):
-    assert project.uid == project.predictor_evaluation_executions.project_id
+    with pytest.deprecated_call():
+        assert project.uid == project.predictor_evaluation_executions.project_id
     # The resulting collection cannot be used to trigger executions.
-    with pytest.raises(RuntimeError):
-        project.predictor_evaluation_executions.trigger(uuid.uuid4())
+    with pytest.deprecated_call():
+        with pytest.raises(RuntimeError):
+            project.predictor_evaluation_executions.trigger(uuid.uuid4())
+
+
+def test_predictor_evaluations_get_project_id(project):
+    assert project.uid == project.predictor_evaluations.project_id
 
 
 def test_design_workflows_get_project_id(project):
@@ -411,7 +418,46 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path=f'/teams/{collection.team_id}/projects', params={'per_page': 1000, 'page': 1})
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1},
+                             version="v3")
+    assert expected_call == session.last_call
+    assert 5 == len(projects)
+
+
+def test_list_archived_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list_archived())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1, 'archived': "true"},
+                             version="v3")
+    assert expected_call == session.last_call
+    assert 5 == len(projects)
+
+
+def test_list_active_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list_active())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET',
+                             path=f'/teams/{collection.team_id}/projects',
+                             params={'per_page': 1000, 'page': 1, 'archived': "false"},
+                             version="v3")
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -557,6 +603,32 @@ def test_search_projects_no_search_params(collection: ProjectCollection):
     assert 1 == collection.session.num_calls
     assert expected_call == collection.session.last_call
     assert len(projects_data) == len(result)
+
+
+def test_archive_project(collection, session):
+    # Given
+    uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
+
+    # When
+    collection.archive(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path=f'/projects/{uid}/archive')
+    assert expected_call == session.last_call
+
+
+def test_restore_project(collection, session):
+    # Given
+    uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
+
+    # When
+    collection.restore(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path=f'/projects/{uid}/restore')
+    assert expected_call == session.last_call
 
 
 def test_delete_project(collection, session):

@@ -17,11 +17,12 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection(session) -> PredictorEvaluationExecutionCollection:
-    return PredictorEvaluationExecutionCollection(
-        project_id=uuid.uuid4(),
-        workflow_id=uuid.uuid4(),
-        session=session,
-    )
+    with pytest.deprecated_call():
+        return PredictorEvaluationExecutionCollection(
+            project_id=uuid.uuid4(),
+            workflow_id=uuid.uuid4(),
+            session=session,
+        )
 
 
 @pytest.fixture
@@ -37,11 +38,13 @@ def test_basic_methods(workflow_execution, collection):
 
     assert "Example evaluator" in list(iter(workflow_execution))
 
-    with pytest.raises(NotImplementedError):
-        collection.register(workflow_execution)
+    with pytest.deprecated_call():
+        with pytest.raises(NotImplementedError):
+            collection.register(workflow_execution)
 
-    with pytest.raises(NotImplementedError):
-        collection.update(workflow_execution)
+    with pytest.deprecated_call():
+        with pytest.raises(NotImplementedError):
+            collection.update(workflow_execution)
 
 
 def test_build_new_execution(collection, predictor_evaluation_execution_dict):
@@ -87,7 +90,8 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     session.set_response(predictor_evaluation_execution_dict)
 
     # When
-    actual_execution = collection.trigger(predictor_id, random_state=random_state)
+    with pytest.deprecated_call():
+        actual_execution = collection.trigger(predictor_id, random_state=random_state)
 
     # Then
     assert str(actual_execution.uid) == predictor_evaluation_execution_dict["id"]
@@ -110,7 +114,8 @@ def test_trigger_workflow_execution_with_version(collection: PredictorEvaluation
     session.set_response(predictor_evaluation_execution_dict)
 
     # When
-    actual_execution = collection.trigger(predictor_id, predictor_version=predictor_version)
+    with pytest.deprecated_call():
+        actual_execution = collection.trigger(predictor_id, predictor_version=predictor_version)
 
     # Then
     assert str(actual_execution.uid) == predictor_evaluation_execution_dict["id"]
@@ -129,7 +134,8 @@ def test_trigger_workflow_execution_with_version(collection: PredictorEvaluation
 def test_list(collection: PredictorEvaluationExecutionCollection, session, predictor_version):
     session.set_response({"page": 1, "per_page": 4, "next": "", "response": []})
     predictor_id = uuid.uuid4()
-    lst = list(collection.list(per_page=4, predictor_id=predictor_id, predictor_version=predictor_version))
+    with pytest.deprecated_call():
+        lst = list(collection.list(per_page=4, predictor_id=predictor_id, predictor_version=predictor_version))
     assert not lst
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
@@ -140,17 +146,29 @@ def test_list(collection: PredictorEvaluationExecutionCollection, session, predi
 
 
 def test_archive(workflow_execution, collection):
-    collection.archive(workflow_execution.uid)
+    with pytest.deprecated_call():
+        collection.archive(workflow_execution.uid)
     expected_path = '/projects/{}/predictor-evaluation-executions/archive'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow_execution.uid)})
 
 
 def test_restore(workflow_execution, collection):
-    collection.restore(workflow_execution.uid)
+    with pytest.deprecated_call():
+        collection.restore(workflow_execution.uid)
     expected_path = '/projects/{}/predictor-evaluation-executions/restore'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow_execution.uid)})
 
 
 def test_delete(collection):
-    with pytest.raises(NotImplementedError):
-        collection.delete(uuid.uuid4())
+    with pytest.deprecated_call():
+        with pytest.raises(NotImplementedError):
+            collection.delete(uuid.uuid4())
+
+def test_get(predictor_evaluation_execution_dict, workflow_execution, collection):
+    collection.session.set_response(predictor_evaluation_execution_dict)
+    
+    with pytest.deprecated_call():
+        execution = collection.get(workflow_execution.uid)
+    
+    expected_path = f'/projects/{collection.project_id}/predictor-evaluation-executions/{workflow_execution.uid}'
+    assert collection.session.last_call == FakeCall(method='GET', path=expected_path)

@@ -42,13 +42,14 @@ class EngineResourceWithoutStatus(Resource[Self]):
         return self.archived_by is not None
 
     def _post_dump(self, data: dict) -> dict:
-        # Only the data portion of an entity is sent to the server.
-        data = data["data"]
+        if data:
+            # Only the data portion of an entity is sent to the server.
+            data = data["data"]
 
-        if "instance" in data:
-            # Currently, name and description exists on both the data envelope and the config.
-            data["instance"]["name"] = data["name"]
-            data["instance"]["description"] = data["description"]
+            if "instance" in data:
+                # Currently, name and description exists on both the data envelope and the config.
+                data["instance"]["name"] = data["name"]
+                data["instance"]["description"] = data["description"]
 
         return super()._post_dump(data)
 

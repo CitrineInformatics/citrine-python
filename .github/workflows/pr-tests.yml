@@ -1,4 +1,6 @@
 name: PR Tests
+permissions:
+  contents: read
 
 on:
   pull_request:
@@ -8,6 +10,8 @@ on:
 
 jobs:
   pr-tests:
-    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-tests.yml@v1
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-tests.yml@v1.1
     with:
       src: src/citrine
+      include_313: true
+      skip_38: false

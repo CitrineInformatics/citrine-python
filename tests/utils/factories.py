@@ -463,17 +463,93 @@ class AsyncDefaultPredictorResponseFactory(factory.DictFactory):
     data = factory.SubFactory(AsyncDefaultPredictorResponseDataFactory)
 
 
-class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
+class RMSEFactory(factory.DictFactory):
+    type = "RMSE"
+
+
+class NDMEFactory(factory.DictFactory):
+    type = "NDME"
+
+
+class RSquaredFactory(factory.DictFactory):
+    type = "RSquared"
+
+
+class StandardRMSEFactory(factory.DictFactory):
+    type = "StandardRMSE"
+
+
+class PVALFactory(factory.DictFactory):
+    type = "PVA"
+
+
+class F1Factory(factory.DictFactory):
+    type = "F1"
+
+
+class AreaUnderROCFactory(factory.DictFactory):
+    type = "AreaUnderROC"
+
+
+class CoverageProbabilityFactory(factory.DictFactory):
+    class Meta:
+        exclude = ("_level", )
+
+    _level = factory.Faker('pyfloat', max_value=1, min_value=0)
+    coverage_level = factory.LazyAttribute(lambda o: str(o._level))
+    type = "CoverageProbability"
+
+
+class CrossValidationEvaluatorFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    responses = factory.List(3 * [factory.Faker('company')])
+    n_folds = factory.Faker('random_digit_not_null')
+    n_trials = factory.Faker('random_digit_not_null')
+    metrics = factory.List([factory.SubFactory(RMSEFactory),
+                            factory.SubFactory(NDMEFactory),
+                            factory.SubFactory(RSquaredFactory),
+                            factory.SubFactory(StandardRMSEFactory),
+                            factory.SubFactory(PVALFactory),
+                            factory.SubFactory(F1Factory),
+                            factory.SubFactory(AreaUnderROCFactory),
+                            factory.SubFactory(CoverageProbabilityFactory)])
+    type = "CrossValidationEvaluator"
+
+
+class PredictorEvaluationWorkflowFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     archived = False
-    evaluators = []  # TODO  Create EvaluatorDataFactory
+    evaluators = factory.List([factory.SubFactory(CrossValidationEvaluatorFactory)])
     type = "PredictorEvaluationWorkflow"
     # TODO  Create Trait and status_detail content
     status = "SUCCEEDED"
     status_description = "READY"
     status_detail = []
+
+
+class PredictorEvaluationDataFactory(factory.DictFactory):
+    evaluators = factory.List([factory.SubFactory(CrossValidationEvaluatorFactory)])
+
+
+class PredictorEvaluationMetadataFactory(factory.DictFactory):
+    class Meta:
+        exclude = ('is_archived', )
+
+    created = factory.SubFactory(UserTimestampDataFactory)
+    updated = factory.SubFactory(UserTimestampDataFactory)
+    archived = factory.Maybe('is_archived', factory.SubFactory(UserTimestampDataFactory), None)
+    predictor_id = factory.Faker("uuid4")
+    predictor_version = factory.Faker("random_digit_not_null")
+    status = {"major": "SUCCEEDED", "minor": "READY", "detail": []}
+
+
+class PredictorEvaluationFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    data = factory.SubFactory(PredictorEvaluationDataFactory)
+    metadata = factory.SubFactory(PredictorEvaluationMetadataFactory)
 
 
 class DesignSpaceConfigDataFactory(factory.DictFactory):

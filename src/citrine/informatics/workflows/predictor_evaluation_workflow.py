@@ -12,7 +12,7 @@ __all__ = ['PredictorEvaluationWorkflow']
 
 class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
                                   Workflow, AIResourceMetadata):
-    """A workflow that evaluations a predictor.
+    """[DEPRECATED] A workflow that evaluates a predictor.
 
     Parameters
     ----------

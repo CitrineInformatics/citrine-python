@@ -1,4 +1,5 @@
 from pathlib import Path
+import platform
 from typing import Collection
 from uuid import uuid4, UUID
 
@@ -39,19 +40,27 @@ def valid_data() -> dict:
     return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
 
 
-def test_mime_types(collection: FileCollection):
-    expected_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    expected_xls = "application/vnd.ms-excel"
-    expected_txt = "text/plain"
-    expected_unk = "application/octet-stream"
-    expected_csv = "text/csv"
-
-    assert collection._mime_type(Path("asdf.xlsx")) == expected_xlsx
-    assert collection._mime_type(Path("asdf.XLSX")) == expected_xlsx
-    assert collection._mime_type(Path("asdf.xls")) == expected_xls
-    assert collection._mime_type(Path("asdf.TXT")) == expected_txt
-    assert collection._mime_type(Path("asdf.csv")) == expected_csv
-    assert collection._mime_type(Path("asdf.FAKE")) == expected_unk
+@pytest.mark.parametrize(
+    ("filename", "mimetype"),
+    [
+        pytest.param(
+            "asdf.xlsx", 
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+            marks=pytest.mark.xfail(
+                platform.system() == "Windows", 
+                reason="windows-latest test servers omit xlsx from their registry", 
+                strict=True
+            )
+        ),
+        ("asdf.xls", "application/vnd.ms-excel"),
+        ("asdf.XLS", "application/vnd.ms-excel"),
+        ("asdf.TXT", "text/plain"),
+        ("asdf.csv", "text/csv"),
+        ("asdf.FAKE", "application/octet-stream"),
+    ],
+)
+def test_mime_types(collection: FileCollection, filename, mimetype):
+    assert collection._mime_type(Path(filename)) == mimetype
 
 
 def test_build_equivalence(collection, valid_data):
@@ -77,9 +86,9 @@ def test_string_representation(valid_data):
 
 def test_from_path():
     """Test the string representation."""
-    path = '/some/path/with/file.txt'
+    path = Path.cwd() / 'some' / 'path' / 'with' / 'file.txt'
     assert FileLink.from_path(path).filename == 'file.txt'
-    assert FileLink.from_path(Path(path)).url == Path(path).as_uri()
+    assert FileLink.from_path(str(path)).url == path.as_uri()
     assert FileCollection._is_local_url(FileLink.from_path(path).url)
 
 

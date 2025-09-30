@@ -298,7 +298,8 @@ def test_list(valid_graph_predictor_data, valid_graph_predictor_data_empty):
     # Then
     expected_call = FakeCall(method='GET',
                              path='/projects/{}/predictors'.format(collection.project_id),
-                             params={'per_page': 25, 'page': 1, 'archived': False})
+                             params={'per_page': 25, 'page': 1, 'archived': False},
+                             version="v4")
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
@@ -320,7 +321,8 @@ def test_list_all(valid_graph_predictor_data, valid_graph_predictor_data_empty):
     # Then
     expected_call = FakeCall(method='GET',
                              path='/projects/{}/predictors'.format(collection.project_id),
-                             params={'per_page': 25, 'page': 1})
+                             params={'per_page': 25, 'page': 1},
+                             version="v4")
     assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
@@ -339,7 +341,8 @@ def test_list_archived(valid_graph_predictor_data):
     assert session.num_calls == 1
     assert session.last_call == FakeCall(method='GET',
                                          path=f"/projects/{pc.project_id}/predictors",
-                                         params={'per_page': 20, 'page': 1, 'archived': True})
+                                         params={'per_page': 20, 'page': 1, 'archived': True},
+                                         version="v4")
 
 
 def test_get(valid_graph_predictor_data):
