@@ -30,9 +30,9 @@ setup(
         "gemd>=2.1.9,<3",
         "boto3>=1.34.35,<2",
         "deprecation>=2.1.0,<3",
-        "urllib3>=1.26.18,<3",
-        "urllib3>=2.5.0,<3; python_version < '3.10'",
-        "tqdm>=4.27.0,<5; python_version >= '3.10'",
+        "urllib3>=1.26.18,<3; python_version < '3.10'",
+        "urllib3>=2.5.0,<3; python_version >= '3.10'",
+        "tqdm>=4.27.0,<5",
     ],
     extras_require={
         "tests": [
