@@ -6,6 +6,7 @@ mock==5.1.0
 pytest==8.0.0
 pytest-cov==4.1.0
 requests-mock==1.11.0
+pandas>=2.0.3,<3
 
 # faker is a dependency of factory-boy, but factory-boy sets a very low floor
 # for the supported version. There's a long-resolved bug revealed by using the
