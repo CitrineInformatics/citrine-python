@@ -1,3 +1,4 @@
+from copy import deepcopy
 import uuid
 
 import pytest
@@ -5,6 +6,7 @@ import pytest
 from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.informatics.executions.predictor_evaluation import PredictorEvaluationRequest
 from citrine.informatics.predictors import GraphPredictor
+from citrine.jobs.waiting import wait_while_executing
 
 from tests.utils.factories import CrossValidationEvaluatorFactory, PredictorEvaluationDataFactory,\
     PredictorEvaluationFactory, PredictorInstanceDataFactory, PredictorRefFactory
@@ -247,3 +249,26 @@ def test_delete_not_implemented():
     pec = PredictorEvaluationCollection(uuid.uuid4(), session)
     with pytest.raises(NotImplementedError):
         pec.delete(uuid.uuid4())
+
+
+def test_wait():
+    in_progress_response = PredictorEvaluationFactory(metadata__status={"major": "INPROGRESS", "minor": "EXECUTING", "detail": []})
+    completed_response = deepcopy(in_progress_response)
+    completed_response["metadata"]["status"]["major"] = "SUCCEEDED"
+    completed_response["metadata"]["status"]["minor"] = "COMPLETED"
+
+    session = FakeSession()
+    pec = PredictorEvaluationCollection(uuid.uuid4(), session)
+    
+    # wait_while_executing makes two additional calls once it's done polling.
+    responses = 4 * [in_progress_response] + 3 * [completed_response]
+    session.set_responses(*responses)
+
+    evaluation = pec.build(in_progress_response)
+    wait_while_executing(collection=pec, execution=evaluation, interval=0.1)
+
+    expected_call = FakeCall(
+        method='GET',
+        path=f'/projects/{pec.project_id}/predictor-evaluations/{in_progress_response["id"]}'
+    )
+    assert (len(responses) * [expected_call]) == session.calls

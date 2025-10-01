@@ -2,14 +2,16 @@ from functools import lru_cache
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
-from citrine.informatics.predictor_evaluator import PredictorEvaluator
-from citrine.resources.status_detail import StatusDetail
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._rest.engine_resource import EngineResourceWithoutStatus
 from citrine._rest.resource import PredictorRef
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
+from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
+from citrine.informatics.predictor_evaluator import PredictorEvaluator
+from citrine.resources.status_detail import StatusDetail
 
 
 class PredictorEvaluatorsResponse(Serializable['EvaluatorsPayload']):
@@ -36,7 +38,7 @@ class PredictorEvaluationRequest(Serializable['EvaluatorsPayload']):
         self.predictor = PredictorRef(predictor_id, predictor_version)
 
 
-class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation']):
+class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], AsynchronousObject):
     """The evaluation of a predictor's performance."""
 
     uid: UUID = properties.UUID('id', serializable=False)
@@ -55,6 +57,12 @@ class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation']):
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
                                     default=[], serializable=False)
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+
+    project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
+    _in_progress_statuses = ["INPROGRESS"]
+    _succeeded_statuses = ["SUCCEEDED"]
+    _failed_statuses = ["FAILED"]
 
     def _path(self):
         return format_escaped_url(
