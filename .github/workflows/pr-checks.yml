@@ -11,3 +11,16 @@ jobs:
     uses: CitrineInformatics/common-gh-actions/.github/workflows/repo-checks.yml@v1
     with:
       src: src/citrine
+
+  e2e-tests:
+    needs: pr-checks
+    permissions:
+      checks: write
+      contents: read
+      id-token: write
+    uses: CitrineInformatics/nextgen-devkit/.github/workflows/test-e2e-eks.yml@main
+    with:
+      CITRINE_PYTHON_VERSION: ${{ github.event.pull_request.head.sha }}
+    secrets:
+      DEVKIT_APP_ID: ${{ secrets.DEVKIT_APP_ID }}
+      DEVKIT_APP_PRIVATE_KEY: ${{ secrets.DEVKIT_APP_PRIVATE_KEY }}
