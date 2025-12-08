@@ -19,7 +19,7 @@ jobs:
       contents: read
       id-token: write
     # NOTE: using a branch SHA during testing
-    uses: CitrineInformatics/common-gh-actions/.github/workflows/repo-checks.yml@feature/PNE-7587-provide-devkit-e2es
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-e2e-tests.yml@feature/PNE-7587-provide-devkit-e2es
     with:
       CITRINE_PYTHON_VERSION: ${{ github.event.pull_request.head.sha }}
     secrets:
