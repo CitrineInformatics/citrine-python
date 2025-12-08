@@ -18,7 +18,8 @@ jobs:
       checks: write
       contents: read
       id-token: write
-    uses: CitrineInformatics/nextgen-devkit/.github/workflows/test-e2e-eks.yml@main
+    # NOTE: using a branch SHA during testing
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/repo-checks.yml@d60de32
     with:
       CITRINE_PYTHON_VERSION: ${{ github.event.pull_request.head.sha }}
     secrets:
