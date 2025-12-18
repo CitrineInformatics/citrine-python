@@ -14,10 +14,6 @@ from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.predictor import PredictorCollection
-from citrine.resources.predictor_evaluation_execution import \
-    PredictorEvaluationExecutionCollection
-from citrine.resources.predictor_evaluation_workflow import \
-    PredictorEvaluationWorkflowCollection
 from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.resources.generative_design_execution import \
     GenerativeDesignExecutionCollection
@@ -118,16 +114,6 @@ class Project(Resource['Project']):
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(project_id=self.uid, session=self.session)
-
-    @property
-    def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
-        """Return a collection representing all visible predictor evaluation workflows."""
-        return PredictorEvaluationWorkflowCollection(project_id=self.uid, session=self.session)
-
-    @property
-    def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
-        """Return a collection representing all visible predictor evaluation executions."""
-        return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def predictor_evaluations(self) -> PredictorEvaluationCollection:
