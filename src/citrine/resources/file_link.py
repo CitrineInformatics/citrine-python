@@ -7,15 +7,13 @@ from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID
-from warnings import warn
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import GEMDResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, _pad_positional_args, \
-    rewrite_s3_links_locally, write_file_locally
+from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
 from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializableMeta
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -198,28 +196,10 @@ class FileCollection(Collection[FileLink]):
     _collection_key = 'files'
     _resource = FileLink
 
-    def __init__(
-        self,
-        *args,
-        session: Session = None,
-        dataset_id: UUID = None,
-        team_id: UUID = None,
-        project_id: Optional[UUID] = None
-    ):
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
-        if self.dataset_id is None:
-            raise TypeError("Missing one required argument: dataset_id.")
-
-        self.team_id = _data_manager_deprecation_checks(
-            session=self.session,
-            project_id=self.project_id,
-            team_id=team_id,
-            obj_type="File Links")
+    def __init__(self, *, session: Session, dataset_id: UUID, team_id: UUID):
+        self.dataset_id = dataset_id
+        self.session = session
+        self.team_id = team_id
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,
@@ -727,15 +707,7 @@ class FileCollection(Collection[FileLink]):
         from citrine.resources.project import Project  # noqa: F401
 
         if build_table and project is None:
-            if self.project_id is None:
-                raise ValueError("Building a table requires a target project.")
-            else:
-                warn(
-                    "Building a table with an implicit project is deprecated "
-                    "and will be removed in v4. Please pass a project explicitly.",
-                    DeprecationWarning
-                )
-                project = self.project_id
+            raise ValueError("Building a table requires a target project.")
 
         def resolve_with_local(candidate: Union[FileLink, Path, str]) -> FileLink:
             """Resolve Path, str or FileLink to an absolute reference."""

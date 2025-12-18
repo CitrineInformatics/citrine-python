@@ -10,8 +10,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, _pad_positional_args, \
-    rewrite_s3_links_locally, write_file_locally
+from citrine._utils.functions import format_escaped_url, rewrite_s3_links_locally, \
+    write_file_locally
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig, TableConfigCollection
 
@@ -96,21 +96,10 @@ class GemTableCollection(Collection[GemTable]):
     _paginator: Paginator = GemTableVersionPaginator()
     _resource = GemTable
 
-    def __init__(self,
-                 *args,
-                 team_id: UUID = None,
-                 project_id: UUID = None,
-                 session: Session = None):
-        args = _pad_positional_args(args, 2)
-        self.project_id = project_id or args[0]
-        self.session: Session = session or args[1]
+    def __init__(self, *, team_id: UUID, project_id: UUID, session: Session):
+        self.project_id = project_id
+        self.session: Session = session
         self.team_id = team_id
-        if self.project_id is None:
-            raise TypeError("Missing one required argument: project_id.")
-        if self.team_id is None:
-            raise TypeError("Missing one required argument: team_id.")
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""

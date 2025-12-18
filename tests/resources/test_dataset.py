@@ -63,15 +63,6 @@ def dataset():
 
     return dataset
 
-def test_deprecation_of_positional_arguments(session):
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        dset = DatasetCollection(uuid4(), session)
-    with pytest.raises(TypeError):
-        dset = DatasetCollection(project_id=uuid4(), session=None)
-
 def test_register_dataset(collection, session):
     # Given
     name = 'Test Dataset'

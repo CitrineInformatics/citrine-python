@@ -1,7 +1,6 @@
 from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
-from warnings import warn
 
 from gemd.entity.object import MaterialRun
 
@@ -12,7 +11,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, _pad_positional_args
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
@@ -28,7 +27,6 @@ from citrine.gemtables.variables import (
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:   # pragma: no cover
-    from citrine.resources.project import Project
     from citrine.resources.team import Team
 
 
@@ -213,8 +211,7 @@ class TableConfig(Resource["TableConfig"]):
 
     def add_all_ingredients(self, *,
                             process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
-                            project: 'Project' = None,
-                            team: 'Team' = None,
+                            team: 'Team',
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
                             unit: Optional[str] = None
@@ -229,8 +226,8 @@ class TableConfig(Resource["TableConfig"]):
         ------------
         process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
             representation of a registered process template
-        project: Project
-            a project that has access to the process template
+        team: Team
+            a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
         scope: Optional[str]
@@ -239,16 +236,6 @@ class TableConfig(Resource["TableConfig"]):
             the units for the quantity, if selecting Absolute Quantity
 
         """
-        if project is not None:
-            warn("Adding ingredients to a table config through a project is deprecated as of "
-                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
-                 DeprecationWarning)
-            principal = project
-        elif team is not None:
-            principal = team
-        else:
-            raise TypeError("Missing 1 required argument: team")
-
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -256,7 +243,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
         link = _make_link_by_uid(process_template)
-        process: ProcessTemplate = principal.process_templates.get(uid=link)
+        process: ProcessTemplate = team.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -320,8 +307,7 @@ class TableConfig(Resource["TableConfig"]):
 
     def add_all_ingredients_in_output(self, *,
                                       process_templates: List[LinkByUID],
-                                      project: 'Project' = None,
-                                      team: 'Team' = None,
+                                      team: 'Team',
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
                                       unit: Optional[str] = None
@@ -339,8 +325,8 @@ class TableConfig(Resource["TableConfig"]):
         process_templates: List[LinkByUID]
             registered process templates from which to pull allowed ingredients and at which to
             halt searching
-        project: Project
-            a project that has access to the process template
+        team: Team
+            a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
         scope: Optional[str]
@@ -349,16 +335,6 @@ class TableConfig(Resource["TableConfig"]):
             the units for the quantity, if selecting Absolute Quantity
 
         """
-        if project is not None:
-            warn("Adding ingredients to a table config through a project is deprecated as of "
-                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
-                 DeprecationWarning)
-            principal = project
-        elif team is not None:
-            principal = team
-        else:
-            raise TypeError("Missing 1 required argument: team")
-
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -367,7 +343,7 @@ class TableConfig(Resource["TableConfig"]):
         }
         union_allowed_names = []
         for process_template_link in process_templates:
-            process: ProcessTemplate = principal.process_templates.get(process_template_link)
+            process: ProcessTemplate = team.process_templates.get(process_template_link)
             if not process.allowed_names:
                 raise RuntimeError(
                     f"Cannot add ingredients for process template '{process.name}' "
@@ -443,15 +419,10 @@ class TableConfigCollection(Collection[TableConfig]):
     # definition) are necessary
     _individual_key = None
 
-    def __init__(self, *args, team_id: UUID, project_id: UUID = None, session: Session = None):
-        args = _pad_positional_args(args, 2)
-        self.project_id = project_id or args[0]
-        self.session: Session = session or args[1]
+    def __init__(self, *, team_id: UUID, project_id: UUID, session: Session):
+        self.project_id = project_id
+        self.session: Session = session
         self.team_id = team_id
-        if self.project_id is None:
-            raise TypeError("Missing one required argument: project_id.")
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
 
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """Get a table config.

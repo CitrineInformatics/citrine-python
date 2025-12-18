@@ -18,8 +18,7 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, format_escaped_url, \
-    _pad_positional_args, replace_objects_with_links, scrub_none
+from citrine._utils.functions import format_escaped_url, replace_objects_with_links, scrub_none
 from citrine.exceptions import BadRequest
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.audit_info import AuditInfo
@@ -214,25 +213,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self,
-                 *args,
-                 session: Session = None,
-                 dataset_id: Optional[UUID] = None,
-                 team_id: UUID = None,
-                 project_id: Optional[UUID] = None):
-        # Handle positional arguments for backward compatibility
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
-
-        self.team_id = _data_manager_deprecation_checks(
-            session=self.session,
-            project_id=self.project_id,
-            team_id=team_id,
-            obj_type="GEMD Objects")
+    def __init__(self, *, session: Session, team_id: UUID, dataset_id: Optional[UUID] = None):
+        self.dataset_id = dataset_id
+        self.session = session
+        self.team_id = team_id
 
     @classmethod
     @abstractmethod
@@ -240,17 +224,16 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """Return the resource type in the collection."""
 
     @property
-    def _path_template(self):
-        collection_key = self._collection_key.replace("_", "-")
-        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{collection_key}'
+    def _path_collection_key(self):
+        return self._collection_key.replace("_", "-")
 
-    # After Data Manager deprecation, both can use the `teams/...` path.
+    @property
+    def _path_template(self):
+        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{self._path_collection_key}'
+
     @property
     def _dataset_agnostic_path_template(self):
-        if self.project_id is None:
-            return f'teams/{self.team_id}/{self._collection_key.replace("_", "-")}'
-        else:
-            return f'projects/{self.project_id}/{self._collection_key.replace("_", "-")}'
+        return f'teams/{self.team_id}/{self._path_collection_key}'
 
     def build(self, data: dict) -> ResourceType:
         """
