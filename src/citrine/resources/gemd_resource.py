@@ -1,6 +1,6 @@
 """Collection class for generic GEMD objects and templates."""
 import re
-from typing import Type, Union, List, Tuple, Iterable, Optional
+from typing import Type, Union, List, Tuple, Iterable
 from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
@@ -15,7 +15,7 @@ from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
 from citrine._utils.batcher import Batcher
-from citrine._utils.functions import _pad_positional_args, replace_objects_with_links, scrub_none
+from citrine._utils.functions import replace_objects_with_links, scrub_none
 
 
 BATCH_SIZE = 50
@@ -26,23 +26,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _collection_key = 'storables'
 
-    def __init__(
-        self,
-        *args,
-        dataset_id: UUID = None,
-        session: Session = None,
-        team_id: UUID = None,
-        project_id: Optional[UUID] = None
-    ):
-        super().__init__(*args,
-                         team_id=team_id,
-                         dataset_id=dataset_id,
-                         session=session,
-                         project_id=project_id)
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
+    def __init__(self, *, dataset_id: UUID, session: Session, team_id: UUID):
+        super().__init__(team_id=team_id, dataset_id=dataset_id, session=session)
+        self.dataset_id = dataset_id
+        self.session = session
         self.team_id = team_id
 
     @classmethod

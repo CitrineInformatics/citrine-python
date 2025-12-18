@@ -1,7 +1,5 @@
-from deprecation import deprecated
 from typing import Optional, Union, Iterator, Iterable, Collection as TypingCollection
 from uuid import UUID
-from warnings import warn
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -9,7 +7,6 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, _pad_positional_args
 from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
@@ -190,24 +187,9 @@ class Ingestion(Resource['Ingestion']):
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
     team_id = properties.Optional(properties.UUID, 'team_id', default=None)
-    _project_id = properties.Optional(properties.UUID, 'project_id', default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
-
-    @property
-    @deprecated(deprecated_in='3.11.0', removed_in='4.0.0',
-                details="The project_id attribute is deprecated since "
-                        "dataset access is now controlled through teams.")
-    def project_id(self) -> Optional[UUID]:
-        """[DEPRECATED] The project ID associated with this ingest."""
-        return self._project_id
-
-    @project_id.setter
-    @deprecated(deprecated_in='3.9.0', removed_in='4.0.0',
-                details="Use the project argument instead of setting the project_id attribute.")
-    def project_id(self, value: Optional[UUID]):
-        self._project_id = value
 
     def build_objects(self,
                       *,
@@ -303,15 +285,7 @@ class Ingestion(Resource['Ingestion']):
         if not build_table:
             project_id = None
         elif project is None:
-            if self._project_id is None:
-                raise ValueError("Building a table requires a target project.")
-            else:
-                warn(
-                    "Building a table with an implicit project is deprecated "
-                    "and will be removed in v4. Please pass a project explicitly.",
-                    DeprecationWarning
-                )
-                project_id = self._project_id
+            raise ValueError("Building a table requires a target project.")
         elif isinstance(project, Project):
             project_id = project.uid
         elif isinstance(project, UUID):
@@ -486,38 +460,12 @@ class IngestionCollection(Collection[Ingestion]):
     _individual_key = None
     _collection_key = None
     _resource = Ingestion
+    _path_template = 'teams/{team_id}/ingestions'
 
-    def __init__(
-        self,
-        *args,
-        session: Session = None,
-        team_id: UUID = None,
-        dataset_id: UUID = None,
-        project_id: Optional[UUID] = None
-    ):
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
-        if self.dataset_id is None:
-            raise TypeError("Missing one required argument: dataset_id.")
-
-        self.team_id = _data_manager_deprecation_checks(
-            session=self.session,
-            project_id=self.project_id,
-            team_id=team_id,
-            obj_type="Ingestions")
-
-    # After the Data Manager deprecation,
-    # this can be a Class Variable using the `teams/...` endpoint
-    @property
-    def _path_template(self):
-        if self.project_id is None:
-            return f'teams/{self.team_id}/ingestions'
-        else:
-            return f'projects/{self.project_id}/ingestions'
+    def __init__(self, *, session: Session, team_id: UUID, dataset_id: UUID):
+        self.dataset_id = dataset_id
+        self.session = session
+        self.team_id = team_id
 
     def build_from_file_links(self,
                               file_links: TypingCollection[FileLink],

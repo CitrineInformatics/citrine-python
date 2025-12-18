@@ -97,17 +97,6 @@ def uploader() -> _Uploader:
     """An _Uploader object with all of its fields filled in."""
     return _UploaderFactory()
 
-def test_deprecation_of_positional_arguments(session):
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        _ = FileCollection(uuid4(), uuid4(), session)
-    with pytest.raises(TypeError):
-        _ = FileCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
-    with pytest.raises(TypeError):
-        _ = FileCollection(project_id=uuid4(), dataset_id=None, session=session)
-
 def test_delete(collection: FileCollection, session):
     """Test that deletion calls the expected endpoint and checks the url structure."""
     # Given
@@ -567,12 +556,6 @@ def test_ingest(collection: FileCollection, session):
 
     with pytest.raises(ValueError):
         collection.ingest([good_file1], build_table=True)
-
-    session.set_responses(ingest_files_resp, job_id_resp, job_status_resp, ingest_status_resp)
-    coll_with_project_id = FileCollection(team_id=uuid4(), dataset_id=uuid4(), session=session)
-    coll_with_project_id.project_id = uuid4()
-    with pytest.deprecated_call():
-        coll_with_project_id.ingest([good_file1], build_table=True)
 
 
 def test_ingest_with_upload(collection, monkeypatch, tmp_path, session):

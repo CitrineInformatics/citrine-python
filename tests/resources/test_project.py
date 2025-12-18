@@ -53,12 +53,6 @@ def collection(session) -> ProjectCollection:
     return ProjectCollection(session, team_id=uuid.uuid4())
 
 
-@pytest.fixture
-def datasets(project) -> DatasetCollection:
-    with pytest.deprecated_call():
-        return project.datasets
-
-
 def test_get_team_id_from_project(session):
     team_id = uuid.UUID('6b608f78-e341-422c-8076-35adc8828000')
     check_project = {'project': {'team': {'id': team_id}}}
@@ -87,27 +81,13 @@ def test_publish_resource(project, session):
     assert expected_call == session.last_call
 
 
-def test_publish_resource_deprecated(project, datasets, session):
-    dataset_id = str(uuid.uuid4())
-    dataset = datasets.build(dict(
-        id=dataset_id,
-        name="public dataset", summary="test", description="test"
-    ))
-    with pytest.deprecated_call():
+def test_publish_resource_dataset(project, session):
+    dataset = Dataset("public dataset", summary="test", description="test")
+    with pytest.raises(ValueError):
         assert project.publish(resource=dataset)
 
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path=f'/projects/{project.uid}/published-resources/DATASET/batch-publish',
-        json={
-            'ids': [str(dataset.uid)]
-        }
-    )
-    assert expected_call == session.last_call
 
-
-def test_pull_in_resource(project, datasets, session):
+def test_pull_in_resource(project, session):
     predictor = GraphPredictor(name="foo", description="foo", predictors=[])
     predictor.uid = uuid.uuid4()
     assert project.pull_in_resource(resource=predictor)
@@ -123,27 +103,13 @@ def test_pull_in_resource(project, datasets, session):
     assert expected_call == session.last_call
 
 
-def test_pull_in_resource_deprecated(project, datasets, session):
-    dataset_id = str(uuid.uuid4())
-    dataset = datasets.build(dict(
-        id=dataset_id,
-        name="public dataset", summary="test", description="test"
-    ))
-    with pytest.deprecated_call():
+def test_pull_in_resource_dataset(project, session):
+    dataset = Dataset("public dataset", summary="test", description="test")
+    with pytest.raises(ValueError):
         assert project.pull_in_resource(resource=dataset)
 
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path=f'/teams/{project.team_id}/projects/{project.uid}/outside-resources/DATASET/batch-pull-in',
-        json={
-            'ids': [str(dataset.uid)]
-        }
-    )
-    assert expected_call == session.last_call
 
-
-def test_un_publish_resource(project, datasets, session):
+def test_un_publish_resource(project, session):
     predictor = GraphPredictor(name="foo", description="foo", predictors=[])
     predictor.uid = uuid.uuid4()
     assert project.un_publish(resource=predictor)
@@ -159,136 +125,10 @@ def test_un_publish_resource(project, datasets, session):
     assert expected_call == session.last_call
 
 
-def test_un_publish_resource_deprecated(project, datasets, session):
-    dataset_id = str(uuid.uuid4())
-    dataset = datasets.build(dict(
-        id=dataset_id,
-        name="public dataset", summary="test", description="test"
-    ))
-    with pytest.deprecated_call():
+def test_un_publish_resource_dataset(project, session):
+    dataset = Dataset("public dataset", summary="test", description="test")
+    with pytest.raises(ValueError):
         assert project.un_publish(resource=dataset)
-
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='POST',
-        path=f'/projects/{project.uid}/published-resources/DATASET/batch-un-publish',
-        json={
-            'ids': [str(dataset.uid)]
-        }
-    )
-    assert expected_call == session.last_call
-
-
-def test_datasets_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.datasets
-
-    assert project.uid == collection.project_id
-
-
-def test_property_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.property_templates
-    
-    assert project.uid == collection.project_id
-
-
-def test_condition_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.condition_templates
-
-    assert project.uid == collection.project_id
-
-
-def test_parameter_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.parameter_templates
-
-    assert project.uid == collection.project_id
-
-
-def test_material_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.material_templates
-
-    assert project.uid == collection.project_id
-
-
-def test_measurement_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.measurement_templates
-
-    assert project.uid == collection.project_id
-
-
-def test_process_templates_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.process_templates
-
-    assert project.uid == collection.project_id
-
-
-def test_process_runs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.process_runs
-
-    assert project.uid == collection.project_id
-
-
-def test_measurement_runs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.measurement_runs
-
-    assert project.uid == collection.project_id
-
-
-def test_material_runs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.material_runs
-
-    assert project.uid == collection.project_id
-
-
-def test_ingredient_runs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.ingredient_runs
-
-    assert project.uid == collection.project_id
-
-
-def test_process_specs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.process_specs
-
-    assert project.uid == collection.project_id
-
-
-def test_measurement_specs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.measurement_specs
-
-    assert project.uid == collection.project_id
-
-
-def test_material_specs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.material_specs
-
-    assert project.uid == collection.project_id
-
-
-def test_ingredient_specs_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.ingredient_specs
-
-    assert project.uid == collection.project_id
-
-
-def test_gemd_resource_get_project_id(project):
-    with pytest.deprecated_call():
-        collection = project.gemd
-
-    assert project.uid == collection.project_id
 
 
 def test_design_spaces_get_project_id(project):
@@ -677,138 +517,5 @@ def test_list_members(project, session):
     assert isinstance(members[0], TeamMember)
 
 
-def test_project_batch_delete_no_errors(project, session):
-    job_resp = {
-        'job_id': '1234'
-    }
-
-    # Actual response-like data - note there is no 'failures' array within 'output'
-    successful_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [
-            {
-                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
-                "status": "Success", "dependencies": []
-             }
-            ],
-        'output': {}
-    }
-
-    session.set_responses(job_resp, successful_job_resp)
-
-    # When
-    with pytest.deprecated_call():
-        del_resp = project.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
-
-    # Then
-    assert len(del_resp) == 0
-
-    # When trying with entities
-    session.set_responses(job_resp, successful_job_resp)
-    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
-    with pytest.deprecated_call():
-        del_resp = project.gemd_batch_delete([entity])
-
-    # Then
-    assert len(del_resp) == 0
-
-
-def test_project_batch_delete(project, session):
-    job_resp = {
-        'job_id': '1234'
-    }
-
-    failures_escaped_json = json.dumps([
-        {
-            "id": {
-                'scope': 'somescope',
-                'id': 'abcd-1234'
-            },
-            'cause': {
-                "code": 400,
-                "message": "",
-                "validation_errors": [
-                    {
-                        "failure_message": "fail msg",
-                        "failure_id": "identifier.coreid.missing"
-                    }
-                ]
-            }
-        }
-    ])
-
-    failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
-            'failures': failures_escaped_json
-        }
-    }
-
-    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
-
-    # When
-    with pytest.deprecated_call():
-        del_resp = project.gemd_batch_delete([uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')])
-
-    # Then
-    assert 2 == session.num_calls
-
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    expected_api_error = ApiError.build({
-        "code": "400",
-        "message": "",
-        "validation_errors": [{"failure_message": "fail msg", "failure_id": "identifier.coreid.missing"}]
-    })
-
-    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
-    assert first_failure[1].dump() == expected_api_error.dump()
-
-    # And again with tuples of (scope, id)
-    with pytest.deprecated_call():
-        del_resp = project.gemd_batch_delete([LinkByUID('id', '16fd2706-8baf-433b-82eb-8c7fada847da')])
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
-    assert first_failure[1].dump() == expected_api_error.dump()
-
-
-def test_batch_delete_bad_input(project):
-    with pytest.deprecated_call():
-        with pytest.raises(TypeError):
-            project.gemd_batch_delete([True])
-
-
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
-
-
-def test_owned_dataset_ids(project, datasets):
-    # Create a set of datasets in the project
-    ids = {uuid.uuid4() for _ in range(5)}
-    for d_id in ids:
-        dataset = Dataset(name=f"Test Dataset - {d_id}", summary="Test Dataset", description="Test Dataset")
-        datasets.register(dataset)
-
-    # Set the session response to have the list of dataset IDs
-    project.session.set_response({'ids': list(ids)})
-
-    # Fetch the list of UUID owned by the current project
-    with pytest.deprecated_call():
-        owned_ids = project.owned_dataset_ids()
-
-    # Let's mock our expected API call so we can compare and ensure that the one made is the same
-    expect_call = FakeCall(method='GET',
-                           path='/DATASET/authorized-ids',
-                           params={'userId': '',
-                                   'domain': '/projects/16fd2706-8baf-433b-82eb-8c7fada847da',
-                                   'action': 'WRITE'})
-    # Compare our calls
-    assert expect_call == project.session.last_call
-    assert project.session.num_calls == len(ids) + 1
-    assert ids == set(owned_ids)
