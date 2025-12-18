@@ -1,4 +1,3 @@
-import warnings
 from typing import Set, Optional, Tuple
 
 from citrine._serialization import properties
@@ -107,21 +106,6 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         self._basis_ingredients = dict.fromkeys(value, 1)
 
     @property
-    def basis_ingredient_names(self) -> Set[str]:
-        """Retrieve the names of all ingredients in the denominator of the ratio."""
-        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
-                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
-        return self.basis_ingredients
-
-    # This is for symmetry; it's not strictly necessary.
-    @basis_ingredient_names.setter
-    def basis_ingredient_names(self, value: Set[str]):
-        """Set the names of all ingredients in the denominator of the ratio."""
-        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
-                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
-        self.basis_ingredients = value
-
-    @property
     def basis_labels(self) -> Set[str]:
         """Retrieve the labels in the denominator of the ratio."""
         return set(self._basis_labels.keys())
@@ -130,21 +114,6 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
     def basis_labels(self, value: Set[str]):
         """Set the labels in the denominator of the ratio."""
         self._basis_labels = dict.fromkeys(value, 1)
-
-    @property
-    def basis_label_names(self) -> Set[str]:
-        """Retrieve the names of all labels in the denominator of the ratio."""
-        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
-                      "Please use basis_labels instead.", DeprecationWarning)
-        return self.basis_labels
-
-    # This is for symmetry; it's not strictly necessary.
-    @basis_label_names.setter
-    def basis_label_names(self, value: Set[str]):
-        """Set the names of all labels in the denominator of the ratio."""
-        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
-                      "Please use basis_labels instead.", DeprecationWarning)
-        self.basis_labels = value
 
     def _numerator_read(self, num_dict):
         if num_dict:
