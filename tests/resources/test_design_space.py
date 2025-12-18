@@ -169,18 +169,21 @@ def test_design_space_limits():
     session.responses.append(mock_response)
 
     # Then
-    with pytest.raises(ValueError) as excinfo:
-        collection.register(too_big)
+    with pytest.deprecated_call():
+        with pytest.raises(ValueError) as excinfo:
+            collection.register(too_big)
     assert "only supports" in str(excinfo.value)
 
     # test register
-    collection.register(just_right)
+    with pytest.deprecated_call():
+        collection.register(just_right)
 
     # add back the response for the next test
     session.responses.append(mock_response)
 
     # test update
-    collection.update(just_right)
+    with pytest.deprecated_call():
+        collection.update(just_right)
 
 
 @pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
@@ -312,12 +315,12 @@ def test_create_default_with_config(valid_product_design_space, ingredient_fract
     assert default_design_space.dump() == expected_response
 
 
-def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+def test_list_design_spaces(valid_product_design_space_data, valid_hierarchical_design_space_data):
     # Given
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
     session.set_response({
-        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+        'response': [valid_product_design_space_data, valid_hierarchical_design_space_data]
     })
 
     # When
@@ -331,12 +334,12 @@ def test_list_design_spaces(valid_formulation_design_space_data, valid_enumerate
     assert len(design_spaces) == 2
 
 
-def test_list_all_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+def test_list_all_design_spaces(valid_product_design_space_data, valid_hierarchical_design_space_data):
     # Given
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
     session.set_response({
-        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+        'response': [valid_product_design_space_data, valid_hierarchical_design_space_data]
     })
 
     # When
@@ -350,12 +353,12 @@ def test_list_all_design_spaces(valid_formulation_design_space_data, valid_enume
     assert len(design_spaces) == 2
 
 
-def test_list_archived_design_spaces(valid_formulation_design_space_data, valid_enumerated_design_space_data):
+def test_list_archived_design_spaces(valid_product_design_space_data, valid_hierarchical_design_space_data):
     # Given
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
     session.set_response({
-        'response': [valid_formulation_design_space_data, valid_enumerated_design_space_data]
+        'response': [valid_product_design_space_data, valid_hierarchical_design_space_data]
     })
 
     # When
@@ -369,13 +372,13 @@ def test_list_archived_design_spaces(valid_formulation_design_space_data, valid_
     assert len(design_spaces) == 2
 
 
-def test_archive(valid_formulation_design_space_data):
+def test_archive(valid_product_design_space_data):
     session = FakeSession()
     dsc = DesignSpaceCollection(uuid.uuid4(), session)
     base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
-    ds_id = valid_formulation_design_space_data["id"]
+    ds_id = valid_product_design_space_data["id"]
 
-    response = deepcopy(valid_formulation_design_space_data)
+    response = deepcopy(valid_product_design_space_data)
     response["metadata"]["archived"] = response["metadata"]["created"]
     session.set_response(response)
 
@@ -387,13 +390,13 @@ def test_archive(valid_formulation_design_space_data):
     ]
 
 
-def test_restore(valid_formulation_design_space_data):
+def test_restore(valid_product_design_space_data):
     session = FakeSession()
     dsc = DesignSpaceCollection(uuid.uuid4(), session)
     base_path = DesignSpaceCollection._path_template.format(project_id=dsc.project_id)
-    ds_id = valid_formulation_design_space_data["id"]
+    ds_id = valid_product_design_space_data["id"]
 
-    response = deepcopy(valid_formulation_design_space_data)
+    response = deepcopy(valid_product_design_space_data)
     if "archived" in response["metadata"]:
         del response["metadata"]["archived"]
     session.set_response(deepcopy(response))
@@ -563,3 +566,28 @@ def test_locked(valid_product_design_space_data):
     assert ds.is_locked
     assert ds.locked_by == lock_user
     assert ds.lock_time == lock_time
+
+
+@pytest.mark.parametrize("ds_data_fixture_name", ("valid_formulation_design_space_data",
+                                                  "valid_enumerated_design_space_data",
+                                                  "valid_data_source_design_space_dict"))
+def test_deprecated_top_level_design_spaces(request, ds_data_fixture_name):
+    ds_data = request.getfixturevalue(ds_data_fixture_name)
+
+    session = FakeSession()
+    session.set_response(ds_data)
+    dc = DesignSpaceCollection(uuid.uuid4(), session)
+
+    with pytest.deprecated_call():
+        ds = dc.get(uuid.uuid4())
+
+    with pytest.deprecated_call():
+        dc.register(ds)
+
+    with pytest.deprecated_call():
+        dc.update(ds)
+
+    session.set_response({"response": [ds_data]})
+
+    with pytest.deprecated_call():
+        next(dc.list())
