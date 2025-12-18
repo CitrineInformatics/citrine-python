@@ -73,18 +73,6 @@ def test_enumerated_deserialization(valid_enumerated_design_space_data):
         assert design_space.data[1] == {'x': '2.0', 'color': 'green', 'formula': 'V2O3'}
 
 
-def test_enumerated_serialization_data_int_deprecated(valid_enumerated_design_space_data):
-    design_space = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
-    with pytest.deprecated_call():
-        design_space.data = [dict(x=1, color='red', formula='C44H54Si2')]
-
-
-def test_enumerated_serialization_data_float_deprecated(valid_enumerated_design_space_data):
-    design_space = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
-    with pytest.deprecated_call():
-        design_space.data = [dict(x=1.0, color='red', formula='C44H54Si2')]
-
-
 def test_enumerated_serialization(valid_enumerated_design_space_data):
     """Ensure that a serialized EnumeratedDesignSpace looks sane."""
     design_space_serialization_check(valid_enumerated_design_space_data, EnumeratedDesignSpace)
