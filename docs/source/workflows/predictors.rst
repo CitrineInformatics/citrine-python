@@ -55,7 +55,7 @@ The following example demonstrates how to use the Citrine Python client to creat
        description = 'Predictor description',
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1],
-       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)]
    )
 
    predictor = create_or_update(collection=project.predictors,
@@ -79,26 +79,19 @@ Training data can be specified when creating a graph predictor.
 This will be combined with any training data present in the sub-predictors.
 
 The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` from on-platform and locally-defined predictors.
-Assume that there exists a CSV file with columns for time, bulk modulus, and Poisson's ratio.
+Assume that there exists a GEMD table with columns for time, bulk modulus, and Poisson's ratio.
 We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
 The ML models are independently registered on-platform, but the expression predictor is defined locally and hence cannot be re-used.
 
 .. code:: python
 
     from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor, ExpressionPredictor
-    from citrine.informatics.data_sources import CSVDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
 
     time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
     bulk_modulus = RealDescriptor("Bulk Modulus", lower_bound=0, upper_bound=1E3, units="GPa")
     poissons_ratio = RealDescriptor("Poisson\'s Ratio", lower_bound=0, upper_bound=0.5, units="")
-    training_data = CSVDataSource(
-        file_link = elastic_properties_file,
-        column_definition = {
-            "Tempering Time (s)": time,
-            "Bulk Modulus (GPa)": bulk_modulus,
-            "Poisson\'s Ratio": poissons_ratio
-        }
-    )
+    training_data = GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)
 
     bulk_modulus_predictor = project.predictors.register(
         AutoMLPredictor(
@@ -267,7 +260,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Density from solvent molecular structure',
         description='Predict the density from the solvent molecular structure using molecular structure features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
@@ -347,109 +340,13 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Melting temperature from alloy chemical formula',
         description='Predict the melting temperature from the alloy chemical formula using chemical formula features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
     predictor = create_or_update(
         collection=project.predictors,
         module=graph_predictor
-    )
-
-
-Ingredients to formulation predictor (ALPHA)
---------------------------------------------------
-
-The :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` constructs a formulation from a list of ingredients.
-This predictor is only required to construct formulations from CSV data sources.
-Formulations are constructed automatically by GEM Tables when the underlying GEMD data contains formulations, so
-an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is not required in those cases.
-
-Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
-For example, ``{'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units='')}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
-There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
-If a material does not contain data for a given quantity descriptor key, it is assumed that ingredient is not present in the mixture.
-
-Let's add another ingredient ``salt`` to our map and say we are given data in the form:
-
-+-------------------+----------------+---------------+----------------+
-| Ingredient id     | water quantity | salt quantity | density (g/cc) |
-+===================+================+===============+================+
-| hypertonic saline | 0.93           | 0.07          | 1.08           |
-+-------------------+----------------+---------------+----------------+
-| isotonic saline   | 0.99           | 0.01          | 1.01           |
-+-------------------+----------------+---------------+----------------+
-| water             |                |               | 1.0            |
-+-------------------+----------------+---------------+----------------+
-| salt              |                |               | 2.16           |
-+-------------------+----------------+---------------+----------------+
-
-There are two mixtures, hypertonic and isotonic saline, formed by mixing water and salt together in different amounts.
-(Note, water and salt are leaf ingredients; hence these rows do not contain quantity data.)
-Mixtures are defined by a map from ingredient id to quantity, so this predictor would form 2 mixtures with recipes:
-
-.. code:: python
-
-    # hypertonic saline
-    {'water': 0.93, 'salt': 0.07}
-
-    # isotonic saline
-    {'water': 0.99, 'salt': 0.01}
-
-Ingredients may be given 0 or more labels.
-Labels provide a way to group or distinguish one or more ingredients and can be used to featurize mixtures (discussed in the next section).
-The same label may be given to multiple ingredients, and a single ingredient may be given multiple labels.
-Labels are specified using a map from each label to a list of all ingredients that should be given that label.
-Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
-For example, we may wish to label ``water`` as a solvent and ``salt`` as a solute.
-These labels are specified via:
-
-.. code:: python
-
-    labels = {"solvent": {"water"}, "solute": {"salt"}}
-
-The following example illustrates how an
-:class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
-is constructed for the saline example.
-
-.. code:: python
-
-    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-    from citrine.informatics.predictors import IngredientsToFormulationPredictor
-
-    file_link = dataset.files.upload(file_path="./saline_solutions.csv", dest_name"saline_solutions.csv")
-
-    # create descriptors for each ingredient quantity (volume fraction)
-    water_quantity = RealDescriptor(key='water quantity', lower_bound=0, upper_bound=1, units='')
-    salt_quantity = RealDescriptor(key='salt quantity', lower_bound=0, upper_bound=1, units='')
-
-    # create a descriptor to hold density data
-    density = RealDescriptor(key='density', lower_bound=0, upper_bound=1000, units='g/cc')
-
-    data_source = CSVDataSource(
-        file_link = file_link,
-        column_definitions = {
-            'water quantity': water_quantity,
-            'salt quantity': salt_quantity,
-            'density': density
-        },
-        identifiers=['Ingredient id']
-    )
-
-    IngredientsToFormulationPredictor(
-        name='Ingredients to formulation predictor',
-        description='Constructs a mixture from ingredient quantities',
-        # map from ingredient id to its quantity
-        id_to_quantity={
-            'water': water_quantity,
-            'salt': salt_quantity
-        },
-        # label water as a solvent and salt a solute
-        labels={
-            "solvent": {"water"},
-            "solute": {"salt"}
-        },
-        training_data=[data_source]
     )
 
 
@@ -479,7 +376,7 @@ yielding just the quantities of the leaf constituents salt and water.
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(
         table_id=table_uid,
-        table_version=1
+        table_version=table_version
     )
 
     SimpleMixturePredictor(
@@ -577,7 +474,7 @@ to compute the mean solute density and the distribution of acetone solubility in
     # table with formulations and their ingredients
     data_source = GemTableDataSource(
         table_id=table_uid,
-        table_version=1
+        table_version=table_version
     )
 
     mean_property_predictor = MeanPropertyPredictor(

@@ -58,7 +58,7 @@ class DescriptorMethods:
         Parameters
         ----------
         data_source : DataSource
-            A CSVDataSource or AraTableDataSource to get descriptors for.
+            The data source to get descriptors for.
 
         Returns
         -------

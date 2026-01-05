@@ -102,6 +102,9 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
                  file_link: FileLink,
                  column_definitions: Mapping[str, Descriptor],
                  identifiers: Optional[List[str]] = None):
+        warn("CSVDataSource is deprecated as of 3.28.0 and will be removed in 4.0.0. Please use "
+             "another type of data source, such as GemTableDataSource.",
+             category=DeprecationWarning)
         self.file_link = file_link
         self.column_definitions = column_definitions
         self.identifiers = identifiers
