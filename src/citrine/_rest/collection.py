@@ -4,7 +4,7 @@ from uuid import UUID
 
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource, ResourceRef
+from citrine._rest.resource import Resource
 from citrine._utils.functions import resource_path
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
@@ -27,11 +27,6 @@ class Collection(Generic[ResourceType], Pageable):
     _collection_key: str = 'entries'
     _paginator: Paginator = Paginator()
     _api_version: str = "v1"
-
-    def _put_resource_ref(self, subpath: str, uid: Union[UUID, str]):
-        url = self._get_path(subpath)
-        ref = ResourceRef(uid)
-        return self.session.put_resource(url, ref.dump(), version=self._api_version)
 
     def _get_path(self,
                   uid: Optional[Union[UUID, str]] = None,

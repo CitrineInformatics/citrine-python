@@ -327,8 +327,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
         description='Predicts z from input x',
         inputs=[x.dump()],
         outputs=[z.dump()],
-        estimators=[AutoMLEstimator.RANDOM_FOREST.value],
-        training_data=[]
+        estimators=[AutoMLEstimator.RANDOM_FOREST.value]
     )
 
 
@@ -550,8 +549,7 @@ def valid_mean_property_predictor_data():
         p=2.0,
         impute_properties=True,
         default_properties={'density': 1.0},
-        label='solvent',
-        training_data=[]
+        label='solvent'
     )
 
 
@@ -660,8 +658,7 @@ def valid_simple_mixture_predictor_data():
     return dict(
         type='SimpleMixture',
         name='Simple mixture predictor',
-        description='simple mixture description',
-        training_data=[]
+        description='simple mixture description'
     )
 
 

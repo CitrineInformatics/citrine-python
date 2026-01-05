@@ -1,5 +1,4 @@
 from typing import List, Mapping, Union
-from warnings import warn
 
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
@@ -59,11 +58,5 @@ class EnumeratedDesignSpace(EngineResource['EnumeratedDesignSpace'], DesignSpace
         return self._data
 
     @data.setter
-    def data(self, value: List[Mapping[str, Union[int, float, str]]]):
-        for item in value:
-            for el in item.values():
-                if isinstance(el, (int, float)):
-                    warn("Providing numeric data values is deprecated as of 3.4.7, and will be "
-                         "dropped in 4.0.0. Please use strings instead.",
-                         DeprecationWarning)
+    def data(self, value: List[Mapping[str, str]]):
         self._data = value
