@@ -5,7 +5,7 @@ Projects
 A Project is the basic container for AI Assets on the Citrine Platform, such as GEM Tables, Predictors, Design Spaces, and Design Workflows.
 Access rights on resources inside a Project are managed, granted, and revoked at the Team level.
 
-Users are individuals using the Citrine Platform, and they are made members of Team.
+Users are individuals using the Citrine Platform, and they are made members of a Team.
 A user who is a member of a Team has access to all of the Projects that the Team has access to.
 
 Every interaction with every other type of resource is scoped to a single Team.
@@ -33,8 +33,15 @@ To retrieve a Project in the team, either find the Project in the list:
 
     project_name = "Copper oxides project"
     all_projects = team.projects.list()
-    copper_oxides_project = next((project for project in all_projects
-    if project.name == project_name), None)
+    project = next((project for project in all_projects if project.name == project_name), None)
+
+or use the :func:`~citrine.seeding.find_or_create.find_or_create_project` convenience method:
+
+.. code-block:: python
+
+    from citrine.seeding.find_or_create import find_or_create_project
+    project_name = "Copper oxides project"
+    project = find_or_create_project(project_collection=team.projects, project_name=project_name)
 
 or get it by unique identifier:
 

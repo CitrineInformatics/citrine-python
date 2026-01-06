@@ -102,7 +102,7 @@ Assume that the process template is accessible from a known Project, ``project``
 
     table_config = table_config.add_all_ingredients(
         process_template=LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
-        project=project,
+        team=team,
         quantity_dimension=IngredientQuantityDimension.MASS
     )
 

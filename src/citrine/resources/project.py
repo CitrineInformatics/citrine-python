@@ -26,7 +26,7 @@ class Project(Resource['Project']):
     """
     A Citrine Project.
 
-    A project is a collection of datasets and AI assets, some of which belong directly
+    A project is a collection of training sets and AI assets, some of which belong directly
     to the project, and some of which have been shared with the project.
 
     Parameters

@@ -19,7 +19,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
 .. code:: python
 
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.predictors import AutoMLPredictor
+    from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
     data_source = GemTableDataSource(
@@ -27,7 +27,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
         table_version = "2"
     )
 
-    predictor = AutoMLPredictor(
+    auto_ml_predictor = AutoMLPredictor(
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
@@ -35,9 +35,15 @@ The example below assumes that the uuid and the version of the desired GEM Table
             CategoricalDescriptor("terminal~crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         ],
-        outputs = [RealDescriptor("terminal~band gap", lower_bound=0, upper_bound=20, units="eV")],
+        outputs = [RealDescriptor("terminal~band gap", lower_bound=0, upper_bound=20, units="eV")]
+    )
+
+    predictor = GraphPredictor(
+        name = "Root predictor",
+        predictors = [auto_ml_predictor],
         training_data = [data_source]
     )
+        
 
 Note that the descriptor keys above are the headers of the *variable* not the column in the table.
 The last term in the column header is a suffix associated with the specific column definition rather than the variable.

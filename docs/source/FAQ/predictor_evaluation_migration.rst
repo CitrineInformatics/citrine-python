@@ -5,7 +5,7 @@ Migrating to Predictor Evaluations
 Summary
 =======
 
-In version 4.0, :py:class:`Predictor Evaluation Workflows <citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection>` and :py:class:`Predictor Evaluation Executions <citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection>` (collectively, PEWs) will be merged into a single entity called :py:class:`Predictor Evaluations  <citrine.resources.predictor_evaluation.PredictorEvaluationCollection>`. The new entity will retain the functionality of its predecessors, while simplyfing interactions with it. And it will support the continuing evolution of the platform.
+`Predictor Evaluation Workflows` and `Predictor Evaluation Executions` (collectively, PEWs) have been merged into a single entity called :py:class:`Predictor Evaluations <citrine.resources.predictor_evaluation.PredictorEvaluationCollection>`. The new entity retains the functionality of its predecessors, while simplyfing interactions with it, and supporting the continuing evolution of the platform.
 
 Basic Usage
 ===========

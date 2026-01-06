@@ -5,61 +5,18 @@ A Design Space defines a set of materials that should be searched over when perf
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
 Currently, there are four Design Spaces:
 
--  `EnumeratedDesignSpace <#enumerated-design-space>`__
 -  `ProductDesignSpace <#product-design-space>`__
+-  `HierarchicalDesignSpace <#hierarchical-design-space>`__
 -  `DataSourceDesignSpace <#data-source-design-space>`__
 -  `FormulationDesignSpace <#formulation-design-space>`__
 
-Enumerated design space
------------------------
-
-An :class:`~citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace` is composed of an explicit list of candidates.
-Each candidate is specified using a dictionary keyed on the key of a corresponding :class:`~citrine.informatics.descriptors.Descriptor`.
-A list of descriptors defines what key-value pairs must be present in each candidate.
-If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.
-
-As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the Citrine Python client:
-
-.. code:: python
-
-   from citrine.informatics.descriptors import RealDescriptor
-   from citrine.informatics.design_spaces import EnumeratedDesignSpace
-
-   x = RealDescriptor(key='x', lower_bound=0, upper_bound=10, units="")
-   y = RealDescriptor(key='y', lower_bound=0, upper_bound=10, units="")
-   descriptors = [x, y]
-
-   # create a list of candidates
-   # invalid candidates will be removed from the design space
-   candidates = [
-     {'x': 0, 'y': 0},
-     {'x': 0, 'y': 1},
-     {'x': 2, 'y': 3},
-     {'x': 10, 'y': 10},
-     # invalid because x > 10
-     {'x': 11, 'y': 10},
-     # invalid because z isn't in descriptors
-     {'x': 11, 'y': 10, 'z': 0},
-     # invalid because y is missing
-     {'x': 10}
-   ]
-
-   design_space = EnumeratedDesignSpace(
-     name='2D coordinate system',
-     description='Design space that contains (x, y) points',
-     descriptors=descriptors,
-     data=candidates
-   )
-
-   registered_design_space = project.design_spaces.register(design_space)
-
-Product design space
+Product Design Space
 --------------------
 
 Materials from a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace` are composed of the `Cartesian product`_ of independent factors.
-Each factor can be a separate design space _or_ a univariate dimension.
+Each factor can be a separate design space *or* a univariate dimension.
 Any other type of design space can be a valid subspace.
-Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.
+Subspaces are defined anonymously and embedded in the product design space.
 
 A :class:`~citrine.informatics.dimensions.Dimension` defines valid values of a single variable.
 Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
@@ -115,29 +72,23 @@ Note, each factor must be **independent**.
 This means that the same descriptor may not appear more than once in a product design space.
 
 As an example, let's create a produt design space that defines the ways in which we might mix two pigments together and stir at some temperature.
-We are only interested in specific amounts of each pigment, so we create an enumerated design space that defines the amounts we wish to test.
+We are only interested in specific amounts of each pigment, so we create a data source design space that references a data source defining the amounts we wish to test.
 The mixing speed is discrete, so we describe it with an enumerated dimension.
 And temperature is described by a continuous dimension.
 
 .. code:: python
 
-    from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor
+    from citrine.informatics.design_spaces import DataSourceDesignSpace, ProductDesignSpace
     from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
-    from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace
 
-    pigmentA_descriptor = RealDescriptor(key='Amount of Pigment A', lower_bound=0, upper_bound=100, units='g')
-    pigmentB_descriptor = RealDescriptor(key='Amount of Pigment B', lower_bound=0, upper_bound=100, units='g')
-    enumerated_space = EnumeratedDesignSpace(
+    pigment_data_source = data_source=GemTableDataSource(table_id=table_id, table_version=table_version)
+    enumerated_space = DataSourceDesignSpace(
         name="amounts of pigments A and B",
         description="total amount of pigment is 100 grams",
-        data=[
-            {'Amount of Pigment A': 10.0, 'Amount of Pigment B': 90.0},
-            {'Amount of Pigment A': 15.0, 'Amount of Pigment B': 85.0},
-            {'Amount of Pigment A': 20.0, 'Amount of Pigment B': 80.0}
-        ]
+        data_source=pigment_data_source
     )
-    enumerated_space_registered = project.design_spaces.register(enumerated_space)
-    enumerated_space_uid = enumerated_space_registered.uid
 
     temp_descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
     temp_dimension = ContinuousDimension(descriptor=temp_descriptor, lower_bound=300, upper_bound=400)
@@ -148,14 +99,11 @@ And temperature is described by a continuous dimension.
     product_space = ProductDesignSpace(
         name="Mix 2 pigments at some speed and temperature",
         description="Pigments A and B, temperatures between 300 and 400 K, and either Slow or Fast",
-        subspaces=[enumerated_space_uid],
+        subspaces=[enumerated_space],
         dimensions=[temp_dimension, speed_dimension]
     )
 
     product_space = project.design_spaces.register(product_space)
-
-In the approach shown above, the enumerated design space is registered on-platform and can be used in other contexts.
-It would also be valid, however, to not register the enumerated design space and to include it in the product design space directly as opposed to through its uid: `subspaces=[enumerated_space]`.
 
 The enumerated design space defined in this way might product the following candidates:
 
@@ -172,31 +120,41 @@ The enumerated design space defined in this way might product the following cand
         ... # enumerated factors repeat while continuously sampling Temperature
    ]
 
+Hierarchical Design Space
+-------------------------
+
 Data Source Design Space
 ------------------------
 
-A :class:`~citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace` is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
+A :class:`~citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace` draws its candidates from an existing data source.
 Any data source can be used and no additional information is needed.
+When registered, this type of design space must be a subspace of a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`.
 
 For example, assume you have a :class:`~citrine.resources.gemtables.GemTable` that contains one
 :class:`~citrine.gemtables.rows.Row` for each candidate that you wish to test.
-Assume the table's `table_id` and `table_version` are known.
+Assume the table's ``table_id`` and ``table_version`` are known.
 The example code below creates a registers a design space based on this Gem Table.
 
 .. code:: python
 
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.design_spaces import DataSourceDesignSpace
+    from citrine.informatics.design_spaces import DataSourceDesignSpace, ProductDesignSpace
 
     data_source = GemTableDataSource(
         table_id=table_id,
         table_version=table_version
     )
 
-    design_space = DataSourceDesignSpace(
+    data_source_design_space = DataSourceDesignSpace(
         name="my candidates",
         description="450 potential formulations",
         data_source=data_source
+    )
+
+    design_space = ProductDesignSpace(
+        name="top-level design space",
+        description="contains a single data source design space.",
+        subspaces=[data_source_design_space]
     )
 
     registered_design_space = project.design_spaces.register(design_space)
@@ -246,6 +204,8 @@ Ingredient fractions in recipes sampled from a formulation design space will alw
 Label information defines which labels are applied to each ingredient in the recipe.
 These labels will always be a subset of all labels from the design space.
 
+When registered, this type of design space must be a subspace of a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace` or part of a :class:`~citrine.informatics.design_spaces.hierarchical_design_space.HierarchicalDesignSpace`.
+
 The following demonstrates how to create a formulation design space of saline solutions containing three ingredients: water, salt, and boric acid (a common antiseptic).
 We will require that formulations contain 2 ingredients, that no more than 1 solute is present, and that the total fraction of water is between 0.95 and 0.99.
 
@@ -274,13 +234,19 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
     IngredientFractionConstraint(formulation_descriptor=descriptor, ingredient="water", min=0.95, max=0.99)
   }
 
-  design_space = FormulationDesignSpace(
+  formulation_design_space = FormulationDesignSpace(
     name = "Saline solution design space",
     description = "Composes formulations from water, salt, and boric acid",
     formulation_descriptor = descriptor,
     ingredients = ingredients,
     labels = labels,
     constraints = constraints
+  )
+    
+  design_space = ProductDesignSpace(
+    name="top-level design space",
+    description="contains a single formulation design space.",
+    subspaces=[formulation_design_space]
   )
 
   registered_design_space = project.design_spaces.register(design_space)

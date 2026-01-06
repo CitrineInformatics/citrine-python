@@ -21,7 +21,6 @@ Datasets can be listed and gotten from Teams just as Teams are from the client i
 
     team = citrine.teams.get("baaa467e-1758-43a8-97c7-76e569d0dcab")
     datasets_in_team = team.datasets.list()
-    a_dataset = project.datasets.get("6ed8bf3b-876b-40f0-9d50-982e686e5cd3")
 
 Datasets can only be deleted if they are empty.
 If you need to delete a non-empty Dataset, see this discussion on :ref:`deleting data objects <deleting_data_objects_label>`.
@@ -47,11 +46,11 @@ Assume you have a "band gaps team" with known id, ``band_gaps_team_id``, and are
     band_gaps_team = citrine.teams.get(band_gaps_team_id)
 
     # create the Dataset object
-    Strehlow_Cook_description = "Band gaps for elemental and binary semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
-    Strehlow_Cook_dataset = Dataset(name="Strehlow and Cook", summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
+    strehlow_cook_description = "Band gaps for elemental and binary semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
+    strehlow_cook_dataset = Dataset(name="Strehlow and Cook", summary="Strehlow and Cook band gaps", description=strehlow_cook_description)
 
     # pass the Dataset object to the registration endpoint
-    Strehlow_Cook_dataset = band_gaps_team.datasets.register(Strehlow_Cook_dataset)
+    strehlow_cook_dataset = band_gaps_team.datasets.register(strehlow_cook_dataset)
 
 
 Deleting a Dataset

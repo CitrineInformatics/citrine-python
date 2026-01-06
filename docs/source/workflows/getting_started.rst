@@ -11,7 +11,7 @@ These capabilities include generating candidates for Sequential Learning, identi
 Workflows Overview
 ------------------
 
-Currently, there are two workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PredictorEvaluation <predictor_evaluation_workflows>`.
+Currently, there are two workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PredictorEvaluation <predictor_evaluations>`.
 There are two different types of modules, and these are discussed in greater detail below.
 
 Design Workflow
@@ -35,12 +35,11 @@ Branches
 ########
 
 A ``Branch`` is a named container which can contain any number of design workflows, and is purely a tool for organization.
-If you do not see branches in the Citrine Platform, you do not need to change how you work with design workflows. They will contain an additional field ``branch_id``, which you can ignore.
 
 Predictor Evaluation
 ********************
 
-The :doc:`PredictorEvaluation <predictor_evaluation_workflows>` is used to analyze a :doc:`Predictor <predictors>`.
+The :doc:`PredictorEvaluation <predictor_evaluations>` is used to analyze a :doc:`Predictor <predictors>`.
 They helps users understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
 These outcomes are captured in a series of response metrics.
 
@@ -51,8 +50,8 @@ Modules are re-usable computational tools used to construct workflows.
 The modules dictate how the platform utilizes research data to generate computational results.
 There are 2 types of modules on the platform:
 
--  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
--  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
+*  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
+*  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
     A predictor can be composed of machine-learned models, featurizers, and analytical relations.
 
 .. _archiving_label:
@@ -61,7 +60,7 @@ Archiving
 *********
 
 Modules and workflows start active by default when created.
-An archived resource will not show up when listing, and an archived module cannot be used in workflows.
+An archived resource will not show up when listing, although an archived module can be used in workflows.
 To archive a resource with a known ``uid``, use the ``.archive()`` method of the relevant collection
 (e.g., :meth:`DesignWorkflowCollection.archive() <citrine.resources.design_workflow.DesignWorkflowCollection.archive>`).
 Use ``.restore()`` to un-archive the resource.
@@ -69,13 +68,13 @@ Use ``.restore()`` to un-archive the resource.
 Registration and validation
 ---------------------------
 
-Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
+Both modules and workflows are registered with a project and validated before they are ready for use. When registered via the Citrine Python client, validation occurs automatically.
 Validation status can be one of the following states:
 
--  **Created:** The module/workflow has been registered with a project and has been queued for validation.
+-  **Created:** The module/workflow has been registered with a project, but validation has not begun.
 -  **Validating:** The module/workflow is currently validating. The status will be updated to one of the subsequent states upon completion.
 -  **Invalid:** Validation completed successfully but found errors with the workflow/module.
 -  **Ready:** Validation completed successfully and found no errors.
 -  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
 
-Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
+Validation of a workflow and all constituent modules must complete with Ready status before the workflow can be executed.

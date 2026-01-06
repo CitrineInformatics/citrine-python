@@ -4,7 +4,7 @@ Predictor Reports
 Training a predictor generally produces a set of inter-connected models.
 A predictor report describes those models, for example their settings and what features are important to the model.
 It does not include predictor evaluation metrics.
-To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationMetrics <predictor_evaluation_workflows>`.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationMetrics <predictor_evaluations>`.
 The report can be accessed via ``predictor.report``.
 
 A task to generate a predictor report is scheduled when a predictor is registered.
@@ -70,28 +70,28 @@ Assume that there is a training data table with known id and version.
 
     # create ML predictor
     auto_ml_predictor = AutoMLPredictor(
-       name='ML predictor for z',
-       description='Predicts z from x and y',
-       inputs=[x, y],
-       outputs=[z],
-       training_data=[GemTableDataSource(
-        table_id = training_table_id,
-        table_version = training_table_version
-        )]
+        name='ML predictor for z',
+        description='Predicts z from x and y',
+        inputs=[x, y],
+        outputs=[z]
     )
 
     # register a predictor with a project
     predictor = project.predictors.register(
-       GraphPredictor(
-           name='ML predictor for z',
-           description='Predicts z from x and y',
-           predictors=[auto_ml_predictor]
-       )
+        GraphPredictor(
+            name='ML predictor for z',
+            description='Predicts z from x and y',
+            predictors=[auto_ml_predictor]
+            training_data=[GemTableDataSource(
+                table_id = training_table_id,
+                table_version = training_table_version
+            )]
+        )
     )
 
     # wait for the predictor report to be ready
     while project.predictors.get(predictor.uid).report.status == 'PENDING':
-       sleep(10)
+        sleep(10)
 
     # print the json report
     report = project.predictors.get(predictor.uid).report

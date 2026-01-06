@@ -7,7 +7,7 @@ Descriptors allow users to define a controlled vocabulary with which to describe
 Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
 If you are familiar with the GEMD data model, descriptors are roughly equivalent to :class:`AttributeTemplates <citrine.resources.attribute_templates.AttributeTemplate>`.
 
-The AI Engine currently supports 5 kinds of descriptors:
+The AI Engine currently supports 6 kinds of descriptors:
 
 -  `Real Descriptors <#real-descriptor>`__
 -  `Integer Descriptor <#integer-descriptor>`__

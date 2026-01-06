@@ -41,4 +41,4 @@ They also include a :doc:`Score <../workflows/scores>` which codifies goals of t
 Predictor Evaluation
 ^^^^^^^^^^^^^^^^^^^^
 
-:doc:`Predictor Evaluations <../workflows/predictor_evaluation_workflows>` analyze the quality of a Predictor.
+:doc:`Predictor Evaluations <../workflows/predictor_evaluations>` analyze the quality of a Predictor.
