@@ -1,12 +1,14 @@
 """Resources that represent collections of design spaces."""
+import warnings
 from functools import partial
-from typing import Iterable, Optional, TypeVar, Union
+from typing import Iterable, Iterator, Optional, TypeVar, Union
 from uuid import UUID
 
 
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpace, \
-    DesignSpaceSettings, EnumeratedDesignSpace, HierarchicalDesignSpace
+from citrine.informatics.design_spaces import DataSourceDesignSpace, DefaultDesignSpaceMode, \
+    DesignSpace, DesignSpaceSettings, EnumeratedDesignSpace, FormulationDesignSpace, \
+    HierarchicalDesignSpace
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
@@ -48,8 +50,16 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         rather than let the POST or PUT call fail because the request body is too big.  This
         validation is performed when the design space is sent to the platform in case a user
         creates a large intermediate design space but then filters it down before registering it.
+
+        Additionally, checks for deprecated top-level design space types, and emits deprecation
+        warnings as appropriate.
         """
         if isinstance(design_space, EnumeratedDesignSpace):
+            warnings.warn("As of 3.27.0, EnumeratedDesignSpace is deprecated in favor of a "
+                          "ProductDesignSpace containing a DataSourceDesignSpace subspace. "
+                          "Support for EnumeratedDesignSpace will be dropped in 4.0.",
+                          DeprecationWarning)
+
             width = len(design_space.descriptors)
             length = len(design_space.data)
             if width * length > self._enumerated_cell_limit:
@@ -57,6 +67,31 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                       "but {} were given. Please reduce the number of descriptors or candidates " \
                       "in this EnumeratedDesignSpace"
                 raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
+        elif isinstance(design_space, (DataSourceDesignSpace, FormulationDesignSpace)):
+            typ = type(design_space).__name__
+            warnings.warn(f"As of 3.27.0, saving a top-level {typ} is deprecated. Support "
+                          "will be removed in 4.0. Wrap it in a ProductDesignSpace instead: "
+                          f"ProductDesignSpace('name', 'description', subspaces=[{typ}(...)])",
+                          DeprecationWarning)
+
+    def _verify_read_request(self, design_space: DesignSpace):
+        """Perform read-time validations of the design space.
+
+        Checks for deprecated top-level design space types, and emits deprecation warnings as
+        appropriate.
+        """
+        if isinstance(design_space, EnumeratedDesignSpace):
+            warnings.warn("As of 3.27.0, EnumeratedDesignSpace is deprecated in favor of a "
+                          "ProductDesignSpace containing a DataSourceDesignSpace subspace. "
+                          "Support for EnumeratedDesignSpace will be dropped in 4.0.",
+                          DeprecationWarning)
+        elif isinstance(design_space, (DataSourceDesignSpace, FormulationDesignSpace)):
+            typ = type(design_space).__name__
+            warnings.warn(f"As of 3.27.0, top-level {typ}s are deprecated. Any that remain when "
+                          "SDK 4.0 are released will be wrapped in a ProductDesignSpace. You "
+                          "can wrap it yourself to get rid of this warning now: "
+                          f"ProductDesignSpace('name', 'description', subspaces=[{typ}(...)])",
+                          DeprecationWarning)
 
     def register(self, design_space: DesignSpace) -> DesignSpace:
         """Create a new design space."""
@@ -115,6 +150,31 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         url = self._get_path(uid, action="restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
+
+    def get(self, uid: Union[UUID, str]) -> DesignSpace:
+        """Get a particular element of the collection."""
+        design_space = super().get(uid)
+        self._verify_read_request(design_space)
+        return design_space
+
+    def _build_collection_elements(self, collection: Iterable[dict]) -> Iterator[DesignSpace]:
+        """
+        For each element in the collection, build the appropriate resource type.
+
+        Parameters
+        ---------
+        collection: Iterable[dict]
+            collection containing the elements to be built
+
+        Returns
+        -------
+        Iterator[DesignSpace]
+            Resources in this collection.
+
+        """
+        for design_space in super()._build_collection_elements(collection=collection):
+            self._verify_read_request(design_space)
+            yield design_space
 
     def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
         filters = {}
