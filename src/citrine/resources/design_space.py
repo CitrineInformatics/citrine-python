@@ -1,21 +1,17 @@
 """Resources that represent collections of design spaces."""
-import warnings
 from functools import partial
-from typing import Iterable, Iterator, Optional, TypeVar, Union
+from typing import Iterable, Optional, Union
 from uuid import UUID
 
 
 from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_spaces import DataSourceDesignSpace, DefaultDesignSpaceMode, \
-    DesignSpace, DesignSpaceSettings, EnumeratedDesignSpace, FormulationDesignSpace, \
-    HierarchicalDesignSpace
+from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpaceSettings, \
+    HierarchicalDesignSpace, TopLevelDesignSpace
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-CreationType = TypeVar('CreationType', bound=DesignSpace)
 
-
-class DesignSpaceCollection(Collection[DesignSpace]):
+class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
     """Represents the collection of design spaces as well as the resources belonging to it.
 
     Parameters
@@ -28,7 +24,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     _api_version = 'v3'
     _path_template = '/projects/{project_id}/design-spaces'
     _individual_key = None
-    _resource = DesignSpace
+    _resource = TopLevelDesignSpace
     _collection_key = 'response'
     _enumerated_cell_limit = 128 * 2000
 
@@ -36,67 +32,15 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         self.project_id = project_id
         self.session: Session = session
 
-    def build(self, data: dict) -> DesignSpace:
+    def build(self, data: dict) -> TopLevelDesignSpace:
         """Build an individual design space."""
-        design_space: DesignSpace = DesignSpace.build(data)
+        design_space: TopLevelDesignSpace = TopLevelDesignSpace.build(data)
         design_space._session = self.session
         design_space._project_id = self.project_id
         return design_space
 
-    def _verify_write_request(self, design_space: DesignSpace):
-        """Perform write-time validations of the design space registration or update.
-
-        EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
-        rather than let the POST or PUT call fail because the request body is too big.  This
-        validation is performed when the design space is sent to the platform in case a user
-        creates a large intermediate design space but then filters it down before registering it.
-
-        Additionally, checks for deprecated top-level design space types, and emits deprecation
-        warnings as appropriate.
-        """
-        if isinstance(design_space, EnumeratedDesignSpace):
-            warnings.warn("As of 3.27.0, EnumeratedDesignSpace is deprecated in favor of a "
-                          "ProductDesignSpace containing a DataSourceDesignSpace subspace. "
-                          "Support for EnumeratedDesignSpace will be dropped in 4.0.",
-                          DeprecationWarning)
-
-            width = len(design_space.descriptors)
-            length = len(design_space.data)
-            if width * length > self._enumerated_cell_limit:
-                msg = "EnumeratedDesignSpace only supports up to {} descriptor-values, " \
-                      "but {} were given. Please reduce the number of descriptors or candidates " \
-                      "in this EnumeratedDesignSpace"
-                raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
-        elif isinstance(design_space, (DataSourceDesignSpace, FormulationDesignSpace)):
-            typ = type(design_space).__name__
-            warnings.warn(f"As of 3.27.0, saving a top-level {typ} is deprecated. Support "
-                          "will be removed in 4.0. Wrap it in a ProductDesignSpace instead: "
-                          f"ProductDesignSpace('name', 'description', subspaces=[{typ}(...)])",
-                          DeprecationWarning)
-
-    def _verify_read_request(self, design_space: DesignSpace):
-        """Perform read-time validations of the design space.
-
-        Checks for deprecated top-level design space types, and emits deprecation warnings as
-        appropriate.
-        """
-        if isinstance(design_space, EnumeratedDesignSpace):
-            warnings.warn("As of 3.27.0, EnumeratedDesignSpace is deprecated in favor of a "
-                          "ProductDesignSpace containing a DataSourceDesignSpace subspace. "
-                          "Support for EnumeratedDesignSpace will be dropped in 4.0.",
-                          DeprecationWarning)
-        elif isinstance(design_space, (DataSourceDesignSpace, FormulationDesignSpace)):
-            typ = type(design_space).__name__
-            warnings.warn(f"As of 3.27.0, top-level {typ}s are deprecated. Any that remain when "
-                          "SDK 4.0 are released will be wrapped in a ProductDesignSpace. You "
-                          "can wrap it yourself to get rid of this warning now: "
-                          f"ProductDesignSpace('name', 'description', subspaces=[{typ}(...)])",
-                          DeprecationWarning)
-
-    def register(self, design_space: DesignSpace) -> DesignSpace:
+    def register(self, design_space: TopLevelDesignSpace) -> TopLevelDesignSpace:
         """Create a new design space."""
-        self._verify_write_request(design_space)
-
         registered_ds = super().register(design_space)
 
         # If the initial response is invalid, just return it.
@@ -107,9 +51,8 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         else:
             return self._validate(registered_ds.uid)
 
-    def update(self, design_space: DesignSpace) -> DesignSpace:
+    def update(self, design_space: TopLevelDesignSpace) -> TopLevelDesignSpace:
         """Update and validate an existing DesignSpace."""
-        self._verify_write_request(design_space)
         updated_ds = super().update(design_space)
 
         # If the initial response is invalid, just return it.
@@ -120,12 +63,12 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         else:
             return self._validate(updated_ds.uid)
 
-    def _validate(self, uid: Union[UUID, str]) -> DesignSpace:
+    def _validate(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
         path = self._get_path(uid, action="validate")
         entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
-    def archive(self, uid: Union[UUID, str]) -> DesignSpace:
+    def archive(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
         """Archiving a design space removes it from view, but is not a hard delete.
 
         Parameters
@@ -138,7 +81,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def restore(self, uid: Union[UUID, str]) -> DesignSpace:
+    def restore(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
         """Restore an archived design space.
 
         Parameters
@@ -151,31 +94,6 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def get(self, uid: Union[UUID, str]) -> DesignSpace:
-        """Get a particular element of the collection."""
-        design_space = super().get(uid)
-        self._verify_read_request(design_space)
-        return design_space
-
-    def _build_collection_elements(self, collection: Iterable[dict]) -> Iterator[DesignSpace]:
-        """
-        For each element in the collection, build the appropriate resource type.
-
-        Parameters
-        ---------
-        collection: Iterable[dict]
-            collection containing the elements to be built
-
-        Returns
-        -------
-        Iterator[DesignSpace]
-            Resources in this collection.
-
-        """
-        for design_space in super()._build_collection_elements(collection=collection):
-            self._verify_read_request(design_space)
-            yield design_space
-
     def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
         filters = {}
         if archived is not None:
@@ -186,15 +104,15 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def list_all(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+    def list_all(self, *, per_page: int = 20) -> Iterable[TopLevelDesignSpace]:
         """List all design spaces."""
         return self._list_base(per_page=per_page)
 
-    def list(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+    def list(self, *, per_page: int = 20) -> Iterable[TopLevelDesignSpace]:
         """List non-archived design spaces."""
         return self._list_base(per_page=per_page, archived=False)
 
-    def list_archived(self, *, per_page: int = 20) -> Iterable[DesignSpace]:
+    def list_archived(self, *, per_page: int = 20) -> Iterable[TopLevelDesignSpace]:
         """List archived design spaces."""
         return self._list_base(per_page=per_page, archived=True)
 
@@ -206,7 +124,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
                        include_label_count_constraints: bool = False,
-                       include_parameter_constraints: bool = False) -> DesignSpace:
+                       include_parameter_constraints: bool = False) -> TopLevelDesignSpace:
         """Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
@@ -250,7 +168,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
 
         Returns
         -------
-        DesignSpace
+        TopLevelDesignSpace
             Default design space
 
         """
@@ -266,7 +184,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         )
 
         data = self.session.post_resource(path, json=settings.dump(), version=self._api_version)
-        ds = self.build(DesignSpace.wrap_instance(data["instance"]))
+        ds = self.build(TopLevelDesignSpace.wrap_instance(data["instance"]))
         ds._settings = settings
         return ds
 
@@ -311,7 +229,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         if predictor_version:
             payload["predictor_version"] = predictor_version
         data = self.session.post_resource(path, json=payload, version=self._api_version)
-        return HierarchicalDesignSpace.build(DesignSpace.wrap_instance(data["instance"]))
+        return HierarchicalDesignSpace.build(TopLevelDesignSpace.wrap_instance(data["instance"]))
 
     def delete(self, uid: Union[UUID, str]):
         """Design Spaces cannot be deleted at this time."""

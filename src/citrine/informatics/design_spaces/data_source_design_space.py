@@ -1,12 +1,12 @@
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.subspace import DesignSubspace
 
 __all__ = ['DataSourceDesignSpace']
 
 
-class DataSourceDesignSpace(EngineResource['DataSourceDesignSpace'], DesignSpace):
+class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSubspace):
     """An enumeration of candidates stored in a data source.
 
     Parameters
@@ -20,10 +20,9 @@ class DataSourceDesignSpace(EngineResource['DataSourceDesignSpace'], DesignSpace
 
     """
 
-    data_source = properties.Object(DataSource, 'data.instance.data_source')
+    data_source = properties.Object(DataSource, 'data_source')
 
-    typ = properties.String('data.instance.type', default='DataSourceDesignSpace',
-                            deserializable=False)
+    typ = properties.String('type', default='DataSourceDesignSpace', deserializable=False)
 
     def __init__(self,
                  name: str,

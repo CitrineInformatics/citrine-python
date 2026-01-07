@@ -117,107 +117,21 @@ def valid_product_design_space_data():
 
 
 @pytest.fixture
-def valid_enumerated_design_space_data():
-    """Produce valid enumerated design space data."""
-    user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
-    return dict(
-        id=str(uuid.uuid4()),
-        data=dict(
-            name='my enumerated design space',
-            description='enumerates some things',
-            instance=dict(
-                type='EnumeratedDesignSpace',
-                name='my enumerated design space',
-                description='enumerates some things',
-                descriptors=[
-                    dict(
-                        type='Real',
-                        descriptor_key='x',
-                        units='',
-                        lower_bound=1.0,
-                        upper_bound=2.0,
-                    ),
-                    dict(
-                        type='Categorical',
-                        descriptor_key='color',
-                        descriptor_values=['blue', 'green', 'red'],
-                    ),
-                    dict(
-                        type='Inorganic',
-                        descriptor_key='formula'
-                    )
-                ],
-                data=[
-                    dict(x='1', color='red', formula='C44H54Si2'),
-                    dict(x='2.0', color='green', formula='V2O3')
-                ]
-            )
-        ),
-        metadata=dict(
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            ),
-            archived=dict(
-                user=user,
-                time=time
-            ),
-            status=dict(
-                name='VALIDATING',
-                detail=[]
-            )
-        )
-    )
-
-
-@pytest.fixture
 def valid_formulation_design_space_data():
     """Produce valid formulation design space data."""
     from citrine.informatics.constraints import IngredientCountConstraint
     from citrine.informatics.descriptors import FormulationDescriptor
     descriptor = FormulationDescriptor.hierarchical()
     constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
-    user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
     return dict(
-        id=str(uuid.uuid4()),
-        data=dict(
-            name='formulation design space',
-            description='formulates some things',
-            instance=dict(
-                type='FormulationDesignSpace',
-                name='formulation design space',
-                description='formulates some things',
-                formulation_descriptor=descriptor.dump(),
-                ingredients=['foo'],
-                labels={'bar': ['foo']},
-                constraints=[constraint.dump()],
-                resolution=0.1
-            )
-        ),
-        metadata=dict(
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            ),
-            archived=dict(
-                user=user,
-                time=time
-            ),
-            status=dict(
-                name='VALIDATING',
-                detail=[]
-            )
-        )
+        type='FormulationDesignSpace',
+        name='formulation design space',
+        description='formulates some things',
+        formulation_descriptor=descriptor.dump(),
+        ingredients=['foo'],
+        labels={'bar': ['foo']},
+        constraints=[constraint.dump()],
+        resolution=0.1
     )
 
 
@@ -297,7 +211,7 @@ def valid_material_node_definition_data(valid_formulation_design_space_data):
                 list=['red']
             )
         ],
-        formulation=valid_formulation_design_space_data["data"]["instance"],
+        formulation=valid_formulation_design_space_data,
         template=dict(
             material_template=str(uuid.uuid4()),
             process_template=str(uuid.uuid4()),
@@ -581,34 +495,11 @@ def valid_ingredient_fractions_predictor_data():
 
 @pytest.fixture
 def valid_data_source_design_space_dict(valid_gem_data_source_dict):
-    user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
     return dict(
-        id=str(uuid.uuid4()),
-        data=dict(
-            name="Example valid data source design space",
-            description="Example valid data source design space based on a GEM Table Data Source.",
-            instance=dict(
-                type="DataSourceDesignSpace",
-                name="Example valid data source design space",
-                description="Example valid data source design space based on a GEM Table Data Source.",
-                data_source=valid_gem_data_source_dict
-            )
-        ),
-        metadata=dict(
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            ),
-            status=dict(
-                name='VALIDATING',
-                detail=[]
-            )
-        )
+        type="DataSourceDesignSpace",
+        name="Example valid data source design space",
+        description="Example valid data source design space based on a GEM Table Data Source.",
+        data_source=valid_gem_data_source_dict
     )
 
 
@@ -649,6 +540,18 @@ def invalid_graph_predictor_data():
     return PredictorEntityDataFactory(
         data=PredictorDataDataFactory(instance=instance),
         meatadata=PredictorMetadataDataFactory(status=status)
+    )
+
+
+@pytest.fixture
+def invalid_design_subspace_data():
+    """Produce invalid valid data used for tests."""
+    return dict(
+        type='invalid',
+        name='my design space',
+        description='does some things',
+        subspaces=[],
+        dimensions=[]
     )
 
 

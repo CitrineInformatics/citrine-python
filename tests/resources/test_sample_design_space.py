@@ -1,7 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
 from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 from citrine.resources.sample_design_space_execution import SampleDesignSpaceExecutionCollection
@@ -15,16 +15,11 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection(session) -> SampleDesignSpaceExecutionCollection:
-    ds = DesignSpace()
+    ds = TopLevelDesignSpace()
     ds._project_id = uuid.uuid4()
     ds.uid = uuid.uuid4()
     ds._session = session
     return ds.sample_design_space_executions
-
-
-@pytest.fixture
-def design_space() -> DesignSpace:
-    return 
 
 
 @pytest.fixture

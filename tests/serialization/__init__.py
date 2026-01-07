@@ -16,7 +16,7 @@ def design_space_serialization_check(data, moduleClass):
     """
     module = moduleClass.build(data)
     serialized = module.dump()
-    assert serialized == valid_serialization_output(data)['data']
+    assert serialized == valid_serialization_output(data)
 
 
 def predictor_serialization_check(json, module_class):
