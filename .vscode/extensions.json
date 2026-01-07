@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        // Linting and formatting
+        "charliermarsh.ruff",
+    ]
+}
