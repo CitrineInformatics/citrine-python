@@ -158,18 +158,14 @@ The predictor we'll evaluate is defined below:
 
 .. code:: python
 
-    from citrine.informatics.data_sources import CSVDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     from citrine.informatics.predictors import AutoMLPredictor
 
+    data_source = GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)
+
     x = RealDescriptor(key='x', lower_bound=0.0, upper_bound=1.0, units='')
     y = RealDescriptor(key='y', lower_bound=0.0, upper_bound=1.0, units='')
-
-    data_source = CSVDataSource(
-        file_link=file, # path to CSV that contains training data for x and y
-        column_definitions={'x': x, 'y': y}
-    )
-
     predictor = AutoMLPredictor(
         name='y predictor',
         description='predicts y given x',
@@ -179,7 +175,7 @@ The predictor we'll evaluate is defined below:
     )
 
 This predictor expects ``x`` as an input and predicts ``y``.
-Training data is provided by a :class:`~citrine.informatics.data_sources.CSVDataSource` that assumes ``filename`` represents the path to a CSV that contains ``x`` and ``y``.
+Training data is provided by a :class:`~citrine.informatics.data_sources.GemTableDataSource` that contains ``x`` and ``y``.
 
 Next, create a project and register the predictor:
 
