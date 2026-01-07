@@ -8,5 +8,5 @@ tqdm==4.66.3
 
 # boto3 (through botocore) depends on urllib3. Version 1.34.35 requires
 # urllib3 < 1.27 when using Python 3.9 or less, and urllib3 < 2.1 otherwise.
-urllib3==1.26.18; python_version < "3.10"
+urllib3==2.6.3; python_version < "3.10"
 urllib3==2.5.0; python_version >= "3.10"
