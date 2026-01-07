@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.design_candidate import DesignCandidate
+from citrine.informatics.design_candidate import DesignCandidate, HierarchicalDesignCandidate
 from citrine.informatics.predict_request import PredictRequest
 from citrine.informatics.scores import Score
 from citrine.informatics.executions.execution import Execution
@@ -54,6 +54,22 @@ class DesignExecution(Resource["DesignExecution"], Execution):
 
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_candidates,
+                                        per_page=per_page)
+
+    @classmethod
+    def _build_hierarchical_candidates(
+            cls, subset_collection: Iterable[dict]) -> Iterable[HierarchicalDesignCandidate]:
+        for candidate in subset_collection:
+            yield HierarchicalDesignCandidate.build(candidate)
+
+    def hierarchical_candidates(self, *, per_page: int = 100) -> Iterable[DesignCandidate]:
+        """Fetch the Design Candidates for the particular execution, paginated."""
+        path = self._path() + '/candidate-histories'
+
+        fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
+
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_hierarchical_candidates,
                                         per_page=per_page)
 
     def predict(self,

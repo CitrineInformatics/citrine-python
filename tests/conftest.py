@@ -840,6 +840,30 @@ def example_hierarchical_design_material(example_design_material):
 
 
 @pytest.fixture()
+def example_hierarchical_candidates(example_hierarchical_design_material):
+    return {
+        "page": 2,
+        "per_page": 4,
+        "response": [{
+            "id": str(uuid.uuid4()),
+            "primary_score": 0,
+            "rank": 1,
+            "material": example_hierarchical_design_material,
+            "name": "Example candidate",
+            "hidden": True,
+            "comments": [
+                {
+                    "message": "a message",
+                    "created": {
+                        "user": str(uuid.uuid4()),
+                        "time": '2025-02-20T10:46:26Z'
+                    }
+                }
+            ]
+        }]
+    }
+
+@pytest.fixture()
 def example_candidates(example_design_material):
     return {
         "page": 2,
