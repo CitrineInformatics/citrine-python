@@ -26,6 +26,7 @@ dependencies = [
 test = [
     "mock",
     "pandas",
+    "pre-commit",
     "pytest",
     "requests-mock",
     "ruff",
