@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
+
 from deprecation import deprecated
 from functools import partial
 from typing import Optional, Union, Iterator
@@ -12,39 +13,52 @@ from citrine.informatics.executions import predictor_evaluation_execution
 from citrine.resources.response import Response
 
 
-class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
+class PredictorEvaluationExecutionCollection(
+    Collection["PredictorEvaluationExecution"]
+):
     """A collection of PredictorEvaluationExecutions."""
 
-    _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
+    _path_template = "/projects/{project_id}/predictor-evaluation-executions"  # noqa
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = predictor_evaluation_execution.PredictorEvaluationExecution
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Predictor evaluation workflows are being eliminated in favor of directly"
-                        "evaluating predictors. Please use Project.predictor_evaluations instead.")
-    def __init__(self,
-                 project_id: UUID,
-                 session: Session,
-                 workflow_id: Optional[UUID] = None):
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Predictor evaluation workflows are being eliminated in favor of directly"
+        "evaluating predictors. Please use Project.predictor_evaluations instead.",
+    )
+    def __init__(
+        self, project_id: UUID, session: Session, workflow_id: Optional[UUID] = None
+    ):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: Optional[UUID] = workflow_id
 
-    def build(self, data: dict) -> predictor_evaluation_execution.PredictorEvaluationExecution:
+    def build(
+        self, data: dict
+    ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
-        execution = predictor_evaluation_execution.PredictorEvaluationExecution.build(data)
+        execution = predictor_evaluation_execution.PredictorEvaluationExecution.build(
+            data
+        )
         execution._session = self.session
         execution.project_id = self.project_id
         return execution
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use PredictorEvaluationCollection.trigger instead.")
-    def trigger(self,
-                predictor_id: UUID,
-                *,
-                predictor_version: Optional[Union[int, str]] = None,
-                random_state: Optional[int] = None):
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Please use PredictorEvaluationCollection.trigger instead.",
+    )
+    def trigger(
+        self,
+        predictor_id: UUID,
+        *,
+        predictor_version: Optional[Union[int, str]] = None,
+        random_state: Optional[int] = None,
+    ):
         """Trigger a predictor evaluation execution against a predictor.
 
         Parameters
@@ -58,14 +72,16 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         """
         if self.workflow_id is None:
-            msg = "Cannot trigger a predictor evaluation execution without knowing the " \
-                  "predictor evaluation workflow. Use workflow.executions.trigger instead of " \
-                  "project.predictor_evaluation_executions.trigger"
+            msg = (
+                "Cannot trigger a predictor evaluation execution without knowing the "
+                "predictor evaluation workflow. Use workflow.executions.trigger instead of "
+                "project.predictor_evaluation_executions.trigger"
+            )
             raise RuntimeError(msg)
         path = format_escaped_url(
-            '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions',
+            "/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions",
             project_id=self.project_id,
-            workflow_id=self.workflow_id
+            workflow_id=self.workflow_id,
         )
 
         params = dict()
@@ -73,26 +89,29 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             params["random_state"] = random_state
 
         payload = PredictorRef(predictor_id, predictor_version).dump()
-        data = self.session.post_resource(path, payload, params=params, version='v2')
+        data = self.session.post_resource(path, payload, params=params, version="v2")
 
         return self.build(data)
 
     @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
-    def register(self,
-                 model: predictor_evaluation_execution.PredictorEvaluationExecution
-                 ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
+    def register(
+        self, model: predictor_evaluation_execution.PredictorEvaluationExecution
+    ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot register an execution."""
         raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
 
     @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
-    def update(self,
-               model: predictor_evaluation_execution.PredictorEvaluationExecution
-               ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
+    def update(
+        self, model: predictor_evaluation_execution.PredictorEvaluationExecution
+    ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use PredictorEvaluation.archive")
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Please use PredictorEvaluation.archive",
+    )
     def archive(self, uid: Union[UUID, str]):
         """Archive a predictor evaluation execution.
 
@@ -102,10 +121,13 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to archive
 
         """
-        self._put_resource_ref('archive', uid)
+        self._put_resource_ref("archive", uid)
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use PredictorEvaluation.restore")
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Please use PredictorEvaluation.restore",
+    )
     def restore(self, uid: Union[UUID, str]):
         """Restore an archived predictor evaluation execution.
 
@@ -115,16 +137,20 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to restore
 
         """
-        self._put_resource_ref('restore', uid)
+        self._put_resource_ref("restore", uid)
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use PredictorEvaluation.list")
-    def list(self,
-             *,
-             per_page: int = 100,
-             predictor_id: Optional[UUID] = None,
-             predictor_version: Optional[Union[int, str]] = None
-             ) -> Iterator[predictor_evaluation_execution.PredictorEvaluationExecution]:
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Please use PredictorEvaluation.list",
+    )
+    def list(
+        self,
+        *,
+        per_page: int = 100,
+        predictor_id: Optional[UUID] = None,
+        predictor_version: Optional[Union[int, str]] = None,
+    ) -> Iterator[predictor_evaluation_execution.PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -154,19 +180,26 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             params["workflow_id"] = str(self.workflow_id)
 
         fetcher = partial(self._fetch_page, additional_params=params)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     @deprecated(deprecated_in="3.23.0", removed_in="4.0.0")
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
-            "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")
+            "Predictor Evaluation Executions cannot be deleted; they can be archived instead."
+        )
 
-    @deprecated(deprecated_in="3.23.0", removed_in="4.0.0",
-                details="Please use PredictorEvaluation.get")
-    def get(self,
-            uid: Union[UUID, str]) -> predictor_evaluation_execution.PredictorEvaluationExecution:
+    @deprecated(
+        deprecated_in="3.23.0",
+        removed_in="4.0.0",
+        details="Please use PredictorEvaluation.get",
+    )
+    def get(
+        self, uid: Union[UUID, str]
+    ) -> predictor_evaluation_execution.PredictorEvaluationExecution:
         """Get a particular element of the collection."""
         return super().get(uid)

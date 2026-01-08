@@ -10,11 +10,7 @@ from citrine.informatics.design_spaces import FormulationDesignSpace
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 
-__all__ = [
-    "TemplateLink",
-    "MaterialNodeDefinition",
-    "HierarchicalDesignSpace"
-]
+__all__ = ["TemplateLink", "MaterialNodeDefinition", "HierarchicalDesignSpace"]
 
 
 class TemplateLink(Serializable["TemplateLink"]):
@@ -35,16 +31,20 @@ class TemplateLink(Serializable["TemplateLink"]):
 
     material_template = properties.UUID("material_template")
     process_template = properties.UUID("process_template")
-    material_template_name = properties.Optional(properties.String, "material_template_name")
-    process_template_name = properties.Optional(properties.String, "process_template_name")
+    material_template_name = properties.Optional(
+        properties.String, "material_template_name"
+    )
+    process_template_name = properties.Optional(
+        properties.String, "process_template_name"
+    )
 
     def __init__(
-            self,
-            *,
-            material_template: UUID,
-            process_template: UUID,
-            material_template_name: Optional[str] = None,
-            process_template_name: Optional[str] = None
+        self,
+        *,
+        material_template: UUID,
+        process_template: UUID,
+        material_template_name: Optional[str] = None,
+        process_template_name: Optional[str] = None,
     ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
@@ -87,19 +87,21 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
     display_name = properties.Optional(properties.String, "display_name")
 
     def __init__(
-            self,
-            *,
-            name: str,
-            scope: Optional[str] = None,
-            attributes: Optional[List[Dimension]] = None,
-            formulation_subspace: Optional[FormulationDesignSpace] = None,
-            template_link: Optional[TemplateLink] = None,
-            display_name: Optional[str] = None
+        self,
+        *,
+        name: str,
+        scope: Optional[str] = None,
+        attributes: Optional[List[Dimension]] = None,
+        formulation_subspace: Optional[FormulationDesignSpace] = None,
+        template_link: Optional[TemplateLink] = None,
+        display_name: Optional[str] = None,
     ):
         self.name = name
         self.scope: Optional[str] = scope
         self.attributes = attributes or list()
-        self.formulation_subspace: Optional[FormulationDesignSpace] = formulation_subspace
+        self.formulation_subspace: Optional[FormulationDesignSpace] = (
+            formulation_subspace
+        )
         self.template_link: Optional[TemplateLink] = template_link
         self.display_name: Optional[str] = display_name
 
@@ -151,7 +153,9 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
 
     """
 
-    _settings = properties.Optional(properties.Object(DesignSpaceSettings), "metadata.settings")
+    _settings = properties.Optional(
+        properties.Object(DesignSpaceSettings), "metadata.settings"
+    )
 
     root = properties.Object(MaterialNodeDefinition, "data.instance.root")
     subspaces = properties.List(
@@ -165,13 +169,13 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
     )
 
     def __init__(
-            self,
-            name: str,
-            *,
-            description: str,
-            root: MaterialNodeDefinition,
-            subspaces: Optional[List[MaterialNodeDefinition]] = None,
-            data_sources: Optional[List[DataSource]] = None
+        self,
+        name: str,
+        *,
+        description: str,
+        root: MaterialNodeDefinition,
+        subspaces: Optional[List[MaterialNodeDefinition]] = None,
+        data_sources: Optional[List[DataSource]] = None,
     ):
         self.name: str = name
         self.description: str = description
@@ -189,8 +193,7 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
         data["instance"]["root"] = self.__unwrap_node(root_node)
 
         data["instance"]["subspaces"] = [
-            self.__unwrap_node(sub_node)
-            for sub_node in data['instance']['subspaces']
+            self.__unwrap_node(sub_node) for sub_node in data["instance"]["subspaces"]
         ]
         return data
 
@@ -200,26 +203,29 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
         data["data"]["instance"]["root"] = cls.__wrap_node(root_node)
 
         data["data"]["instance"]["subspaces"] = [
-            cls.__wrap_node(sub_node) for sub_node in data['data']['instance']['subspaces']
+            cls.__wrap_node(sub_node)
+            for sub_node in data["data"]["instance"]["subspaces"]
         ]
 
         return data
 
     @staticmethod
     def __wrap_node(node_data: dict) -> dict:
-        formulation_subspace = node_data.pop('formulation', None)
+        formulation_subspace = node_data.pop("formulation", None)
         if formulation_subspace:
-            node_data['formulation'] = DesignSpace.wrap_instance(formulation_subspace)
+            node_data["formulation"] = DesignSpace.wrap_instance(formulation_subspace)
         return node_data
 
     @staticmethod
     def __unwrap_node(node_data: dict) -> dict:
-        formulation_subspace = node_data.pop('formulation', None)
+        formulation_subspace = node_data.pop("formulation", None)
         if formulation_subspace:
-            node_data['formulation'] = formulation_subspace['data']['instance']
-            node_data['formulation']['name'] = formulation_subspace['data']['name']
-            node_data['formulation']['description'] = formulation_subspace['data']['description']
+            node_data["formulation"] = formulation_subspace["data"]["instance"]
+            node_data["formulation"]["name"] = formulation_subspace["data"]["name"]
+            node_data["formulation"]["description"] = formulation_subspace["data"][
+                "description"
+            ]
         return node_data
 
     def __repr__(self):
-        return f'<HierarchicalDesignSpace {self.name}>'
+        return f"<HierarchicalDesignSpace {self.name}>"

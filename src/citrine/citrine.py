@@ -26,28 +26,30 @@ class Citrine:
 
     """
 
-    def __init__(self,
-                 api_key: str = None,
-                 *,
-                 scheme: str = None,
-                 host: str = None,
-                 port: Optional[str] = None):
+    def __init__(
+        self,
+        api_key: str = None,
+        *,
+        scheme: str = None,
+        host: str = None,
+        port: Optional[str] = None,
+    ):
         if api_key is None:
-            api_key = environ.get('CITRINE_API_KEY')
+            api_key = environ.get("CITRINE_API_KEY")
         if scheme is None:
-            scheme = 'https'
+            scheme = "https"
 
         if host is None:
-            host = environ.get('CITRINE_API_HOST')
+            host = environ.get("CITRINE_API_HOST")
             if host is None:
-                raise ValueError("No host passed and environmental "
-                                 "variable CITRINE_API_HOST not set.")
+                raise ValueError(
+                    "No host passed and environmental "
+                    "variable CITRINE_API_HOST not set."
+                )
 
-        self.session: Session = Session(refresh_token=api_key,
-                                        scheme=scheme,
-                                        host=host,
-                                        port=port
-                                        )
+        self.session: Session = Session(
+            refresh_token=api_key, scheme=scheme, host=host, port=port
+        )
 
     @property
     def projects(self) -> ProjectCollection:

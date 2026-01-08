@@ -5,10 +5,10 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
-__all__ = ['IngredientCountConstraint']
+__all__ = ["IngredientCountConstraint"]
 
 
-class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Constraint):
+class IngredientCountConstraint(Serializable["IngredientCountConstraint"], Constraint):
     """Represents a constraint on the total number of ingredients in a formulation.
 
     Parameters
@@ -26,17 +26,22 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    min = properties.Integer('min')
-    max = properties.Integer('max')
-    label = properties.Optional(properties.String, 'label')
-    typ = properties.String('type', default='IngredientCountConstraint')
+    formulation_descriptor = properties.Object(
+        FormulationDescriptor, "formulation_descriptor"
+    )
+    min = properties.Integer("min")
+    max = properties.Integer("max")
+    label = properties.Optional(properties.String, "label")
+    typ = properties.String("type", default="IngredientCountConstraint")
 
-    def __init__(self, *,
-                 formulation_descriptor: FormulationDescriptor,
-                 min: int,
-                 max: int,
-                 label: Optional[str] = None):
+    def __init__(
+        self,
+        *,
+        formulation_descriptor: FormulationDescriptor,
+        min: int,
+        max: int,
+        label: Optional[str] = None,
+    ):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.min: int = min
         self.max: int = max

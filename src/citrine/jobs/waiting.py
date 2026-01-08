@@ -5,8 +5,12 @@ from typing import Union
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
+from citrine.informatics.executions.generative_design_execution import (
+    GenerativeDesignExecution,
+)
+from citrine.informatics.executions.sample_design_space_execution import (
+    SampleDesignSpaceExecution,
+)
 from citrine.informatics.executions import PredictorEvaluationExecution
 
 
@@ -32,7 +36,7 @@ def wait_for_asynchronous_object(
     collection: Collection[AsynchronousObject],
     print_status_info: bool = False,
     timeout: float = 1800.0,
-    interval: float = 3.0
+    interval: float = 3.0,
 ) -> AsynchronousObject:
     """
     Wait until an asynchronous object has finished.
@@ -77,11 +81,12 @@ def wait_for_asynchronous_object(
         raise ConditionTimeoutError(
             "Timeout of {timeout_length} seconds "
             "reached, but task {uid} is still in progress".format(
-                timeout_length=timeout, uid=resource.uid)
+                timeout_length=timeout, uid=resource.uid
+            )
         )
 
     current_resource = collection.get(resource.uid)
-    if print_status_info and hasattr(current_resource, 'status_detail'):
+    if print_status_info and hasattr(current_resource, "status_detail"):
         print("\nStatus info:")
         pprint([detail.msg for detail in current_resource.status_detail])
     return current_resource
@@ -122,9 +127,13 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    return wait_for_asynchronous_object(resource=module, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout,
-                                        interval=interval)
+    return wait_for_asynchronous_object(
+        resource=module,
+        collection=collection,
+        print_status_info=print_status_info,
+        timeout=timeout,
+        interval=interval,
+    )
 
 
 def wait_while_executing(
@@ -133,22 +142,22 @@ def wait_while_executing(
         Collection[PredictorEvaluationExecution],
         Collection[DesignExecution],
         Collection[GenerativeDesignExecution],
-        Collection[SampleDesignSpaceExecution]
+        Collection[SampleDesignSpaceExecution],
     ],
     execution: Union[
         PredictorEvaluationExecution,
         DesignExecution,
         GenerativeDesignExecution,
-        SampleDesignSpaceExecution
+        SampleDesignSpaceExecution,
     ],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
 ) -> Union[
-        PredictorEvaluationExecution,
-        DesignExecution,
-        GenerativeDesignExecution,
-        SampleDesignSpaceExecution,
+    PredictorEvaluationExecution,
+    DesignExecution,
+    GenerativeDesignExecution,
+    SampleDesignSpaceExecution,
 ]:
     """
     Wait until execution is finished.
@@ -178,6 +187,10 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    return wait_for_asynchronous_object(resource=execution, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout,
-                                        interval=interval)
+    return wait_for_asynchronous_object(
+        resource=execution,
+        collection=collection,
+        print_status_info=print_status_info,
+        timeout=timeout,
+        interval=interval,
+    )

@@ -2,7 +2,6 @@ from citrine.resources.file_link import FileCollection, FileLink
 
 
 class FakeFileCollection(FileCollection):
-
     def __init__(self):
         self.files = []
 

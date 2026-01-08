@@ -17,18 +17,21 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     description = properties.Optional(properties.String(), "description")
 
     @classmethod
-    def get_type(cls, data) -> Type['PredictorNode']:
+    def get_type(cls, data) -> Type["PredictorNode"]:
         """Return the subtype."""
         from .auto_ml_predictor import AutoMLPredictor
         from .attribute_accumulation_predictor import AttributeAccumulationPredictor
         from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
         from .expression_predictor import ExpressionPredictor
         from .ingredient_fractions_predictor import IngredientFractionsPredictor
-        from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
+        from .ingredients_to_formulation_predictor import (
+            IngredientsToFormulationPredictor,
+        )
         from .label_fractions_predictor import LabelFractionsPredictor
         from .mean_property_predictor import MeanPropertyPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
         from .simple_mixture_predictor import SimpleMixturePredictor
+
         type_dict = {
             "AnalyticExpression": ExpressionPredictor,
             "AttributeAccumulation": AttributeAccumulationPredictor,
@@ -41,11 +44,12 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "SimpleMixture": SimpleMixturePredictor,
         }
-        typ = type_dict.get(data['type'])
+        typ = type_dict.get(data["type"])
         if typ is not None:
             return typ
         else:
             raise ValueError(
-                '{} is not a valid predictor node type. '
-                'Must be in {}.'.format(data['type'], type_dict.keys())
+                "{} is not a valid predictor node type. Must be in {}.".format(
+                    data["type"], type_dict.keys()
+                )
             )

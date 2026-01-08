@@ -1,4 +1,5 @@
 """Top-level class for all object run objects and collections thereof."""
+
 from abc import ABC
 from typing import TypeVar
 

@@ -16,12 +16,11 @@ def test_flatten():
 
     bounds = CategoricalBounds(categories=["foo", "bar"])
     template = ProcessTemplate(
-        "spam",
-        conditions=[(ConditionTemplate(name="eggs", bounds=bounds), bounds)]
+        "spam", conditions=[(ConditionTemplate(name="eggs", bounds=bounds), bounds)]
     )
     spec = ProcessSpec(name="spec", template=template)
 
-    flat = flatten(spec, scope='testing')
+    flat = flatten(spec, scope="testing")
     assert len(flat) == 3, "Expected 3 flattened objects"
 
 

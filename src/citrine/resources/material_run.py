@@ -1,4 +1,5 @@
 """Resources that represent material run data objects."""
+
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
@@ -14,15 +15,14 @@ from gemd.entity.file_link import FileLink
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
-from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
+from gemd.entity.template.material_template import (
+    MaterialTemplate as GEMDMaterialTemplate,
+)
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 
 
 class MaterialRun(
-    GEMDResource['MaterialRun'],
-    ObjectRun,
-    GEMDMaterialRun,
-    typ=GEMDMaterialRun.typ
+    GEMDResource["MaterialRun"], ObjectRun, GEMDMaterialRun, typ=GEMDMaterialRun.typ
 ):
     """
     A material run.
@@ -63,46 +63,59 @@ class MaterialRun(
 
     _response_key = GEMDMaterialRun.typ  # 'material_run'
 
-    name = String('name', override=True, use_init=True)
-    process = PropertyOptional(LinkOrElse(GEMDProcessRun),
-                               'process',
-                               override=True,
-                               use_init=True,)
-    sample_type = PropertyOptional(String, 'sample_type', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDMaterialSpec),
-                            'spec',
-                            override=True,
-                            use_init=True,)
+    name = String("name", override=True, use_init=True)
+    process = PropertyOptional(
+        LinkOrElse(GEMDProcessRun),
+        "process",
+        override=True,
+        use_init=True,
+    )
+    sample_type = PropertyOptional(String, "sample_type", override=True)
+    spec = PropertyOptional(
+        LinkOrElse(GEMDMaterialSpec),
+        "spec",
+        override=True,
+        use_init=True,
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 process: Optional[GEMDProcessRun] = None,
-                 sample_type: Optional[str] = "unknown",
-                 spec: Optional[GEMDMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 default_labels: Optional[List[str]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: Optional[Dict[str, str]] = None,
+        tags: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        process: Optional[GEMDProcessRun] = None,
+        sample_type: Optional[str] = "unknown",
+        spec: Optional[GEMDMaterialSpec] = None,
+        file_links: Optional[List[FileLink]] = None,
+        default_labels: Optional[List[str]] = None,
+    ):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
         super(ObjectRun, self).__init__()
-        GEMDMaterialRun.__init__(self, name=name, uids=uids,
-                                 tags=all_tags, process=process,
-                                 sample_type=sample_type, spec=spec,
-                                 file_links=file_links, notes=notes)
+        GEMDMaterialRun.__init__(
+            self,
+            name=name,
+            uids=uids,
+            tags=all_tags,
+            process=process,
+            sample_type=sample_type,
+            spec=spec,
+            file_links=file_links,
+            notes=notes,
+        )
 
     def __str__(self):
-        return '<Material run {!r}>'.format(self.name)
+        return "<Material run {!r}>".format(self.name)
 
 
 class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     """Represents the collection of all material runs associated with a dataset."""
 
-    _individual_key = 'material_run'
-    _collection_key = 'material_runs'
+    _individual_key = "material_run"
+    _collection_key = "material_runs"
     _resource = MaterialRun
 
     @classmethod
@@ -134,18 +147,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         link = _make_link_by_uid(id)
         path = format_escaped_url(
             "teams/{}/gemd/query/material-histories?filter_nonroot_materials=true",
-            self.team_id)
+            self.team_id,
+        )
         query = {
             "criteria": [
                 {
                     "datasets": [str(self.dataset_id)],
                     "type": "terminal_material_run_identifiers_criteria",
-                    "terminal_material_ids": [
-                        {
-                            "scope": link.scope,
-                            "id": link.id
-                        }
-                    ]
+                    "terminal_material_ids": [{"scope": link.scope, "id": link.id}],
                 }
             ]
         }
@@ -161,9 +170,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         else:
             return None
 
-    def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
-                       ) -> Optional[MaterialRun]:
+    def get_by_process(
+        self, uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+    ) -> Optional[MaterialRun]:
         """
         Get output material of a process.
 
@@ -179,13 +188,12 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         return next(
-            self._get_relation(relation='process-runs', uid=uid, per_page=1),
-            None
+            self._get_relation(relation="process-runs", uid=uid, per_page=1), None
         )
 
-    def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
-                     ) -> Iterator[MaterialRun]:
+    def list_by_spec(
+        self, uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+    ) -> Iterator[MaterialRun]:
         """
         Get the material runs using the specified material spec.
 
@@ -200,11 +208,11 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The material runs using the specified material spec.
 
         """
-        return self._get_relation('material-specs', uid=uid)
+        return self._get_relation("material-specs", uid=uid)
 
-    def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
-                         ) -> Iterator[MaterialRun]:
+    def list_by_template(
+        self, uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+    ) -> Iterator[MaterialRun]:
         """
         Get the material runs using the specified material template.
 
@@ -220,10 +228,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         spec_collection = MaterialSpecCollection(
-            team_id=self.team_id,
-            dataset_id=self.dataset_id,
-            session=self.session
+            team_id=self.team_id, dataset_id=self.dataset_id, session=self.session
         )
         specs = spec_collection.list_by_template(uid=_make_link_by_uid(uid))
-        return (run for runs in (self.list_by_spec(spec) for spec in specs)
-                for run in runs)
+        return (
+            run for runs in (self.list_by_spec(spec) for spec in specs) for run in runs
+        )

@@ -16,8 +16,12 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, *, predictor: Union[GraphPredictor, PredictorNode],
-                                 inputs: List[Descriptor]) -> List[Descriptor]:
+    def from_predictor_responses(
+        self,
+        *,
+        predictor: Union[GraphPredictor, PredictorNode],
+        inputs: List[Descriptor],
+    ) -> List[Descriptor]:
         """
         Get responses for a predictor, given an input space.
 
@@ -42,14 +46,12 @@ class DescriptorMethods:
             predictor_data = predictor.dump()
 
         response = self.session.post_resource(
-            path=format_escaped_url('/projects/{}/material-descriptors/predictor-responses',
-                                    self.project_id),
-            json={
-                'predictor': predictor_data,
-                'inputs': [i.dump() for i in inputs]
-            }
+            path=format_escaped_url(
+                "/projects/{}/material-descriptors/predictor-responses", self.project_id
+            ),
+            json={"predictor": predictor_data, "inputs": [i.dump() for i in inputs]},
         )
-        return [Descriptor.build(r) for r in response['responses']]
+        return [Descriptor.build(r) for r in response["responses"]]
 
     def from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
         """
@@ -67,10 +69,9 @@ class DescriptorMethods:
 
         """
         response = self.session.post_resource(
-            path=format_escaped_url('/projects/{}/material-descriptors/from-data-source',
-                                    self.project_id),
-            json={
-                'data_source': data_source.dump()
-            }
+            path=format_escaped_url(
+                "/projects/{}/material-descriptors/from-data-source", self.project_id
+            ),
+            json={"data_source": data_source.dump()},
         )
-        return [Descriptor.build(r) for r in response['descriptors']]
+        return [Descriptor.build(r) for r in response["descriptors"]]

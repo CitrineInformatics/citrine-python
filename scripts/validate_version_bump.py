@@ -9,7 +9,7 @@ from typing import TextIO
 
 def main():
     repo_dir = popen("git rev-parse --show-toplevel", mode="r").read().rstrip()
-    version_path = relpath(f'{repo_dir}/src/citrine/__version__.py', getcwd())
+    version_path = relpath(f"{repo_dir}/src/citrine/__version__.py", getcwd())
 
     try:
         with open(version_path, "r") as fh:
@@ -18,10 +18,13 @@ def main():
         raise ValueError(f"Couldn't extract version from {version_path}") from e
 
     try:
-        with popen(f"git fetch origin && git show origin/main:src/citrine/__version__.py", mode="r") as fh:
+        with popen(
+            "git fetch origin && git show origin/main:src/citrine/__version__.py",
+            mode="r",
+        ) as fh:
             old_version = extract_version(fh)
     except Exception as e:
-        raise ValueError(f"Couldn't extract version from main branch") from e
+        raise ValueError("Couldn't extract version from main branch") from e
 
     if new_version.major != old_version.major:
         number = "major"
@@ -50,7 +53,7 @@ def main():
 def extract_version(handle: TextIO) -> Version:
     text = handle.read()
     if not re.search(r"\S", text):
-        raise ValueError(f"No content")
+        raise ValueError("No content")
     match = re.search(r"""^\s*__version__\s*=\s*(['"])(\S+)\1""", text, re.MULTILINE)
     if match:
         return Version(match.group(2))

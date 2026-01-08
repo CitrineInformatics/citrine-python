@@ -1,18 +1,15 @@
 from typing import TypeVar, Union
-from uuid import uuid4, UUID
+from uuid import UUID
 
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
-from citrine.informatics.workflows import DesignWorkflow
+from citrine.informatics.workflows import DesignWorkflow, Workflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
-
 from tests.utils.fakes import FakeCollection
 
-WorkflowType = TypeVar('WorkflowType', bound='Workflow')
+WorkflowType = TypeVar("WorkflowType", bound="Workflow")
 
 
 class FakeWorkflowCollection(FakeCollection[WorkflowType]):
-
     def __init__(self, project_id, session: Session):
         FakeCollection.__init__(self)
         self.project_id = project_id
@@ -31,5 +28,7 @@ class FakeWorkflowCollection(FakeCollection[WorkflowType]):
         self.update(workflow)
 
 
-class FakeDesignWorkflowCollection(FakeWorkflowCollection[DesignWorkflow], DesignWorkflowCollection):
+class FakeDesignWorkflowCollection(
+    FakeWorkflowCollection[DesignWorkflow], DesignWorkflowCollection
+):
     pass

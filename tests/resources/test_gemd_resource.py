@@ -1,39 +1,56 @@
 import random
-from uuid import uuid4, UUID
 from os.path import basename
+from uuid import UUID, uuid4
 
 import pytest
-
+from gemd.entity.attribute import Condition, Parameter, Property, PropertyAndConditions
 from gemd.entity.bounds.integer_bounds import IntegerBounds
-from gemd.entity.attribute import Property, Condition, Parameter, PropertyAndConditions
-from gemd.entity.value import NominalInteger
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
-from gemd.entity.object.material_run import MaterialRun as GemdMaterialRun
-from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
-from gemd.entity.object.process_run import ProcessRun as GemdProcessRun
-from gemd.entity.object.measurement_spec import MeasurementSpec as GemdMeasurementSpec
-from gemd.entity.object.measurement_run import MeasurementRun as GemdMeasurementRun
-from gemd.entity.object.ingredient_spec import IngredientSpec as GemdIngredientSpec
 from gemd.entity.object.ingredient_run import IngredientRun as GemdIngredientRun
-from gemd.entity.template.material_template import MaterialTemplate as GemdMaterialTemplate
+from gemd.entity.object.ingredient_spec import IngredientSpec as GemdIngredientSpec
+from gemd.entity.object.material_run import MaterialRun as GemdMaterialRun
+from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
+from gemd.entity.object.measurement_run import MeasurementRun as GemdMeasurementRun
+from gemd.entity.object.measurement_spec import MeasurementSpec as GemdMeasurementSpec
+from gemd.entity.object.process_run import ProcessRun as GemdProcessRun
+from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
+from gemd.entity.template.condition_template import (
+    ConditionTemplate as GemdConditionTemplate,
+)
+from gemd.entity.template.material_template import (
+    MaterialTemplate as GemdMaterialTemplate,
+)
+from gemd.entity.template.measurement_template import (
+    MeasurementTemplate as GemdMeasurementTemplate,
+)
+from gemd.entity.template.parameter_template import (
+    ParameterTemplate as GemdParameterTemplate,
+)
 from gemd.entity.template.process_template import ProcessTemplate as GemdProcessTemplate
-from gemd.entity.template.measurement_template import MeasurementTemplate as GemdMeasurementTemplate
-from gemd.entity.template.condition_template import ConditionTemplate as GemdConditionTemplate
-from gemd.entity.template.parameter_template import ParameterTemplate as GemdParameterTemplate
-from gemd.entity.template.property_template import PropertyTemplate as GemdPropertyTemplate
+from gemd.entity.template.property_template import (
+    PropertyTemplate as GemdPropertyTemplate,
+)
+from gemd.entity.value import NominalInteger
 
-from citrine.exceptions import PollingTimeoutError, JobFailureError
-from citrine.resources.api_error import ApiError, ValidationError
+from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import JobFailureError, PollingTimeoutError
+from citrine.resources.api_error import ApiError
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE, CITRINE_TAG_PREFIX
+from citrine.resources.data_concepts import (
+    CITRINE_SCOPE,
+    CITRINE_TAG_PREFIX,
+    DataConcepts,
+)
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
-from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
+from citrine.resources.material_spec import MaterialSpec, MaterialSpecCollection
+from citrine.resources.material_template import (
+    MaterialTemplate,
+    MaterialTemplateCollection,
+)
 from citrine.resources.measurement_run import MeasurementRun
 from citrine.resources.measurement_spec import MeasurementSpec
 from citrine.resources.measurement_template import MeasurementTemplate
@@ -42,11 +59,12 @@ from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.property_template import PropertyTemplate
-from citrine._utils.functions import format_escaped_url
-
-from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
-from tests.utils.factories import JobSubmissionResponseDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.factories import (
+    JobSubmissionResponseDataFactory,
+    MaterialRunDataFactory,
+    MaterialSpecDataFactory,
+)
+from tests.utils.session import FakeCall, FakeSession
 
 
 @pytest.fixture
@@ -56,24 +74,23 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def gemd_collection(session) -> GEMDResourceCollection:
-    return GEMDResourceCollection(
-        team_id=uuid4(),
-        dataset_id=uuid4(),
-        session=session
-    )
+    return GEMDResourceCollection(team_id=uuid4(), dataset_id=uuid4(), session=session)
+
 
 def test_invalid_collection_construction():
     with pytest.raises(TypeError):
         return GEMDResourceCollection(
-            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-            session=session)
+            dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"), session=session
+        )
+
 
 def test_deprecation_of_positional_arguments(session):
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
+    team_id = UUID("6b608f78-e341-422c-8076-35adc8828000")
+    check_project = {"project": {"team": {"id": team_id}}}
     session.set_response(check_project)
     with pytest.deprecated_call():
-        fcol = GEMDResourceCollection(uuid4(), uuid4(), session)
+        GEMDResourceCollection(uuid4(), uuid4(), session)
+
 
 def sample_gems(nsamples, **kwargs):
     factories = [MaterialRunDataFactory, MaterialSpecDataFactory]
@@ -87,9 +104,7 @@ def test_get_type(gemd_collection):
 def test_list(gemd_collection, session):
     # Given
     samples = sample_gems(20)
-    session.set_response({
-        'contents': samples
-    })
+    session.set_response({"contents": samples})
 
     # When
     gems = list(gemd_collection.list())
@@ -97,52 +112,65 @@ def test_list(gemd_collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='GET',
-        path=format_escaped_url('teams/{}/storables', gemd_collection.team_id, gemd_collection.dataset_id),
+        method="GET",
+        path=format_escaped_url(
+            "teams/{}/storables", gemd_collection.team_id, gemd_collection.dataset_id
+        ),
         params={
-            'dataset_id': str(gemd_collection.dataset_id),
-            'forward': True,
-            'ascending': True,
-            'per_page': 100
-        }
+            "dataset_id": str(gemd_collection.dataset_id),
+            "forward": True,
+            "ascending": True,
+            "per_page": 100,
+        },
     )
     assert expected_call == session.last_call
     assert len(samples) == len(gems)
     for i in range(len(gems)):
-        assert samples[i]['uids']['id'] == gems[i].uids['id']
+        assert samples[i]["uids"]["id"] == gems[i].uids["id"]
 
 
 def test_register(gemd_collection):
     """Check that register routes to the correct collections"""
     targets = [
         MaterialTemplate("foo"),
-        MaterialSpec("foo",
-                     properties=[PropertyAndConditions(
-                         property=Property("prop", value=NominalInteger(1)),
-                         conditions=[Condition("cond", value=NominalInteger(1))],
-                     )]
-                     ),
+        MaterialSpec(
+            "foo",
+            properties=[
+                PropertyAndConditions(
+                    property=Property("prop", value=NominalInteger(1)),
+                    conditions=[Condition("cond", value=NominalInteger(1))],
+                )
+            ],
+        ),
         MaterialRun("foo"),
         ProcessTemplate("foo"),
-        ProcessSpec("foo",
-                    conditions=[Condition("cond", value=NominalInteger(1))],
-                    parameters=[Parameter("para", value=NominalInteger(1))]),
-        ProcessRun("foo",
-                   conditions=[Condition("cond", value=NominalInteger(1))],
-                   parameters=[Parameter("para", value=NominalInteger(1))]),
+        ProcessSpec(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
+        ProcessRun(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
         MeasurementTemplate("foo"),
-        MeasurementSpec("foo",
-                        conditions=[Condition("cond", value=NominalInteger(1))],
-                        parameters=[Parameter("para", value=NominalInteger(1))]),
-        MeasurementRun("foo",
-                       properties=[Property("prop", value=NominalInteger(1))],
-                       conditions=[Condition("cond", value=NominalInteger(1))],
-                       parameters=[Parameter("para", value=NominalInteger(1))]),
+        MeasurementSpec(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
+        MeasurementRun(
+            "foo",
+            properties=[Property("prop", value=NominalInteger(1))],
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
         IngredientSpec("foo"),
         IngredientRun(),
         PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
-        ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+        ConditionTemplate("bar", bounds=IntegerBounds(0, 1)),
     ]
 
     for obj in targets:
@@ -152,7 +180,9 @@ def test_register(gemd_collection):
         registered = gemd_collection.register(obj, dry_run=False)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
-        assert basename(gemd_collection.session.calls[-1].path) == basename(gemd_collection._path_template)
+        assert basename(gemd_collection.session.calls[-1].path) == basename(
+            gemd_collection._path_template
+        )
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
@@ -161,33 +191,44 @@ def test_gemd_register(gemd_collection):
     """Check that register routes to the correct collections"""
     targets = [
         GemdMaterialTemplate("foo"),
-        GemdMaterialSpec("foo",
-                         properties=[PropertyAndConditions(
-                             property=Property("prop", value=NominalInteger(1)),
-                             conditions=[Condition("cond", value=NominalInteger(1))],
-                     )]
-                     ),
+        GemdMaterialSpec(
+            "foo",
+            properties=[
+                PropertyAndConditions(
+                    property=Property("prop", value=NominalInteger(1)),
+                    conditions=[Condition("cond", value=NominalInteger(1))],
+                )
+            ],
+        ),
         GemdMaterialRun("foo"),
         GemdProcessTemplate("foo"),
-        GemdProcessSpec("foo",
-                        conditions=[Condition("cond", value=NominalInteger(1))],
-                        parameters=[Parameter("para", value=NominalInteger(1))]),
-        GemdProcessRun("foo",
-                       conditions=[Condition("cond", value=NominalInteger(1))],
-                       parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdProcessSpec(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
+        GemdProcessRun(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
         GemdMeasurementTemplate("foo"),
-        GemdMeasurementSpec("foo",
-                            conditions=[Condition("cond", value=NominalInteger(1))],
-                            parameters=[Parameter("para", value=NominalInteger(1))]),
-        GemdMeasurementRun("foo",
-                           properties=[Property("prop", value=NominalInteger(1))],
-                           conditions=[Condition("cond", value=NominalInteger(1))],
-                           parameters=[Parameter("para", value=NominalInteger(1))]),
+        GemdMeasurementSpec(
+            "foo",
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
+        GemdMeasurementRun(
+            "foo",
+            properties=[Property("prop", value=NominalInteger(1))],
+            conditions=[Condition("cond", value=NominalInteger(1))],
+            parameters=[Parameter("para", value=NominalInteger(1))],
+        ),
         GemdIngredientSpec("foo"),
         GemdIngredientRun(),
         GemdPropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         GemdParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
-        GemdConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+        GemdConditionTemplate("bar", bounds=IntegerBounds(0, 1)),
     ]
 
     for obj in targets:
@@ -197,7 +238,9 @@ def test_gemd_register(gemd_collection):
         registered = gemd_collection.register(obj, dry_run=False)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
-        assert basename(gemd_collection.session.calls[-1].path) == basename(gemd_collection._path_template)
+        assert basename(gemd_collection.session.calls[-1].path) == basename(
+            gemd_collection._path_template
+        )
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
@@ -205,21 +248,17 @@ def test_gemd_register(gemd_collection):
 def test_register_no_mutate(gemd_collection):
     """Check that register routes to the correct collections"""
     expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo",
-                                                     uids={'scope1': 'A',
-                                                           'scope2': 'B'
-                                                           }
-                                                     ),
-        MaterialSpecCollection: MaterialSpec("foo",
-                                             uids={'id': str(uuid4())}
-                                             ),
+        MaterialTemplateCollection: MaterialTemplate(
+            "foo", uids={"scope1": "A", "scope2": "B"}
+        ),
+        MaterialSpecCollection: MaterialSpec("foo", uids={"id": str(uuid4())}),
     }
     for specific_collection, obj in expected.items():
         len_before = len(obj.uids)
         registered = gemd_collection.register(obj)
         assert len(obj.uids) == len_before
         for pair in registered.uids.items():
-            assert pair[1] == obj.uids.get(pair[0], 'No such key')
+            assert pair[1] == obj.uids.get(pair[0], "No such key")
 
 
 def test_register_all(gemd_collection):
@@ -228,39 +267,67 @@ def test_register_all(gemd_collection):
     property_template = PropertyTemplate("bar", bounds=bounds)
     parameter_template = ParameterTemplate("bar", bounds=bounds)
     condition_template = ConditionTemplate("bar", bounds=bounds)
-    foo_process_template = ProcessTemplate("foo",
-                                           conditions=[[condition_template, bounds]],
-                                           parameters=[[parameter_template, bounds]])
+    foo_process_template = ProcessTemplate(
+        "foo",
+        conditions=[[condition_template, bounds]],
+        parameters=[[parameter_template, bounds]],
+    )
 
     foo_process_spec = ProcessSpec("foo", template=foo_process_template)
     foo_process_run = ProcessRun("foo", spec=foo_process_spec)
-    foo_material_template = MaterialTemplate("foo", properties=[[property_template, bounds]])
-    foo_material_spec = MaterialSpec("foo", template=foo_material_template, process=foo_process_spec)
-    foo_material_run = MaterialRun("foo", spec=foo_material_spec, process=foo_process_run)
-    foo_measurement_template = MeasurementTemplate("foo",
-                                                   conditions=[[condition_template, bounds]],
-                                                   parameters=[[parameter_template, bounds]],
-                                                   properties=[[property_template, bounds]])
+    foo_material_template = MaterialTemplate(
+        "foo", properties=[[property_template, bounds]]
+    )
+    foo_material_spec = MaterialSpec(
+        "foo", template=foo_material_template, process=foo_process_spec
+    )
+    foo_material_run = MaterialRun(
+        "foo", spec=foo_material_spec, process=foo_process_run
+    )
+    foo_measurement_template = MeasurementTemplate(
+        "foo",
+        conditions=[[condition_template, bounds]],
+        parameters=[[parameter_template, bounds]],
+        properties=[[property_template, bounds]],
+    )
     foo_measurement_spec = MeasurementSpec("foo", template=foo_measurement_template)
-    foo_measurement_run = MeasurementRun("foo", spec=foo_measurement_spec, material=foo_material_run)
+    foo_measurement_run = MeasurementRun(
+        "foo", spec=foo_measurement_spec, material=foo_material_run
+    )
 
-    baz_process_template = ProcessTemplate("baz",
-                                           conditions=[[condition_template, bounds]],
-                                           parameters=[[parameter_template, bounds]])
+    baz_process_template = ProcessTemplate(
+        "baz",
+        conditions=[[condition_template, bounds]],
+        parameters=[[parameter_template, bounds]],
+    )
     baz_process_spec = ProcessSpec("baz", template=baz_process_template)
     baz_process_run = ProcessRun("baz", spec=baz_process_spec)
-    baz_material_template = MaterialTemplate("baz", properties=[[property_template, bounds]])
-    baz_material_spec = MaterialSpec("baz", template=baz_material_template, process=baz_process_spec)
-    baz_material_run = MaterialRun("baz", spec=baz_material_spec, process=baz_process_run)
-    baz_measurement_template = MeasurementTemplate("baz",
-                                                   conditions=[[condition_template, bounds]],
-                                                   parameters=[[parameter_template, bounds]],
-                                                   properties=[[property_template, bounds]])
+    baz_material_template = MaterialTemplate(
+        "baz", properties=[[property_template, bounds]]
+    )
+    baz_material_spec = MaterialSpec(
+        "baz", template=baz_material_template, process=baz_process_spec
+    )
+    baz_material_run = MaterialRun(
+        "baz", spec=baz_material_spec, process=baz_process_run
+    )
+    baz_measurement_template = MeasurementTemplate(
+        "baz",
+        conditions=[[condition_template, bounds]],
+        parameters=[[parameter_template, bounds]],
+        properties=[[property_template, bounds]],
+    )
     baz_measurement_spec = MeasurementSpec("baz", template=baz_measurement_template)
-    baz_measurement_run = MeasurementRun("baz", spec=baz_measurement_spec, material=baz_material_run)
+    baz_measurement_run = MeasurementRun(
+        "baz", spec=baz_measurement_spec, material=baz_material_run
+    )
 
-    foo_baz_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=baz_process_spec)
-    foo_baz_ingredient_run = IngredientRun(spec=foo_baz_ingredient_spec, material=foo_material_run, process=baz_process_run)
+    foo_baz_ingredient_spec = IngredientSpec(
+        "foo", material=foo_material_spec, process=baz_process_spec
+    )
+    foo_baz_ingredient_run = IngredientRun(
+        spec=foo_baz_ingredient_spec, material=foo_material_run, process=baz_process_run
+    )
 
     expected = [
         foo_baz_ingredient_run,
@@ -274,7 +341,6 @@ def test_register_all(gemd_collection):
         foo_process_run,
         foo_process_spec,
         foo_process_template,
-
         baz_measurement_run,
         baz_measurement_spec,
         baz_measurement_template,
@@ -284,10 +350,9 @@ def test_register_all(gemd_collection):
         baz_process_run,
         baz_process_spec,
         baz_process_template,
-
         property_template,
         parameter_template,
-        condition_template
+        condition_template,
     ]
 
     for obj in expected:
@@ -320,7 +385,12 @@ def test_register_all(gemd_collection):
 
 def test_register_all_dry_run(gemd_collection):
     """Verify expected behavior around batching.  Note we cannot actually test dependencies."""
-    from gemd.demo.cake import make_cake_templates, make_cake_spec, make_cake, change_scope
+    from gemd.demo.cake import (
+        change_scope,
+        make_cake,
+        make_cake_spec,
+        make_cake_templates,
+    )
     from gemd.util import flatten
 
     change_scope("pr-688")
@@ -355,7 +425,9 @@ def test_register_all_object_update(gemd_collection):
     process = GemdProcessSpec("process")
     material = GemdMaterialSpec("material", process=process)
 
-    registered_process, registered_material = gemd_collection.register_all([process, material])
+    registered_process, registered_material = gemd_collection.register_all(
+        [process, material]
+    )
 
     assert process.uids == registered_process.uids
     assert material.uids == registered_material.uids
@@ -376,14 +448,22 @@ def test_delete(gemd_collection, session):
 
     for obj in targets:
         for dry_run in True, False:
-            session.set_response(obj.dump())  # Delete calls get, must return object data internally
+            session.set_response(
+                obj.dump()
+            )  # Delete calls get, must return object data internally
             gemd_collection.delete(obj, dry_run=dry_run)
-            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(gemd_collection._path_template)
+            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(
+                gemd_collection._path_template
+            )
 
             # And again, with uids
-            session.set_response(obj.dump())  # Delete calls get, must return object data internally
+            session.set_response(
+                obj.dump()
+            )  # Delete calls get, must return object data internally
             gemd_collection.delete(obj.uid, dry_run=dry_run)
-            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(gemd_collection._path_template)
+            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(
+                gemd_collection._path_template
+            )
 
 
 def test_update(gemd_collection):
@@ -393,20 +473,19 @@ def test_update(gemd_collection):
     template.description = "updated description"
     template_updated = gemd_collection.update(template)
     assert template_updated == template
-    assert gemd_collection.session.calls[0].path == gemd_collection.session.calls[1].path
+    assert (
+        gemd_collection.session.calls[0].path == gemd_collection.session.calls[1].path
+    )
 
 
 def test_async_update(gemd_collection, session):
     """Check that async update returns appropriately returns None on success."""
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
     fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Success',
-        'tasks': [],
-        'output': {}
+        "job_type": "some_typ",
+        "status": "Success",
+        "tasks": [],
+        "output": {},
     }
 
     session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
@@ -418,10 +497,7 @@ def test_async_update(gemd_collection, session):
 def test_async_update_and_no_dataset_id(gemd_collection, session):
     """Ensure async_update requires a dataset id"""
 
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
 
     session.set_response(JobSubmissionResponseDataFactory())
     gemd_collection.dataset_id = None
@@ -433,36 +509,29 @@ def test_async_update_and_no_dataset_id(gemd_collection, session):
 def test_async_update_timeout(gemd_collection, session):
     """Ensure the proper exception is thrown on a timeout error"""
 
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
     fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Pending',
-        'tasks': [],
-        'output': {}
+        "job_type": "some_typ",
+        "status": "Pending",
+        "tasks": [],
+        "output": {},
     }
 
     session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
 
     with pytest.raises(PollingTimeoutError):
-        gemd_collection.async_update(obj, wait_for_response=True,
-                                               timeout=-1.0)
+        gemd_collection.async_update(obj, wait_for_response=True, timeout=-1.0)
 
 
 def test_async_update_and_wait(gemd_collection, session):
     """Check that async_update parses the response when waiting"""
 
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
     fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Success',
-        'tasks': [],
-        'output': {}
+        "job_type": "some_typ",
+        "status": "Success",
+        "tasks": [],
+        "output": {},
     }
 
     session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
@@ -474,15 +543,12 @@ def test_async_update_and_wait(gemd_collection, session):
 def test_async_update_and_wait_failure(gemd_collection, session):
     """Check that async_update parses the failure correctly"""
 
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
     fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Failure',
-        'tasks': [],
-        'output': {}
+        "job_type": "some_typ",
+        "status": "Failure",
+        "tasks": [],
+        "output": {},
     }
 
     session.set_responses(JobSubmissionResponseDataFactory(), fake_job_status_resp)
@@ -494,10 +560,7 @@ def test_async_update_and_wait_failure(gemd_collection, session):
 def test_async_update_with_no_wait(gemd_collection, session):
     """Check that async_update parses the response when not waiting"""
 
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
+    obj = ProcessTemplate("foo", uids={"id": str(uuid4())})
 
     session.set_response(JobSubmissionResponseDataFactory())
     job_id = gemd_collection.async_update(obj, wait_for_response=False)
@@ -505,44 +568,41 @@ def test_async_update_with_no_wait(gemd_collection, session):
 
 
 def test_batch_delete(gemd_collection, session):
-    job_resp = {
-        'job_id': '1234'
-    }
+    job_resp = {"job_id": "1234"}
 
     import json
-    failures_escaped_json = json.dumps([
-        {
-            "id": {
-                'scope': 'somescope',
-                'id': 'abcd-1234'
-            },
-            'cause': {
-                "code": 400,
-                "message": "",
-                "validation_errors": [
-                    {
-                        "failure_message": "fail msg",
-                        "failure_id": "identifier.coreid.missing"
-                    }
-                ]
+
+    failures_escaped_json = json.dumps(
+        [
+            {
+                "id": {"scope": "somescope", "id": "abcd-1234"},
+                "cause": {
+                    "code": 400,
+                    "message": "",
+                    "validation_errors": [
+                        {
+                            "failure_message": "fail msg",
+                            "failure_id": "identifier.coreid.missing",
+                        }
+                    ],
+                },
             }
-        }
-    ])
+        ]
+    )
 
     failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
-            'failures': failures_escaped_json
-        }
+        "job_type": "batch_delete",
+        "status": "Success",
+        "tasks": [],
+        "output": {"failures": failures_escaped_json},
     }
 
     session.set_responses(job_resp, failed_job_resp)
 
     # When
-    del_resp = gemd_collection.batch_delete([UUID(
-        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    del_resp = gemd_collection.batch_delete(
+        [UUID("16fd2706-8baf-433b-82eb-8c7fada847da")]
+    )
 
     # Then
     assert 2 == session.num_calls
@@ -550,13 +610,20 @@ def test_batch_delete(gemd_collection, session):
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
-    expected_api_error = ApiError.build({
-        "code": "400",
-        "message": "",
-        "validation_errors": [{"failure_message": "fail msg", "failure_id": "identifier.coreid.missing"}]
-    })
+    expected_api_error = ApiError.build(
+        {
+            "code": "400",
+            "message": "",
+            "validation_errors": [
+                {
+                    "failure_message": "fail msg",
+                    "failure_id": "identifier.coreid.missing",
+                }
+            ],
+        }
+    )
 
-    assert first_failure[0] == LinkByUID('somescope', 'abcd-1234')
+    assert first_failure[0] == LinkByUID("somescope", "abcd-1234")
     assert first_failure[1].dump() == expected_api_error.dump()
 
 
@@ -569,20 +636,33 @@ def test_type_passthrough(gemd_collection, session):
     """Verify objects that are not directly referenced by objects (e.g., a tuple of Templates) don't get type information stripped."""
     # Generate some metadata
     metadata = {
-        'dataset': str(uuid4()),
-        'audit_info': AuditInfo.build({"created_by": str(uuid4()),
-                                       "created_at": 1559933807392
-                                       }),
-        "tags": [f"{CITRINE_TAG_PREFIX}::added"]
+        "dataset": str(uuid4()),
+        "audit_info": AuditInfo.build(
+            {"created_by": str(uuid4()), "created_at": 1559933807392}
+        ),
+        "tags": [f"{CITRINE_TAG_PREFIX}::added"],
     }
     # Set up the Condition Templates
     low_tmpl, high_tmpl = [
-        ConditionTemplate('condition low', uids={CITRINE_SCOPE: str(uuid4())}, bounds=IntegerBounds(1, 10)),
-        ConditionTemplate('condition high', uids={CITRINE_SCOPE: str(uuid4())}, bounds=IntegerBounds(11, 20)),
+        ConditionTemplate(
+            "condition low",
+            uids={CITRINE_SCOPE: str(uuid4())},
+            bounds=IntegerBounds(1, 10),
+        ),
+        ConditionTemplate(
+            "condition high",
+            uids={CITRINE_SCOPE: str(uuid4())},
+            bounds=IntegerBounds(11, 20),
+        ),
     ]
-    session.set_response({"objects": [dict(low_tmpl.dump(), **metadata),
-                                      dict(high_tmpl.dump(), **metadata),
-                                      ]})
+    session.set_response(
+        {
+            "objects": [
+                dict(low_tmpl.dump(), **metadata),
+                dict(high_tmpl.dump(), **metadata),
+            ]
+        }
+    )
     low_tmpl, high_tmpl = gemd_collection.register_all([low_tmpl, high_tmpl])
     assert low_tmpl.dataset is not None
     assert low_tmpl.audit_info is not None
@@ -590,10 +670,12 @@ def test_type_passthrough(gemd_collection, session):
     assert high_tmpl.audit_info is not None
 
     ptempl = ProcessTemplate(
-        'my template',
+        "my template",
         uids={CITRINE_SCOPE: str(uuid4())},
-        conditions=[(low_tmpl, IntegerBounds(2, 4)), (high_tmpl, IntegerBounds(12, 15))],
-
+        conditions=[
+            (low_tmpl, IntegerBounds(2, 4)),
+            (high_tmpl, IntegerBounds(12, 15)),
+        ],
     )
     session.set_response(dict(ptempl.dump(), **metadata))
     ptempl = gemd_collection.register(ptempl)
@@ -602,37 +684,36 @@ def test_type_passthrough(gemd_collection, session):
 
     arr = [
         ProcessSpec(
-            'foo',
+            "foo",
             uids={CITRINE_SCOPE: str(uuid4())},
             template=ptempl,
             conditions=[
-                Condition(name='low', value=NominalInteger(3), template=low_tmpl),
-                Condition(name='high', value=NominalInteger(13), template=high_tmpl),
-            ]
+                Condition(name="low", value=NominalInteger(3), template=low_tmpl),
+                Condition(name="high", value=NominalInteger(13), template=high_tmpl),
+            ],
         ),
         ProcessSpec(
-            'bar',
+            "bar",
             uids={CITRINE_SCOPE: str(uuid4())},
             template=ptempl,
             conditions=[
-                Condition(name='high', value=NominalInteger(14), template=high_tmpl),
-            ]
+                Condition(name="high", value=NominalInteger(14), template=high_tmpl),
+            ],
         ),
-        ProcessSpec('baz', uids={CITRINE_SCOPE: str(uuid4())}),
+        ProcessSpec("baz", uids={CITRINE_SCOPE: str(uuid4())}),
     ]
     session.set_response({"objects": [dict(x.dump(), **metadata) for x in arr]})
     pspecs = gemd_collection.register_all(arr)
-    assert [s.name for s in pspecs] == ['foo', 'bar', 'baz']
+    assert [s.name for s in pspecs] == ["foo", "bar", "baz"]
     assert pspecs == arr
 
 
 def test_tag_magic(gemd_collection, session):
     auto_tag = f"{CITRINE_TAG_PREFIX}::added"
-    additions = {"tags": ["tag", auto_tag],
-                 "uids": {CITRINE_SCOPE: str(uuid4()),
-                          "original": "id"
-                          }
-                 }
+    additions = {
+        "tags": ["tag", auto_tag],
+        "uids": {CITRINE_SCOPE: str(uuid4()), "original": "id"},
+    }
 
     obj1 = ProcessSpec("one", tags=["tag"], uids={"original": "id"})
     session.set_response(dict(obj1.dump(), **additions))

@@ -5,17 +5,17 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization import properties
 
 __all__ = [
-    'ExperimentValue',
-    'RealExperimentValue',
-    'IntegerExperimentValue',
-    'CategoricalExperimentValue',
-    'MixtureExperimentValue',
-    'ChemicalFormulaExperimentValue',
-    'MolecularStructureExperimentValue'
+    "ExperimentValue",
+    "RealExperimentValue",
+    "IntegerExperimentValue",
+    "CategoricalExperimentValue",
+    "MixtureExperimentValue",
+    "ChemicalFormulaExperimentValue",
+    "MolecularStructureExperimentValue",
 ]
 
 
-class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
+class ExperimentValue(PolymorphicSerializable["ExperimentValue"]):
     """An container for experiment values.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -61,70 +61,77 @@ class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
         [self.__getattribute__(key) for key in attrs]
 
         try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
+            return all(
+                [
+                    self.__getattribute__(key) == other.__getattribute__(key)
+                    for key in attrs
+                ]
+            )
         except AttributeError:
             return False
 
 
-class RealExperimentValue(Serializable['RealExperimentValue'], ExperimentValue):
+class RealExperimentValue(Serializable["RealExperimentValue"], ExperimentValue):
     """A floating point experiment result."""
 
-    value = properties.Float('value')
-    typ = properties.String('type', default='RealValue', deserializable=False)
+    value = properties.Float("value")
+    typ = properties.String("type", default="RealValue", deserializable=False)
 
     def __init__(self, value: float):
         self.value = value
 
 
-class IntegerExperimentValue(Serializable['IntegerExperimentValue'], ExperimentValue):
+class IntegerExperimentValue(Serializable["IntegerExperimentValue"], ExperimentValue):
     """An integer value experiment result."""
 
-    value = properties.Integer('value')
-    typ = properties.String('type', default='IntegerValue', deserializable=False)
+    value = properties.Integer("value")
+    typ = properties.String("type", default="IntegerValue", deserializable=False)
 
     def __init__(self, value: int):
         self.value = value
 
 
-class CategoricalExperimentValue(Serializable['CategoricalExperimentValue'], ExperimentValue):
+class CategoricalExperimentValue(
+    Serializable["CategoricalExperimentValue"], ExperimentValue
+):
     """An experiment result with a categorical value."""
 
-    value = properties.String('value')
-    typ = properties.String('type', default='CategoricalValue', deserializable=False)
+    value = properties.String("value")
+    typ = properties.String("type", default="CategoricalValue", deserializable=False)
 
     def __init__(self, value: str):
         self.value = value
 
 
-class MixtureExperimentValue(Serializable['MixtureExperimentValue'], ExperimentValue):
+class MixtureExperimentValue(Serializable["MixtureExperimentValue"], ExperimentValue):
     """An experiment result mapping ingredients and labels to real values."""
 
-    value = properties.Mapping(properties.String, properties.Float, 'value')
-    typ = properties.String('type', default='MixtureValue', deserializable=False)
+    value = properties.Mapping(properties.String, properties.Float, "value")
+    typ = properties.String("type", default="MixtureValue", deserializable=False)
 
     def __init__(self, value: Dict[str, float]):
         self.value = value
 
 
-class ChemicalFormulaExperimentValue(Serializable['ChemicalFormulaExperimentValue'],
-                                     ExperimentValue):
+class ChemicalFormulaExperimentValue(
+    Serializable["ChemicalFormulaExperimentValue"], ExperimentValue
+):
     """Experiment value for a chemical formula."""
 
-    value = properties.String('value')
-    typ = properties.String('type', default='InorganicValue', deserializable=False)
+    value = properties.String("value")
+    typ = properties.String("type", default="InorganicValue", deserializable=False)
 
     def __init__(self, value: str):
         self.value = value
 
 
-class MolecularStructureExperimentValue(Serializable['MolecularStructureExperimentValue'],
-                                        ExperimentValue):
+class MolecularStructureExperimentValue(
+    Serializable["MolecularStructureExperimentValue"], ExperimentValue
+):
     """Experiment value for a molecular structure."""
 
-    value = properties.String('value')
-    typ = properties.String('type', default='OrganicValue', deserializable=False)
+    value = properties.String("value")
+    typ = properties.String("type", default="OrganicValue", deserializable=False)
 
     def __init__(self, value: str):
         self.value = value

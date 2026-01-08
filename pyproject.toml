@@ -24,6 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
+    "factory-boy",
     "mock",
     "pandas",
     "pre-commit",

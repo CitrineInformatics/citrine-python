@@ -2,10 +2,10 @@
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 
-__all__ = ['Constraint']
+__all__ = ["Constraint"]
 
 
-class Constraint(PolymorphicSerializable['Constraint']):
+class Constraint(PolymorphicSerializable["Constraint"]):
     """A Citrine Constraint places restrictions on a design space.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -24,13 +24,14 @@ class Constraint(PolymorphicSerializable['Constraint']):
         from .integer_range_constraint import IntegerRangeConstraint
         from .categorical_constraint import AcceptableCategoriesConstraint
         from .ingredient_ratio_constraint import IngredientRatioConstraint
+
         return {
-            'Categorical': AcceptableCategoriesConstraint,  # Kept for backwards compatibility.
-            'AcceptableCategoriesConstraint': AcceptableCategoriesConstraint,
-            'IngredientCountConstraint': IngredientCountConstraint,
-            'IngredientFractionConstraint': IngredientFractionConstraint,
-            'LabelFractionConstraint': LabelFractionConstraint,
-            'ScalarRange': ScalarRangeConstraint,
-            'IntegerRange': IntegerRangeConstraint,
-            'IngredientRatio': IngredientRatioConstraint,
-        }[data['type']]
+            "Categorical": AcceptableCategoriesConstraint,  # Kept for backwards compatibility.
+            "AcceptableCategoriesConstraint": AcceptableCategoriesConstraint,
+            "IngredientCountConstraint": IngredientCountConstraint,
+            "IngredientFractionConstraint": IngredientFractionConstraint,
+            "LabelFractionConstraint": LabelFractionConstraint,
+            "ScalarRange": ScalarRangeConstraint,
+            "IntegerRange": IntegerRangeConstraint,
+            "IngredientRatio": IngredientRatioConstraint,
+        }[data["type"]]

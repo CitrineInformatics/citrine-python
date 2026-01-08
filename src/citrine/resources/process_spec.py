@@ -1,4 +1,5 @@
 """Resources that represent process spec objects."""
+
 from typing import Optional, Dict, List, Type, Union, Iterator
 from uuid import UUID
 
@@ -16,10 +17,7 @@ from gemd.entity.template.process_template import ProcessTemplate as GEMDProcess
 
 
 class ProcessSpec(
-    GEMDResource['ProcessSpec'],
-    ObjectSpec,
-    GEMDProcessSpec,
-    typ=GEMDProcessSpec.typ
+    GEMDResource["ProcessSpec"], ObjectSpec, GEMDProcessSpec, typ=GEMDProcessSpec.typ
 ):
     """
     A process specification.
@@ -53,41 +51,56 @@ class ProcessSpec(
 
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
-    name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    template = PropertyOptional(LinkOrElse(GEMDProcessTemplate),
-                                'template', override=True,
-                                use_init=True,
-                                )
+    name = String("name", override=True, use_init=True)
+    conditions = PropertyOptional(
+        PropertyList(Object(Condition)), "conditions", override=True
+    )
+    parameters = PropertyOptional(
+        PropertyList(Object(Parameter)), "parameters", override=True
+    )
+    template = PropertyOptional(
+        LinkOrElse(GEMDProcessTemplate),
+        "template",
+        override=True,
+        use_init=True,
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 parameters: Optional[List[Parameter]] = None,
-                 template: Optional[GEMDProcessTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None
-                 ):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: Optional[Dict[str, str]] = None,
+        tags: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        conditions: Optional[List[Condition]] = None,
+        parameters: Optional[List[Parameter]] = None,
+        template: Optional[GEMDProcessTemplate] = None,
+        file_links: Optional[List[FileLink]] = None,
+    ):
         if uids is None:
             uids = dict()
         super(ObjectSpec, self).__init__()
-        GEMDProcessSpec.__init__(self, name=name, uids=uids,
-                                 tags=tags, conditions=conditions, parameters=parameters,
-                                 template=template, file_links=file_links, notes=notes)
+        GEMDProcessSpec.__init__(
+            self,
+            name=name,
+            uids=uids,
+            tags=tags,
+            conditions=conditions,
+            parameters=parameters,
+            template=template,
+            file_links=file_links,
+            notes=notes,
+        )
 
     def __str__(self):
-        return '<Process spec {!r}>'.format(self.name)
+        return "<Process spec {!r}>".format(self.name)
 
 
 class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     """Represents the collection of all process specs associated with a dataset."""
 
-    _individual_key = 'process_spec'
-    _collection_key = 'process_specs'
+    _individual_key = "process_spec"
+    _collection_key = "process_specs"
     _resource = ProcessSpec
 
     @classmethod
@@ -95,9 +108,9 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
-                         ) -> Iterator[ProcessSpec]:
+    def list_by_template(
+        self, uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
+    ) -> Iterator[ProcessSpec]:
         """
         Get the process specs using the specified process template.
 
@@ -112,4 +125,4 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
             The process specs using the specified process template
 
         """
-        return self._get_relation('process-templates', uid=uid)
+        return self._get_relation("process-templates", uid=uid)

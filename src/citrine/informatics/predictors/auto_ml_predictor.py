@@ -9,7 +9,7 @@ from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['AutoMLPredictor', 'AutoMLEstimator']
+__all__ = ["AutoMLPredictor", "AutoMLEstimator"]
 
 
 class AutoMLEstimator(BaseEnumeration):
@@ -62,50 +62,58 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
 
     """
 
-    inputs = _properties.List(_properties.Object(Descriptor), 'inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'outputs')
+    inputs = _properties.List(_properties.Object(Descriptor), "inputs")
+    outputs = _properties.List(_properties.Object(Descriptor), "outputs")
     estimators = _properties.Set(
         _properties.Enumeration(AutoMLEstimator),
-        'estimators',
-        default={AutoMLEstimator.RANDOM_FOREST}
+        "estimators",
+        default={AutoMLEstimator.RANDOM_FOREST},
     )
     _training_data = _properties.List(
-        _properties.Object(DataSource),
-        'training_data',
-        default=[]
+        _properties.Object(DataSource), "training_data", default=[]
     )
 
-    typ = _properties.String('type', default='AutoML', deserializable=False)
+    typ = _properties.String("type", default="AutoML", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 outputs: List[Descriptor],
-                 inputs: List[Descriptor],
-                 estimators: Optional[Set[AutoMLEstimator]] = None,
-                 training_data: Optional[List[DataSource]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        outputs: List[Descriptor],
+        inputs: List[Descriptor],
+        estimators: Optional[Set[AutoMLEstimator]] = None,
+        training_data: Optional[List[DataSource]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
-        self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
+        self.estimators: Set[AutoMLEstimator] = estimators or {
+            AutoMLEstimator.RANDOM_FOREST
+        }
         self.outputs = outputs
         # self.training_data: List[DataSource] = training_data or []
         if training_data:
             self.training_data: List[DataSource] = training_data
 
     @property
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data must be accessed through the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data must be accessed through the top-level GraphPredictor.'",
+    )
     def training_data(self):
         """[DEPRECATED] Retrieve training data associated with this node."""
         return self._training_data
 
     @training_data.setter
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data should only be added to the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data should only be added to the top-level GraphPredictor.'",
+    )
     def training_data(self, value):
         self._training_data = value
 
     def __str__(self):
-        return '<AutoMLPredictor {!r}>'.format(self.name)
+        return "<AutoMLPredictor {!r}>".format(self.name)

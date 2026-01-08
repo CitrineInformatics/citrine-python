@@ -1,25 +1,53 @@
 """Tests for citrine.informatics.columns."""
+
 import pytest
 
-from citrine.gemtables.columns import *
+from citrine.gemtables.columns import (
+    ChemicalDisplayFormat,
+    Column,
+    ComponentQuantityColumn,
+    CompositionSortOrder,
+    ConcatColumn,
+    FlatCompositionColumn,
+    IdentityColumn,
+    MeanColumn,
+    MolecularStructureColumn,
+    MostLikelyCategoryColumn,
+    MostLikelyProbabilityColumn,
+    NthBiggestComponentNameColumn,
+    NthBiggestComponentQuantityColumn,
+    OriginalUnitsColumn,
+    QuantileColumn,
+    StdDevColumn,
+)
 from citrine.gemtables.variables import TerminalMaterialInfo
 
 
-@pytest.fixture(params=[
-    IdentityColumn(data_source="terminal name"),
-    MeanColumn(data_source="density", target_units="g/cm^3"),
-    StdDevColumn(data_source="density", target_units="g/cm^3"),
-    QuantileColumn(data_source="density", quantile=0.95),
-    OriginalUnitsColumn(data_source="density"),
-    MostLikelyCategoryColumn(data_source="color"),
-    MostLikelyProbabilityColumn(data_source="color"),
-    FlatCompositionColumn(data_source="formula", sort_order=CompositionSortOrder.QUANTITY),
-    ComponentQuantityColumn(data_source="formula", component_name="Si", normalize=True),
-    NthBiggestComponentNameColumn(data_source="formula", n=1),
-    NthBiggestComponentQuantityColumn(data_source="formula", n=2),
-    MolecularStructureColumn(data_source="molecule", format=ChemicalDisplayFormat.SMILES),
-    ConcatColumn(data_source="labels", subcolumn=IdentityColumn(data_source="terminal name"))
-])
+@pytest.fixture(
+    params=[
+        IdentityColumn(data_source="terminal name"),
+        MeanColumn(data_source="density", target_units="g/cm^3"),
+        StdDevColumn(data_source="density", target_units="g/cm^3"),
+        QuantileColumn(data_source="density", quantile=0.95),
+        OriginalUnitsColumn(data_source="density"),
+        MostLikelyCategoryColumn(data_source="color"),
+        MostLikelyProbabilityColumn(data_source="color"),
+        FlatCompositionColumn(
+            data_source="formula", sort_order=CompositionSortOrder.QUANTITY
+        ),
+        ComponentQuantityColumn(
+            data_source="formula", component_name="Si", normalize=True
+        ),
+        NthBiggestComponentNameColumn(data_source="formula", n=1),
+        NthBiggestComponentQuantityColumn(data_source="formula", n=2),
+        MolecularStructureColumn(
+            data_source="molecule", format=ChemicalDisplayFormat.SMILES
+        ),
+        ConcatColumn(
+            data_source="labels", subcolumn=IdentityColumn(data_source="terminal name")
+        ),
+    ]
+)
 def column(request):
     return request.param
 
@@ -46,10 +74,9 @@ def test_invalid_deser():
 
 def test_data_source_args():
     terminal_name = "terminal name"
-    var = TerminalMaterialInfo(name=terminal_name,
-                               headers=[terminal_name],
-                               field='NAME'
-                               )
+    var = TerminalMaterialInfo(
+        name=terminal_name, headers=[terminal_name], field="NAME"
+    )
     IdentityColumn(data_source=terminal_name)
     IdentityColumn(data_source=var)
     with pytest.raises(TypeError):

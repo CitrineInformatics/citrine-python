@@ -1,11 +1,12 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
+
 from typing import List, Type
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
 
-__all__ = ['AllRealFilter', 'AllIntegerFilter', 'NominalCategoricalFilter']
+__all__ = ["AllRealFilter", "AllIntegerFilter", "NominalCategoricalFilter"]
 
 
 class PropertyFilterType(PolymorphicSerializable):
@@ -16,12 +17,13 @@ class PropertyFilterType(PolymorphicSerializable):
         """Return the subtype."""
         classes: List[Type[PropertyFilterType]] = [
             NominalCategoricalFilter,
-            AllRealFilter, AllIntegerFilter
+            AllRealFilter,
+            AllIntegerFilter,
         ]
-        return {klass.typ: klass for klass in classes}[data['type']]
+        return {klass.typ: klass for klass in classes}[data["type"]]
 
 
-class AllRealFilter(Serializable['AllRealFilter'], PropertyFilterType):
+class AllRealFilter(Serializable["AllRealFilter"], PropertyFilterType):
     """
     Filter for any real value that fits certain constraints.
 
@@ -36,13 +38,13 @@ class AllRealFilter(Serializable['AllRealFilter'], PropertyFilterType):
 
     """
 
-    lower = properties.Float('lower')
-    upper = properties.Float('upper')
-    unit = properties.String('unit')
-    typ = properties.String('type', default="all_real_filter", deserializable=False)
+    lower = properties.Float("lower")
+    upper = properties.Float("upper")
+    unit = properties.String("unit")
+    typ = properties.String("type", default="all_real_filter", deserializable=False)
 
 
-class AllIntegerFilter(Serializable['AllIntegerFilter'], PropertyFilterType):
+class AllIntegerFilter(Serializable["AllIntegerFilter"], PropertyFilterType):
     """
     Filter for any integer value that fits certain constraints.
 
@@ -57,13 +59,15 @@ class AllIntegerFilter(Serializable['AllIntegerFilter'], PropertyFilterType):
 
     """
 
-    lower = properties.Float('lower')
-    upper = properties.Float('upper')
-    inclusive = properties.Optional(properties.Boolean, 'inclusive', default=True)
-    typ = properties.String('type', default="all_integer_filter", deserializable=False)
+    lower = properties.Float("lower")
+    upper = properties.Float("upper")
+    inclusive = properties.Optional(properties.Boolean, "inclusive", default=True)
+    typ = properties.String("type", default="all_integer_filter", deserializable=False)
 
 
-class NominalCategoricalFilter(Serializable['NominalCategoricalFilter'], PropertyFilterType):
+class NominalCategoricalFilter(
+    Serializable["NominalCategoricalFilter"], PropertyFilterType
+):
     """
     Filter based upon a fixed list of Categorical Values.
 
@@ -74,5 +78,7 @@ class NominalCategoricalFilter(Serializable['NominalCategoricalFilter'], Propert
 
     """
 
-    categories = properties.Set(properties.String, 'categories')
-    typ = properties.String('type', default="nominal_categorical_filter", deserializable=False)
+    categories = properties.Set(properties.String, "categories")
+    typ = properties.String(
+        "type", default="nominal_categorical_filter", deserializable=False
+    )

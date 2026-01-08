@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from citrine.resources.data_concepts import CITRINE_TAG_PREFIX
 
-_CITRINE_DEFAULT_LABEL_PREFIX = f'{CITRINE_TAG_PREFIX}::mat_label'
+_CITRINE_DEFAULT_LABEL_PREFIX = f"{CITRINE_TAG_PREFIX}::mat_label"
 
 
 def _inject_default_label_tags(

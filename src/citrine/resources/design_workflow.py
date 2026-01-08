@@ -12,18 +12,20 @@ from functools import partial
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
     """A collection of DesignWorkflows."""
 
-    _path_template = '/projects/{project_id}/design-workflows'
+    _path_template = "/projects/{project_id}/design-workflows"
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = DesignWorkflow
     _api_version = "v2"
 
-    def __init__(self,
-                 project_id: UUID,
-                 session: Session,
-                 *,
-                 branch_root_id: Optional[UUID] = None,
-                 branch_version: Optional[int] = None):
+    def __init__(
+        self,
+        project_id: UUID,
+        session: Session,
+        *,
+        branch_root_id: Optional[UUID] = None,
+        branch_version: Optional[int] = None,
+    ):
         self.project_id: UUID = project_id
         self.session: Session = session
 
@@ -52,9 +54,11 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         if self.branch_root_id is None or self.branch_version is None:
             # There are a number of contexts in which hitting design workflow endpoints without
             # a branch ID is valid, so only this particular usage is disallowed.
-            msg = ('A design workflow must be created with a branch. Please use '
-                   'branch.design_workflows.register() instead of '
-                   'project.design_workflows.register().')
+            msg = (
+                "A design workflow must be created with a branch. Please use "
+                "branch.design_workflows.register() instead of "
+                "project.design_workflows.register()."
+            )
             raise RuntimeError(msg)
         else:
             # branch_root_id and branch_version are in the body of design workflow endpoints, so
@@ -107,20 +111,28 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         if self.branch_root_id is not None or self.branch_version is not None:
-            if self.branch_root_id != model.branch_root_id or \
-                    self.branch_version != model.branch_version:
-                raise ValueError('To move a design workflow to another branch, please use '
-                                 'Project.design_workflows.update')
+            if (
+                self.branch_root_id != model.branch_root_id
+                or self.branch_version != model.branch_version
+            ):
+                raise ValueError(
+                    "To move a design workflow to another branch, please use "
+                    "Project.design_workflows.update"
+                )
 
         if model.branch_root_id is None or model.branch_version is None:
-            raise ValueError('Cannot update a design workflow unless its branch_root_id and '
-                             'branch_version are set.')
+            raise ValueError(
+                "Cannot update a design workflow unless its branch_root_id and "
+                "branch_version are set."
+            )
 
         # If executions have already been done, warn about future behavior change
         executions = model.design_executions.list()
         if next(executions, None) is not None:
-            raise RuntimeError("Cannot update a design workflow after candidate generation, "
-                               "please register a new design workflow instead")
+            raise RuntimeError(
+                "Cannot update a design workflow after candidate generation, "
+                "please register a new design workflow instead"
+            )
 
         return super().update(model)
 
@@ -151,29 +163,37 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
-            "Design Workflows cannot be deleted; they can be archived instead.")
+            "Design Workflows cannot be deleted; they can be archived instead."
+        )
 
     def list_archived(self, *, per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows."""
-        fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        fetcher = partial(
+            self._fetch_page, additional_params={"filter": "archived eq 'true'"}
+        )
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
-    def _fetch_page(self,
-                    path: Optional[str] = None,
-                    fetch_func: Optional[Callable[..., dict]] = None,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    json_body: Optional[dict] = None,
-                    additional_params: Optional[dict] = None,
-                    ) -> Tuple[Iterable[dict], str]:
+    def _fetch_page(
+        self,
+        path: Optional[str] = None,
+        fetch_func: Optional[Callable[..., dict]] = None,
+        page: Optional[int] = None,
+        per_page: Optional[int] = None,
+        json_body: Optional[dict] = None,
+        additional_params: Optional[dict] = None,
+    ) -> Tuple[Iterable[dict], str]:
         params = additional_params or {}
         params["branch_root_id"] = self.branch_root_id
         params["branch_version"] = self.branch_version
-        return super()._fetch_page(path=path,
-                                   fetch_func=fetch_func,
-                                   page=page,
-                                   per_page=per_page,
-                                   json_body=json_body,
-                                   additional_params=params)
+        return super()._fetch_page(
+            path=path,
+            fetch_func=fetch_func,
+            page=page,
+            per_page=per_page,
+            json_body=json_body,
+            additional_params=params,
+        )

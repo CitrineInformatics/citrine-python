@@ -10,7 +10,15 @@ from citrine._session import Session
 class FakeCall:
     """Encapsulates a call to a FakeSession."""
 
-    def __init__(self, method, path, json=None, params: dict = None, version: str = None, **kwargs):
+    def __init__(
+        self,
+        method,
+        path,
+        json=None,
+        params: dict = None,
+        version: str = None,
+        **kwargs,
+    ):
         self.method = method
         self.path = path
         self.json = json
@@ -19,40 +27,44 @@ class FakeCall:
         self.kwargs = kwargs
 
     def __repr__(self):
-        return f'FakeCall({self})'
+        return f"FakeCall({self})"
 
     def __str__(self) -> str:
         path = self.path
         if self.version:
-            path = path[1:] if path.startswith('/') else path
-            path = f'{self.version}/{path}'
+            path = path[1:] if path.startswith("/") else path
+            path = f"{self.version}/{path}"
 
         if self.params:
-            path = f'{path}?{urlencode(self.params)}'
+            path = f"{path}?{urlencode(self.params)}"
 
-        return f'{self.method} {path} : {dumps(self.json)}'
+        return f"{self.method} {path} : {dumps(self.json)}"
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, FakeCall):
             return NotImplemented
 
         return (
-                self.method == other.method and
-                self.path.lstrip('/') == other.path.lstrip('/') and  # Leading slashes don't affect results
-                self.json == other.json and
-                self.params == other.params and
-            (not self.version or not other.version or self.version == other.version)  # Allows users to check the URL version without forcing everyone to.
+            self.method == other.method
+            and self.path.lstrip("/")
+            == other.path.lstrip("/")  # Leading slashes don't affect results
+            and self.json == other.json
+            and self.params == other.params
+            and (
+                not self.version or not other.version or self.version == other.version
+            )  # Allows users to check the URL version without forcing everyone to.
         )
 
 
 class FakeSession(Session):
     """Fake version of Session used to test API interaction."""
+
     def __init__(self):
         self.calls = []
         self.responses = []
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
-        self.s3_addressing_style = 'auto'
+        self.s3_addressing_style = "auto"
         self.use_idempotent_dataset_put = False
 
     def set_response(self, resp):
@@ -85,23 +97,23 @@ class FakeSession(Session):
         return self.checked_delete(path, **kwargs)
 
     def checked_get(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('GET', path, **kwargs))
+        self.calls.append(FakeCall("GET", path, **kwargs))
         return self._get_response()
 
     def checked_post(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('POST', path, json, **kwargs))
+        self.calls.append(FakeCall("POST", path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_put(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('PUT', path, json, **kwargs))
+        self.calls.append(FakeCall("PUT", path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_patch(self, path: str, json: dict, **kwargs) -> dict:
-        self.calls.append(FakeCall('PATCH', path, json, **kwargs))
+        self.calls.append(FakeCall("PATCH", path, json, **kwargs))
         return self._get_response(default_response=json)
 
     def checked_delete(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('DELETE', path, **kwargs))
+        self.calls.append(FakeCall("DELETE", path, **kwargs))
         return self._get_response()
 
     def _get_response(self, default_response: dict = None):
@@ -121,39 +133,45 @@ class FakeSession(Session):
         return response
 
     @staticmethod
-    def cursor_paged_resource(base_method: Callable[..., dict], path: str,
-                              forward: bool = True, per_page: int = 100,
-                              version: str = 'v2', **kwargs) -> Iterator[dict]:
+    def cursor_paged_resource(
+        base_method: Callable[..., dict],
+        path: str,
+        forward: bool = True,
+        per_page: int = 100,
+        version: str = "v2",
+        **kwargs,
+    ) -> Iterator[dict]:
         """
         Returns a flat generator of results for an API query.
 
         Results are fetched in chunks of size `per_page` and loaded lazily.
         """
-        params = kwargs.get('params', {})
-        params['forward'] = forward
-        params['ascending'] = forward
-        params['per_page'] = per_page
-        kwargs['params'] = params
+        params = kwargs.get("params", {})
+        params["forward"] = forward
+        params["ascending"] = forward
+        params["per_page"] = per_page
+        kwargs["params"] = params
         while True:
             response_json = base_method(path, version=version, **kwargs)
-            for obj in response_json['contents']:
+            for obj in response_json["contents"]:
                 yield obj
-            cursor = response_json.get('next')
+            cursor = response_json.get("next")
             if cursor is None:
                 break
-            params['cursor'] = cursor
+            params["cursor"] = cursor
 
 
 class FakePaginatedSession(FakeSession):
     """Fake version of Session used to test API interaction, with support for pagination params page and per_page."""
+
     def checked_get(self, path: str, **kwargs) -> dict:
-        params = kwargs.get('params')
-        self.calls.append(FakeCall('GET', path, params=params))
+        params = kwargs.get("params")
+        self.calls.append(FakeCall("GET", path, params=params))
         return self._get_response(**params)
 
     def checked_post(self, path: str, json: dict, **kwargs) -> dict:
-        params = kwargs.get('params')
-        self.calls.append(FakeCall('POST', path, json, params=params))
+        params = kwargs.get("params")
+        self.calls.append(FakeCall("POST", path, json, params=params))
         return self._get_response(**params)
 
     def _get_response(self, **kwargs):
@@ -162,23 +180,23 @@ class FakePaginatedSession(FakeSession):
         """
         if not self.responses:
             return {}
-        
-        page = kwargs.get('page', 1)
-        per_page = kwargs.get('per_page', 20)
+
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 20)
 
         start_idx = (page - 1) * per_page
 
-        # in case the response takes the shape of something like 
+        # in case the response takes the shape of something like
         # {'projects': [Project1, Project2, etc.]}
         has_collection_key = isinstance(self.responses[0], dict)
 
         if has_collection_key:
             key = list(self.responses[0].keys())[0]
-            list_values = self.responses[0][key][start_idx:start_idx + per_page]
+            list_values = self.responses[0][key][start_idx : start_idx + per_page]
             return dict.fromkeys([key], list_values)
 
         else:
-            return self.responses[0][start_idx:start_idx + per_page]
+            return self.responses[0][start_idx : start_idx + per_page]
 
 
 class FakeS3Client:
@@ -200,7 +218,7 @@ class FakeS3Client:
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
-    def __init__(self, status_code, content=None, text="", reason='BadRequest'):
+    def __init__(self, status_code, content=None, text="", reason="BadRequest"):
         self.content = content
         self.text = text
         self.status_code = status_code
@@ -215,11 +233,19 @@ class FakeRequestResponse:
 #       the method to FakeRequest.
 class FakeRequestResponseApiError:
     """A fake version of a requests.request() response that has an ApiError"""
-    def __init__(self, code: int, message: str, validation_errors: List[ValidationError],
-                 reason: str = 'BadRequest'):
-        self.api_error_json = {"code": code,
-                               "message": message,
-                               "validation_errors": [ve.dump() for ve in validation_errors]}
+
+    def __init__(
+        self,
+        code: int,
+        message: str,
+        validation_errors: List[ValidationError],
+        reason: str = "BadRequest",
+    ):
+        self.api_error_json = {
+            "code": code,
+            "message": message,
+            "validation_errors": [ve.dump() for ve in validation_errors],
+        }
         self.text = message
         self.status_code = code
         self.reason = reason
@@ -245,18 +271,20 @@ def make_fake_cursor_request_function(all_results: list):
     all_results: list
         All results in the result set to simulate paging
     """
+
     # TODO add logic for `forward` and `ascending`
     def fake_cursor_request(*_, params=None, **__):
-        page_size = params['per_page']
-        if 'cursor' in params:
-            cursor = int(params['cursor'])
-            contents = all_results[cursor + 1:cursor + page_size + 1]
+        page_size = params["per_page"]
+        if "cursor" in params:
+            cursor = int(params["cursor"])
+            contents = all_results[cursor + 1 : cursor + page_size + 1]
         else:
             contents = all_results[:page_size]
-        response = {'contents': contents}
+        response = {"contents": contents}
         if contents:
-            response['next'] = str(all_results.index(contents[-1]))
-            if 'cursor' in params:
-                response['previous'] = str(all_results.index(contents[0]))
+            response["next"] = str(all_results.index(contents[-1]))
+            if "cursor" in params:
+                response["previous"] = str(all_results.index(contents[0]))
         return response
+
     return fake_cursor_request

@@ -1,8 +1,7 @@
 """Tests for citrine.informatics.scores."""
+
 from citrine.informatics.objectives import ScalarMaxObjective
 from citrine.informatics.scores import Score, EIScore, LIScore
-
-from tests.informatics.test_scores import li_score, ei_score
 
 
 def test_li_dumps(li_score):

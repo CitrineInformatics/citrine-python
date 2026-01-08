@@ -3,10 +3,12 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
-__all__ = ['IngredientFractionConstraint']
+__all__ = ["IngredientFractionConstraint"]
 
 
-class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'], Constraint):
+class IngredientFractionConstraint(
+    Serializable["IngredientFractionConstraint"], Constraint
+):
     """Represents a constraint on an ingredient fraction in a formulation.
 
     Parameters
@@ -27,19 +29,24 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    ingredient = properties.String('ingredient')
-    min = properties.Optional(properties.Float, 'min')
-    max = properties.Optional(properties.Float, 'max')
-    is_required = properties.Boolean('is_required')
-    typ = properties.String('type', default='IngredientFractionConstraint')
+    formulation_descriptor = properties.Object(
+        FormulationDescriptor, "formulation_descriptor"
+    )
+    ingredient = properties.String("ingredient")
+    min = properties.Optional(properties.Float, "min")
+    max = properties.Optional(properties.Float, "max")
+    is_required = properties.Boolean("is_required")
+    typ = properties.String("type", default="IngredientFractionConstraint")
 
-    def __init__(self, *,
-                 formulation_descriptor: FormulationDescriptor,
-                 ingredient: str,
-                 min: float,
-                 max: float,
-                 is_required: bool = True):
+    def __init__(
+        self,
+        *,
+        formulation_descriptor: FormulationDescriptor,
+        ingredient: str,
+        min: float,
+        max: float,
+        is_required: bool = True,
+    ):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredient: str = ingredient
         self.min: float = min

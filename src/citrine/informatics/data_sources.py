@@ -1,4 +1,5 @@
 """Tools for working with Descriptors."""
+
 from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
@@ -12,15 +13,15 @@ from citrine.resources.file_link import FileLink
 from citrine.resources.gemtables import GemTable
 
 __all__ = [
-    'DataSource',
-    'CSVDataSource',
-    'GemTableDataSource',
-    'ExperimentDataSourceRef',
-    'SnapshotDataSource',
+    "DataSource",
+    "CSVDataSource",
+    "GemTableDataSource",
+    "ExperimentDataSourceRef",
+    "SnapshotDataSource",
 ]
 
 
-class DataSource(PolymorphicSerializable['DataSource']):
+class DataSource(PolymorphicSerializable["DataSource"]):
     """A source of data for the AI engine.
 
     Data source provides a polymorphic interface for specifying different kinds of data as the
@@ -36,7 +37,12 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
     @classmethod
     def _subclass_list(self) -> List[Type[Serializable]]:
-        return [CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
+        return [
+            CSVDataSource,
+            GemTableDataSource,
+            ExperimentDataSourceRef,
+            SnapshotDataSource,
+        ]
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -57,7 +63,9 @@ class DataSource(PolymorphicSerializable['DataSource']):
     def from_data_source_id(cls, data_source_id: str) -> "DataSource":
         """Build a DataSource from a datasource_id."""
         terms = data_source_id.split("::")
-        res = next((x for x in cls._subclass_list() if x._data_source_type == terms[0]), None)
+        res = next(
+            (x for x in cls._subclass_list() if x._data_source_type == terms[0]), None
+        )
         if res is None:
             raise ValueError(f"Unrecognized type: {terms[0]}")
         return res._data_source_id_builder(*terms[1:])
@@ -72,7 +80,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         """Generate the data_source_id for this DataSource."""
 
 
-class CSVDataSource(Serializable['CSVDataSource'], DataSource):
+class CSVDataSource(Serializable["CSVDataSource"], DataSource):
     """A data source based on a CSV file stored on the data platform.
 
     Parameters
@@ -89,22 +97,27 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
 
     """
 
-    typ = properties.String('type', default='csv_data_source', deserializable=False)
+    typ = properties.String("type", default="csv_data_source", deserializable=False)
     file_link = properties.Object(FileLink, "file_link")
     column_definitions = properties.Mapping(
-        properties.String, properties.Object(Descriptor), "column_definitions")
+        properties.String, properties.Object(Descriptor), "column_definitions"
+    )
     identifiers = properties.Optional(properties.List(properties.String), "identifiers")
 
     _data_source_type = "csv"
 
-    def __init__(self,
-                 *,
-                 file_link: FileLink,
-                 column_definitions: Mapping[str, Descriptor],
-                 identifiers: Optional[List[str]] = None):
-        warn("CSVDataSource is deprecated as of 3.28.0 and will be removed in 4.0.0. Please use "
-             "another type of data source, such as GemTableDataSource.",
-             category=DeprecationWarning)
+    def __init__(
+        self,
+        *,
+        file_link: FileLink,
+        column_definitions: Mapping[str, Descriptor],
+        identifiers: Optional[List[str]] = None,
+    ):
+        warn(
+            "CSVDataSource is deprecated as of 3.28.0 and will be removed in 4.0.0. Please use "
+            "another type of data source, such as GemTableDataSource.",
+            category=DeprecationWarning,
+        )
         self.file_link = file_link
         self.column_definitions = column_definitions
         self.identifiers = identifiers
@@ -112,20 +125,23 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
     @classmethod
     def _data_source_id_builder(cls, *args) -> DataSource:
         # TODO Figure out how to populate the column definitions
-        warn("A CSVDataSource was derived from a data_source_id "
-             "but is missing its column_definitions and identities",
-             UserWarning)
+        warn(
+            "A CSVDataSource was derived from a data_source_id "
+            "but is missing its column_definitions and identities",
+            UserWarning,
+        )
         return CSVDataSource(
-            file_link=FileLink(url=args[0], filename=args[1]),
-            column_definitions={}
+            file_link=FileLink(url=args[0], filename=args[1]), column_definitions={}
         )
 
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-        return f"{self._data_source_type}::{self.file_link.url}::{self.file_link.filename}"
+        return (
+            f"{self._data_source_type}::{self.file_link.url}::{self.file_link.filename}"
+        )
 
 
-class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
+class GemTableDataSource(Serializable["GemTableDataSource"], DataSource):
     """A data source based on a GEM Table hosted on the data platform.
 
     Parameters
@@ -138,16 +154,15 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
     """
 
-    typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
+    typ = properties.String(
+        "type", default="hosted_table_data_source", deserializable=False
+    )
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
 
     _data_source_type = "gemd"
 
-    def __init__(self,
-                 *,
-                 table_id: UUID,
-                 table_version: Union[int, str]):
+    def __init__(self, *, table_id: UUID, table_version: Union[int, str]):
         self.table_id: UUID = table_id
         self.table_version: Union[int, str] = table_version
 
@@ -172,7 +187,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         return GemTableDataSource(table_id=table.uid, table_version=table.version)
 
 
-class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):
+class ExperimentDataSourceRef(Serializable["ExperimentDataSourceRef"], DataSource):
     """A reference to a data source based on an experiment result hosted on the data platform.
 
     Parameters
@@ -182,7 +197,9 @@ class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSourc
 
     """
 
-    typ = properties.String('type', default='experiments_data_source', deserializable=False)
+    typ = properties.String(
+        "type", default="experiments_data_source", deserializable=False
+    )
     datasource_id = properties.UUID("datasource_id")
 
     _data_source_type = "experiments"
@@ -199,7 +216,7 @@ class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSourc
         return f"{self._data_source_type}::{self.datasource_id}"
 
 
-class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
+class SnapshotDataSource(Serializable["SnapshotDataSource"], DataSource):
     """A reference to a data source based on a Snapshot on the data platform.
 
     Parameters
@@ -209,7 +226,9 @@ class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
 
     """
 
-    typ = properties.String('type', default='snapshot_data_source', deserializable=False)
+    typ = properties.String(
+        "type", default="snapshot_data_source", deserializable=False
+    )
     snapshot_id = properties.UUID("snapshot_id")
 
     _data_source_type = "snapshot"

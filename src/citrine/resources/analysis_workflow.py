@@ -2,8 +2,10 @@ import functools
 from typing import Iterator, Optional, Union
 from uuid import UUID
 
-from citrine.informatics.workflows.analysis_workflow import AnalysisWorkflow, \
-    AnalysisWorkflowUpdatePayload
+from citrine.informatics.workflows.analysis_workflow import (
+    AnalysisWorkflow,
+    AnalysisWorkflowUpdatePayload,
+)
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
@@ -18,11 +20,11 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
 
     """
 
-    _api_version = 'v1'
-    _path_template = '/teams/{team_id}/analysis-workflows'
+    _api_version = "v1"
+    _path_template = "/teams/{team_id}/analysis-workflows"
     _individual_key = None
     _resource = AnalysisWorkflow
-    _collection_key = 'response'
+    _collection_key = "response"
 
     def __init__(self, session: Session, *, team_id: UUID):
         self.session = session
@@ -59,11 +61,15 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
         """List acttive analysis workflows."""
         return self._list_with_params(per_page=per_page, filter="archived eq 'false'")
 
-    def _list_with_params(self, *, per_page: int, **kwargs) -> Iterator[AnalysisWorkflow]:
+    def _list_with_params(
+        self, *, per_page: int, **kwargs
+    ) -> Iterator[AnalysisWorkflow]:
         page_fetcher = functools.partial(self._fetch_page, additional_params=kwargs)
-        return self._paginator.paginate(page_fetcher=page_fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=page_fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def archive(self, uid: Union[UUID, str]) -> AnalysisWorkflow:
         """Archive an analysis workflow, hiding it from default listings."""
@@ -77,13 +83,17 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def update(self,
-               uid: Union[UUID, str],
-               *,
-               name: Optional[str] = None,
-               description: Optional[str] = None) -> AnalysisWorkflow:
+    def update(
+        self,
+        uid: Union[UUID, str],
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> AnalysisWorkflow:
         """Update the name and/or description of the analysis workflow."""
-        aw_update = AnalysisWorkflowUpdatePayload(uid=uid, name=name, description=description)
+        aw_update = AnalysisWorkflowUpdatePayload(
+            uid=uid, name=name, description=description
+        )
         return super().update(aw_update)
 
     def rebuild(self, uid: Union[UUID, str]) -> AnalysisWorkflow:
@@ -94,4 +104,6 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
 
     def delete(self, uid: Union[UUID, str]):
         """Analysis workflows cannot be deleted at this time."""
-        raise NotImplementedError("Deleting Analysis Workflows is not currently supported.")
+        raise NotImplementedError(
+            "Deleting Analysis Workflows is not currently supported."
+        )

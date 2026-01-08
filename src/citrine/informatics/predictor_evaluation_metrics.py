@@ -6,15 +6,17 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
-__all__ = ['PredictorEvaluationMetric',
-           'RMSE',
-           'NDME',
-           'RSquared',
-           'StandardRMSE',
-           'PVA',
-           'F1',
-           'AreaUnderROC',
-           'CoverageProbability']
+__all__ = [
+    "PredictorEvaluationMetric",
+    "RMSE",
+    "NDME",
+    "RSquared",
+    "StandardRMSE",
+    "PVA",
+    "F1",
+    "AreaUnderROC",
+    "CoverageProbability",
+]
 
 logger = getLogger(__name__)
 
@@ -148,7 +150,9 @@ class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
         return "Area Under the ROC"
 
 
-class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluationMetric):
+class CoverageProbability(
+    Serializable["CoverageProbability"], PredictorEvaluationMetric
+):
     """Percentage of observations that fall within a given confidence interval.
 
     The coverage level can be specified to 3 digits, e.g., 0.123, but not 0.1234.
@@ -173,9 +177,8 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                 raise ValueError(
                     "Invalid coverage level string '{requested_level}'. "
                     "Coverage level must represent a floating point number between "
-                    "0 and 1 (non-inclusive).".format(
-                        requested_level=coverage_level
-                    ))
+                    "0 and 1 (non-inclusive).".format(requested_level=coverage_level)
+                )
         elif isinstance(coverage_level, float):
             raw_float = coverage_level
         else:
@@ -189,9 +192,9 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                 "Coverage level can only be specified to 3 decimal places."
                 "Requested level '{requested_level}' will be rounded "
                 "to {rounded_level}.".format(
-                    requested_level=coverage_level,
-                    rounded_level=_level_float
-                ))
+                    requested_level=coverage_level, rounded_level=_level_float
+                )
+            )
 
         self._level_str = "{:5.3f}".format(_level_float)
 

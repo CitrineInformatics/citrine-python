@@ -1,4 +1,5 @@
 """Tests for citrine.informatics.design_candidate."""
+
 from citrine.informatics.design_candidate import DesignVariable
 
 

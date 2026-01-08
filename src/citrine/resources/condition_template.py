@@ -1,17 +1,23 @@
 """Resources that represent condition templates."""
+
 from typing import List, Dict, Optional, Type
 
 from citrine._rest.resource import GEMDResource
-from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
+from citrine.resources.attribute_templates import (
+    AttributeTemplate,
+    AttributeTemplateCollection,
+)
 from gemd.entity.bounds.base_bounds import BaseBounds
-from gemd.entity.template.condition_template import ConditionTemplate as GEMDConditionTemplate
+from gemd.entity.template.condition_template import (
+    ConditionTemplate as GEMDConditionTemplate,
+)
 
 
 class ConditionTemplate(
-    GEMDResource['ConditionTemplate'],
+    GEMDResource["ConditionTemplate"],
     AttributeTemplate,
     GEMDConditionTemplate,
-    typ=GEMDConditionTemplate.typ
+    typ=GEMDConditionTemplate.typ,
 ):
     """
     A condition template.
@@ -37,29 +43,36 @@ class ConditionTemplate(
 
     _response_key = GEMDConditionTemplate.typ  # 'condition_template'
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[List[str]] = None
-                 ):
+    def __init__(
+        self,
+        name: str,
+        *,
+        bounds: BaseBounds,
+        uids: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+    ):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()
-        GEMDConditionTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
-                                       uids=uids, description=description)
+        GEMDConditionTemplate.__init__(
+            self,
+            name=name,
+            bounds=bounds,
+            tags=tags,
+            uids=uids,
+            description=description,
+        )
 
     def __str__(self):
-        return '<Condition template {!r}>'.format(self.name)
+        return "<Condition template {!r}>".format(self.name)
 
 
 class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]):
     """A collection of condition templates."""
 
-    _individual_key = 'condition_template'
-    _collection_key = 'condition_templates'
+    _individual_key = "condition_template"
+    _collection_key = "condition_templates"
     _resource = ConditionTemplate
 
     @classmethod

@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from citrine._serialization.serializable import Serializable
 
-Self = TypeVar('Self', bound='Serializable')
+Self = TypeVar("Self", bound="Serializable")
 
 
 class IncludeParentProperties(Serializable[Self]):
@@ -14,6 +14,7 @@ class IncludeParentProperties(Serializable[Self]):
         resource = super().build(data)
 
         from citrine._serialization import properties
+
         metadata_properties = properties.Object(base_cls).deserialize(data)
 
         resource.__dict__.update(metadata_properties.__dict__)

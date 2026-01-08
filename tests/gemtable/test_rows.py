@@ -1,22 +1,28 @@
 """Tests for citrine.informatics.rows."""
+
 import pytest
 
 from citrine.gemtables.rows import MaterialRunByTemplate, Row
 from gemd.entity.link_by_uid import LinkByUID
 
 
-@pytest.fixture(params=[
-    MaterialRunByTemplate(templates=[
-        LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
-    ]),
-    MaterialRunByTemplate(templates=[
-        LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
-    ],
-        tags=[
-            "foo::bar", "some::tag"
-        ]
-    ),
-])
+@pytest.fixture(
+    params=[
+        MaterialRunByTemplate(
+            templates=[
+                LinkByUID(scope="templates", id="density"),
+                LinkByUID(scope="templates", id="ingredients"),
+            ]
+        ),
+        MaterialRunByTemplate(
+            templates=[
+                LinkByUID(scope="templates", id="density"),
+                LinkByUID(scope="templates", id="ingredients"),
+            ],
+            tags=["foo::bar", "some::tag"],
+        ),
+    ]
+)
 def row(request):
     return request.param
 

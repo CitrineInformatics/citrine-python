@@ -9,9 +9,16 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, _pad_positional_args
+from citrine._utils.functions import (
+    _data_manager_deprecation_checks,
+    _pad_positional_args,
+)
 from citrine.exceptions import CitrineException, BadRequest
-from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
+from citrine.jobs.job import (
+    JobSubmissionResponse,
+    JobFailureError,
+    _poll_for_job_completion,
+)
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.file_link import FileLink
 
@@ -65,29 +72,36 @@ class IngestionErrorLevel(BaseEnumeration):
     INFO = "info"
 
 
-class IngestionErrorTrace(Resource['IngestionErrorTrace']):
+class IngestionErrorTrace(Resource["IngestionErrorTrace"]):
     """[ALPHA] Detailed information about an ingestion issue."""
 
     family = properties.Enumeration(IngestionErrorFamily, "family")
     error_type = properties.Enumeration(IngestionErrorType, "error_type")
     level = properties.Enumeration(IngestionErrorLevel, "level")
     msg = properties.String("msg")
-    dataset_file_id = properties.Optional(properties.UUID(), "dataset_file_id", default=None)
-    file_version_uuid = properties.Optional(properties.UUID(), "file_version_uuid", default=None)
+    dataset_file_id = properties.Optional(
+        properties.UUID(), "dataset_file_id", default=None
+    )
+    file_version_uuid = properties.Optional(
+        properties.UUID(), "file_version_uuid", default=None
+    )
     row_number = properties.Optional(properties.Integer(), "row_number", default=None)
-    column_number = properties.Optional(properties.Integer(), "column_number", default=None)
+    column_number = properties.Optional(
+        properties.Integer(), "column_number", default=None
+    )
 
-    def __init__(self,
-                 msg,
-                 level=IngestionErrorLevel.ERROR,
-                 *,
-                 family=IngestionErrorFamily.UNKNOWN,
-                 error_type=IngestionErrorType.UNKNOWN_ERROR,
-                 dataset_file_id=dataset_file_id.default,
-                 file_version_uuid=file_version_uuid.default,
-                 row_number=row_number.default,
-                 column_number=column_number.default,
-                 ):
+    def __init__(
+        self,
+        msg,
+        level=IngestionErrorLevel.ERROR,
+        *,
+        family=IngestionErrorFamily.UNKNOWN,
+        error_type=IngestionErrorType.UNKNOWN_ERROR,
+        dataset_file_id=dataset_file_id.default,
+        file_version_uuid=file_version_uuid.default,
+        row_number=row_number.default,
+        column_number=column_number.default,
+    ):
         self.msg = msg
         self.level = level
         self.family = family
@@ -109,25 +123,29 @@ class IngestionErrorTrace(Resource['IngestionErrorTrace']):
         return f"{self!r}: {self.msg}"
 
     def __repr__(self):
-        coords = ", ".join([x for x in (self.column_number, self.row_number) if x is not None])
+        coords = ", ".join(
+            [x for x in (self.column_number, self.row_number) if x is not None]
+        )
         return f"<{self.level}: {self.error_type}{f' {coords}' if len(coords) else ''}>"
 
 
 class IngestionException(CitrineException):
     """[ALPHA] An exception that contains details of a failed ingestion."""
 
-    uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    uid = properties.Optional(properties.UUID(), "ingestion_id", default=None)
     """Optional[UUID]"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
     """List[IngestionErrorTrace]"""
 
-    def __init__(self,
-                 *,
-                 uid: Optional[UUID] = uid.default,
-                 errors: Iterable[IngestionErrorTrace]):
+    def __init__(
+        self,
+        *,
+        uid: Optional[UUID] = uid.default,
+        errors: Iterable[IngestionErrorTrace],
+    ):
         errors_ = list(errors)
-        message = '; '.join(str(e) for e in errors_)
+        message = "; ".join(str(e) for e in errors_)
         super().__init__(message)
         self.uid = uid
         self.errors = errors_
@@ -141,27 +159,33 @@ class IngestionException(CitrineException):
     def from_api_error(cls, source: ApiError) -> "IngestionException":
         """[ALPHA] Build an IngestionException from an ApiError."""
         if len(source.validation_errors) > 0:
-            return cls(errors=[IngestionErrorTrace.from_validation_error(x)
-                               for x in source.validation_errors])
+            return cls(
+                errors=[
+                    IngestionErrorTrace.from_validation_error(x)
+                    for x in source.validation_errors
+                ]
+            )
         else:
             return cls(errors=[IngestionErrorTrace(msg=source.message)])
 
 
-class IngestionStatus(Resource['IngestionStatus']):
+class IngestionStatus(Resource["IngestionStatus"]):
     """[ALPHA] An object that represents the outcome of an ingestion event."""
 
-    uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
+    uid = properties.Optional(properties.UUID(), "ingestion_id", default=None)
     """UUID"""
     status = properties.Enumeration(IngestionStatusType, "status")
     """IngestionStatusType"""
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
     """List[IngestionErrorTrace]"""
 
-    def __init__(self,
-                 *,
-                 uid: Optional[UUID] = uid.default,
-                 status: IngestionStatusType = IngestionStatusType.INGESTION_CREATED,
-                 errors: Iterable[IngestionErrorTrace]):
+    def __init__(
+        self,
+        *,
+        uid: Optional[UUID] = uid.default,
+        status: IngestionStatusType = IngestionStatusType.INGESTION_CREATED,
+        errors: Iterable[IngestionErrorTrace],
+    ):
         self.uid = uid
         self.status = status
         self.errors = list(errors)
@@ -177,7 +201,7 @@ class IngestionStatus(Resource['IngestionStatus']):
         return cls(uid=exception.uid, errors=exception.errors)
 
 
-class Ingestion(Resource['Ingestion']):
+class Ingestion(Resource["Ingestion"]):
     """
     [ALPHA] A job that uploads new information to the platform.
 
@@ -187,37 +211,46 @@ class Ingestion(Resource['Ingestion']):
 
     """
 
-    uid = properties.UUID('ingestion_id')
+    uid = properties.UUID("ingestion_id")
     """UUID: Unique uuid4 identifier of this ingestion."""
-    team_id = properties.Optional(properties.UUID, 'team_id', default=None)
-    _project_id = properties.Optional(properties.UUID, 'project_id', default=None)
-    dataset_id = properties.UUID('dataset_id')
-    session = properties.Object(Session, 'session', serializable=False)
-    raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
+    team_id = properties.Optional(properties.UUID, "team_id", default=None)
+    _project_id = properties.Optional(properties.UUID, "project_id", default=None)
+    dataset_id = properties.UUID("dataset_id")
+    session = properties.Object(Session, "session", serializable=False)
+    raise_errors = properties.Optional(
+        properties.Boolean(), "raise_errors", default=True
+    )
 
     @property
-    @deprecated(deprecated_in='3.11.0', removed_in='4.0.0',
-                details="The project_id attribute is deprecated since "
-                        "dataset access is now controlled through teams.")
+    @deprecated(
+        deprecated_in="3.11.0",
+        removed_in="4.0.0",
+        details="The project_id attribute is deprecated since "
+        "dataset access is now controlled through teams.",
+    )
     def project_id(self) -> Optional[UUID]:
         """[DEPRECATED] The project ID associated with this ingest."""
         return self._project_id
 
     @project_id.setter
-    @deprecated(deprecated_in='3.9.0', removed_in='4.0.0',
-                details="Use the project argument instead of setting the project_id attribute.")
+    @deprecated(
+        deprecated_in="3.9.0",
+        removed_in="4.0.0",
+        details="Use the project argument instead of setting the project_id attribute.",
+    )
     def project_id(self, value: Optional[UUID]):
         self._project_id = value
 
-    def build_objects(self,
-                      *,
-                      build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
-                      delete_dataset_contents: bool = False,
-                      delete_templates: bool = True,
-                      timeout: float = None,
-                      polling_delay: Optional[float] = None
-                      ) -> IngestionStatus:
+    def build_objects(
+        self,
+        *,
+        build_table: bool = False,
+        project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+        delete_dataset_contents: bool = False,
+        delete_templates: bool = True,
+        timeout: float = None,
+        polling_delay: Optional[float] = None,
+    ) -> IngestionStatus:
         """
         [ALPHA] Perform a complete ingestion operation, from start to finish.
 
@@ -249,29 +282,35 @@ class Ingestion(Resource['Ingestion']):
 
         """
         try:
-            job = self.build_objects_async(build_table=build_table,
-                                           project=project,
-                                           delete_dataset_contents=delete_dataset_contents,
-                                           delete_templates=delete_templates)
+            job = self.build_objects_async(
+                build_table=build_table,
+                project=project,
+                delete_dataset_contents=delete_dataset_contents,
+                delete_templates=delete_templates,
+            )
         except IngestionException as e:
             if self.raise_errors:
                 raise e
             else:
                 return IngestionStatus.from_exception(e)
 
-        status = self.poll_for_job_completion(job, timeout=timeout, polling_delay=polling_delay)
+        status = self.poll_for_job_completion(
+            job, timeout=timeout, polling_delay=polling_delay
+        )
 
         if self.raise_errors and not status.success:
             raise IngestionException.from_status(status)
 
         return status
 
-    def build_objects_async(self,
-                            *,
-                            build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
-                            delete_dataset_contents: bool = False,
-                            delete_templates: bool = True) -> JobSubmissionResponse:
+    def build_objects_async(
+        self,
+        *,
+        build_table: bool = False,
+        project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+        delete_dataset_contents: bool = False,
+        delete_templates: bool = True,
+    ) -> JobSubmissionResponse:
         """
         [ALPHA] Begin an async ingestion operation.
 
@@ -294,9 +333,10 @@ class Ingestion(Resource['Ingestion']):
 
         """
         from citrine.resources.project import Project
-        collection = IngestionCollection(team_id=self.team_id,
-                                         dataset_id=self.dataset_id,
-                                         session=self.session)
+
+        collection = IngestionCollection(
+            team_id=self.team_id, dataset_id=self.dataset_id, session=self.session
+        )
         path = collection._get_path(uid=self.uid, action="gemd-objects-async")
 
         # Project resolution logic
@@ -309,7 +349,7 @@ class Ingestion(Resource['Ingestion']):
                 warn(
                     "Building a table with an implicit project is deprecated "
                     "and will be removed in v4. Please pass a project explicitly.",
-                    DeprecationWarning
+                    DeprecationWarning,
                 )
                 project_id = self._project_id
         elif isinstance(project, Project):
@@ -335,12 +375,13 @@ class Ingestion(Resource['Ingestion']):
             else:
                 raise e
 
-    def poll_for_job_completion(self,
-                                job: JobSubmissionResponse,
-                                *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
-                                ) -> IngestionStatus:
+    def poll_for_job_completion(
+        self,
+        job: JobSubmissionResponse,
+        *,
+        timeout: Optional[float] = None,
+        polling_delay: Optional[float] = None,
+    ) -> IngestionStatus:
         """
         [ALPHA] Repeatedly ask server if a job associated with this ingestion has completed.
 
@@ -373,15 +414,18 @@ class Ingestion(Resource['Ingestion']):
             team_id=self.team_id,
             job=job,
             raise_errors=False,  # JobFailureError doesn't contain the error
-            **kwargs
+            **kwargs,
         )
-        if build_job_status.output is not None and "table_build_job_id" in build_job_status.output:
+        if (
+            build_job_status.output is not None
+            and "table_build_job_id" in build_job_status.output
+        ):
             _poll_for_job_completion(
                 session=self.session,
                 team_id=self.team_id,
                 job=build_job_status.output["table_build_job_id"],
                 raise_errors=False,  # JobFailureError doesn't contain the error
-                **kwargs
+                **kwargs,
             )
         return self.status()
 
@@ -395,9 +439,9 @@ class Ingestion(Resource['Ingestion']):
             The result of the ingestion attempt
 
         """
-        collection = IngestionCollection(team_id=self.team_id,
-                                         dataset_id=self.dataset_id,
-                                         session=self.session)
+        collection = IngestionCollection(
+            team_id=self.team_id, dataset_id=self.dataset_id, session=self.session
+        )
         path = collection._get_path(uid=self.uid, action="status")
         return IngestionStatus.build(self.session.get_resource(path=path))
 
@@ -409,42 +453,46 @@ class FailedIngestion(Ingestion):
         self.errors = list(errors)
         self.raise_errors = False
 
-    def build_objects(self,
-                      *,
-                      build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
-                      delete_dataset_contents: bool = False,
-                      delete_templates: bool = True,
-                      timeout: float = None,
-                      polling_delay: Optional[float] = None
-                      ) -> IngestionStatus:
+    def build_objects(
+        self,
+        *,
+        build_table: bool = False,
+        project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+        delete_dataset_contents: bool = False,
+        delete_templates: bool = True,
+        timeout: float = None,
+        polling_delay: Optional[float] = None,
+    ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         return self.status()
 
-    def build_objects_async(self,
-                            *,
-                            build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
-                            delete_dataset_contents: bool = False,
-                            delete_templates: bool = True) -> JobSubmissionResponse:
+    def build_objects_async(
+        self,
+        *,
+        build_table: bool = False,
+        project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+        delete_dataset_contents: bool = False,
+        delete_templates: bool = True,
+    ) -> JobSubmissionResponse:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(
             message=f"Errors: {[e.msg for e in self.errors]}",
-            job_id=UUID('0' * 32),  # Nil UUID
-            failure_reasons=[e.msg for e in self.errors]
+            job_id=UUID("0" * 32),  # Nil UUID
+            failure_reasons=[e.msg for e in self.errors],
         )
 
-    def poll_for_job_completion(self,
-                                job: JobSubmissionResponse,
-                                *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
-                                ) -> IngestionStatus:
+    def poll_for_job_completion(
+        self,
+        job: JobSubmissionResponse,
+        *,
+        timeout: Optional[float] = None,
+        polling_delay: Optional[float] = None,
+    ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(
             message=f"Errors: {[e.msg for e in self.errors]}",
-            job_id=UUID('0' * 32),  # Nil UUID
-            failure_reasons=[e.msg for e in self.errors]
+            job_id=UUID("0" * 32),  # Nil UUID
+            failure_reasons=[e.msg for e in self.errors],
         )
 
     def status(self) -> IngestionStatus:
@@ -460,14 +508,16 @@ class FailedIngestion(Ingestion):
         if self.raise_errors:
             raise JobFailureError(
                 message=f"Ingestion creation failed: {self.errors}",
-                job_id=UUID('0' * 32),  # Nil UUID
-                failure_reasons=[str(x) for x in self.errors]
+                job_id=UUID("0" * 32),  # Nil UUID
+                failure_reasons=[str(x) for x in self.errors],
             )
         else:
-            return IngestionStatus.build({
-                "status": IngestionStatusType.INGESTION_CREATED,
-                "errors": self.errors,
-            })
+            return IngestionStatus.build(
+                {
+                    "status": IngestionStatusType.INGESTION_CREATED,
+                    "errors": self.errors,
+                }
+            )
 
 
 class IngestionCollection(Collection[Ingestion]):
@@ -493,7 +543,7 @@ class IngestionCollection(Collection[Ingestion]):
         session: Session = None,
         team_id: UUID = None,
         dataset_id: UUID = None,
-        project_id: Optional[UUID] = None
+        project_id: Optional[UUID] = None,
     ):
         args = _pad_positional_args(args, 3)
         self.project_id = project_id or args[0]
@@ -508,21 +558,21 @@ class IngestionCollection(Collection[Ingestion]):
             session=self.session,
             project_id=self.project_id,
             team_id=team_id,
-            obj_type="Ingestions")
+            obj_type="Ingestions",
+        )
 
     # After the Data Manager deprecation,
     # this can be a Class Variable using the `teams/...` endpoint
     @property
     def _path_template(self):
         if self.project_id is None:
-            return f'teams/{self.team_id}/ingestions'
+            return f"teams/{self.team_id}/ingestions"
         else:
-            return f'projects/{self.project_id}/ingestions'
+            return f"projects/{self.project_id}/ingestions"
 
-    def build_from_file_links(self,
-                              file_links: TypingCollection[FileLink],
-                              *,
-                              raise_errors: bool = True) -> Ingestion:
+    def build_from_file_links(
+        self, file_links: TypingCollection[FileLink], *, raise_errors: bool = True
+    ) -> Ingestion:
         """
         [ALPHA] Create an on-platform ingestion event based on the passed FileLink objects.
 
@@ -539,7 +589,9 @@ class IngestionCollection(Collection[Ingestion]):
             raise ValueError("No files passed.")
         invalid_links = [f for f in file_links if f.uid is None]
         if len(invalid_links) != 0:
-            raise ValueError(f"{len(invalid_links)} File Links have no on-platform UID.")
+            raise ValueError(
+                f"{len(invalid_links)} File Links have no on-platform UID."
+            )
 
         req = {
             "dataset_id": str(self.dataset_id),
@@ -547,7 +599,7 @@ class IngestionCollection(Collection[Ingestion]):
             "files": [
                 {"dataset_file_id": str(f.uid), "file_version_uuid": str(f.version)}
                 for f in file_links
-            ]
+            ],
         }
 
         try:
@@ -555,8 +607,10 @@ class IngestionCollection(Collection[Ingestion]):
         except BadRequest as e:
             if e.api_error is not None:
                 if e.api_error.validation_errors:
-                    errors = [IngestionErrorTrace.from_validation_error(error)
-                              for error in e.api_error.validation_errors]
+                    errors = [
+                        IngestionErrorTrace.from_validation_error(error)
+                        for error in e.api_error.validation_errors
+                    ]
                 else:
                     errors = [IngestionErrorTrace(msg=e.api_error.message)]
                 if raise_errors:
@@ -565,10 +619,7 @@ class IngestionCollection(Collection[Ingestion]):
                     return FailedIngestion(errors=errors)
             else:
                 raise e
-        return self.build({
-            **response,
-            "raise_errors": raise_errors
-        })
+        return self.build({**response, "raise_errors": raise_errors})
 
     def build(self, data: dict) -> Ingestion:
         """Build an instance of an Ingestion."""

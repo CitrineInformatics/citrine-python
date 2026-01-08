@@ -16,7 +16,9 @@ def wait_until(condition, timeout=30, interval=0.5):
     return result
 
 
-def generate_fake_wait_while(*, status: str, status_detail: Optional[List[StatusDetail]] = None) -> Callable:
+def generate_fake_wait_while(
+    *, status: str, status_detail: Optional[List[StatusDetail]] = None
+) -> Callable:
     """Generate a wait_while function that mutates a resource with the specified status info."""
     status_detail = status_detail or []
 

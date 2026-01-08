@@ -7,10 +7,10 @@ from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 from citrine.informatics.dimensions import Dimension
 
-__all__ = ['ProductDesignSpace']
+__all__ = ["ProductDesignSpace"]
 
 
-class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
+class ProductDesignSpace(EngineResource["ProductDesignSpace"], DesignSpace):
     """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.
@@ -29,23 +29,29 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
 
     """
 
-    _settings = properties.Optional(properties.Object(DesignSpaceSettings), "metadata.settings")
-
-    subspaces = properties.List(properties.Object(DesignSpace), 'data.instance.subspaces',
-                                default=[])
-    dimensions = properties.Optional(
-        properties.List(properties.Object(Dimension)), 'data.instance.dimensions'
+    _settings = properties.Optional(
+        properties.Object(DesignSpaceSettings), "metadata.settings"
     )
 
-    typ = properties.String('data.instance.type', default='ProductDesignSpace',
-                            deserializable=False)
+    subspaces = properties.List(
+        properties.Object(DesignSpace), "data.instance.subspaces", default=[]
+    )
+    dimensions = properties.Optional(
+        properties.List(properties.Object(Dimension)), "data.instance.dimensions"
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 subspaces: Optional[List[Union[UUID, DesignSpace]]] = None,
-                 dimensions: Optional[List[Dimension]] = None):
+    typ = properties.String(
+        "data.instance.type", default="ProductDesignSpace", deserializable=False
+    )
+
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        subspaces: Optional[List[Union[UUID, DesignSpace]]] = None,
+        dimensions: Optional[List[Dimension]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.subspaces: List[Union[UUID, DesignSpace]] = subspaces or []
@@ -57,18 +63,20 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], DesignSpace):
         if self._settings:
             data["settings"] = self._settings.dump()
 
-        for i, subspace in enumerate(data['instance']['subspaces']):
+        for i, subspace in enumerate(data["instance"]["subspaces"]):
             if isinstance(subspace, dict):
                 # embedded design spaces are not modules, so only serialize their config
-                data['instance']['subspaces'][i] = subspace['instance']
+                data["instance"]["subspaces"][i] = subspace["instance"]
         return data
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        for i, subspace_data in enumerate(data['data']['instance']['subspaces']):
+        for i, subspace_data in enumerate(data["data"]["instance"]["subspaces"]):
             if isinstance(subspace_data, dict):
-                data['data']['instance']['subspaces'][i] = DesignSpace.wrap_instance(subspace_data)
+                data["data"]["instance"]["subspaces"][i] = DesignSpace.wrap_instance(
+                    subspace_data
+                )
         return data
 
     def __str__(self):
-        return '<ProductDesignSpace {!r}>'.format(self.name)
+        return "<ProductDesignSpace {!r}>".format(self.name)

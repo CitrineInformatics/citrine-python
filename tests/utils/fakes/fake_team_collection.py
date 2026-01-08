@@ -4,13 +4,11 @@ from citrine.resources.team import Team, TeamCollection
 
 
 class FakeTeam(Team):
-
     def __init__(self, name):
         self.name = name
 
 
 class FakeTeamCollection(TeamCollection):
-
     def __init__(self, session):
         super().__init__(session=session)
         self.teams = []
@@ -24,4 +22,4 @@ class FakeTeamCollection(TeamCollection):
         if page is None:
             return self.teams
         else:
-            return self.teams[(page - 1) * per_page:page * per_page]
+            return self.teams[(page - 1) * per_page : page * per_page]

@@ -15,30 +15,32 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> IngredientRunCollection:
     return IngredientRunCollection(
-        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"),
         session=session,
-        team_id=UUID('6b608f78-e341-422c-8076-35adc8828000')
+        team_id=UUID("6b608f78-e341-422c-8076-35adc8828000"),
     )
 
 
 def test_create_deprecated_collection(session):
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    session.set_response({'project': {'team': {'id': UUID("6b608f78-e341-422c-8076-35adc8828000")}}})
+    project_id = "6b608f78-e341-422c-8076-35adc8828545"
+    session.set_response(
+        {"project": {"team": {"id": UUID("6b608f78-e341-422c-8076-35adc8828000")}}}
+    )
 
     with pytest.deprecated_call():
         IngredientRunCollection(
-            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+            dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"),
             session=session,
-            project_id=UUID(project_id)
+            project_id=UUID(project_id),
         )
 
-    assert session.calls == [FakeCall(method="GET", path=f'projects/{project_id}')]
+    assert session.calls == [FakeCall(method="GET", path=f"projects/{project_id}")]
 
 
 def test_list_by_spec(collection: IngredientRunCollection):
     run_noop_gemd_relation_search_test(
-        search_for='ingredient-runs',
-        search_with='ingredient-specs',
+        search_for="ingredient-runs",
+        search_with="ingredient-specs",
         collection=collection,
         search_fn=collection.list_by_spec,
     )
@@ -46,8 +48,8 @@ def test_list_by_spec(collection: IngredientRunCollection):
 
 def test_list_by_material(collection: IngredientRunCollection):
     run_noop_gemd_relation_search_test(
-        search_for='ingredient-runs',
-        search_with='material-runs',
+        search_for="ingredient-runs",
+        search_with="material-runs",
         collection=collection,
         search_fn=collection.list_by_material,
     )
@@ -55,8 +57,8 @@ def test_list_by_material(collection: IngredientRunCollection):
 
 def test_list_by_process(collection: IngredientRunCollection):
     run_noop_gemd_relation_search_test(
-        search_for='ingredient-runs',
-        search_with='process-runs',
+        search_for="ingredient-runs",
+        search_with="process-runs",
         collection=collection,
         search_fn=collection.list_by_process,
     )
@@ -69,14 +71,10 @@ def test_equals():
     from gemd.entity.value import NominalReal
 
     gemd_obj = GEMDIngredientRun(
-        mass_fraction=NominalReal(1.0, ""),
-        notes="I have notes",
-        tags=["tag!"]
+        mass_fraction=NominalReal(1.0, ""), notes="I have notes", tags=["tag!"]
     )
     citrine_obj = CitrineIngredientRun(
-        mass_fraction=NominalReal(1.0, ""),
-        notes="I have notes",
-        tags=["tag!"]
+        mass_fraction=NominalReal(1.0, ""), notes="I have notes", tags=["tag!"]
     )
     assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
     citrine_obj.notes = "Something else"

@@ -5,7 +5,7 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['LabelFractionsPredictor']
+__all__ = ["LabelFractionsPredictor"]
 
 
 class LabelFractionsPredictor(Resource["LabelFractionsPredictor"], PredictorNode):
@@ -24,21 +24,23 @@ class LabelFractionsPredictor(Resource["LabelFractionsPredictor"], PredictorNode
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'input')
-    labels = _properties.Set(_properties.String, 'labels')
+    input_descriptor = _properties.Object(FormulationDescriptor, "input")
+    labels = _properties.Set(_properties.String, "labels")
 
-    typ = _properties.String('type', default='LabelFractions', deserializable=False)
+    typ = _properties.String("type", default="LabelFractions", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: FormulationDescriptor,
-                 labels: Set[str]):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: FormulationDescriptor,
+        labels: Set[str],
+    ):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.labels: Set[str] = labels
 
     def __str__(self):
-        return '<LabelFractionsPredictor {!r}>'.format(self.name)
+        return "<LabelFractionsPredictor {!r}>".format(self.name)

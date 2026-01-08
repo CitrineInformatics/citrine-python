@@ -1,17 +1,23 @@
 """Resources that represent parameter templates."""
+
 from typing import List, Dict, Optional, Type
 
 from citrine._rest.resource import GEMDResource
-from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
+from citrine.resources.attribute_templates import (
+    AttributeTemplate,
+    AttributeTemplateCollection,
+)
 from gemd.entity.bounds.base_bounds import BaseBounds
-from gemd.entity.template.parameter_template import ParameterTemplate as GEMDParameterTemplate
+from gemd.entity.template.parameter_template import (
+    ParameterTemplate as GEMDParameterTemplate,
+)
 
 
 class ParameterTemplate(
-    GEMDResource['ParameterTemplate'],
+    GEMDResource["ParameterTemplate"],
     AttributeTemplate,
     GEMDParameterTemplate,
-    typ=GEMDParameterTemplate.typ
+    typ=GEMDParameterTemplate.typ,
 ):
     """
     A parameter template.
@@ -37,28 +43,36 @@ class ParameterTemplate(
 
     _response_key = GEMDParameterTemplate.typ  # 'parameter_template'
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        bounds: BaseBounds,
+        uids: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+    ):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()
-        GEMDParameterTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
-                                       uids=uids, description=description)
+        GEMDParameterTemplate.__init__(
+            self,
+            name=name,
+            bounds=bounds,
+            tags=tags,
+            uids=uids,
+            description=description,
+        )
 
     def __str__(self):
-        return '<Parameter template {!r}>'.format(self.name)
+        return "<Parameter template {!r}>".format(self.name)
 
 
 class ParameterTemplateCollection(AttributeTemplateCollection[ParameterTemplate]):
     """A collection of parameter templates."""
 
-    _individual_key = 'parameter_template'
-    _collection_key = 'parameter_templates'
+    _individual_key = "parameter_template"
+    _collection_key = "parameter_templates"
     _resource = ParameterTemplate
 
     @classmethod

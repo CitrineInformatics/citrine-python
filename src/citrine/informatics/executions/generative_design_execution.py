@@ -18,7 +18,7 @@ class GenerativeDesignExecution(Resource["GenerativeDesignExecution"], Execution
 
     def _path(self):
         return format_escaped_url(
-            '/projects/{project_id}/generative-design/executions/',
+            "/projects/{project_id}/generative-design/executions/",
             project_id=self.project_id,
         )
 
@@ -31,11 +31,15 @@ class GenerativeDesignExecution(Resource["GenerativeDesignExecution"], Execution
 
     def results(self, *, per_page: int = 100) -> Iterable[GenerativeDesignResult]:
         """Fetch the Generative Design Results for the particular execution, paginated."""
-        path = self._path() + f'{self.uid}/results'
-        fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_results,
-                                        per_page=per_page)
+        path = self._path() + f"{self.uid}/results"
+        fetcher = partial(
+            self._fetch_page, path=path, fetch_func=self._session.get_resource
+        )
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_results,
+            per_page=per_page,
+        )
 
     def result(
         self,
@@ -43,7 +47,7 @@ class GenerativeDesignExecution(Resource["GenerativeDesignExecution"], Execution
         result_id: UUID,
     ) -> GenerativeDesignResult:
         """Fetch a Generative Design Result for the particular UID."""
-        path = self._path() + f'{self.uid}/results/{result_id}'
+        path = self._path() + f"{self.uid}/results/{result_id}"
         data = self._session.get_resource(path, version=self._api_version)
         result = GenerativeDesignResult.build(data)
         return result

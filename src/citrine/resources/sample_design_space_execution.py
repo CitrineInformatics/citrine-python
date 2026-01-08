@@ -1,10 +1,13 @@
 """Resources that represent both individual and collections of sample design space executions."""
+
 from typing import Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
+from citrine.informatics.executions.sample_design_space_execution import (
+    SampleDesignSpaceExecution,
+)
 from citrine.informatics.design_spaces.sample_design_space import SampleDesignSpaceInput
 from citrine.resources.response import Response
 
@@ -12,10 +15,10 @@ from citrine.resources.response import Response
 class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecution"]):
     """A collection of SampleDesignSpaceExecutions."""
 
-    _api_version = 'v3'
-    _path_template = '/projects/{project_id}/design-spaces/{design_space_id}/sample'
+    _api_version = "v3"
+    _path_template = "/projects/{project_id}/design-spaces/{design_space_id}/sample"
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = SampleDesignSpaceExecution
 
     def __init__(self, project_id: UUID, design_space_id: UUID, session: Session):
@@ -48,9 +51,11 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a SampleDesignSpaceExecution.")
 
-    def list(self, *,
-             per_page: int = 10,
-             ) -> Iterator[SampleDesignSpaceExecution]:
+    def list(
+        self,
+        *,
+        per_page: int = 10,
+    ) -> Iterator[SampleDesignSpaceExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -70,12 +75,12 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
             Resources in this collection.
 
         """
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=self._fetch_page,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Sample Design Space Executions cannot be deleted or archived."""
-        raise NotImplementedError(
-            "Sample Design Space Executions cannot be deleted"
-        )
+        raise NotImplementedError("Sample Design Space Executions cannot be deleted")

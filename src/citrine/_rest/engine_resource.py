@@ -5,32 +5,39 @@ from citrine._serialization import properties
 from citrine._serialization.include_parent_properties import IncludeParentProperties
 from citrine.resources.status_detail import StatusDetail
 
-Self = TypeVar('Self', bound='Resource')
+Self = TypeVar("Self", bound="Resource")
 
 
 class EngineResourceWithoutStatus(Resource[Self]):
     """Base resource for metadata from stand-alone AI Engine modules."""
 
-    created_by = properties.Optional(properties.UUID, 'metadata.created.user', serializable=False)
+    created_by = properties.Optional(
+        properties.UUID, "metadata.created.user", serializable=False
+    )
     """:Optional[UUID]: id of the user who created the resource"""
-    create_time = properties.Optional(properties.Datetime, 'metadata.created.time',
-                                      serializable=False)
+    create_time = properties.Optional(
+        properties.Datetime, "metadata.created.time", serializable=False
+    )
     """:Optional[datetime]: date and time at which the resource was created"""
 
-    updated_by = properties.Optional(properties.UUID, 'metadata.updated.user',
-                                     serializable=False)
+    updated_by = properties.Optional(
+        properties.UUID, "metadata.updated.user", serializable=False
+    )
     """:Optional[UUID]: id of the user who most recently updated the resource,
     if it has been updated"""
-    update_time = properties.Optional(properties.Datetime, 'metadata.updated.time',
-                                      serializable=False)
+    update_time = properties.Optional(
+        properties.Datetime, "metadata.updated.time", serializable=False
+    )
     """:Optional[datetime]: date and time at which the resource was most recently updated,
     if it has been updated"""
 
-    archived_by = properties.Optional(properties.UUID, 'metadata.archived.user',
-                                      serializable=False)
+    archived_by = properties.Optional(
+        properties.UUID, "metadata.archived.user", serializable=False
+    )
     """:Optional[UUID]: id of the user who archived the resource, if it has been archived"""
-    archive_time = properties.Optional(properties.Datetime, 'metadata.archived.time',
-                                       serializable=False)
+    archive_time = properties.Optional(
+        properties.Datetime, "metadata.archived.time", serializable=False
+    )
     """:Optional[datetime]: date and time at which the resource was archived,
     if it has been archived"""
 
@@ -59,10 +66,16 @@ class EngineResourceWithoutStatus(Resource[Self]):
 class EngineResource(EngineResourceWithoutStatus[Self], IncludeParentProperties[Self]):
     """Base resource for metadata from stand-alone AI Engine modules."""
 
-    status = properties.Optional(properties.String(), 'metadata.status.name', serializable=False)
+    status = properties.Optional(
+        properties.String(), "metadata.status.name", serializable=False
+    )
     """:Optional[str]: short description of the resource's status"""
-    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
-                                    default=[], serializable=False)
+    status_detail = properties.List(
+        properties.Object(StatusDetail),
+        "metadata.status.detail",
+        default=[],
+        serializable=False,
+    )
     """:List[StatusDetail]: a list of structured status info, containing the message and level"""
 
     @classmethod
@@ -75,10 +88,14 @@ class VersionedEngineResource(EngineResource[Self], IncludeParentProperties[Self
     """Base resource for metadata from stand-alone AI Engine modules which support versioning."""
 
     """:Integer: The version number of the resource."""
-    version = properties.Optional(properties.Integer, 'metadata.version', serializable=False)
+    version = properties.Optional(
+        properties.Integer, "metadata.version", serializable=False
+    )
 
     """:Boolean: The draft status of the resource."""
-    draft = properties.Optional(properties.Boolean, 'metadata.draft', serializable=False)
+    draft = properties.Optional(
+        properties.Boolean, "metadata.draft", serializable=False
+    )
 
     @classmethod
     def build(cls, data: dict):

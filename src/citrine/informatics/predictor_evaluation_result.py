@@ -4,18 +4,23 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
-from citrine.informatics.predictor_evaluator import PredictorEvaluator, HoldoutSetEvaluator, \
-    CrossValidationEvaluator
+from citrine.informatics.predictor_evaluator import (
+    PredictorEvaluator,
+    HoldoutSetEvaluator,
+    CrossValidationEvaluator,
+)
 
-__all__ = ['MetricValue',
-           'RealMetricValue',
-           'PredictedVsActualRealPoint',
-           'PredictedVsActualCategoricalPoint',
-           'RealPredictedVsActual',
-           'CategoricalPredictedVsActual',
-           'ResponseMetrics',
-           'PredictorEvaluationResult',
-           'CrossValidationResult']
+__all__ = [
+    "MetricValue",
+    "RealMetricValue",
+    "PredictedVsActualRealPoint",
+    "PredictedVsActualCategoricalPoint",
+    "RealPredictedVsActual",
+    "CategoricalPredictedVsActual",
+    "ResponseMetrics",
+    "PredictorEvaluationResult",
+    "CrossValidationResult",
+]
 
 
 class MetricValue(PolymorphicSerializable["MetricValue"]):
@@ -31,7 +36,7 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
         return {
             "RealMetricValue": RealMetricValue,
             "RealPredictedVsActual": RealPredictedVsActual,
-            "CategoricalPredictedVsActual": CategoricalPredictedVsActual
+            "CategoricalPredictedVsActual": CategoricalPredictedVsActual,
         }[data["type"]]
 
 
@@ -42,11 +47,13 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
     """:float: Mean value"""
     standard_error = properties.Optional(properties.Float(), "standard_error")
     """:Optional[float]: Standard error of the mean"""
-    typ = properties.String('type', default='RealMetricValue', deserializable=False)
+    typ = properties.String("type", default="RealMetricValue", deserializable=False)
 
     def __eq__(self, other):
         if isinstance(other, RealMetricValue):
-            return self.mean == other.mean and self.standard_error == other.standard_error
+            return (
+                self.mean == other.mean and self.standard_error == other.standard_error
+            )
         else:
             return False
 
@@ -71,7 +78,9 @@ class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
         pass  # pragma: no cover
 
 
-class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoricalPoint"]):
+class PredictedVsActualCategoricalPoint(
+    Serializable["PredictedVsActualCategoricalPoint"]
+):
     """Predicted vs. actual data for a single categorical data point."""
 
     uuid = properties.UUID("uuid")
@@ -93,14 +102,20 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
         pass  # pragma: no cover
 
 
-class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], MetricValue):
+class CategoricalPredictedVsActual(
+    Serializable["CategoricalPredictedVsActual"], MetricValue
+):
     """List of predicted vs. actual data points for a categorical value."""
 
-    value = properties.List(properties.Object(PredictedVsActualCategoricalPoint), "value")
+    value = properties.List(
+        properties.Object(PredictedVsActualCategoricalPoint), "value"
+    )
     """:List[PredictedVsActualCategoricalPoint]: List of predicted vs. actual data computed during
     a predictor evaluation. This is a flattened list that contains data for all
     trials and folds."""
-    typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
+    typ = properties.String(
+        "type", default="CategoricalPredictedVsActual", deserializable=False
+    )
 
     def __iter__(self):
         return iter(self.value)
@@ -116,7 +131,9 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
     """:List[PredictedVsActualRealPoint]: List of predicted vs. actual data computed during
     a predictor evaluation. This is a flattened list that contains data for all
     trials and folds."""
-    typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
+    typ = properties.String(
+        "type", default="RealPredictedVsActual", deserializable=False
+    )
 
     def __iter__(self):
         return iter(self.value)
@@ -133,7 +150,9 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
 
     """
 
-    metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")
+    metrics = properties.Mapping(
+        properties.String, properties.Object(MetricValue), "metrics"
+    )
     """:Dict[str, MetricValue]: Metrics computed for a single response, keyed by the
     metric's ``__repr__``."""
 
@@ -166,7 +185,7 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         """Return the subtype."""
         return {
             "CrossValidationResult": CrossValidationResult,
-            "HoldoutSetResult": HoldoutSetResult
+            "HoldoutSetResult": HoldoutSetResult,
         }[data["type"]]
 
     @property
@@ -185,7 +204,9 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         raise NotImplementedError  # pragma: no cover
 
 
-class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEvaluationResult):
+class CrossValidationResult(
+    Serializable["CrossValidationResult"], PredictorEvaluationResult
+):
     """Result of performing a cross-validation evaluation on a predictor.
 
     Results for a cross-validated response can be accessed via ``cvResult['response_name']``,
@@ -197,9 +218,12 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
     """
 
     _evaluator = properties.Object(CrossValidationEvaluator, "evaluator")
-    _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
-                                           "response_results")
-    typ = properties.String('type', default='CrossValidationResult', deserializable=False)
+    _response_results = properties.Mapping(
+        properties.String, properties.Object(ResponseMetrics), "response_results"
+    )
+    typ = properties.String(
+        "type", default="CrossValidationResult", deserializable=False
+    )
 
     def __getitem__(self, item):
         return self._response_results[item]
@@ -235,9 +259,10 @@ class HoldoutSetResult(Serializable["HoldoutSetResult"], PredictorEvaluationResu
     """
 
     _evaluator = properties.Object(HoldoutSetEvaluator, "evaluator")
-    _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
-                                           "response_results")
-    typ = properties.String('type', default='HoldoutSetResult', deserializable=False)
+    _response_results = properties.Mapping(
+        properties.String, properties.Object(ResponseMetrics), "response_results"
+    )
+    typ = properties.String("type", default="HoldoutSetResult", deserializable=False)
 
     def __getitem__(self, item):
         return self._response_results[item]

@@ -6,10 +6,7 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
 from citrine.informatics.data_sources import DataSource
 
-__all__ = ['PredictorEvaluator',
-           'CrossValidationEvaluator',
-           'HoldoutSetEvaluator'
-           ]
+__all__ = ["PredictorEvaluator", "CrossValidationEvaluator", "HoldoutSetEvaluator"]
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
@@ -20,7 +17,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         """Return the subtype."""
         return {
             "CrossValidationEvaluator": CrossValidationEvaluator,
-            "HoldoutSetEvaluator": HoldoutSetEvaluator
+            "HoldoutSetEvaluator": HoldoutSetEvaluator,
         }[data["type"]]
 
     def __eq__(self, other):
@@ -28,13 +25,15 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             self_dict = self.dump()
             other_dict = other.dump()
 
-            self_dict['responses'] = set(self_dict.get('responses', []))
-            self_dict['metrics'] = frozenset(
-                frozenset((k, v) for k, v in dct.items()) for dct in self_dict.get('metrics', [])
+            self_dict["responses"] = set(self_dict.get("responses", []))
+            self_dict["metrics"] = frozenset(
+                frozenset((k, v) for k, v in dct.items())
+                for dct in self_dict.get("metrics", [])
             )
-            other_dict['responses'] = set(other_dict.get('responses', []))
-            other_dict['metrics'] = frozenset(
-                frozenset((k, v) for k, v in dct.items()) for dct in other_dict.get('metrics', [])
+            other_dict["responses"] = set(other_dict.get("responses", []))
+            other_dict["metrics"] = frozenset(
+                frozenset((k, v) for k, v in dct.items())
+                for dct in other_dict.get("metrics", [])
             )
 
             return self_dict == other_dict
@@ -63,7 +62,9 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         raise NotImplementedError  # pragma: no cover
 
 
-class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
+class CrossValidationEvaluator(
+    Serializable["CrossValidationEvaluator"], PredictorEvaluator
+):
     """Evaluate a predictor via cross validation.
 
     Performs cross-validation on requested predictor responses and computes the requested metrics
@@ -105,21 +106,27 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     _responses = properties.Set(properties.String, "responses")
     n_folds = properties.Integer("n_folds")
     n_trials = properties.Integer("n_trials")
-    _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
-                                   "metrics")
-    ignore_when_grouping = properties.Optional(properties.Set(properties.String),
-                                               "ignore_when_grouping")
-    typ = properties.String("type", default="CrossValidationEvaluator", deserializable=False)
+    _metrics = properties.Optional(
+        properties.Set(properties.Object(PredictorEvaluationMetric)), "metrics"
+    )
+    ignore_when_grouping = properties.Optional(
+        properties.Set(properties.String), "ignore_when_grouping"
+    )
+    typ = properties.String(
+        "type", default="CrossValidationEvaluator", deserializable=False
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str = "",
-                 responses: Set[str],
-                 n_folds: int = 5,
-                 n_trials: int = 3,
-                 metrics: Optional[Set[PredictorEvaluationMetric]] = None,
-                 ignore_when_grouping: Optional[Set[str]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str = "",
+        responses: Set[str],
+        n_folds: int = 5,
+        n_trials: int = 3,
+        metrics: Optional[Set[PredictorEvaluationMetric]] = None,
+        ignore_when_grouping: Optional[Set[str]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self._responses: Set[str] = responses
@@ -163,16 +170,20 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
     description = properties.String("description")
     _responses = properties.Set(properties.String, "responses")
     data_source = properties.Object(DataSource, "data_source")
-    _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
-                                   "metrics")
+    _metrics = properties.Optional(
+        properties.Set(properties.Object(PredictorEvaluationMetric)), "metrics"
+    )
     typ = properties.String("type", default="HoldoutSetEvaluator", deserializable=False)
 
-    def __init__(self,
-                 name: str, *,
-                 description: str = "",
-                 responses: Set[str],
-                 data_source: DataSource,
-                 metrics: Optional[Set[PredictorEvaluationMetric]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str = "",
+        responses: Set[str],
+        data_source: DataSource,
+        metrics: Optional[Set[PredictorEvaluationMetric]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self._responses: Set[str] = responses

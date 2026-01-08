@@ -8,10 +8,12 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import MolecularStructureDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['MolecularStructureFeaturizer']
+__all__ = ["MolecularStructureFeaturizer"]
 
 
-class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], PredictorNode):
+class MolecularStructureFeaturizer(
+    Resource["MolecularStructureFeaturizer"], PredictorNode
+):
     """
     A featurizer for molecular structures, powered by CDK.
 
@@ -78,19 +80,21 @@ class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], Pre
 
     """
 
-    input_descriptor = _properties.Object(MolecularStructureDescriptor, 'descriptor')
-    features = _properties.List(_properties.String, 'features')
-    excludes = _properties.List(_properties.String, 'excludes')
+    input_descriptor = _properties.Object(MolecularStructureDescriptor, "descriptor")
+    features = _properties.List(_properties.String, "features")
+    excludes = _properties.List(_properties.String, "excludes")
 
-    typ = _properties.String('type', default='MoleculeFeaturizer', deserializable=False)
+    typ = _properties.String("type", default="MoleculeFeaturizer", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: MolecularStructureDescriptor,
-                 features: Optional[List[str]] = None,
-                 excludes: Optional[List[str]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: MolecularStructureDescriptor,
+        features: Optional[List[str]] = None,
+        excludes: Optional[List[str]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.input_descriptor = input_descriptor
@@ -98,4 +102,4 @@ class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], Pre
         self.excludes = excludes if excludes is not None else []
 
     def __str__(self):
-        return '<MolecularStructureFeaturizer {!r}>'.format(self.name)
+        return "<MolecularStructureFeaturizer {!r}>".format(self.name)

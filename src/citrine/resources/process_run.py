@@ -1,4 +1,5 @@
 """Resources that represent process run data objects."""
+
 from typing import List, Dict, Optional, Type, Union, Iterator
 from uuid import UUID
 
@@ -16,7 +17,9 @@ from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.source.performed_source import PerformedSource
 
 
-class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMDProcessRun.typ):
+class ProcessRun(
+    GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMDProcessRun.typ
+):
     """
     A process run.
 
@@ -51,39 +54,59 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
 
     _response_key = GEMDProcessRun.typ  # 'process_run'
 
-    name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDProcessSpec), 'spec', override=True, use_init=True,)
+    name = String("name", override=True, use_init=True)
+    conditions = PropertyOptional(
+        PropertyList(Object(Condition)), "conditions", override=True
+    )
+    parameters = PropertyOptional(
+        PropertyList(Object(Parameter)), "parameters", override=True
+    )
+    spec = PropertyOptional(
+        LinkOrElse(GEMDProcessSpec),
+        "spec",
+        override=True,
+        use_init=True,
+    )
     source = PropertyOptional(Object(PerformedSource), "source", override=True)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 parameters: Optional[List[Parameter]] = None,
-                 spec: Optional[GEMDProcessSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: Optional[Dict[str, str]] = None,
+        tags: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        conditions: Optional[List[Condition]] = None,
+        parameters: Optional[List[Parameter]] = None,
+        spec: Optional[GEMDProcessSpec] = None,
+        file_links: Optional[List[FileLink]] = None,
+        source: Optional[PerformedSource] = None,
+    ):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
-        GEMDProcessRun.__init__(self, name=name, uids=uids,
-                                tags=tags, conditions=conditions, parameters=parameters,
-                                spec=spec, file_links=file_links, notes=notes, source=source)
+        GEMDProcessRun.__init__(
+            self,
+            name=name,
+            uids=uids,
+            tags=tags,
+            conditions=conditions,
+            parameters=parameters,
+            spec=spec,
+            file_links=file_links,
+            notes=notes,
+            source=source,
+        )
 
     def __str__(self):
-        return '<Process run {!r}>'.format(self.name)
+        return "<Process run {!r}>".format(self.name)
 
 
 class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     """Represents the collection of all process runs associated with a dataset."""
 
-    _individual_key = 'process_run'
-    _collection_key = 'process_runs'
+    _individual_key = "process_run"
+    _collection_key = "process_runs"
     _resource = ProcessRun
 
     @classmethod
@@ -91,9 +114,9 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         """Return the resource type in the collection."""
         return ProcessRun
 
-    def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
-                     ) -> Iterator[ProcessRun]:
+    def list_by_spec(
+        self, uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+    ) -> Iterator[ProcessRun]:
         """
         Get the process runs using the specified process spec.
 
@@ -108,4 +131,4 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
             The process runs using the specified process spec.
 
         """
-        return self._get_relation('process-specs', uid=uid)
+        return self._get_relation("process-specs", uid=uid)

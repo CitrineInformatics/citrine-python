@@ -3,10 +3,10 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
-__all__ = ['LabelFractionConstraint']
+__all__ = ["LabelFractionConstraint"]
 
 
-class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constraint):
+class LabelFractionConstraint(Serializable["LabelFractionConstraint"], Constraint):
     """Represents a constraint on the total amount of ingredients with a given label.
 
     Parameters
@@ -27,19 +27,24 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    label = properties.String('label')
-    min = properties.Optional(properties.Float, 'min')
-    max = properties.Optional(properties.Float, 'max')
-    is_required = properties.Boolean('is_required')
-    typ = properties.String('type', default='LabelFractionConstraint')
+    formulation_descriptor = properties.Object(
+        FormulationDescriptor, "formulation_descriptor"
+    )
+    label = properties.String("label")
+    min = properties.Optional(properties.Float, "min")
+    max = properties.Optional(properties.Float, "max")
+    is_required = properties.Boolean("is_required")
+    typ = properties.String("type", default="LabelFractionConstraint")
 
-    def __init__(self, *,
-                 formulation_descriptor: FormulationDescriptor,
-                 label: str,
-                 min: float,
-                 max: float,
-                 is_required: bool = True):
+    def __init__(
+        self,
+        *,
+        formulation_descriptor: FormulationDescriptor,
+        label: str,
+        min: float,
+        max: float,
+        is_required: bool = True,
+    ):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.label: str = label
         self.min: float = min

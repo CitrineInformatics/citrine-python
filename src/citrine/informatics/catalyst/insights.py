@@ -16,14 +16,18 @@ class InsightsRequest(Serializable["InsightsRequest"]):
         default=LanguageModelChoice.GPT_35_TURBO,
     )
     n_documents = properties.Optional(properties.Integer, "n_documents", default=5)
-    response_size = properties.Optional(properties.Integer, "response_size", default=100)
+    response_size = properties.Optional(
+        properties.Integer, "response_size", default=100
+    )
 
     def __init__(
         self,
         *,
         question: str,
         temperature: Optional[float] = 0.0,
-        language_model: Optional[LanguageModelChoice] = LanguageModelChoice.GPT_35_TURBO,
+        language_model: Optional[
+            LanguageModelChoice
+        ] = LanguageModelChoice.GPT_35_TURBO,
         n_documents: Optional[int] = 5,
         response_size: Optional[int] = 100,
     ):

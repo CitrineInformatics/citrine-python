@@ -6,7 +6,7 @@ from citrine._serialization import properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['ChemicalFormulaFeaturizer']
+__all__ = ["ChemicalFormulaFeaturizer"]
 
 
 class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], PredictorNode):
@@ -131,21 +131,25 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
 
     """
 
-    input_descriptor = properties.Object(ChemicalFormulaDescriptor, 'input')
-    features = properties.List(properties.String, 'features')
-    excludes = properties.List(properties.String, 'excludes', default=[])
-    _powers = properties.List(properties.Float, 'powers')
+    input_descriptor = properties.Object(ChemicalFormulaDescriptor, "input")
+    features = properties.List(properties.String, "features")
+    excludes = properties.List(properties.String, "excludes", default=[])
+    _powers = properties.List(properties.Float, "powers")
 
-    typ = properties.String('type', default='ChemicalFormulaFeaturizer', deserializable=False)
+    typ = properties.String(
+        "type", default="ChemicalFormulaFeaturizer", deserializable=False
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: ChemicalFormulaDescriptor,
-                 features: Optional[List[str]] = None,
-                 excludes: Optional[List[str]] = None,
-                 powers: Optional[List[int]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: ChemicalFormulaDescriptor,
+        features: Optional[List[str]] = None,
+        excludes: Optional[List[str]] = None,
+        powers: Optional[List[int]] = None,
+    ):
         self.name = name
         self.description = description
         self.input_descriptor = input_descriptor
@@ -156,8 +160,10 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
     @property
     def powers(self) -> List[int]:
         """The list of powers when computing generalized weighted means of element properties."""
-        warn("The type of 'powers' will change to a list of floats in v4.0.0. To retrieve them as "
-             "floats now, use 'powers_as_float'.")
+        warn(
+            "The type of 'powers' will change to a list of floats in v4.0.0. To retrieve them as "
+            "floats now, use 'powers_as_float'."
+        )
         truncated = [int(p) for p in self._powers]
         if truncated != self._powers:
             diffs = [f"{x} => {y}" for x, y in zip(self._powers, truncated) if x != y]
@@ -171,9 +177,11 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
     @property
     def powers_as_float(self) -> List[float]:
         """Powers when computing generalized weighted means of element properties."""
-        warn("'powers_as_float' will be deprecated in v4.0.0 for 'powers', and removed in v5.0.0",
-             PendingDeprecationWarning)
+        warn(
+            "'powers_as_float' will be deprecated in v4.0.0 for 'powers', and removed in v5.0.0",
+            PendingDeprecationWarning,
+        )
         return self._powers
 
     def __str__(self):
-        return '<ChemicalFormulaFeaturizer {!r}>'.format(self.name)
+        return "<ChemicalFormulaFeaturizer {!r}>".format(self.name)

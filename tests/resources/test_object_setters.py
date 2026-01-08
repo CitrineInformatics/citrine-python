@@ -9,7 +9,6 @@ from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.measurement_run import MeasurementRun
-from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 
 
@@ -23,8 +22,11 @@ def test_soft_process_material_attachment():
 def test_soft_measurement_material_attachment():
     """Test that soft attachments are formed from materials to measurements."""
     cake = MaterialRun("A cake")
-    smell_test = MeasurementRun("use your nose", material=cake, properties=[
-        Property(name="Smell",  value=DiscreteCategorical("yummy"))])
+    smell_test = MeasurementRun(
+        "use your nose",
+        material=cake,
+        properties=[Property(name="Smell", value=DiscreteCategorical("yummy"))],
+    )
     taste_test = MeasurementRun("taste", material=cake)
     assert cake.measurements == [smell_test, taste_test]
 
@@ -34,11 +36,14 @@ def test_soft_process_ingredient_attachment():
     vinegar = MaterialSpec("vinegar")
     baking_soda = MaterialSpec("baking soda")
     eruption = ProcessSpec("Volcano eruption")
-    vinegar_sample = IngredientSpec("a bit of vinegar", material=vinegar, process=eruption)
+    vinegar_sample = IngredientSpec(
+        "a bit of vinegar", material=vinegar, process=eruption
+    )
     baking_soda_sample = IngredientSpec("a bit of NaOh", material=baking_soda)
     baking_soda_sample.process = eruption
-    assert set(eruption.ingredients) == {vinegar_sample, baking_soda_sample}, \
+    assert set(eruption.ingredients) == {vinegar_sample, baking_soda_sample}, (
         "Creating an ingredient for a process did not auto-populate that process's ingredient list"
+    )
 
 
 def test_object_pointer_serde():

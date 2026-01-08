@@ -9,8 +9,8 @@ from citrine._utils.functions import resource_path
 class CatalystResource:
     """Encapsulates th ability to invoke Catalyst."""
 
-    _path_template: str = '/catalyst'
-    _api_version = 'v1'
+    _path_template: str = "/catalyst"
+    _api_version = "v1"
 
     def __init__(self, session: Session):
         self.session: Session = session
