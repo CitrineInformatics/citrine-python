@@ -10,7 +10,7 @@ from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine._rest.collection import CreationType, Collection
 
 logger = getLogger(__name__)
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def find_collection(*, collection: Collection[T], name: str) -> Optional[T]:
@@ -24,33 +24,33 @@ def find_collection(*, collection: Collection[T], name: str) -> Optional[T]:
             # try to use search if it is available
             # call list() to collapse the iterator, otherwise the NotFound
             # won't show up until collection_list is used
-            collection_list = list(collection.search(search_params={
-                "name": {
-                    "value": name,
-                    "search_method": "EXACT"
-                }
-            }))
+            collection_list = list(
+                collection.search(
+                    search_params={"name": {"value": name, "search_method": "EXACT"}}
+                )
+            )
         except (NotFound, NotImplementedError):
             # Search must not be available yet or any more
             collection_list = collection.list()
     else:
         collection_list = collection.list()
 
-    matching_resources = [resource for resource in collection_list if resource.name == name]
+    matching_resources = [
+        resource for resource in collection_list if resource.name == name
+    ]
     if len(matching_resources) > 1:
         raise ValueError("Found multiple collections with name '{}'".format(name))
     if len(matching_resources) == 1:
         result = matching_resources.pop()
-        logger.info('Found existing: {}'.format(result))
+        logger.info("Found existing: {}".format(result))
         return result
     else:
         return None
 
 
-def get_by_name_or_create(*,
-                          collection: Collection[T],
-                          name: str,
-                          default_provider: Callable[..., T]) -> T:
+def get_by_name_or_create(
+    *, collection: Collection[T], name: str, default_provider: Callable[..., T]
+) -> T:
     """
     Tries to find a collection by its name (returns first hit).
 
@@ -60,7 +60,9 @@ def get_by_name_or_create(*,
     if found:
         return found
     else:
-        logger.info('Failed to find resource with name {}, creating one instead.'.format(name))
+        logger.info(
+            "Failed to find resource with name {}, creating one instead.".format(name)
+        )
         return default_provider()
 
 
@@ -77,34 +79,39 @@ def get_by_name_or_raise_error(*, collection: Collection[T], name: str) -> T:
         raise ValueError("Did not find resource with the given name: {}".format(name))
 
 
-def find_or_create_project(*,
-                           project_collection: ProjectCollection,
-                           project_name: str,
-                           raise_error: bool = False) -> Project:
+def find_or_create_project(
+    *,
+    project_collection: ProjectCollection,
+    project_name: str,
+    raise_error: bool = False,
+) -> Project:
     """
     Tries to find a project by name (returns first hit).
 
     If not found, creates a new project with the given name
     """
     if project_collection.team_id is None:
-        raise NotImplementedError("Collection must have a team ID, such as when retrieved with "
-                                  "find_or_create_team.")
+        raise NotImplementedError(
+            "Collection must have a team ID, such as when retrieved with "
+            "find_or_create_team."
+        )
 
     if raise_error:
-        project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
+        project = get_by_name_or_raise_error(
+            collection=project_collection, name=project_name
+        )
     else:
         project = get_by_name_or_create(
             collection=project_collection,
             name=project_name,
-            default_provider=lambda: project_collection.register(project_name)
+            default_provider=lambda: project_collection.register(project_name),
         )
     return project
 
 
-def find_or_create_team(*,
-                        team_collection: TeamCollection,
-                        team_name: str,
-                        raise_error: bool = False) -> Team:
+def find_or_create_team(
+    *, team_collection: TeamCollection, team_name: str, raise_error: bool = False
+) -> Team:
     """
     Tries to find a team by name (returns first hit).
 
@@ -116,36 +123,40 @@ def find_or_create_team(*,
         team = get_by_name_or_create(
             collection=team_collection,
             name=team_name,
-            default_provider=lambda: team_collection.register(team_name)
+            default_provider=lambda: team_collection.register(team_name),
         )
     return team
 
 
-def find_or_create_dataset(*,
-                           dataset_collection: DatasetCollection,
-                           dataset_name: str,
-                           raise_error: bool = False) -> Dataset:
+def find_or_create_dataset(
+    *,
+    dataset_collection: DatasetCollection,
+    dataset_name: str,
+    raise_error: bool = False,
+) -> Dataset:
     """
     Tries to find a dataset by name (returns first hit).
 
     If not found, creates a new dataset with the given name
     """
     if raise_error:
-        dataset = get_by_name_or_raise_error(collection=dataset_collection, name=dataset_name)
+        dataset = get_by_name_or_raise_error(
+            collection=dataset_collection, name=dataset_name
+        )
     else:
         dataset = get_by_name_or_create(
             collection=dataset_collection,
             name=dataset_name,
             default_provider=lambda: dataset_collection.register(
                 Dataset(dataset_name, summary="seed summ.", description="seed desc.")
-            )
+            ),
         )
     return dataset
 
 
-def create_or_update(*,
-                     collection: Collection[CreationType],
-                     resource: CreationType) -> CreationType:
+def create_or_update(
+    *, collection: Collection[CreationType], resource: CreationType
+) -> CreationType:
     """
     Update a resource of a given name belonging to a collection.
 

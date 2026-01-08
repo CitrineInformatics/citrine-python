@@ -12,24 +12,27 @@ from citrine._session import Session
 from citrine.informatics.experiment_values import ExperimentValue
 
 
-class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
+class CandidateExperimentSnapshot(Serializable["CandidateExperimentSnapshot"]):
     """The contents of a candidate experiment within an experiment data source."""
 
-    uid = properties.UUID('experiment_id', serializable=False)
+    uid = properties.UUID("experiment_id", serializable=False)
     """:UUID: unique Citrine id of this experiment"""
-    candidate_id = properties.UUID('candidate_id', serializable=False)
+    candidate_id = properties.UUID("candidate_id", serializable=False)
     """:UUID: unique Citrine id of the candidate associated with this experiment"""
-    workflow_id = properties.UUID('workflow_id', serializable=False)
+    workflow_id = properties.UUID("workflow_id", serializable=False)
     """:UUID: unique Citrine id of the design workflow which produced the associated candidate"""
-    name = properties.String('name', serializable=False)
+    name = properties.String("name", serializable=False)
     """:str: name of the experiment"""
-    description = properties.Optional(properties.String, 'description', serializable=False)
+    description = properties.Optional(
+        properties.String, "description", serializable=False
+    )
     """:Optional[str]: description of the experiment"""
-    updated_time = properties.Datetime('updated_time', serializable=False)
+    updated_time = properties.Datetime("updated_time", serializable=False)
     """:datetime: date and time at which the experiment was updated"""
 
-    overrides = properties.Mapping(properties.String, properties.Object(ExperimentValue),
-                                   'overrides')
+    overrides = properties.Mapping(
+        properties.String, properties.Object(ExperimentValue), "overrides"
+    )
     """:dict[str, ExperimentValue]: dictionary of candidate material variable overrides"""
 
     def __init__(self, *args, **kwargs):
@@ -37,25 +40,30 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
         pass  # pragma: no cover
 
     def _overrides_json(self) -> Dict[str, str]:
-        return {name: json.dumps(expt_value.value) for name, expt_value in self.overrides.items()}
+        return {
+            name: json.dumps(expt_value.value)
+            for name, expt_value in self.overrides.items()
+        }
 
 
-class ExperimentDataSource(Serializable['ExperimentDataSource']):
+class ExperimentDataSource(Serializable["ExperimentDataSource"]):
     """An experiment data source."""
 
-    uid = properties.UUID('id', serializable=False)
+    uid = properties.UUID("id", serializable=False)
     """:UUID: unique Citrine id of this experiment data source"""
-    experiments = properties.List(properties.Object(CandidateExperimentSnapshot),
-                                  'data.experiments',
-                                  serializable=False)
+    experiments = properties.List(
+        properties.Object(CandidateExperimentSnapshot),
+        "data.experiments",
+        serializable=False,
+    )
     """:list[CandidateExperimentSnapshot]: list of experiment data in this data source"""
-    branch_root_id = properties.UUID('metadata.branch_root_id', serializable=False)
+    branch_root_id = properties.UUID("metadata.branch_root_id", serializable=False)
     """:UUID: unique Citrine id of the branch root this data source is associated with"""
-    version = properties.Integer('metadata.version', serializable=False)
+    version = properties.Integer("metadata.version", serializable=False)
     """:int: version of this data source"""
-    created_by = properties.UUID('metadata.created.user', serializable=False)
+    created_by = properties.UUID("metadata.created.user", serializable=False)
     """:UUID: id of the user who created this data source"""
-    create_time = properties.Datetime('metadata.created.time', serializable=False)
+    create_time = properties.Datetime("metadata.created.time", serializable=False)
     """:datetime: date and time at which this data source was created"""
 
     def __init__(self, *args, **kwargs):
@@ -88,10 +96,10 @@ class ExperimentDataSource(Serializable['ExperimentDataSource']):
 class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
     """Represents the collection of all experiment data sources associated with a project."""
 
-    _path_template = 'projects/{project_id}/candidate-experiment-datasources'
+    _path_template = "projects/{project_id}/candidate-experiment-datasources"
     _individual_key = None
     _resource = ExperimentDataSource
-    _collection_key = 'response'
+    _collection_key = "response"
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -104,10 +112,13 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
         result._session = self.session
         return result
 
-    def list(self, *,
-             per_page: int = 100,
-             branch_version_id: Optional[Union[UUID, str]] = None,
-             version: Optional[Union[int, str]] = None) -> Iterator[ExperimentDataSource]:
+    def list(
+        self,
+        *,
+        per_page: int = 100,
+        branch_version_id: Optional[Union[UUID, str]] = None,
+        version: Optional[Union[int, str]] = None,
+    ) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
 
         Parameters
@@ -134,9 +145,11 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             params["version"] = version
 
         fetcher = partial(self._fetch_page, additional_params=params)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def read(self, datasource: Union[ExperimentDataSource, UUID, str]):
         """Reads the provided experiment data source into a CSV.

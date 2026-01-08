@@ -7,61 +7,73 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.exceptions import NotFound
-from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
+from citrine.resources.data_version_update import (
+    BranchDataUpdate,
+    NextBranchVersionRequest,
+)
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
-                                                     ExperimentDataSource)
+from citrine.resources.experiment_datasource import (
+    ExperimentDataSourceCollection,
+    ExperimentDataSource,
+)
 
 
 LATEST_VER = "latest"  # Refers to the most recently created branch version.
 
 
-class Branch(Resource['Branch']):
+class Branch(Resource["Branch"]):
     """
     A project branch.
 
     A branch is a container for design workflows.
     """
 
-    name = properties.String('data.name')
-    uid = properties.Optional(properties.UUID(), 'id')
-    archived = properties.Boolean('metadata.archived', serializable=False)
-    created_at = properties.Optional(properties.Datetime(), 'metadata.created.time',
-                                     serializable=False)
-    updated_at = properties.Optional(properties.Datetime(), 'metadata.updated.time',
-                                     serializable=False)
+    name = properties.String("data.name")
+    uid = properties.Optional(properties.UUID(), "id")
+    archived = properties.Boolean("metadata.archived", serializable=False)
+    created_at = properties.Optional(
+        properties.Datetime(), "metadata.created.time", serializable=False
+    )
+    updated_at = properties.Optional(
+        properties.Datetime(), "metadata.updated.time", serializable=False
+    )
     # added in v2
-    root_id = properties.UUID('metadata.root_id', serializable=False)
-    version = properties.Integer('metadata.version', serializable=False)
+    root_id = properties.UUID("metadata.root_id", serializable=False)
+    version = properties.Integer("metadata.version", serializable=False)
 
     project_id: Optional[UUID] = None
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 session: Optional[Session] = None):
+    def __init__(self, name: str, *, session: Optional[Session] = None):
         self.name: str = name
         self.session: Session = session
 
     def __str__(self):
-        return f'<Branch {self.name!r}>'
+        return f"<Branch {self.name!r}>"
 
     @property
     def design_workflows(self) -> DesignWorkflowCollection:
         """Return a resource representing all workflows contained within this branch."""
-        if getattr(self, 'project_id', None) is None:
-            raise AttributeError('Cannot initialize workflow without project reference!')
-        return DesignWorkflowCollection(project_id=self.project_id,
-                                        session=self.session,
-                                        branch_root_id=self.root_id,
-                                        branch_version=self.version)
+        if getattr(self, "project_id", None) is None:
+            raise AttributeError(
+                "Cannot initialize workflow without project reference!"
+            )
+        return DesignWorkflowCollection(
+            project_id=self.project_id,
+            session=self.session,
+            branch_root_id=self.root_id,
+            branch_version=self.version,
+        )
 
     @property
     def experiment_datasource(self) -> Optional[ExperimentDataSource]:
         """Return this branch's experiment data source, or None if one doesn't exist."""
-        if getattr(self, 'project_id', None) is None:
-            raise AttributeError('Cannot retrieve datasource without project reference!')
-        erds = ExperimentDataSourceCollection(project_id=self.project_id, session=self.session)
+        if getattr(self, "project_id", None) is None:
+            raise AttributeError(
+                "Cannot retrieve datasource without project reference!"
+            )
+        erds = ExperimentDataSourceCollection(
+            project_id=self.project_id, session=self.session
+        )
         branch_erds_iter = erds.list(branch_version_id=self.uid, version=LATEST_VER)
         return next(branch_erds_iter, None)
 
@@ -74,11 +86,11 @@ class Branch(Resource['Branch']):
 class BranchCollection(Collection[Branch]):
     """A collection of Branches."""
 
-    _path_template = '/projects/{project_id}/branches'
+    _path_template = "/projects/{project_id}/branches"
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = Branch
-    _api_version = 'v2'
+    _api_version = "v2"
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id: UUID = project_id
@@ -104,10 +116,12 @@ class BranchCollection(Collection[Branch]):
         branch.project_id = self.project_id
         return branch
 
-    def get(self,
-            *,
-            root_id: Union[UUID, str],
-            version: Optional[Union[int, str]] = LATEST_VER) -> Branch:
+    def get(
+        self,
+        *,
+        root_id: Union[UUID, str],
+        version: Optional[Union[int, str]] = LATEST_VER,
+    ) -> Branch:
         """
         Retrieve a branch by its root ID and, optionally, its version number.
 
@@ -138,7 +152,7 @@ class BranchCollection(Collection[Branch]):
                 message=f"Branch root '{root_id}', version {version} not found",
                 method="GET",
                 path=self._get_path(),
-                params=params
+                params=params,
             )
 
     def get_by_version_id(self, *, version_id: Union[UUID, str]) -> Branch:
@@ -220,14 +234,18 @@ class BranchCollection(Collection[Branch]):
 
     def _list_with_params(self, *, per_page, **kwargs):
         fetcher = functools.partial(self._fetch_page, additional_params=kwargs)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
-    def archive(self,
-                *,
-                root_id: Union[UUID, str],
-                version: Optional[Union[int, str]] = LATEST_VER):
+    def archive(
+        self,
+        *,
+        root_id: Union[UUID, str],
+        version: Optional[Union[int, str]] = LATEST_VER,
+    ):
         """
         Archive a branch.
 
@@ -249,10 +267,12 @@ class BranchCollection(Collection[Branch]):
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
-    def restore(self,
-                *,
-                root_id: Union[UUID, str],
-                version: Optional[Union[int, str]] = LATEST_VER):
+    def restore(
+        self,
+        *,
+        root_id: Union[UUID, str],
+        version: Optional[Union[int, str]] = LATEST_VER,
+    ):
         """
         Restore an archived branch.
 
@@ -274,12 +294,14 @@ class BranchCollection(Collection[Branch]):
         data = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(data)
 
-    def update_data(self,
-                    *,
-                    root_id: Union[UUID, str],
-                    version: Optional[Union[int, str]] = LATEST_VER,
-                    use_existing: bool = True,
-                    retrain_models: bool = False) -> Optional[Branch]:
+    def update_data(
+        self,
+        *,
+        root_id: Union[UUID, str],
+        version: Optional[Union[int, str]] = LATEST_VER,
+        use_existing: bool = True,
+        retrain_models: bool = False,
+    ) -> Optional[Branch]:
         """
         Automatically advance the branch to the next version.
 
@@ -319,17 +341,22 @@ class BranchCollection(Collection[Branch]):
         if use_existing:
             use_predictors = version_updates.predictors
 
-        branch_instructions = NextBranchVersionRequest(data_updates=version_updates.data_updates,
-                                                       use_predictors=use_predictors)
-        branch = self.next_version(root_id=root_id,
-                                   branch_instructions=branch_instructions,
-                                   retrain_models=retrain_models)
+        branch_instructions = NextBranchVersionRequest(
+            data_updates=version_updates.data_updates, use_predictors=use_predictors
+        )
+        branch = self.next_version(
+            root_id=root_id,
+            branch_instructions=branch_instructions,
+            retrain_models=retrain_models,
+        )
         return branch
 
-    def data_updates(self,
-                     *,
-                     root_id: Union[UUID, str],
-                     version: Optional[Union[int, str]] = LATEST_VER) -> BranchDataUpdate:
+    def data_updates(
+        self,
+        *,
+        root_id: Union[UUID, str],
+        version: Optional[Union[int, str]] = LATEST_VER,
+    ) -> BranchDataUpdate:
         """
         Get data updates for a branch.
 
@@ -356,11 +383,13 @@ class BranchCollection(Collection[Branch]):
         data = self.session.get_resource(path, version=self._api_version)
         return BranchDataUpdate.build(data)
 
-    def next_version(self,
-                     root_id: Union[UUID, str],
-                     *,
-                     branch_instructions: NextBranchVersionRequest,
-                     retrain_models: bool = True):
+    def next_version(
+        self,
+        root_id: Union[UUID, str],
+        *,
+        branch_instructions: NextBranchVersionRequest,
+        retrain_models: bool = True,
+    ):
         """
         Move a branch to the next version.
 
@@ -388,9 +417,10 @@ class BranchCollection(Collection[Branch]):
 
         """
         path = self._get_path(action="next-version-predictor")
-        data = self.session.post_resource(path, branch_instructions.dump(),
-                                          version=self._api_version,
-                                          params={
-                                              'root': str(root_id),
-                                              'retrain_models': retrain_models})
+        data = self.session.post_resource(
+            path,
+            branch_instructions.dump(),
+            version=self._api_version,
+            params={"root": str(root_id), "retrain_models": retrain_models},
+        )
         return self.build(data)

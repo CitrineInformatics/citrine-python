@@ -1,4 +1,4 @@
-__all__ = ['Predictor']
+__all__ = ["Predictor"]
 
 
 class Predictor:

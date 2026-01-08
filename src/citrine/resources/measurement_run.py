@@ -1,4 +1,5 @@
 """Resources that represent measurement run data objects."""
+
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
@@ -19,10 +20,10 @@ from gemd.entity.source.performed_source import PerformedSource
 
 
 class MeasurementRun(
-    GEMDResource['MeasurementRun'],
+    GEMDResource["MeasurementRun"],
     ObjectRun,
     GEMDMeasurementRun,
-    typ=GEMDMeasurementRun.typ
+    typ=GEMDMeasurementRun.typ,
 ):
     """
     A measurement run.
@@ -62,49 +63,72 @@ class MeasurementRun(
 
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
-    name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    properties = PropertyOptional(PropertyList(Object(Property)), 'properties', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDMeasurementSpec), 'spec', override=True, use_init=True,)
-    material = PropertyOptional(LinkOrElse(GEMDMaterialRun),
-                                "material",
-                                override=True,
-                                use_init=True,
-                                )
+    name = String("name", override=True, use_init=True)
+    conditions = PropertyOptional(
+        PropertyList(Object(Condition)), "conditions", override=True
+    )
+    parameters = PropertyOptional(
+        PropertyList(Object(Parameter)), "parameters", override=True
+    )
+    properties = PropertyOptional(
+        PropertyList(Object(Property)), "properties", override=True
+    )
+    spec = PropertyOptional(
+        LinkOrElse(GEMDMeasurementSpec),
+        "spec",
+        override=True,
+        use_init=True,
+    )
+    material = PropertyOptional(
+        LinkOrElse(GEMDMaterialRun),
+        "material",
+        override=True,
+        use_init=True,
+    )
     source = PropertyOptional(Object(PerformedSource), "source", override=True)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 properties: Optional[List[Property]] = None,
-                 parameters: Optional[List[Parameter]] = None,
-                 spec: Optional[GEMDMeasurementSpec] = None,
-                 material: Optional[GEMDMaterialRun] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: Optional[Dict[str, str]] = None,
+        tags: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        conditions: Optional[List[Condition]] = None,
+        properties: Optional[List[Property]] = None,
+        parameters: Optional[List[Parameter]] = None,
+        spec: Optional[GEMDMeasurementSpec] = None,
+        material: Optional[GEMDMaterialRun] = None,
+        file_links: Optional[List[FileLink]] = None,
+        source: Optional[PerformedSource] = None,
+    ):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
-        GEMDMeasurementRun.__init__(self, name=name, uids=uids,
-                                    material=material,
-                                    tags=tags, conditions=conditions, properties=properties,
-                                    parameters=parameters, spec=spec,
-                                    file_links=file_links, notes=notes, source=source)
+        GEMDMeasurementRun.__init__(
+            self,
+            name=name,
+            uids=uids,
+            material=material,
+            tags=tags,
+            conditions=conditions,
+            properties=properties,
+            parameters=parameters,
+            spec=spec,
+            file_links=file_links,
+            notes=notes,
+            source=source,
+        )
 
     def __str__(self):
-        return '<Measurement run {!r}>'.format(self.name)
+        return "<Measurement run {!r}>".format(self.name)
 
 
 class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     """Represents the collection of all measurement runs associated with a dataset."""
 
-    _individual_key = 'measurement_run'
-    _collection_key = 'measurement_runs'
+    _individual_key = "measurement_run"
+    _collection_key = "measurement_runs"
     _resource = MeasurementRun
 
     @classmethod
@@ -112,9 +136,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
-                     ) -> Iterator[MeasurementRun]:
+    def list_by_spec(
+        self, uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
+    ) -> Iterator[MeasurementRun]:
         """
         Get the measurement runs using the specified measurement spec.
 
@@ -129,11 +153,11 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurement runs using the specified measurement spec.
 
         """
-        return self._get_relation('measurement-specs', uid=uid)
+        return self._get_relation("measurement-specs", uid=uid)
 
-    def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
-                         ) -> Iterator[MeasurementRun]:
+    def list_by_material(
+        self, uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+    ) -> Iterator[MeasurementRun]:
         """
         Get measurements of the specified material.
 
@@ -148,4 +172,4 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurements of the specified material
 
         """
-        return self._get_relation(relation='material-runs', uid=uid)
+        return self._get_relation(relation="material-runs", uid=uid)

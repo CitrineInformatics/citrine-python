@@ -6,10 +6,10 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
-__all__ = ['IngredientRatioConstraint']
+__all__ = ["IngredientRatioConstraint"]
 
 
-class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Constraint):
+class IngredientRatioConstraint(Serializable["IngredientRatioConstraint"], Constraint):
     """A formulation constraint operating on the ratio of quantities of ingredients and a basis.
 
     Example: "6 to 7 parts ingredient A per 100 parts ingredient B" becomes
@@ -37,37 +37,47 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    min = properties.Float('min')
-    max = properties.Float('max')
+    formulation_descriptor = properties.Object(
+        FormulationDescriptor, "formulation_descriptor"
+    )
+    min = properties.Float("min")
+    max = properties.Float("max")
 
     # The backend provides ingredients and labels as dictionaries, but presently only allows one
     # between them. To clarify customer interaction, we only allow a single one of each to be set.
     # Since our serde library doesn't allow extracting from a dict with unknown keys, we do it by
     # hiding the dictionaries and exposing properties.
     _ingredients = properties.Mapping(
-        properties.String, properties.Float, 'ingredients', default={})
-    _labels = properties.Mapping(properties.String, properties.Float, 'labels', default={})
+        properties.String, properties.Float, "ingredients", default={}
+    )
+    _labels = properties.Mapping(
+        properties.String, properties.Float, "labels", default={}
+    )
 
     # The backend provides basis ingredients and basis labels as a dictionary from the key to a
     # multiplier. However, for ingredient ratio constraints, the multiplier in the denominator
     # should always be one, so we can't allow users to enter it. We need to use properties for this
     # behavior. It also allows us to display deprecation warnings for the coming type change.
     _basis_ingredients = properties.Mapping(
-        properties.String, properties.Float, 'basis_ingredients', default={})
+        properties.String, properties.Float, "basis_ingredients", default={}
+    )
     _basis_labels = properties.Mapping(
-        properties.String, properties.Float, 'basis_labels', default={})
+        properties.String, properties.Float, "basis_labels", default={}
+    )
 
-    typ = properties.String('type', default='IngredientRatio')
+    typ = properties.String("type", default="IngredientRatio")
 
-    def __init__(self, *,
-                 formulation_descriptor: FormulationDescriptor,
-                 min: float,
-                 max: float,
-                 ingredient: Optional[Tuple[str, float]] = None,
-                 label: Optional[Tuple[str, float]] = None,
-                 basis_ingredients: Set[str] = set(),
-                 basis_labels: Set[str] = set()):
+    def __init__(
+        self,
+        *,
+        formulation_descriptor: FormulationDescriptor,
+        min: float,
+        max: float,
+        ingredient: Optional[Tuple[str, float]] = None,
+        label: Optional[Tuple[str, float]] = None,
+        basis_ingredients: Set[str] = set(),
+        basis_labels: Set[str] = set(),
+    ):
         self.formulation_descriptor = formulation_descriptor
         self.min = min
         self.max = max
@@ -109,16 +119,22 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
     @property
     def basis_ingredient_names(self) -> Set[str]:
         """Retrieve the names of all ingredients in the denominator of the ratio."""
-        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
-                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
+        warnings.warn(
+            "basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
+            "4.0. Please use basis_ingredients instead.",
+            DeprecationWarning,
+        )
         return self.basis_ingredients
 
     # This is for symmetry; it's not strictly necessary.
     @basis_ingredient_names.setter
     def basis_ingredient_names(self, value: Set[str]):
         """Set the names of all ingredients in the denominator of the ratio."""
-        warnings.warn("basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
-                      "4.0. Please use basis_ingredients instead.", DeprecationWarning)
+        warnings.warn(
+            "basis_ingredient_names is deprecated as of 3.0.0 and will be dropped in "
+            "4.0. Please use basis_ingredients instead.",
+            DeprecationWarning,
+        )
         self.basis_ingredients = value
 
     @property
@@ -134,16 +150,22 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
     @property
     def basis_label_names(self) -> Set[str]:
         """Retrieve the names of all labels in the denominator of the ratio."""
-        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
-                      "Please use basis_labels instead.", DeprecationWarning)
+        warnings.warn(
+            "basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
+            "Please use basis_labels instead.",
+            DeprecationWarning,
+        )
         return self.basis_labels
 
     # This is for symmetry; it's not strictly necessary.
     @basis_label_names.setter
     def basis_label_names(self, value: Set[str]):
         """Set the names of all labels in the denominator of the ratio."""
-        warnings.warn("basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
-                      "Please use basis_labels instead.", DeprecationWarning)
+        warnings.warn(
+            "basis_label_names is deprecated as of 3.0.0 and will be dropped in 4.0. "
+            "Please use basis_labels instead.",
+            DeprecationWarning,
+        )
         self.basis_labels = value
 
     def _numerator_read(self, num_dict):

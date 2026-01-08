@@ -20,36 +20,36 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> GemTableCollection:
     return GemTableCollection(
-        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        session=session
+        team_id=UUID("6b608f78-e341-422c-8076-35adc8828545"),
+        project_id=UUID("6b608f78-e341-422c-8076-35adc8828545"),
+        session=session,
     )
 
 
 def test_deprecated_create_collection(session):
     with pytest.raises(TypeError):
         return GemTableCollection(
-            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-            session=session
+            project_id=UUID("6b608f78-e341-422c-8076-35adc8828545"), session=session
         )
 
     with pytest.raises(TypeError):
         return GemTableCollection(
-            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-            session=session
+            team_id=UUID("6b608f78-e341-422c-8076-35adc8828545"), session=session
         )
 
     with pytest.raises(TypeError):
         return GemTableCollection(
-            team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+            team_id=UUID("6b608f78-e341-422c-8076-35adc8828545"),
+            project_id=UUID("6b608f78-e341-422c-8076-35adc8828545"),
         )
 
 
 @pytest.fixture
 def table():
     def _table(download_url: str) -> GemTable:
-        return GemTable.build(GemTableDataFactory(signed_download_url=download_url, version=2))
+        return GemTable.build(
+            GemTableDataFactory(signed_download_url=download_url, version=2)
+        )
 
     return _table
 
@@ -60,13 +60,15 @@ def test_get_table_metadata(collection, session):
     session.set_response(gem_table)
 
     # When
-    retrieved_table: GemTable = collection.get(gem_table["id"], version=gem_table["version"])
+    retrieved_table: GemTable = collection.get(
+        gem_table["id"], version=gem_table["version"]
+    )
 
     # Then
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/display-tables/{gem_table['id']}/versions/{gem_table['version']}"
+        path=f"projects/{collection.project_id}/display-tables/{gem_table['id']}/versions/{gem_table['version']}",
     )
     assert session.last_call == expect_call
     assert str(retrieved_table.uid) == gem_table["id"]
@@ -85,15 +87,19 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.version == version_number
 
     # Given
-    config = TableConfig(name="foo", description="bar", datasets=[], variables=[], rows=[], columns=[])
-    session.set_response({
-        "version": {
-            "ara_definition": config.dump(),
-            "version_number": config.version_number,
-            "id": config.config_uid,
-        },
-        "definition": {"id": uuid4()}
-    })
+    config = TableConfig(
+        name="foo", description="bar", datasets=[], variables=[], rows=[], columns=[]
+    )
+    session.set_response(
+        {
+            "version": {
+                "ara_definition": config.dump(),
+                "version_number": config.version_number,
+                "id": config.config_uid,
+            },
+            "definition": {"id": uuid4()},
+        }
+    )
 
     # Then
     assert retrieved_table.config.name == config.name
@@ -101,7 +107,7 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.description == config.description
     expect_call = FakeCall(
         method="GET",
-        path=f"projects/{collection.project_id}/display-tables/{retrieved_table.uid}/versions/{retrieved_table.version}/definition"
+        path=f"projects/{collection.project_id}/display-tables/{retrieved_table.uid}/versions/{retrieved_table.version}/definition",
     )
     assert session.last_call == expect_call
 
@@ -125,7 +131,7 @@ def test_list_table_versions(collection, session):
     session.set_response(table_versions)
 
     # When
-    results = list(collection.list_versions(table_versions['tables'][0]['id']))
+    results = list(collection.list_versions(table_versions["tables"][0]["id"]))
 
     # Then
     assert len(results) == 3
@@ -140,7 +146,7 @@ def test_list_by_config(collection, session):
     # When
     # NOTE: list_by_config returns slightly more info in this call, but it's a superset of
     # a typical Table, and parsed identically in citrine-python.
-    results = list(collection.list_by_config(table_versions['tables'][0]['id']))
+    results = list(collection.list_by_config(table_versions["tables"][0]["id"]))
 
     # Then
     assert len(results) == 3
@@ -178,29 +184,31 @@ def test_build_from_config(collection: GemTableCollection, session):
     config_uid = uuid4()
     config_version = 2
     config = TableConfig(
-        name='foo',
-        description='bar',
-        columns=[],
-        rows=[],
-        variables=[],
-        datasets=[]
+        name="foo", description="bar", columns=[], rows=[], variables=[], datasets=[]
     )
     config.config_uid = config_uid
     config.version_number = config_version
     expected_table_data = GemTableDataFactory()
     session.set_responses(
-        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
-        {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
-        {'job_type': 'foo', 'status': 'Success', 'tasks': [], 'output': {
-            'display_table_id': expected_table_data['id'],
-            'display_table_version': str(expected_table_data['version']),
-            'table_warnings': json.dumps([
-                {'limited_results': ['foo', 'bar'], 'total_count': 3},
-            ])
-        }},
+        {"job_id": "12345678-1234-1234-1234-123456789ccc"},
+        {"job_type": "foo", "status": "In Progress", "tasks": []},
+        {
+            "job_type": "foo",
+            "status": "Success",
+            "tasks": [],
+            "output": {
+                "display_table_id": expected_table_data["id"],
+                "display_table_version": str(expected_table_data["version"]),
+                "table_warnings": json.dumps(
+                    [
+                        {"limited_results": ["foo", "bar"], "total_count": 3},
+                    ]
+                ),
+            },
+        },
         expected_table_data,
     )
-    gem_table = collection.build_from_config(config, version='ignored')
+    gem_table = collection.build_from_config(config, version="ignored")
     assert isinstance(gem_table, GemTable)
     assert session.num_calls == 4
 
@@ -209,12 +217,7 @@ def test_build_from_config_failures(collection: GemTableCollection, session):
     with pytest.raises(ValueError):
         collection.build_from_config(uuid4())
     config = TableConfig(
-        name='foo',
-        description='bar',
-        columns=[],
-        rows=[],
-        variables=[],
-        datasets=[]
+        name="foo", description="bar", columns=[], rows=[], variables=[], datasets=[]
     )
     config.definition_uid = uuid4()
     with pytest.raises(ValueError):
@@ -225,16 +228,26 @@ def test_build_from_config_failures(collection: GemTableCollection, session):
         collection.build_from_config(config)
     config.config_uid = uuid4()
     session.set_responses(
-        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
-        {'job_type': 'foo', 'status': 'Failure', 'tasks': [
-            {'task_type': 'foo', 'id': 'foo', 'status': 'Failure', 'failure_reason': 'because', 'dependencies': []}
-        ]},
+        {"job_id": "12345678-1234-1234-1234-123456789ccc"},
+        {
+            "job_type": "foo",
+            "status": "Failure",
+            "tasks": [
+                {
+                    "task_type": "foo",
+                    "id": "foo",
+                    "status": "Failure",
+                    "failure_reason": "because",
+                    "dependencies": [],
+                }
+            ],
+        },
     )
     with pytest.raises(JobFailureError):
         collection.build_from_config(uuid4(), version=1)
     session.set_responses(
-        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
-        {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
+        {"job_id": "12345678-1234-1234-1234-123456789ccc"},
+        {"job_type": "foo", "status": "In Progress", "tasks": []},
     )
     with pytest.raises(PollingTimeoutError):
         collection.build_from_config(config, timeout=0)
@@ -245,44 +258,44 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
     # When
     with requests_mock.mock() as mock_get:
         remote_url = "http://otherhost:4566/anywhere"
-        mock_get.get(remote_url, text='stuff')
+        mock_get.get(remote_url, text="stuff")
         collection.read(table=table(remote_url), local_path="table.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 1
-        assert mock_write_files_locally.call_args == call(b'stuff', "table.pdf")
+        assert mock_write_files_locally.call_args == call(b"stuff", "table.pdf")
 
     with requests_mock.mock() as mock_get:
         # When
         localstack_url = "http://localstack:4566/anywhere"
-        mock_get.get(localstack_url, text='stuff')
+        mock_get.get(localstack_url, text="stuff")
         collection.read(table=table(localstack_url), local_path="table2.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 2
-        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
+        assert mock_write_files_locally.call_args == call(b"stuff", "table2.pdf")
 
     with requests_mock.mock() as mock_get:
         # When
         localstack_url = "http://localstack:4566/anywhere"
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
-        mock_get.get(override_url + "/anywhere", text='stuff')
+        mock_get.get(override_url + "/anywhere", text="stuff")
         collection.read(table=table(localstack_url), local_path="table3.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 3
-        assert mock_write_files_locally.call_args == call(b'stuff', "table3.pdf")
+        assert mock_write_files_locally.call_args == call(b"stuff", "table3.pdf")
 
     with requests_mock.mock() as mock_get:
         # When
         localstack_url = "http://localstack:4566/anywhere"
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
-        mock_get.get(override_url + "/anywhere", text='stuff')
+        mock_get.get(override_url + "/anywhere", text="stuff")
         this_table = table(localstack_url)
         collection.session.set_response({"tables": [this_table.dump()]})
         collection.read(table=this_table.uid, local_path="table4.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 4
-        assert mock_write_files_locally.call_args == call(b'stuff', "table4.pdf")
+        assert mock_write_files_locally.call_args == call(b"stuff", "table4.pdf")
 
 
 def test_read_table_into_memory_from_collection(table, session, collection):
@@ -302,7 +315,4 @@ def test_gem_table_entity_dict():
     table = GemTable.build(GemTableDataFactory())
     entity = table.access_control_dict()
 
-    assert entity == {
-        'id': str(table.uid),
-        'type': 'TABLE'
-    }
+    assert entity == {"id": str(table.uid), "type": "TABLE"}

@@ -1,2 +1,2 @@
-class ExampleClass():
+class ExampleClass:
     pass

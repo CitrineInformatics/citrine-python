@@ -1,18 +1,8 @@
-from uuid import UUID
 import json
+from uuid import UUID
 
 import pytest
-from citrine._session import Session
-from citrine._utils.functions import scrub_none
-from citrine.exceptions import BadRequest
-from citrine.resources.api_error import ValidationError
-from citrine.resources.data_concepts import CITRINE_SCOPE
-from citrine.resources.material_run import MaterialRunCollection
-from citrine.resources.material_run import MaterialRun as CitrineRun
-from citrine.resources.material_run import _inject_default_label_tags
-from citrine.resources.gemd_resource import GEMDResourceCollection
-
-from gemd.demo.cake import make_cake, change_scope
+from gemd.demo.cake import change_scope, make_cake
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_run import MaterialRun as GEMDRun
@@ -20,11 +10,30 @@ from gemd.entity.object.material_spec import MaterialSpec as GEMDSpec
 from gemd.json import GEMDJson
 from gemd.util import flatten
 
+from citrine._session import Session
+from citrine._utils.functions import scrub_none
+from citrine.exceptions import BadRequest
+from citrine.resources.api_error import ValidationError
+from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.gemd_resource import GEMDResourceCollection
+from citrine.resources.material_run import MaterialRun as CitrineRun
+from citrine.resources.material_run import MaterialRunCollection
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
-from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, \
-    MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
-from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
-    FakeRequestResponse
+from tests.utils.factories import (
+    LinkByUIDFactory,
+    MaterialRunDataFactory,
+    MaterialRunFactory,
+    MaterialSpecDataFactory,
+    MaterialTemplateFactory,
+    ProcessTemplateFactory,
+)
+from tests.utils.session import (
+    FakeCall,
+    FakeRequestResponse,
+    FakeRequestResponseApiError,
+    FakeSession,
+    make_fake_cursor_request_function,
+)
 
 
 @pytest.fixture
@@ -35,29 +44,34 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> MaterialRunCollection:
     return MaterialRunCollection(
-        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"),
         session=session,
-        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000'))
+        team_id=UUID("6b608f78-e341-422c-8076-35adc8828000"),
+    )
+
 
 def test_deprecated_collection_construction(session):
     with pytest.deprecated_call():
-        team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-        check_project = {'project': {'team': {'id': team_id}}}
+        team_id = UUID("6b608f78-e341-422c-8076-35adc8828000")
+        check_project = {"project": {"team": {"id": team_id}}}
         session.set_response(check_project)
-        mr =  MaterialRunCollection(
-            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        MaterialRunCollection(
+            dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"),
             session=session,
-            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'))
+            project_id=UUID("6b608f78-e341-422c-8076-35adc8828545"),
+        )
+
 
 def test_invalid_collection_construction():
     with pytest.raises(TypeError):
-        mr = MaterialRunCollection(dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-                                   session=session)
+        MaterialRunCollection(
+            dataset_id=UUID("8da51e93-8b55-4dd3-8489-af8f65d4ad9a"), session=session
+        )
 
 
 def test_register_material_run(collection, session):
     # Given
-    session.set_response(MaterialRunDataFactory(name='Test MR 123'))
+    session.set_response(MaterialRunDataFactory(name="Test MR 123"))
     material_run = MaterialRunFactory()
 
     # When
@@ -68,21 +82,33 @@ def test_register_material_run(collection, session):
 
 
 def test_register_all(collection, session):
-    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'), MaterialRunFactory(name='3')]
-    session.set_response({'objects': [r.dump() for r in runs]})
+    runs = [
+        MaterialRunFactory(name="1"),
+        MaterialRunFactory(name="2"),
+        MaterialRunFactory(name="3"),
+    ]
+    session.set_response({"objects": [r.dump() for r in runs]})
     registered = collection.register_all(runs)
     assert [r.name for r in runs] == [r.name for r in registered]
     assert len(session.calls) == 1
-    assert session.calls[0].method == 'PUT'
-    assert GEMDResourceCollection(team_id = collection.team_id, dataset_id = collection.dataset_id, session = collection.session)._get_path() \
-           in session.calls[0].path
+    assert session.calls[0].method == "PUT"
+    assert (
+        GEMDResourceCollection(
+            team_id=collection.team_id,
+            dataset_id=collection.dataset_id,
+            session=collection.session,
+        )._get_path()
+        in session.calls[0].path
+    )
     with pytest.raises(RuntimeError):
-        MaterialRunCollection(team_id=collection.team_id, dataset_id=None, session=session).register_all([])
+        MaterialRunCollection(
+            team_id=collection.team_id, dataset_id=None, session=session
+        ).register_all([])
 
 
 def test_dry_run_register_material_run(collection, session):
     # Given
-    session.set_response(MaterialRunDataFactory(name='Test MR 123'))
+    session.set_response(MaterialRunDataFactory(name="Test MR 123"))
     material_run = MaterialRunFactory()
 
     # When
@@ -90,14 +116,16 @@ def test_dry_run_register_material_run(collection, session):
 
     # Then
     assert "<Material run 'Test MR 123'>" == str(registered)
-    assert session.last_call.params == {'dry_run': True}
+    assert session.last_call.params == {"dry_run": True}
 
 
 def test_nomutate_gemd(collection, session):
     """When registering a GEMD object, the object should not change (aside from auto ids)"""
     # Given
-    session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
-    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for _ in range(2))
+    session.set_response(MaterialRunDataFactory(name="Test MR mutation"))
+    before, after = (
+        GEMDRun(name="Main", uids={"nomutate": "please"}) for _ in range(2)
+    )
 
     # When
     registered = collection.register(after)
@@ -113,10 +141,14 @@ def test_get_history(collection, session):
     # Given
     cake = make_cake()
     cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
-    root_link = LinkByUID.build(cake_json.pop('object'))
-    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
-    cake_json['roots'] = [root_obj]
-    cake_json['context'].remove(root_obj)
+    root_link = LinkByUID.build(cake_json.pop("object"))
+    root_obj = next(
+        o
+        for o in cake_json["context"]
+        if root_link.id == o["uids"].get(root_link.scope)
+    )
+    cake_json["roots"] = [root_obj]
+    cake_json["context"].remove(root_obj)
 
     session.set_response([cake_json])
 
@@ -126,17 +158,19 @@ def test_get_history(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='POST',
-        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        method="POST",
+        path=f"teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true",
         json={
-            'criteria': [
+            "criteria": [
                 {
-                    'datasets': [str(collection.dataset_id)],
-                    'type': 'terminal_material_run_identifiers_criteria',
-                    'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                    "datasets": [str(collection.dataset_id)],
+                    "type": "terminal_material_run_identifiers_criteria",
+                    "terminal_material_ids": [
+                        {"scope": root_link.scope, "id": root_link.id}
+                    ],
                 }
             ]
-        }
+        },
     )
     assert expected_call == session.last_call
     assert run == cake
@@ -154,17 +188,19 @@ def test_get_history_no_histories(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='POST',
-        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        method="POST",
+        path=f"teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true",
         json={
-            'criteria': [
+            "criteria": [
                 {
-                    'datasets': [str(collection.dataset_id)],
-                    'type': 'terminal_material_run_identifiers_criteria',
-                    'terminal_material_ids': [{'scope': CITRINE_SCOPE, 'id': str(root_id)}]
+                    "datasets": [str(collection.dataset_id)],
+                    "type": "terminal_material_run_identifiers_criteria",
+                    "terminal_material_ids": [
+                        {"scope": CITRINE_SCOPE, "id": str(root_id)}
+                    ],
                 }
             ]
-        }
+        },
     )
     assert expected_call == session.last_call
     assert run is None
@@ -174,10 +210,14 @@ def test_get_history_no_roots(collection, session):
     # Given
     cake = make_cake()
     cake_json = json.loads(GEMDJson(scope=CITRINE_SCOPE).dumps(cake))
-    root_link = LinkByUID.build(cake_json.pop('object'))
-    root_obj = next(o for o in cake_json['context'] if root_link.id == o['uids'].get(root_link.scope))
-    cake_json['roots'] = []
-    cake_json['context'].remove(root_obj)
+    root_link = LinkByUID.build(cake_json.pop("object"))
+    root_obj = next(
+        o
+        for o in cake_json["context"]
+        if root_link.id == o["uids"].get(root_link.scope)
+    )
+    cake_json["roots"] = []
+    cake_json["context"].remove(root_obj)
 
     session.set_response([cake_json])
 
@@ -187,17 +227,19 @@ def test_get_history_no_roots(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='POST',
-        path=f'teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true',
+        method="POST",
+        path=f"teams/{collection.team_id}/gemd/query/material-histories?filter_nonroot_materials=true",
         json={
-            'criteria': [
+            "criteria": [
                 {
-                    'datasets': [str(collection.dataset_id)],
-                    'type': 'terminal_material_run_identifiers_criteria',
-                    'terminal_material_ids': [{'scope': root_link.scope, 'id': root_link.id}]
+                    "datasets": [str(collection.dataset_id)],
+                    "type": "terminal_material_run_identifiers_criteria",
+                    "terminal_material_ids": [
+                        {"scope": root_link.scope, "id": root_link.id}
+                    ],
                 }
             ]
-        }
+        },
     )
     assert expected_call == session.last_call
     assert run is None
@@ -205,8 +247,8 @@ def test_get_history_no_roots(collection, session):
 
 def test_get_material_run(collection, session):
     # Given
-    run_data = MaterialRunDataFactory(name='Cake 2')
-    mr_id = run_data['uids']['id']
+    run_data = MaterialRunDataFactory(name="Cake 2")
+    mr_id = run_data["uids"]["id"]
     session.set_response(run_data)
 
     # When
@@ -215,18 +257,19 @@ def test_get_material_run(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='GET',
-        path='teams/{}/datasets/{}/material-runs/id/{}'.format(collection.team_id, collection.dataset_id, mr_id)
+        method="GET",
+        path="teams/{}/datasets/{}/material-runs/id/{}".format(
+            collection.team_id, collection.dataset_id, mr_id
+        ),
     )
     assert expected_call == session.last_call
-    assert 'Cake 2' == run.name
+    assert "Cake 2" == run.name
+
 
 def test_list_material_runs(collection, session):
     # Given
     sample_run = MaterialRunDataFactory()
-    session.set_response({
-        'contents': [sample_run]
-    })
+    session.set_response({"contents": [sample_run]})
 
     # When
     runs = list(collection.list())
@@ -235,18 +278,20 @@ def test_list_material_runs(collection, session):
     assert 1 == session.num_calls
 
     expected_call = FakeCall(
-        method='GET',
-        path='teams/{}/material-runs'.format(collection.team_id, collection.dataset_id),
+        method="GET",
+        path="teams/{}/material-runs".format(
+            collection.team_id,
+        ),
         params={
-            'dataset_id': str(collection.dataset_id),
-            'forward': True,
-            'ascending': True,
-            'per_page': 100
-        }
+            "dataset_id": str(collection.dataset_id),
+            "forward": True,
+            "ascending": True,
+            "per_page": 100,
+        },
     )
     assert expected_call == session.last_call
     assert 1 == len(runs)
-    assert sample_run['uids'] == runs[0].uids
+    assert sample_run["uids"] == runs[0].uids
 
 
 def test_cursor_paginated_searches(collection, session):
@@ -254,39 +299,45 @@ def test_cursor_paginated_searches(collection, session):
     Tests that search methods using cursor-pagination are hooked up correctly.
     There is no real search logic tested here.
     """
-    all_runs = [
-        MaterialRunDataFactory(name="foo_{}".format(i)) for i in range(20)
-    ]
+    all_runs = [MaterialRunDataFactory(name="foo_{}".format(i)) for i in range(20)]
     fake_request = make_fake_cursor_request_function(all_runs)
     # pretty shady, need to add these methods to the fake session to test their
     # interactions with the actual search methods
-    setattr(session, 'get_resource', fake_request)
-    setattr(session, 'post_resource', fake_request)
-    setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
+    setattr(session, "get_resource", fake_request)
+    setattr(session, "post_resource", fake_request)
+    setattr(session, "cursor_paged_resource", Session.cursor_paged_resource)
 
-    assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
+    assert len(list(collection.list_by_name("unused", per_page=2))) == len(all_runs)
     assert len(list(collection.list(per_page=2))) == len(all_runs)
-    assert len(list(collection.list_by_tag('unused', per_page=2))) == len(all_runs)
-    assert len(list(collection.list_by_attribute_bounds(
-        {LinkByUIDFactory(): IntegerBounds(1, 5)}, per_page=2))) == len(all_runs)
+    assert len(list(collection.list_by_tag("unused", per_page=2))) == len(all_runs)
+    assert len(
+        list(
+            collection.list_by_attribute_bounds(
+                {LinkByUIDFactory(): IntegerBounds(1, 5)}, per_page=2
+            )
+        )
+    ) == len(all_runs)
 
     # invalid inputs
     with pytest.raises(TypeError):
         collection.list_by_attribute_bounds([1, 5], per_page=2)
     with pytest.raises(NotImplementedError):
-        collection.list_by_attribute_bounds({
-            LinkByUIDFactory(): IntegerBounds(1, 5),
-            LinkByUIDFactory(): IntegerBounds(1, 5),
-        }, per_page=2)
+        collection.list_by_attribute_bounds(
+            {
+                LinkByUIDFactory(): IntegerBounds(1, 5),
+                LinkByUIDFactory(): IntegerBounds(1, 5),
+            },
+            per_page=2,
+        )
     with pytest.raises(RuntimeError):
         collection.dataset_id = None
-        collection.list_by_name('unused', per_page=2)
+        collection.list_by_name("unused", per_page=2)
 
 
 def test_delete_material_run(collection, session):
     # Given
-    material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
-    material_run_scope = 'id'
+    material_run_uid = "2d3a782f-aee7-41db-853c-36bf4bff0626"
+    material_run_scope = "id"
 
     # When
     collection.delete(material_run_uid)
@@ -294,22 +345,22 @@ def test_delete_material_run(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='DELETE',
-        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+        method="DELETE",
+        path="teams/{}/datasets/{}/material-runs/{}/{}".format(
             collection.team_id,
             collection.dataset_id,
             material_run_scope,
-            material_run_uid
+            material_run_uid,
         ),
-        params={'dry_run': False}
+        params={"dry_run": False},
     )
     assert expected_call == session.last_call
 
 
 def test_dry_run_delete_material_run(collection, session):
     # Given
-    material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
-    material_run_scope = 'id'
+    material_run_uid = "2d3a782f-aee7-41db-853c-36bf4bff0626"
+    material_run_scope = "id"
 
     # When
     collection.delete(material_run_uid, dry_run=True)
@@ -317,14 +368,14 @@ def test_dry_run_delete_material_run(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='DELETE',
-        path='teams/{}/datasets/{}/material-runs/{}/{}'.format(
+        method="DELETE",
+        path="teams/{}/datasets/{}/material-runs/{}/{}".format(
             collection.team_id,
             collection.dataset_id,
             material_run_scope,
-            material_run_uid
+            material_run_uid,
         ),
-        params={'dry_run': True}
+        params={"dry_run": True},
     )
     assert expected_call == session.last_call
 
@@ -342,8 +393,8 @@ def test_material_run_can_get_with_no_id(collection, session):
     # Given
     collection.dataset_id = None
 
-    run_data = MaterialRunDataFactory(name='Cake 2')
-    mr_id = run_data['uids']['id']
+    run_data = MaterialRunDataFactory(name="Cake 2")
+    mr_id = run_data["uids"]["id"]
     session.set_response(run_data)
 
     # When
@@ -352,17 +403,17 @@ def test_material_run_can_get_with_no_id(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method='GET',
-        path='teams/{}/material-runs/id/{}'.format(collection.team_id, mr_id)
+        method="GET",
+        path="teams/{}/material-runs/id/{}".format(collection.team_id, mr_id),
     )
     assert expected_call == session.last_call
-    assert 'Cake 2' == run.name
+    assert "Cake 2" == run.name
 
 
 def test_get_by_process(collection):
     run_noop_gemd_relation_search_test(
-        search_for='material-runs',
-        search_with='process-runs',
+        search_for="material-runs",
+        search_with="process-runs",
         collection=collection,
         search_fn=collection.get_by_process,
         per_page=1,
@@ -371,8 +422,8 @@ def test_get_by_process(collection):
 
 def test_list_by_spec(collection):
     run_noop_gemd_relation_search_test(
-        search_for='material-runs',
-        search_with='material-specs',
+        search_for="material-runs",
+        search_with="material-specs",
         collection=collection,
         search_fn=collection.list_by_spec,
     )
@@ -397,7 +448,8 @@ def test_validate_templates_successful_minimal_params(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="teams/{}/material-runs/validate-templates".format(team_id),
-        json={"dataObject": scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())},
+    )
     assert session.last_call == expected_call
     assert errors == []
 
@@ -416,16 +468,23 @@ def test_validate_templates_successful_all_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(model=run, object_template=template, ingredient_process_template=unused_process_template)
+    errors = collection.validate_templates(
+        model=run,
+        object_template=template,
+        ingredient_process_template=unused_process_template,
+    )
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="PUT",
         path="teams/{}/material-runs/validate-templates".format(team_id),
-        json={"dataObject": scrub_none(run.dump()),
-              "objectTemplate": scrub_none(template.dump()),
-              "ingredientProcessTemplate": scrub_none(unused_process_template.dump())})
+        json={
+            "dataObject": scrub_none(run.dump()),
+            "objectTemplate": scrub_none(template.dump()),
+            "ingredientProcessTemplate": scrub_none(unused_process_template.dump()),
+        },
+    )
     assert session.last_call == expected_call
     assert errors == []
 
@@ -439,8 +498,14 @@ def test_validate_templates_errors(collection, session):
     run = MaterialRunFactory(name="")
 
     # When
-    validation_error = ValidationError.build({"failure_message": "you failed", "failure_id": "failure_id"})
-    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
+    validation_error = ValidationError.build(
+        {"failure_message": "you failed", "failure_id": "failure_id"}
+    )
+    session.set_response(
+        BadRequest(
+            "path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])
+        )
+    )
     errors = collection.validate_templates(model=run)
 
     # Then
@@ -448,7 +513,8 @@ def test_validate_templates_errors(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="teams/{}/material-runs/validate-templates".format(team_id),
-        json={"dataObject": scrub_none(run.dump())})
+        json={"dataObject": scrub_none(run.dump())},
+    )
     assert session.last_call == expected_call
     assert len(errors) == 1
     assert errors[0].dump() == validation_error.dump()
@@ -475,7 +541,11 @@ def test_validate_templates_unrelated_400_with_api_error(collection, session):
     run = MaterialRunFactory()
 
     # When
-    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
+    session.set_response(
+        BadRequest(
+            "path", FakeRequestResponseApiError(400, "I am not a validation error", [])
+        )
+    )
     with pytest.raises(BadRequest):
         collection.validate_templates(model=run)
 
@@ -486,40 +556,41 @@ def test_list_by_template(collection, session):
     """
     # Given
     material_template = MaterialTemplateFactory()
-    test_scope = 'id'
+    test_scope = "id"
     template_id = material_template.uids[test_scope]
     sample_spec1 = MaterialSpecDataFactory(template=material_template)
     sample_spec2 = MaterialSpecDataFactory(template=material_template)
-    key = 'contents'
+    key = "contents"
     sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
     sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
     sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
     sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
-    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
-                          {key: [sample_run2_1, sample_run2_2]})
+    session.set_responses(
+        {key: [sample_spec1, sample_spec2]},
+        {key: [sample_run1_1, sample_run1_2]},
+        {key: [sample_run2_1, sample_run2_2]},
+    )
 
     # When
     runs = [run for run in collection.list_by_template(template_id)]
 
     # Then
     assert 3 == session.num_calls
-    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
+    assert runs == [
+        collection.build(run)
+        for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]
+    ]
 
 
 def test_equals():
     """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
-    from citrine.resources.material_run import MaterialRun as CitrineMaterialRun
     from gemd.entity.object import MaterialRun as GEMDMaterialRun
 
-    gemd_obj = GEMDMaterialRun(
-        name="My Name",
-        notes="I have notes",
-        tags=["tag!"]
-    )
+    from citrine.resources.material_run import MaterialRun as CitrineMaterialRun
+
+    gemd_obj = GEMDMaterialRun(name="My Name", notes="I have notes", tags=["tag!"])
     citrine_obj = CitrineMaterialRun(
-        name="My Name",
-        notes="I have notes",
-        tags=["tag!"]
+        name="My Name", notes="I have notes", tags=["tag!"]
     )
     assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
     citrine_obj.notes = "Something else"
@@ -527,7 +598,7 @@ def test_equals():
 
 
 def test_deep_equals(collection):
-    change_scope('test_deep_equals_scope')
+    change_scope("test_deep_equals_scope")
     cake = make_cake()
     flat_list = flatten(cake)
     # Note that registered turns them into a flat list of Citrine resources
@@ -545,7 +616,7 @@ def test_deep_equals(collection):
 
 
 def test_nonmutating_dry_run(collection):
-    change_scope('test_deep_equals_scope')
+    change_scope("test_deep_equals_scope")
     cake = make_cake()
     uid_stash = cake.uids.copy()
 
@@ -565,9 +636,9 @@ def test_nonmutating_dry_run(collection):
 
 
 def test_args_only(collection):
-    """"Test that only arguments to register_all get registered/tested/returned."""
+    """ "Test that only arguments to register_all get registered/tested/returned."""
     obj = GEMDRun("name", spec=GEMDSpec("name"))
-    GEMDJson(scope='test_args_only').dumps(obj)  # no-op to populate ids
+    GEMDJson(scope="test_args_only").dumps(obj)  # no-op to populate ids
     dry = collection.register_all([obj], dry_run=True)
     assert obj in dry
     assert obj.spec not in dry

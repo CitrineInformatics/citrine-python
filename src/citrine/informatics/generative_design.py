@@ -75,8 +75,8 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
         data.update(result)
         return data
 
-    uid = properties.UUID('id')
-    execution_id = properties.UUID('execution_id')
+    uid = properties.UUID("id")
+    execution_id = properties.UUID("execution_id")
 
     seed = properties.String("seed")
     """The seed used to generate the molecule."""
@@ -91,7 +91,7 @@ class GenerativeDesignResult(Serializable["GenerativeDesignResult"]):
         pass  # pragma: no cover
 
 
-class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
+class GenerativeDesignInput(Serializable["GenerativeDesignInput"]):
     """A Citrine Generative Design Execution Input.
 
     Parameters
@@ -117,20 +117,22 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
 
     """
 
-    seeds = properties.List(properties.String(), 'seeds')
+    seeds = properties.List(properties.String(), "seeds")
     fingerprint_type = properties.Enumeration(FingerprintType, "fingerprint_type")
     min_fingerprint_similarity = properties.Float("min_fingerprint_similarity")
     mutation_per_seed = properties.Integer("mutation_per_seed")
     structure_exclusions = properties.List(
-        properties.Enumeration(StructureExclusion),
-        "structure_exclusions"
+        properties.Enumeration(StructureExclusion), "structure_exclusions"
     )
     min_substructure_counts = properties.Mapping(
-        properties.String(), properties.Integer(), "min_substructure_counts",
+        properties.String(),
+        properties.Integer(),
+        "min_substructure_counts",
     )
 
     def __init__(
-        self, *,
+        self,
+        *,
         seeds: List[str],
         fingerprint_type: FingerprintType,
         min_fingerprint_similarity: float,

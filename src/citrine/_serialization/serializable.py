@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar
 
 
-Self = TypeVar('Self', bound='Serializable')
+Self = TypeVar("Self", bound="Serializable")
 
 
 class Serializable(Generic[Self]):
@@ -16,12 +16,14 @@ class Serializable(Generic[Self]):
     def build(cls, data: dict) -> Self:
         """Build an instance of this object from given data."""
         from citrine._serialization import properties
+
         pre_built = cls._pre_build(data)
         return properties.Object(cls).deserialize(pre_built)
 
     def dump(self) -> dict:
         """Dump this instance."""
         from citrine._serialization import properties
+
         serialized = properties.Object(type(self)).serialize(self)
         return self._post_dump(serialized)
 

@@ -12,4 +12,4 @@ def test_module_ref_serialization():
     ref_data = ref.dump()
 
     # Then
-    assert ref_data['module_uid'] == str(m_uid)
+    assert ref_data["module_uid"] == str(m_uid)

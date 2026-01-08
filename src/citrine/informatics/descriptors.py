@@ -1,4 +1,5 @@
 """Tools for working with Descriptors."""
+
 from typing import Type, Set, Union
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -7,14 +8,16 @@ from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
 
-__all__ = ['Descriptor',
-           'RealDescriptor',
-           'IntegerDescriptor',
-           'ChemicalFormulaDescriptor',
-           'MolecularStructureDescriptor',
-           'CategoricalDescriptor',
-           'FormulationDescriptor',
-           'FormulationKey']
+__all__ = [
+    "Descriptor",
+    "RealDescriptor",
+    "IntegerDescriptor",
+    "ChemicalFormulaDescriptor",
+    "MolecularStructureDescriptor",
+    "CategoricalDescriptor",
+    "FormulationDescriptor",
+    "FormulationKey",
+]
 
 
 class FormulationKey(BaseEnumeration):
@@ -29,13 +32,13 @@ class FormulationKey(BaseEnumeration):
     FLAT = "Flat Formulation"
 
 
-class Descriptor(PolymorphicSerializable['Descriptor']):
+class Descriptor(PolymorphicSerializable["Descriptor"]):
     """A Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
     """
 
-    key = properties.String('descriptor_key')
+    key = properties.String("descriptor_key")
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -68,14 +71,17 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         [self.__getattribute__(key) for key in attrs]
 
         try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
+            return all(
+                [
+                    self.__getattribute__(key) == other.__getattribute__(key)
+                    for key in attrs
+                ]
+            )
         except AttributeError:
             return False
 
 
-class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
+class RealDescriptor(Serializable["RealDescriptor"], Descriptor):
     """A descriptor to hold real-valued numbers.
 
     Parameters
@@ -91,20 +97,17 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     """
 
-    lower_bound = properties.Float('lower_bound')
-    upper_bound = properties.Float('upper_bound')
-    units = properties.String('units', default='')
-    typ = properties.String('type', default='Real', deserializable=False)
+    lower_bound = properties.Float("lower_bound")
+    upper_bound = properties.Float("upper_bound")
+    units = properties.String("units", default="")
+    typ = properties.String("type", default="Real", deserializable=False)
 
     def __eq__(self, other):
-        return self._equals(other, ["key", "lower_bound", "upper_bound", "units", "typ"])
+        return self._equals(
+            other, ["key", "lower_bound", "upper_bound", "units", "typ"]
+        )
 
-    def __init__(self,
-                 key: str,
-                 *,
-                 lower_bound: float,
-                 upper_bound: float,
-                 units: str):
+    def __init__(self, key: str, *, lower_bound: float, upper_bound: float, units: str):
         self.key: str = key
         self.lower_bound: float = lower_bound
         self.upper_bound: float = upper_bound
@@ -115,10 +118,11 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     def __repr__(self):
         return "RealDescriptor({}, {}, {}, {})".format(
-            self.key, self.lower_bound, self.upper_bound, self.units)
+            self.key, self.lower_bound, self.upper_bound, self.units
+        )
 
 
-class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
+class IntegerDescriptor(Serializable["IntegerDescriptor"], Descriptor):
     """[ALPHA] A descriptor to hold integer-valued numbers.
 
     Warning: IntegerDescriptors are not fully supported by the Citrine Platform web interface
@@ -135,9 +139,9 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
 
     """
 
-    lower_bound = properties.Integer('lower_bound')
-    upper_bound = properties.Integer('upper_bound')
-    typ = properties.String('type', default='Integer', deserializable=False)
+    lower_bound = properties.Integer("lower_bound")
+    upper_bound = properties.Integer("upper_bound")
+    typ = properties.String("type", default="Integer", deserializable=False)
 
     def __eq__(self, other):
         return self._equals(other, ["key", "lower_bound", "upper_bound", "typ"])
@@ -151,10 +155,12 @@ class IntegerDescriptor(Serializable['IntegerDescriptor'], Descriptor):
         return "<IntegerDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "IntegerDescriptor({}, {}, {})".format(self.key, self.lower_bound, self.upper_bound)
+        return "IntegerDescriptor({}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound
+        )
 
 
-class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
+class ChemicalFormulaDescriptor(Serializable["ChemicalFormulaDescriptor"], Descriptor):
     """Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
@@ -164,7 +170,7 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     """
 
-    typ = properties.String('type', default='Inorganic', deserializable=False)
+    typ = properties.String("type", default="Inorganic", deserializable=False)
 
     def __eq__(self, other):
         return self._equals(other, ["key", "typ"])
@@ -179,7 +185,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
         return "ChemicalFormulaDescriptor(key={})".format(self.key)
 
 
-class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
+class MolecularStructureDescriptor(
+    Serializable["MolecularStructureDescriptor"], Descriptor
+):
     """
     Material descriptor for an organic molecule.
 
@@ -192,7 +200,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
 
     """
 
-    typ = properties.String('type', default='Organic', deserializable=False)
+    typ = properties.String("type", default="Organic", deserializable=False)
 
     def __eq__(self, other):
         return self._equals(other, ["key", "typ"])
@@ -207,7 +215,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
         return "MolecularStructureDescriptor(key={})".format(self.key)
 
 
-class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
+class CategoricalDescriptor(Serializable["CategoricalDescriptor"], Descriptor):
     """A descriptor to hold categorical variables.
 
     An exhaustive list of categorical values may be supplied.
@@ -221,8 +229,8 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     """
 
-    typ = properties.String('type', default='Categorical', deserializable=False)
-    categories = properties.Set(properties.String, 'descriptor_values')
+    typ = properties.String("type", default="Categorical", deserializable=False)
+    categories = properties.Set(properties.String, "descriptor_values")
 
     def __eq__(self, other):
         return self._equals(other, ["key", "categories", "typ"])
@@ -238,10 +246,12 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
         return "<CategoricalDescriptor {!r}>".format(self.key)
 
     def __repr__(self):
-        return "CategoricalDescriptor(key={}, categories={})".format(self.key, self.categories)
+        return "CategoricalDescriptor(key={}, categories={})".format(
+            self.key, self.categories
+        )
 
 
-class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
+class FormulationDescriptor(Serializable["FormulationDescriptor"], Descriptor):
     """A descriptor to hold formulations.
 
     Parameters
@@ -254,7 +264,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     """
 
     typ = properties.String(
-        'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
+        "type", default=FormulationKey.HIERARCHICAL.value, deserializable=False
     )
 
     def __init__(self, key: Union[FormulationKey, str]):

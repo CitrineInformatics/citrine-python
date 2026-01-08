@@ -1,6 +1,6 @@
 """Tests reports initialization."""
-from citrine.informatics.reports import PredictorReport, ModelSummary, FeatureImportanceReport, Report
-from citrine.informatics.descriptors import RealDescriptor
+
+from citrine.informatics.reports import PredictorReport, Report
 
 
 def test_status(valid_predictor_report_data):
@@ -13,7 +13,9 @@ def test_selection_summary(valid_predictor_report_data):
     """Ensure that we can iterate selection summary results as expected."""
     report = PredictorReport.build(valid_predictor_report_data)
     selection_summaries = [
-        s.selection_summary for s in report.model_summaries if s.selection_summary is not None
+        s.selection_summary
+        for s in report.model_summaries
+        if s.selection_summary is not None
     ]
 
     assert len(selection_summaries) > 0

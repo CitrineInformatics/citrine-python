@@ -1,4 +1,5 @@
 """Tests for citrine.informatics.objectives."""
+
 import pytest
 
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective

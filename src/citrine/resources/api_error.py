@@ -16,7 +16,9 @@ class ApiError(Serializable["ApiError"]):
 
     code = properties.Optional(properties.Integer(), "code")
     message = properties.Optional(properties.String(), "message")
-    validation_errors = properties.List(properties.Object(ValidationError), "validation_errors")
+    validation_errors = properties.List(
+        properties.Object(ValidationError), "validation_errors"
+    )
 
     def has_failure(self, failure_id: str) -> bool:
         """Checks if this error contains a ValidationError with specified failure ID."""

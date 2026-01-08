@@ -8,7 +8,7 @@ from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['SimpleMixturePredictor']
+__all__ = ["SimpleMixturePredictor"]
 
 
 class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
@@ -30,22 +30,26 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
 
     """
 
-    _training_data = properties.List(properties.Object(DataSource), 'training_data', default=[])
+    _training_data = properties.List(
+        properties.Object(DataSource), "training_data", default=[]
+    )
 
-    typ = properties.String('type', default='SimpleMixture', deserializable=False)
+    typ = properties.String("type", default="SimpleMixture", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 training_data: Optional[List[DataSource]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        training_data: Optional[List[DataSource]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         if training_data:
             self.training_data: List[DataSource] = training_data
 
     def __str__(self):
-        return '<SimpleMixturePredictor {!r}>'.format(self.name)
+        return "<SimpleMixturePredictor {!r}>".format(self.name)
 
     @property
     def input_descriptor(self) -> FormulationDescriptor:
@@ -58,14 +62,20 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
         return FormulationDescriptor.flat()
 
     @property
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data must be accessed through the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data must be accessed through the top-level GraphPredictor.'",
+    )
     def training_data(self):
         """[DEPRECATED] Retrieve training data associated with this node."""
         return self._training_data
 
     @training_data.setter
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data should only be added to the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data should only be added to the top-level GraphPredictor.'",
+    )
     def training_data(self, value):
         self._training_data = value

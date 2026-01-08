@@ -1,4 +1,5 @@
 """Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
+
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 from uuid import uuid4
@@ -6,7 +7,11 @@ from uuid import uuid4
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
-from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
+from citrine._utils.functions import (
+    get_object_id,
+    replace_objects_with_links,
+    scrub_none,
+)
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import String, Object
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -29,8 +34,10 @@ class DataObject(DataConcepts, BaseObject, ABC):
     DataObject must be extended along with `Resource`
     """
 
-    notes = PropertyOptional(String(), 'notes')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    notes = PropertyOptional(String(), "notes")
+    file_links = PropertyOptional(
+        PropertyList(Object(FileLink)), "file_links", override=True
+    )
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
@@ -40,9 +47,12 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
 
     def list_by_attribute_bounds(
-            self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
-            forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
+        self,
+        attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+        *,
+        forward: bool = True,
+        per_page: int = 100,
+    ) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
 
@@ -80,7 +90,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         body = self._get_attribute_bounds_search_body(attribute_bounds)
         params = {}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            params["dataset_id"] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.post_resource,
             # "Ignoring" dataset because it is in the query params (and required)
@@ -88,30 +98,36 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             json=body,
             forward=forward,
             per_page=per_page,
-            params=params)
+            params=params,
+        )
         return (self.build(raw) for raw in raw_objects)
 
     @staticmethod
     def _get_attribute_bounds_search_body(attribute_bounds):
         if not isinstance(attribute_bounds, dict):
-            raise TypeError('attribute_bounds must be a dict mapping template to bounds; '
-                            'got {}'.format(attribute_bounds))
+            raise TypeError(
+                "attribute_bounds must be a dict mapping template to bounds; "
+                "got {}".format(attribute_bounds)
+            )
         if len(attribute_bounds) != 1:
-            raise NotImplementedError('Currently, only searches with exactly one template '
-                                      'to bounds mapping are supported; got {}'
-                                      .format(attribute_bounds))
+            raise NotImplementedError(
+                "Currently, only searches with exactly one template "
+                "to bounds mapping are supported; got {}".format(attribute_bounds)
+            )
         return {
-            'attribute_bounds': {
+            "attribute_bounds": {
                 get_object_id(templ): bounds.as_dict()
                 for templ, bounds in attribute_bounds.items()
             }
         }
 
-    def validate_templates(self, *,
-                           model: DataObjectResourceType,
-                           object_template: Optional[ObjectTemplateResourceType] = None,
-                           ingredient_process_template: Optional[ProcessTemplate] = None)\
-            -> List[ValidationError]:
+    def validate_templates(
+        self,
+        *,
+        model: DataObjectResourceType,
+        object_template: Optional[ObjectTemplateResourceType] = None,
+        ingredient_process_template: Optional[ProcessTemplate] = None,
+    ) -> List[ValidationError]:
         """
         Validate a data object against its templates.
 
@@ -129,15 +145,19 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         temp_scope = str(uuid4())
         GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
-        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        recursive_foreach(
+            model, lambda x: x.uids.pop(temp_scope, None)
+        )  # Strip temp uids
 
         request_data = {"dataObject": dumped_data}
         if object_template is not None:
-            request_data["objectTemplate"] = \
-                replace_objects_with_links(scrub_none(object_template.dump()))
+            request_data["objectTemplate"] = replace_objects_with_links(
+                scrub_none(object_template.dump())
+            )
         if ingredient_process_template is not None:
-            request_data["ingredientProcessTemplate"] = \
-                replace_objects_with_links(scrub_none(ingredient_process_template.dump()))
+            request_data["ingredientProcessTemplate"] = replace_objects_with_links(
+                scrub_none(ingredient_process_template.dump())
+            )
         try:
             self.session.put_resource(path, request_data)
             return []

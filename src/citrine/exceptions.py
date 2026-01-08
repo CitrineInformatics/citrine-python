@@ -1,4 +1,5 @@
 """Citrine-specific exceptions."""
+
 from types import SimpleNamespace
 from typing import Optional, List
 from urllib.parse import urlencode
@@ -54,11 +55,13 @@ class NonRetryableHttpException(NonRetryableException):
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
                     from citrine.resources.api_error import ApiError
+
                     self.api_error = ApiError.build(resp_json)
 
                     validation_error_msgs = [
                         "{} ({})".format(f.failure_message, f.failure_id)
-                        for f in self.api_error.validation_errors]
+                        for f in self.api_error.validation_errors
+                    ]
 
                     if self.api_error.message is not None:
                         self.detailed_error_info.append(self.api_error.message)
@@ -120,8 +123,12 @@ class NotFound(NonRetryableHttpException):
                 status_code=404,
                 request=SimpleNamespace(method=method.upper()),
                 reason="Not Found",
-                json=lambda self: {"code": 404, "message": message, "validation_errors": []}
-            )
+                json=lambda self: {
+                    "code": 404,
+                    "message": message,
+                    "validation_errors": [],
+                },
+            ),
         )
 
 
@@ -173,5 +180,6 @@ class ModuleRegistrationFailedException(NonRetryableException):
 
     def __init__(self, moduleType: str, exc: Exception):
         err = 'The "{0}" failed to register. {1}: {2}'.format(
-            moduleType, exc.__class__.__name__, str(exc))
+            moduleType, exc.__class__.__name__, str(exc)
+        )
         super().__init__(err)

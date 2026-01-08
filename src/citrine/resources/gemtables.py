@@ -10,15 +10,19 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, _pad_positional_args, \
-    rewrite_s3_links_locally, write_file_locally
+from citrine._utils.functions import (
+    format_escaped_url,
+    _pad_positional_args,
+    rewrite_s3_links_locally,
+    write_file_locally,
+)
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig, TableConfigCollection
 
 logger = getLogger(__name__)
 
 
-class GemTable(Resource['Table']):
+class GemTable(Resource["Table"]):
     """A 2-dimensional projection of data.
 
     GEM Tables are the basic unit used to flatten and manipulate data objects.
@@ -27,21 +31,25 @@ class GemTable(Resource['Table']):
     can be used to 'flatten' data objects into useful projections.
     """
 
-    _response_key = 'table'
+    _response_key = "table"
     _resource_type = ResourceTypeEnum.TABLE
 
-    uid = properties.UUID('id')
+    uid = properties.UUID("id")
     """:UUID: unique Citrine id of this GEM Table"""
-    version = properties.Integer('version')
+    version = properties.Integer("version")
     """:int: Version number of the GEM Table.
     The first table built from a given config is version 1."""
-    download_url = properties.String('signed_download_url')
+    download_url = properties.String("signed_download_url")
     """:str: URL pointing to the location of the GEM Table's contents.
     This is an expiring download link and is not unique."""
 
-    _config = properties.Optional(properties.Object(TableConfig), "config", serializable=False)
+    _config = properties.Optional(
+        properties.Object(TableConfig), "config", serializable=False
+    )
     _name = properties.Optional(properties.String, "name", serializable=False)
-    _description = properties.Optional(properties.String, "description", serializable=False)
+    _description = properties.Optional(
+        properties.String, "description", serializable=False
+    )
 
     def __init__(self):
         self._team_id = None
@@ -49,15 +57,17 @@ class GemTable(Resource['Table']):
         self._session = None
 
     def __str__(self):
-        return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
+        return "<GEM Table {!r}, version {}>".format(self.uid, self.version)
 
     @property
     def config(self) -> TableConfig:
         """Configuration used to build the table."""
         if self._config is None:
-            config_collection = TableConfigCollection(team_id=self._team_id,
-                                                      project_id=self._project_id,
-                                                      session=self._session)
+            config_collection = TableConfigCollection(
+                team_id=self._team_id,
+                project_id=self._project_id,
+                session=self._session,
+            )
             self._config = config_collection.get_for_table(self)
         return self._config
 
@@ -91,16 +101,18 @@ class GemTableVersionPaginator(Paginator[GemTable]):
 class GemTableCollection(Collection[GemTable]):
     """Represents the collection of all tables associated with a project."""
 
-    _path_template = 'projects/{project_id}/display-tables'
-    _collection_key: str = 'tables'
+    _path_template = "projects/{project_id}/display-tables"
+    _collection_key: str = "tables"
     _paginator: Paginator = GemTableVersionPaginator()
     _resource = GemTable
 
-    def __init__(self,
-                 *args,
-                 team_id: UUID = None,
-                 project_id: UUID = None,
-                 session: Session = None):
+    def __init__(
+        self,
+        *args,
+        team_id: UUID = None,
+        project_id: UUID = None,
+        session: Session = None,
+    ):
         args = _pad_positional_args(args, 2)
         self.project_id = project_id or args[0]
         self.session: Session = session or args[1]
@@ -123,10 +135,7 @@ class GemTableCollection(Collection[GemTable]):
             newest_table = max(tables, key=lambda x: x.version or 0)
             return newest_table
 
-    def list_versions(self,
-                      uid: UUID,
-                      *,
-                      per_page: int = 100) -> Iterable[GemTable]:
+    def list_versions(self, uid: UUID, *, per_page: int = 100) -> Iterable[GemTable]:
         """
         List the versions of a table given a specific Table UID.
 
@@ -137,11 +146,14 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource(self._get_path(uid),
-                                             params=self._page_params(page, per_page))
-            return data[self._collection_key], data.get('next', "")
+
+        def _fetch_versions(
+            page: Optional[int], per_page: int
+        ) -> Tuple[Iterable[dict], str]:
+            data = self.session.get_resource(
+                self._get_path(uid), params=self._page_params(page, per_page)
+            )
+            return data[self._collection_key], data.get("next", "")
 
         def _build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
             for item in collection:
@@ -149,12 +161,15 @@ class GemTableCollection(Collection[GemTable]):
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            _fetch_versions, _build_versions, per_page, deduplicate=False)
+            _fetch_versions,
+            _build_versions,
+            per_page,
+            deduplicate=False,
+        )
 
-    def list_by_config(self,
-                       table_config_uid: UUID,
-                       *,
-                       per_page: int = 100) -> Iterable[GemTable]:
+    def list_by_config(
+        self, table_config_uid: UUID, *, per_page: int = 100
+    ) -> Iterable[GemTable]:
         """
         List the versions of a table associated with a given Table Config UID.
 
@@ -165,18 +180,20 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
-            path_params = {'table_config_uid_str': str(table_config_uid)}
+
+        def _fetch_versions(
+            page: Optional[int], per_page: int
+        ) -> Tuple[Iterable[dict], str]:
+            path_params = {"table_config_uid_str": str(table_config_uid)}
             path_params.update(self.__dict__)
             path = format_escaped_url(
-                'projects/{project_id}/table-configs/{table_config_uid_str}/gem-tables',
-                **path_params
+                "projects/{project_id}/table-configs/{table_config_uid_str}/gem-tables",
+                **path_params,
             )
             data = self.session.get_resource(
-                path,
-                params=self._page_params(page, per_page))
-            return data[self._collection_key], data.get('next', "")
+                path, params=self._page_params(page, per_page)
+            )
+            return data[self._collection_key], data.get("next", "")
 
         def _build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
             for item in collection:
@@ -184,10 +201,15 @@ class GemTableCollection(Collection[GemTable]):
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            _fetch_versions, _build_versions, per_page, deduplicate=False)
+            _fetch_versions,
+            _build_versions,
+            per_page,
+            deduplicate=False,
+        )
 
-    def initiate_build(self, config: Union[TableConfig, str, UUID], *,
-                       version: Union[str, UUID] = None) -> JobSubmissionResponse:
+    def initiate_build(
+        self, config: Union[TableConfig, str, UUID], *, version: Union[str, UUID] = None
+    ) -> JobSubmissionResponse:
         """
         Initiates tables build with provided config.
 
@@ -210,20 +232,28 @@ class GemTableCollection(Collection[GemTable]):
         """
         if isinstance(config, TableConfig):
             if version is not None:
-                logger.warning('Ignoring version %s since config object was provided.', version)
+                logger.warning(
+                    "Ignoring version %s since config object was provided.", version
+                )
             if config.version_number is None:
-                raise ValueError('Cannot build table from config which has no version. '
-                                 'Try registering the config before building.')
+                raise ValueError(
+                    "Cannot build table from config which has no version. "
+                    "Try registering the config before building."
+                )
             if config.uid is None:
-                raise ValueError('Cannot build table from config which has no uid. '
-                                 'Try registering the config before building.')
+                raise ValueError(
+                    "Cannot build table from config which has no uid. "
+                    "Try registering the config before building."
+                )
             uid = config.uid
             version = config.version_number
         else:
             if version is None:
-                raise ValueError('Version must be specified when building by config uid.')
+                raise ValueError(
+                    "Version must be specified when building by config uid."
+                )
             uid = config
-        logger.info(f'Submitting table build for config {uid} version {version}...')
+        logger.info(f"Submitting table build for config {uid} version {version}...")
         path = format_escaped_url(
             "teams/{}/projects/{}/table-configs/{}/versions/{}/build",
             self.team_id,
@@ -234,13 +264,14 @@ class GemTableCollection(Collection[GemTable]):
         response = self.session.post_resource(path=path, json={})
         submission = JobSubmissionResponse.build(response)
         logger.info(
-            f'Table build job submitted from config {uid} '
-            f'version {version} with job ID {submission.job_id}'
+            f"Table build job submitted from config {uid} "
+            f"version {version} with job ID {submission.job_id}"
         )
         return submission
 
-    def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
-                         timeout: float = 15 * 60) -> GemTable:
+    def get_by_build_job(
+        self, job: Union[JobSubmissionResponse, UUID], *, timeout: float = 15 * 60
+    ) -> GemTable:
         """
         Gets table by build job, waiting for it to complete if necessary.
 
@@ -260,29 +291,33 @@ class GemTableCollection(Collection[GemTable]):
 
         """
         status = _poll_for_job_completion(
-            session=self.session,
-            team_id=self.team_id,
-            job=job,
-            timeout=timeout)
+            session=self.session, team_id=self.team_id, job=job, timeout=timeout
+        )
 
-        table_id = status.output['display_table_id']
-        table_version = status.output['display_table_version']
-        warning_blob = status.output.get('table_warnings')
+        table_id = status.output["display_table_id"]
+        table_version = status.output["display_table_version"]
+        warning_blob = status.output.get("table_warnings")
         warnings = json.loads(warning_blob) if warning_blob is not None else []
         if warnings:
-            warn_lines = ['Table build completed with warnings:']
+            warn_lines = ["Table build completed with warnings:"]
             for warning in warnings:
-                limited_results = warning.get('limited_results', [])
+                limited_results = warning.get("limited_results", [])
                 warn_lines.extend(limited_results)
-                total_count = warning.get('total_count', 0)
+                total_count = warning.get("total_count", 0)
                 if total_count > len(limited_results):
-                    warn_lines.append(f'and {total_count - len(limited_results)} more similar.')
-            logger.warning('\n\t'.join(warn_lines))
+                    warn_lines.append(
+                        f"and {total_count - len(limited_results)} more similar."
+                    )
+            logger.warning("\n\t".join(warn_lines))
         return self.get(table_id, version=table_version)
 
-    def build_from_config(self, config: Union[TableConfig, str, UUID], *,
-                          version: Union[str, int] = None,
-                          timeout: float = 15 * 60) -> GemTable:
+    def build_from_config(
+        self,
+        config: Union[TableConfig, str, UUID],
+        *,
+        version: Union[str, int] = None,
+        timeout: float = 15 * 60,
+    ) -> GemTable:
         """
         Builds table from table config, waiting for build job to complete.
 
@@ -316,7 +351,7 @@ class GemTableCollection(Collection[GemTable]):
 
     def register(self, model: GemTable) -> GemTable:
         """Tables cannot be created at this time."""
-        raise RuntimeError('Creating Tables is not supported at this time.')
+        raise RuntimeError("Creating Tables is not supported at this time.")
 
     def update(self, model: GemTable) -> GemTable:
         """Tables cannot be updated."""
@@ -353,7 +388,9 @@ class GemTableCollection(Collection[GemTable]):
             table = self.get(uid=table)
 
         data_location = table.download_url
-        data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
+        data_location = rewrite_s3_links_locally(
+            data_location, self.session.s3_endpoint_url
+        )
         return requests.get(data_location)
 
     def read_to_memory(self, table: table_type) -> str:

@@ -12,8 +12,11 @@ from tests.utils.session import FakeSession
 
 
 class FakeProjectCollection(ProjectCollection):
-
-    def __init__(self, search_implemented: bool = True, team_id: Optional[Union[UUID, str]] = None):
+    def __init__(
+        self,
+        search_implemented: bool = True,
+        team_id: Optional[Union[UUID, str]] = None,
+    ):
         super().__init__(session=FakeSession, team_id=team_id)
         self.projects = []
         self.search_implemented = search_implemented
@@ -27,7 +30,7 @@ class FakeProjectCollection(ProjectCollection):
         if page is None:
             return self.projects
         else:
-            return self.projects[(page - 1) * per_page:page * per_page]
+            return self.projects[(page - 1) * per_page : page * per_page]
 
     def search(self, search_params: Optional[dict] = None, per_page: int = 100):
         if not self.search_implemented:
@@ -56,18 +59,25 @@ class FakeProjectCollection(ProjectCollection):
 
 
 class FakeProject(Project):
-
-    def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
+    def __init__(
+        self, name="foo", description="bar", num_properties=3, session=FakeSession()
+    ):
         super().__init__(name=name, description=description, session=session)
         self.uid = uuid4()
         self.team_id = uuid4()
         self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
         self._design_workflows = FakeDesignWorkflowCollection(self.uid, self.session)
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
-        self._datasets = FakeDatasetCollection(team_id=self.team_id, session=self.session)
+        self._datasets = FakeDatasetCollection(
+            team_id=self.team_id, session=self.session
+        )
         self._predictors = FakePredictorCollection(self.uid, self.session)
-        self._tables = FakeGemTableCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
-        self._table_configs = FakeTableConfigCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
+        self._tables = FakeGemTableCollection(
+            team_id=self.team_id, project_id=self.uid, session=self.session
+        )
+        self._table_configs = FakeTableConfigCollection(
+            team_id=self.team_id, project_id=self.uid, session=self.session
+        )
 
     @property
     def datasets(self) -> FakeDatasetCollection:

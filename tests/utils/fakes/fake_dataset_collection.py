@@ -6,7 +6,6 @@ from tests.utils.fakes.fake_file_collection import FakeFileCollection
 
 
 class FakeDataset(Dataset):
-
     def __init__(self):
         pass
 
@@ -16,7 +15,6 @@ class FakeDataset(Dataset):
 
 
 class FakeDatasetCollection(DatasetCollection):
-
     def __init__(self, *, session, team_id):
         super().__init__(team_id=team_id, session=session)
         self.datasets = []
@@ -29,4 +27,4 @@ class FakeDatasetCollection(DatasetCollection):
         if page is None:
             return self.datasets
         else:
-            return self.datasets[(page - 1)*per_page:page*per_page]
+            return self.datasets[(page - 1) * per_page : page * per_page]

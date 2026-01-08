@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of teams."""
+
 from typing import List, Optional, Tuple, Union
 from uuid import UUID
 
@@ -42,18 +43,21 @@ TEAM_ACTIONS = Union[WRITE, READ, SHARE]
 class TeamMember:
     """A Member of a Team."""
 
-    def __init__(self,
-                 *,
-                 user: User,
-                 team: 'Team',  # noqa: F821
-                 actions: List[TEAM_ACTIONS]):
+    def __init__(
+        self,
+        *,
+        user: User,
+        team: "Team",  # noqa: F821
+        actions: List[TEAM_ACTIONS],
+    ):
         self.user = user
-        self.team: 'Team' = team  # noqa: F821
+        self.team: "Team" = team  # noqa: F821
         self.actions: List[TEAM_ACTIONS] = actions
 
     def __str__(self):
-        return '<TeamMember {!r} can {!s} in {!r}>' \
-            .format(self.user.screen_name, self.actions, self.team.name)
+        return "<TeamMember {!r} can {!s} in {!r}>".format(
+            self.user.screen_name, self.actions, self.team.name
+        )
 
 
 class TeamResourceIDs:
@@ -75,22 +79,23 @@ class TeamResourceIDs:
 
     _api_version = "v3"
 
-    def __init__(self,
-                 session: Session,
-                 team_id: Union[str, UUID],
-                 resource_type: str) -> None:
+    def __init__(
+        self, session: Session, team_id: Union[str, UUID], resource_type: str
+    ) -> None:
         self.session = session
         self.team_id = team_id
         self.resource_type = resource_type
 
     def _path(self) -> str:
-        return format_escaped_url(f'/teams/{self.team_id}')
+        return format_escaped_url(f"/teams/{self.team_id}")
 
     def _list_ids(self, action: str) -> List[str]:
         query_params = {"domain": self._path(), "action": action}
-        return self.session.get_resource(f"/{self.resource_type}/authorized-ids",
-                                         params=query_params,
-                                         version=self._api_version)['ids']
+        return self.session.get_resource(
+            f"/{self.resource_type}/authorized-ids",
+            params=query_params,
+            version=self._api_version,
+        )["ids"]
 
     def list_readable(self):
         """
@@ -129,7 +134,7 @@ class TeamResourceIDs:
         return self._list_ids(action=SHARE)
 
 
-class Team(Resource['Team']):
+class Team(Resource["Team"]):
     """
     A Citrine Team.
 
@@ -146,33 +151,31 @@ class Team(Resource['Team']):
 
     """
 
-    _response_key = 'team'
+    _response_key = "team"
     _resource_type = ResourceTypeEnum.TEAM
     _api_version = "v3"
 
-    name = properties.String('name')
+    name = properties.String("name")
     """str: Name of the Team"""
-    description = properties.Optional(properties.String(), 'description')
+    description = properties.Optional(properties.String(), "description")
     """str: Description of the Team"""
-    uid = properties.Optional(properties.UUID(), 'id')
+    uid = properties.Optional(properties.UUID(), "id")
     """UUID: Unique uuid4 identifier of this team."""
-    created_at = properties.Optional(properties.Datetime(), 'created_at')
+    created_at = properties.Optional(properties.Datetime(), "created_at")
     """int: Time the team was created, in seconds since epoch."""
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str = "",
-                 session: Optional[Session] = None):
+    def __init__(
+        self, name: str, *, description: str = "", session: Optional[Session] = None
+    ):
         self.name: str = name
         self.description: str = description
         self.session: Session = session
 
     def __str__(self):
-        return '<Team {!r}>'.format(self.name)
+        return "<Team {!r}>".format(self.name)
 
     def _path(self):
-        return format_escaped_url('/teams/{team_id}', team_id=self.uid)
+        return format_escaped_url("/teams/{team_id}", team_id=self.uid)
 
     def list_members(self) -> List[TeamMember]:
         """
@@ -186,9 +189,14 @@ class Team(Resource['Team']):
             The members of the current team
 
         """
-        response = self.session.get_resource(self._path() + "/users", version=self._api_version)
+        response = self.session.get_resource(
+            self._path() + "/users", version=self._api_version
+        )
         members = response["users"]
-        return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
+        return [
+            TeamMember(user=User.build(m), team=self, actions=m["actions"])
+            for m in members
+        ]
 
     def get_member(self, user_id: Union[str, UUID, User]) -> TeamMember:
         """
@@ -209,7 +217,7 @@ class Team(Resource['Team']):
         """
         if isinstance(user_id, User):
             user_id = user_id.uid
-        path = self._path() + format_escaped_url('/users/{user_id}', user_id=user_id)
+        path = self._path() + format_escaped_url("/users/{user_id}", user_id=user_id)
         member = self.session.get_resource(path=path, version=self._api_version)["user"]
         return TeamMember(user=User.build(member), team=self, actions=member["actions"])
 
@@ -245,14 +253,19 @@ class Team(Resource['Team']):
         """
         if isinstance(user_id, User):
             user_id = user_id.uid
-        self.session.checked_post(self._path() + "/users/batch-remove",
-                                  json={"ids": [str(user_id)]}, version=self._api_version)
+        self.session.checked_post(
+            self._path() + "/users/batch-remove",
+            json={"ids": [str(user_id)]},
+            version=self._api_version,
+        )
         return True  # note: only get here if checked_post doesn't raise error
 
-    def add_user(self,
-                 user_id: Union[str, UUID, User],
-                 *,
-                 actions: Optional[List[TEAM_ACTIONS]] = None) -> bool:
+    def add_user(
+        self,
+        user_id: Union[str, UUID, User],
+        *,
+        actions: Optional[List[TEAM_ACTIONS]] = None,
+    ) -> bool:
         """
         Add a User to a Team.
 
@@ -283,10 +296,9 @@ class Team(Resource['Team']):
             actions = [READ]
         return self.update_user_action(user_id, actions=actions)
 
-    def update_user_action(self,
-                           user_id: Union[str, UUID, User],
-                           *,
-                           actions: List[TEAM_ACTIONS]) -> bool:
+    def update_user_action(
+        self, user_id: Union[str, UUID, User], *, actions: List[TEAM_ACTIONS]
+    ) -> bool:
         """
         Overwrites a User's action permissions in the Team.
 
@@ -308,14 +320,16 @@ class Team(Resource['Team']):
         """
         if isinstance(user_id, User):
             user_id = user_id.uid
-        self.session.checked_put(self._path() + "/users", version=self._api_version,
-                                 json={'id': str(user_id), "actions": actions})
+        self.session.checked_put(
+            self._path() + "/users",
+            version=self._api_version,
+            json={"id": str(user_id), "actions": actions},
+        )
         return True
 
-    def share(self,
-              *,
-              resource: Resource,
-              target_team_id: Union[str, UUID, "Team"]) -> bool:
+    def share(
+        self, *, resource: Resource, target_team_id: Union[str, UUID, "Team"]
+    ) -> bool:
         """
         Share a resource with another team.
 
@@ -340,13 +354,16 @@ class Team(Resource['Team']):
         payload = {
             "resource_type": resource_access["type"],
             "resource_id": resource_access["id"],
-            "target_team_id": str(target_team_id)
+            "target_team_id": str(target_team_id),
         }
-        self.session.checked_post(self._path() + "/shared-resources",
-                                  version=self._api_version, json=payload)
+        self.session.checked_post(
+            self._path() + "/shared-resources", version=self._api_version, json=payload
+        )
         return True
 
-    def un_share(self, *, resource: Resource, target_team_id: Union[str, UUID, "Team"]) -> bool:
+    def un_share(
+        self, *, resource: Resource, target_team_id: Union[str, UUID, "Team"]
+    ) -> bool:
         """
         Revoke the share of a particular resource to a secondary team.
 
@@ -372,7 +389,7 @@ class Team(Resource['Team']):
         self.session.checked_delete(
             self._path() + f"/shared-resources/{resource_type}/{resource_id}",
             version=self._api_version,
-            json={"target_team_id": str(target_team_id)}
+            json={"target_team_id": str(target_team_id)},
         )
         return True
 
@@ -387,10 +404,10 @@ class Team(Resource['Team']):
 
         """
         query_params = {"userId": "", "domain": self._path(), "action": "WRITE"}
-        response = self.session.get_resource("/DATASET/authorized-ids",
-                                             params=query_params,
-                                             version="v3")
-        return response['ids']
+        response = self.session.get_resource(
+            "/DATASET/authorized-ids", params=query_params, version="v3"
+        )
+        return response["ids"]
 
     @property
     def projects(self) -> ProjectCollection:
@@ -405,9 +422,11 @@ class Team(Resource['Team']):
     @property
     def dataset_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published dataset IDs."""
-        return TeamResourceIDs(session=self.session,
-                               team_id=self.uid,
-                               resource_type=ResourceTypeEnum.DATASET.value)
+        return TeamResourceIDs(
+            session=self.session,
+            team_id=self.uid,
+            resource_type=ResourceTypeEnum.DATASET.value,
+        )
 
     @property
     def datasets(self) -> DatasetCollection:
@@ -417,106 +436,142 @@ class Team(Resource['Team']):
     @property
     def module_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published module IDs."""
-        return TeamResourceIDs(session=self.session,
-                               team_id=self.uid,
-                               resource_type=ResourceTypeEnum.MODULE.value)
+        return TeamResourceIDs(
+            session=self.session,
+            team_id=self.uid,
+            resource_type=ResourceTypeEnum.MODULE.value,
+        )
 
     @property
     def table_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published table IDs."""
-        return TeamResourceIDs(session=self.session,
-                               team_id=self.uid,
-                               resource_type=ResourceTypeEnum.TABLE.value)
+        return TeamResourceIDs(
+            session=self.session,
+            team_id=self.uid,
+            resource_type=ResourceTypeEnum.TABLE.value,
+        )
 
     @property
     def table_definition_ids(self) -> TeamResourceIDs:
         """Return a TeamResourceIDs instance for listing published table definition IDs."""
-        return TeamResourceIDs(session=self.session,
-                               team_id=self.uid,
-                               resource_type=ResourceTypeEnum.TABLE_DEFINITION.value)
+        return TeamResourceIDs(
+            session=self.session,
+            team_id=self.uid,
+            resource_type=ResourceTypeEnum.TABLE_DEFINITION.value,
+        )
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
         """Return a resource representing all property templates in this dataset."""
-        return PropertyTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return PropertyTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def condition_templates(self) -> ConditionTemplateCollection:
         """Return a resource representing all condition templates in this dataset."""
-        return ConditionTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return ConditionTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def parameter_templates(self) -> ParameterTemplateCollection:
         """Return a resource representing all parameter templates in this dataset."""
-        return ParameterTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return ParameterTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def material_templates(self) -> MaterialTemplateCollection:
         """Return a resource representing all material templates in this dataset."""
-        return MaterialTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MaterialTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def measurement_templates(self) -> MeasurementTemplateCollection:
         """Return a resource representing all measurement templates in this dataset."""
-        return MeasurementTemplateCollection(team_id=self.uid,
-                                             dataset_id=None,
-                                             session=self.session)
+        return MeasurementTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def process_templates(self) -> ProcessTemplateCollection:
         """Return a resource representing all process templates in this dataset."""
-        return ProcessTemplateCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return ProcessTemplateCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def process_runs(self) -> ProcessRunCollection:
         """Return a resource representing all process runs in this dataset."""
-        return ProcessRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return ProcessRunCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def measurement_runs(self) -> MeasurementRunCollection:
         """Return a resource representing all measurement runs in this dataset."""
-        return MeasurementRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MeasurementRunCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def material_runs(self) -> MaterialRunCollection:
         """Return a resource representing all material runs in this dataset."""
-        return MaterialRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MaterialRunCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def ingredient_runs(self) -> IngredientRunCollection:
         """Return a resource representing all ingredient runs in this dataset."""
-        return IngredientRunCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return IngredientRunCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def process_specs(self) -> ProcessSpecCollection:
         """Return a resource representing all process specs in this dataset."""
-        return ProcessSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return ProcessSpecCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def measurement_specs(self) -> MeasurementSpecCollection:
         """Return a resource representing all measurement specs in this dataset."""
-        return MeasurementSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MeasurementSpecCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def material_specs(self) -> MaterialSpecCollection:
         """Return a resource representing all material specs in this dataset."""
-        return MaterialSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return MaterialSpecCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
-        return IngredientSpecCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return IngredientSpecCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
     @property
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
+        return GEMDResourceCollection(
+            team_id=self.uid, dataset_id=None, session=self.session
+        )
 
-    def gemd_batch_delete(self,
-                          id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
-                          *,
-                          timeout: float = 2 * 60,
-                          polling_delay: float = 1.0) -> List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(
+        self,
+        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+        *,
+        timeout: float = 2 * 60,
+        polling_delay: float = 1.0,
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -550,12 +605,14 @@ class Team(Resource['Team']):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list=id_list,
-                                        team_id=self.uid,
-                                        session=self.session,
-                                        dataset_id=None,
-                                        timeout=timeout,
-                                        polling_delay=polling_delay)
+        return _async_gemd_batch_delete(
+            id_list=id_list,
+            team_id=self.uid,
+            session=self.session,
+            dataset_id=None,
+            timeout=timeout,
+            polling_delay=polling_delay,
+        )
 
 
 class TeamCollection(AdminCollection[Team]):
@@ -569,9 +626,9 @@ class TeamCollection(AdminCollection[Team]):
 
     """
 
-    _path_template = '/teams'
-    _individual_key = 'team'
-    _collection_key = 'teams'
+    _path_template = "/teams"
+    _individual_key = "team"
+    _collection_key = "teams"
     _resource = Team
     _api_version = "v3"
 
@@ -609,7 +666,9 @@ class TeamCollection(AdminCollection[Team]):
 
         """
         url = self._get_path(team.uid)
-        updated = self.session.patch_resource(url, team.dump(), version=self._api_version)
+        updated = self.session.patch_resource(
+            url, team.dump(), version=self._api_version
+        )
         data = updated[self._individual_key]
         return self.build(data)
 

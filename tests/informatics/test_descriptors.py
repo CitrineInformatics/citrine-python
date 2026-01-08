@@ -1,20 +1,32 @@
 """Tests for citrine.informatics.descriptors."""
+
 import json
 
 import pytest
 
-from citrine.informatics.descriptors import *
+from citrine.informatics.descriptors import (
+    CategoricalDescriptor,
+    ChemicalFormulaDescriptor,
+    Descriptor,
+    FormulationDescriptor,
+    FormulationKey,
+    IntegerDescriptor,
+    MolecularStructureDescriptor,
+    RealDescriptor,
+)
 
 
-@pytest.fixture(params=[
-    RealDescriptor('alpha', lower_bound=0, upper_bound=100, units=""),
-    IntegerDescriptor('count', lower_bound=0, upper_bound=100),
-    ChemicalFormulaDescriptor('formula'),
-    MolecularStructureDescriptor("organic"),
-    CategoricalDescriptor("my categorical", categories=["a", "b"]),
-    CategoricalDescriptor("categorical", categories=["*"]),
-    FormulationDescriptor.hierarchical()
-])
+@pytest.fixture(
+    params=[
+        RealDescriptor("alpha", lower_bound=0, upper_bound=100, units=""),
+        IntegerDescriptor("count", lower_bound=0, upper_bound=100),
+        ChemicalFormulaDescriptor("formula"),
+        MolecularStructureDescriptor("organic"),
+        CategoricalDescriptor("my categorical", categories=["a", "b"]),
+        CategoricalDescriptor("categorical", categories=["*"]),
+        FormulationDescriptor.hierarchical(),
+    ]
+)
 def descriptor(request):
     return request.param
 
@@ -27,7 +39,6 @@ def test_deser_from_parent(descriptor):
 
 
 def test_equals(descriptor):
-
     assert descriptor._equals(descriptor, descriptor.__dict__.keys())
 
     # attributes missing from the descriptor should raise an exception

@@ -1,8 +1,8 @@
 """Test the Paginator"""
+
 from uuid import uuid4
 
 from mock import Mock
-import pytest
 
 from citrine._rest.paginator import Paginator
 
@@ -47,7 +47,9 @@ def test_pagination_stops_when_initial_item_repeated():
 
 
 def test_pagination_deduplicates_repeated_intermediate_values():
-    result = Paginator().paginate(mocked_fetcher(a, b, b, b, b, b, b, c, c), lambda x: x, per_page=1)
+    result = Paginator().paginate(
+        mocked_fetcher(a, b, b, b, b, b, b, c, c), lambda x: x, per_page=1
+    )
     assert list(result) == [a, b, c]
 
 

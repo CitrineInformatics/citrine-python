@@ -1,4 +1,5 @@
 """Top-level class for all data concepts objects and collections thereof."""
+
 import re
 from abc import abstractmethod, ABC
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
@@ -18,15 +19,20 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, format_escaped_url, \
-    _pad_positional_args, replace_objects_with_links, scrub_none
+from citrine._utils.functions import (
+    _data_manager_deprecation_checks,
+    format_escaped_url,
+    _pad_positional_args,
+    replace_objects_with_links,
+    scrub_none,
+)
 from citrine.exceptions import BadRequest
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.response import Response
 
-CITRINE_SCOPE = 'id'
-CITRINE_TAG_PREFIX = 'citr_auto'
+CITRINE_SCOPE = "id"
+CITRINE_TAG_PREFIX = "citr_auto"
 
 
 class DataConceptsMeta(DictSerializableMeta):
@@ -34,17 +40,16 @@ class DataConceptsMeta(DictSerializableMeta):
 
     def __init__(cls, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        resolved = next((b.typ for b in cls.__bases__ if getattr(b, "typ", None) is not None),
-                        None)
+        resolved = next(
+            (b.typ for b in cls.__bases__ if getattr(b, "typ", None) is not None), None
+        )
         if resolved is not None:
             cls._typ_stash = resolved
         cls.typ = String("type")
 
 
 class DataConcepts(
-    PolymorphicSerializable['DataConcepts'],
-    BaseEntity,
-    metaclass=DataConceptsMeta
+    PolymorphicSerializable["DataConcepts"], BaseEntity, metaclass=DataConceptsMeta
 ):
     """
     An abstract data concepts object.
@@ -59,8 +64,10 @@ class DataConcepts(
     """
 
     """Properties inherited from GEMD Base Entitiy."""
-    uids = PropertyOptional(Mapping(String('scope'), String('id')), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    uids = PropertyOptional(
+        Mapping(String("scope"), String("id")), "uids", override=True
+    )
+    tags = PropertyOptional(PropertyList(String()), "tags", override=True)
 
     _type_key = "type"
     """str: key used to determine type of serialized object."""
@@ -122,7 +129,7 @@ class DataConcepts(
         """
         if isinstance(data, DictSerializable):
             data = data.as_dict()
-        return DictSerializable.class_mapping[data['type']]
+        return DictSerializable.class_mapping[data["type"]]
 
     @classmethod
     def get_collection_type(cls, data) -> "Type[DataConceptsCollection]":
@@ -149,7 +156,7 @@ class DataConcepts(
             DataConcepts._make_collection_dict()
         if isinstance(data, DictSerializable):
             data = data.as_dict()
-        return DataConcepts.collection_dict[data['type']]
+        return DataConcepts.collection_dict[data["type"]]
 
     @staticmethod
     def _make_collection_dict():
@@ -168,18 +175,30 @@ class DataConcepts(
         from citrine.resources.material_run import MaterialRunCollection
         from citrine.resources.measurement_run import MeasurementRunCollection
         from citrine.resources.process_run import ProcessRunCollection
+
         _collection_list = [
-            ConditionTemplateCollection, ParameterTemplateCollection, PropertyTemplateCollection,
-            MaterialTemplateCollection, MeasurementTemplateCollection, ProcessTemplateCollection,
-            IngredientSpecCollection, MaterialSpecCollection, MeasurementSpecCollection,
-            ProcessSpecCollection, IngredientRunCollection, MaterialRunCollection,
-            MeasurementRunCollection, ProcessRunCollection
+            ConditionTemplateCollection,
+            ParameterTemplateCollection,
+            PropertyTemplateCollection,
+            MaterialTemplateCollection,
+            MeasurementTemplateCollection,
+            ProcessTemplateCollection,
+            IngredientSpecCollection,
+            MaterialSpecCollection,
+            MeasurementSpecCollection,
+            ProcessSpecCollection,
+            IngredientRunCollection,
+            MaterialRunCollection,
+            MeasurementRunCollection,
+            ProcessRunCollection,
         ]
         for collection in _collection_list:
             DataConcepts.collection_dict[collection._individual_key] = collection
 
 
-def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) -> LinkByUID:
+def _make_link_by_uid(
+    gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
+) -> LinkByUID:
     if isinstance(gemd_object_rep, BaseEntity):
         return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
@@ -189,11 +208,13 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) 
         scope = CITRINE_SCOPE
         return LinkByUID(scope, uid)
     else:
-        raise TypeError("Link can only be created from a GEMD object, LinkByUID, str, or UUID."
-                        "Instead got {}.".format(gemd_object_rep))
+        raise TypeError(
+            "Link can only be created from a GEMD object, LinkByUID, str, or UUID."
+            "Instead got {}.".format(gemd_object_rep)
+        )
 
 
-ResourceType = TypeVar('ResourceType', bound='DataConcepts')
+ResourceType = TypeVar("ResourceType", bound="DataConcepts")
 
 
 class DataConceptsCollection(Collection[ResourceType], ABC):
@@ -214,12 +235,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self,
-                 *args,
-                 session: Session = None,
-                 dataset_id: Optional[UUID] = None,
-                 team_id: UUID = None,
-                 project_id: Optional[UUID] = None):
+    def __init__(
+        self,
+        *args,
+        session: Session = None,
+        dataset_id: Optional[UUID] = None,
+        team_id: UUID = None,
+        project_id: Optional[UUID] = None,
+    ):
         # Handle positional arguments for backward compatibility
         args = _pad_positional_args(args, 3)
         self.project_id = project_id or args[0]
@@ -232,7 +255,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             session=self.session,
             project_id=self.project_id,
             team_id=team_id,
-            obj_type="GEMD Objects")
+            obj_type="GEMD Objects",
+        )
 
     @classmethod
     @abstractmethod
@@ -242,15 +266,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
     @property
     def _path_template(self):
         collection_key = self._collection_key.replace("_", "-")
-        return f'teams/{self.team_id}/datasets/{self.dataset_id}/{collection_key}'
+        return f"teams/{self.team_id}/datasets/{self.dataset_id}/{collection_key}"
 
     # After Data Manager deprecation, both can use the `teams/...` path.
     @property
     def _dataset_agnostic_path_template(self):
         if self.project_id is None:
-            return f'teams/{self.team_id}/{self._collection_key.replace("_", "-")}'
+            return f"teams/{self.team_id}/{self._collection_key.replace('_', '-')}"
         else:
-            return f'projects/{self.project_id}/{self._collection_key.replace("_", "-")}'
+            return (
+                f"projects/{self.project_id}/{self._collection_key.replace('_', '-')}"
+            )
 
     def build(self, data: dict) -> ResourceType:
         """
@@ -271,9 +297,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         return self.get_type().build(data)
 
-    def list(self, *,
-             per_page: Optional[int] = 100,
-             forward: bool = True) -> Iterator[ResourceType]:
+    def list(
+        self, *, per_page: Optional[int] = 100, forward: bool = True
+    ) -> Iterator[ResourceType]:
         """
         Get all visible elements of the collection.
 
@@ -298,13 +324,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         params = {}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            params["dataset_id"] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True),
             forward=forward,
             per_page=per_page,
-            params=params)
+            params=params,
+        )
         return (self.build(raw) for raw in raw_objects)
 
     def register(self, model: ResourceType, *, dry_run=False):
@@ -337,9 +364,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to register a data model object.")
+            raise RuntimeError(
+                "Must specify a dataset in order to register a data model object."
+            )
         path = self._get_path()
-        params = {'dry_run': dry_run}
+        params = {"dry_run": dry_run}
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
@@ -349,34 +378,46 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.post_resource(path, dumped_data, params=params)
         registered = self.build(data)
 
-        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        recursive_foreach(
+            model, lambda x: x.uids.pop(temp_scope, None)
+        )  # Strip temp uids
         if not dry_run:
             # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
             model.uids.update({k: v for k, v in registered.uids.items()})
             if registered.tags is not None:
                 if model.tags is None:  # This is somehow hit by nextgen-devkit tests
                     model.tags = list()  # pragma: no cover
-                model.tags.extend([tag for tag in registered.tags
-                                   if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)])
+                model.tags.extend(
+                    [
+                        tag
+                        for tag in registered.tags
+                        if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)
+                    ]
+                )
         else:
             # Remove of the tags/uids the platform spuriously added
             # this might leave objects with just the temp ids, which we want to strip later
             if CITRINE_SCOPE not in model.uids:
                 registered.uids.pop(CITRINE_SCOPE, None)
             if registered.tags is not None:
-                todo = [tag for tag in registered.tags
-                        if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                todo = [
+                    tag
+                    for tag in registered.tags
+                    if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)
+                ]
                 for tag in todo:  # Covering this block would require dark art
                     if tag not in model.tags:
                         registered.tags.remove(tag)
         return registered
 
-    def register_all(self,
-                     models: Iterable[ResourceType],
-                     *,
-                     dry_run: bool = False,
-                     status_bar: bool = False,
-                     include_nested: bool = False) -> List[ResourceType]:
+    def register_all(
+        self,
+        models: Iterable[ResourceType],
+        *,
+        dry_run: bool = False,
+        status_bar: bool = False,
+        include_nested: bool = False,
+    ) -> List[ResourceType]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -419,14 +460,15 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         # avoiding a circular import
         from citrine.resources.gemd_resource import GEMDResourceCollection
-        gemd_collection = GEMDResourceCollection(team_id=self.team_id,
-                                                 dataset_id=self.dataset_id,
-                                                 session=self.session)
+
+        gemd_collection = GEMDResourceCollection(
+            team_id=self.team_id, dataset_id=self.dataset_id, session=self.session
+        )
         return gemd_collection.register_all(
             models,
             dry_run=dry_run,
             status_bar=status_bar,
-            include_nested=include_nested
+            include_nested=include_nested,
         )
 
     def update(self, model: ResourceType) -> ResourceType:
@@ -444,15 +486,20 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             return self.register(model, dry_run=False)
         except BadRequest:
             # If register() cannot be used because an asynchronous check is required
-            return self.async_update(model, dry_run=False,
-                                     wait_for_response=True, return_model=True)
+            return self.async_update(
+                model, dry_run=False, wait_for_response=True, return_model=True
+            )
 
-    def async_update(self, model: ResourceType, *,
-                     dry_run: bool = False,
-                     wait_for_response: bool = True,
-                     timeout: float = 2 * 60,
-                     polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
+    def async_update(
+        self,
+        model: ResourceType,
+        *,
+        dry_run: bool = False,
+        wait_for_response: bool = True,
+        timeout: float = 2 * 60,
+        polling_delay: float = 1.0,
+        return_model: bool = False,
+    ) -> Optional[Union[UUID, ResourceType]]:
         """
         Update a particular element of the collection with data validation.
 
@@ -499,22 +546,29 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         temp_scope = str(uuid4())
         GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
-        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        recursive_foreach(
+            model, lambda x: x.uids.pop(temp_scope, None)
+        )  # Strip temp uids
 
         scope = CITRINE_SCOPE
-        id = dumped_data['uids'][scope]
+        id = dumped_data["uids"][scope]
         if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to update "
-                               "a data model object with data validation.")
+            raise RuntimeError(
+                "Must specify a dataset in order to update "
+                "a data model object with data validation."
+            )
 
         url = self._get_path(action=[scope, id, "async"])
-        response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
+        response_json = self.session.put_resource(
+            url, dumped_data, params={"dry_run": dry_run}
+        )
 
         job_id = response_json["job_id"]
 
         if wait_for_response:
-            self.poll_async_update_job(job_id=job_id, timeout=timeout,
-                                       polling_delay=polling_delay)
+            self.poll_async_update_job(
+                job_id=job_id, timeout=timeout, polling_delay=polling_delay
+            )
 
             # That worked, return nothing or return the object
             if return_model:
@@ -525,8 +579,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             # TODO: use JobSubmissionResponse here instead
             return job_id
 
-    def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
-                              polling_delay: float = 1.0) -> None:
+    def poll_async_update_job(
+        self, job_id: UUID, *, timeout: float = 2 * 60, polling_delay: float = 1.0
+    ) -> None:
         """
         Poll for the result of the async_update call.
 
@@ -559,8 +614,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         _poll_for_job_completion(
             session=self.session,
             team_id=self.team_id,
-            job=job_id, timeout=timeout,
-            polling_delay=polling_delay)
+            job=job_id,
+            timeout=timeout,
+            polling_delay=polling_delay,
+        )
 
         # That worked, nothing returned in this case
         return None
@@ -581,12 +638,20 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid)
-        path = self._get_path(ignore_dataset=self.dataset_id is None, action=[link.scope, link.id])
+        path = self._get_path(
+            ignore_dataset=self.dataset_id is None, action=[link.scope, link.id]
+        )
         data = self.session.get_resource(path)
         return self.build(data)
 
-    def list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    def list_by_name(
+        self,
+        name: str,
+        *,
+        exact: bool = False,
+        forward: bool = True,
+        per_page: int = 100,
+    ) -> Iterator[ResourceType]:
         """
         Get all objects with specified name in this dataset.
 
@@ -612,14 +677,15 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset to filter by name.")
-        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        params = {"dataset_id": str(self.dataset_id), "name": name, "exact": exact}
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True, action="filter-by-name"),
             forward=forward,
             per_page=per_page,
-            params=params)
+            params=params,
+        )
         return (self.build(raw) for raw in raw_objects)
 
     def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
@@ -648,17 +714,20 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {'tags': [tag]}
+        params = {"tags": [tag]}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            params["dataset_id"] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True),
             per_page=per_page,
-            params=params)
+            params=params,
+        )
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *, dry_run: bool = False):
+    def delete(
+        self, uid: Union[UUID, str, LinkByUID, BaseEntity], *, dry_run: bool = False
+    ):
         """
         Delete an element of the collection by its id.
 
@@ -673,12 +742,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         link = _make_link_by_uid(uid)
         path = self._get_path(action=[link.scope, link.id])
-        params = {'dry_run': dry_run}
+        params = {"dry_run": dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
-    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
-                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    def _get_relation(
+        self,
+        relation: str,
+        uid: Union[UUID, str, LinkByUID, BaseEntity],
+        forward: bool = True,
+        per_page: int = 100,
+    ) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.
 
@@ -705,19 +779,21 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         params = {}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            params["dataset_id"] = str(self.dataset_id)
         link = _make_link_by_uid(uid)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            format_escaped_url('teams/{}/{}/{}/{}/{}',
-                               self.team_id,
-                               relation,
-                               link.scope,
-                               link.id,
-                               self._collection_key.replace('_', '-')
-                               ),
+            format_escaped_url(
+                "teams/{}/{}/{}/{}/{}",
+                self.team_id,
+                relation,
+                link.scope,
+                link.id,
+                self._collection_key.replace("_", "-"),
+            ),
             forward=forward,
             per_page=per_page,
             params=params,
-            version='v1')
+            version="v1",
+        )
         return (self.build(raw) for raw in raw_objects)

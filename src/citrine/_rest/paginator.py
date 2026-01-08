@@ -1,7 +1,7 @@
 from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Iterator
 from uuid import uuid4
 
-ResourceType = TypeVar('ResourceType')
+ResourceType = TypeVar("ResourceType")
 
 
 class Paginator(Generic[ResourceType]):
@@ -12,12 +12,14 @@ class Paginator(Generic[ResourceType]):
     that will be extracted for comparison purposes (to avoid looping on the same items).
     """
 
-    def paginate(self,
-                 page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
-                 collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
-                 per_page: int = 100,
-                 search_params: Optional[dict] = None,
-                 deduplicate: bool = True) -> Iterator[ResourceType]:
+    def paginate(
+        self,
+        page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
+        collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
+        per_page: int = 100,
+        search_params: Optional[dict] = None,
+        deduplicate: bool = True,
+    ) -> Iterator[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
 
@@ -53,26 +55,27 @@ class Paginator(Generic[ResourceType]):
         """
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible. Also
         # making 'search_params' key of outermost dict for keyword expansion by page_fetcher func
-        search_params = {} if search_params is None else {'search_params': search_params}
+        search_params = (
+            {} if search_params is None else {"search_params": search_params}
+        )
 
         first_entity = None
         page_idx = 1
         uids = set()
 
         while True:
-            subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page,
-                                                       **search_params)
+            subset_collection, next_uri = page_fetcher(
+                page=page_idx, per_page=per_page, **search_params
+            )
 
             subset = collection_builder(subset_collection)
 
             count = 0
             for idx, element in enumerate(subset):
-
                 # escaping from infinite loops where page/per_page are not
                 # honored and are returning the same results regardless of page:
                 current_entity = self._comparison_fields(element)
-                if first_entity is not None and \
-                        first_entity == current_entity:
+                if first_entity is not None and first_entity == current_entity:
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
@@ -106,4 +109,4 @@ class Paginator(Generic[ResourceType]):
 
         If the 'uid' here isn't found, default to comparing the entire entity.
         """
-        return getattr(entity, 'uid', entity)
+        return getattr(entity, "uid", entity)

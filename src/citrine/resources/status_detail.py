@@ -6,7 +6,7 @@ from citrine._serialization import properties
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 
-StatusDetailType = TypeVar('StatusDetailType', bound='StatusDetail')
+StatusDetailType = TypeVar("StatusDetailType", bound="StatusDetail")
 
 
 class StatusLevelEnum(BaseEnumeration):

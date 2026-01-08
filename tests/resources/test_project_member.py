@@ -23,5 +23,6 @@ def project_member(user, project) -> ProjectMember:
 
 
 def test_string_representation(project_member):
-    assert project_member.__str__() == "<ProjectMember '{}' is MEMBER of '{}'>"\
-        .format(project_member.user.screen_name, project_member.project.name)
+    assert project_member.__str__() == "<ProjectMember '{}' is MEMBER of '{}'>".format(
+        project_member.user.screen_name, project_member.project.name
+    )

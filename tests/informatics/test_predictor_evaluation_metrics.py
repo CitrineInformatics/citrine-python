@@ -1,21 +1,39 @@
 """Tests for citrine.informatics.descriptors."""
+
 import json
 import logging
 
 import pytest
-from citrine.informatics.predictor_evaluation_metrics import *
+
+from citrine.informatics.predictor_evaluation_metrics import (
+    F1,
+    NDME,
+    PVA,
+    RMSE,
+    AreaUnderROC,
+    CoverageProbability,
+    PredictorEvaluationMetric,
+    RSquared,
+    StandardRMSE,
+)
 
 
-@pytest.fixture(params=[
-    (RMSE(), "rmse", "RMSE"),
-    (RSquared(), "R^2", "R^2"),
-    (NDME(), "ndme", "NDME"),
-    (StandardRMSE(), "standardized_rmse", "Standardized RMSE"),
-    (PVA(), "predicted_vs_actual", "Predicted vs Actual"),
-    (F1(), "f1", "F1 Score"),
-    (AreaUnderROC(), "area_under_roc", "Area Under the ROC"),
-    (CoverageProbability(coverage_level=0.123), "coverage_probability_0.123", "Coverage Probability (0.123)")
-])
+@pytest.fixture(
+    params=[
+        (RMSE(), "rmse", "RMSE"),
+        (RSquared(), "R^2", "R^2"),
+        (NDME(), "ndme", "NDME"),
+        (StandardRMSE(), "standardized_rmse", "Standardized RMSE"),
+        (PVA(), "predicted_vs_actual", "Predicted vs Actual"),
+        (F1(), "f1", "F1 Score"),
+        (AreaUnderROC(), "area_under_roc", "Area Under the ROC"),
+        (
+            CoverageProbability(coverage_level=0.123),
+            "coverage_probability_0.123",
+            "Coverage Probability (0.123)",
+        ),
+    ]
+)
 def metric(request):
     return request.param
 

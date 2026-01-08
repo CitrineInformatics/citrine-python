@@ -1,12 +1,27 @@
 import pytest
-
-from citrine._utils.batcher import Batcher
-
 from gemd.demo.cake import make_cake
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object import *
-from gemd.entity.template import *
+from gemd.entity.object import (
+    IngredientRun,
+    IngredientSpec,
+    MaterialRun,
+    MaterialSpec,
+    MeasurementRun,
+    MeasurementSpec,
+    ProcessRun,
+    ProcessSpec,
+)
+from gemd.entity.template import (
+    ConditionTemplate,
+    MaterialTemplate,
+    MeasurementTemplate,
+    ParameterTemplate,
+    ProcessTemplate,
+    PropertyTemplate,
+)
 from gemd.util import flatten, writable_sort_order
+
+from citrine._utils.batcher import Batcher
 
 
 def test_by_type():
@@ -16,8 +31,9 @@ def test_by_type():
     first = batcher.batch(flatten(cake), batch_size=10)
     assert all(len(batch) <= 10 for batch in first), "A batch was too long"
     for i in range(len(first) - 1):
-        assert max(writable_sort_order(x) for x in first[i]) \
-               <= min(writable_sort_order(x) for x in first[i+1]), "Load order violated"
+        assert max(writable_sort_order(x) for x in first[i]) <= min(
+            writable_sort_order(x) for x in first[i + 1]
+        ), "Load order violated"
     assert len(flatten(cake)) == len({y for x in first for y in x}), "Object missing"
     assert len(flatten(cake)) == len([y for x in first for y in x]), "Object repeated"
 
@@ -30,7 +46,7 @@ def test_by_type():
     with pytest.raises(ValueError):
         bad = [
             ProcessSpec(name="One", uids={"bad": "id"}),
-            ProcessSpec(name="Two", uids={"bad": "id"})
+            ProcessSpec(name="Two", uids={"bad": "id"}),
         ]
         batcher.batch(bad, batch_size=10)
 
@@ -77,16 +93,20 @@ def test_by_dependency():
             elif isinstance(obj, ProcessRun):
                 assert obj.spec in derefs, "Spec wasn't in batch"
                 for x in obj.parameters:
-                    assert(x.template in derefs), "Referenced parameter wasn't in batch"
+                    assert x.template in derefs, "Referenced parameter wasn't in batch"
                 for x in obj.conditions:
-                    assert(x.template in derefs), "Referenced condition wasn't in batch"
+                    assert x.template in derefs, "Referenced condition wasn't in batch"
             elif isinstance(obj, MaterialSpec):
                 assert obj.template in derefs, "Template wasn't in batch"
                 assert obj.process in derefs, "Process wasn't in batch"
                 for x in obj.properties:
-                    assert x.property.template in derefs, "Referenced property wasn't in batch"
+                    assert x.property.template in derefs, (
+                        "Referenced property wasn't in batch"
+                    )
                     for y in x.conditions:
-                        assert y.template in derefs, "Referenced condition wasn't in batch"
+                        assert y.template in derefs, (
+                            "Referenced condition wasn't in batch"
+                        )
             elif isinstance(obj, MaterialRun):
                 assert obj.spec in derefs, "Spec wasn't in batch"
                 assert obj.process in derefs, "Process wasn't in batch"
@@ -112,7 +132,9 @@ def test_by_dependency():
                     assert x.template in derefs, "Referenced condition wasn't in batch"
                 for x in obj.properties:
                     assert x.template in derefs, "Referenced property wasn't in batch"
-            elif isinstance(obj, (PropertyTemplate, ConditionTemplate, ParameterTemplate)):
+            elif isinstance(
+                obj, (PropertyTemplate, ConditionTemplate, ParameterTemplate)
+            ):
                 pass  # These objects don't reference other objects
             else:
                 pytest.fail(f"Unhandled type in batch: {type(obj)}")

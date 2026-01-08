@@ -1,4 +1,5 @@
 """Top-level class for all object template objects and collections thereof."""
+
 from abc import ABC
 from typing import TypeVar
 
@@ -15,11 +16,13 @@ class ObjectTemplate(Template, GEMDTemplate, ABC):
     ObjectTemplate must be extended along with `Resource`
     """
 
-    name = String('name')
-    description = PropertyOptional(String(), 'description')
+    name = String("name")
+    description = PropertyOptional(String(), "description")
 
 
-ObjectTemplateResourceType = TypeVar("ObjectTemplateResourceType", bound="ObjectTemplate")
+ObjectTemplateResourceType = TypeVar(
+    "ObjectTemplateResourceType", bound="ObjectTemplate"
+)
 
 
 class ObjectTemplateCollection(TemplateCollection[ObjectTemplateResourceType], ABC):

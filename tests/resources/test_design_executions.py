@@ -24,7 +24,9 @@ def collection(session) -> DesignExecutionCollection:
 
 
 @pytest.fixture
-def workflow_execution(collection: DesignExecutionCollection, design_execution_dict) -> DesignExecution:
+def workflow_execution(
+    collection: DesignExecutionCollection, design_execution_dict
+) -> DesignExecution:
     return collection.build(design_execution_dict)
 
 
@@ -59,11 +61,15 @@ def test_build_new_execution(collection, design_execution_dict):
     assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
     assert execution._session == collection.session
-    assert execution.in_progress() and not execution.succeeded() and not execution.failed()
+    assert (
+        execution.in_progress() and not execution.succeeded() and not execution.failed()
+    )
     assert execution.status_detail
 
 
-def test_trigger_workflow_execution(collection: DesignExecutionCollection, design_execution_dict, session):
+def test_trigger_workflow_execution(
+    collection: DesignExecutionCollection, design_execution_dict, session
+):
     # Given
     session.set_response(design_execution_dict)
     score = MLIScoreFactory()
@@ -74,18 +80,20 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
 
     # Then
     assert str(actual_execution.uid) == design_execution_dict["id"]
-    expected_path = '/projects/{}/design-workflows/{}/executions'.format(
+    expected_path = "/projects/{}/design-workflows/{}/executions".format(
         collection.project_id,
         collection.workflow_id,
     )
     assert session.last_call == FakeCall(
-        method='POST',
+        method="POST",
         path=expected_path,
-        json={'score': score.dump(), 'max_candidates': max_candidates}
+        json={"score": score.dump(), "max_candidates": max_candidates},
     )
 
 
-def test_workflow_execution_results(workflow_execution: DesignExecution, session, example_candidates):
+def test_workflow_execution_results(
+    workflow_execution: DesignExecution, session, example_candidates
+):
     # Given
     session.set_response(example_candidates)
 
@@ -93,15 +101,19 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     list(workflow_execution.candidates(per_page=4))
 
     # Then
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+    expected_path = "/projects/{}/design-workflows/{}/executions/{}/candidates".format(
         workflow_execution.project_id,
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
+    assert session.last_call == FakeCall(
+        method="GET", path=expected_path, params={"per_page": 4, "page": 1}
+    )
 
 
-def test_workflow_execution_hierarchical_results(workflow_execution: DesignExecution, session, example_hierarchical_candidates):
+def test_workflow_execution_hierarchical_results(
+    workflow_execution: DesignExecution, session, example_hierarchical_candidates
+):
     # Given
     session.set_response(example_hierarchical_candidates)
 
@@ -109,22 +121,28 @@ def test_workflow_execution_hierarchical_results(workflow_execution: DesignExecu
     list(workflow_execution.hierarchical_candidates(per_page=4))
 
     # Then
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidate-histories'.format(
-        workflow_execution.project_id,
-        workflow_execution.workflow_id,
-        workflow_execution.uid,
+    expected_path = (
+        "/projects/{}/design-workflows/{}/executions/{}/candidate-histories".format(
+            workflow_execution.project_id,
+            workflow_execution.workflow_id,
+            workflow_execution.uid,
+        )
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
+    assert session.last_call == FakeCall(
+        method="GET", path=expected_path, params={"per_page": 4, "page": 1}
+    )
 
 
-def test_workflow_execution_results_pinned(workflow_execution: DesignExecution, session, example_candidates):
+def test_workflow_execution_results_pinned(
+    workflow_execution: DesignExecution, session, example_candidates
+):
     # Given
     pinned_by = uuid.uuid4()
     pinned_time = datetime.now()
     example_candidates_pinned = deepcopy(example_candidates)
     example_candidates_pinned["response"][0]["pinned"] = {
         "user": pinned_by,
-        "time": pinned_time
+        "time": pinned_time,
     }
     session.set_response(example_candidates_pinned)
 
@@ -132,12 +150,14 @@ def test_workflow_execution_results_pinned(workflow_execution: DesignExecution, 
     candidates = list(workflow_execution.candidates(per_page=4))
 
     # Then
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+    expected_path = "/projects/{}/design-workflows/{}/executions/{}/candidates".format(
         workflow_execution.project_id,
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, 'page': 1})
+    assert session.last_call == FakeCall(
+        method="GET", path=expected_path, params={"per_page": 4, "page": 1}
+    )
     assert candidates[0].pinned_by == pinned_by
     assert candidates[0].pinned_time == pinned_time
 
@@ -147,11 +167,11 @@ def test_list(collection: DesignExecutionCollection, session):
     lst = list(collection.list(per_page=4))
     assert len(lst) == 0
 
-    expected_path = '/projects/{}/design-workflows/{}/executions'.format(collection.project_id, collection.workflow_id)
+    expected_path = "/projects/{}/design-workflows/{}/executions".format(
+        collection.project_id, collection.workflow_id
+    )
     assert session.last_call == FakeCall(
-        method='GET',
-        path=expected_path,
-        params={"per_page": 4, 'page': 1}
+        method="GET", path=expected_path, params={"per_page": 4, "page": 1}
     )
 
 

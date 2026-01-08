@@ -14,18 +14,22 @@ def test_no_templates():
 
 
 def test_no_data_objects():
-    objs = [PropertyTemplate("pt", bounds=CategoricalBounds()),
-            ConditionTemplate("ct", bounds=CategoricalBounds())]
+    objs = [
+        PropertyTemplate("pt", bounds=CategoricalBounds()),
+        ConditionTemplate("ct", bounds=CategoricalBounds()),
+    ]
     templates, data_objects = split_templates_from_objects(objs)
     assert len(templates) == 2
     assert len(data_objects) == 0
 
 
 def test_both_present():
-    objs = [ProcessSpec("ps"),
-            PropertyTemplate("pt", bounds=CategoricalBounds()),
-            MeasurementSpec("ms"),
-            ConditionTemplate("ct", bounds=CategoricalBounds())]
+    objs = [
+        ProcessSpec("ps"),
+        PropertyTemplate("pt", bounds=CategoricalBounds()),
+        MeasurementSpec("ms"),
+        ConditionTemplate("ct", bounds=CategoricalBounds()),
+    ]
     templates, data_objects = split_templates_from_objects(objs)
     assert len(templates) == 2
     assert len(data_objects) == 2

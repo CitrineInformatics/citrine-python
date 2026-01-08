@@ -6,11 +6,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import (
-    CategoricalDescriptor, FormulationDescriptor, RealDescriptor
+    CategoricalDescriptor,
+    FormulationDescriptor,
+    RealDescriptor,
 )
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['MeanPropertyPredictor']
+__all__ = ["MeanPropertyPredictor"]
 
 
 class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
@@ -64,40 +66,45 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'input')
+    input_descriptor = _properties.Object(FormulationDescriptor, "input")
     properties = _properties.List(
         _properties.Union(
-            [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
+            [
+                _properties.Object(RealDescriptor),
+                _properties.Object(CategoricalDescriptor),
+            ]
         ),
-        'properties'
+        "properties",
     )
-    p = _properties.Float('p')
-    impute_properties = _properties.Boolean('impute_properties')
-    label = _properties.Optional(_properties.String, 'label')
+    p = _properties.Float("p")
+    impute_properties = _properties.Boolean("impute_properties")
+    label = _properties.Optional(_properties.String, "label")
     default_properties = _properties.Optional(
         _properties.Mapping(
             _properties.String,
-            _properties.Union([_properties.String, _properties.Float])
+            _properties.Union([_properties.String, _properties.Float]),
         ),
-        'default_properties'
+        "default_properties",
     )
     _training_data = _properties.List(
-        _properties.Object(DataSource), 'training_data', default=[]
+        _properties.Object(DataSource), "training_data", default=[]
     )
 
-    typ = _properties.String('type', default='MeanProperty', deserializable=False)
+    typ = _properties.String("type", default="MeanProperty", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: FormulationDescriptor,
-                 properties: List[Union[RealDescriptor, CategoricalDescriptor]],
-                 p: float,
-                 impute_properties: bool,
-                 label: Optional[str] = None,
-                 default_properties: Optional[Mapping[str, Union[str, float]]] = None,
-                 training_data: Optional[List[DataSource]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: FormulationDescriptor,
+        properties: List[Union[RealDescriptor, CategoricalDescriptor]],
+        p: float,
+        impute_properties: bool,
+        label: Optional[str] = None,
+        default_properties: Optional[Mapping[str, Union[str, float]]] = None,
+        training_data: Optional[List[DataSource]] = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
@@ -105,23 +112,31 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         self.p: float = p
         self.impute_properties: bool = impute_properties
         self.label: Optional[str] = label
-        self.default_properties: Optional[Mapping[str, Union[str, float]]] = default_properties
+        self.default_properties: Optional[Mapping[str, Union[str, float]]] = (
+            default_properties
+        )
         # self.training_data: List[DataSource] = training_data or []
         if training_data:
             self.training_data: List[DataSource] = training_data
 
     def __str__(self):
-        return '<MeanPropertyPredictor {!r}>'.format(self.name)
+        return "<MeanPropertyPredictor {!r}>".format(self.name)
 
     @property
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data must be accessed through the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data must be accessed through the top-level GraphPredictor.'",
+    )
     def training_data(self):
         """[DEPRECATED] Retrieve training data associated with this node."""
         return self._training_data
 
     @training_data.setter
-    @deprecated(deprecated_in="3.5.0", removed_in="4.0.0",
-                details="Training data should only be added to the top-level GraphPredictor.'")
+    @deprecated(
+        deprecated_in="3.5.0",
+        removed_in="4.0.0",
+        details="Training data should only be added to the top-level GraphPredictor.'",
+    )
     def training_data(self, value):
         self._training_data = value

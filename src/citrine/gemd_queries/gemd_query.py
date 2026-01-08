@@ -1,4 +1,5 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
+
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
@@ -27,7 +28,7 @@ class GemdObjectType(BaseEnumeration):
     MEASUREMENT_SPEC_TYPE = "measurement_spec", "MEASUREMENT_SPEC_TYPE"
 
 
-class GemdQuery(Serializable['GemdQuery']):
+class GemdQuery(Serializable["GemdQuery"]):
     """
     This describes what data objects to fetch (or graph of data objects).
 
@@ -48,16 +49,16 @@ class GemdQuery(Serializable['GemdQuery']):
     datasets = properties.Set(properties.UUID, "datasets", default=set())
     object_types = properties.Set(
         properties.Enumeration(GemdObjectType),
-        'object_types',
-        default={x for x in GemdObjectType}
+        "object_types",
+        default={x for x in GemdObjectType},
     )
-    schema_version = properties.Integer('schema_version', default=1)
+    schema_version = properties.Integer("schema_version", default=1)
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         """Run data modification before building."""
-        version = data.get('schema_version')
-        if data.get('schema_version') != 1:
+        version = data.get("schema_version")
+        if data.get("schema_version") != 1:
             raise ValueError(
                 f"This version of the library only supports schema_version 1, not '{version}'"
             )

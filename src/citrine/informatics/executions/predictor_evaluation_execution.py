@@ -7,7 +7,7 @@ from citrine.informatics.executions.execution import Execution
 from citrine._rest.resource import Resource
 
 
-class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Execution):
+class PredictorEvaluationExecution(Resource["PredictorEvaluationExecution"], Execution):
     """[DEPRECATED] The execution of a PredictorEvaluationWorkflow.
 
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
@@ -15,19 +15,21 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Exe
 
     """
 
-    evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
+    evaluator_names = properties.List(
+        properties.String, "evaluator_names", serializable=False
+    )
     """:List[str]: names of the predictor evaluators that were executed. These are used
     when calling the ``results()`` method."""
-    workflow_id = properties.UUID('workflow_id', serializable=False)
+    workflow_id = properties.UUID("workflow_id", serializable=False)
     """:UUID: Unique identifier of the workflow that was executed"""
-    predictor_id = properties.UUID('predictor_id', serializable=False)
-    predictor_version = properties.Integer('predictor_version', serializable=False)
+    predictor_id = properties.UUID("predictor_id", serializable=False)
+    predictor_version = properties.Integer("predictor_version", serializable=False)
 
     def _path(self):
         return format_escaped_url(
-            '/projects/{project_id}/predictor-evaluation-executions/{execution_id}',
+            "/projects/{project_id}/predictor-evaluation-executions/{execution_id}",
             project_id=self.project_id,
-            execution_id=self.uid
+            execution_id=self.uid,
         )
 
     @lru_cache()

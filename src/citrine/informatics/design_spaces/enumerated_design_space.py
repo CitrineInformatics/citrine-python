@@ -6,10 +6,10 @@ from citrine._serialization import properties
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
 
-__all__ = ['EnumeratedDesignSpace']
+__all__ = ["EnumeratedDesignSpace"]
 
 
-class EnumeratedDesignSpace(EngineResource['EnumeratedDesignSpace'], DesignSpace):
+class EnumeratedDesignSpace(EngineResource["EnumeratedDesignSpace"], DesignSpace):
     """An explicit enumeration of candidate materials to score.
 
     Enumerated design spaces are intended to capture small spaces with fewer than
@@ -29,29 +29,38 @@ class EnumeratedDesignSpace(EngineResource['EnumeratedDesignSpace'], DesignSpace
 
     """
 
-    descriptors = properties.List(properties.Object(Descriptor), 'data.instance.descriptors')
-    _data = properties.List(properties.Mapping(properties.String,
-                                               properties.Union([properties.String(),
-                                                                 properties.Integer(),
-                                                                 properties.Float()])),
-                            'data.instance.data')
+    descriptors = properties.List(
+        properties.Object(Descriptor), "data.instance.descriptors"
+    )
+    _data = properties.List(
+        properties.Mapping(
+            properties.String,
+            properties.Union(
+                [properties.String(), properties.Integer(), properties.Float()]
+            ),
+        ),
+        "data.instance.data",
+    )
 
-    typ = properties.String('data.instance.type', default='EnumeratedDesignSpace',
-                            deserializable=False)
+    typ = properties.String(
+        "data.instance.type", default="EnumeratedDesignSpace", deserializable=False
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 descriptors: List[Descriptor],
-                 data: List[Mapping[str, Union[int, float, str]]]):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        descriptors: List[Descriptor],
+        data: List[Mapping[str, Union[int, float, str]]],
+    ):
         self.name: str = name
         self.description: str = description
         self.descriptors: List[Descriptor] = descriptors
         self.data: List[Mapping[str, Union[int, float, str]]] = data
 
     def __str__(self):
-        return '<EnumeratedDesignSpace {!r}>'.format(self.name)
+        return "<EnumeratedDesignSpace {!r}>".format(self.name)
 
     @property
     def data(self) -> List[Mapping[str, Union[int, float, str]]]:
@@ -63,7 +72,9 @@ class EnumeratedDesignSpace(EngineResource['EnumeratedDesignSpace'], DesignSpace
         for item in value:
             for el in item.values():
                 if isinstance(el, (int, float)):
-                    warn("Providing numeric data values is deprecated as of 3.4.7, and will be "
-                         "dropped in 4.0.0. Please use strings instead.",
-                         DeprecationWarning)
+                    warn(
+                        "Providing numeric data values is deprecated as of 3.4.7, and will be "
+                        "dropped in 4.0.0. Please use strings instead.",
+                        DeprecationWarning,
+                    )
         self._data = value

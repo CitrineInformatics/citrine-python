@@ -4,15 +4,35 @@
 # Naming convention here is to use "*DataFactory" for dictionaries used as API input/out, and
 # <ModelName>Factory for the domain objects themselves
 
+from random import randint, random
+from typing import Optional, Set
+
 import arrow
 import factory
 from faker.providers.date_time import Provider
-from random import random, randint
-from typing import Set, Optional
+from gemd import EmpiricalFormula, FileLink, LinkByUID
+from gemd.enumeration import SampleType
 
-from citrine.gemd_queries.gemd_query import *
-from citrine.gemd_queries.criteria import *
-from citrine.gemd_queries.filter import *
+from citrine.gemd_queries.criteria import (
+    AndOperator,
+    ConnectivityClassCriteria,
+    MaterialClassification,
+    MaterialRunClassificationCriteria,
+    MaterialTemplatesCriteria,
+    NameCriteria,
+    OrOperator,
+    PropertiesCriteria,
+    TagFilterType,
+    TagsCriteria,
+    TextSearchType,
+)
+from citrine.gemd_queries.filter import (
+    AllIntegerFilter,
+    AllRealFilter,
+    NominalCategoricalFilter,
+)
+from citrine.gemd_queries.gemd_query import GemdObjectType
+from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.scores import LIScore
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.jobs.job import JobStatus
@@ -25,9 +45,6 @@ from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.table_config import TableConfigInitiator
 
-from gemd import LinkByUID, EmpiricalFormula, FileLink
-from gemd.enumeration import SampleType
-
 
 class AugmentedProvider(Provider):
     def random_formula(self, count: int = None, elements: Set[str] = None) -> str:
@@ -38,7 +55,9 @@ class AugmentedProvider(Provider):
             count = self.generator.random.randrange(1, 5)
         components = sorted(self.generator.random.sample(elements, count))
         # Use weights to bias toward looking more real-ish
-        amounts = self.generator.random.choices([1, 2, 3, 4, 5], weights=[40, 40, 10, 10, 2], k=count)
+        amounts = self.generator.random.choices(
+            [1, 2, 3, 4, 5], weights=[40, 40, 10, 10, 2], k=count
+        )
         return "".join(f"({c}){a}" for c, a in zip(components, amounts))
 
     def random_smiles(self) -> str:
@@ -53,7 +72,7 @@ class AugmentedProvider(Provider):
             "F": 1,
             "Cl": 1,
             "Br": 1,
-            "I": 1
+            "I": 1,
         }
         valence = {
             "B": 3,
@@ -65,9 +84,9 @@ class AugmentedProvider(Provider):
             "F": 1,
             "Cl": 1,
             "Br": 1,
-            "I": 1
+            "I": 1,
         }
-        bonds = ['', '=', '#', '$']
+        bonds = ["", "=", "#", "$"]
 
         elements = list(element_weights)
         weights = list(element_weights.values())
@@ -83,12 +102,17 @@ class AugmentedProvider(Provider):
             else:
                 atom = self.generator.random.choices(elements, weights=weights)[0]
                 max_bond = max(valence[atom], remain[-1])
-                bond = 1 + self.generator.random.choices(
-                    range(max_bond),
-                    weights=[0.1 ** i for i in range(max_bond)]
-                )[0]
+                bond = (
+                    1
+                    + self.generator.random.choices(
+                        range(max_bond), weights=[0.1**i for i in range(max_bond)]
+                    )[0]
+                )
                 remain[-1] -= bond
-                if remain[-1] > 1 and self.generator.random.randrange(3 ** len(remain)) == 0:
+                if (
+                    remain[-1] > 1
+                    and self.generator.random.randrange(3 ** len(remain)) == 0
+                ):
                     # Branch
                     remain.append(None)
                     smiles += "("
@@ -98,9 +122,9 @@ class AugmentedProvider(Provider):
         return smiles[:-1]  # Always has a superfluous ) at the end
 
     def unix_milliseconds(
-            self,
-            end_milliseconds: Optional[int] = None,
-            start_milliseconds: Optional[int] = None,
+        self,
+        end_milliseconds: Optional[int] = None,
+        start_milliseconds: Optional[int] = None,
     ) -> float:
         """
         Get a timestamp in milliseconds between January 1, 1970 and now, unless
@@ -131,19 +155,19 @@ class UserTimestampDataFactory(factory.DictFactory):
 
 
 class TeamDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    name = factory.Faker('company')
-    description = factory.Faker('catch_phrase')
+    id = factory.Faker("uuid4")
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
     created_at = factory.Faker("unix_milliseconds")
 
 
 class ProjectDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    name = factory.Faker('company')
-    description = factory.Faker('catch_phrase')
-    status = 'CREATED'
+    id = factory.Faker("uuid4")
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    status = "CREATED"
     created_at = factory.Faker("unix_milliseconds")
-    team_id = factory.Faker('uuid4')
+    team_id = factory.Faker("uuid4")
 
 
 class DataVersionUpdateFactory(factory.DictFactory):
@@ -152,8 +176,8 @@ class DataVersionUpdateFactory(factory.DictFactory):
 
 
 class PredictorRefFactory(factory.DictFactory):
-    predictor_id = factory.Faker('uuid4')
-    predictor_version = factory.Faker('random_digit_not_null')
+    predictor_id = factory.Faker("uuid4")
+    predictor_version = factory.Faker("random_digit_not_null")
 
 
 class BranchDataUpdateFactory(factory.DictFactory):
@@ -167,47 +191,47 @@ class NextBranchVersionFactory(factory.DictFactory):
 
 
 class BranchDataFieldFactory(factory.DictFactory):
-    name = factory.Faker('company')
+    name = factory.Faker("company")
 
 
 class BranchMetadataFieldFactory(factory.DictFactory):
-    root_id = factory.Faker('uuid4')
-    archived = factory.Faker('boolean')
-    version = factory.Faker('random_digit_not_null')
+    root_id = factory.Faker("uuid4")
+    archived = factory.Faker("boolean")
+    version = factory.Faker("random_digit_not_null")
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
 
 
 class BranchDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(BranchDataFieldFactory)
     metadata = factory.SubFactory(BranchMetadataFieldFactory)
 
 
 class BranchVersionRefFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    version = factory.Faker('random_digit_not_null')
+    id = factory.Faker("uuid4")
+    version = factory.Faker("random_digit_not_null")
 
 
 class BranchRootMetadataFieldFactory(factory.DictFactory):
     latest_branch_version = factory.SubFactory(BranchVersionRefFactory)
-    archived = factory.Faker('boolean')
+    archived = factory.Faker("boolean")
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
 
 
 class BranchRootDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(BranchDataFieldFactory)
     metadata = factory.SubFactory(BranchRootMetadataFieldFactory)
 
 
 class UserDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    screen_name = factory.Faker('name')
-    position = factory.Faker('job')
-    email = factory.Faker('email')
-    is_admin = factory.Faker('boolean')
+    id = factory.Faker("uuid4")
+    screen_name = factory.Faker("name")
+    position = factory.Faker("job")
+    email = factory.Faker("email")
+    is_admin = factory.Faker("boolean")
 
 
 class GemTableDataFactory(factory.DictFactory):
@@ -218,9 +242,9 @@ class GemTableDataFactory(factory.DictFactory):
     * table-configs/{table_config_uid_str}/gem-tables
     """
 
-    id = factory.Faker('uuid4')
-    version = factory.Faker('random_digit_not_null')
-    signed_download_url = factory.Faker('uri')
+    id = factory.Faker("uuid4")
+    version = factory.Faker("random_digit_not_null")
+    signed_download_url = factory.Faker("uri")
 
 
 class ListGemTableVersionsDataFactory(factory.DictFactory):
@@ -230,17 +254,20 @@ class ListGemTableVersionsDataFactory(factory.DictFactory):
     * gem-tables/
     * gem-tables/{table_identity_id}
     """
+
     # Explicitly set version numbers so that they are distinct
-    tables = factory.List([
-        factory.SubFactory(GemTableDataFactory, version=1),
-        factory.SubFactory(GemTableDataFactory, version=4),
-        factory.SubFactory(GemTableDataFactory, version=2),
-    ])
+    tables = factory.List(
+        [
+            factory.SubFactory(GemTableDataFactory, version=1),
+            factory.SubFactory(GemTableDataFactory, version=4),
+            factory.SubFactory(GemTableDataFactory, version=2),
+        ]
+    )
 
 
 class RealFilterDataFactory(factory.DictFactory):
     type = AllRealFilter.typ
-    unit = 'dimensionless'
+    unit = "dimensionless"
     lower = factory.LazyAttribute(lambda o: min(0, 2 * o.upper) + random() * o.upper)
     upper = factory.Faker("pyfloat")
 
@@ -253,12 +280,12 @@ class IntegerFilterDataFactory(factory.DictFactory):
 
 class CategoryFilterDataFactory(factory.DictFactory):
     type = NominalCategoricalFilter.typ
-    categories = factory.Faker('words', unique=True)
+    categories = factory.Faker("words", unique=True)
 
 
 class PropertiesCriteriaDataFactory(factory.DictFactory):
     type = PropertiesCriteria.typ
-    property_templates_filter = factory.List([factory.Faker('uuid4')])
+    property_templates_filter = factory.List([factory.Faker("uuid4")])
     value_type_filter = factory.SubFactory(RealFilterDataFactory)
 
     class Params:
@@ -272,95 +299,101 @@ class PropertiesCriteriaDataFactory(factory.DictFactory):
 
 class NameCriteriaDataFactory(factory.DictFactory):
     type = NameCriteria.typ
-    name = factory.Faker('word')
-    search_type = factory.Faker('enum', enum_cls=TextSearchType)
+    name = factory.Faker("word")
+    search_type = factory.Faker("enum", enum_cls=TextSearchType)
 
 
 class MaterialRunClassificationCriteriaDataFactory(factory.DictFactory):
     type = MaterialRunClassificationCriteria.typ
     classifications = factory.Faker(
-        'random_elements',
+        "random_elements",
         elements=[str(x) for x in MaterialClassification],
-        unique=True
+        unique=True,
     )
 
 
 class MaterialTemplatesCriteriaDataFactory(factory.DictFactory):
     type = MaterialTemplatesCriteria.typ
-    material_templates_identifiers = factory.List([factory.Faker('uuid4')])
-    tag_filters = factory.Faker('words', unique=True)
+    material_templates_identifiers = factory.List([factory.Faker("uuid4")])
+    tag_filters = factory.Faker("words", unique=True)
 
 
 class ConnectivityClassCriteriaDataFactory(factory.DictFactory):
     type = ConnectivityClassCriteria.typ
-    is_consumed = factory.Faker('boolean')
-    is_produced = factory.Faker('boolean')
+    is_consumed = factory.Faker("boolean")
+    is_produced = factory.Faker("boolean")
 
 
 class TagsCriteriaDataFactory(factory.DictFactory):
     type = TagsCriteria.typ
-    tags = factory.Faker('words', unique=True)
-    filter_type = factory.Faker('enum', enum_cls=TagFilterType)
+    tags = factory.Faker("words", unique=True)
+    filter_type = factory.Faker("enum", enum_cls=TagFilterType)
 
 
 class AndOperatorCriteriaDataFactory(factory.DictFactory):
     type = AndOperator.typ
-    criteria = factory.List([
-        factory.SubFactory(NameCriteriaDataFactory),
-        factory.SubFactory(MaterialRunClassificationCriteriaDataFactory),
-        factory.SubFactory(MaterialTemplatesCriteriaDataFactory)
-    ])
+    criteria = factory.List(
+        [
+            factory.SubFactory(NameCriteriaDataFactory),
+            factory.SubFactory(MaterialRunClassificationCriteriaDataFactory),
+            factory.SubFactory(MaterialTemplatesCriteriaDataFactory),
+        ]
+    )
 
 
 class OrOperatorCriteriaDataFactory(factory.DictFactory):
     type = OrOperator.typ
-    criteria = factory.List([
-        factory.SubFactory(PropertiesCriteriaDataFactory),
-        factory.SubFactory(PropertiesCriteriaDataFactory, integer=True),
-        factory.SubFactory(PropertiesCriteriaDataFactory, category=True),
-        factory.SubFactory(AndOperatorCriteriaDataFactory)
-    ])
+    criteria = factory.List(
+        [
+            factory.SubFactory(PropertiesCriteriaDataFactory),
+            factory.SubFactory(PropertiesCriteriaDataFactory, integer=True),
+            factory.SubFactory(PropertiesCriteriaDataFactory, category=True),
+            factory.SubFactory(AndOperatorCriteriaDataFactory),
+        ]
+    )
 
 
 class GemdQueryDataFactory(factory.DictFactory):
     criteria = factory.List([factory.SubFactory(OrOperatorCriteriaDataFactory)])
-    datasets = factory.List([factory.Faker('uuid4')])
+    datasets = factory.List([factory.Faker("uuid4")])
     object_types = factory.List([str(x) for x in GemdObjectType])
     schema_version = 1
 
 
 class TableConfigMainMetaDataDataFactory(factory.DictFactory):
     """This is the metadata for the primary definition ID of the TableConfig."""
-    id = factory.Faker('uuid4')
+
+    id = factory.Faker("uuid4")
     deleted = False
     create_time = factory.Faker("unix_milliseconds")
-    created_by = factory.Faker('uuid4')
+    created_by = factory.Faker("uuid4")
     update_time = factory.Faker("unix_milliseconds")
-    updated_by = factory.Faker('uuid4')
+    updated_by = factory.Faker("uuid4")
 
 
 class TableConfigDataFactory(factory.DictFactory):
     """This is simply the Blob stored in a Table Config Version."""
+
     name = factory.Faker("company")
-    description = factory.Faker('bs')
+    description = factory.Faker("bs")
     # TODO  Create factories for definitions
     rows = []
     columns = []
     variables = []
-    datasets = factory.List([factory.Faker('uuid4')])
+    datasets = factory.List([factory.Faker("uuid4")])
     gemd_query = factory.SubFactory(GemdQueryDataFactory)
 
 
 class TableConfigVersionMetaDataDataFactory(factory.DictFactory):
     ara_definition = factory.SubFactory(TableConfigDataFactory)
-    id = factory.Faker('uuid4')
-    definition_id = factory.Faker('uuid4')
-    version_number = factory.Faker('random_digit_not_null')
+    id = factory.Faker("uuid4")
+    definition_id = factory.Faker("uuid4")
+    version_number = factory.Faker("random_digit_not_null")
     deleted = False
     create_time = factory.Faker("unix_milliseconds")
-    created_by = factory.Faker('uuid4')
+    created_by = factory.Faker("uuid4")
     update_time = factory.Faker("unix_milliseconds")
-    updated_by = factory.Faker('uuid4')
+    updated_by = factory.Faker("uuid4")
     initiator = str(TableConfigInitiator.CITRINE_PYTHON)
 
 
@@ -371,27 +404,30 @@ class TableConfigResponseDataFactory(factory.DictFactory):
     * projects/{project_id}/display-tables/{uid}/versions/{version}/definition
 
     """
+
     definition = factory.SubFactory(TableConfigMainMetaDataDataFactory)
     version = factory.SubFactory(TableConfigVersionMetaDataDataFactory)
 
 
 class ListTableConfigResponseDataFactory(factory.DictFactory):
     """This encapsulates all of the versions of a table config object."""
+
     definition = factory.SubFactory(TableConfigMainMetaDataDataFactory)
     # Explicitly set version numbers so that they are distinct
-    versions = factory.List([
-        factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=1),
-        factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=4),
-        factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=2),
-    ])
+    versions = factory.List(
+        [
+            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=1),
+            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=4),
+            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=2),
+        ]
+    )
 
 
 class TableDataSourceDataFactory(factory.DictFactory):
     type = "hosted_table_data_source"
     table_id = factory.Faker("uuid4")
-    table_version = factory.Faker('random_digit_not_null')
+    table_version = factory.Faker("random_digit_not_null")
 
-from citrine.informatics.data_sources import GemTableDataSource
 
 class TableDataSourceFactory(factory.Factory):
     class Meta:
@@ -436,7 +472,7 @@ class PredictorDataDataFactory(factory.DictFactory):
 
 
 class PredictorEntityDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(PredictorDataDataFactory)
     metadata = factory.SubFactory(PredictorMetadataDataFactory)
 
@@ -458,7 +494,7 @@ class AsyncDefaultPredictorResponseDataFactory(factory.DictFactory):
 
 
 class AsyncDefaultPredictorResponseFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     metadata = factory.SubFactory(AsyncDefaultPredictorResponseMetadataFactory)
     data = factory.SubFactory(AsyncDefaultPredictorResponseDataFactory)
 
@@ -493,9 +529,9 @@ class AreaUnderROCFactory(factory.DictFactory):
 
 class CoverageProbabilityFactory(factory.DictFactory):
     class Meta:
-        exclude = ("_level", )
+        exclude = ("_level",)
 
-    _level = factory.Faker('pyfloat', max_value=1, min_value=0)
+    _level = factory.Faker("pyfloat", max_value=1, min_value=0)
     coverage_level = factory.LazyAttribute(lambda o: str(o._level))
     type = "CoverageProbability"
 
@@ -503,22 +539,26 @@ class CoverageProbabilityFactory(factory.DictFactory):
 class CrossValidationEvaluatorFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
-    responses = factory.List(3 * [factory.Faker('company')])
-    n_folds = factory.Faker('random_digit_not_null')
-    n_trials = factory.Faker('random_digit_not_null')
-    metrics = factory.List([factory.SubFactory(RMSEFactory),
-                            factory.SubFactory(NDMEFactory),
-                            factory.SubFactory(RSquaredFactory),
-                            factory.SubFactory(StandardRMSEFactory),
-                            factory.SubFactory(PVALFactory),
-                            factory.SubFactory(F1Factory),
-                            factory.SubFactory(AreaUnderROCFactory),
-                            factory.SubFactory(CoverageProbabilityFactory)])
+    responses = factory.List(3 * [factory.Faker("company")])
+    n_folds = factory.Faker("random_digit_not_null")
+    n_trials = factory.Faker("random_digit_not_null")
+    metrics = factory.List(
+        [
+            factory.SubFactory(RMSEFactory),
+            factory.SubFactory(NDMEFactory),
+            factory.SubFactory(RSquaredFactory),
+            factory.SubFactory(StandardRMSEFactory),
+            factory.SubFactory(PVALFactory),
+            factory.SubFactory(F1Factory),
+            factory.SubFactory(AreaUnderROCFactory),
+            factory.SubFactory(CoverageProbabilityFactory),
+        ]
+    )
     type = "CrossValidationEvaluator"
 
 
 class PredictorEvaluationWorkflowFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     archived = False
@@ -536,24 +576,26 @@ class PredictorEvaluationDataFactory(factory.DictFactory):
 
 class PredictorEvaluationMetadataFactory(factory.DictFactory):
     class Meta:
-        exclude = ('is_archived', )
+        exclude = ("is_archived",)
 
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
-    archived = factory.Maybe('is_archived', factory.SubFactory(UserTimestampDataFactory), None)
+    archived = factory.Maybe(
+        "is_archived", factory.SubFactory(UserTimestampDataFactory), None
+    )
     predictor_id = factory.Faker("uuid4")
     predictor_version = factory.Faker("random_digit_not_null")
     status = {"major": "SUCCEEDED", "minor": "READY", "detail": []}
 
 
 class PredictorEvaluationFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(PredictorEvaluationDataFactory)
     metadata = factory.SubFactory(PredictorEvaluationMetadataFactory)
 
 
 class DesignSpaceConfigDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     name = factory.Faker("company")
     descriptor = factory.Faker("catch_phrase")
     subspaces = []  # TODO  Create SubspaceDataFactory
@@ -563,7 +605,7 @@ class DesignSpaceConfigDataFactory(factory.DictFactory):
 
 class DesignSpaceDataFactory(factory.DictFactory):
     config = factory.SubFactory(DesignSpaceConfigDataFactory)
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     display_name = factory.Faker("company")
     archived = False
     module_type = "DESIGN_SPACE"
@@ -578,28 +620,28 @@ class DesignWorkflowDataFactory(factory.DictFactory):
         branch = factory.SubFactory(BranchDataFactory)
         times = factory.List([factory.Faker("unix_milliseconds") for i in range(3)])
         register = factory.Trait(
-            id = factory.Faker('uuid4'),
-            branch_id = factory.LazyAttribute(lambda o: o.branch["id"]),
-            created_by = factory.Faker('uuid4'),
-            updated_by = factory.LazyAttribute(lambda o: o.created_by),
-            create_time = factory.LazyAttribute(lambda o: sorted(o.times)[0]),
-            update_time = factory.LazyAttribute(lambda o: sorted(o.times)[0]),
+            id=factory.Faker("uuid4"),
+            branch_id=factory.LazyAttribute(lambda o: o.branch["id"]),
+            created_by=factory.Faker("uuid4"),
+            updated_by=factory.LazyAttribute(lambda o: o.created_by),
+            create_time=factory.LazyAttribute(lambda o: sorted(o.times)[0]),
+            update_time=factory.LazyAttribute(lambda o: sorted(o.times)[0]),
             # TODO: Create a Trait for statuses
-            status = "SUCCEEDED",
-            status_description = "READY",
-            status_info = [],
-            status_detail = []
+            status="SUCCEEDED",
+            status_description="READY",
+            status_info=[],
+            status_detail=[],
         )
         update = factory.Trait(
-            register = True,
-            updated_by = factory.Faker('uuid4'),
-            update_time = factory.LazyAttribute(lambda o: sorted(o.times)[1])
+            register=True,
+            updated_by=factory.Faker("uuid4"),
+            update_time=factory.LazyAttribute(lambda o: sorted(o.times)[1]),
         )
         archive = factory.Trait(
-            update = True,
-            archived = True,
-            archived_by = factory.Faker('uuid4'),
-            archive_time = factory.LazyAttribute(lambda o: sorted(o.times)[2]),
+            update=True,
+            archived=True,
+            archived_by=factory.Faker("uuid4"),
+            archive_time=factory.LazyAttribute(lambda o: sorted(o.times)[2]),
         )
 
     type = DesignWorkflow.typ
@@ -612,41 +654,39 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     branch_root_id = factory.LazyAttribute(lambda o: o.branch["metadata"]["root_id"])
     branch_version = factory.LazyAttribute(lambda o: o.branch["metadata"]["version"])
     archived = False
-    status_description = ""  # TODO: Should be None, but property not defined as Optional
+    status_description = (
+        ""  # TODO: Should be None, but property not defined as Optional
+    )
 
 
 class IngestFilesResponseDataFactory(factory.DictFactory):
-    team_id = factory.Faker('uuid4')
-    dataset_id = factory.Faker('uuid4')
-    ingestion_id = factory.Faker('uuid4')
+    team_id = factory.Faker("uuid4")
+    dataset_id = factory.Faker("uuid4")
+    ingestion_id = factory.Faker("uuid4")
 
 
 class IngestionStatusResponseDataFactory(factory.DictFactory):
-    ingestion_id = factory.Faker('uuid4')
+    ingestion_id = factory.Faker("uuid4")
     status = IngestionStatusType.INGESTION_CREATED
     errors = factory.List([])
 
 
 class JobSubmissionResponseDataFactory(factory.DictFactory):
-    job_id = factory.Faker('uuid4')
+    job_id = factory.Faker("uuid4")
 
 
 class TaskNodeDataFactory(factory.DictFactory):
     class Params:
         failure = False
 
-    id = factory.Faker('uuid4')
-    task_type = factory.Faker('word')
+    id = factory.Faker("uuid4")
+    task_type = factory.Faker("word")
     status = factory.Maybe(
-        "failure",
-        yes_declaration=JobStatus.FAILURE,
-        no_declaration=JobStatus.SUCCESS
+        "failure", yes_declaration=JobStatus.FAILURE, no_declaration=JobStatus.SUCCESS
     )
     dependencies = factory.List([])
     failure_reason = factory.Maybe(
-        "failure",
-        yes_declaration=factory.Faker('sentence'),
-        no_declaration=None
+        "failure", yes_declaration=factory.Faker("sentence"), no_declaration=None
     )
 
 
@@ -654,15 +694,17 @@ class JobStatusResponseDataFactory(factory.DictFactory):
     class Params:
         failure = False
 
-    job_type = factory.Faker('word')
+    job_type = factory.Faker("word")
     status = factory.Maybe(
-        "failure",
-        yes_declaration=JobStatus.FAILURE,
-        no_declaration=JobStatus.SUCCESS
+        "failure", yes_declaration=JobStatus.FAILURE, no_declaration=JobStatus.SUCCESS
     )
-    tasks = factory.List([
-        factory.RelatedFactory(TaskNodeDataFactory, failure=factory.SelfAttribute('...failure'))
-    ])
+    tasks = factory.List(
+        [
+            factory.RelatedFactory(
+                TaskNodeDataFactory, failure=factory.SelfAttribute("...failure")
+            )
+        ]
+    )
     output = factory.Dict({})
 
 
@@ -670,14 +712,14 @@ class DatasetDataFactory(factory.DictFactory):
     class Params:
         times = factory.List([factory.Faker("unix_milliseconds") for i in range(3)])
 
-    id = factory.Faker('uuid4')
-    name = factory.Faker('company')
-    summary = factory.Faker('catch_phrase')
-    description = factory.Faker('bs')
+    id = factory.Faker("uuid4")
+    name = factory.Faker("company")
+    summary = factory.Faker("catch_phrase")
+    description = factory.Faker("bs")
     deleted = False
-    created_by = factory.Faker('uuid4')
-    updated_by = factory.Faker('uuid4')
-    deleted_by = factory.Faker('uuid4')
+    created_by = factory.Faker("uuid4")
+    updated_by = factory.Faker("uuid4")
+    deleted_by = factory.Faker("uuid4")
     unique_name = None  # TODO Update tests to include unique_name
     create_time = factory.LazyAttribute(lambda o: sorted(o.times)[0])
     update_time = factory.LazyAttribute(lambda o: sorted(o.times)[1])
@@ -686,23 +728,23 @@ class DatasetDataFactory(factory.DictFactory):
 
 
 class IDDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
 
 
 class LinkByUIDFactory(factory.Factory):
     class Meta:
         model = LinkByUID
 
-    scope = 'id'
-    id = factory.Faker('uuid4')
+    scope = "id"
+    id = factory.Faker("uuid4")
 
 
 class FileLinkFactory(factory.Factory):
     class Meta:
         model = FileLink
 
-    url = factory.Faker('uri')
-    filename = factory.Faker('file_name')
+    url = factory.Faker("uri")
+    filename = factory.Faker("file_name")
 
 
 class ProcessTemplateFactory(factory.Factory):
@@ -710,9 +752,9 @@ class ProcessTemplateFactory(factory.Factory):
         model = ProcessTemplate
 
     uids = factory.SubFactory(IDDataFactory)
-    name = factory.Faker('color_name')
-    tags = factory.List([factory.Faker('color_name'), factory.Faker('color_name')])
-    description = factory.Faker('catch_phrase')
+    name = factory.Faker("color_name")
+    tags = factory.List([factory.Faker("color_name"), factory.Faker("color_name")])
+    description = factory.Faker("catch_phrase")
     conditions = []  # TODO make a ConditionsTemplateFactory
     parameters = []  # TODO make a ParametersTemplateFactory
 
@@ -722,10 +764,10 @@ class MaterialTemplateFactory(factory.Factory):
         model = MaterialTemplate
 
     uids = factory.SubFactory(IDDataFactory)
-    name = factory.Faker('color_name')
-    tags = factory.List([factory.Faker('color_name'), factory.Faker('color_name')])
+    name = factory.Faker("color_name")
+    tags = factory.List([factory.Faker("color_name"), factory.Faker("color_name")])
     properties = []  # TODO make a PropertiesTemplateFactory
-    description = factory.Faker('catch_phrase')
+    description = factory.Faker("catch_phrase")
 
 
 class MaterialSpecFactory(factory.Factory):
@@ -733,9 +775,9 @@ class MaterialSpecFactory(factory.Factory):
         model = MaterialSpec
 
     uids = factory.SubFactory(IDDataFactory)
-    name = factory.Faker('color_name')
-    tags = factory.List([factory.Faker('color_name'), factory.Faker('color_name')])
-    notes = factory.Faker('catch_phrase')
+    name = factory.Faker("color_name")
+    tags = factory.List([factory.Faker("color_name"), factory.Faker("color_name")])
+    notes = factory.Faker("catch_phrase")
     process = factory.SubFactory(LinkByUIDFactory)
     file_links = factory.List([factory.SubFactory(FileLinkFactory)])
     template = factory.SubFactory(LinkByUIDFactory)
@@ -747,9 +789,9 @@ class MaterialRunFactory(factory.Factory):
         model = MaterialRun
 
     uids = factory.SubFactory(IDDataFactory)
-    name = factory.Faker('color_name')
-    tags = factory.List([factory.Faker('color_name'), factory.Faker('color_name')])
-    notes = factory.Faker('catch_phrase')
+    name = factory.Faker("color_name")
+    tags = factory.List([factory.Faker("color_name"), factory.Faker("color_name")])
+    notes = factory.Faker("catch_phrase")
     process = factory.SubFactory(LinkByUIDFactory)
     sample_type = factory.Faker("enum", enum_cls=SampleType)
     spec = factory.SubFactory(LinkByUIDFactory)
@@ -759,13 +801,13 @@ class MaterialRunFactory(factory.Factory):
 class LinkByUIDDataFactory(factory.DictFactory):
     id = LinkByUIDFactory.id
     scope = LinkByUIDFactory.scope
-    type = 'link_by_uid'
+    type = "link_by_uid"
 
 
 class FileLinkDataFactory(factory.DictFactory):
     url = FileLinkFactory.url
     filename = FileLinkFactory.filename
-    type = 'file_link'
+    type = "file_link"
 
 
 class MaterialSpecDataFactory(factory.DictFactory):
@@ -777,7 +819,7 @@ class MaterialSpecDataFactory(factory.DictFactory):
     file_links = factory.List([factory.SubFactory(FileLinkDataFactory)])
     template = factory.SubFactory(LinkByUIDDataFactory)
     properties = []  # TODO make a PropertiesDataFactory
-    type = 'material_spec'
+    type = "material_spec"
 
 
 class MaterialRunDataFactory(factory.DictFactory):
@@ -789,16 +831,16 @@ class MaterialRunDataFactory(factory.DictFactory):
     sample_type = MaterialRunFactory.sample_type
     spec = factory.SubFactory(LinkByUIDDataFactory)
     file_links = factory.List([factory.SubFactory(FileLinkDataFactory)])
-    type = 'material_run'
+    type = "material_run"
 
 
 class DatasetFactory(factory.Factory):
     class Meta:
         model = Dataset
 
-    name = factory.Faker('company')
-    summary = factory.Faker('catch_phrase')
-    description = factory.Faker('bs')
+    name = factory.Faker("company")
+    summary = factory.Faker("catch_phrase")
+    description = factory.Faker("bs")
     unique_name = None  # TODO Update tests to include unique_name
 
 
@@ -809,14 +851,14 @@ class _UploaderFactory(factory.Factory):
     # TODO Bring _Uploader in line with other library concepts
     @factory.post_generation
     def assign_values(obj, create, extracted):
-        obj.bucket = 'citrine-datasvc'
-        obj.object_key = '334455'
-        obj.upload_id = 'dea3a-555'
-        obj.region_name = 'us-west'
-        obj.aws_access_key_id = 'dkfjiejkcm'
-        obj.aws_secret_access_key = 'ifeemkdsfjeijie8759235u2wjr388'
-        obj.aws_session_token = 'fafjeijfi87834j87woa'
-        obj.s3_version = '2'
+        obj.bucket = "citrine-datasvc"
+        obj.object_key = "334455"
+        obj.upload_id = "dea3a-555"
+        obj.region_name = "us-west"
+        obj.aws_access_key_id = "dkfjiejkcm"
+        obj.aws_secret_access_key = "ifeemkdsfjeijie8759235u2wjr388"
+        obj.aws_session_token = "fafjeijfi87834j87woa"
+        obj.s3_version = "2"
 
 
 class MLIScoreFactory(factory.Factory):
@@ -830,17 +872,17 @@ class MLIScoreFactory(factory.Factory):
 
 class CategoricalExperimentValueDataFactory(factory.DictFactory):
     type = "CategoricalValue"
-    value = factory.Faker('company')
+    value = factory.Faker("company")
 
 
 class ChemicalFormulaExperimentValueDataFactory(factory.DictFactory):
     type = "InorganicValue"
-    value = factory.Faker('random_formula')
+    value = factory.Faker("random_formula")
 
 
 class IntegerExperimentValueDataFactory(factory.DictFactory):
     type = "IntegerValue"
-    value = factory.Faker('random_int', min=1, max=99)
+    value = factory.Faker("random_int", min=1, max=99)
 
 
 class MixtureExperimentValueDataFactory(factory.DictFactory):
@@ -850,127 +892,170 @@ class MixtureExperimentValueDataFactory(factory.DictFactory):
 
 class MolecularStructureExperimentValueDataFactory(factory.DictFactory):
     type = "OrganicValue"
-    value = factory.Faker('random_smiles')
+    value = factory.Faker("random_smiles")
 
 
 class RealExperimentValueDataFactory(factory.DictFactory):
     type = "RealValue"
-    value = factory.Faker('pyfloat', min_value=0, max_value=100)
+    value = factory.Faker("pyfloat", min_value=0, max_value=100)
 
 
 class CandidateExperimentSnapshotDataFactory(factory.DictFactory):
-    experiment_id = factory.Faker('uuid4')
-    candidate_id = factory.Faker('uuid4')
-    workflow_id = factory.Faker('uuid4')
-    name = factory.Faker('company')
-    description = factory.Faker('company')
+    experiment_id = factory.Faker("uuid4")
+    candidate_id = factory.Faker("uuid4")
+    workflow_id = factory.Faker("uuid4")
+    name = factory.Faker("company")
+    description = factory.Faker("company")
     updated_time = factory.Faker("unix_milliseconds")
     # TODO  Generate Experiment keys randomly but uniquely
-    overrides = factory.Dict({
-        "ingredient1": factory.SubFactory(CategoricalExperimentValueDataFactory),
-        "ingredient2": factory.SubFactory(ChemicalFormulaExperimentValueDataFactory),
-        "ingredient3": factory.SubFactory(IntegerExperimentValueDataFactory),
-        "Formulation": factory.SubFactory(MixtureExperimentValueDataFactory),
-        "ingredient4": factory.SubFactory(MolecularStructureExperimentValueDataFactory),
-        "ingredient5": factory.SubFactory(RealExperimentValueDataFactory)
-    })
+    overrides = factory.Dict(
+        {
+            "ingredient1": factory.SubFactory(CategoricalExperimentValueDataFactory),
+            "ingredient2": factory.SubFactory(
+                ChemicalFormulaExperimentValueDataFactory
+            ),
+            "ingredient3": factory.SubFactory(IntegerExperimentValueDataFactory),
+            "Formulation": factory.SubFactory(MixtureExperimentValueDataFactory),
+            "ingredient4": factory.SubFactory(
+                MolecularStructureExperimentValueDataFactory
+            ),
+            "ingredient5": factory.SubFactory(RealExperimentValueDataFactory),
+        }
+    )
 
 
 class ExperimentDataSourceDataDataFactory(factory.DictFactory):
-    experiments = factory.List([factory.SubFactory(CandidateExperimentSnapshotDataFactory)])
+    experiments = factory.List(
+        [factory.SubFactory(CandidateExperimentSnapshotDataFactory)]
+    )
 
 
 class ExperimentDataSourceMetadataDataFactory(factory.DictFactory):
-    branch_root_id = factory.Faker('uuid4')
-    version = factory.Faker('random_digit_not_null')
+    branch_root_id = factory.Faker("uuid4")
+    version = factory.Faker("random_digit_not_null")
     created = factory.SubFactory(UserTimestampDataFactory)
 
 
 class ExperimentDataSourceDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(ExperimentDataSourceDataDataFactory)
     metadata = factory.SubFactory(ExperimentDataSourceMetadataDataFactory)
 
 
 class AnalysisPlotMetadataDataFactory(factory.DictFactory):
-    rank = factory.Faker('random_int', min=1, max=10)
+    rank = factory.Faker("random_int", min=1, max=10)
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
 
 
 class AnalysisPlotDataDataFactory(factory.DictFactory):
-    name = factory.Faker('company')
-    description = factory.Faker('catch_phrase')
-    plot_type = factory.Faker('random_element', elements=('SCATTER', 'VIOLIN'))
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    plot_type = factory.Faker("random_element", elements=("SCATTER", "VIOLIN"))
     config = {}
 
 
 class AnalysisPlotEntityDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(AnalysisPlotDataDataFactory)
     metadata = factory.SubFactory(AnalysisPlotMetadataDataFactory)
 
 
 class LatestBuildDataFactory(factory.DictFactory):
     class Params:
-        is_failed = factory.LazyAttribute(lambda o: o.status == 'FAILED')
+        is_failed = factory.LazyAttribute(lambda o: o.status == "FAILED")
 
-    status = factory.Faker('random_element', elements=('INPROGRESS', 'SUCCEEDED', 'FAILED'))
-    failure_reason = factory.Maybe('is_failed', ['This is a test failure message'], [])
+    status = factory.Faker(
+        "random_element", elements=("INPROGRESS", "SUCCEEDED", "FAILED")
+    )
+    failure_reason = factory.Maybe("is_failed", ["This is a test failure message"], [])
     query = factory.SubFactory(GemdQueryDataFactory)
 
 
 class AnalysisWorkflowMetadataDataFactory(factory.DictFactory):
     class Meta:
-        exclude = ('is_archived', 'has_build')
+        exclude = ("is_archived", "has_build")
 
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
-    archived = factory.Maybe('is_archived', factory.SubFactory(UserTimestampDataFactory), None)
-    latest_build = factory.Maybe('has_build', factory.SubFactory(LatestBuildDataFactory), None)
+    archived = factory.Maybe(
+        "is_archived", factory.SubFactory(UserTimestampDataFactory), None
+    )
+    latest_build = factory.Maybe(
+        "has_build", factory.SubFactory(LatestBuildDataFactory), None
+    )
 
 
 class AnalysisWorkflowDataDataFactory(factory.DictFactory):
     class Meta:
-        exclude = ('has_snapshot', 'plot_count')
+        exclude = ("has_snapshot", "plot_count")
 
     class Params:
         plot_count = 1
 
-    name = factory.Faker('company')
-    description = factory.Faker('catch_phrase')
-    snapshot_id = factory.Maybe('has_snapshot', factory.Faker('uuid4'), None)
-    plots = factory.LazyAttribute(lambda self: [AnalysisPlotEntityDataFactory() for _ in range(self.plot_count)])
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    snapshot_id = factory.Maybe("has_snapshot", factory.Faker("uuid4"), None)
+    plots = factory.LazyAttribute(
+        lambda self: [AnalysisPlotEntityDataFactory() for _ in range(self.plot_count)]
+    )
 
 
 class AnalysisWorkflowEntityDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
+    id = factory.Faker("uuid4")
     data = factory.SubFactory(AnalysisWorkflowDataDataFactory)
     metadata = factory.SubFactory(AnalysisWorkflowMetadataDataFactory)
 
 
 class FeatureEffectsResponseResultFactory(factory.DictFactory):
-    materials = factory.List([
-        factory.Faker('uuid4', cast_to=None),
-        factory.Faker('uuid4', cast_to=None),
-        factory.Faker('uuid4', cast_to=None)
-    ])
-    outputs = factory.Dict({
-        "output1": factory.Dict({
-            "feature1": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")])
-        }),
-        "output2": factory.Dict({
-            "feature1": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")]),
-            "feature2": factory.List([factory.Faker("pyfloat"), factory.Faker("pyfloat"), factory.Faker("pyfloat")])
-        })
-    })
+    materials = factory.List(
+        [
+            factory.Faker("uuid4", cast_to=None),
+            factory.Faker("uuid4", cast_to=None),
+            factory.Faker("uuid4", cast_to=None),
+        ]
+    )
+    outputs = factory.Dict(
+        {
+            "output1": factory.Dict(
+                {
+                    "feature1": factory.List(
+                        [
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                        ]
+                    )
+                }
+            ),
+            "output2": factory.Dict(
+                {
+                    "feature1": factory.List(
+                        [
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                        ]
+                    ),
+                    "feature2": factory.List(
+                        [
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                            factory.Faker("pyfloat"),
+                        ]
+                    ),
+                }
+            ),
+        }
+    )
+
 
 class FeatureEffectsMetadataFactory(factory.DictFactory):
-    predictor_id = factory.Faker('uuid4')
-    predictor_version = factory.Faker('random_digit_not_null')
+    predictor_id = factory.Faker("uuid4")
+    predictor_version = factory.Faker("random_digit_not_null")
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
-    status = 'SUCCEEDED'
+    status = "SUCCEEDED"
 
 
 class FeatureEffectsResponseFactory(factory.DictFactory):

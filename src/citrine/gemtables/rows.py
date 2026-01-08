@@ -1,4 +1,5 @@
 """Row definitions for GEM Tables."""
+
 from typing import Type, List, Set, Union
 from uuid import UUID
 
@@ -12,7 +13,7 @@ from citrine._serialization import properties
 from citrine.resources.data_concepts import _make_link_by_uid
 
 
-class Row(PolymorphicSerializable['Row']):
+class Row(PolymorphicSerializable["Row"]):
     """A rule for defining rows in a GEM Table.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -29,16 +30,14 @@ class Row(PolymorphicSerializable['Row']):
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
-        types: List[Type[Serializable]] = [
-            MaterialRunByTemplate
-        ]
+        types: List[Type[Serializable]] = [MaterialRunByTemplate]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
             raise ValueError("Unrecognized type: {}".format(data["type"]))
         return res
 
 
-class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
+class MaterialRunByTemplate(Serializable["MaterialRunByTemplate"], Row):
     """Rows corresponding to MaterialRuns, marked by their template.
 
     Parameters
@@ -52,14 +51,13 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     """
 
     templates = properties.List(properties.Object(LinkByUID), "templates")
-    typ = properties.String('type', default="material_run_by_template", deserializable=False)
+    typ = properties.String(
+        "type", default="material_run_by_template", deserializable=False
+    )
     tags = properties.Optional(properties.Set(properties.String), "tags")
 
     template_type = Union[UUID, str, LinkByUID, MaterialTemplate]
 
-    def __init__(self, *,
-                 templates: List[template_type],
-                 tags: Set[str] = None):
-
+    def __init__(self, *, templates: List[template_type], tags: Set[str] = None):
         self.templates = [_make_link_by_uid(x) for x in templates]
         self.tags = tags

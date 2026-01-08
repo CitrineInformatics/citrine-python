@@ -1,10 +1,13 @@
 """Resources that represent both individual and collections of design workflow executions."""
+
 from typing import Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
+from citrine.informatics.executions.generative_design_execution import (
+    GenerativeDesignExecution,
+)
 from citrine.informatics.generative_design import GenerativeDesignInput
 from citrine.resources.response import Response
 
@@ -12,9 +15,9 @@ from citrine.resources.response import Response
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):
     """A collection of GenerativeDesignExecutions."""
 
-    _path_template = '/projects/{project_id}/generative-design/executions'
+    _path_template = "/projects/{project_id}/generative-design/executions"
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = GenerativeDesignExecution
 
     def __init__(self, project_id: UUID, session: Session):
@@ -65,12 +68,12 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
             Resources in this collection.
 
         """
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=self._fetch_page,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Generative Design Executions cannot be deleted or archived."""
-        raise NotImplementedError(
-            "Generative Design Executions cannot be deleted"
-        )
+        raise NotImplementedError("Generative Design Executions cannot be deleted")

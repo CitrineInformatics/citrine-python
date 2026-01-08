@@ -1,4 +1,5 @@
 """Resources that represent ingredient spec data objects."""
+
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
@@ -16,10 +17,10 @@ from gemd.entity.value.continuous_value import ContinuousValue
 
 
 class IngredientSpec(
-    GEMDResource['IngredientSpec'],
+    GEMDResource["IngredientSpec"],
     ObjectSpec,
     GEMDIngredientSpec,
-    typ=GEMDIngredientSpec.typ
+    typ=GEMDIngredientSpec.typ,
 ):
     """
     An ingredient specification.
@@ -65,54 +66,72 @@ class IngredientSpec(
 
     _response_key = GEMDIngredientSpec.typ  # 'ingredient_spec'
 
-    material = PropertyOptional(LinkOrElse(GEMDMaterialSpec), 'material', override=True)
-    process = PropertyOptional(LinkOrElse(GEMDProcessSpec),
-                               'process',
-                               override=True,
-                               use_init=True)
-    mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction', override=True)
-    volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction', override=True)
-    number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction', override=True)
-    absolute_quantity = PropertyOptional(Object(ContinuousValue),
-                                         'absolute_quantity',
-                                         override=True)
-    name = String('name', override=True, use_init=True)
-    labels = PropertyOptional(PropertyList(String()), 'labels', override=True, use_init=True)
+    material = PropertyOptional(LinkOrElse(GEMDMaterialSpec), "material", override=True)
+    process = PropertyOptional(
+        LinkOrElse(GEMDProcessSpec), "process", override=True, use_init=True
+    )
+    mass_fraction = PropertyOptional(
+        Object(ContinuousValue), "mass_fraction", override=True
+    )
+    volume_fraction = PropertyOptional(
+        Object(ContinuousValue), "volume_fraction", override=True
+    )
+    number_fraction = PropertyOptional(
+        Object(ContinuousValue), "number_fraction", override=True
+    )
+    absolute_quantity = PropertyOptional(
+        Object(ContinuousValue), "absolute_quantity", override=True
+    )
+    name = String("name", override=True, use_init=True)
+    labels = PropertyOptional(
+        PropertyList(String()), "labels", override=True, use_init=True
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 material: Optional[GEMDMaterialSpec] = None,
-                 process: Optional[GEMDProcessSpec] = None,
-                 mass_fraction: Optional[ContinuousValue] = None,
-                 volume_fraction: Optional[ContinuousValue] = None,
-                 number_fraction: Optional[ContinuousValue] = None,
-                 absolute_quantity: Optional[ContinuousValue] = None,
-                 labels: Optional[List[str]] = None,
-                 file_links: Optional[List[FileLink]] = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: Optional[Dict[str, str]] = None,
+        tags: Optional[List[str]] = None,
+        notes: Optional[str] = None,
+        material: Optional[GEMDMaterialSpec] = None,
+        process: Optional[GEMDProcessSpec] = None,
+        mass_fraction: Optional[ContinuousValue] = None,
+        volume_fraction: Optional[ContinuousValue] = None,
+        number_fraction: Optional[ContinuousValue] = None,
+        absolute_quantity: Optional[ContinuousValue] = None,
+        labels: Optional[List[str]] = None,
+        file_links: Optional[List[FileLink]] = None,
+    ):
         if uids is None:
             uids = dict()
 
         super(ObjectSpec, self).__init__()
-        GEMDIngredientSpec.__init__(self, uids=uids, tags=tags, notes=notes,
-                                    material=material, process=process,
-                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
-                                    number_fraction=number_fraction,
-                                    absolute_quantity=absolute_quantity, labels=labels,
-                                    name=name, file_links=file_links)
+        GEMDIngredientSpec.__init__(
+            self,
+            uids=uids,
+            tags=tags,
+            notes=notes,
+            material=material,
+            process=process,
+            mass_fraction=mass_fraction,
+            volume_fraction=volume_fraction,
+            number_fraction=number_fraction,
+            absolute_quantity=absolute_quantity,
+            labels=labels,
+            name=name,
+            file_links=file_links,
+        )
 
     def __str__(self):
-        return '<Ingredient spec {!r}>'.format(self.name)
+        return "<Ingredient spec {!r}>".format(self.name)
 
 
 class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     """Represents the collection of all ingredient specs associated with a dataset."""
 
-    _individual_key = 'ingredient_spec'
-    _collection_key = 'ingredient_specs'
+    _individual_key = "ingredient_spec"
+    _collection_key = "ingredient_specs"
     _resource = IngredientSpec
 
     @classmethod
@@ -120,9 +139,9 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """Return the resource type in the collection."""
         return IngredientSpec
 
-    def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
-                        ) -> Iterator[IngredientSpec]:
+    def list_by_process(
+        self, uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+    ) -> Iterator[IngredientSpec]:
         """
         Get ingredients to a process.
 
@@ -137,11 +156,11 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
             The ingredients to the specified process.
 
         """
-        return self._get_relation(relation='process-specs', uid=uid)
+        return self._get_relation(relation="process-specs", uid=uid)
 
-    def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
-                         ) -> Iterator[IngredientSpec]:
+    def list_by_material(
+        self, uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+    ) -> Iterator[IngredientSpec]:
         """
         Get ingredients using the specified material.
 
@@ -156,4 +175,4 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
             The ingredients using the specified material
 
         """
-        return self._get_relation(relation='material-specs', uid=uid)
+        return self._get_relation(relation="material-specs", uid=uid)
