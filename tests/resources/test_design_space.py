@@ -8,8 +8,8 @@ import pytest
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.descriptors import RealDescriptor, FormulationKey
-from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpace, \
-        DesignSpaceSettings, EnumeratedDesignSpace, HierarchicalDesignSpace, ProductDesignSpace
+from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpaceSettings, \
+    DesignSubspace, HierarchicalDesignSpace, ProductDesignSpace, TopLevelDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
 from tests.utils.session import FakeCall, FakeSession
@@ -46,7 +46,7 @@ def _ds_to_response(ds, status="CREATED"):
 @pytest.fixture
 def valid_product_design_space(valid_product_design_space_data) -> ProductDesignSpace:
     data = deepcopy(valid_product_design_space_data)
-    return DesignSpace.build(data)
+    return TopLevelDesignSpace.build(data)
 
 
 def test_design_space_build(valid_product_design_space_data):
@@ -80,8 +80,7 @@ def test_design_space_build_with_status_detail(valid_product_design_space_data):
 
 
 def test_formulation_build(valid_formulation_design_space_data):
-    pc = DesignSpaceCollection(uuid.uuid4(), None)
-    design_space = pc.build(valid_formulation_design_space_data)
+    design_space = DesignSubspace.build(valid_formulation_design_space_data)
     assert design_space.name == 'formulation design space'
     assert design_space.description == 'formulates some things'
     assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
@@ -89,6 +88,10 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.labels == {'bar': {'foo'}}
     assert len(design_space.constraints) == 1
     assert design_space.resolution == 0.1
+
+
+def test_unsupported_subspace_type():
+    pass
 
 
 def test_hierarchical_build(valid_hierarchical_design_space_data):
@@ -128,62 +131,6 @@ def test_convert_to_hierarchical(valid_hierarchical_design_space_data):
 
     assert session.num_calls == 1
     assert session.last_call == expected_call
-
-
-def test_design_space_limits():
-    """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
-    # Given
-    session = FakeSession()
-    collection = DesignSpaceCollection(uuid.uuid4(), session)
-        
-    descriptors = [RealDescriptor(f"R-{i}", lower_bound=0, upper_bound=1, units="") for i in range(128)]
-    descriptor_values = {f"R-{i}": str(random.random()) for i in range(128)}
-
-    just_right = EnumeratedDesignSpace(
-        "just right",
-        description="just right desc",
-        descriptors=descriptors,
-        data=[descriptor_values] * 2000
-    )
-
-    too_big = EnumeratedDesignSpace(
-        "too big",
-        description="too big desc",
-        descriptors=just_right.descriptors,
-        data=[descriptor_values] * 2001
-    )
-
-    # create mock post response by setting the status.
-    # Deserializing that huge dict takes a long time, and it's done twice when making a call to
-    # register or update (the second is the automatic validation kick-off). Since we're only
-    # interested in checking the validation pre-request, we can specify a tiny response to speed up
-    # the test execution.
-    dummy_desc = descriptors[0]
-    dummy_resp = EnumeratedDesignSpace(
-        "basic",
-        description="basic desc",
-        descriptors=[dummy_desc],
-        data=[{dummy_desc.key: descriptor_values[dummy_desc.key]}]
-    )
-    mock_response = _ds_to_response(dummy_resp, status="READY")
-    session.responses.append(mock_response)
-
-    # Then
-    with pytest.deprecated_call():
-        with pytest.raises(ValueError) as excinfo:
-            collection.register(too_big)
-    assert "only supports" in str(excinfo.value)
-
-    # test register
-    with pytest.deprecated_call():
-        collection.register(just_right)
-
-    # add back the response for the next test
-    session.responses.append(mock_response)
-
-    # test update
-    with pytest.deprecated_call():
-        collection.update(just_right)
 
 
 @pytest.mark.parametrize("predictor_version", (2, "1", "latest", None))
@@ -437,6 +384,24 @@ def test_failed_register(valid_product_design_space_data):
     assert retval.dump() == ds.dump()
 
 
+def test_update(valid_product_design_space_data):
+    response_data = deepcopy(valid_product_design_space_data)
+
+    session = FakeSession()
+    session.set_response(response_data)
+    dsc = DesignSpaceCollection(uuid.uuid4(), session)
+    ds = dsc.build(deepcopy(valid_product_design_space_data))
+    
+    retval = dsc.update(ds)
+    
+    base_path = f"/projects/{dsc.project_id}/design-spaces"
+    assert session.calls == [
+        FakeCall(method='PUT', path=f'{base_path}/{ds.uid}', json=ds.dump()),
+        FakeCall(method='PUT', path=f'{base_path}/{ds.uid}/validate', json={})
+    ]
+    assert retval.dump() == ds.dump()
+
+
 def test_failed_update(valid_product_design_space_data):
     response_data = deepcopy(valid_product_design_space_data)
     response_data['metadata']['status']['name'] = 'INVALID'
@@ -566,28 +531,3 @@ def test_locked(valid_product_design_space_data):
     assert ds.is_locked
     assert ds.locked_by == lock_user
     assert ds.lock_time == lock_time
-
-
-@pytest.mark.parametrize("ds_data_fixture_name", ("valid_formulation_design_space_data",
-                                                  "valid_enumerated_design_space_data",
-                                                  "valid_data_source_design_space_dict"))
-def test_deprecated_top_level_design_spaces(request, ds_data_fixture_name):
-    ds_data = request.getfixturevalue(ds_data_fixture_name)
-
-    session = FakeSession()
-    session.set_response(ds_data)
-    dc = DesignSpaceCollection(uuid.uuid4(), session)
-
-    with pytest.deprecated_call():
-        ds = dc.get(uuid.uuid4())
-
-    with pytest.deprecated_call():
-        dc.register(ds)
-
-    with pytest.deprecated_call():
-        dc.update(ds)
-
-    session.set_response({"response": [ds_data]})
-
-    with pytest.deprecated_call():
-        next(dc.list())

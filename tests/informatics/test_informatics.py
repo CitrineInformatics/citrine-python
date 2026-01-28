@@ -4,7 +4,7 @@ from citrine.informatics.descriptors import FormulationDescriptor, FormulationKe
 from citrine.informatics.constraints import ScalarRangeConstraint, AcceptableCategoriesConstraint, \
     IngredientCountConstraint, IngredientFractionConstraint, IngredientRatioConstraint, \
     LabelFractionConstraint, IntegerRangeConstraint
-from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace, FormulationDesignSpace
+from citrine.informatics.design_spaces import ProductDesignSpace, FormulationDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
 from citrine.informatics.scores import LIScore, EIScore, EVScore
 
@@ -31,7 +31,6 @@ informatics_string_data = [
     (IngredientRatioConstraint(formulation_descriptor=FormulationDescriptor('Flat Formulation'), min=0.0, max=1.0, ingredient=("x", 1.5), label=("x'", 0.5), basis_ingredients=["y", "z"], basis_labels=["y'", "z'"]), "<IngredientRatioConstraint 'Flat Formulation'>"),
     (ProductDesignSpace(name='my design space', description='does some things'),
      "<ProductDesignSpace 'my design space'>"),
-    (EnumeratedDesignSpace('enumerated', description='desc', descriptors=[], data=[]), "<EnumeratedDesignSpace 'enumerated'>"),
     (FormulationDesignSpace(
         name='Formulation',
         description='desc',

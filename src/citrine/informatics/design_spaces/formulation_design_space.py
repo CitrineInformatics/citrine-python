@@ -1,15 +1,15 @@
 from typing import Mapping, Optional, Set
 
-from citrine._rest.engine_resource import EngineResource
+from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.subspace import DesignSubspace
 
 __all__ = ['FormulationDesignSpace']
 
 
-class FormulationDesignSpace(EngineResource['FormulationDesignSpace'], DesignSpace):
+class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace):
     """Design space composed of mixtures of ingredients.
 
     Parameters
@@ -36,23 +36,16 @@ class FormulationDesignSpace(EngineResource['FormulationDesignSpace'], DesignSpa
 
     """
 
-    formulation_descriptor = properties.Object(
-        FormulationDescriptor,
-        'data.instance.formulation_descriptor'
-    )
-    ingredients = properties.Set(properties.String, 'data.instance.ingredients')
+    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
+    ingredients = properties.Set(properties.String, 'ingredients')
     labels = properties.Optional(properties.Mapping(
         properties.String,
         properties.Set(properties.String)
-    ), 'data.instance.labels')
-    constraints = properties.Set(properties.Object(Constraint), 'data.instance.constraints')
-    resolution = properties.Float('data.instance.resolution')
+    ), 'labels')
+    constraints = properties.Set(properties.Object(Constraint), 'constraints')
+    resolution = properties.Float('resolution')
 
-    typ = properties.String(
-        'data.instance.type',
-        default='FormulationDesignSpace',
-        deserializable=False
-    )
+    typ = properties.String('type', default='FormulationDesignSpace', deserializable=False)
 
     def __init__(self,
                  name: str,

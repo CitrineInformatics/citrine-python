@@ -7,7 +7,7 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.dimensions import Dimension
 from citrine.informatics.design_spaces import FormulationDesignSpace
-from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
 from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 
 __all__ = [
@@ -108,7 +108,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         return f"<MaterialNodeDefinition {display_name}>"
 
 
-class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignSpace):
+class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLevelDesignSpace):
     """A design space that produces hierarchical candidates representing a material history.
 
     A hierarchical design space always contains a root node that defines the
@@ -185,41 +185,7 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], DesignS
         if self._settings:
             data["settings"] = self._settings.dump()
 
-        root_node = data["instance"]["root"]
-        data["instance"]["root"] = self.__unwrap_node(root_node)
-
-        data["instance"]["subspaces"] = [
-            self.__unwrap_node(sub_node)
-            for sub_node in data['instance']['subspaces']
-        ]
         return data
-
-    @classmethod
-    def _pre_build(cls, data: dict) -> dict:
-        root_node = data["data"]["instance"]["root"]
-        data["data"]["instance"]["root"] = cls.__wrap_node(root_node)
-
-        data["data"]["instance"]["subspaces"] = [
-            cls.__wrap_node(sub_node) for sub_node in data['data']['instance']['subspaces']
-        ]
-
-        return data
-
-    @staticmethod
-    def __wrap_node(node_data: dict) -> dict:
-        formulation_subspace = node_data.pop('formulation', None)
-        if formulation_subspace:
-            node_data['formulation'] = DesignSpace.wrap_instance(formulation_subspace)
-        return node_data
-
-    @staticmethod
-    def __unwrap_node(node_data: dict) -> dict:
-        formulation_subspace = node_data.pop('formulation', None)
-        if formulation_subspace:
-            node_data['formulation'] = formulation_subspace['data']['instance']
-            node_data['formulation']['name'] = formulation_subspace['data']['name']
-            node_data['formulation']['description'] = formulation_subspace['data']['description']
-        return node_data
 
     def __repr__(self):
         return f'<HierarchicalDesignSpace {self.name}>'
