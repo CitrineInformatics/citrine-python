@@ -1,19 +1,15 @@
 """Tools for working with Descriptors."""
 from abc import abstractmethod
-from typing import Type, List, Mapping, Optional, Union
+from typing import Type, List, Union
 from uuid import UUID
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine.informatics.descriptors import Descriptor
-from citrine.resources.file_link import FileLink
 from citrine.resources.gemtables import GemTable
 
 __all__ = [
     'DataSource',
-    'CSVDataSource',
     'GemTableDataSource',
     'ExperimentDataSourceRef',
     'SnapshotDataSource',
@@ -36,7 +32,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
     @classmethod
     def _subclass_list(self) -> List[Type[Serializable]]:
-        return [CSVDataSource, GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
+        return [GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -70,59 +66,6 @@ class DataSource(PolymorphicSerializable['DataSource']):
     @abstractmethod
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-
-
-class CSVDataSource(Serializable['CSVDataSource'], DataSource):
-    """A data source based on a CSV file stored on the data platform.
-
-    Parameters
-    ----------
-    file_link: FileLink
-        link to the CSV file to read the data from
-    column_definitions: Mapping[str, Descriptor]
-        Map the column headers to the descriptors that will be used to interpret the cell contents
-    identifiers: Optional[List[str]]
-        List of one or more column headers whose values uniquely identify a row. These may overlap
-        with ``column_definitions`` if a column should be used as data and as an identifier,
-        but this is not necessary. Identifiers must be unique within a dataset. No two rows can
-        contain the same value.
-
-    """
-
-    typ = properties.String('type', default='csv_data_source', deserializable=False)
-    file_link = properties.Object(FileLink, "file_link")
-    column_definitions = properties.Mapping(
-        properties.String, properties.Object(Descriptor), "column_definitions")
-    identifiers = properties.Optional(properties.List(properties.String), "identifiers")
-
-    _data_source_type = "csv"
-
-    def __init__(self,
-                 *,
-                 file_link: FileLink,
-                 column_definitions: Mapping[str, Descriptor],
-                 identifiers: Optional[List[str]] = None):
-        warn("CSVDataSource is deprecated as of 3.28.0 and will be removed in 4.0.0. Please use "
-             "another type of data source, such as GemTableDataSource.",
-             category=DeprecationWarning)
-        self.file_link = file_link
-        self.column_definitions = column_definitions
-        self.identifiers = identifiers
-
-    @classmethod
-    def _data_source_id_builder(cls, *args) -> DataSource:
-        # TODO Figure out how to populate the column definitions
-        warn("A CSVDataSource was derived from a data_source_id "
-             "but is missing its column_definitions and identities",
-             UserWarning)
-        return CSVDataSource(
-            file_link=FileLink(url=args[0], filename=args[1]),
-            column_definitions={}
-        )
-
-    def to_data_source_id(self) -> str:
-        """Generate the data_source_id for this DataSource."""
-        return f"{self._data_source_type}::{self.file_link.url}::{self.file_link.filename}"
 
 
 class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
