@@ -13,11 +13,10 @@ Versioning
 ------------------------
 
 All predictors have a version number. When you create a new predictor, it will be version 1, and its `draft` flag will be `True`.
-While `draft` is True, any edits will overwrite the current version.
-Once the predictor trains successfully, `draft` will be set to `False`. Any further edits will apply to the next version.
-If training fails, `draft` will remain `True`.
-To act on a specific version of the predictor (where allowed), use the function which accepts a `version` argument.
-Any which don't accept a version act on the most recent version of the predictor. For example, `get()` vs. `get_version()`.
+While ``draft`` is ``True``, any edits will overwrite the current version.
+Once the predictor trains successfully, ``draft`` will be set to ``False``. Any further edits will apply to the next version.
+If training fails, ``draft`` will remain ``True``.
+To act on a specific version of the predictor (where allowed), pass the ``version`` argument.
 
 Auto ML predictor
 -------------------------
@@ -27,7 +26,7 @@ AutoMLPredictors allow you to use your domain knowledge to construct custom `Gra
 Each AutoMLPredictor is defined by a set of inputs and outputs.
 Inputs are used as input features to the machine learning model.
 The outputs are the properties that you would like the model to predict.
-Currently, only one output per AutoML predictor is supported, and there must be at least one input.
+There must be at least one input.
 Only one model is trained from inputs to the outputs.
 
 AutoMLPredictors support both regression and classification.
@@ -45,7 +44,7 @@ The following example demonstrates how to use the Citrine Python client to creat
 
 .. code:: python
 
-   from citrine.informatics.predictors import AutoMLPredictor
+   from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor
    from citrine.seeding.find_or_create import create_or_update
 
    # create AutoMLPredictor (assumes descriptors for
@@ -54,12 +53,16 @@ The following example demonstrates how to use the Citrine Python client to creat
        name = 'Predictor name',
        description = 'Predictor description',
        inputs = [input_descriptor_1, input_descriptor_2],
-       outputs = [output_descriptor_1],
+       outputs = [output_descriptor_1]
+   )
+   graph_predictor = GraphPredictor(
+       name = 'Root predictor',
+       predictors = [auto_ml_predictor],
        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)]
    )
 
    predictor = create_or_update(collection=project.predictors,
-                                resource=auto_ml_predictor
+                                resource=graph_predictor
                                )
 
 
@@ -69,23 +72,20 @@ Graph predictor
 The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple predictors into a directed bipartite graph.
 The predictors are connected based on their descriptors -- using a descriptor as the output of one predictor and also as the input of another will ensure that the predictors are wired together.
 The graph structure is quite flexible.
-A descriptor can be the output and/or input of multiple predictors, and cycles are permitted.
+A descriptor can be the output and/or input of multiple predictors.
 
-A ``GraphPredictor`` is created by specifying the sub-predictors.
-These can either be references to predictors that exist on-platform, or they can be predictors that are defined locally.
+A ``GraphPredictor`` is created by specifying the sub-predictors, defined locally.
 A sub-predictor **cannot** be another ``GraphPredictor``.
 
 Training data can be specified when creating a graph predictor.
-This will be combined with any training data present in the sub-predictors.
 
-The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` from on-platform and locally-defined predictors.
-Assume that there exists a GEMD table with columns for time, bulk modulus, and Poisson's ratio.
+The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`.
+Assume that there exists a GEM Table with columns for time, bulk modulus, and Poisson's ratio.
 We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
-The ML models are independently registered on-platform, but the expression predictor is defined locally and hence cannot be re-used.
 
 .. code:: python
 
-    from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor, ExpressionPredictor
+    from citrine.informatics.predictors import AutoMLPredictor, ExpressionPredictor, GraphPredictor
     from citrine.informatics.data_sources import GemTableDataSource
 
     time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
@@ -93,23 +93,17 @@ The ML models are independently registered on-platform, but the expression predi
     poissons_ratio = RealDescriptor("Poisson\'s Ratio", lower_bound=0, upper_bound=0.5, units="")
     training_data = GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)
 
-    bulk_modulus_predictor = project.predictors.register(
-        AutoMLPredictor(
-            name="predict bulk modulus from tempering time",
-            description="",
-            inputs=[time],
-            outputs=[bulk_modulus],
-            training_data=[training_data]
-        )
+    bulk_modulus_predictor = AutoMLPredictor(
+        name="predict bulk modulus from tempering time",
+        description="",
+        inputs=[time],
+        outputs=[bulk_modulus]
     )
-    poissons_ratio_predictor = project.predictors.register(
-        AutoMLPredictor(
-            name="predict Poisson\'s ratio from tempering time",
-            description="",
-            inputs=[time],
-            outputs=[poissons_ratio],
-            training_data=[training_data]
-        )
+    poissons_ratio_predictor = AutoMLPredictor(
+        name="predict Poisson\'s ratio from tempering time",
+        description="",
+        inputs=[time],
+        outputs=[poissons_ratio]
     )
 
     youngs_modulus = RealDescriptor("Young\'s Modulus", lower_bound=0, upper_bound=1E4, units="GPa")
@@ -126,11 +120,11 @@ The ML models are independently registered on-platform, but the expression predi
             name = "Big elastic constant predictor",
             description = ""
             predictors = [
-                bulk_modulus_predictor.uid,
-                poissons_ratio_predictor.uid,
+                bulk_modulus_predictor,
+                poissons_ratio_predictor,
                 expression_predictor
             ],
-           training_data = []
+            training_data=[training_data]
         )
     )
 
@@ -172,7 +166,8 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
 .. code:: python
 
-    from citrine.informatics.predictors import ExpressionPredictor
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor
 
     youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
     poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
@@ -189,13 +184,19 @@ The following example demonstrates how to create an :class:`~citrine.informatics
        }
     )
 
+    graph_predictor = GraphPredictor(
+        name = 'Root predictor',
+        predictors = [shear_modulus_predictor],
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)]
+    )
+
     # register or update predictor by name
     predictor = create_or_update(
         collection=project.predictors,
         module=shear_modulus_predictor
     )
 
-For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+For a more involved example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 Molecular Structure Featurizer
 ------------------------------------
@@ -215,7 +216,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
 .. code:: python
 
     from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
-    from citrine.informatics.predictors import MolecularStructureFeaturizer, AutoMLPredictor, GraphPredictor
+    from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor, MolecularStructureFeaturizer
     from citrine.seeding.find_or_create import create_or_update
     from citrine.informatics.data_sources import GemTableDataSource
 
@@ -251,8 +252,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='ML Model for Density',
         description='Predict the density, given molecular features of the solvent',
         inputs = features,
-        output = [output_desc],
-        training_data = []
+        output = [output_desc]
     )
 
     # use a graph predictor to wrap together the featurizer and the machine learning model
@@ -276,7 +276,7 @@ computes a configurable set of features on chemical formula data by using the pr
 and their stoichiometric amounts.
 Many of the features are stoichiometrically weighted generalized means of element-level properties, though some are more complex functions of the chemical formula.
 The generalized means are configured with the ``powers`` argument, which is a list of means to calculate.
-For example, setting ``powers=[1, 3]`` will calculate the mean and 3-mean of all applicable features.
+For example, setting ``powers=[1.0, 3.0]`` will calculate the mean and 3-mean of all applicable features.
 
 The features to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
 The default is the `standard` alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
@@ -287,14 +287,13 @@ The feature names and descriptors are automatically constructed from the name of
 The ``from_predictor_responses`` method will grab the descriptors for the features so that they can be fed into other predicors,
 e.g., the :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, as inputs.
 
-
 The following example demonstrates how to use a :class:`~citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer` and
 :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` to model a property of an alloy:
 
 .. code:: python
 
     from citrine.informatics.descriptors import ChemicalFormulaDescriptor, RealDescriptor
-    from citrine.informatics.predictors import ChemicalFormulaFeaturizer, AutoMLPredictor, GraphPredictor
+    from citrine.informatics.predictors import AutoMLPredictor, ChemicalFormulaFeaturizer, GraphPredictor
     from citrine.seeding.find_or_create import create_or_update
     from citrine.informatics.data_sources import GemTableDataSource
 
@@ -316,7 +315,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         description="Featurize the Alloy's chemical formula using the default features and a 2-mean.",
         input_descriptor=input_desc,
         features=['standard'],
-        powers=[2]
+        powers=[2.0]
     )
 
     # get the feature names
@@ -331,8 +330,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='ML Model for Melting Temperature',
         description='Predict the melting temperature, given chemical features of the alloy',
         inputs = features,
-        outputs = [output_desc],
-        training_data = []
+        outputs = [output_desc]
     )
 
     # use a graph predictor to wrap together the featurizer and the machine learning model
@@ -363,7 +361,7 @@ An ``input_descriptor`` with key 'Formulation' is automatically generated that r
 the associated material history of the input formulation is traversed to determine the leaf ingredients.
 These leaf ingredients are then summed across all leaves of the mixing processes,
 with the resulting candidates described by an automatically generated ``output_descriptor`` formulation descriptor named 'Flat Formulation'.
-The ``training_data`` parameter is used as a source of formulation recipes to be used in flattening hierarchical mixtures.
+The ``training_data`` of the parent :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` is used as a source of formulation recipes to be used in flattening hierarchical mixtures.
 
 The following example illustrates how a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`
 can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline,
@@ -371,7 +369,7 @@ yielding just the quantities of the leaf constituents salt and water.
 
 .. code:: python
 
-    from citrine.informatics.predictors import SimpleMixturePredictor
+    from citrine.informatics.predictors import GraphPredictor, SimpleMixturePredictor
 
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(
@@ -379,11 +377,18 @@ yielding just the quantities of the leaf constituents salt and water.
         table_version=table_version
     )
 
-    SimpleMixturePredictor(
+    mixture_predictor = SimpleMixturePredictor(
         name='Simple mixture predictor',
-        description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
-        training_data=[data_source]
+        description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients'
     )
+    
+    graph_predictor = GraphPredictor(
+        name = 'Root predictor',
+        predictors = [mixture_predictor],
+        training_data = [data_source]
+    )
+
+
 
 Mean property predictor
 -----------------------
@@ -460,7 +465,7 @@ to compute the mean solute density and the distribution of acetone solubility in
 
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-    from citrine.informatics.predictors import MeanPropertyPredictor
+    from citrine.informatics.predictors import GraphPredictor, MeanPropertyPredictor
 
     # descriptor that holds formulation data
     formulation = FormulationDescriptor.hierarchical()
@@ -485,13 +490,18 @@ to compute the mean solute density and the distribution of acetone solubility in
         properties=[density, acetone_solubility],
         # compute the response with component quantities weighted evenly
         p=1,
-        training_data=[data_source],
         # impute ingredient properties, if missing
         impute_properties=True,
         # if missing, use provided defaults
         default_properties={'density': 2.0, 'acetone solubility': 'Slightly Soluble'},
         # only featurize ingredients labeled as a solute
         label='solute'
+    )
+    
+    graph_predictor = GraphPredictor(
+        name = 'Root predictor',
+        predictors = [mean_property_predictor],
+        training_data = [data_source]
     )
 
 This predictor will compute a real descriptor with a key  ``mean of property density with label solute in formulation``
@@ -591,7 +601,7 @@ Predictor reports
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include predictor evaluation metrics.
-To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluation <predictor_evaluation_workflows>`.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluation <predictor_evaluations>`.
 
 Training data
 -------------
@@ -606,11 +616,7 @@ Deduplication is additive.
 Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
 Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
 
-When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all sub-predictors are combined into a single deduplicated list.
 Each predictor is trained on the subset of the combined data that is valid for the model.
-Note, data may come from sources defined by other sub-predictors in the graph.
-Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all sub-predictors that require it.
-If all data sources required to train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
 

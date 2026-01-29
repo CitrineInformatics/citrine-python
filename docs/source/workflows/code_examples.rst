@@ -79,8 +79,7 @@ This pattern is also extremely useful for performing optimization over complex o
         outputs = [
             final_ph,
             final_loaf_hydration,
-        ],
-        training_data=[training_table]
+        ]
     )
 
     shelf_life_calculator = ExpressionPredictor(
@@ -104,7 +103,8 @@ This pattern is also extremely useful for performing optimization over complex o
             dough_hydration_calculator,
             physical_properties_predictor,
             shelf_life_calculator
-        ]
+        ],
+        training_data=[training_table]
     )
 
 .. |Bread Predictor Graph Visualization| image:: bread_predictor_graph_viz.jpg

@@ -30,9 +30,9 @@ The following example demonstrates how to use the Citrine Python client to regis
     # print final validation status
     validated_workflow = project.design_workflows.get(workflow.uid)
     print(validated_workflow.status)
-    # status info will contain relevant validation information
+    # status detail will contain relevant validation information
     # (i.e. why the workflow is valid/invalid)
-    print(validated_workflow.status_info)
+    print(validated_workflow.status_detail)
 
 
 Execution and results
@@ -148,13 +148,13 @@ Branches
 --------
 
 Branches are purely an organizational concept, used to group design workflows with similar goals under a single name.
-They are the primary organizational concept of AI assets as displayed in our web UI.
+They are the primary organizational concept of AI assets as displayed in the web UI.
 In the context of the Citrine Python client, they can be thought of as a bucket of design workflows.
-If you do not wish to interact with them in the python client, ignore the ``branch_id`` on a DesignWorkflow, and it will be handled for you.
+They are managed for you in the python client, but you can view the associated ``branch_root_id`` and ``branch_version`` on a :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow`.
 
 A branch has a name, along with any number of design workflows.
 A DesignWorkflow can be created and retrieved, and you can list all design workflows on a branch.
-You can still list all design workflows on the project as before.
+You can also list all design workflows in the project directly.
 
 .. code:: python
 
@@ -181,15 +181,15 @@ You can still list all design workflows on the project as before.
     # print final validation status
     validated_workflow = branch.design_workflows.get(workflow.uid)
     print(validated_workflow.status)
-    # status info will contain relevant validation information
+    # status detail will contain relevant validation information
     # (i.e. why the workflow is valid/invalid)
-    print(validated_workflow.status_info)
+    print(validated_workflow.status_detail)
 
 
 When you're done with a branch, it can be archived, removing it from the results of ``list`` and setting the ``archived`` flag.
 ``list_archived`` lists all archived branches in a project. An archived branch can be restored via its unique ID.
 
-Note that archiving branches is independent of archiving the design workflows contained within it.
+Archiving branches is independent of archiving the design workflows contained within it.
 Archiving a branch will hide the entire branch from default displays in the web UI.
 As a result, the design workflows it contained within it will also be hidden.
 Yet archiving th branch will *not* change the archived status of the contained design workflows in the context of design workflow listing methods.

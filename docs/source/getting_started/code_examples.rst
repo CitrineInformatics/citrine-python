@@ -38,17 +38,17 @@ Note that all resources are given descriptive names and summaries.
     print("My new team has name {} and id {}".format(
         band_gaps_team.name, band_gaps_team.uid))
 
-    Strehlow_Cook_description = "Band gaps for elemental and binary " \
+    strehlow_cook_description = "Band gaps for elemental and binary " \
         "semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
-    Strehlow_Cook_dataset = Dataset(name="Strehlow and Cook",
-        summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
-    Strehlow_Cook_dataset = band_gaps_team.datasets.register(Strehlow_Cook_dataset)
+    strehlow_cook_dataset = Dataset(name="Strehlow and Cook",
+        summary="Strehlow and Cook band gaps", description=strehlow_cook_description)
+    strehlow_cook_dataset = band_gaps_team.datasets.register(strehlow_cook_dataset)
 
 Find an existing Team and Dataset
 ------------------------------------
 
 Often you will work with existing resources.
-The code below retrieves a Team with the name "Copper oxides team" and a dataset with a known unique id that is stored as ``dataset_A_uid``.
+The code below retrieves a Team with the name "Copper oxides team" and a dataset with a known unique id that is stored as ``dataset_a_uid``.
 For more information on retrieving resources, see :ref:`Reading Resources <functionality_reading_label>`.
 
 .. code-block:: python
@@ -58,7 +58,7 @@ For more information on retrieving resources, see :ref:`Reading Resources <funct
     copper_oxides_team = next((team for team in all_teams
         if team.name == team_name), None)
     assert copper_oxides_team is not None
-    dataset_A = copper_oxides_team.datasets.get(uid=dataset_A_uid)
+    dataset_a = copper_oxides_team.datasets.get(uid=dataset_a_uid)
 
 Find a template
 ---------------
