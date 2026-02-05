@@ -1,11 +1,11 @@
 derp==0.1.1
-factory-boy==3.3.0
+factory-boy==3.3.3
 flake8==7.0.0
 flake8-docstrings==1.7.0
-mock==5.1.0
-pytest==8.0.0
-pytest-cov==4.1.0
-requests-mock==1.11.0
+mock==5.2.0
+pytest==8.4.2
+pytest-cov==7.0.0
+requests-mock==1.12.1
 pandas>=2.0.3,<3
 
 # faker is a dependency of factory-boy, but factory-boy sets a very low floor

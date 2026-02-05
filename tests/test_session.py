@@ -1,27 +1,30 @@
 import jwt
-import pytest
-
-from citrine.exceptions import (
-    BadRequest,
-    Conflict,
-    NonRetryableException,
-    WorkflowNotReadyException,
-    RetryableException)
-
 from datetime import datetime, timedelta, timezone
 
 import mock
 import requests
 import requests_mock
+import pytest
+
 from citrine._session import Session
-from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
+from citrine.exceptions import (
+    BadRequest,
+    Conflict,
+    NonRetryableException,
+    NotFound,
+    RetryableException,
+    WorkflowNotReadyException,
+    Unauthorized,
+    UnauthorizedRefreshToken, 
+)
+
 from tests.utils.session import make_fake_cursor_request_function
 
 
 def refresh_token(expiration: datetime = None) -> dict:
     token = jwt.encode(
         payload={'exp': expiration.timestamp()},
-        key='garbage'
+        key='Actually_Triangle_Perhaps_Finally'
     )
     return {'access_token': token}
 

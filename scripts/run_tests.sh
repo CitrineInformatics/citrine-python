@@ -37,7 +37,8 @@ fi
 
 flake8 $REPO_DIR/src                                                          || exit 1;
 derp $REPO_DIR/src $REPO_DIR/src/citrine/__version__.py                       || exit 1;
-pytest $QUIET $EXITFIRST --cov=$REPO_DIR/src                                 \
-       --cov-report term-missing:skip-covered                                \
-       --cov-config=$REPO_DIR/tox.ini --no-cov-on-fail --cov-fail-under=100  \
+pytest $QUIET $EXITFIRST --cov=$REPO_DIR/src  \
+       --cov-report term-missing:skip-covered \
+       --cov-config=$REPO_DIR/pyproject.toml  \
+       --no-cov-on-fail --cov-fail-under=100  \
        $REPO_DIR/tests                                                        || exit 1;
