@@ -10,8 +10,8 @@ on:
 
 jobs:
   pr-tests:
-    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-tests.yml@v1.1
+    uses: CitrineInformatics/common-gh-actions/.github/workflows/run-tests.yml@v2.0
     with:
       src: src/citrine
-      include_313: true
-      skip_38: false
+      skip_39: true
+      include_314: true

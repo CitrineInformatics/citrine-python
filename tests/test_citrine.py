@@ -11,7 +11,7 @@ from citrine import Citrine
 def refresh_token(expiration: datetime = None) -> dict:
     token = jwt.encode(
         payload={'exp': expiration.timestamp()},
-        key='garbage'
+        key='Actually_Triangle_Perhaps_Finally'
     )
     return {'access_token': token}
 
