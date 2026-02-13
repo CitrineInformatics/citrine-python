@@ -1,6 +1,5 @@
 """Tools for working with Descriptors."""
 from abc import abstractmethod
-from typing import Type, List, Union
 from uuid import UUID
 
 from citrine._serialization import properties

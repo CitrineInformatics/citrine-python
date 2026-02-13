@@ -1,5 +1,5 @@
 """Variable definitions for GEM Tables."""
-from typing import Type, Optional, List, Union, Tuple
+from typing import Optional
 from uuid import UUID
 
 from gemd.entity.bounds.base_bounds import BaseBounds

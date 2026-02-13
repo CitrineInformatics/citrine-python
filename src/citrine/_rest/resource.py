@@ -1,4 +1,4 @@
-from typing import TypeVar, Optional, Union
+from typing import TypeVar, Optional
 from uuid import UUID
 
 from citrine._serialization.serializable import Serializable

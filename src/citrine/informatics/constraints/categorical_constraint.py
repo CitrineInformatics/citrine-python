@@ -1,4 +1,3 @@
-from typing import List
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable

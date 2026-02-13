@@ -1,6 +1,5 @@
 import time
 from pprint import pprint
-from typing import Union
 
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject

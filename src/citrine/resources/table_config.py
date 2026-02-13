@@ -1,5 +1,5 @@
 from copy import copy
-from typing import List, Union, Optional, Tuple
+from typing import Optional
 from uuid import UUID
 
 from gemd.entity.object import MaterialRun
@@ -94,7 +94,7 @@ class TableConfig(Resource["TableConfig"]):
     _resource_type = ResourceTypeEnum.TABLE_DEFINITION
 
     @staticmethod
-    def _get_dups(lst: List) -> List:
+    def _get_dups(lst: list) -> list:
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 

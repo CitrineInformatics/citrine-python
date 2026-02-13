@@ -1,5 +1,4 @@
 """Row definitions for GEM Tables."""
-from typing import Type, List, Set, Union
 from uuid import UUID
 
 from gemd.entity.link_by_uid import LinkByUID

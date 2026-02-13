@@ -1,5 +1,5 @@
 """Resources that represent measurement spec data objects."""
-from typing import List, Dict, Optional, Type, Union, Iterator
+from typing import Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource

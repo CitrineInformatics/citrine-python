@@ -1,7 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 import re
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
+from typing import Iterable, Iterator, List, Optional, TypeVar
 from uuid import UUID, uuid4
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta

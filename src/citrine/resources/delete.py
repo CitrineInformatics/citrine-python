@@ -1,5 +1,5 @@
 import json
-from typing import List, Union, Tuple, Optional
+from typing import Optional
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity

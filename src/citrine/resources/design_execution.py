@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
-from typing import Optional, Union, Iterator
+from typing import Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection

@@ -1,7 +1,6 @@
 from gemd.enumeration.base_enumeration import BaseEnumeration
 from logging import getLogger
 from time import time, sleep
-from typing import Union
 from uuid import UUID
 from warnings import warn
 

@@ -1,5 +1,5 @@
 """Resources that represent ingredient spec data objects."""
-from typing import List, Dict, Optional, Type, Iterator, Union
+from typing import Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource

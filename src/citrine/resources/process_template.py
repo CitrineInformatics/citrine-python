@@ -1,5 +1,5 @@
 """Resources that represent process templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from typing import Optional, Sequence
 
 from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList

@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Optional
 
 from citrine.informatics.predictors import GraphPredictor
 from citrine._serialization import properties

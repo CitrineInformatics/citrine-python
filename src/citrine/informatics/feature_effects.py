@@ -1,4 +1,3 @@
-from typing import Dict
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -50,7 +49,7 @@ class FeatureEffects(Resource):
                                   serializable=False)
 
     @classmethod
-    def _pre_build(cls, data: dict) -> Dict:
+    def _pre_build(cls, data: dict) -> dict:
         shapley = data.get("result")
         if not shapley:
             return data

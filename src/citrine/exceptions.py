@@ -1,6 +1,6 @@
 """Citrine-specific exceptions."""
 from types import SimpleNamespace
-from typing import Optional, List
+from typing import Optional
 from urllib.parse import urlencode
 from uuid import UUID
 

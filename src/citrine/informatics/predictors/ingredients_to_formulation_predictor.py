@@ -1,4 +1,3 @@
-from typing import Set, Mapping
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties

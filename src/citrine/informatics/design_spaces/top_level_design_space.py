@@ -1,5 +1,5 @@
 """Tools for working with design spaces."""
-from typing import Optional, Type
+from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject

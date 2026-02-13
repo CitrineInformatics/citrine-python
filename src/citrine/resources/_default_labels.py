@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from citrine.resources.data_concepts import CITRINE_TAG_PREFIX
 

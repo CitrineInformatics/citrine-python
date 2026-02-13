@@ -1,4 +1,3 @@
-from typing import Dict, Type
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

@@ -1,5 +1,5 @@
 """Tools for working with Dimensions."""
-from typing import Optional, Type, List
+from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

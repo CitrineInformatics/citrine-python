@@ -1,4 +1,4 @@
-from typing import Set, Optional, Tuple
+from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable

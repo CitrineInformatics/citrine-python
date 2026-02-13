@@ -1,5 +1,5 @@
 import functools
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection

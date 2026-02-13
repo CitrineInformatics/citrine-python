@@ -1,5 +1,5 @@
 """Column definitions for GEM Tables."""
-from typing import Type, Optional, List, Union
+from typing import Optional
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 

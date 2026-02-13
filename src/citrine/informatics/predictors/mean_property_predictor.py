@@ -1,4 +1,4 @@
-from typing import List, Mapping, Optional, Union
+from typing import Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties

@@ -1,4 +1,3 @@
-from typing import List, Union
 from uuid import UUID
 
 from citrine._session import Session

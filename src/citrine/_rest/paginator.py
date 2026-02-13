@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Iterator
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Iterator
 from uuid import uuid4
 
 ResourceType = TypeVar('ResourceType')

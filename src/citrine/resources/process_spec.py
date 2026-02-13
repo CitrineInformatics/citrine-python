@@ -1,5 +1,5 @@
 """Resources that represent process spec objects."""
-from typing import Optional, Dict, List, Type, Union, Iterator
+from typing import Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource

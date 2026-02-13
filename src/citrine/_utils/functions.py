@@ -1,7 +1,7 @@
 from abc import ABCMeta
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Optional, Sequence
 from urllib.parse import quote, urlencode, urlparse
 from uuid import UUID
 from warnings import warn

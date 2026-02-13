@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of teams."""
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity

@@ -1,6 +1,5 @@
 from logging import getLogger
 from math import isclose
-from typing import Type, Union
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

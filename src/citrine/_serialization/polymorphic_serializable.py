@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Generic, TypeVar, Type
+from typing import Generic, TypeVar
 
 from citrine._serialization.serializable import Serializable
 

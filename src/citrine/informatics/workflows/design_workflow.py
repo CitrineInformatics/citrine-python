@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import Resource

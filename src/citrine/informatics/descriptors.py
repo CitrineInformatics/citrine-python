@@ -1,5 +1,4 @@
 """Tools for working with Descriptors."""
-from typing import Type, Set, Union
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 

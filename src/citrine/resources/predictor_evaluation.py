@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Iterable, Iterator, List, Optional, Union
+from typing import Iterable, Iterator, List, Optional
 from uuid import UUID
 
 from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation, \

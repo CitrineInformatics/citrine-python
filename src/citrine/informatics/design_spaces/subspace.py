@@ -1,5 +1,3 @@
-from typing import Type
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.design_spaces.design_space import DesignSpace

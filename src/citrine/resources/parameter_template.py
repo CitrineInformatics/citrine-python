@@ -1,5 +1,5 @@
 """Resources that represent parameter templates."""
-from typing import List, Dict, Optional, Type
+from typing import Optional
 
 from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection

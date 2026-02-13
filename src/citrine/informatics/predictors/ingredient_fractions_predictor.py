@@ -1,4 +1,3 @@
-from typing import Set
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties

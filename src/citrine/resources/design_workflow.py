@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Callable, Union, Iterable, Optional, Tuple
+from typing import Callable, Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection

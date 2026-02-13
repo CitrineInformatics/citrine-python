@@ -1,4 +1,4 @@
-from typing import List, Optional, Set
+from typing import Optional
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 

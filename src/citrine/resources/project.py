@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of projects."""
 from functools import partial
-from typing import Optional, Dict, List, Union, Iterable, Iterator
+from typing import Optional, Iterable, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -398,7 +398,7 @@ class ProjectCollection(Collection[Project]):
         """
         return self._list_base(per_page=per_page, archived=True)
 
-    def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
+    def search_all(self, search_params: Optional[dict]) -> Iterable[dict]:
         """
         Search across all projects in a domain.
 

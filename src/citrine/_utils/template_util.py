@@ -8,7 +8,6 @@ from gemd.entity.object import (
 )
 from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.value.base_value import BaseValue
-from typing import Mapping, List
 from gemd.entity.attribute import PropertyAndConditions
 
 

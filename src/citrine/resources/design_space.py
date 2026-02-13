@@ -1,6 +1,6 @@
 """Resources that represent collections of design spaces."""
 from functools import partial
-from typing import Iterable, Optional, Union
+from typing import Iterable, Optional
 from uuid import UUID
 
 

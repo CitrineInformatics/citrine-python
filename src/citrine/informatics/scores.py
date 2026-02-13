@@ -1,5 +1,5 @@
 """Tools for working with Scores."""
-from typing import List, Optional
+from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

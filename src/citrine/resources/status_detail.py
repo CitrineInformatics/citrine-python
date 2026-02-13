@@ -1,4 +1,4 @@
-from typing import TypeVar, Union
+from typing import TypeVar
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties

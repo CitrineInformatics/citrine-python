@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Optional
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from gemd.enumeration.base_enumeration import BaseEnumeration

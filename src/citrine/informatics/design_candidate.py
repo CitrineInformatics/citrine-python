@@ -1,4 +1,4 @@
-from typing import Type, Optional
+from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

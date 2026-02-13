@@ -1,6 +1,6 @@
 """Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
 from abc import ABC
-from typing import Dict, Union, Optional, Iterator, List, TypeVar
+from typing import Optional, Iterator, TypeVar
 from uuid import uuid4
 
 from gemd.json import GEMDJson

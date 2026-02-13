@@ -1,5 +1,4 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
-from typing import List, Type
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

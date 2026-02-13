@@ -1,5 +1,4 @@
 """Record to hold branch data version update information."""
-from typing import List
 
 from citrine._rest.resource import PredictorRef, Resource
 from citrine._serialization import properties as properties

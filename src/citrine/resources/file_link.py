@@ -3,7 +3,7 @@ import mimetypes
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
+from typing import Optional, Iterable, Sequence
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID

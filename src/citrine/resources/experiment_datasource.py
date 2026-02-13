@@ -2,7 +2,7 @@ import csv
 import json
 from functools import partial
 from io import StringIO
-from typing import Dict, Iterator, Optional, Union
+from typing import Iterator, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection

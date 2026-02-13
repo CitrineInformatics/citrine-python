@@ -1,6 +1,6 @@
 import json
 from logging import getLogger
-from typing import Union, Iterable, Optional, Any, Tuple
+from typing import Iterable, Optional, Any
 
 import requests
 

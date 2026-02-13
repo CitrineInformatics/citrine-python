@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from warnings import warn
 
 from citrine._rest.resource import Resource

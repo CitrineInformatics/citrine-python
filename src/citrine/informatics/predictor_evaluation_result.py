@@ -1,4 +1,3 @@
-from typing import Type, Set
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

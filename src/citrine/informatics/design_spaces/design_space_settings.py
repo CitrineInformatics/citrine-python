@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration

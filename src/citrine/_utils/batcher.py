@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import List, Iterable
+from typing import Iterable
 
 from citrine.resources.data_concepts import DataConcepts
 

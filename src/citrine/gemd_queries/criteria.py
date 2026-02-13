@@ -1,5 +1,4 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
-from typing import List, Type
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 

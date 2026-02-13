@@ -1,6 +1,6 @@
 """Collection class for generic GEMD objects and templates."""
 import re
-from typing import Type, Union, List, Tuple, Iterable
+from typing import Iterable
 from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
