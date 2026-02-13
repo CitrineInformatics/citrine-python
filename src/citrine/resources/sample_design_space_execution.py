@@ -74,7 +74,7 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Sample Design Space Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Sample Design Space Executions cannot be deleted"

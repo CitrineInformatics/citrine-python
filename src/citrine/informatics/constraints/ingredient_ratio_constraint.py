@@ -29,9 +29,9 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         multiplier for an ingredient in the numerator of the ratio
     label: Optional[tuple[str, float]]
         multiplier for a label in the numerator of the ratio
-    basis_ingredients: Optional[Union[list[str], dict[str, float]]]
+    basis_ingredients: Optional[list[str] | dict[str | float]]
         the ingredients which should appear in the denominator of the ratio
-    basis_labels: Optional[Union[list[str], dict[str, float]]]
+    basis_labels: Optional[list[str] | dict[str | float]]
         the labels which should appear in the denominator of the ratio
 
     """

@@ -16,14 +16,14 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, *, predictor: Union[GraphPredictor, PredictorNode],
+    def from_predictor_responses(self, *, predictor: GraphPredictor | PredictorNode,
                                  inputs: list[Descriptor]) -> list[Descriptor]:
         """
         Get responses for a predictor, given an input space.
 
         Parameters
         ----------
-        predictor : Union[Predictor, PredictorNode]
+        predictor : Predictor | PredictorNode
             Either a single predictor node or full predictor
              whose available responses are to be computed.
         inputs : list[Descriptor]

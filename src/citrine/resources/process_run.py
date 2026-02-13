@@ -92,14 +92,14 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         return ProcessRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                     uid: UUID | str | LinkByUID | GEMDProcessSpec
                      ) -> Iterator[ProcessRun]:
         """
         Get the process runs using the specified process spec.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+        uid: UUID | str | LinkByUID | GEMDProcessSpec
             A representation of the process spec whose process run usages are to be located.
 
         Returns

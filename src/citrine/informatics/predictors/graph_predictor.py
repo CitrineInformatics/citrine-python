@@ -29,7 +29,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         name of the configuration
     description: str
         the description of the predictor
-    predictors: list[Union[UUID, PredictorNode]],
+    predictors: list[UUID | PredictorNode],
         the list of individual predictors to use in the graph
     training_data: Optional[list[DataSource]]
         Optional sources of training data shared by all predictors in the graph.

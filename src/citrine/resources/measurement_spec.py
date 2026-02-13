@@ -96,14 +96,14 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         return MeasurementSpec
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
+                         uid: UUID | str | LinkByUID | GEMDMeasurementTemplate
                          ) -> Iterator[MeasurementSpec]:
         """
         Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
+        uid: UUID | str | LinkByUID | GEMDMeasurementTemplate
             A representation of of the measurement template whose measurement spec usages are
             to be located.
 

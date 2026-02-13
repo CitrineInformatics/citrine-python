@@ -22,7 +22,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         the UUID corresponding to the design space to use
     predictor_id: Optional[UUID]
         the UUID corresponding to the predictor to use
-    predictor_version: Optional[Union[int, str]]
+    predictor_version: Optional[int | str]
         the version of the predictor to use
     description: Optional[str]
         a description of the workflow
@@ -51,7 +51,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                  *,
                  design_space_id: Optional[UUID] = None,
                  predictor_id: Optional[UUID] = None,
-                 predictor_version: Optional[Union[int, str]] = None,
+                 predictor_version: Optional[int | str] = None,
                  data_source: Optional[DataSource] = None,
                  description: Optional[str] = None):
         self.name = name

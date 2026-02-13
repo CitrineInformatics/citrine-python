@@ -106,8 +106,8 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
 
     def list(self, *,
              per_page: int = 100,
-             branch_version_id: Optional[Union[UUID, str]] = None,
-             version: Optional[Union[int, str]] = None) -> Iterator[ExperimentDataSource]:
+             branch_version_id: Optional[UUID | str] = None,
+             version: Optional[int | str] = None) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
 
         Parameters
@@ -118,7 +118,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             is specified it limits the maximum number of elements in the response.
         branch_version_id: UUID, optional
             Filter the list by the branch version ID.
-        version: Union[int, str], optional
+        version: int | str, optional
             Filter the list by the data source version. Also accepts "latest".
 
         Returns
@@ -138,7 +138,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def read(self, datasource: Union[ExperimentDataSource, UUID, str]):
+    def read(self, datasource: ExperimentDataSource | UUID | str):
         """Reads the provided experiment data source into a CSV.
 
         If a UUID or str is provided, it's first retrieved from the platform.

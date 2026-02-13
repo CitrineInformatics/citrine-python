@@ -9,10 +9,10 @@ class Pageable():
     _api_version: str = "v1"
 
     def _get_path(self,
-                  uid: Optional[Union[UUID, str]] = None,
+                  uid: Optional[UUID | str] = None,
                   *,
                   ignore_dataset: bool = False,
-                  action: Union[str, Sequence[str]] = [],
+                  action: str | Sequence[str] = [],
                   query_terms: dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id."""

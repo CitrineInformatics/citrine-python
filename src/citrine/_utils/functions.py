@@ -118,7 +118,7 @@ def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
         return url
 
 
-def write_file_locally(content, local_path: Union[str, Path]):
+def write_file_locally(content, local_path: str | Path):
     """Take content from remote and ensure path exists."""
     if isinstance(local_path, str):
         if len(os.path.split(local_path)[-1]) == 0:
@@ -297,8 +297,8 @@ def format_escaped_url(
 
 def resource_path(*,
                   path_template: str,
-                  uid: Optional[Union[UUID, str]] = None,
-                  action: Union[str, Sequence[str]] = [],
+                  uid: Optional[UUID | str] = None,
+                  action: str | Sequence[str] = [],
                   query_terms: dict[str, str] = {},
                   **kwargs
                   ) -> str:

@@ -86,16 +86,16 @@ class ProcessTemplate(
                  name: str,
                  *,
                  uids: Optional[dict[str, str]] = None,
-                 conditions: Optional[Sequence[Union[ConditionTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ConditionTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 parameters: Optional[Sequence[Union[ParameterTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ParameterTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
+                 conditions: Optional[Sequence[ConditionTemplate
+                                               | LinkByUID
+                                               | Sequence[ConditionTemplate | LinkByUID
+                                                          | Optional[BaseBounds]]
+                                               ]] = None,
+                 parameters: Optional[Sequence[ParameterTemplate
+                                               | LinkByUID
+                                               | Sequence[ParameterTemplate | LinkByUID
+                                                          | Optional[BaseBounds]]
+                                               ]] = None,
                  allowed_labels: Optional[list[str]] = None,
                  allowed_names: Optional[list[str]] = None,
                  description: Optional[str] = None,

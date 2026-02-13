@@ -65,20 +65,20 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def archive(self, uid: Union[UUID, str]) -> AnalysisWorkflow:
+    def archive(self, uid: UUID | str) -> AnalysisWorkflow:
         """Archive an analysis workflow, hiding it from default listings."""
         url = self._get_path(uid=uid, action="archive")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def restore(self, uid: Union[UUID, str]) -> AnalysisWorkflow:
+    def restore(self, uid: UUID | str) -> AnalysisWorkflow:
         """Restore an analysis workflow, showing it in default listings."""
         url = self._get_path(uid=uid, action="restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
     def update(self,
-               uid: Union[UUID, str],
+               uid: UUID | str,
                *,
                name: Optional[str] = None,
                description: Optional[str] = None) -> AnalysisWorkflow:
@@ -86,12 +86,12 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
         aw_update = AnalysisWorkflowUpdatePayload(uid=uid, name=name, description=description)
         return super().update(aw_update)
 
-    def rebuild(self, uid: Union[UUID, str]) -> AnalysisWorkflow:
+    def rebuild(self, uid: UUID | str) -> AnalysisWorkflow:
         """Rebuild the data source underlying the analysis workflow."""
         url = self._get_path(uid=uid, action=("query", "rerun"))
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Analysis workflows cannot be deleted at this time."""
         raise NotImplementedError("Deleting Analysis Workflows is not currently supported.")

@@ -10,6 +10,12 @@ from citrine.informatics.executions.sample_design_space_execution import SampleD
 from citrine.informatics.executions import PredictorEvaluation
 
 
+ExecutionType = PredictorEvaluation \
+    | DesignExecution \
+    | GenerativeDesignExecution \
+    | SampleDesignSpaceExecution
+
+
 class ConditionTimeoutError(RuntimeError):
     """Error that is raised when timeout is reached but the checked condition is still False."""
 
@@ -129,34 +135,18 @@ def wait_while_validating(
 
 def wait_while_executing(
     *,
-    collection: Union[
-        Collection[PredictorEvaluation],
-        Collection[DesignExecution],
-        Collection[GenerativeDesignExecution],
-        Collection[SampleDesignSpaceExecution]
-    ],
-    execution: Union[
-        PredictorEvaluation,
-        DesignExecution,
-        GenerativeDesignExecution,
-        SampleDesignSpaceExecution
-    ],
+    collection: Collection[ExecutionType],
+    execution: ExecutionType,
     print_status_info: bool = False,
     timeout: float = 1800.0,
-    interval: float = 3.0,
-) -> Union[
-        PredictorEvaluation,
-        DesignExecution,
-        GenerativeDesignExecution,
-        SampleDesignSpaceExecution,
-]:
+    interval: float = 3.0
+) -> ExecutionType:
     """
     Wait until execution is finished.
 
     Parameters
     ----------
-    execution : Union[PredictorEvaluation, DesignExecution, GenerativeDesignExecution,
-                      SampleDesignSpaceExecution]
+    execution : ExecutionType
         an execution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
@@ -164,16 +154,11 @@ def wait_while_executing(
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
-    collection : Union[Collection[PredictorEvaluationExecution],
-                       Collection[DesignExecution],
-                       Collection[GenerativeDesignExecution],
-                       Collection[SampleDesignSpaceExecution]]
-        Collection containing executions
+    collection : Collection[ExecutionType]
 
     Returns
     -------
-    Union[PredictorEvaluationExecution, DesignExecution, GenerativeDesignExecution,
-          SampleDesignSpaceExecution]
+    ExectutionType
         the updated execution after it has finished executing
 
 

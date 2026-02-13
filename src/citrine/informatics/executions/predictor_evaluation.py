@@ -32,8 +32,8 @@ class PredictorEvaluationRequest(Serializable['EvaluatorsPayload']):
     def __init__(self,
                  *,
                  evaluators: list[PredictorEvaluator],
-                 predictor_id: Union[UUID, str],
-                 predictor_version: Optional[Union[int, str]] = None):
+                 predictor_id: UUID | str,
+                 predictor_version: Optional[int | str] = None):
         self.evaluators = evaluators
         self.predictor = PredictorRef(predictor_id, predictor_version)
 

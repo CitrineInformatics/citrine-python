@@ -122,14 +122,14 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return IngredientRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+                     uid: UUID | str | LinkByUID | GEMDIngredientSpec
                      ) -> Iterator[IngredientRun]:
         """
         Get the ingredient runs using the specified ingredient spec.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+        uid: UUID | str | LinkByUID | GEMDIngredientSpec
             A representation of the ingredient spec whose ingredient run usages are to be located.
 
         Returns
@@ -141,14 +141,14 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation(relation='ingredient-specs', uid=uid)
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+                        uid: UUID | str | LinkByUID | GEMDProcessRun
                         ) -> Iterator[IngredientRun]:
         """
         Get ingredients to a process.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+        uid: UUID | str | LinkByUID | GEMDProcessRun
             A representation of the process whose ingredients are to be located.
 
         Returns
@@ -160,14 +160,14 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation(relation='process-runs', uid=uid)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+                         uid: UUID | str | LinkByUID | GEMDMaterialRun
                          ) -> Iterator[IngredientRun]:
         """
         Get ingredients using the specified material.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+        uid: UUID | str | LinkByUID | GEMDMaterialRun
             A representation of the material whose ingredient run usages are to be located.
 
         Returns

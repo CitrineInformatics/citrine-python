@@ -100,6 +100,6 @@ class PredictorRef(Serializable['PredictorRef']):
         'predictor_version'
     )
 
-    def __init__(self, uid: Union[UUID, str], version: Optional[Union[int, str]] = None):
+    def __init__(self, uid: UUID | str, version: Optional[int | str] = None):
         self.uid = uid
         self.version = version

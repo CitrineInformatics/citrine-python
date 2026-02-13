@@ -69,7 +69,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Generative Design Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Generative Design Executions cannot be deleted"

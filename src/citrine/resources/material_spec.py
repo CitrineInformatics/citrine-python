@@ -108,14 +108,14 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         return MaterialSpec
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+                         uid: UUID | str | LinkByUID | GEMDMaterialTemplate
                          ) -> Iterator[MaterialSpec]:
         """
         Get the material specs using the specified material template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+        uid: UUID | str | LinkByUID | GEMDMaterialTemplate
             A representation of the material template whose material spec usages are to be located.
 
         Returns
@@ -127,14 +127,14 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         return self._get_relation('material-templates', uid=uid)
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                       uid: UUID | str | LinkByUID | GEMDProcessSpec
                        ) -> Optional[MaterialSpec]:
         """
         Get output material of a process.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+        uid: UUID | str | LinkByUID | GEMDProcessSpec
             A representation of the process whose output is to be located.
 
         Returns

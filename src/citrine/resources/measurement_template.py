@@ -101,21 +101,21 @@ class MeasurementTemplate(
                  name: str,
                  *,
                  uids: Optional[dict[str, str]] = None,
-                 properties: Optional[Sequence[Union[PropertyTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 conditions: Optional[Sequence[Union[ConditionTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ConditionTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 parameters: Optional[Sequence[Union[ParameterTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ParameterTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
+                 properties: Optional[Sequence[PropertyTemplate
+                                               | LinkByUID
+                                               | Sequence[PropertyTemplate | LinkByUID
+                                                          | BaseBounds]
+                                               ]] = None,
+                 conditions: Optional[Sequence[ConditionTemplate
+                                               | LinkByUID
+                                               | Sequence[ConditionTemplate | LinkByUID
+                                                          | Optional[BaseBounds]]
+                                               ]] = None,
+                 parameters: Optional[Sequence[ParameterTemplate
+                                               | LinkByUID
+                                               | Sequence[ParameterTemplate | LinkByUID
+                                                          | Optional[BaseBounds]]
+                                               ]] = None,
                  description: Optional[str] = None,
                  tags: Optional[list[str]] = None):
         if uids is None:

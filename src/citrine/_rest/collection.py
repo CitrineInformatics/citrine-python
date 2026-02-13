@@ -29,10 +29,10 @@ class Collection(Generic[ResourceType], Pageable):
     _api_version: str = "v1"
 
     def _get_path(self,
-                  uid: Optional[Union[UUID, str]] = None,
+                  uid: Optional[UUID | str] = None,
                   *,
                   ignore_dataset: bool = False,
-                  action: Union[str, Sequence[str]] = [],
+                  action: str | Sequence[str] = [],
                   query_terms: dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
@@ -44,7 +44,7 @@ class Collection(Generic[ResourceType], Pageable):
     def build(self, data: dict):
         """Build an individual element of the collection."""
 
-    def get(self, uid: Union[UUID, str]) -> ResourceType:
+    def get(self, uid: UUID | str) -> ResourceType:
         """Get a particular element of the collection."""
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
@@ -95,7 +95,7 @@ class Collection(Generic[ResourceType], Pageable):
         data = updated[self._individual_key] if self._individual_key else updated
         return self.build(data)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Delete a particular element of the collection."""
         url = self._get_path(uid)
         data = self.session.delete_resource(url, version=self._api_version)

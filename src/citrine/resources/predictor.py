@@ -84,8 +84,8 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         self.session: Session = session
 
     def _construct_path(self,
-                        uid: Union[UUID, str],
-                        version: Optional[Union[int, str]] = None,
+                        uid: UUID | str,
+                        version: Optional[int | str] = None,
                         action: str = None) -> str:
         path = self._path_template.format(project_id=self.project_id, uid=str(uid))
         if version is not None:
@@ -99,7 +99,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
             path += f"/{action}" if action else ""
         return path
 
-    def _page_fetcher(self, *, uid: Union[UUID, str], **additional_params):
+    def _page_fetcher(self, *, uid: UUID | str, **additional_params):
         fetcher_params = {
             "path": self._construct_path(uid),
             "additional_params": additional_params
@@ -114,18 +114,18 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         return predictor
 
     def get(self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+            version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         path = self._construct_path(uid, version)
         entity = self.session.get_resource(path, version=self._api_version)
         return self.build(entity)
 
     def get_featurized_training_data(
             self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str] = MOST_RECENT_VER
+            version: int | str = MOST_RECENT_VER
     ) -> list[HierarchicalDesignMaterial]:
         version_path = self._construct_path(uid, version)
         full_path = f"{version_path}/featurized-training-data"
@@ -133,7 +133,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         return [HierarchicalDesignMaterial.build(x) for x in payload]
 
     def list(self,
-             uid: Union[UUID, str],
+             uid: UUID | str,
              *,
              per_page: int = 100) -> Iterable[GraphPredictor]:
         """List non-archived versions of the given predictor."""
@@ -143,7 +143,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
                                         per_page=per_page)
 
     def list_archived(self,
-                      uid: Union[UUID, str],
+                      uid: UUID | str,
                       *,
                       per_page: int = 20) -> Iterable[GraphPredictor]:
         """List archived versions of the given predictor."""
@@ -153,41 +153,41 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
                                         per_page=per_page)
 
     def archive(self,
-                uid: Union[UUID, str],
+                uid: UUID | str,
                 *,
-                version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+                version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         url = self._construct_path(uid, version, "archive")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
     def restore(self,
-                uid: Union[UUID, str],
+                uid: UUID | str,
                 *,
-                version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+                version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         url = self._construct_path(uid, version, "restore")
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
     def is_stale(self,
-                 uid: Union[UUID, str],
+                 uid: UUID | str,
                  *,
-                 version: Union[int, str] = MOST_RECENT_VER) -> bool:
+                 version: int | str = MOST_RECENT_VER) -> bool:
         path = self._construct_path(uid, version, "is-stale")
         response = self.session.get_resource(path, version=self._api_version)
         return response["is_stale"]
 
     def retrain_stale(self,
-                      uid: Union[UUID, str],
+                      uid: UUID | str,
                       *,
-                      version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+                      version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         path = self._construct_path(uid, version, "retrain-stale")
         entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
     def rename(self,
-               uid: Union[UUID, str],
+               uid: UUID | str,
                *,
-               version: Union[int, str],
+               version: int | str,
                name: Optional[str] = None,
                description: Optional[str] = None
                ) -> GraphPredictor:
@@ -196,7 +196,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         entity = self.session.put_resource(path, json, version=self._api_version)
         return self.build(entity)
 
-    def delete(self, uid: Union[UUID, str], *, version: Union[int, str] = MOST_RECENT_VER):
+    def delete(self, uid: UUID | str, *, version: int | str = MOST_RECENT_VER):
         """Predictor versions cannot be deleted at this time."""
         msg = "Predictor versions cannot be deleted. Use 'archive_version' instead."
         raise NotImplementedError(msg)
@@ -231,9 +231,9 @@ class PredictorCollection(Collection[GraphPredictor]):
         return predictor
 
     def get(self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str] = MOST_RECENT_VER) -> GraphPredictor:
+            version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         """Get a predictor by ID and (optionally) version.
 
         If version is omitted, the most recent version will be retrieved.
@@ -244,9 +244,9 @@ class PredictorCollection(Collection[GraphPredictor]):
 
     def get_featurized_training_data(
             self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str] = MOST_RECENT_VER
+            version: int | str = MOST_RECENT_VER
     ) -> list[HierarchicalDesignMaterial]:
         """Retrieve a list of featurized materials for a trained predictor.
 
@@ -298,7 +298,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         else:
             return self.train(updated_predictor.uid)
 
-    def train(self, uid: Union[UUID, str]) -> GraphPredictor:
+    def train(self, uid: UUID | str) -> GraphPredictor:
         """Train a predictor.
 
         If the predictor is not a draft, a new version will be created which is a copy of the
@@ -312,57 +312,57 @@ class PredictorCollection(Collection[GraphPredictor]):
 
     def archive_version(
             self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str]
+            version: int | str
     ) -> GraphPredictor:
         """Archive a predictor version."""
         return self._versions_collection.archive(uid, version=version)
 
     def restore_version(
             self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Union[int, str]
+            version: int | str
     ) -> GraphPredictor:
         """Restore a predictor version."""
         return self._versions_collection.restore(uid, version=version)
 
-    def archive_root(self, uid: Union[UUID, str]):
+    def archive_root(self, uid: UUID | str):
         """Archive a root predictor.
 
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the predictor to archive.
 
         """
         path = self._get_path(uid=uid, action="archive")
         self.session.put_resource(path, {}, version=self._api_version)
 
-    def restore_root(self, uid: Union[UUID, str]):
+    def restore_root(self, uid: UUID | str):
         """Restore an archived root predictor.
 
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the predictor to restore.
 
         """
         path = self._get_path(uid, action="restore")
         self.session.put_resource(path, {}, version=self._api_version)
 
-    def root_is_archived(self, uid: Union[UUID, str]) -> bool:
+    def root_is_archived(self, uid: UUID | str) -> bool:
         """Determine if the predictor root is archived.
 
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the predictor to check.
         """
         uid = str(uid)
         return any(uid == str(archived_pred.uid) for archived_pred in self.list_archived())
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         """[UNSUPPORTED] Use archive_root or archive_version instead."""
         raise NotImplementedError("The archive() method is no longer supported. You most likely "
                                   "want archive_root(), or possibly archive_version().")
 
-    def restore(self, uid: Union[UUID, str]):
+    def restore(self, uid: UUID | str):
         """[UNSUPPORTED] Use restore_root or restore_version instead."""
         raise NotImplementedError("The restore() method is no longer supported. You most likely "
                                   "want restore_root(), or possibly restore_version().")
@@ -392,20 +392,20 @@ class PredictorCollection(Collection[GraphPredictor]):
         return self._list_base(per_page=per_page, archived=True)
 
     def list_versions(self,
-                      uid: Union[UUID, str] = None,
+                      uid: UUID | str = None,
                       *,
                       per_page: int = 100) -> Iterable[GraphPredictor]:
         """List all non-archived versions of the given Predictor."""
         return self._versions_collection.list(uid, per_page=per_page)
 
     def list_archived_versions(self,
-                               uid: Union[UUID, str] = None,
+                               uid: UUID | str = None,
                                *,
                                per_page: int = 20) -> Iterable[GraphPredictor]:
         """List all archived versions of the given Predictor."""
         return self._versions_collection.list_archived(uid, per_page=per_page)
 
-    def check_for_update(self, uid: Union[UUID, str]) -> Optional[GraphPredictor]:
+    def check_for_update(self, uid: UUID | str) -> Optional[GraphPredictor]:
         """
         Check if there are updates available for a predictor.
 
@@ -417,7 +417,7 @@ class PredictorCollection(Collection[GraphPredictor]):
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the predictor to check
 
         Returns
@@ -438,7 +438,7 @@ class PredictorCollection(Collection[GraphPredictor]):
     def create_default(self,
                        *,
                        training_data: DataSource,
-                       pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                       pattern: str | AutoConfigureMode = AutoConfigureMode.INFER,
                        prefer_valid: bool = True) -> GraphPredictor:
         """Create a default predictor for some training data.
 
@@ -486,7 +486,7 @@ class PredictorCollection(Collection[GraphPredictor]):
     def create_default_async(self,
                              *,
                              training_data: DataSource,
-                             pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                             pattern: str | AutoConfigureMode = AutoConfigureMode.INFER,
                              prefer_valid: bool = True) -> AsyncDefaultPredictor:
         """Similar to PredictorCollection.create_default, except asynchronous.
 
@@ -526,7 +526,7 @@ class PredictorCollection(Collection[GraphPredictor]):
 
     @staticmethod
     def _create_default_payload(training_data: DataSource,
-                                pattern: Union[str, AutoConfigureMode] = AutoConfigureMode.INFER,
+                                pattern: str | AutoConfigureMode = AutoConfigureMode.INFER,
                                 prefer_valid: bool = True) -> dict:
         # Continue handling string pattern inputs
         pattern = AutoConfigureMode.from_str(pattern, exception=True)
@@ -534,7 +534,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         return {"data_source": training_data.dump(), "pattern": pattern,
                 "prefer_valid": prefer_valid}
 
-    def get_default_async(self, *, task_id: Union[UUID, str]) -> AsyncDefaultPredictor:
+    def get_default_async(self, *, task_id: UUID | str) -> AsyncDefaultPredictor:
         """Get the current async default predictor generation result.
 
         The status field will indicate if it's INPROGRESS, SUCCEEDED, or FAILED. While INPROGRESS,
@@ -546,7 +546,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         data = self.session.get_resource(path, version=self._api_version)
         return AsyncDefaultPredictor.build(data)
 
-    def is_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> bool:
+    def is_stale(self, uid: UUID | str, *, version: int | str) -> bool:
         """Returns True if a predictor is stale, False otherwise.
 
         A predictor is stale if it's in the READY state, but the platform cannot load the
@@ -554,7 +554,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         """
         return self._versions_collection.is_stale(uid, version=version)
 
-    def retrain_stale(self, uid: Union[UUID, str], *, version: Union[int, str]) -> GraphPredictor:
+    def retrain_stale(self, uid: UUID | str, *, version: int | str) -> GraphPredictor:
         """Begins retraining a stale predictor.
 
         This can only be used on a stale predictor, which is when it's in the READY state, but the
@@ -564,9 +564,9 @@ class PredictorCollection(Collection[GraphPredictor]):
         return self._versions_collection.retrain_stale(uid, version=version)
 
     def rename(self,
-               uid: Union[UUID, str],
+               uid: UUID | str,
                *,
-               version: Union[int, str],
+               version: int | str,
                name: Optional[str] = None,
                description: Optional[str] = None) -> GraphPredictor:
         """Rename an existing predictor.
@@ -578,7 +578,7 @@ class PredictorCollection(Collection[GraphPredictor]):
             uid, version=version, name=name, description=description
         )
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Predictors cannot be deleted at this time."""
         msg = "Predictors cannot be deleted. Use 'archive_version' or 'archive_root' instead."
         raise NotImplementedError(msg)

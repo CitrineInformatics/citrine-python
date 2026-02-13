@@ -32,12 +32,12 @@ class ChemicalDisplayFormat(BaseEnumeration):
     INCHI = "inchi"
 
 
-def _make_data_source(variable_rep: Union[str, Variable]) -> str:
+def _make_data_source(variable_rep: str | Variable) -> str:
     """Return a string appropriate to use as a data_source.
 
     Parameters
     ----------
-    variable_rep: Union[str, Variable]
+    variable_rep: str | Variable
         Either the name of the variable or the variable itself
 
     """
@@ -86,7 +86,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     target_units: Optional[str]
         units to convert the real variable into. If not specified:
@@ -102,7 +102,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
     typ = properties.String('type', default="mean_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  target_units: Optional[str] = None):
         self.data_source = _make_data_source(data_source)
         self.target_units = target_units
@@ -113,7 +113,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     target_units: Optional[str]
         units to convert the real variable into. If not specified:
@@ -129,7 +129,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
     typ = properties.String('type', default="std_dev_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  target_units: Optional[str] = None):
         self.data_source = _make_data_source(data_source)
         self.target_units = target_units
@@ -154,7 +154,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     quantile: float
         the quantile to use for the column, defined between 0.0 and 1.0
@@ -173,7 +173,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
     typ = properties.String('type', default="quantile_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  quantile: float,
                  target_units: Optional[str] = None):
         self.data_source = _make_data_source(data_source)
@@ -186,7 +186,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
 
     """
@@ -194,7 +194,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
     data_source = properties.String('data_source')
     typ = properties.String('type', default="original_units_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable]):
+    def __init__(self, *, data_source: str | Variable):
         self.data_source = _make_data_source(data_source)
 
 
@@ -203,7 +203,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
 
     """
@@ -211,7 +211,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_category_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable]):
+    def __init__(self, *, data_source: str | Variable):
         self.data_source = _make_data_source(data_source)
 
 
@@ -220,7 +220,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
 
     """
@@ -228,7 +228,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_probability_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable]):
+    def __init__(self, *, data_source: str | Variable):
         self.data_source = _make_data_source(data_source)
 
 
@@ -241,7 +241,7 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     sort_order: CompositionSortOrder
         order with which to sort the components when generating the flat string
@@ -253,7 +253,7 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
     typ = properties.String('type', default="flat_composition_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  sort_order: CompositionSortOrder):
         self.data_source = _make_data_source(data_source)
         self.sort_order = sort_order
@@ -266,7 +266,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     component_name: str
         name of the component from which to extract the quantity
@@ -281,7 +281,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
     typ = properties.String('type', default="component_quantity_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  component_name: str,
                  normalize: bool = False):
         self.data_source = _make_data_source(data_source)
@@ -296,7 +296,7 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     n: int
         index of the component name to extract, starting with 1 for the biggest
@@ -308,7 +308,7 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
     typ = properties.String('type', default="biggest_component_name_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  n: int):
         self.data_source = _make_data_source(data_source)
         self.n = n
@@ -321,7 +321,7 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     n: int
         index of the component quantity to extract, starting with 1 for the biggest
@@ -337,7 +337,7 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
                             default="biggest_component_quantity_column", deserializable=False)
 
     def __init__(self, *,
-                 data_source: Union[str, Variable],
+                 data_source: str | Variable,
                  n: int,
                  normalize: bool = False):
         self.data_source = _make_data_source(data_source)
@@ -350,7 +350,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
 
     """
@@ -358,7 +358,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     data_source = properties.String('data_source')
     typ = properties.String('type', default="identity_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable]):
+    def __init__(self, *, data_source: str | Variable):
         self.data_source = _make_data_source(data_source)
 
 
@@ -367,7 +367,7 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     format: ChemicalDisplayFormat
         the format in which to display the molecular structure
@@ -378,7 +378,7 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
     format = properties.Enumeration(ChemicalDisplayFormat, 'format')
     typ = properties.String('type', default="molecular_structure_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable], format: ChemicalDisplayFormat):
+    def __init__(self, *, data_source: str | Variable, format: ChemicalDisplayFormat):
         self.data_source = _make_data_source(data_source)
         self.format = format
 
@@ -392,7 +392,7 @@ class ConcatColumn(Serializable['ConcatColumn'], Column):
 
     Parameters
     ----------
-    data_source: Union[str, Variable]
+    data_source: str | Variable
         name of the variable to use when populating the column
     subcolumn: Column
         a column of the type of the individual values to be concatenated
@@ -403,6 +403,6 @@ class ConcatColumn(Serializable['ConcatColumn'], Column):
     subcolumn = properties.Object(Column, 'subcolumn')
     typ = properties.String('type', default="concat_column", deserializable=False)
 
-    def __init__(self, *, data_source: Union[str, Variable], subcolumn: Column):
+    def __init__(self, *, data_source: str | Variable, subcolumn: Column):
         self.data_source = _make_data_source(data_source)
         self.subcolumn = subcolumn

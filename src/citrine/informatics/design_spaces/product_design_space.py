@@ -1,5 +1,4 @@
 from typing import List, Union, Optional
-from uuid import UUID
 
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
@@ -22,7 +21,7 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpa
         the name of the design space
     description:str
         the description of the design space
-    subspaces: list[Union[UUID, DesignSubspace]]
+    subspaces: list[DesignSubspace]
         the list of subspaces to combine, defined in-line
     dimensions: list[Dimension]
         univariate dimensions that are factors of the design space; can be enumerated or continuous
@@ -44,11 +43,11 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpa
                  name: str,
                  *,
                  description: str,
-                 subspaces: Optional[list[Union[UUID, DesignSubspace]]] = None,
+                 subspaces: Optional[list[DesignSubspace]] = None,
                  dimensions: Optional[list[Dimension]] = None):
         self.name: str = name
         self.description: str = description
-        self.subspaces: list[Union[UUID, DesignSubspace]] = subspaces or []
+        self.subspaces: list[DesignSubspace] = subspaces or []
         self.dimensions: list[Dimension] = dimensions or []
 
     def _post_dump(self, data: dict) -> dict:

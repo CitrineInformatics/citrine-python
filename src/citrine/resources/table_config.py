@@ -160,7 +160,7 @@ class TableConfig(Resource["TableConfig"]):
         return self.config_uid
 
     @uid.setter
-    def uid(self, new_uid: Union[str, UUID]) -> None:
+    def uid(self, new_uid: str | UUID) -> None:
         """Set the unique ID of the table config, independent of its version."""
         self.config_uid = new_uid
 
@@ -210,7 +210,7 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients(self, *,
-                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
+                            process_template: LinkByUID | ProcessTemplate | str | UUID,
                             team: 'Team',
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
@@ -224,7 +224,7 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+        process_template: LinkByUID | ProcessTemplate | str | UUID
             representation of a registered process template
         team: Team
             a team that has access to the process template
@@ -424,7 +424,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.session: Session = session
         self.team_id = team_id
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
+    def get(self, uid: UUID | str, *, version: Optional[int] = None):
         """Get a table config.
 
         If no version is specified, then the most recent version is returned.
@@ -479,7 +479,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def default_for_material(
             self, *,
-            material: Union[MaterialRun, LinkByUID, str, UUID],
+            material: MaterialRun | LinkByUID | str | UUID,
             name: str,
             description: str = None,
             algorithm: Optional[TableBuildAlgorithm] = None
@@ -498,7 +498,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Parameters
         ----------
-        material: Union[MaterialRun, LinkByUid, str, UUID]
+        material: MaterialRun | LinkByUid | str | UUID
             The terminal material whose history is used to construct a table config.
         name: str
             The name for the table config.
@@ -672,6 +672,6 @@ class TableConfigCollection(Collection[TableConfig]):
                              " update()")
         return self.register(table_config)
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Table configs cannot be deleted at this time."""
         raise NotImplementedError("Table configs cannot be deleted at this time.")

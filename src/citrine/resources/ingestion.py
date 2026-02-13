@@ -194,7 +194,7 @@ class Ingestion(Resource['Ingestion']):
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                      project: Optional["Project | UUID | str"] = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
@@ -251,7 +251,7 @@ class Ingestion(Resource['Ingestion']):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                            project: Optional["Project | UUID | str"] = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """
@@ -386,7 +386,7 @@ class FailedIngestion(Ingestion):
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                      project: Optional["Project | UUID | str"] = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
@@ -398,7 +398,7 @@ class FailedIngestion(Ingestion):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                            project: Optional["Project | UUID | str"] = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""

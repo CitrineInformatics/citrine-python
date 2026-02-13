@@ -43,7 +43,7 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
 
     Parameters
     ----------
-    templates: list[Union[UUID, str, LinkByUID, MaterialTemplate]]
+    templates: list[UUID | str | LinkByUID | MaterialTemplate]
         templates of materials to include
     tags: set[str]
         optional list of tags for filtering. If a terminal material doesn't
@@ -55,7 +55,7 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     typ = properties.String('type', default="material_run_by_template", deserializable=False)
     tags = properties.Optional(properties.Set(properties.String), "tags")
 
-    template_type = Union[UUID, str, LinkByUID, MaterialTemplate]
+    template_type = UUID | str | LinkByUID | MaterialTemplate
 
     def __init__(self, *,
                  templates: list[template_type],

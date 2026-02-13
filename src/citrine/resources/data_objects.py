@@ -41,7 +41,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def list_by_attribute_bounds(
             self,
-            attribute_bounds: dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
+            attribute_bounds: dict[AttributeTemplate | LinkByUID, BaseBounds], *,
             forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
@@ -53,8 +53,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
         Parameters
         ----------
-        attribute_bounds: dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
+        attribute_bounds: dict[AttributeTemplate | \
+        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`, \
         :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.

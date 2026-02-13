@@ -257,7 +257,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
         'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
     )
 
-    def __init__(self, key: Union[FormulationKey, str]):
+    def __init__(self, key: FormulationKey | str):
         self.key = FormulationKey.from_str(key, exception=True)
 
     def __eq__(self, other):

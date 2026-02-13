@@ -36,7 +36,7 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
                  *,
                  name: str,
                  description: str,
-                 snapshot_id: Optional[Union[UUID, str]] = None,
+                 snapshot_id: Optional[UUID | str] = None,
                  plots: list[dict] = []):
         self.name = name
         self.description = description
@@ -66,7 +66,7 @@ class AnalysisWorkflowUpdatePayload(Resource['AnalysisWorkflowUpdatePayload']):
     description = properties.Optional(properties.String, 'description')
 
     def __init__(self,
-                 uid: Union[UUID, str],
+                 uid: UUID | str,
                  *,
                  name: Optional[str] = None,
                  description: Optional[str] = None):

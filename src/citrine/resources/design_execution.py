@@ -47,12 +47,12 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a DesignExecution.")
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         """Archive a Design Workflow execution.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the execution to archive
 
         """
@@ -95,7 +95,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Design Workflow Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Design Executions cannot be deleted")

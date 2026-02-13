@@ -110,7 +110,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, id: Union[str, UUID, LinkByUID, MaterialRun]) -> MaterialRun:
+    def get_history(self, id: str | UUID | LinkByUID | MaterialRun) -> MaterialRun:
         """
         Get the history associated with a terminal material.
 
@@ -120,7 +120,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         Parameters
         ----------
-        id: Union[UUID, str, LinkByUID, MaterialRun]
+        id: UUID | str | LinkByUID | MaterialRun
             A representation of the material whose history is to be retrieved
 
         Returns
@@ -162,14 +162,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             return None
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+                       uid: UUID | str | LinkByUID | GEMDProcessRun
                        ) -> Optional[MaterialRun]:
         """
         Get output material of a process.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+        uid: UUID | str | LinkByUID | GEMDProcessRun
             A representation of the process whose output is to be located.
 
         Returns
@@ -184,14 +184,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         )
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+                     uid: UUID | str | LinkByUID | GEMDMaterialSpec
                      ) -> Iterator[MaterialRun]:
         """
         Get the material runs using the specified material spec.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec]
+        uid: UUID | str | LinkByUID | GEMDMaterialSpec
             A representation of the material spec whose material run usages are to be located.
 
         Returns
@@ -203,14 +203,14 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         return self._get_relation('material-specs', uid=uid)
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+                         uid: UUID | str | LinkByUID | GEMDMaterialTemplate
                          ) -> Iterator[MaterialRun]:
         """
         Get the material runs using the specified material template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate]
+        uid: UUID | str | LinkByUID | GEMDMaterialTemplate
             A representation of the material template whose material run usages are to be located.
 
         Returns

@@ -178,7 +178,7 @@ class DataConcepts(
             DataConcepts.collection_dict[collection._individual_key] = collection
 
 
-def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) -> LinkByUID:
+def _make_link_by_uid(gemd_object_rep: str | UUID | BaseEntity | LinkByUID) -> LinkByUID:
     if isinstance(gemd_object_rep, BaseEntity):
         return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
@@ -435,7 +435,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      wait_for_response: bool = True,
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
+                     return_model: bool = False) -> Optional[UUID | ResourceType]:
         """
         Update a particular element of the collection with data validation.
 
@@ -548,13 +548,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> ResourceType:
+    def get(self, uid: UUID | str | LinkByUID | BaseEntity) -> ResourceType:
         """
         Get an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, BaseEntity]
+        uid: UUID | str | LinkByUID | BaseEntity
             A representation of the object (Citrine id, LinkByUID, or the object itself)
 
         Returns
@@ -641,13 +641,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *, dry_run: bool = False):
+    def delete(self, uid: UUID | str | LinkByUID | BaseEntity, *, dry_run: bool = False):
         """
         Delete an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, BaseEntity]
+        uid: UUID | str | LinkByUID | BaseEntity
             A representation of the object (Citrine id, LinkByUID, or the object itself)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
@@ -660,7 +660,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
-    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def _get_relation(self, relation: str, uid: UUID | str | LinkByUID | BaseEntity,
                       forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.

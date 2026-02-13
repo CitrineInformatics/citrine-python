@@ -75,7 +75,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     ----------
     table_id: UUID
         Unique identifier for the GEM Table
-    table_version: Union[str,int]
+    table_version: str | int
         Version number for the GEM Table. The first GEM table built from a configuration
         has version = 1. Strings are cast to ints.
 
@@ -90,9 +90,9 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     def __init__(self,
                  *,
                  table_id: UUID,
-                 table_version: Union[int, str]):
+                 table_version: int | str):
         self.table_id: UUID = table_id
-        self.table_version: Union[int, str] = table_version
+        self.table_version: int | str = table_version
 
     @classmethod
     def _data_source_id_builder(cls, *args) -> DataSource:

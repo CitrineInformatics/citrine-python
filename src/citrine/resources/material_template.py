@@ -63,11 +63,11 @@ class MaterialTemplate(
                  name: str,
                  *,
                  uids: Optional[dict[str, str]] = None,
-                 properties: Optional[Sequence[Union[PropertyTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
+                 properties: Optional[Sequence[PropertyTemplate
+                                               | LinkByUID
+                                               | Sequence[PropertyTemplate | LinkByUID
+                                                          | Optional[BaseBounds]]
+                                               ]] = None,
                  description: Optional[str] = None,
                  tags: Optional[list[str]] = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with

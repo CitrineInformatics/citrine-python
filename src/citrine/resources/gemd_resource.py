@@ -173,7 +173,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def batch_delete(
             self,
-            id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[LinkByUID | UUID | str | BaseEntity],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
@@ -198,7 +198,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Parameters
         ----------
-        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or

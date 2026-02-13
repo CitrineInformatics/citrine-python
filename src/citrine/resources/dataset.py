@@ -266,13 +266,13 @@ class Dataset(Resource['Dataset']):
         """Update a data model object using the appropriate collection."""
         return self.gemd._collection_for(model).update(model)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
+    def delete(self, uid: UUID | str | LinkByUID | DataConcepts, *, dry_run=False):
         """
         Delete a GEMD resource from the appropriate collection.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, DataConcepts]
+        uid: UUID | str | LinkByUID | DataConcepts
             A representation of the resource to delete (Citrine id, LinkByUID, or the object)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
@@ -347,7 +347,7 @@ class Dataset(Resource['Dataset']):
 
     def gemd_batch_delete(
             self,
-            id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[LinkByUID | UUID | str | BaseEntity],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
@@ -372,7 +372,7 @@ class Dataset(Resource['Dataset']):
 
         Parameters
         ----------
-        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or

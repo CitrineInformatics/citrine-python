@@ -96,14 +96,14 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         return ProcessSpec
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
+                         uid: UUID | str | LinkByUID | GEMDProcessTemplate
                          ) -> Iterator[ProcessSpec]:
         """
         Get the process specs using the specified process template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
+        uid: UUID | str | LinkByUID | GEMDProcessTemplate
             A representation of the process template whose process spec usages are to be located.
 
         Returns

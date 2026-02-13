@@ -43,7 +43,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
                    *,
                    per_page: int = 100,
                    predictor_id: Optional[UUID] = None,
-                   predictor_version: Optional[Union[int, str]] = None,
+                   predictor_version: Optional[int | str] = None,
                    archived: Optional[bool] = None
                    ) -> Iterator[PredictorEvaluation]:
         params = {"archived": archived}
@@ -61,7 +61,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
                  *,
                  per_page: int = 100,
                  predictor_id: Optional[UUID] = None,
-                 predictor_version: Optional[Union[int, str]] = None
+                 predictor_version: Optional[int | str] = None
                  ) -> Iterable[PredictorEvaluation]:
         """List all predictor evaluations."""
         return self._list_base(per_page=per_page,
@@ -72,7 +72,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
              *,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None,
-             predictor_version: Optional[Union[int, str]] = None
+             predictor_version: Optional[int | str] = None
              ) -> Iterable[PredictorEvaluation]:
         """List non-archived predictor evaluations."""
         return self._list_base(per_page=per_page,
@@ -84,7 +84,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
                       *,
                       per_page: int = 100,
                       predictor_id: Optional[UUID] = None,
-                      predictor_version: Optional[Union[int, str]] = None
+                      predictor_version: Optional[int | str] = None
                       ) -> Iterable[PredictorEvaluation]:
         """List archived predictor evaluations."""
         return self._list_base(per_page=per_page,
@@ -92,13 +92,13 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
                                predictor_version=predictor_version,
                                archived=True)
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         """Archive an evaluation."""
         url = self._get_path(uid, action="archive")
         result = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(result)
 
-    def restore(self, uid: Union[UUID, str]):
+    def restore(self, uid: UUID | str):
         """Restore an archived evaluation."""
         url = self._get_path(uid, action="restore")
         result = self.session.put_resource(url, {}, version=self._api_version)
@@ -117,8 +117,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
 
     def default(self,
                 *,
-                predictor_id: Union[UUID, str],
-                predictor_version: Union[int, str] = LATEST_PRED_VER
+                predictor_id: UUID | str,
+                predictor_version: int | str = LATEST_PRED_VER
                 ) -> List[PredictorEvaluator]:
         """Retrieve the default evaluators for a stored predictor.
 
@@ -139,7 +139,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         ----------
         predictor_id: UUID
             Unique identifier of the predictor to evaluate
-        predictor_version: Option[Union[int, str]]
+        predictor_version: Option[int | str]
             The version of the predictor to evaluate
 
         Returns
@@ -154,8 +154,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
 
     def trigger(self,
                 *,
-                predictor_id: Union[UUID, str],
-                predictor_version: Union[int, str] = LATEST_PRED_VER,
+                predictor_id: UUID | str,
+                predictor_version: int | str = LATEST_PRED_VER,
                 evaluators: List[PredictorEvaluator]) -> PredictorEvaluation:
         """Evaluate a predictor using the provided evaluators.
 
@@ -163,7 +163,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         ----------
         predictor_id: UUID
             Unique identifier of the predictor to evaluate
-        predictor_version: Option[Union[int, str]]
+        predictor_version: Option[int | str]
             The version of the predictor to evaluate. Defaults to the latest trained version.
         evaluators: list[PredictorEvaluator]
             The evaluators to use to measure predictor performance.
@@ -182,8 +182,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
 
     def trigger_default(self,
                         *,
-                        predictor_id: Union[UUID, str],
-                        predictor_version: Union[int, str] = LATEST_PRED_VER
+                        predictor_id: UUID | str,
+                        predictor_version: int | str = LATEST_PRED_VER
                         ) -> PredictorEvaluation:
         """Evaluate a predictor using the default evaluators.
 
@@ -193,7 +193,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         ----------
         predictor_id: UUID
             Unique identifier of the predictor to evaluate
-        predictor_version: Option[Union[int, str]]
+        predictor_version: Option[int | str]
             The version of the predictor to evaluate
 
         Returns
@@ -214,6 +214,6 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         """Cannot update an evaluation."""
         raise NotImplementedError("Cannot update a PredictorEvaluation.")
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Cannot delete an evaluation."""
         raise NotImplementedError("Cannot delete a PredictorEvaluation.")

@@ -164,7 +164,7 @@ class FileLink(
         self.typ = FileLink.typ
 
     @classmethod
-    def from_path(cls, path: Union[str, Path]) -> "FileLink":
+    def from_path(cls, path: str | Path) -> "FileLink":
         """Construct a FileLink from a local Path."""
         path = Path(path)  # In case it was a string
         return cls(filename=path.name, url=path.expanduser().absolute().as_uri())
@@ -202,11 +202,11 @@ class FileCollection(Collection[FileLink]):
         self.team_id = team_id
 
     def _get_path(self,
-                  uid: Optional[Union[UUID, str]] = None,
+                  uid: Optional[UUID | str] = None,
                   *,
                   ignore_dataset: Optional[bool] = False,
-                  version: Union[str, UUID] = None,
-                  action: Union[str, Sequence[str]] = [],
+                  version: str | UUID = None,
+                  action: str | Sequence[str] = [],
                   query_terms: dict[str, str] = {},) -> str:
         """Build the path for taking an action with a particular file version."""
         if version is not None:
@@ -230,15 +230,15 @@ class FileCollection(Collection[FileLink]):
         return FileLink.build(data)
 
     def get(self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Optional[Union[UUID, str, int]] = None) -> FileLink:
+            version: Optional[UUID | str | int] = None) -> FileLink:
         """
         Retrieve an on-platform FileLink from its filename or file uuid.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             A representation of the FileLink (Citrine id or file name)
         version: Optional[UUID, str, int]
             The version, as a UUID or str(UUID) of the version_id or an int or
@@ -293,7 +293,7 @@ class FileCollection(Collection[FileLink]):
 
         return file
 
-    def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
+    def upload(self, *, file_path: str | Path, dest_name: str = None) -> FileLink:
         """
         Uploads a file to the dataset.
 
@@ -581,7 +581,7 @@ class FileCollection(Collection[FileLink]):
 
         return self.build({"filename": dest_name, "id": file_id, "version": version_id})
 
-    def download(self, *, file_link: Union[str, UUID, FileLink], local_path: Union[str, Path]):
+    def download(self, *, file_link: str | UUID | FileLink, local_path: str | Path):
         """
         Download the file associated with a given FileLink to the local computer.
 
@@ -610,7 +610,7 @@ class FileCollection(Collection[FileLink]):
         response_content = self.read(file_link=file_link)
         write_file_locally(response_content, final_path)
 
-    def read(self, *, file_link: Union[str, UUID, FileLink]) -> bytes:
+    def read(self, *, file_link: str | UUID | FileLink) -> bytes:
         """
         Read the file associated with a given FileLink.
 
@@ -648,7 +648,7 @@ class FileCollection(Collection[FileLink]):
         return download_response.content
 
     def ingest(self,
-               files: Iterable[Union[FileLink, Path, str]],
+               files: Iterable[FileLink | Path | str],
                *,
                upload: bool = False,
                raise_errors: bool = True,
@@ -657,7 +657,7 @@ class FileCollection(Collection[FileLink]):
                delete_templates: bool = True,
                timeout: float = None,
                polling_delay: Optional[float] = None,
-               project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+               project: Optional["Project | UUID | str"] = None,  # noqa: F821
                ) -> "IngestionStatus":  # noqa: F821
         """
         [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
@@ -709,7 +709,7 @@ class FileCollection(Collection[FileLink]):
         if build_table and project is None:
             raise ValueError("Building a table requires a target project.")
 
-        def resolve_with_local(candidate: Union[FileLink, Path, str]) -> FileLink:
+        def resolve_with_local(candidate: FileLink | Path | str) -> FileLink:
             """Resolve Path, str or FileLink to an absolute reference."""
             if upload:
                 if not isinstance(candidate, GEMDFileLink):
@@ -777,7 +777,7 @@ class FileCollection(Collection[FileLink]):
         data = self.session.delete_resource(self._get_path(file_id))
         return Response(body=data)
 
-    def _resolve_file_link(self, identifier: Union[str, UUID, FileLink]) -> FileLink:
+    def _resolve_file_link(self, identifier: str | UUID | FileLink) -> FileLink:
         """Generate the FileLink object referenced by the passed argument."""
         if isinstance(identifier, GEMDFileLink):
             if not isinstance(identifier, FileLink):  # Up-convert type with existing info

@@ -13,7 +13,7 @@ from citrine.resources.data_concepts import _make_link_by_uid
 
 
 def _async_gemd_batch_delete(
-        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
+        id_list: list[LinkByUID | UUID | str | BaseEntity],
         team_id: UUID,
         session: Session,
         dataset_id: Optional[UUID] = None,
@@ -30,7 +30,7 @@ def _async_gemd_batch_delete(
 
     Parameters
     ----------
-    id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
+    id_list: list[LinkByUID | UUID | str | BaseEntity]
         A list of the IDs of data objects to be removed. They can be passed
         as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
         or string is assumed to be a Citrine ID, whereas a LinkByUID or

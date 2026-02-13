@@ -46,8 +46,8 @@ class DesignSpaceSettings(Resource["DesignSpaceSettings"]):
 
     def __init__(self,
                  *,
-                 predictor_id: Union[UUID, str],
-                 predictor_version: Optional[Union[int, str]] = None,
+                 predictor_id: UUID | str,
+                 predictor_version: Optional[int | str] = None,
                  mode: Optional[DefaultDesignSpaceMode] = None,
                  exclude_intermediates: Optional[bool] = None,
                  include_ingredient_fraction_constraints: Optional[bool] = None,

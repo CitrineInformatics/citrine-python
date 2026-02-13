@@ -225,7 +225,7 @@ class Project(Resource['Project']):
             json={'ids': [resource_access["id"]]})
         return True
 
-    def list_members(self) -> Union[list[ProjectMember], list["TeamMember"]]:  # noqa: F821
+    def list_members(self) -> "list[ProjectMember] | list[TeamMember]":  # noqa: F821
         """
         List all of the members in the current project.
 
@@ -291,7 +291,7 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    def get(self, uid: Union[UUID, str]) -> Project:
+    def get(self, uid: UUID | str) -> Project:
         """
         Get a particular project.
 
@@ -514,7 +514,7 @@ class ProjectCollection(Collection[Project]):
         return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
-    def archive(self, uid: Union[UUID, str]) -> Response:
+    def archive(self, uid: UUID | str) -> Response:
         """Archive a project."""
         # Only the team-agnostic project archive is implemented
         if self.team_id is None:
@@ -523,7 +523,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).archive(uid)
 
-    def restore(self, uid: Union[UUID, str]) -> Response:
+    def restore(self, uid: UUID | str) -> Response:
         """Restore an archived project."""
         # Only the team-agnostic project restore is implemented
         if self.team_id is None:
@@ -532,7 +532,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).restore(uid)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """
         Delete a particular project.
 

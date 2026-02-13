@@ -77,7 +77,7 @@ class TeamResourceIDs:
 
     def __init__(self,
                  session: Session,
-                 team_id: Union[str, UUID],
+                 team_id: str | UUID,
                  resource_type: str) -> None:
         self.session = session
         self.team_id = team_id
@@ -190,7 +190,7 @@ class Team(Resource['Team']):
         members = response["users"]
         return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
-    def get_member(self, user_id: Union[str, UUID, User]) -> TeamMember:
+    def get_member(self, user_id: str | UUID | User) -> TeamMember:
         """
         Get a particular member in the current team.
 
@@ -226,7 +226,7 @@ class Team(Resource['Team']):
         me = UserCollection(self.session).me()
         return self.get_member(me)
 
-    def remove_user(self, user_id: Union[str, UUID, User]) -> bool:
+    def remove_user(self, user_id: str | UUID | User) -> bool:
         """
         Remove a User from a Team.
 
@@ -250,7 +250,7 @@ class Team(Resource['Team']):
         return True  # note: only get here if checked_post doesn't raise error
 
     def add_user(self,
-                 user_id: Union[str, UUID, User],
+                 user_id: str | UUID | User,
                  *,
                  actions: Optional[list[TEAM_ACTIONS]] = None) -> bool:
         """
@@ -284,7 +284,7 @@ class Team(Resource['Team']):
         return self.update_user_action(user_id, actions=actions)
 
     def update_user_action(self,
-                           user_id: Union[str, UUID, User],
+                           user_id: str | UUID | User,
                            *,
                            actions: list[TEAM_ACTIONS]) -> bool:
         """
@@ -315,7 +315,7 @@ class Team(Resource['Team']):
     def share(self,
               *,
               resource: Resource,
-              target_team_id: Union[str, UUID, "Team"]) -> bool:
+              target_team_id: "str | UUID | Team") -> bool:
         """
         Share a resource with another team.
 
@@ -325,7 +325,7 @@ class Team(Resource['Team']):
         ----------
         resource: Resource
             The resource owned by this team, which will be shared
-        target_team_id: Union[str, UUID, Team]
+        target_team_id: str | UUID | Team
             The id of the team with which to share the resource
 
         Returns
@@ -346,7 +346,7 @@ class Team(Resource['Team']):
                                   version=self._api_version, json=payload)
         return True
 
-    def un_share(self, *, resource: Resource, target_team_id: Union[str, UUID, "Team"]) -> bool:
+    def un_share(self, *, resource: Resource, target_team_id: "str | UUID | Team") -> bool:
         """
         Revoke the share of a particular resource to a secondary team.
 
@@ -356,7 +356,7 @@ class Team(Resource['Team']):
         ----------
         resource: Resource
             The resource owned by this team, which will be un-shared
-        target_team_id: Union[str, UUID, Team]
+        target_team_id: str | UUID | Team
             The id of the team which should not have access to the resource
 
         Returns
@@ -513,7 +513,7 @@ class Team(Resource['Team']):
         return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
 
     def gemd_batch_delete(self,
-                          id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
+                          id_list: list[LinkByUID | UUID | str | BaseEntity],
                           *,
                           timeout: float = 2 * 60,
                           polling_delay: float = 1.0) -> list[tuple[LinkByUID, ApiError]]:
@@ -530,7 +530,7 @@ class Team(Resource['Team']):
 
         Parameters
         ----------
-        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
