@@ -17,7 +17,7 @@ class Dimension(PolymorphicSerializable['Dimension']):
     """
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             'ContinuousDimension': ContinuousDimension,
@@ -100,6 +100,6 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
 
     def __init__(self,
                  descriptor: Descriptor, *,
-                 values: List[str]):
+                 values: list[str]):
         self.descriptor: Descriptor = descriptor
-        self.values: List[str] = values
+        self.values: list[str] = values

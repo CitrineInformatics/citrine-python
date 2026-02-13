@@ -41,7 +41,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def list_by_attribute_bounds(
             self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
+            attribute_bounds: dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
             forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
@@ -53,7 +53,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
         Parameters
         ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, \
+        attribute_bounds: dict[Union[AttributeTemplate, \
         :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
         :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
@@ -111,7 +111,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
                            model: DataObjectResourceType,
                            object_template: Optional[ObjectTemplateResourceType] = None,
                            ingredient_process_template: Optional[ProcessTemplate] = None)\
-            -> List[ValidationError]:
+            -> list[ValidationError]:
         """
         Validate a data object against its templates.
 
@@ -122,7 +122,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         :param object_template: optional object template to validate against
         :param ingredient_process_template: optional process template to validate ingredient
          against. Ignored unless data object is an IngredientSpec or IngredientRun.
-        :return: List[ValidationError] of validation errors encountered. Empty if successful.
+        :return: list[ValidationError] of validation errors encountered. Empty if successful.
         """
         path = self._get_path(ignore_dataset=True, action="validate-templates")
 

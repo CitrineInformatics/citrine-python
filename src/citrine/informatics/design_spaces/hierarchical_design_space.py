@@ -63,7 +63,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         in the formulation subspace of a different node.
     scope: Optional[str]
         An optional custom scope used to identify the materials produced by this node.
-    attributes: List[Dimension]
+    attributes: list[Dimension]
         Set of dimensions included on materials produced by this node.
     formulation_subspace: Optional[FormulationDesignSpace]
         An optional formulation design space defining the ingredients, labels,
@@ -91,7 +91,7 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             *,
             name: str,
             scope: Optional[str] = None,
-            attributes: Optional[List[Dimension]] = None,
+            attributes: Optional[list[Dimension]] = None,
             formulation_subspace: Optional[FormulationDesignSpace] = None,
             template_link: Optional[TemplateLink] = None,
             display_name: Optional[str] = None
@@ -144,9 +144,9 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
         Description of the design space
     root: MaterialNodeDefinition
         Terminal material node produced by the design space
-    subspaces: List[MaterialNodeDefinition]
+    subspaces: list[MaterialNodeDefinition]
         Sub material nodes produced by the design space
-    data_sources: List[DataSource]
+    data_sources: list[DataSource]
         Data sources used to inject known materials into the hierarchical candidates
 
     """
@@ -170,14 +170,14 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
             *,
             description: str,
             root: MaterialNodeDefinition,
-            subspaces: Optional[List[MaterialNodeDefinition]] = None,
-            data_sources: Optional[List[DataSource]] = None
+            subspaces: Optional[list[MaterialNodeDefinition]] = None,
+            data_sources: Optional[list[DataSource]] = None
     ):
         self.name: str = name
         self.description: str = description
         self.root: MaterialNodeDefinition = root
-        self.subspaces: List[MaterialNodeDefinition] = subspaces or list()
-        self.data_sources: List[DataSource] = data_sources or list()
+        self.subspaces: list[MaterialNodeDefinition] = subspaces or list()
+        self.data_sources: list[DataSource] = data_sources or list()
 
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)

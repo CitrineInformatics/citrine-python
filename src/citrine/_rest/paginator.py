@@ -13,7 +13,7 @@ class Paginator(Generic[ResourceType]):
     """
 
     def paginate(self,
-                 page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
+                 page_fetcher: Callable[[Optional[int], int], tuple[Iterable[dict], str]],
                  collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  per_page: int = 100,
                  search_params: Optional[dict] = None,
@@ -29,7 +29,7 @@ class Paginator(Generic[ResourceType]):
 
         Parameters
         ---------
-        page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]]
+        page_fetcher: Callable[[Optional[int], int], tuple[Iterable[dict], str]]
             Fetches the next page of elements
         collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]]
             Builds each element in the collection into the appropriate resource

@@ -19,7 +19,7 @@ class SinglePrediction(Serializable["SinglePrediction"]):
     material = properties.Object(DesignMaterial, 'material')
 
     def __init__(self, material_id: UUID,
-                 identifiers: List[str],
+                 identifiers: list[str],
                  material: DesignMaterial):
         self.material_id = material_id
         self.identifiers = identifiers

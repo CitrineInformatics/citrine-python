@@ -22,7 +22,7 @@ class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
     """
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "RealValue": RealExperimentValue,
@@ -53,7 +53,7 @@ class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
         ----------
         other: Description
             the Description instance to compare to
-        attrs: List[str]
+        attrs: list[str]
             A list of attribute names to lookup and compare
 
         """
@@ -104,7 +104,7 @@ class MixtureExperimentValue(Serializable['MixtureExperimentValue'], ExperimentV
     value = properties.Mapping(properties.String, properties.Float, 'value')
     typ = properties.String('type', default='MixtureValue', deserializable=False)
 
-    def __init__(self, value: Dict[str, float]):
+    def __init__(self, value: dict[str, float]):
         self.value = value
 
 

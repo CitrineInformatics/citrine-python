@@ -35,17 +35,17 @@ class MeasurementRun(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
         Long-form notes about the measurement run.
-    conditions: List[Condition], optional
+    conditions: list[Condition], optional
         Conditions under which this measurement run occurs.
-    parameters: List[Parameter], optional
+    parameters: list[Parameter], optional
         Parameters of this measurement run.
-    properties: List[Property], optional
+    properties: list[Property], optional
         Properties that are measured during this measurement run.
     spec: MeasurementSpec
         The measurement specification of which this is an instance.
@@ -53,7 +53,7 @@ class MeasurementRun(
         The material run being measured.
     spec: MaterialSpec
         The material specification of which this is an instance.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
     source: PerformedSource, optional
         Information about the person who performed the run and when.
@@ -77,15 +77,15 @@ class MeasurementRun(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 properties: Optional[List[Property]] = None,
-                 parameters: Optional[List[Parameter]] = None,
+                 conditions: Optional[list[Condition]] = None,
+                 properties: Optional[list[Property]] = None,
+                 parameters: Optional[list[Parameter]] = None,
                  spec: Optional[GEMDMeasurementSpec] = None,
                  material: Optional[GEMDMaterialRun] = None,
-                 file_links: Optional[List[FileLink]] = None,
+                 file_links: Optional[list[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
         if uids is None:
             uids = dict()
@@ -108,7 +108,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     _resource = MeasurementRun
 
     @classmethod
-    def get_type(cls) -> Type[MeasurementRun]:
+    def get_type(cls) -> type[MeasurementRun]:
         """Return the resource type in the collection."""
         return MeasurementRun
 

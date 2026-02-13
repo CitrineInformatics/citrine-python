@@ -96,7 +96,7 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
 
     Parameters
     ----------
-    seeds: List[str]
+    seeds: list[str]
         The seeds used to generate the molecules.
     fingerprint_type: FingerprintType
         The fingerprint type used to calculate the fingerprint similarity.
@@ -106,10 +106,10 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
         The number of initial mutations that will be attempted per seed.
         IMPORTANT, the total number of molecules generated will likely be lower than this value.
         Some mutations may be duplicates or may not meet the fingerprint similarity threshold.
-    structure_exclusions: List[StructureExclusion]
+    structure_exclusions: list[StructureExclusion]
         The structure exclusions used to limit molecule mutations.
         If None, no structure exclusions will be used.
-    min_substructure_counts: Dict[str, int]
+    min_substructure_counts: dict[str, int]
         Dictionary for constraining which substructures (represented by SMARTS strings,
         not SMILES) must appear in each mutated molecule, along with integer values
         representing the minimum number of times each substructure must appear in a
@@ -131,16 +131,16 @@ class GenerativeDesignInput(Serializable['GenerativeDesignInput']):
 
     def __init__(
         self, *,
-        seeds: List[str],
+        seeds: list[str],
         fingerprint_type: FingerprintType,
         min_fingerprint_similarity: float,
         mutation_per_seed: int,
-        structure_exclusions: Optional[List[StructureExclusion]] = None,
-        min_substructure_counts: Optional[Dict[str, int]] = None,
+        structure_exclusions: Optional[list[StructureExclusion]] = None,
+        min_substructure_counts: Optional[dict[str, int]] = None,
     ):
-        self.seeds: List[str] = seeds
+        self.seeds: list[str] = seeds
         self.fingerprint_type: FingerprintType = fingerprint_type
         self.min_fingerprint_similarity: float = min_fingerprint_similarity
         self.mutation_per_seed: int = mutation_per_seed
-        self.structure_exclusions: List[StructureExclusion] = structure_exclusions or []
-        self.min_substructure_counts: Dict[str, int] = min_substructure_counts or {}
+        self.structure_exclusions: list[StructureExclusion] = structure_exclusions or []
+        self.min_substructure_counts: dict[str, int] = min_substructure_counts or {}

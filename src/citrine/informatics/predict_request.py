@@ -19,7 +19,7 @@ class PredictRequest(Serializable["PredictRequest"]):
     random_seed = properties.Optional(properties.Integer, 'random_seed')
 
     def __init__(self, material_id: UUID,
-                 identifiers: List[str],
+                 identifiers: list[str],
                  material: DesignMaterial,
                  created_from_id: UUID,
                  *,

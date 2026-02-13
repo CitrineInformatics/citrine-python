@@ -57,7 +57,7 @@ class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], Asynch
     _failed_statuses = ["INVALID", "ERROR"]
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         from .product_design_space import ProductDesignSpace
         from .hierarchical_design_space import HierarchicalDesignSpace

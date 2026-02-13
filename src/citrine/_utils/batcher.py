@@ -11,7 +11,7 @@ class Batcher(ABC):
     """Base class for Data Concepts batching routines."""
 
     @abstractmethod
-    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> list[list[DataConcepts]]:
         """Collect a list of DataConcepts into batches according to some batching algorithm."""
 
     @staticmethod
@@ -28,7 +28,7 @@ class Batcher(ABC):
 class BatchByType(Batcher):
     """Batching by object type."""
 
-    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> list[list[DataConcepts]]:
         """Collect object batches by type, following an order that will satisfy prereqs."""
         batches = list()
         by_type = defaultdict(list)
@@ -58,7 +58,7 @@ class BatchByType(Batcher):
 class BatchByDependency(Batcher):
     """Batching by clusters where nothing references anything outside the cluster."""
 
-    def batch(self, objects: Iterable[DataConcepts], batch_size) -> List[List[DataConcepts]]:
+    def batch(self, objects: Iterable[DataConcepts], batch_size) -> list[list[DataConcepts]]:
         """Collect object batches that are internally consistent for dry_run object tests."""
         # Collect shallow dependences, UID references, and type-based clusters
         depends = dict()

@@ -36,7 +36,7 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
         """Candidate experiment snapshots are not directly instantiated by the user."""
         pass  # pragma: no cover
 
-    def _overrides_json(self) -> Dict[str, str]:
+    def _overrides_json(self) -> dict[str, str]:
         return {name: json.dumps(expt_value.value) for name, expt_value in self.overrides.items()}
 
 

@@ -35,7 +35,7 @@ class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
 
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status_detail',
                                     default=[], serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
@@ -126,7 +126,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
             uid: Union[UUID, str],
             *,
             version: Union[int, str] = MOST_RECENT_VER
-    ) -> List[HierarchicalDesignMaterial]:
+    ) -> list[HierarchicalDesignMaterial]:
         version_path = self._construct_path(uid, version)
         full_path = f"{version_path}/featurized-training-data"
         payload = self.session.get_resource(full_path, version=self._api_version)
@@ -247,7 +247,7 @@ class PredictorCollection(Collection[GraphPredictor]):
             uid: Union[UUID, str],
             *,
             version: Union[int, str] = MOST_RECENT_VER
-    ) -> List[HierarchicalDesignMaterial]:
+    ) -> list[HierarchicalDesignMaterial]:
         """Retrieve a list of featurized materials for a trained predictor.
 
         Featurized materials contain the input variables found in the training data source

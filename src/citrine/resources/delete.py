@@ -13,13 +13,13 @@ from citrine.resources.data_concepts import _make_link_by_uid
 
 
 def _async_gemd_batch_delete(
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
         team_id: UUID,
         session: Session,
         dataset_id: Optional[UUID] = None,
         timeout: float = 2 * 60,
         polling_delay: float = 1.0
-) -> List[Tuple[LinkByUID, ApiError]]:
+) -> list[tuple[LinkByUID, ApiError]]:
     """
     Shared implementation of Async GEMD Batch deletion.
 
@@ -30,7 +30,7 @@ def _async_gemd_batch_delete(
 
     Parameters
     ----------
-    id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+    id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
         A list of the IDs of data objects to be removed. They can be passed
         as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
         or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -56,7 +56,7 @@ def _async_gemd_batch_delete(
 
     Returns
     -------
-    List[Tuple[LinkByUID, ApiError]]
+    list[tuple[LinkByUID, ApiError]]
         A list of (LinkByUID, api_error) for each failure to delete an object.
         Note that this method doesn't raise an exception if an object fails to be
         deleted.
@@ -94,7 +94,7 @@ def _poll_for_async_batch_delete_result(
         job_id: str,
         timeout: float,
         polling_delay: float
-) -> List[Tuple[LinkByUID, ApiError]]:
+) -> list[tuple[LinkByUID, ApiError]]:
     """
     Poll for the result of an asynchronous batch delete (or a deletion of dataset contents).
 
@@ -119,7 +119,7 @@ def _poll_for_async_batch_delete_result(
 
     Returns
     -------
-    List[Tuple[LinkByUID, ApiError]]
+    list[tuple[LinkByUID, ApiError]]
         A list of (LinkByUID, api_error) for each failure to delete an object.
         Note that this method doesn't raise an exception if an object fails to be
         deleted.

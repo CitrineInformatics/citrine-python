@@ -117,7 +117,7 @@ class IngestionException(CitrineException):
     """Optional[UUID]"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
-    """List[IngestionErrorTrace]"""
+    """list[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
@@ -152,7 +152,7 @@ class IngestionStatus(Resource['IngestionStatus']):
     status = properties.Enumeration(IngestionStatusType, "status")
     """IngestionStatusType"""
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
-    """List[IngestionErrorTrace]"""
+    """list[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,

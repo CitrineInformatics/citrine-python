@@ -74,12 +74,12 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
 
     @property
     @abstractmethod
-    def underlying_types(self) -> typing.Union[DeserializedType, typing.Tuple[DeserializedType]]:
+    def underlying_types(self) -> typing.Union[DeserializedType, tuple[DeserializedType]]:
         """Return the python types handled by this property."""
 
     @property
     @abstractmethod
-    def serialized_types(self) -> typing.Union[SerializedType, typing.Tuple[SerializedType]]:
+    def serialized_types(self) -> typing.Union[SerializedType, tuple[SerializedType]]:
         """Return the types used to serialize this property."""
 
     def _error_source(self, base_class: type) -> str:
@@ -241,7 +241,7 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
 
 @lru_cache(maxsize=1024)
 def _get_key_and_base_class(prop: Property, klass: typing.Any) -> \
-        typing.Tuple[typing.Optional[str], typing.Optional[str]]:
+        tuple[typing.Optional[str], typing.Optional[str]]:
     """
     Return the base class and class attribute name for the object and property.
 
@@ -415,7 +415,7 @@ class Datetime(Property[datetime, int]):
 class List(PropertyCollection[list, list]):
 
     def __init__(self,
-                 element_type: typing.Union[Property, typing.Type[Property]],
+                 element_type: typing.Union[Property, type[Property]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -469,7 +469,7 @@ class List(PropertyCollection[list, list]):
 class Set(PropertyCollection[set, typing.Iterable]):
 
     def __init__(self,
-                 element_type: typing.Union[Property, typing.Type[Property]],
+                 element_type: typing.Union[Property, type[Property]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -530,7 +530,7 @@ class Union(Property[typing.Any, typing.Any]):
     """
 
     def __init__(self,
-                 element_types: typing.Sequence[typing.Union[Property, typing.Type[Property]]],
+                 element_types: typing.Sequence[typing.Union[Property, type[Property]]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -547,7 +547,7 @@ class Union(Property[typing.Any, typing.Any]):
                          use_init=use_init)
         if not isinstance(element_types, typing.Iterable):
             raise ValueError("element types must be iterable: {}".format(element_types))
-        self.element_types: typing.List[Property, ...] = \
+        self.element_types: list[Property, ...] = \
             [el if isinstance(el, Property) else el() for el in element_types]
 
     @property
@@ -585,7 +585,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
     """A finite list in which the type of each entry is specified."""
 
     def __init__(self,
-                 element_types: typing.Sequence[typing.Union[Property, typing.Type[Property]]],
+                 element_types: typing.Sequence[typing.Union[Property, type[Property]]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -602,7 +602,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
                          use_init=use_init)
         if not isinstance(element_types, list):
             raise ValueError("element types must be a list: {}".format(element_types))
-        self.element_types: typing.List[Property, ...] = \
+        self.element_types: list[Property, ...] = \
             [el if isinstance(el, Property) else el() for el in element_types]
 
     @property
@@ -665,7 +665,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
 class Enumeration(Property[BaseEnumeration, str]):
 
     def __init__(self,
-                 klass: typing.Type[typing.Any],
+                 klass: type[typing.Any],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -698,7 +698,7 @@ class Enumeration(Property[BaseEnumeration, str]):
 
 
 @lru_cache(maxsize=1024)
-def _fields_map(klass: typing.Type) -> typing.Dict[str, Property]:
+def _fields_map(klass: typing.Type) -> dict[str, Property]:
     """Compute the properties-relevant fields in a given class."""
     return {
         k: v
@@ -710,7 +710,7 @@ def _fields_map(klass: typing.Type) -> typing.Dict[str, Property]:
 class Object(PropertyCollection[typing.Any, dict]):
 
     def __init__(self,
-                 klass: typing.Type[typing.Any],
+                 klass: type[typing.Any],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -727,7 +727,7 @@ class Object(PropertyCollection[typing.Any, dict]):
                          use_init=use_init)
         self.klass = klass
         # We need to use __dict__ here because other access methods will invoke __get__
-        self.fields: typing.Dict[str, Property] = _fields_map(self.klass)
+        self.fields: dict[str, Property] = _fields_map(self.klass)
         self.polymorphic = "get_type" in self.klass.__dict__ and\
                            issubclass(self.klass, PolymorphicSerializable)
 
@@ -836,7 +836,7 @@ class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]
     """
 
     def __init__(self,
-                 klass: typing.Type[typing.Any] = Serializable,
+                 klass: type[typing.Any] = Serializable,
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -893,7 +893,7 @@ class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]
 class Optional(PropertyCollection[typing.Optional[typing.Any], typing.Optional[typing.Any]]):
 
     def __init__(self,
-                 prop: typing.Union[Property, typing.Type[Property]],
+                 prop: typing.Union[Property, type[Property]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,
@@ -959,8 +959,8 @@ class Mapping(PropertyCollection[dict, dict]):
     """
 
     def __init__(self,
-                 keys_type: typing.Union[Property, typing.Type[Property]],
-                 values_type: typing.Union[Property, typing.Type[Property]],
+                 keys_type: typing.Union[Property, type[Property]],
+                 values_type: typing.Union[Property, type[Property]],
                  serialization_path: typing.Optional[str] = None,
                  *,
                  serializable: bool = True,

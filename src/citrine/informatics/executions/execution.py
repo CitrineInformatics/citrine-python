@@ -34,7 +34,7 @@ class Execution(Pageable, AsynchronousObject, ABC):
     status_detail = properties.List(
         properties.Object(StatusDetail), 'status_detail', default=[], serializable=False
     )
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     """:Optional[UUID]: id of the user who created the resource"""
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)

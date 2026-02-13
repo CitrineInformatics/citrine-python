@@ -28,7 +28,7 @@ class ParameterTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -41,9 +41,9 @@ class ParameterTemplate(
                  name: str,
                  *,
                  bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[dict[str, str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 tags: Optional[list[str]] = None):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()
@@ -62,6 +62,6 @@ class ParameterTemplateCollection(AttributeTemplateCollection[ParameterTemplate]
     _resource = ParameterTemplate
 
     @classmethod
-    def get_type(cls) -> Type[ParameterTemplate]:
+    def get_type(cls) -> type[ParameterTemplate]:
         """Return the resource type in the collection."""
         return ParameterTemplate

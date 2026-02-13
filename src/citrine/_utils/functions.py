@@ -281,7 +281,7 @@ def format_escaped_url(
         the `format` template to which the escaped arguments will be bound
     *args : Iterable[str]
         Other arguments
-    **kwargs: Dict[str]
+    **kwargs: dict[str]
         Keyword arguments
 
     Returns
@@ -299,7 +299,7 @@ def resource_path(*,
                   path_template: str,
                   uid: Optional[Union[UUID, str]] = None,
                   action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},
+                  query_terms: dict[str, str] = {},
                   **kwargs
                   ) -> str:
     """Construct a url from a base path and, optionally, id and/or action."""

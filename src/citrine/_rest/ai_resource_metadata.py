@@ -29,4 +29,4 @@ class AIResourceMetadata():
     """:Optional[str]: short description of the resource's status"""
     status_detail = properties.List(properties.Object(StatusDetail), 'status_detail', default=[],
                                     serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""

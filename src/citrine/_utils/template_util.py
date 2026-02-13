@@ -12,7 +12,7 @@ from typing import Mapping, List
 from gemd.entity.attribute import PropertyAndConditions
 
 
-def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValue]]:
+def make_attribute_table(gems: list[DataConcepts]) -> list[dict[str, BaseValue]]:
     """[ALPHA] the current status of make_attribute_table.
 
     Given a list of GEMD Objects, this method returns a list of dictionaries
@@ -31,12 +31,12 @@ def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValu
 
     Parameters
     ----------
-    gems : List[DataConcepts]
+    gems : list[DataConcepts]
         List of GEMD objects whose attributes you would like to compare.
 
     Returns
     -------
-    List[Mapping[str, BaseValue]]
+    list[dict[str, BaseValue]]
         A list of dictionaries where each dictionary represents an object and its attributes.
 
     """

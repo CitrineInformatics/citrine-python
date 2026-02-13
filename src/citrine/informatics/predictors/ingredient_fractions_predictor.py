@@ -19,7 +19,7 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"], Pre
         the description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
-    ingredients: Set[str]
+    ingredients: set[str]
         set of ingredients to featurize.
         If an unknown ingredient is encountered, an error will be thrown.
 
@@ -35,11 +35,11 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"], Pre
                  *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 ingredients: Set[str]):
+                 ingredients: set[str]):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.ingredients: Set[str] = ingredients
+        self.ingredients: set[str] = ingredients
 
     def __str__(self):
         return '<IngredientFractionsPredictor {!r}>'.format(self.name)

@@ -37,11 +37,11 @@ class MaterialTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
-    properties: List[PropertyTemplate] or List[PropertyTemplate, \
+    properties: list[PropertyTemplate] or list[PropertyTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -62,14 +62,14 @@ class MaterialTemplate(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
                                                                     Optional[BaseBounds]]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 tags: Optional[list[str]] = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
@@ -92,6 +92,6 @@ class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     _resource = MaterialTemplate
 
     @classmethod
-    def get_type(cls) -> Type[MaterialTemplate]:
+    def get_type(cls) -> type[MaterialTemplate]:
         """Return the resource type in the collection."""
         return MaterialTemplate

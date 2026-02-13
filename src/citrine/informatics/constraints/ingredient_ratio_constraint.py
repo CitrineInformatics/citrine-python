@@ -63,10 +63,10 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
                  formulation_descriptor: FormulationDescriptor,
                  min: float,
                  max: float,
-                 ingredient: Optional[Tuple[str, float]] = None,
-                 label: Optional[Tuple[str, float]] = None,
-                 basis_ingredients: Set[str] = set(),
-                 basis_labels: Set[str] = set()):
+                 ingredient: Optional[tuple[str, float]] = None,
+                 label: Optional[tuple[str, float]] = None,
+                 basis_ingredients: set[str] = set(),
+                 basis_labels: set[str] = set()):
         self.formulation_descriptor = formulation_descriptor
         self.min = min
         self.max = max
@@ -81,7 +81,7 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._numerator_read(self._ingredients)
 
     @ingredient.setter
-    def ingredient(self, value: Optional[Tuple[str, float]]):
+    def ingredient(self, value: Optional[tuple[str, float]]):
         """Set the ingredient and its multiplier in the numerator."""
         self._ingredients = self._numerator_validate(value, "Ingredient")
 
@@ -91,27 +91,27 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._numerator_read(self._labels)
 
     @label.setter
-    def label(self, value: Optional[Tuple[str, float]]):
+    def label(self, value: Optional[tuple[str, float]]):
         """Set the label and its multiplier in the numerator."""
         self._labels = self._numerator_validate(value, "Label")
 
     @property
-    def basis_ingredients(self) -> Set[str]:
+    def basis_ingredients(self) -> set[str]:
         """Retrieve the ingredients in the denominator of the ratio."""
         return set(self._basis_ingredients.keys())
 
     @basis_ingredients.setter
-    def basis_ingredients(self, value: Set[str]):
+    def basis_ingredients(self, value: set[str]):
         """Set the ingredients in the denominator of the ratio."""
         self._basis_ingredients = dict.fromkeys(value, 1)
 
     @property
-    def basis_labels(self) -> Set[str]:
+    def basis_labels(self) -> set[str]:
         """Retrieve the labels in the denominator of the ratio."""
         return set(self._basis_labels.keys())
 
     @basis_labels.setter
-    def basis_labels(self, value: Set[str]):
+    def basis_labels(self, value: set[str]):
         """Set the labels in the denominator of the ratio."""
         self._basis_labels = dict.fromkeys(value, 1)
 

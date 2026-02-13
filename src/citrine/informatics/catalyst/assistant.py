@@ -36,7 +36,7 @@ class AssistantResponse(PolymorphicSerializable["AssistantResponse"]):
     """The parent type for all Model Assistant responses."""
 
     @classmethod
-    def get_type(cls, data) -> Type['AssistantResponse']:
+    def get_type(cls, data) -> type['AssistantResponse']:
         """Return the subtype."""
         type_dict = {
             "message": AssistantResponseMessage,

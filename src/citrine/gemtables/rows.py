@@ -25,11 +25,11 @@ class Row(PolymorphicSerializable['Row']):
             return False
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
-        types: List[Type[Serializable]] = [
+        types: list[type[Serializable]] = [
             MaterialRunByTemplate
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
@@ -45,7 +45,7 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     ----------
     templates: list[Union[UUID, str, LinkByUID, MaterialTemplate]]
         templates of materials to include
-    tags: Set[str]
+    tags: set[str]
         optional list of tags for filtering. If a terminal material doesn't
         contain any of the tags it will be filtered out.
 
@@ -58,8 +58,8 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     template_type = Union[UUID, str, LinkByUID, MaterialTemplate]
 
     def __init__(self, *,
-                 templates: List[template_type],
-                 tags: Set[str] = None):
+                 templates: list[template_type],
+                 tags: set[str] = None):
 
         self.templates = [_make_link_by_uid(x) for x in templates]
         self.tags = tags

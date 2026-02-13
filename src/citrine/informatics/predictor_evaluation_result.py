@@ -26,7 +26,7 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
         pass  # pragma: no cover
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "RealMetricValue": RealMetricValue,
@@ -57,7 +57,7 @@ class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
     uuid = properties.UUID("uuid")
     """:UUID: Unique Citrine id given to the candidate"""
     identifiers = properties.Set(properties.String, "identifiers")
-    """:Set[str]: Set of globally unique identifiers given to the candidate"""
+    """:set[str]: Set of globally unique identifiers given to the candidate"""
     trial = properties.Integer("trial")
     """:int: 1-based index of the trial this candidate belonged to"""
     fold = properties.Integer("fold")
@@ -77,16 +77,16 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
     uuid = properties.UUID("uuid")
     """:UUID: Unique Citrine id given to the candidate"""
     identifiers = properties.Set(properties.String, "identifiers")
-    """:Set[str]: Set of globally unique identifiers given to the candidate"""
+    """:set[str]: Set of globally unique identifiers given to the candidate"""
     trial = properties.Integer("trial")
     """:int: 1-based index of the trial this candidate belonged to"""
     fold = properties.Integer("fold")
     """:int: 1-based index of the fold this candidate belonged to"""
     predicted = properties.Mapping(properties.String, properties.Float, "predicted")
-    """:Dict[str, float]: Predicted class probabilities defined as a map from each class name
+    """:dict[str, float]: Predicted class probabilities defined as a map from each class name
     to its relative frequency"""
     actual = properties.Mapping(properties.String, properties.Float, "actual")
-    """:Dict[str, float]: Actual class probabilities defined as a map from each class name
+    """:dict[str, float]: Actual class probabilities defined as a map from each class name
     to its relative frequency"""
 
     def __init__(self):
@@ -97,7 +97,7 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
     """List of predicted vs. actual data points for a categorical value."""
 
     value = properties.List(properties.Object(PredictedVsActualCategoricalPoint), "value")
-    """:List[PredictedVsActualCategoricalPoint]: List of predicted vs. actual data computed during
+    """:list[PredictedVsActualCategoricalPoint]: List of predicted vs. actual data computed during
     a predictor evaluation. This is a flattened list that contains data for all
     trials and folds."""
     typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
@@ -113,7 +113,7 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
     """List of predicted vs. actual data points for a real value."""
 
     value = properties.List(properties.Object(PredictedVsActualRealPoint), "value")
-    """:List[PredictedVsActualRealPoint]: List of predicted vs. actual data computed during
+    """:list[PredictedVsActualRealPoint]: List of predicted vs. actual data computed during
     a predictor evaluation. This is a flattened list that contains data for all
     trials and folds."""
     typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
@@ -134,7 +134,7 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
     """
 
     metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")
-    """:Dict[str, MetricValue]: Metrics computed for a single response, keyed by the
+    """:dict[str, MetricValue]: Metrics computed for a single response, keyed by the
     metric's ``__repr__``."""
 
     def __init__(self):
@@ -162,7 +162,7 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         pass  # pragma: no cover
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "CrossValidationResult": CrossValidationResult,
@@ -175,13 +175,13 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         raise NotImplementedError  # pragma: no cover
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Predictor responses that were evaluated."""
         raise NotImplementedError  # pragma: no cover
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
-        """:Set[PredictorEvaluationMetric]: Metrics computed for predictor responses."""
+    def metrics(self) -> set[PredictorEvaluationMetric]:
+        """:set[PredictorEvaluationMetric]: Metrics computed for predictor responses."""
         raise NotImplementedError  # pragma: no cover
 
 
@@ -213,13 +213,13 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
         return self._evaluator
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Responses for which results are present."""
         return set(self._response_results.keys())
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
-        """:Set[PredictorEvaluationMetric]: Metrics for which results are present."""
+    def metrics(self) -> set[PredictorEvaluationMetric]:
+        """:set[PredictorEvaluationMetric]: Metrics for which results are present."""
         return self._evaluator.metrics
 
 
@@ -251,11 +251,11 @@ class HoldoutSetResult(Serializable["HoldoutSetResult"], PredictorEvaluationResu
         return self._evaluator
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Responses for which results are present."""
         return set(self._response_results.keys())
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
-        """:Set[PredictorEvaluationMetric]: Metrics for which results are present."""
+    def metrics(self) -> set[PredictorEvaluationMetric]:
+        """:set[PredictorEvaluationMetric]: Metrics for which results are present."""
         return self._evaluator.metrics

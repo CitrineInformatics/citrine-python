@@ -33,7 +33,7 @@ class MaterialSpec(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -41,14 +41,14 @@ class MaterialSpec(
         Long-form notes about the material spec.
     process: ProcessSpec
         Process that produces this material.
-    properties: List[PropertyAndConditions], optional
+    properties: list[PropertyAndConditions], optional
         Properties of the material, along with an optional list of conditions under which
         those properties are measured.
     template: MaterialTemplate, optional
         A template bounding the valid values for this material's properties.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
-    default_labels: List[str], optional
+    default_labels: list[str], optional
         An optional set of default labels to apply to this material spec.
         Default labels are used to:
           - Populate labels on the ingredient spec, if none are explicitly
@@ -75,14 +75,14 @@ class MaterialSpec(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
                  process: Optional[GEMDProcessSpec] = None,
-                 properties: Optional[List[PropertyAndConditions]] = None,
+                 properties: Optional[list[PropertyAndConditions]] = None,
                  template: Optional[GEMDMaterialTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 default_labels: Optional[List[str]] = None):
+                 file_links: Optional[list[FileLink]] = None,
+                 default_labels: Optional[list[str]] = None):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
@@ -103,7 +103,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     _resource = MaterialSpec
 
     @classmethod
-    def get_type(cls) -> Type[MaterialSpec]:
+    def get_type(cls) -> type[MaterialSpec]:
         """Return the resource type in the collection."""
         return MaterialSpec
 

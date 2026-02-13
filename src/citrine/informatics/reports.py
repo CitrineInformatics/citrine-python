@@ -26,7 +26,7 @@ class Report(PolymorphicSerializable['Report'], AsynchronousObject):
     _response_key = None
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the only subtype."""
         return PredictorReport
 
@@ -90,7 +90,7 @@ class ModelEvaluationResult(Serializable["ModelEvaluationResult"]):
         return iter(self.responses)
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Responses the model was evaluated on."""
         return set(self._response_results.keys())
 
@@ -129,17 +129,17 @@ class ModelSummary(Serializable['ModelSummary']):
         properties.Union([properties.Object(Descriptor), properties.String()]),
         'inputs'
     )
-    """:List[Descriptor]: list of input descriptors"""
+    """:list[Descriptor]: list of input descriptors"""
     outputs = properties.List(
         properties.Union([properties.Object(Descriptor), properties.String()]),
         'outputs'
     )
-    """:List[Descriptor]: list of output descriptors"""
+    """:list[Descriptor]: list of output descriptors"""
     model_settings = properties.Raw('model_settings')
     """:dict: model settings, as a dictionary (keys depend on the model type)"""
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
-    """:List[FeatureImportanceReport]: feature importance reports for each output"""
+    """:list[FeatureImportanceReport]: feature importance reports for each output"""
     selection_summary = properties.Optional(
         properties.Object(ModelSelectionReport), "selection_summary"
     )
@@ -173,9 +173,9 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     status = properties.String('status')
     """:str: The status of the report. Possible statuses are PENDING, ERROR, and OK."""
     descriptors = properties.List(properties.Object(Descriptor), 'report.descriptors', default=[])
-    """:List[Descriptor]: All descriptors that appear in the predictor"""
+    """:list[Descriptor]: All descriptors that appear in the predictor"""
     model_summaries = properties.List(properties.Object(ModelSummary), 'report.models', default=[])
-    """:List[ModelSummary]: Summaries of all models in the predictor"""
+    """:list[ModelSummary]: Summaries of all models in the predictor"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -232,7 +232,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         return as_list[0]
 
     @staticmethod
-    def _collapse_model_settings(raw_settings: Dict[str, Any]):
+    def _collapse_model_settings(raw_settings: dict[str, Any]):
         """Collapse a model's settings into a flat dictionary.
 
         Model settings are returned as a dictionary with a "name" field, a "value" field,
@@ -240,7 +240,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         top-level dictionary with keys given by "name" and values given by "value."
 
         """
-        def _recurse_model_settings(settings: Dict[str, str], list_or_dict):
+        def _recurse_model_settings(settings: dict[str, str], list_or_dict):
             """Recursively traverse the model settings, adding name-value pairs to dictionary."""
             if isinstance(list_or_dict, list):
                 for setting in list_or_dict:

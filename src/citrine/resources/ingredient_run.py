@@ -33,7 +33,7 @@ class IngredientRun(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -57,7 +57,7 @@ class IngredientRun(
         The absolute quantity of the ingredient in the process.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
     """
@@ -84,8 +84,8 @@ class IngredientRun(
 
     def __init__(self,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialRun] = None,
                  process: Optional[GEMDProcessRun] = None,
@@ -94,7 +94,7 @@ class IngredientRun(
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
                  spec: Optional[GEMDIngredientSpec] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 file_links: Optional[list[FileLink]] = None):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
@@ -117,7 +117,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     _resource = IngredientRun
 
     @classmethod
-    def get_type(cls) -> Type[IngredientRun]:
+    def get_type(cls) -> type[IngredientRun]:
         """Return the resource type in the collection."""
         return IngredientRun
 

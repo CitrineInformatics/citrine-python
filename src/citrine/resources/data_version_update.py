@@ -30,8 +30,8 @@ class BranchDataUpdate(Resource['BranchDataUpdate']):
 
     def __init__(self,
                  *,
-                 data_updates: List[DataVersionUpdate],
-                 predictors: List[PredictorRef]):
+                 data_updates: list[DataVersionUpdate],
+                 predictors: list[PredictorRef]):
         self.data_updates = data_updates
         self.predictors = predictors
 
@@ -51,7 +51,7 @@ class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
 
     def __init__(self,
                  *,
-                 data_updates: List[DataVersionUpdate],
-                 use_predictors: List[PredictorRef]):
+                 data_updates: list[DataVersionUpdate],
+                 use_predictors: list[PredictorRef]):
         self.data_updates = data_updates
         self.use_predictors = use_predictors

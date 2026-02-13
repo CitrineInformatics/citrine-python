@@ -40,7 +40,7 @@ class DesignVariable(PolymorphicSerializable["DesignVariable"]):
         pass  # pragma: no cover
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "R": MeanAndStd,
@@ -78,7 +78,7 @@ class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
     """
 
     probabilities = properties.Mapping(properties.String, properties.Float, 'cp')
-    """:Dict[str, float]: mapping from category names to their probabilities"""
+    """:dict[str, float]: mapping from category names to their probabilities"""
     typ = properties.String('type', default='C', deserializable=False)
     """:str: polymorphic type code"""
 
@@ -95,9 +95,9 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     """
 
     quantities = properties.Mapping(properties.String, properties.Float, 'q')
-    """:Dict[str, float]: mapping from ingredient identifiers to their quantities"""
+    """:dict[str, float]: mapping from ingredient identifiers to their quantities"""
     labels = properties.Mapping(properties.String, properties.Set(properties.String), 'l')
-    """:Dict[str, Set[str]]: mapping from label identifiers to their associated ingredients"""
+    """:dict[str, set[str]]: mapping from label identifiers to their associated ingredients"""
     typ = properties.String('type', default='M', deserializable=False)
     """:str: polymorphic type code"""
 
@@ -139,13 +139,13 @@ class DesignMaterial(Serializable["DesignMaterial"]):
     material_id = properties.UUID('identifiers.id')
     """:UUID: unique internal Citrine id of the material"""
     identifiers = properties.List(properties.String, 'identifiers.external', default=[])
-    """:List[str]: globally unique identifiers assigned to the material"""
+    """:list[str]: globally unique identifiers assigned to the material"""
     process_template = properties.Optional(properties.UUID, 'identifiers.process_template')
     """:Optional[UUID]: GEMD process template that describes the process to create this material"""
     material_template = properties.Optional(properties.UUID, 'identifiers.material_template')
     """:Optional[UUID]: GEMD material template that describes this material"""
     values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
-    """:Dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
+    """:dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
     def __init__(self, *, values: dict):
         self.values = values
@@ -164,9 +164,9 @@ class HierarchicalDesignMaterial(Serializable["HierarchicalDesignMaterial"]):
     root = properties.Object(DesignMaterial, 'terminal')
     """:DesignMaterial: root material containing features and predicted properties"""
     sub_materials = properties.List(properties.Object(DesignMaterial), 'sub_materials')
-    """:List[DesignMaterial]: all other materials appearing in the history of the root"""
+    """:list[DesignMaterial]: all other materials appearing in the history of the root"""
     mixtures = properties.Mapping(properties.UUID, properties.Object(Mixture), 'mixtures')
-    """:Dict[UUID, Mixture]: mapping from Citrine ID to components the material is composed of"""
+    """:dict[UUID, Mixture]: mapping from Citrine ID to components the material is composed of"""
 
 
 class DesignCandidate(Serializable["DesignCandidate"]):
@@ -180,7 +180,7 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     material_id = properties.UUID('material_id')
     """:UUID: unique internal Citrine id of the material"""
     identifiers = properties.List(properties.String(), 'identifiers')
-    """:List[str]: globally unique identifiers assigned to the material"""
+    """:list[str]: globally unique identifiers assigned to the material"""
     primary_score = properties.Float('primary_score')
     """:float: numerical score describing how well the candidate satisfies the objectives
     and constraints (higher is better)"""

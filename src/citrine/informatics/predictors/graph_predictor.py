@@ -29,9 +29,9 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         name of the configuration
     description: str
         the description of the predictor
-    predictors: List[Union[UUID, PredictorNode]],
+    predictors: list[Union[UUID, PredictorNode]],
         the list of individual predictors to use in the graph
-    training_data: Optional[List[DataSource]]
+    training_data: Optional[list[DataSource]]
         Optional sources of training data shared by all predictors in the graph.
         Training data provided by this graph predictor does not need to be specified as part of the
         configuration of sub-predictors. Shared training data and any training data specified
@@ -73,12 +73,12 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
                  name: str,
                  *,
                  description: str,
-                 predictors: List[PredictorNode],
-                 training_data: Optional[List[DataSource]] = None):
+                 predictors: list[PredictorNode],
+                 training_data: Optional[list[DataSource]] = None):
         self.name: str = name
         self.description: str = description
-        self.training_data: List[DataSource] = training_data or []
-        self.predictors: List[PredictorNode] = predictors
+        self.training_data: list[DataSource] = training_data or []
+        self.predictors: list[PredictorNode] = predictors
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)

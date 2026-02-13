@@ -24,7 +24,7 @@ class ExpressionPredictor(Resource["ExpressionPredictor"], PredictorNode):
         expression that computes an output from aliased inputs
     output: RealDescriptor
         descriptor that represents the output of the expression
-    aliases: Mapping[str, RealDescriptor]
+    aliases: dict[str, RealDescriptor]
         a mapping from each unknown argument to its descriptor.
         All unknown arguments must have an associated descriptor.
 
@@ -44,12 +44,12 @@ class ExpressionPredictor(Resource["ExpressionPredictor"], PredictorNode):
                  description: str,
                  expression: str,
                  output: RealDescriptor,
-                 aliases: Mapping[str, RealDescriptor]):
+                 aliases: dict[str, RealDescriptor]):
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
         self.output: RealDescriptor = output
-        self.aliases: Mapping[str, RealDescriptor] = aliases
+        self.aliases: dict[str, RealDescriptor] = aliases
 
     def __str__(self):
         return '<ExpressionPredictor {!r}>'.format(self.name)

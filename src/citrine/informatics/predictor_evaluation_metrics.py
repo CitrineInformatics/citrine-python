@@ -35,7 +35,7 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
             return False
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         t = data["type"]
         return {

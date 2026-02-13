@@ -47,7 +47,7 @@ class TaskNode(Resource['TaskNode']):
     """:str: the type of task running"""
     _status = properties.String("status")
     dependencies = PropertySet(String(), "dependencies")
-    """:Set[str]: all the tasks that this task is dependent on"""
+    """:set[str]: all the tasks that this task is dependent on"""
     failure_reason = properties.Optional(String(), "failure_reason")
     """:str: if a task has failed, the failure reason will be in this parameter"""
 
@@ -80,7 +80,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     _status = properties.String("status")
     """:str: The status of the job. One of "Running", "Success", or "Failure"."""
     tasks = properties.List(Object(TaskNode), "tasks")
-    """:List[TaskNode]: all of the constituent task required to complete this job"""
+    """:list[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
     """:Optional[dict[str, str]]: job output properties and results"""
 

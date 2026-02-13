@@ -127,7 +127,7 @@ class GemTableCollection(Collection[GemTable]):
         :return: An iterable of the versions of the Tables (as Table objects).
         """
         def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+                            per_page: int) -> tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return data[self._collection_key], data.get('next', "")
@@ -155,7 +155,7 @@ class GemTableCollection(Collection[GemTable]):
         :return: An iterable of the versions of the Tables (as Table objects).
         """
         def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+                            per_page: int) -> tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)
             path = format_escaped_url(

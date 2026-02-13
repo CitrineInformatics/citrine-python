@@ -120,10 +120,10 @@ class TableConfig(Resource["TableConfig"]):
     def __init__(self, name: str,
                  *,
                  description: str,
-                 datasets: List[UUID],
-                 variables: List[Variable],
-                 rows: List[Row],
-                 columns: List[Column],
+                 datasets: list[UUID],
+                 variables: list[Variable],
+                 rows: list[Row],
+                 columns: list[Column],
                  gemd_query: GemdQuery = None,
                  generation_algorithm: Optional[TableFromGemdQueryAlgorithm] = None):
         self.name = name
@@ -166,7 +166,7 @@ class TableConfig(Resource["TableConfig"]):
 
     def add_columns(self, *,
                     variable: Variable,
-                    columns: List[Column],
+                    columns: list[Column],
                     name: Optional[str] = None,
                     description: Optional[str] = None
                     ) -> 'TableConfig':
@@ -306,7 +306,7 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients_in_output(self, *,
-                                      process_templates: List[LinkByUID],
+                                      process_templates: list[LinkByUID],
                                       team: 'Team',
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
@@ -322,7 +322,7 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_templates: List[LinkByUID]
+        process_templates: list[LinkByUID]
             registered process templates from which to pull allowed ingredients and at which to
             halt searching
         team: Team
@@ -483,7 +483,7 @@ class TableConfigCollection(Collection[TableConfig]):
             name: str,
             description: str = None,
             algorithm: Optional[TableBuildAlgorithm] = None
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build best-guess default table config for provided terminal material's history.
 
@@ -510,7 +510,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -545,7 +545,7 @@ class TableConfigCollection(Collection[TableConfig]):
             description: str = None,
             algorithm: Optional[TableFromGemdQueryAlgorithm] = None,
             register_config: bool = False
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build a TableConfig based on the results of a database query.
 
@@ -565,7 +565,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -598,7 +598,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def preview(self, *,
                 table_config: TableConfig,
-                preview_materials: List[LinkByUID] = None
+                preview_materials: list[LinkByUID] = None
                 ) -> dict:
         """Preview a Table Config on an explicit set of terminal materials.
 
@@ -606,7 +606,7 @@ class TableConfigCollection(Collection[TableConfig]):
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_materials: List[LinkByUID]
+        preview_materials: list[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
 
         """

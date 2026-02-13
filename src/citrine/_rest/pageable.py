@@ -13,7 +13,7 @@ class Pageable():
                   *,
                   ignore_dataset: bool = False,
                   action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},
+                  query_terms: dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
         raise NotImplementedError  # pragma: no cover
@@ -27,7 +27,7 @@ class Pageable():
                     additional_params: Optional[dict] = None,
                     *,
                     version: Optional[str] = None
-                    ) -> Tuple[Iterable[dict], str]:
+                    ) -> tuple[Iterable[dict], str]:
         """
         Fetch visible elements.  This does not handle pagination.
 
@@ -102,7 +102,7 @@ class Pageable():
     def _page_params(self,
                      page: Optional[int],
                      per_page: Optional[int],
-                     module_type: Optional[str] = None) -> Dict[str, int]:
+                     module_type: Optional[str] = None) -> dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page

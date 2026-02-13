@@ -66,7 +66,7 @@ class DataConcepts(
 
     collection_dict = dict()
     """
-    Dict[str, class]: dictionary from the type key to the associated collection \
+    dict[str, class]: dictionary from the type key to the associated collection \
      for every class that extends DataConcepts.
 
     Only populated if the :func:`get_collection_type` method is invoked.
@@ -100,7 +100,7 @@ class DataConcepts(
         return self._dataset
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """
         Determine the class of a serialized object.
 
@@ -124,7 +124,7 @@ class DataConcepts(
         return DictSerializable.class_mapping[data['type']]
 
     @classmethod
-    def get_collection_type(cls, data) -> "Type[DataConceptsCollection]":
+    def get_collection_type(cls, data) -> "type[DataConceptsCollection]":
         """
         Determine the associated collection type for a serialized data object.
 
@@ -220,7 +220,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     @classmethod
     @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
+    def get_type(cls) -> type[Serializable]:
         """Return the resource type in the collection."""
 
     @property
@@ -396,7 +396,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             Each object model as it now exists in the database.
 
         """

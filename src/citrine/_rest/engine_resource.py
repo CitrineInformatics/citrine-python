@@ -63,7 +63,7 @@ class EngineResource(EngineResourceWithoutStatus[Self], IncludeParentProperties[
     """:Optional[str]: short description of the resource's status"""
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
                                     default=[], serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""
 
     @classmethod
     def build(cls, data: dict):

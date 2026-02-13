@@ -31,11 +31,11 @@ class DataSource(PolymorphicSerializable['DataSource']):
             return False
 
     @classmethod
-    def _subclass_list(self) -> List[Type[Serializable]]:
+    def _subclass_list(self) -> list[type[Serializable]]:
         return [GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")

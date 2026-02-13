@@ -35,7 +35,7 @@ class MaterialRun(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -48,9 +48,9 @@ class MaterialRun(
         "unknown." Default is "unknown."
     spec: MaterialSpec
         The material specification of which this is an instance.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
-    default_labels: List[str], optional
+    default_labels: list[str], optional
         An optional set of default labels to apply to this material run.
         Default labels are used to:
           - Marking the material run as a potential replacement ingredient for a
@@ -77,14 +77,14 @@ class MaterialRun(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
                  process: Optional[GEMDProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[GEMDMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 default_labels: Optional[List[str]] = None):
+                 file_links: Optional[list[FileLink]] = None,
+                 default_labels: Optional[list[str]] = None):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
@@ -106,7 +106,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     _resource = MaterialRun
 
     @classmethod
-    def get_type(cls) -> Type[MaterialRun]:
+    def get_type(cls) -> type[MaterialRun]:
         """Return the resource type in the collection."""
         return MaterialRun
 

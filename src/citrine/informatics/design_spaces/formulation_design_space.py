@@ -20,14 +20,14 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
         the description of the design space
     formulation_descriptor: FormulationDescriptor
         descriptor used to store formulations sampled from the design space
-    ingredients: Set[str]
+    ingredients: set[str]
         set of ingredient names that can be used in a formulation
-    constraints: Set[IngredientConstraint]
+    constraints: set[IngredientConstraint]
         set of constraints that restricts formulations sampled from the space.
         This must include an
         :class:`~io.citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint`
         with maximum count of 32 or fewer.
-    labels: Optional[Mapping[str, Set[str]]]
+    labels: Optional[dict[str, set[str]]]
         map from a label to each ingredient that should given that label
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     resolution: float, optional
@@ -52,16 +52,16 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
                  *,
                  description: str,
                  formulation_descriptor: FormulationDescriptor,
-                 ingredients: Set[str],
-                 constraints: Set[Constraint],
-                 labels: Optional[Mapping[str, Set[str]]] = None,
+                 ingredients: set[str],
+                 constraints: set[Constraint],
+                 labels: Optional[dict[str, set[str]]] = None,
                  resolution: float = 0.0001):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
-        self.ingredients: Set[str] = ingredients
-        self.constraints: Set[Constraint] = constraints
-        self.labels: Optional[Mapping[str, Set[str]]] = labels
+        self.ingredients: set[str] = ingredients
+        self.constraints: set[Constraint] = constraints
+        self.labels: Optional[dict[str, set[str]]] = labels
         self.resolution: float = resolution
 
     def __str__(self):

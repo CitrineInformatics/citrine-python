@@ -87,7 +87,7 @@ class FileLinkMeta(DictSerializableMeta):
         cls.typ = properties.String('type', default="file_link", deserializable=False)
 
 
-def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
+def _get_ids_from_url(url: str) -> tuple[Optional[UUID], Optional[UUID]]:
     """Attempt to extract file_id and version_id from a URL."""
     parsed = urlparse(url)
     if len(parsed.query) > 0 or len(parsed.fragment) > 0:
@@ -207,7 +207,7 @@ class FileCollection(Collection[FileLink]):
                   ignore_dataset: Optional[bool] = False,
                   version: Union[str, UUID] = None,
                   action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},) -> str:
+                  query_terms: dict[str, str] = {},) -> str:
         """Build the path for taking an action with a particular file version."""
         if version is not None:
             action = ['versions', version] + ([action] if isinstance(action, str) else action)
@@ -664,7 +664,7 @@ class FileCollection(Collection[FileLink]):
 
         Parameters
         ----------
-        files: List[FileLink, Path, or str]
+        files: list[FileLink, Path, or str]
             A list of files from which GEMD objects should be built.
             A FileLink must contain an absolute URL or a relative path for an on-platform resource.
             Strings must be resolvable to a FileLink; if resolution fails, an exception is thrown.

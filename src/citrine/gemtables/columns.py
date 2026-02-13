@@ -63,11 +63,11 @@ class Column(PolymorphicSerializable['Column']):
             return False
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
-        types: List[Type[Serializable]] = [
+        types: list[type[Serializable]] = [
             IdentityColumn,
             MeanColumn, StdDevColumn, QuantileColumn, OriginalUnitsColumn,
             MostLikelyCategoryColumn, MostLikelyProbabilityColumn,

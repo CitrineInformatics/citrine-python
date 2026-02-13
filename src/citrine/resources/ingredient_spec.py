@@ -32,7 +32,7 @@ class IngredientSpec(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -56,9 +56,9 @@ class IngredientSpec(
         The absolute quantity of the ingredient in the process.
     name: str
         Label on the ingredient that is unique within the process that contains it.
-    labels: List[str], optional
+    labels: list[str], optional
         Additional labels on the ingredient.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
     """
@@ -82,8 +82,8 @@ class IngredientSpec(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialSpec] = None,
                  process: Optional[GEMDProcessSpec] = None,
@@ -91,8 +91,8 @@ class IngredientSpec(
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 labels: Optional[List[str]] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 labels: Optional[list[str]] = None,
+                 file_links: Optional[list[FileLink]] = None):
         if uids is None:
             uids = dict()
 
@@ -116,7 +116,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     _resource = IngredientSpec
 
     @classmethod
-    def get_type(cls) -> Type[IngredientSpec]:
+    def get_type(cls) -> type[IngredientSpec]:
         """Return the resource type in the collection."""
         return IngredientSpec
 

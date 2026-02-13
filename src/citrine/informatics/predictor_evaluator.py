@@ -16,7 +16,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
     """A Citrine Predictor Evaluator computes metrics on a predictor."""
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "CrossValidationEvaluator": CrossValidationEvaluator,
@@ -42,12 +42,12 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             return False
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Responses to compute metrics for."""
         raise NotImplementedError  # pragma: no cover
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
+    def metrics(self) -> set[PredictorEvaluationMetric]:
         """Metrics to compute for each response."""
         raise NotImplementedError  # pragma: no cover
 
@@ -84,16 +84,16 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
         Name of the evaluator
     description: str
         Description of the evaluator
-    responses: Set[str]
+    responses: set[str]
         Set of descriptor keys to evaluate
     n_folds: int
         Number of cross-validation folds
     n_trials: int
         Number of cross-validation trials, each contains ``n_folds`` folds
-    metrics: Optional[Set[PredictorEvaluationMetric]]
+    metrics: Optional[set[PredictorEvaluationMetric]]
         Optional set of metrics to compute for each response.
         Default is all metrics.
-    ignore_when_grouping: Optional[Set[str]]
+    ignore_when_grouping: Optional[set[str]]
         Set of descriptor keys to group together.
         Candidates with different values for the given keys and identical values
         for all other descriptors will be in the same group.
@@ -115,26 +115,26 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
                  name: str,
                  *,
                  description: str = "",
-                 responses: Set[str],
+                 responses: set[str],
                  n_folds: int = 5,
                  n_trials: int = 3,
-                 metrics: Optional[Set[PredictorEvaluationMetric]] = None,
-                 ignore_when_grouping: Optional[Set[str]] = None):
+                 metrics: Optional[set[PredictorEvaluationMetric]] = None,
+                 ignore_when_grouping: Optional[set[str]] = None):
         self.name: str = name
         self.description: str = description
-        self._responses: Set[str] = responses
-        self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
+        self._responses: set[str] = responses
+        self._metrics: Optional[set[PredictorEvaluationMetric]] = metrics
         self.n_folds: int = n_folds
         self.n_trials: int = n_trials
-        self.ignore_when_grouping: Optional[Set[str]] = ignore_when_grouping
+        self.ignore_when_grouping: Optional[set[str]] = ignore_when_grouping
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Set of predictor responses cross-validated by the evaluator."""
         return self._responses
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
+    def metrics(self) -> set[PredictorEvaluationMetric]:
         """Set of metrics computed during cross-validation."""
         return self._metrics
 
@@ -150,11 +150,11 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
     ----------
     name: str
         Name of the evaluator
-    responses: Set[str]
+    responses: set[str]
         Set of descriptor keys to evaluate
     data_source: DataSource
         Source of holdout data
-    metrics: Optional[Set[PredictorEvaluationMetric]]
+    metrics: Optional[set[PredictorEvaluationMetric]]
         Optional set of metrics to compute for each response. Default is all metrics.
 
     """
@@ -170,21 +170,21 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
     def __init__(self,
                  name: str, *,
                  description: str = "",
-                 responses: Set[str],
+                 responses: set[str],
                  data_source: DataSource,
-                 metrics: Optional[Set[PredictorEvaluationMetric]] = None):
+                 metrics: Optional[set[PredictorEvaluationMetric]] = None):
         self.name: str = name
         self.description: str = description
-        self._responses: Set[str] = responses
+        self._responses: set[str] = responses
         self.data_source = data_source
-        self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
+        self._metrics: Optional[set[PredictorEvaluationMetric]] = metrics
 
     @property
-    def responses(self) -> Set[str]:
+    def responses(self) -> set[str]:
         """Set of responses to predict and compare against the ground-truth values."""
         return self._responses
 
     @property
-    def metrics(self) -> Set[PredictorEvaluationMetric]:
+    def metrics(self) -> set[PredictorEvaluationMetric]:
         """Set of metrics computed on the predictions."""
         return self._metrics

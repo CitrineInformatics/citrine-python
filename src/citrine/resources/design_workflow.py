@@ -167,7 +167,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                     per_page: Optional[int] = None,
                     json_body: Optional[dict] = None,
                     additional_params: Optional[dict] = None,
-                    ) -> Tuple[Iterable[dict], str]:
+                    ) -> tuple[Iterable[dict], str]:
         params = additional_params or {}
         params["branch_root_id"] = self.branch_root_id
         params["branch_version"] = self.branch_version

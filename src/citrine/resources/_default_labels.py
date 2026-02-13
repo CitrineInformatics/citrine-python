@@ -6,8 +6,8 @@ _CITRINE_DEFAULT_LABEL_PREFIX = f'{CITRINE_TAG_PREFIX}::mat_label'
 
 
 def _inject_default_label_tags(
-    original_tags: Optional[List[str]], default_labels: Optional[List[str]]
-) -> Optional[List[str]]:
+    original_tags: Optional[list[str]], default_labels: Optional[list[str]]
+) -> Optional[list[str]]:
     if default_labels is None:
         all_tags = original_tags
     else:

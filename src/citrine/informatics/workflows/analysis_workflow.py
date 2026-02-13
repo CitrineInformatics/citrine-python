@@ -37,7 +37,7 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
                  name: str,
                  description: str,
                  snapshot_id: Optional[Union[UUID, str]] = None,
-                 plots: List[dict] = []):
+                 plots: list[dict] = []):
         self.name = name
         self.description = description
         self.snapshot_id = snapshot_id

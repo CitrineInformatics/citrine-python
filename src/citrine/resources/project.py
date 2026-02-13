@@ -225,13 +225,13 @@ class Project(Resource['Project']):
             json={'ids': [resource_access["id"]]})
         return True
 
-    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
+    def list_members(self) -> Union[list[ProjectMember], list["TeamMember"]]:  # noqa: F821
         """
         List all of the members in the current project.
 
         Returns
         -------
-        List[ProjectMember] | List[TeamMember]
+        list[ProjectMember] | list[TeamMember]
             The members of the current project, or the members of the team
             containing the project if teams have been released.
 

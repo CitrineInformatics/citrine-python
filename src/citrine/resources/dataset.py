@@ -218,7 +218,7 @@ class Dataset(Resource['Dataset']):
                      *,
                      dry_run: bool = False,
                      status_bar: bool = False,
-                     include_nested: bool = False) -> List[DataConcepts]:
+                     include_nested: bool = False) -> list[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -251,7 +251,7 @@ class Dataset(Resource['Dataset']):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             The registered versions
 
         """
@@ -314,7 +314,7 @@ class Dataset(Resource['Dataset']):
             How long to delay between each polling retry attempt.
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.
@@ -347,11 +347,11 @@ class Dataset(Resource['Dataset']):
 
     def gemd_batch_delete(
             self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    ) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -372,7 +372,7 @@ class Dataset(Resource['Dataset']):
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -388,7 +388,7 @@ class Dataset(Resource['Dataset']):
 
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.

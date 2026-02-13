@@ -30,19 +30,19 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
         Long-form notes about the process run.
-    conditions: List[Condition], optional
+    conditions: list[Condition], optional
         Conditions under which this process run occurs.
-    parameters: List[Parameter], optional
+    parameters: list[Parameter], optional
         Parameters of this process run.
     spec: ProcessSpec
         Spec for this process run.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
     source: PerformedSource, optional
         Information about the person who performed the run and when.
@@ -60,13 +60,13 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
+                 uids: Optional[dict[str, str]] = None,
+                 tags: Optional[list[str]] = None,
                  notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 parameters: Optional[List[Parameter]] = None,
+                 conditions: Optional[list[Condition]] = None,
+                 parameters: Optional[list[Parameter]] = None,
                  spec: Optional[GEMDProcessSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
+                 file_links: Optional[list[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
         if uids is None:
             uids = dict()
@@ -87,7 +87,7 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     _resource = ProcessRun
 
     @classmethod
-    def get_type(cls) -> Type[ProcessRun]:
+    def get_type(cls) -> type[ProcessRun]:
         """Return the resource type in the collection."""
         return ProcessRun
 

@@ -46,10 +46,10 @@ class TeamMember:
                  *,
                  user: User,
                  team: 'Team',  # noqa: F821
-                 actions: List[TEAM_ACTIONS]):
+                 actions: list[TEAM_ACTIONS]):
         self.user = user
         self.team: 'Team' = team  # noqa: F821
-        self.actions: List[TEAM_ACTIONS] = actions
+        self.actions: list[TEAM_ACTIONS] = actions
 
     def __str__(self):
         return '<TeamMember {!r} can {!s} in {!r}>' \
@@ -86,7 +86,7 @@ class TeamResourceIDs:
     def _path(self) -> str:
         return format_escaped_url(f'/teams/{self.team_id}')
 
-    def _list_ids(self, action: str) -> List[str]:
+    def _list_ids(self, action: str) -> list[str]:
         query_params = {"domain": self._path(), "action": action}
         return self.session.get_resource(f"/{self.resource_type}/authorized-ids",
                                          params=query_params,
@@ -98,7 +98,7 @@ class TeamResourceIDs:
 
         Returns
         -------
-        List[str]
+        list[str]
             Returns a list of string UUIDs for each resource
 
         """
@@ -110,7 +110,7 @@ class TeamResourceIDs:
 
         Returns
         -------
-        List[str]
+        list[str]
             Returns a list of string UUIDs for each resource
 
         """
@@ -122,7 +122,7 @@ class TeamResourceIDs:
 
         Returns
         -------
-        List[str]
+        list[str]
             Returns a list of string UUIDs for each resource
 
         """
@@ -174,7 +174,7 @@ class Team(Resource['Team']):
     def _path(self):
         return format_escaped_url('/teams/{team_id}', team_id=self.uid)
 
-    def list_members(self) -> List[TeamMember]:
+    def list_members(self) -> list[TeamMember]:
         """
         List all of the members in the current team.
 
@@ -182,7 +182,7 @@ class Team(Resource['Team']):
 
         Returns
         -------
-        List[TeamMember]
+        list[TeamMember]
             The members of the current team
 
         """
@@ -252,7 +252,7 @@ class Team(Resource['Team']):
     def add_user(self,
                  user_id: Union[str, UUID, User],
                  *,
-                 actions: Optional[List[TEAM_ACTIONS]] = None) -> bool:
+                 actions: Optional[list[TEAM_ACTIONS]] = None) -> bool:
         """
         Add a User to a Team.
 
@@ -286,7 +286,7 @@ class Team(Resource['Team']):
     def update_user_action(self,
                            user_id: Union[str, UUID, User],
                            *,
-                           actions: List[TEAM_ACTIONS]) -> bool:
+                           actions: list[TEAM_ACTIONS]) -> bool:
         """
         Overwrites a User's action permissions in the Team.
 
@@ -376,13 +376,13 @@ class Team(Resource['Team']):
         )
         return True
 
-    def owned_dataset_ids(self) -> List[str]:
+    def owned_dataset_ids(self) -> list[str]:
         """
         List all the ids of the datasets owned by the current team.
 
         Returns
         -------
-        List[str]
+        list[str]
             The ids of the modules owned by current team
 
         """
@@ -513,10 +513,10 @@ class Team(Resource['Team']):
         return GEMDResourceCollection(team_id=self.uid, dataset_id=None, session=self.session)
 
     def gemd_batch_delete(self,
-                          id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+                          id_list: list[Union[LinkByUID, UUID, str, BaseEntity]],
                           *,
                           timeout: float = 2 * 60,
-                          polling_delay: float = 1.0) -> List[Tuple[LinkByUID, ApiError]]:
+                          polling_delay: float = 1.0) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -530,7 +530,7 @@ class Team(Resource['Team']):
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[Union[LinkByUID, UUID, str, BaseEntity]]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -544,7 +544,7 @@ class Team(Resource['Team']):
 
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.

@@ -19,7 +19,7 @@ class PredictorEvaluatorsResponse(Serializable['EvaluatorsPayload']):
 
     evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
 
-    def __init__(self, evaluators: List[PredictorEvaluator]):
+    def __init__(self, evaluators: list[PredictorEvaluator]):
         self.evaluators = evaluators
 
 
@@ -31,7 +31,7 @@ class PredictorEvaluationRequest(Serializable['EvaluatorsPayload']):
 
     def __init__(self,
                  *,
-                 evaluators: List[PredictorEvaluator],
+                 evaluators: list[PredictorEvaluator],
                  predictor_id: Union[UUID, str],
                  predictor_version: Optional[Union[int, str]] = None):
         self.evaluators = evaluators
@@ -45,7 +45,7 @@ class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], As
     """:UUID: Unique identifier of the evaluation"""
     evaluators = properties.List(properties.Object(PredictorEvaluator), "data.evaluators",
                                  serializable=False)
-    """:List{PredictorEvaluator]:the predictor evaluators that were executed. These are used
+    """:list[PredictorEvaluator]:the predictor evaluators that were executed. These are used
     when calling the ``results()`` method."""
     predictor_id = properties.UUID('metadata.predictor_id', serializable=False)
     """:UUID:"""
@@ -56,7 +56,7 @@ class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], As
     """:str: more detailed description of the evaluation's status"""
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
                                     default=[], serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""
 
     project_id: Optional[UUID] = None
     _session: Optional[Session] = None

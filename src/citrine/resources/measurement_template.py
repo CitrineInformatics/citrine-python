@@ -42,21 +42,21 @@ class MeasurementTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
-    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    conditions: list[ConditionTemplate] or list[ConditionTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    parameters: list[ParameterTemplate] or list[ParameterTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
-    properties: List[PropertyTemplate] or List[PropertyTemplate, \
+    properties: list[PropertyTemplate] or list[PropertyTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -100,7 +100,7 @@ class MeasurementTemplate(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
@@ -117,7 +117,7 @@ class MeasurementTemplate(
                                                                     Optional[BaseBounds]]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 tags: Optional[list[str]] = None):
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()
@@ -137,6 +137,6 @@ class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate
     _resource = MeasurementTemplate
 
     @classmethod
-    def get_type(cls) -> Type[MeasurementTemplate]:
+    def get_type(cls) -> type[MeasurementTemplate]:
         """Return the resource type in the collection."""
         return MeasurementTemplate

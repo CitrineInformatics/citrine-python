@@ -165,7 +165,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
             Unique identifier of the predictor to evaluate
         predictor_version: Option[Union[int, str]]
             The version of the predictor to evaluate. Defaults to the latest trained version.
-        evaluators: List[PredictorEvaluator]
+        evaluators: list[PredictorEvaluator]
             The evaluators to use to measure predictor performance.
 
         Returns

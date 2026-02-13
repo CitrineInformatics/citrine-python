@@ -33,7 +33,7 @@ class Collection(Generic[ResourceType], Pageable):
                   *,
                   ignore_dataset: bool = False,
                   action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},
+                  query_terms: dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
         base = self._dataset_agnostic_path_template if ignore_dataset else self._path_template

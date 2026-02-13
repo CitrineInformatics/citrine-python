@@ -40,16 +40,16 @@ class ProcessTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
-    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    conditions: list[ConditionTemplate] or list[ConditionTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    parameters: list[ParameterTemplate] or list[ParameterTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -85,7 +85,7 @@ class ProcessTemplate(
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[dict[str, str]] = None,
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ConditionTemplate, LinkByUID,
@@ -96,10 +96,10 @@ class ProcessTemplate(
                                                      Sequence[Union[ParameterTemplate, LinkByUID,
                                                                     Optional[BaseBounds]]]
                                                      ]]] = None,
-                 allowed_labels: Optional[List[str]] = None,
-                 allowed_names: Optional[List[str]] = None,
+                 allowed_labels: Optional[list[str]] = None,
+                 allowed_names: Optional[list[str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 tags: Optional[list[str]] = None):
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()
@@ -120,6 +120,6 @@ class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     _resource = ProcessTemplate
 
     @classmethod
-    def get_type(cls) -> Type[ProcessTemplate]:
+    def get_type(cls) -> type[ProcessTemplate]:
         """Return the resource type in the collection."""
         return ProcessTemplate
