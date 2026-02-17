@@ -154,12 +154,12 @@ def wait_while_executing(
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
     collection : Collection[ExecutionType]
+        Collection containing executions
 
     Returns
     -------
     ExecutionType
         the updated execution after it has finished executing
-
 
     Raises
     ------

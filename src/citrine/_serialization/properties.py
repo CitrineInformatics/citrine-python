@@ -549,7 +549,7 @@ class Union(Property[Any, Any]):
                          use_init=use_init)
         if not isinstance(element_types, Iterable):
             raise ValueError("element types must be iterable: {}".format(element_types))
-        self.element_types: list[Property, ...] = \
+        self.element_types: list[Property] = \
             [el if isinstance(el, Property) else el() for el in element_types]
 
     @property
@@ -604,7 +604,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
                          use_init=use_init)
         if not isinstance(element_types, list):
             raise ValueError("element types must be a list: {}".format(element_types))
-        self.element_types: list[Property, ...] = \
+        self.element_types: list[Property] = \
             [el if isinstance(el, Property) else el() for el in element_types]
 
     @property
