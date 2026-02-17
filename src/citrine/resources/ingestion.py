@@ -521,7 +521,7 @@ class IngestionCollection(Collection[Ingestion]):
 
     def build(self, data: dict) -> Ingestion:
         """Build an instance of an Ingestion."""
-        result = Ingestion.build({**data, "session": self.session})
+        result = Ingestion.build(data | {"session": self.session})
         return result
 
     def register(self, model: Ingestion) -> Ingestion:
