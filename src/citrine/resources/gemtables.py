@@ -1,6 +1,7 @@
 import json
+from collections.abc import Iterable
 from logging import getLogger
-from typing import Iterable, Optional, Any
+from typing import Any, Optional
 
 import requests
 

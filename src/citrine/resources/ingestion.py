@@ -1,4 +1,5 @@
-from typing import Optional, Iterator, Iterable, Collection as TypingCollection
+from collections.abc import Collection as TypingCollection, Iterator, Iterable
+from typing import Optional
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration

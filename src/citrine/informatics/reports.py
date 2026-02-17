@@ -1,8 +1,9 @@
 """Tools for working with reports."""
-from typing import TypeVar, Iterable, Any
 from abc import abstractmethod
+from collections.abc import Iterable
 from itertools import groupby
 from logging import getLogger
+from typing import Any, TypeVar
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

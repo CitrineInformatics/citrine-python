@@ -1,5 +1,6 @@
+from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import Iterable, Iterator, List, Optional
+from typing import List, Optional
 from uuid import UUID
 
 from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation, \

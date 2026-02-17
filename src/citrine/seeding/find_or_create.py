@@ -1,12 +1,13 @@
+from collections.abc import Callable
 from copy import deepcopy
 from logging import getLogger
-from typing import TypeVar, Optional, Callable
+from typing import Optional, TypeVar
 
 from citrine.exceptions import NotFound
-from citrine.resources.team import TeamCollection, Team
-from citrine.resources.project import ProjectCollection, Project
-from citrine.resources.dataset import DatasetCollection, Dataset
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
+from citrine.resources.dataset import DatasetCollection, Dataset
+from citrine.resources.project import ProjectCollection, Project
+from citrine.resources.team import TeamCollection, Team
 from citrine._rest.collection import CreationType, Collection
 
 logger = getLogger(__name__)

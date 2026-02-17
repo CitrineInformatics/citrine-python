@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Optional, Generic, TypeVar, Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator, Sequence
+from typing import Generic, Optional, TypeVar
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable

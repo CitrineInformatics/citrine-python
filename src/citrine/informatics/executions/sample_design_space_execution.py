@@ -1,5 +1,6 @@
+from collections.abc import Iterable
 from functools import partial
-from typing import Optional, Iterable
+from typing import Optional
 from uuid import UUID
 
 from citrine.informatics.executions.execution import Execution

@@ -1,6 +1,7 @@
 """Resources that represent collections of predictors."""
+from collections.abc import Iterable
 from functools import partial
-from typing import Any, Iterable, Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration

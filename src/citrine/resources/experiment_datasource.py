@@ -1,8 +1,9 @@
 import csv
 import json
+from typing import Iterator
 from functools import partial
 from io import StringIO
-from typing import Iterator, Optional
+from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection

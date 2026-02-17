@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
-from typing import Optional, Iterator, Iterable
+from collections.abc import Iterator, Iterable
+from typing import Optional
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity

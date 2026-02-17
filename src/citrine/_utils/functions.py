@@ -1,7 +1,8 @@
-from abc import ABCMeta
 import os
+from abc import ABCMeta
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Optional, Sequence
+from typing import Any, Optional
 from urllib.parse import quote, urlencode, urlparse
 from uuid import UUID
 from warnings import warn

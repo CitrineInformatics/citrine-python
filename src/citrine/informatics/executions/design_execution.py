@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from functools import partial
-from typing import Iterable
 
 from citrine._rest.paginator import Paginator
 from citrine._rest.resource import Resource

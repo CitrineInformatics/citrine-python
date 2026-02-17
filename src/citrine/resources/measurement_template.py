@@ -1,5 +1,6 @@
 """Resources that represent measurement templates."""
-from typing import Optional, Sequence
+from typing import Optional
+from collections.abc import Sequence
 
 from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import List as PropertyList

@@ -1,6 +1,7 @@
 """Resources that represent both individual and collections of projects."""
+from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import Optional, Iterable, Iterator
+from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection

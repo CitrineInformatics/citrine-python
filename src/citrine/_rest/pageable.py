@@ -1,4 +1,5 @@
-from typing import Optional, Iterable, Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
+from typing import Optional
 from uuid import UUID
 
 

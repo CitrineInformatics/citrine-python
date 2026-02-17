@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of sample design space executions."""
-from typing import Iterator
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection

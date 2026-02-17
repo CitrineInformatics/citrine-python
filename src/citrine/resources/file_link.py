@@ -1,9 +1,10 @@
 """A collection of FileLink objects."""
 import mimetypes
 import os
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Iterable, Sequence
+from typing import Optional
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID

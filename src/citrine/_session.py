@@ -1,9 +1,10 @@
 import platform
+from collections.abc import Callable, Iterator
 from datetime import datetime, timedelta, timezone
 from json.decoder import JSONDecodeError
 from logging import getLogger
 from os import environ
-from typing import Optional, Callable, Iterator
+from typing import Optional
 from urllib.parse import urlunsplit
 
 import jwt
