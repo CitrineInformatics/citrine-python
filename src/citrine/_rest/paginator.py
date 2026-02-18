@@ -1,5 +1,5 @@
 from collections.abc import Callable, Iterable, Iterator
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import uuid4
 
 ResourceType = TypeVar('ResourceType')
@@ -14,10 +14,10 @@ class Paginator(Generic[ResourceType]):
     """
 
     def paginate(self,
-                 page_fetcher: Callable[[Optional[int], int], tuple[Iterable[dict], str]],
+                 page_fetcher: Callable[[int | None, int], tuple[Iterable[dict], str]],
                  collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  per_page: int = 100,
-                 search_params: Optional[dict] = None,
+                 search_params: dict | None = None,
                  deduplicate: bool = True) -> Iterator[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
@@ -30,7 +30,7 @@ class Paginator(Generic[ResourceType]):
 
         Parameters
         ---------
-        page_fetcher: Callable[[Optional[int], int], tuple[Iterable[dict], str]]
+        page_fetcher: Callable[[int | None, int], tuple[Iterable[dict], str]]
             Fetches the next page of elements
         collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]]
             Builds each element in the collection into the appropriate resource

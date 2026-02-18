@@ -4,7 +4,6 @@ import os
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID
@@ -88,7 +87,7 @@ class FileLinkMeta(DictSerializableMeta):
         cls.typ = properties.String('type', default="file_link", deserializable=False)
 
 
-def _get_ids_from_url(url: str) -> tuple[Optional[UUID], Optional[UUID]]:
+def _get_ids_from_url(url: str) -> tuple[UUID | None, UUID | None]:
     """Attempt to extract file_id and version_id from a URL."""
     parsed = urlparse(url)
     if len(parsed.query) > 0 or len(parsed.fragment) > 0:
@@ -203,9 +202,9 @@ class FileCollection(Collection[FileLink]):
         self.team_id = team_id
 
     def _get_path(self,
-                  uid: Optional[UUID | str] = None,
+                  uid: UUID | str | None = None,
                   *,
-                  ignore_dataset: Optional[bool] = False,
+                  ignore_dataset: bool | None = False,
                   version: str | UUID = None,
                   action: str | Sequence[str] = [],
                   query_terms: dict[str, str] = {},) -> str:
@@ -233,7 +232,7 @@ class FileCollection(Collection[FileLink]):
     def get(self,
             uid: UUID | str,
             *,
-            version: Optional[UUID | str | int] = None) -> FileLink:
+            version: UUID | str | int | None = None) -> FileLink:
         """
         Retrieve an on-platform FileLink from its filename or file uuid.
 
@@ -241,7 +240,7 @@ class FileCollection(Collection[FileLink]):
         ----------
         uid: UUID | str
             A representation of the FileLink (Citrine id or file name)
-        version: Optional[UUID, str, int]
+        version: UUID | str | int | None
             The version, as a UUID or str(UUID) of the version_id or an int or
             str(int) of the version number.  If None, returns the file with the
             highest version number (most recent).
@@ -387,8 +386,8 @@ class FileCollection(Collection[FileLink]):
     def _search_by_file_name(self,
                              file_name: str,
                              dset_id: UUID,
-                             file_version_number: Optional[int] = None
-                             ) -> Optional[FileLink]:
+                             file_version_number: int | None = None
+                             ) -> FileLink | None:
         """
         Make a request to the backend to search a file by name.
 
@@ -401,7 +400,7 @@ class FileCollection(Collection[FileLink]):
             The name of the file.
         dset_id: UUID
             UUID that represents a dataset.
-        file_version_number: Optional[int]
+        file_version_number: int | None
             As optional, you can send a specific version number.
 
         Returns
@@ -428,7 +427,7 @@ class FileCollection(Collection[FileLink]):
 
     def _search_by_file_version_id(self,
                                    file_version_id: UUID
-                                   ) -> Optional[FileLink]:
+                                   ) -> FileLink | None:
         """
         Make a request to the backend to search a file by file version id.
 
@@ -459,8 +458,8 @@ class FileCollection(Collection[FileLink]):
     def _search_by_dataset_file_id(self,
                                    dataset_file_id: UUID,
                                    dset_id: UUID,
-                                   file_version_number: Optional[int] = None
-                                   ) -> Optional[FileLink]:
+                                   file_version_number: int | None = None
+                                   ) -> FileLink | None:
         """
         Make a request to the backend to search a file by dataset file id.
 
@@ -473,7 +472,7 @@ class FileCollection(Collection[FileLink]):
             UUID that represents a dataset file id.
         dset_id: UUID
             UUID that represents a dataset.
-        file_version_number: Optional[int]
+        file_version_number: int | None
             As optional, you can send a specific version number
 
         Returns
@@ -657,8 +656,8 @@ class FileCollection(Collection[FileLink]):
                delete_dataset_contents: bool = False,
                delete_templates: bool = True,
                timeout: float = None,
-               polling_delay: Optional[float] = None,
-               project: Optional["Project | UUID | str"] = None,  # noqa: F821
+               polling_delay: float | None = None,
+               project: "Project | UUID | str | None" = None,  # noqa: F821
                ) -> "IngestionStatus":  # noqa: F821
         """
         [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
@@ -684,17 +683,17 @@ class FileCollection(Collection[FileLink]):
         build_table: bool
             Whether to trigger a regeneration of the table config and building the table
             after ingestion.  Default: False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete old objects prior to creating new ones.  Default: False
         delete_templates: bool
             Whether to delete old templates if deleting old objects.  Default: True
-        timeout: Optional[float]
+        timeout: float | None
             Amount of time to wait on the job (in seconds) before giving up. Note that
             this number has no effect on the underlying job itself, which can also time
             out server-side.
-        polling_delay: Optional[float]
+        polling_delay: float | None
             How long to delay between each polling retry attempt.
 
 

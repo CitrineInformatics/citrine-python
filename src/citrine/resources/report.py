@@ -1,5 +1,4 @@
 """A resource that represents a single module report."""
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -28,7 +27,7 @@ class ReportResource(Resource['ReportResource']):
     def get(self,
             *,
             predictor_id: UUID | str,
-            predictor_version: Optional[int | str] = None) -> Report:
+            predictor_version: int | str | None = None) -> Report:
         """Gets a single report keyed on the predictor ID and (optionally) version."""
         version = predictor_version or "most_recent"
 

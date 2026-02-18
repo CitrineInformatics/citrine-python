@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -47,13 +46,13 @@ class DesignSpaceSettings(Resource["DesignSpaceSettings"]):
     def __init__(self,
                  *,
                  predictor_id: UUID | str,
-                 predictor_version: Optional[int | str] = None,
-                 mode: Optional[DefaultDesignSpaceMode] = None,
-                 exclude_intermediates: Optional[bool] = None,
-                 include_ingredient_fraction_constraints: Optional[bool] = None,
-                 include_label_fraction_constraints: Optional[bool] = None,
-                 include_label_count_constraints: Optional[bool] = None,
-                 include_parameter_constraints: Optional[bool] = None):
+                 predictor_version: int | str | None = None,
+                 mode: DefaultDesignSpaceMode | None = None,
+                 exclude_intermediates: bool | None = None,
+                 include_ingredient_fraction_constraints: bool | None = None,
+                 include_label_fraction_constraints: bool | None = None,
+                 include_label_count_constraints: bool | None = None,
+                 include_parameter_constraints: bool | None = None):
         self.predictor_id = predictor_id
         self.predictor_version = predictor_version
         self.mode = mode

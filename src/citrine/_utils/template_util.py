@@ -1,4 +1,7 @@
-from gemd.util.impl import recursive_flatmap
+from collections.abc import Mapping
+
+from citrine.resources.data_concepts import DataConcepts
+from gemd.entity.attribute import PropertyAndConditions
 from gemd.entity.object import (
     ProcessSpec,
     ProcessRun,
@@ -6,12 +9,11 @@ from gemd.entity.object import (
     MeasurementSpec,
     MeasurementRun,
 )
-from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.value.base_value import BaseValue
-from gemd.entity.attribute import PropertyAndConditions
+from gemd.util.impl import recursive_flatmap
 
 
-def make_attribute_table(gems: list[DataConcepts]) -> list[dict[str, BaseValue]]:
+def make_attribute_table(gems: list[DataConcepts]) -> list[Mapping[str, BaseValue]]:
     """[ALPHA] the current status of make_attribute_table.
 
     Given a list of GEMD Objects, this method returns a list of dictionaries
@@ -35,7 +37,7 @@ def make_attribute_table(gems: list[DataConcepts]) -> list[dict[str, BaseValue]]
 
     Returns
     -------
-    list[dict[str, BaseValue]]
+    list[Mapping[str, BaseValue]]
         A list of dictionaries where each dictionary represents an object and its attributes.
 
     """

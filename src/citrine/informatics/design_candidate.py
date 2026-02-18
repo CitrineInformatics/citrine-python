@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -101,7 +99,7 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     typ = properties.String('type', default='M', deserializable=False)
     """:str: polymorphic type code"""
 
-    def __init__(self, *, quantities: dict, labels: Optional[dict] = None):
+    def __init__(self, *, quantities: dict, labels: dict | None = None):
         self.quantities = quantities
         self.labels = labels or {}
         pass  # pragma: no cover
@@ -141,9 +139,9 @@ class DesignMaterial(Serializable["DesignMaterial"]):
     identifiers = properties.List(properties.String, 'identifiers.external', default=[])
     """:list[str]: globally unique identifiers assigned to the material"""
     process_template = properties.Optional(properties.UUID, 'identifiers.process_template')
-    """:Optional[UUID]: GEMD process template that describes the process to create this material"""
+    """:UUID | None: GEMD process template that describes the process to create this material"""
     material_template = properties.Optional(properties.UUID, 'identifiers.material_template')
-    """:Optional[UUID]: GEMD material template that describes this material"""
+    """:UUID | None: GEMD material template that describes this material"""
     values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
     """:dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
@@ -191,9 +189,9 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     hidden = properties.Boolean('hidden')
     """:str: whether the candidate is marked hidden"""
     pinned_by = properties.Optional(properties.UUID, 'pinned.user')
-    """:Optional[UUID]: id of the user who pinned the candidate, if it's been pinned"""
+    """:UUID | None: id of the user who pinned the candidate, if it's been pinned"""
     pinned_time = properties.Optional(properties.Datetime, 'pinned.time')
-    """:Optional[datetime]: date and time at which the candidate was pinned, if it's been pinned"""
+    """:datetime | None: date and time at which the candidate was pinned, if it's been pinned"""
     comments = properties.List(properties.Object(DesignCandidateComment), 'comments', default=[])
     """:list[DesignCandidateComment]: the list of comments on the candidate, with metadata."""
 

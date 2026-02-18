@@ -1,4 +1,4 @@
-from typing import Optional
+from collections.abc import Mapping
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
@@ -41,10 +41,10 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
-    label: Optional[str]
+    label: str | None
         Only ingredients with this label are counted when calculating the component-weighted mean.
         If ``None`` (default) all ingredients will be counted.
-    default_properties: Optional[dict[str, str | float]]
+    default_properties: Mapping[str, str | float] | None
         Default values to use for imputed properties.
         Defaults are specified as a map from descriptor key to its default value.
         If not specified and ``impute_properties == True`` the average over the entire dataset
@@ -82,16 +82,16 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
                  properties: list[RealDescriptor | CategoricalDescriptor],
                  p: float,
                  impute_properties: bool,
-                 label: Optional[str] = None,
-                 default_properties: Optional[dict[str, str | float]] = None):
+                 label: str | None = None,
+                 default_properties: Mapping[str, str | float] | None = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: list[RealDescriptor | CategoricalDescriptor] = properties
         self.p: float = p
         self.impute_properties: bool = impute_properties
-        self.label: Optional[str] = label
-        self.default_properties: Optional[dict[str, str | float]] = default_properties
+        self.label: str | None = label
+        self.default_properties: Mapping[str, str | float] | None = default_properties
 
     def __str__(self):
         return '<MeanPropertyPredictor {!r}>'.format(self.name)

@@ -1,5 +1,4 @@
 """Resources that represent property templates."""
-from typing import Optional
 
 from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
@@ -41,9 +40,9 @@ class PropertyTemplate(
                  name: str,
                  *,
                  bounds: BaseBounds,
-                 uids: Optional[dict[str, str]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[list[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 description: str | None = None,
+                 tags: list[str] | None = None):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()

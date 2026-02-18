@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
@@ -35,8 +33,8 @@ class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint)
 
     def __init__(self, *,
                  descriptor_key: str,
-                 lower_bound: Optional[int] = None,
-                 upper_bound: Optional[int] = None):
+                 lower_bound: int | None = None,
+                 upper_bound: int | None = None):
         self.descriptor_key = descriptor_key
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound

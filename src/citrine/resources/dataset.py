@@ -1,6 +1,5 @@
 """Resources that represent both individual and collections of datasets."""
 from collections.abc import Iterator, Iterable
-from typing import Optional
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -47,11 +46,11 @@ class Dataset(Resource['Dataset']):
     ----------
     name: str
         Name of the dataset. Can be used for searching.
-    summary: Optional[str]
+    summary: str | None
         An optional summary of this dataset.
-    description: Optional[str]
+    description: str | None
         An optional long-form description of the dataset.
-    unique_name: Optional[str]
+    unique_name: str | None
         An optional, globally unique name that can be used to retrieve the dataset.
 
     """
@@ -86,11 +85,11 @@ class Dataset(Resource['Dataset']):
     session = properties.Optional(properties.Object(Session), 'session',
                                   serializable=False, deserializable=False)
 
-    def __init__(self, name: str, *, summary: Optional[str] = None,
-                 description: Optional[str] = None, unique_name: Optional[str] = None):
+    def __init__(self, name: str, *, summary: str | None = None,
+                 description: str | None = None, unique_name: str | None = None):
         self.name: str = name
-        self.summary: Optional[str] = summary
-        self.description: Optional[str] = description
+        self.summary: str | None = summary
+        self.description: str | None = description
         self.unique_name = unique_name
 
         # The attributes below should not be set by the user. Instead they will be updated as the

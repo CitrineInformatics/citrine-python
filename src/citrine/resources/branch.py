@@ -1,6 +1,5 @@
 import functools
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -35,12 +34,12 @@ class Branch(Resource['Branch']):
     root_id = properties.UUID('metadata.root_id', serializable=False)
     version = properties.Integer('metadata.version', serializable=False)
 
-    project_id: Optional[UUID] = None
+    project_id: UUID | None = None
 
     def __init__(self,
                  name: str,
                  *,
-                 session: Optional[Session] = None):
+                 session: Session | None = None):
         self.name: str = name
         self.session: Session = session
 
@@ -58,7 +57,7 @@ class Branch(Resource['Branch']):
                                         branch_version=self.version)
 
     @property
-    def experiment_datasource(self) -> Optional[ExperimentDataSource]:
+    def experiment_datasource(self) -> ExperimentDataSource | None:
         """Return this branch's experiment data source, or None if one doesn't exist."""
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot retrieve datasource without project reference!')
@@ -108,7 +107,7 @@ class BranchCollection(Collection[Branch]):
     def get(self,
             *,
             root_id: UUID | str,
-            version: Optional[int | str] = LATEST_VER) -> Branch:
+            version: int | str | None = LATEST_VER) -> Branch:
         """
         Retrieve a branch by its root ID and, optionally, its version number.
 
@@ -228,7 +227,7 @@ class BranchCollection(Collection[Branch]):
     def archive(self,
                 *,
                 root_id: UUID | str,
-                version: Optional[int | str] = LATEST_VER):
+                version: int | str | None = LATEST_VER):
         """
         Archive a branch.
 
@@ -253,7 +252,7 @@ class BranchCollection(Collection[Branch]):
     def restore(self,
                 *,
                 root_id: UUID | str,
-                version: Optional[int | str] = LATEST_VER):
+                version: int | str | None = LATEST_VER):
         """
         Restore an archived branch.
 
@@ -278,9 +277,9 @@ class BranchCollection(Collection[Branch]):
     def update_data(self,
                     *,
                     root_id: UUID | str,
-                    version: Optional[int | str] = LATEST_VER,
+                    version: int | str | None = LATEST_VER,
                     use_existing: bool = True,
-                    retrain_models: bool = False) -> Optional[Branch]:
+                    retrain_models: bool = False) -> Branch | None:
         """
         Automatically advance the branch to the next version.
 
@@ -330,7 +329,7 @@ class BranchCollection(Collection[Branch]):
     def data_updates(self,
                      *,
                      root_id: UUID | str,
-                     version: Optional[int | str] = LATEST_VER) -> BranchDataUpdate:
+                     version: int | str | None = LATEST_VER) -> BranchDataUpdate:
         """
         Get data updates for a branch.
 

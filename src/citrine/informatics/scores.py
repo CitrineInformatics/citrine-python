@@ -1,5 +1,4 @@
 """Tools for working with Scores."""
-from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -54,7 +53,7 @@ class LIScore(Serializable['LIScore'], Score):
     def __init__(self, *,
                  objectives: list[Objective],
                  baselines: list[float],
-                 constraints: Optional[list[Constraint]] = None):
+                 constraints: list[Constraint] | None = None):
         self.objectives: list[Objective] = objectives
         self.baselines: list[float] = baselines
         self.constraints: list[Constraint] = constraints or []
@@ -89,7 +88,7 @@ class EIScore(Serializable['EIScore'], Score):
     def __init__(self, *,
                  objectives: list[Objective],
                  baselines: list[float],
-                 constraints: Optional[list[Constraint]] = None):
+                 constraints: list[Constraint] | None = None):
         self.objectives: list[Objective] = objectives
         self.baselines: list[float] = baselines
         self.constraints: list[Constraint] = constraints or []
@@ -122,7 +121,7 @@ class EVScore(Serializable['EVScore'], Score):
 
     def __init__(self, *,
                  objectives: list[Objective],
-                 constraints: Optional[list[Constraint]] = None):
+                 constraints: list[Constraint] | None = None):
         self.objectives: list[Objective] = objectives
         self.constraints: list[Constraint] = constraints or []
         self._name = "Expected Value"

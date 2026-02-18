@@ -1,12 +1,9 @@
 """Resources that represent process spec objects."""
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, LinkOrElse
+from citrine._serialization.properties import List, LinkOrElse, Object, Optional, String
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -55,23 +52,20 @@ class ProcessSpec(
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
     name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    template = PropertyOptional(LinkOrElse(GEMDProcessTemplate),
-                                'template', override=True,
-                                use_init=True,
-                                )
+    conditions = Optional(List(Object(Condition)), 'conditions', override=True)
+    parameters = Optional(List(Object(Parameter)), 'parameters', override=True)
+    template = Optional(LinkOrElse(GEMDProcessTemplate), 'template', override=True, use_init=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 tags: Optional[list[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[list[Condition]] = None,
-                 parameters: Optional[list[Parameter]] = None,
-                 template: Optional[GEMDProcessTemplate] = None,
-                 file_links: Optional[list[FileLink]] = None
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 conditions: list[Condition] | None = None,
+                 parameters: list[Parameter] | None = None,
+                 template: GEMDProcessTemplate | None = None,
+                 file_links: list[FileLink] | None = None
                  ):
         if uids is None:
             uids = dict()

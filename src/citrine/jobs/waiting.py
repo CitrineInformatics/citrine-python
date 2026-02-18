@@ -157,7 +157,7 @@ def wait_while_executing(
 
     Returns
     -------
-    ExectutionType
+    ExecutionType
         the updated execution after it has finished executing
 
 

@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.engine_resource import EngineResourceWithoutStatus
@@ -36,7 +35,7 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
                  *,
                  name: str,
                  description: str,
-                 snapshot_id: Optional[UUID | str] = None,
+                 snapshot_id: UUID | str | None = None,
                  plots: list[dict] = []):
         self.name = name
         self.description = description
@@ -68,8 +67,8 @@ class AnalysisWorkflowUpdatePayload(Resource['AnalysisWorkflowUpdatePayload']):
     def __init__(self,
                  uid: UUID | str,
                  *,
-                 name: Optional[str] = None,
-                 description: Optional[str] = None):
+                 name: str | None = None,
+                 description: str | None = None):
         self.uid = uid
         self.name = name
         self.description = description

@@ -1,6 +1,6 @@
 from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
 from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation, \
@@ -43,9 +43,9 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
     def _list_base(self,
                    *,
                    per_page: int = 100,
-                   predictor_id: Optional[UUID] = None,
-                   predictor_version: Optional[int | str] = None,
-                   archived: Optional[bool] = None
+                   predictor_id: UUID | None = None,
+                   predictor_version: int | str | None = None,
+                   archived: bool | None = None
                    ) -> Iterator[PredictorEvaluation]:
         params = {"archived": archived}
         if predictor_id is not None:
@@ -61,8 +61,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
     def list_all(self,
                  *,
                  per_page: int = 100,
-                 predictor_id: Optional[UUID] = None,
-                 predictor_version: Optional[int | str] = None
+                 predictor_id: UUID | None = None,
+                 predictor_version: int | str | None = None
                  ) -> Iterable[PredictorEvaluation]:
         """List all predictor evaluations."""
         return self._list_base(per_page=per_page,
@@ -72,8 +72,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
     def list(self,
              *,
              per_page: int = 100,
-             predictor_id: Optional[UUID] = None,
-             predictor_version: Optional[int | str] = None
+             predictor_id: UUID | None = None,
+             predictor_version: int | str | None = None
              ) -> Iterable[PredictorEvaluation]:
         """List non-archived predictor evaluations."""
         return self._list_base(per_page=per_page,
@@ -84,8 +84,8 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
     def list_archived(self,
                       *,
                       per_page: int = 100,
-                      predictor_id: Optional[UUID] = None,
-                      predictor_version: Optional[int | str] = None
+                      predictor_id: UUID | None = None,
+                      predictor_version: int | str | None = None
                       ) -> Iterable[PredictorEvaluation]:
         """List archived predictor evaluations."""
         return self._list_base(per_page=per_page,

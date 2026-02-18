@@ -144,11 +144,11 @@ class ModelSummary(Serializable['ModelSummary']):
     selection_summary = properties.Optional(
         properties.Object(ModelSelectionReport), "selection_summary"
     )
-    """:Optional[ModelSelectionReport]: optional results of AutoML model selection"""
+    """:ModelSelectionReport | None: optional results of AutoML model selection"""
     predictor_name = properties.String('predictor_configuration_name', default='')
     """:str: the name of the predictor that created this model"""
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
-    """:Optional[UUID]: the unique Citrine id of the predictor that created this model"""
+    """:UUID | None: the unique Citrine id of the predictor that created this model"""
     training_data_count = properties.Optional(properties.Integer, "training_data_count")
     """:int: Number of rows in the training data for the model, if applicable."""
 

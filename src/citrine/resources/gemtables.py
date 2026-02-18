@@ -1,7 +1,7 @@
 import json
 from collections.abc import Iterable
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -102,7 +102,7 @@ class GemTableCollection(Collection[GemTable]):
         self.session: Session = session
         self.team_id = team_id
 
-    def get(self, uid: UUID | str, *, version: Optional[int] = None) -> GemTable:
+    def get(self, uid: UUID | str, *, version: int | None = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
             path = self._get_path(uid, action=["versions", version])
@@ -127,7 +127,7 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
+        def _fetch_versions(page: int | None,
                             per_page: int) -> tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
@@ -155,7 +155,7 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
+        def _fetch_versions(page: int | None,
                             per_page: int) -> tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)

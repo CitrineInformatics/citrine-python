@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of teams."""
-from typing import Optional, Union
+from typing import Union
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -163,7 +163,7 @@ class Team(Resource['Team']):
                  name: str,
                  *,
                  description: str = "",
-                 session: Optional[Session] = None):
+                 session: Session | None = None):
         self.name: str = name
         self.description: str = description
         self.session: Session = session
@@ -252,7 +252,7 @@ class Team(Resource['Team']):
     def add_user(self,
                  user_id: str | UUID | User,
                  *,
-                 actions: Optional[list[TEAM_ACTIONS]] = None) -> bool:
+                 actions: list[TEAM_ACTIONS] | None = None) -> bool:
         """
         Add a User to a Team.
 

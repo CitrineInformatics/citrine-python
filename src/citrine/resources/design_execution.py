@@ -1,6 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -21,7 +20,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def __init__(self,
                  project_id: UUID,
                  session: Session,
-                 workflow_id: Optional[UUID] = None):
+                 workflow_id: UUID | None = None):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
@@ -33,7 +32,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, execution_input: Score, *, max_candidates: Optional[int] = None):
+    def trigger(self, execution_input: Score, *, max_candidates: int | None = None):
         """Trigger a Design Workflow execution given a score and a maximum number of candidates."""
         path = self._get_path()
         json = {'score': execution_input.dump(), "max_candidates": max_candidates}

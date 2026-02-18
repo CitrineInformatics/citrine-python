@@ -12,26 +12,26 @@ class EngineResourceWithoutStatus(Resource[Self]):
     """Base resource for metadata from stand-alone AI Engine modules."""
 
     created_by = properties.Optional(properties.UUID, 'metadata.created.user', serializable=False)
-    """:Optional[UUID]: id of the user who created the resource"""
+    """:UUID | None: id of the user who created the resource"""
     create_time = properties.Optional(properties.Datetime, 'metadata.created.time',
                                       serializable=False)
-    """:Optional[datetime]: date and time at which the resource was created"""
+    """:datetime | None: date and time at which the resource was created"""
 
     updated_by = properties.Optional(properties.UUID, 'metadata.updated.user',
                                      serializable=False)
-    """:Optional[UUID]: id of the user who most recently updated the resource,
+    """:UUID | None: id of the user who most recently updated the resource,
     if it has been updated"""
     update_time = properties.Optional(properties.Datetime, 'metadata.updated.time',
                                       serializable=False)
-    """:Optional[datetime]: date and time at which the resource was most recently updated,
+    """:datetime | None: date and time at which the resource was most recently updated,
     if it has been updated"""
 
     archived_by = properties.Optional(properties.UUID, 'metadata.archived.user',
                                       serializable=False)
-    """:Optional[UUID]: id of the user who archived the resource, if it has been archived"""
+    """:UUID | None: id of the user who archived the resource, if it has been archived"""
     archive_time = properties.Optional(properties.Datetime, 'metadata.archived.time',
                                        serializable=False)
-    """:Optional[datetime]: date and time at which the resource was archived,
+    """:datetime | None: date and time at which the resource was archived,
     if it has been archived"""
 
     _resource_type = ResourceTypeEnum.MODULE
@@ -60,7 +60,7 @@ class EngineResource(EngineResourceWithoutStatus[Self], IncludeParentProperties[
     """Base resource for metadata from stand-alone AI Engine modules."""
 
     status = properties.Optional(properties.String(), 'metadata.status.name', serializable=False)
-    """:Optional[str]: short description of the resource's status"""
+    """:str | None: short description of the resource's status"""
     status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
                                     default=[], serializable=False)
     """:list[StatusDetail]: a list of structured status info, containing the message and level"""

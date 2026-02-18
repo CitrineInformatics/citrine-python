@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -31,7 +30,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
         the description of the predictor
     predictors: list[UUID | PredictorNode],
         the list of individual predictors to use in the graph
-    training_data: Optional[list[DataSource]]
+    training_data: list[DataSource] | None
         Optional sources of training data shared by all predictors in the graph.
         Training data provided by this graph predictor does not need to be specified as part of the
         configuration of sub-predictors. Shared training data and any training data specified
@@ -43,7 +42,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    """:Optional[UUID]: Citrine Platform unique identifier"""
+    """:UUID | None: Citrine Platform unique identifier"""
 
     name = properties.String('data.name')
     description = properties.Optional(properties.String(), 'data.description')
@@ -63,8 +62,8 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
 
     _api_version = "v3"
     _response_key = None
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
+    _project_id: UUID | None = None
+    _session: Session | None = None
     _in_progress_statuses = ["VALIDATING", "CREATED"]
     _succeeded_statuses = ["READY"]
     _failed_statuses = ["INVALID", "ERROR"]
@@ -74,7 +73,7 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
                  *,
                  description: str,
                  predictors: list[PredictorNode],
-                 training_data: Optional[list[DataSource]] = None):
+                 training_data: list[DataSource] | None = None):
         self.name: str = name
         self.description: str = description
         self.training_data: list[DataSource] = training_data or []

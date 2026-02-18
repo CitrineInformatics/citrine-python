@@ -1,7 +1,6 @@
 """Resources that represent both individual and collections of projects."""
 from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -59,13 +58,13 @@ class Project(Resource['Project']):
     def __init__(self,
                  name: str,
                  *,
-                 description: Optional[str] = None,
-                 session: Optional[Session] = None,
-                 team_id: Optional[UUID] = None):
+                 description: str | None = None,
+                 session: Session | None = None,
+                 team_id: UUID | None = None):
         self.name: str = name
-        self.description: Optional[str] = description
+        self.description: str | None = description
         self.session: Session = session
-        self._team_id: Optional[UUID] = team_id
+        self._team_id: UUID | None = team_id
 
     def _post_dump(self, data: dict) -> dict:
         return {key: value for key, value in data.items() if value is not None}
@@ -87,7 +86,7 @@ class Project(Resource['Project']):
         return self._team_id
 
     @team_id.setter
-    def team_id(self, value: Optional[UUID]):
+    def team_id(self, value: UUID | None):
         self._team_id = value
 
     @classmethod
@@ -267,7 +266,7 @@ class ProjectCollection(Collection[Project]):
     _resource = Project
     _api_version = 'v3'
 
-    def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
+    def __init__(self, session: Session, *, team_id: UUID | None = None):
         self.session = session
         self.team_id = team_id
 
@@ -308,7 +307,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).get(uid)
 
-    def register(self, name: str, *, description: Optional[str] = None) -> Project:
+    def register(self, name: str, *, description: str | None = None) -> Project:
         """
         Create and upload new project.
 
@@ -332,7 +331,7 @@ class ProjectCollection(Collection[Project]):
         project = Project(name, description=description)
         return super().register(project)
 
-    def _list_base(self, *, per_page: int = 1000, archived: Optional[bool] = None):
+    def _list_base(self, *, per_page: int = 1000, archived: bool | None = None):
         filters = {}
         if archived is not None:
             filters["archived"] = str(archived).lower()
@@ -399,7 +398,7 @@ class ProjectCollection(Collection[Project]):
         """
         return self._list_base(per_page=per_page, archived=True)
 
-    def search_all(self, search_params: Optional[dict]) -> Iterable[dict]:
+    def search_all(self, search_params: dict | None) -> Iterable[dict]:
         """
         Search across all projects in a domain.
 
@@ -457,7 +456,7 @@ class ProjectCollection(Collection[Project]):
 
     def search(self,
                *,
-               search_params: Optional[dict] = None,
+               search_params: dict | None = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.

@@ -1,5 +1,4 @@
 from copy import copy
-from typing import Optional
 from uuid import UUID
 
 from gemd.entity.object import MaterialRun
@@ -82,7 +81,7 @@ class TableConfig(Resource["TableConfig"]):
         List of row definitions that define the rows of the table
     columns: list[Column]
         Column definitions, which describe how the variables are shaped into the table
-    gemd_query: Optional[GemdQuery]
+    gemd_query: GemdQuery | None
         The query used to define the materials underpinning this table
     generation_algorithm: TableFromGemdQueryAlgorithm
         Which algorithm was used to generate the config based on the GemdQuery results
@@ -99,12 +98,12 @@ class TableConfig(Resource["TableConfig"]):
         return [x for x in lst if lst.count(x) > 1]
 
     config_uid = properties.Optional(properties.UUID(), 'definition_id')
-    """:Optional[UUID]: Unique ID of the table config, independent of its version."""
+    """:UUID | None: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
-    """:Optional[int]: The version of the table config, starting from 1.
+    """:int | None: The version of the table config, starting from 1.
     It increases every time the table config is updated."""
     version_uid = properties.Optional(properties.UUID(), 'id')
-    """:Optional[UUID]: Unique ID that specifies one version of one table config."""
+    """:UUID | None: Unique ID that specifies one version of one table config."""
 
     name = properties.String("name")
     description = properties.String("description")
@@ -125,7 +124,7 @@ class TableConfig(Resource["TableConfig"]):
                  rows: list[Row],
                  columns: list[Column],
                  gemd_query: GemdQuery = None,
-                 generation_algorithm: Optional[TableFromGemdQueryAlgorithm] = None):
+                 generation_algorithm: TableFromGemdQueryAlgorithm | None = None):
         self.name = name
         self.description = description
         self.datasets = datasets
@@ -167,8 +166,8 @@ class TableConfig(Resource["TableConfig"]):
     def add_columns(self, *,
                     variable: Variable,
                     columns: list[Column],
-                    name: Optional[str] = None,
-                    description: Optional[str] = None
+                    name: str | None = None,
+                    description: str | None = None
                     ) -> 'TableConfig':
         """Add a variable and one or more columns to this TableConfig (out-of-place).
 
@@ -182,9 +181,9 @@ class TableConfig(Resource["TableConfig"]):
             Variable to add and use in the added columns
         columns: list[Column]
             Columns to add, which must only reference the added variable
-        name: Optional[str]
+        name: str | None
             Optional renaming of the table
-        description: Optional[str]
+        description: str | None
             Optional re-description of the table
 
         """
@@ -214,7 +213,7 @@ class TableConfig(Resource["TableConfig"]):
                             team: 'Team',
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
-                            unit: Optional[str] = None
+                            unit: str | None = None
                             ):
         """Add variables and columns for all of the possible ingredients in a process.
 
@@ -230,9 +229,9 @@ class TableConfig(Resource["TableConfig"]):
             a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
@@ -310,7 +309,7 @@ class TableConfig(Resource["TableConfig"]):
                                       team: 'Team',
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
-                                      unit: Optional[str] = None
+                                      unit: str | None = None
                                       ):
         """Add variables and columns for all possible ingredients in a list of processes.
 
@@ -329,9 +328,9 @@ class TableConfig(Resource["TableConfig"]):
             a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
@@ -424,7 +423,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.session: Session = session
         self.team_id = team_id
 
-    def get(self, uid: UUID | str, *, version: Optional[int] = None):
+    def get(self, uid: UUID | str, *, version: int | None = None):
         """Get a table config.
 
         If no version is specified, then the most recent version is returned.
@@ -482,7 +481,7 @@ class TableConfigCollection(Collection[TableConfig]):
             material: MaterialRun | LinkByUID | str | UUID,
             name: str,
             description: str = None,
-            algorithm: Optional[TableBuildAlgorithm] = None
+            algorithm: TableBuildAlgorithm | None = None
     ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build best-guess default table config for provided terminal material's history.
@@ -543,7 +542,7 @@ class TableConfigCollection(Collection[TableConfig]):
             *,
             name: str = None,
             description: str = None,
-            algorithm: Optional[TableFromGemdQueryAlgorithm] = None,
+            algorithm: TableFromGemdQueryAlgorithm | None = None,
             register_config: bool = False
     ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """

@@ -1,6 +1,5 @@
 """Citrine-specific exceptions."""
 from types import SimpleNamespace
-from typing import Optional
 from urllib.parse import urlencode
 from uuid import UUID
 
@@ -34,7 +33,7 @@ class UnauthorizedRefreshToken(NonRetryableException):
 class NonRetryableHttpException(NonRetryableException):
     """An exception originating from an HTTP error from a Citrine API."""
 
-    def __init__(self, path: str, response: Optional[Response] = None):
+    def __init__(self, path: str, response: Response | None = None):
         self.url = path
         self.detailed_error_info = []
         if response is not None:

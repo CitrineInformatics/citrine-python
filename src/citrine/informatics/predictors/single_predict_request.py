@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -23,7 +22,7 @@ class SinglePredictRequest(Serializable["SinglePredictRequest"]):
                  identifiers: list[str],
                  material: DesignMaterial,
                  *,
-                 random_seed: Optional[int] = None):
+                 random_seed: int | None = None):
         self.material_id = material_id
         self.identifiers = identifiers
         self.material = material

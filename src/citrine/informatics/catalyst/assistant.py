@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine.informatics.predictors import GraphPredictor
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -19,8 +17,8 @@ class AssistantRequest(Serializable["AssistantRequest"]):
     def __init__(self, *,
                  question: str,
                  predictor: GraphPredictor,
-                 temperature: Optional[float] = 0.0,
-                 language_model: Optional[LanguageModelChoice] = LanguageModelChoice.GPT_4):
+                 temperature: float | None = 0.0,
+                 language_model: LanguageModelChoice | None = LanguageModelChoice.GPT_4):
         self.question = question
         self.predictor = predictor
         self.temperature = temperature

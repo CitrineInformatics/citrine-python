@@ -1,4 +1,3 @@
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.predictors import Predictor

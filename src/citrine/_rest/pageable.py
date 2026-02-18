@@ -1,5 +1,4 @@
 from collections.abc import Callable, Iterable, Sequence
-from typing import Optional
 from uuid import UUID
 
 
@@ -10,7 +9,7 @@ class Pageable():
     _api_version: str = "v1"
 
     def _get_path(self,
-                  uid: Optional[UUID | str] = None,
+                  uid: UUID | str | None = None,
                   *,
                   ignore_dataset: bool = False,
                   action: str | Sequence[str] = [],
@@ -20,14 +19,14 @@ class Pageable():
         raise NotImplementedError  # pragma: no cover
 
     def _fetch_page(self,
-                    path: Optional[str] = None,
-                    fetch_func: Optional[Callable[..., dict]] = None,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    json_body: Optional[dict] = None,
-                    additional_params: Optional[dict] = None,
+                    path: str | None = None,
+                    fetch_func: Callable[..., dict] | None = None,
+                    page: int | None = None,
+                    per_page: int | None = None,
+                    json_body: dict | None = None,
+                    additional_params: dict | None = None,
                     *,
-                    version: Optional[str] = None
+                    version: str | None = None
                     ) -> tuple[Iterable[dict], str]:
         """
         Fetch visible elements.  This does not handle pagination.
@@ -101,9 +100,9 @@ class Pageable():
         return collection, next_uri
 
     def _page_params(self,
-                     page: Optional[int],
-                     per_page: Optional[int],
-                     module_type: Optional[str] = None) -> dict[str, int]:
+                     page: int | None,
+                     per_page: int | None,
+                     module_type: str | None = None) -> dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page

@@ -1,11 +1,9 @@
 """Resources that represent material run data objects."""
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, Optional, String
 from citrine._utils.functions import format_escaped_url
 from citrine.resources._default_labels import _inject_default_label_tags
 from citrine.resources.data_concepts import _make_link_by_uid
@@ -65,27 +63,21 @@ class MaterialRun(
     _response_key = GEMDMaterialRun.typ  # 'material_run'
 
     name = String('name', override=True, use_init=True)
-    process = PropertyOptional(LinkOrElse(GEMDProcessRun),
-                               'process',
-                               override=True,
-                               use_init=True,)
-    sample_type = PropertyOptional(String, 'sample_type', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDMaterialSpec),
-                            'spec',
-                            override=True,
-                            use_init=True,)
+    process = Optional(LinkOrElse(GEMDProcessRun), 'process', override=True, use_init=True)
+    sample_type = Optional(String, 'sample_type', override=True)
+    spec = Optional(LinkOrElse(GEMDMaterialSpec), 'spec', override=True, use_init=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 tags: Optional[list[str]] = None,
-                 notes: Optional[str] = None,
-                 process: Optional[GEMDProcessRun] = None,
-                 sample_type: Optional[str] = "unknown",
-                 spec: Optional[GEMDMaterialSpec] = None,
-                 file_links: Optional[list[FileLink]] = None,
-                 default_labels: Optional[list[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 process: GEMDProcessRun | None = None,
+                 sample_type: str | None = "unknown",
+                 spec: GEMDMaterialSpec | None = None,
+                 file_links: list[FileLink] | None = None,
+                 default_labels: list[str] | None = None):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
@@ -164,7 +156,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
     def get_by_process(self,
                        uid: UUID | str | LinkByUID | GEMDProcessRun
-                       ) -> Optional[MaterialRun]:
+                       ) -> MaterialRun | None:
         """
         Get output material of a process.
 

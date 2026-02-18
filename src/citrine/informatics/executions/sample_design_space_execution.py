@@ -1,6 +1,5 @@
 from collections.abc import Iterable
 from functools import partial
-from typing import Optional
 from uuid import UUID
 
 from citrine.informatics.executions.execution import Execution
@@ -18,7 +17,7 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
     """
 
     _api_version = 'v3'
-    design_space_id: Optional[UUID] = None
+    design_space_id: UUID | None = None
 
     def _path(self):
         return format_escaped_url(
@@ -48,7 +47,7 @@ class SampleDesignSpaceExecution(Resource['SampleDesignSpaceExecution'], Executi
     def results(
         self,
         *,
-        page: Optional[int] = None,
+        page: int | None = None,
         per_page: int = 100,
     ) -> Iterable[SampleSearchSpaceResultCandidate]:
         """Fetch the Sample Design Space Results for the particular execution, paginated."""

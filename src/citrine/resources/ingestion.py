@@ -1,5 +1,4 @@
 from collections.abc import Collection as TypingCollection, Iterator, Iterable
-from typing import Optional
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -115,14 +114,14 @@ class IngestionException(CitrineException):
     """[ALPHA] An exception that contains details of a failed ingestion."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
-    """Optional[UUID]"""
+    """UUID | None"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
     """list[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
-                 uid: Optional[UUID] = uid.default,
+                 uid: UUID | None = uid.default,
                  errors: Iterable[IngestionErrorTrace]):
         errors_ = list(errors)
         message = '; '.join(str(e) for e in errors_)
@@ -157,7 +156,7 @@ class IngestionStatus(Resource['IngestionStatus']):
 
     def __init__(self,
                  *,
-                 uid: Optional[UUID] = uid.default,
+                 uid: UUID | None = uid.default,
                  status: IngestionStatusType = IngestionStatusType.INGESTION_CREATED,
                  errors: Iterable[IngestionErrorTrace]):
         self.uid = uid
@@ -195,11 +194,11 @@ class Ingestion(Resource['Ingestion']):
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional["Project | UUID | str"] = None,  # noqa: F821
+                      project: "Project | UUID | str | None" = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
-                      polling_delay: Optional[float] = None
+                      polling_delay: float | None = None
                       ) -> IngestionStatus:
         """
         [ALPHA] Perform a complete ingestion operation, from start to finish.
@@ -211,18 +210,18 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
         delete_templates: bool
             Whether to delete all objects and templates (as opposed to not deleting
             templates) when `delete_dataset_contents` is True.  Default: True
-        timeout: Optional[float]
+        timeout: float | None
             Amount of time to wait on the job (in seconds) before giving up. Note that
             this number has no effect on the underlying job itself, which can also time
             out server-side.
-        polling_delay: Optional[float]
+        polling_delay: float | None
             How long to delay between each polling retry attempt.
 
         Returns
@@ -252,7 +251,7 @@ class Ingestion(Resource['Ingestion']):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional["Project | UUID | str"] = None,  # noqa: F821
+                            project: "Project | UUID | str | None" = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """
@@ -262,7 +261,7 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
@@ -313,8 +312,8 @@ class Ingestion(Resource['Ingestion']):
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
                                 *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
+                                timeout: float | None = None,
+                                polling_delay: float | None = None
                                 ) -> IngestionStatus:
         """
         [ALPHA] Repeatedly ask server if a job associated with this ingestion has completed.
@@ -387,11 +386,11 @@ class FailedIngestion(Ingestion):
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional["Project | UUID | str"] = None,  # noqa: F821
+                      project: "Project | UUID | str | None" = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
-                      polling_delay: Optional[float] = None
+                      polling_delay: float | None = None
                       ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         return self.status()
@@ -399,7 +398,7 @@ class FailedIngestion(Ingestion):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional["Project | UUID | str"] = None,  # noqa: F821
+                            project: "Project | UUID | str | None" = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
@@ -412,8 +411,8 @@ class FailedIngestion(Ingestion):
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
                                 *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
+                                timeout: float | None = None,
+                                polling_delay: float | None = None
                                 ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(

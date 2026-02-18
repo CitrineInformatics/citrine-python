@@ -2,7 +2,7 @@
 import re
 from abc import abstractmethod, ABC
 from collections.abc import Iterable, Iterator
-from typing import List, Optional, TypeVar
+from typing import List, TypeVar
 from uuid import UUID, uuid4
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
@@ -13,10 +13,8 @@ from gemd.util import recursive_foreach, set_uuids
 
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.properties import String, Mapping, Object
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import UUID as PropertyUUID
+from citrine._serialization.properties import List as PropertyList, UUID as PropertyUUID
+from citrine._serialization.properties import Mapping, Object, Optional, String
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url, replace_objects_with_links, scrub_none
@@ -59,8 +57,8 @@ class DataConcepts(
     """
 
     """Properties inherited from GEMD Base Entitiy."""
-    uids = PropertyOptional(Mapping(String('scope'), String('id')), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    uids = Optional(Mapping(String('scope'), String('id')), 'uids', override=True)
+    tags = Optional(PropertyList(String()), 'tags', override=True)
 
     _type_key = "type"
     """str: key used to determine type of serialized object."""
@@ -79,24 +77,24 @@ class DataConcepts(
     * audit_info contains who/when information about the resource on the citrine platform
     * dataset is the unique Citrine id of the dataset that owns this resource
     """
-    _audit_info = PropertyOptional(Object(AuditInfo), "audit_info", serializable=False)
-    _dataset = PropertyOptional(PropertyUUID, "dataset", serializable=False)
+    _audit_info = Optional(Object(AuditInfo), "audit_info", serializable=False)
+    _dataset = Optional(PropertyUUID, "dataset", serializable=False)
 
     def __init__(self):
         self.typ = self._typ_stash
 
     @property
-    def audit_info(self) -> Optional[AuditInfo]:
+    def audit_info(self) -> AuditInfo | None:
         """Get the audit info object."""
         return self._audit_info
 
     @property
-    def uid(self) -> Optional[UUID]:
+    def uid(self) -> UUID | None:
         """Get the Citrine Identifier (scope = "id"), or None if not registered."""
         return self.uids.get(CITRINE_SCOPE)
 
     @property
-    def dataset(self) -> Optional[UUID]:
+    def dataset(self) -> UUID | None:
         """Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
 
@@ -214,7 +212,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self, *, session: Session, team_id: UUID, dataset_id: Optional[UUID] = None):
+    def __init__(self, *, session: Session, team_id: UUID, dataset_id: UUID | None = None):
         self.dataset_id = dataset_id
         self.session = session
         self.team_id = team_id
@@ -256,7 +254,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return self.get_type().build(data)
 
     def list(self, *,
-             per_page: Optional[int] = 100,
+             per_page: int | None = 100,
              forward: bool = True) -> Iterator[ResourceType]:
         """
         Get all visible elements of the collection.
@@ -436,7 +434,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      wait_for_response: bool = True,
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[UUID | ResourceType]:
+                     return_model: bool = False) -> UUID | ResourceType | None:
         """
         Update a particular element of the collection with data validation.
 
@@ -466,7 +464,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        Optional[UUID]
+        UUID | None
             If wait_for_response if True, then this call will poll the backend, waiting
             for the eventual job result. In the case of successful validation/update,
             a return value of None is provided unless return_model is True, in which case

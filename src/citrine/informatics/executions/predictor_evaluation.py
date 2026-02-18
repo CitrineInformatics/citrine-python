@@ -1,5 +1,4 @@
 from functools import lru_cache
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -33,7 +32,7 @@ class PredictorEvaluationRequest(Serializable['EvaluatorsPayload']):
                  *,
                  evaluators: list[PredictorEvaluator],
                  predictor_id: UUID | str,
-                 predictor_version: Optional[int | str] = None):
+                 predictor_version: int | str | None = None):
         self.evaluators = evaluators
         self.predictor = PredictorRef(predictor_id, predictor_version)
 
@@ -58,8 +57,8 @@ class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], As
                                     default=[], serializable=False)
     """:list[StatusDetail]: a list of structured status info, containing the message and level"""
 
-    project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
+    project_id: UUID | None = None
+    _session: Session | None = None
     _in_progress_statuses = ["INPROGRESS"]
     _succeeded_statuses = ["SUCCEEDED"]
     _failed_statuses = ["FAILED"]

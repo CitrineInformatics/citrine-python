@@ -1,16 +1,14 @@
 """Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
 from abc import ABC
 from collections.abc import Iterator
-from typing import Optional, TypeVar
+from typing import TypeVar
 from uuid import uuid4
 
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import String, Object
-from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import List, Object, Optional, String
 from gemd.entity.file_link import FileLink
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
@@ -30,8 +28,8 @@ class DataObject(DataConcepts, BaseObject, ABC):
     DataObject must be extended along with `Resource`
     """
 
-    notes = PropertyOptional(String(), 'notes')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    notes = Optional(String(), 'notes')
+    file_links = Optional(List(Object(FileLink)), 'file_links', override=True)
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
@@ -110,8 +108,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def validate_templates(self, *,
                            model: DataObjectResourceType,
-                           object_template: Optional[ObjectTemplateResourceType] = None,
-                           ingredient_process_template: Optional[ProcessTemplate] = None)\
+                           object_template: ObjectTemplateResourceType | None = None,
+                           ingredient_process_template: ProcessTemplate | None = None)\
             -> list[ValidationError]:
         """
         Validate a data object against its templates.

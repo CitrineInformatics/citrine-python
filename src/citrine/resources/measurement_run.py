@@ -1,12 +1,9 @@
 """Resources that represent measurement run data objects."""
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -64,30 +61,26 @@ class MeasurementRun(
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
     name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    properties = PropertyOptional(PropertyList(Object(Property)), 'properties', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDMeasurementSpec), 'spec', override=True, use_init=True,)
-    material = PropertyOptional(LinkOrElse(GEMDMaterialRun),
-                                "material",
-                                override=True,
-                                use_init=True,
-                                )
-    source = PropertyOptional(Object(PerformedSource), "source", override=True)
+    conditions = Optional(List(Object(Condition)), 'conditions', override=True)
+    parameters = Optional(List(Object(Parameter)), 'parameters', override=True)
+    properties = Optional(List(Object(Property)), 'properties', override=True)
+    spec = Optional(LinkOrElse(GEMDMeasurementSpec), 'spec', override=True, use_init=True,)
+    material = Optional(LinkOrElse(GEMDMaterialRun), "material", override=True, use_init=True)
+    source = Optional(Object(PerformedSource), "source", override=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 tags: Optional[list[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[list[Condition]] = None,
-                 properties: Optional[list[Property]] = None,
-                 parameters: Optional[list[Parameter]] = None,
-                 spec: Optional[GEMDMeasurementSpec] = None,
-                 material: Optional[GEMDMaterialRun] = None,
-                 file_links: Optional[list[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 conditions: list[Condition] | None = None,
+                 properties: list[Property] | None = None,
+                 parameters: list[Parameter] | None = None,
+                 spec: GEMDMeasurementSpec | None = None,
+                 material: GEMDMaterialRun | None = None,
+                 file_links: list[FileLink] | None = None,
+                 source: PerformedSource | None = None):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()

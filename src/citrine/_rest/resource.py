@@ -1,4 +1,4 @@
-from typing import TypeVar, Optional
+from typing import TypeVar
 from uuid import UUID
 
 from citrine._serialization.serializable import Serializable
@@ -37,7 +37,7 @@ class Resource(Serializable[Self]):
     """Abstract class for representing individual REST resource."""
 
     _path_template: str = NotImplemented
-    _response_key: Optional[str] = None
+    _response_key: str | None = None
     _resource_type: ResourceTypeEnum = NotImplemented
 
     def access_control_dict(self) -> dict:
@@ -100,6 +100,6 @@ class PredictorRef(Serializable['PredictorRef']):
         'predictor_version'
     )
 
-    def __init__(self, uid: UUID | str, version: Optional[int | str] = None):
+    def __init__(self, uid: UUID | str, version: int | str | None = None):
         self.uid = uid
         self.version = version

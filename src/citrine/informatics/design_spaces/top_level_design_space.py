@@ -1,5 +1,4 @@
 """Tools for working with design spaces."""
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -22,17 +21,17 @@ class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], Asynch
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    """:Optional[UUID]: Citrine Platform unique identifier"""
+    """:UUID | None: Citrine Platform unique identifier"""
     name = properties.String('data.name')
     description = properties.Optional(properties.String(), 'data.description')
 
     locked_by = properties.Optional(properties.UUID, 'metadata.locked.user',
                                     serializable=False)
-    """:Optional[UUID]: id of the user whose action cause the design space to
+    """:UUID | None: id of the user whose action cause the design space to
     be locked, if it is locked"""
     lock_time = properties.Optional(properties.Datetime, 'metadata.locked.time',
                                     serializable=False)
-    """:Optional[datetime]: date and time at which the resource was locked,
+    """:datetime | None: date and time at which the resource was locked,
     if it is locked"""
 
     @staticmethod
@@ -50,8 +49,8 @@ class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], Asynch
         }
 
     _response_key = None
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
+    _project_id: UUID | None = None
+    _session: Session | None = None
     _in_progress_statuses = ["VALIDATING", "CREATED"]
     _succeeded_statuses = ["READY"]
     _failed_statuses = ["INVALID", "ERROR"]

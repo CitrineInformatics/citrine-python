@@ -1,12 +1,9 @@
 """Resources that represent material templates."""
-from typing import Optional
 from collections.abc import Sequence
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Union as PropertyUnion
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, \
+    SpecifiedMixedList, Union
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -52,25 +49,20 @@ class MaterialTemplate(
 
     _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
-    properties = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDPropertyTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ), 'properties', override=True)
+    properties = Optional(List(Union([LinkOrElse(GEMDPropertyTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'properties', override=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 properties: Optional[Sequence[PropertyTemplate
-                                               | LinkByUID
-                                               | Sequence[PropertyTemplate | LinkByUID
-                                                          | Optional[BaseBounds]]
-                                               ]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[list[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 properties: Sequence[PropertyTemplate | LinkByUID
+                                      | Sequence[PropertyTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 description: str | None = None,
+                 tags: list[str] | None = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.

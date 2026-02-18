@@ -1,7 +1,7 @@
 """Resources that represent collections of predictors."""
 from collections.abc import Iterable
 from functools import partial
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -29,7 +29,7 @@ class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
     """:UUID: Citrine Platform unique identifier for this task."""
 
     predictor = properties.Optional(properties.Object(GraphPredictor), 'data', serializable=False)
-    """:Optional[GraphPredictor]:"""
+    """:GraphPredictor | None:"""
 
     status = properties.String('metadata.status', serializable=False)
     """:str: short description of the resource's status"""
@@ -86,7 +86,7 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
 
     def _construct_path(self,
                         uid: UUID | str,
-                        version: Optional[int | str] = None,
+                        version: int | str | None = None,
                         action: str = None) -> str:
         path = self._path_template.format(project_id=self.project_id, uid=str(uid))
         if version is not None:
@@ -189,8 +189,8 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
                uid: UUID | str,
                *,
                version: int | str,
-               name: Optional[str] = None,
-               description: Optional[str] = None
+               name: str | None = None,
+               description: str | None = None
                ) -> GraphPredictor:
         path = self._construct_path(uid, version, "rename")
         json = {"name": name, "description": description}
@@ -368,7 +368,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         raise NotImplementedError("The restore() method is no longer supported. You most likely "
                                   "want restore_root(), or possibly restore_version().")
 
-    def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
+    def _list_base(self, *, per_page: int = 100, archived: bool | None = None):
         filters = {}
         if archived is not None:
             filters["archived"] = archived
@@ -406,7 +406,7 @@ class PredictorCollection(Collection[GraphPredictor]):
         """List all archived versions of the given Predictor."""
         return self._versions_collection.list_archived(uid, per_page=per_page)
 
-    def check_for_update(self, uid: UUID | str) -> Optional[GraphPredictor]:
+    def check_for_update(self, uid: UUID | str) -> GraphPredictor | None:
         """
         Check if there are updates available for a predictor.
 
@@ -423,7 +423,7 @@ class PredictorCollection(Collection[GraphPredictor]):
 
         Returns
         -------
-        Optional[Predictor]
+        Predictor | None
             The update, if an update is available; None otherwise.
 
         """
@@ -568,8 +568,8 @@ class PredictorCollection(Collection[GraphPredictor]):
                uid: UUID | str,
                *,
                version: int | str,
-               name: Optional[str] = None,
-               description: Optional[str] = None) -> GraphPredictor:
+               name: str | None = None,
+               description: str | None = None) -> GraphPredictor:
         """Rename an existing predictor.
 
         Both the name and description can be changed. This does not trigger retraining.

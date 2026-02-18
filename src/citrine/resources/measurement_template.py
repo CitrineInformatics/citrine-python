@@ -1,12 +1,9 @@
 """Resources that represent measurement templates."""
-from typing import Optional
 from collections.abc import Sequence
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Union as PropertyUnion
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, \
+    SpecifiedMixedList, Union
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
@@ -67,58 +64,37 @@ class MeasurementTemplate(
 
     _response_key = GEMDMeasurementTemplate.typ  # 'measurement_template'
 
-    properties = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDPropertyTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'properties',
-        override=True
-    )
-    conditions = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDConditionTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'conditions',
-        override=True
-    )
-    parameters = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDParameterTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'parameters',
-        override=True
-    )
+    properties = Optional(List(Union([LinkOrElse(GEMDPropertyTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'properties',
+                          override=True)
+    conditions = Optional(List(Union([LinkOrElse(GEMDConditionTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'conditions',
+                          override=True)
+    parameters = Optional(List(Union([LinkOrElse(GEMDParameterTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'parameters',
+                          override=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 properties: Optional[Sequence[PropertyTemplate
-                                               | LinkByUID
-                                               | Sequence[PropertyTemplate | LinkByUID
-                                                          | BaseBounds]
-                                               ]] = None,
-                 conditions: Optional[Sequence[ConditionTemplate
-                                               | LinkByUID
-                                               | Sequence[ConditionTemplate | LinkByUID
-                                                          | Optional[BaseBounds]]
-                                               ]] = None,
-                 parameters: Optional[Sequence[ParameterTemplate
-                                               | LinkByUID
-                                               | Sequence[ParameterTemplate | LinkByUID
-                                                          | Optional[BaseBounds]]
-                                               ]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[list[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 properties: Sequence[PropertyTemplate | LinkByUID
+                                      | Sequence[PropertyTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 conditions: Sequence[ConditionTemplate | LinkByUID
+                                      | Sequence[ConditionTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 parameters: Sequence[ParameterTemplate | LinkByUID
+                                      | Sequence[ParameterTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 description: str | None = None,
+                 tags: list[str] | None = None):
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()

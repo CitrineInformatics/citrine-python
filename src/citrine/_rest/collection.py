@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from collections.abc import Iterable, Iterator, Sequence
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable
@@ -30,7 +30,7 @@ class Collection(Generic[ResourceType], Pageable):
     _api_version: str = "v1"
 
     def _get_path(self,
-                  uid: Optional[UUID | str] = None,
+                  uid: UUID | str | None = None,
                   *,
                   ignore_dataset: bool = False,
                   action: str | Sequence[str] = [],

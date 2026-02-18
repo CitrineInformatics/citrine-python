@@ -1,9 +1,8 @@
 import csv
 import json
-from typing import Iterator
+from collections.abc import Iterator
 from functools import partial
 from io import StringIO
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -25,7 +24,7 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
     name = properties.String('name', serializable=False)
     """:str: name of the experiment"""
     description = properties.Optional(properties.String, 'description', serializable=False)
-    """:Optional[str]: description of the experiment"""
+    """:str | None: description of the experiment"""
     updated_time = properties.Datetime('updated_time', serializable=False)
     """:datetime: date and time at which the experiment was updated"""
 
@@ -107,8 +106,8 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
 
     def list(self, *,
              per_page: int = 100,
-             branch_version_id: Optional[UUID | str] = None,
-             version: Optional[int | str] = None) -> Iterator[ExperimentDataSource]:
+             branch_version_id: UUID | str | None = None,
+             version: int | str | None = None) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
 
         Parameters

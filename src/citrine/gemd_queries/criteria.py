@@ -92,7 +92,7 @@ class PropertiesCriteria(Serializable['PropertiesCriteria'], Criteria):
     ----------
     property_templates_filter: set[UUID]
         The citrine IDs of the property templates matches must reference.
-    value_type_filter: Optional[PropertyFilterType]
+    value_type_filter: PropertyFilterType | None
         The value range matches must conform to.
 
     """
@@ -196,9 +196,9 @@ class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Crite
 
     Parameters
     ----------
-    is_consumed: Optional[bool]
+    is_consumed: bool | None
         Whether the material is consumed.
-    is_produced: Optional[bool]
+    is_produced: bool | None
         Whether the material is produced.
 
     """

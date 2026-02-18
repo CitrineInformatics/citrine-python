@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -18,13 +17,13 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     ----------
     name: str
         the name of the workflow
-    design_space_id: Optional[UUID]
+    design_space_id: UUID | None
         the UUID corresponding to the design space to use
-    predictor_id: Optional[UUID]
+    predictor_id: UUID | None
         the UUID corresponding to the predictor to use
-    predictor_version: Optional[int | str]
+    predictor_version: int | str | None
         the version of the predictor to use
-    description: Optional[str]
+    description: str | None
         a description of the workflow
 
     """
@@ -33,27 +32,26 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     predictor_id = properties.Optional(properties.UUID, 'predictor_id')
     predictor_version = properties.Optional(
         properties.Union([properties.Integer, properties.String]), 'predictor_version')
-    branch_root_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_root_id')
-    """:Optional[UUID]: Root ID of the branch that contains this workflow."""
-    branch_version: Optional[int] = properties.Optional(properties.Integer, 'branch_version')
-    """:Optional[int]: Version number of the branch that contains this workflow."""
+    branch_root_id: UUID | None = properties.Optional(properties.UUID, 'branch_root_id')
+    """:UUID | None: Root ID of the branch that contains this workflow."""
+    branch_version: int | None = properties.Optional(properties.Integer, 'branch_version')
+    """:int | None: Version number of the branch that contains this workflow."""
     data_source = properties.Optional(properties.Object(DataSource), "data_source")
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
-    _branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id',
-                                                     serializable=False)
+    _branch_id: UUID | None = properties.Optional(properties.UUID, 'branch_id', serializable=False)
 
     def __init__(self,
                  name: str,
                  *,
-                 design_space_id: Optional[UUID] = None,
-                 predictor_id: Optional[UUID] = None,
-                 predictor_version: Optional[int | str] = None,
-                 data_source: Optional[DataSource] = None,
-                 description: Optional[str] = None):
+                 design_space_id: UUID | None = None,
+                 predictor_id: UUID | None = None,
+                 predictor_version: int | str | None = None,
+                 data_source: DataSource | None = None,
+                 description: str | None = None):
         self.name = name
         self.design_space_id = design_space_id
         self.predictor_id = predictor_id
@@ -90,7 +88,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
             project_id=self.project_id, session=self._session, workflow_id=self.uid)
 
     @property
-    def data_source_id(self) -> Optional[str]:
+    def data_source_id(self) -> str | None:
         """A resource referencing the workflow's data source."""
         if self.data_source is None:
             return None
@@ -98,7 +96,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
             return self.data_source.to_data_source_id()
 
     @data_source_id.setter
-    def data_source_id(self, value: Optional[str]):
+    def data_source_id(self, value: str | None):
         if value is None:
             self.data_source = None
         else:

@@ -1,6 +1,5 @@
 from collections.abc import Callable, Iterable
 from copy import deepcopy
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -23,8 +22,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                  project_id: UUID,
                  session: Session,
                  *,
-                 branch_root_id: Optional[UUID] = None,
-                 branch_version: Optional[int] = None):
+                 branch_root_id: UUID | None = None,
+                 branch_version: int | None = None):
         self.project_id: UUID = project_id
         self.session: Session = session
 
@@ -162,12 +161,12 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                                         per_page=per_page)
 
     def _fetch_page(self,
-                    path: Optional[str] = None,
-                    fetch_func: Optional[Callable[..., dict]] = None,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    json_body: Optional[dict] = None,
-                    additional_params: Optional[dict] = None,
+                    path: str | None = None,
+                    fetch_func: Callable[..., dict] | None = None,
+                    page: int | None = None,
+                    per_page: int | None = None,
+                    json_body: dict | None = None,
+                    additional_params: dict | None = None,
                     ) -> tuple[Iterable[dict], str]:
         params = additional_params or {}
         params["branch_root_id"] = self.branch_root_id

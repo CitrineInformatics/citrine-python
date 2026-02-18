@@ -4,7 +4,6 @@ from datetime import datetime, timedelta, timezone
 from json.decoder import JSONDecodeError
 from logging import getLogger
 from os import environ
-from typing import Optional
 from urllib.parse import urlunsplit
 
 import jwt
@@ -38,7 +37,7 @@ class Session(requests.Session):
                  *,
                  scheme: str = None,
                  host: str = None,
-                 port: Optional[str] = None):
+                 port: str | None = None):
         super().__init__()
         if refresh_token is None:
             refresh_token = environ.get('CITRINE_API_KEY')
@@ -53,7 +52,7 @@ class Session(requests.Session):
         self.scheme: str = scheme
         self.authority = ':'.join(([host] if host else []) + ([port] if port else []))
         self.refresh_token: str = refresh_token
-        self.access_token: Optional[str] = None
+        self.access_token: str | None = None
         self.access_token_expiration: datetime = datetime.now(timezone.utc)
 
         agent = "{}/{} python-requests/{} citrine-python/{}".format(
@@ -213,7 +212,7 @@ class Session(requests.Session):
                 raise CitrineException(response.text)
 
     @staticmethod
-    def _extract_response_stacktrace(response: Response) -> Optional[str]:
+    def _extract_response_stacktrace(response: Response) -> str | None:
         try:
             json_value = response.json()
             if isinstance(json_value, dict):

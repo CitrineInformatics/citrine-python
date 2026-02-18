@@ -1,5 +1,4 @@
 """Variable definitions for GEM Tables."""
-from typing import Optional
 from uuid import UUID
 
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -157,7 +156,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
                  *,
                  headers: list[str],
                  template: attribute_type,
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -214,7 +213,7 @@ class AttributeByTemplateAfterProcessTemplate(
                  headers: list[str],
                  attribute_template: attribute_type,
                  process_template: process_type,
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -277,7 +276,7 @@ class AttributeByTemplateAndObjectTemplate(
                  headers: list[str],
                  attribute_template: attribute_type,
                  object_template: object_type,
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -329,7 +328,7 @@ class LocalAttribute(Serializable['LocalAttribute'], Variable):
                  *,
                  headers: list[str],
                  template: attribute_type,
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -385,7 +384,7 @@ class LocalAttributeAndObject(Serializable['LocalAttributeAndObject'], Variable)
                  headers: list[str],
                  template: attribute_type,
                  object_template: object_type,
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -585,7 +584,7 @@ class IngredientQuantityByProcessAndName(
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.process_template = _make_link_by_uid(process_template)
@@ -700,7 +699,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
                  headers: list[str],
                  attribute_template: attribute_type,
                  process_templates: list[process_type],
-                 attribute_constraints: Optional[list[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -916,7 +915,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
                  quantity_dimension: IngredientQuantityDimension,
                  process_templates: list[process_type],
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name
@@ -1066,7 +1065,7 @@ class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable)
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name

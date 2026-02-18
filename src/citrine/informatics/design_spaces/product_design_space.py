@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
@@ -43,8 +41,8 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpa
                  name: str,
                  *,
                  description: str,
-                 subspaces: Optional[list[DesignSubspace]] = None,
-                 dimensions: Optional[list[Dimension]] = None):
+                 subspaces: list[DesignSubspace] | None = None,
+                 dimensions: list[Dimension] | None = None):
         self.name: str = name
         self.description: str = description
         self.subspaces: list[DesignSubspace] = subspaces or []

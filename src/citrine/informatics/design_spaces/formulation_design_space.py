@@ -1,4 +1,4 @@
-from typing import Optional
+from collections.abc import Mapping
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -27,7 +27,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
         This must include an
         :class:`~io.citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint`
         with maximum count of 32 or fewer.
-    labels: Optional[dict[str, set[str]]]
+    labels: Mapping[str, set[str]] | None
         map from a label to each ingredient that should given that label
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     resolution: float, optional
@@ -54,14 +54,14 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
                  formulation_descriptor: FormulationDescriptor,
                  ingredients: set[str],
                  constraints: set[Constraint],
-                 labels: Optional[dict[str, set[str]]] = None,
+                 labels: Mapping[str, set[str]] | None = None,
                  resolution: float = 0.0001):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredients: set[str] = ingredients
         self.constraints: set[Constraint] = constraints
-        self.labels: Optional[dict[str, set[str]]] = labels
+        self.labels: Mapping[str, set[str]] | None = labels
         self.resolution: float = resolution
 
     def __str__(self):

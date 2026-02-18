@@ -1,7 +1,6 @@
 """Resources that represent collections of design spaces."""
 from collections.abc import Iterable
 from functools import partial
-from typing import Optional
 from uuid import UUID
 
 
@@ -95,7 +94,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
+    def _list_base(self, *, per_page: int = 100, archived: bool | None = None):
         filters = {}
         if archived is not None:
             filters["archived"] = archived
@@ -120,7 +119,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
     def create_default(self,
                        *,
                        predictor_id: UUID | str,
-                       predictor_version: Optional[int | str] = None,
+                       predictor_version: int | str | None = None,
                        mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
@@ -144,7 +143,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         predictor_id: UUID
             UUID of the predictor used to construct the design space
 
-        predictor_version: Optional[int | str]
+        predictor_version: int | str | None
             Version of the predictor used to construct the design space
 
         mode: DefaultDesignSpaceMode
@@ -194,7 +193,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             uid: UUID | str,
             *,
             predictor_id: UUID | str,
-            predictor_version: Optional[int | str] = None
+            predictor_version: int | str | None = None
     ) -> HierarchicalDesignSpace:
         """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
 
@@ -210,7 +209,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             UUID of the existing product design space to convert to a hierarchical version
         predictor_id: UUID | str
             UUID of a predictor associated with the design space.
-        predictor_version: Optional[int | str]
+        predictor_version: int | str | None
             Version of the predictor to use. Defaults to the most recent version.
 
         Returns

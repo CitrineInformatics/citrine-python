@@ -1,4 +1,3 @@
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -40,7 +39,7 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
     mean = properties.Float("mean")
     """:float: Mean value"""
     standard_error = properties.Optional(properties.Float(), "standard_error")
-    """:Optional[float]: Standard error of the mean"""
+    """:float | None: Standard error of the mean"""
     typ = properties.String('type', default='RealMetricValue', deserializable=False)
 
     def __eq__(self, other):

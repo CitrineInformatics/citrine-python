@@ -1,13 +1,11 @@
-from typing import Optional
-
 from citrine.resources.data_concepts import CITRINE_TAG_PREFIX
 
 _CITRINE_DEFAULT_LABEL_PREFIX = f'{CITRINE_TAG_PREFIX}::mat_label'
 
 
 def _inject_default_label_tags(
-    original_tags: Optional[list[str]], default_labels: Optional[list[str]]
-) -> Optional[list[str]]:
+    original_tags: list[str] | None, default_labels: list[str] | None
+) -> list[str] | None:
     if default_labels is None:
         all_tags = original_tags
     else:

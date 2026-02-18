@@ -1,6 +1,5 @@
 import functools
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine.informatics.workflows.analysis_workflow import AnalysisWorkflow, \
@@ -81,8 +80,8 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
     def update(self,
                uid: UUID | str,
                *,
-               name: Optional[str] = None,
-               description: Optional[str] = None) -> AnalysisWorkflow:
+               name: str | None = None,
+               description: str | None = None) -> AnalysisWorkflow:
         """Update the name and/or description of the analysis workflow."""
         aw_update = AnalysisWorkflowUpdatePayload(uid=uid, name=name, description=description)
         return super().update(aw_update)

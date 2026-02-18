@@ -81,7 +81,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     tasks = properties.List(Object(TaskNode), "tasks")
     """:list[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
-    """:Optional[dict[str, str]]: job output properties and results"""
+    """:dict[str, str] | None: job output properties and results"""
 
     @property
     def status(self) -> JobStatus | str:

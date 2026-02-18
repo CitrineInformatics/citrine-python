@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
@@ -25,13 +23,13 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         minimum value for the ratio
     max: float
         maximum value for the ratio
-    ingredient: Optional[tuple[str, float]]
+    ingredient: tuple[str, float] | None
         multiplier for an ingredient in the numerator of the ratio
-    label: Optional[tuple[str, float]]
+    label: tuple[str, float] | None
         multiplier for a label in the numerator of the ratio
-    basis_ingredients: Optional[list[str] | dict[str | float]]
+    basis_ingredients: list[str] | dict[str, float] | None
         the ingredients which should appear in the denominator of the ratio
-    basis_labels: Optional[list[str] | dict[str | float]]
+    basis_labels: list[str] | dict[str, float] | None
         the labels which should appear in the denominator of the ratio
 
     """
@@ -63,8 +61,8 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
                  formulation_descriptor: FormulationDescriptor,
                  min: float,
                  max: float,
-                 ingredient: Optional[tuple[str, float]] = None,
-                 label: Optional[tuple[str, float]] = None,
+                 ingredient: tuple[str, float] | None = None,
+                 label: tuple[str, float] | None = None,
                  basis_ingredients: set[str] = set(),
                  basis_labels: set[str] = set()):
         self.formulation_descriptor = formulation_descriptor
@@ -81,7 +79,7 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._numerator_read(self._ingredients)
 
     @ingredient.setter
-    def ingredient(self, value: Optional[tuple[str, float]]):
+    def ingredient(self, value: tuple[str, float] | None):
         """Set the ingredient and its multiplier in the numerator."""
         self._ingredients = self._numerator_validate(value, "Ingredient")
 
@@ -91,7 +89,7 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
         return self._numerator_read(self._labels)
 
     @label.setter
-    def label(self, value: Optional[tuple[str, float]]):
+    def label(self, value: tuple[str, float] | None):
         """Set the label and its multiplier in the numerator."""
         self._labels = self._numerator_validate(value, "Label")
 

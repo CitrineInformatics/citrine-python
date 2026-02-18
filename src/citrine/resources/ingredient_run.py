@@ -1,12 +1,9 @@
 """Resources that represent ingredient run data objects."""
 from collections.abc import Iterator
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import String, LinkOrElse, Object
-from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.link_by_uid import LinkByUID
@@ -65,37 +62,33 @@ class IngredientRun(
 
     _response_key = GEMDIngredientRun.typ  # 'ingredient_run'
 
-    material = PropertyOptional(LinkOrElse(GEMDMaterialRun), 'material', override=True)
-    process = PropertyOptional(LinkOrElse(GEMDProcessRun),
-                               'process',
-                               override=True,
-                               use_init=True,
-                               )
-    mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction')
-    volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction')
-    number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
-    absolute_quantity = PropertyOptional(Object(ContinuousValue), 'absolute_quantity')
-    spec = PropertyOptional(LinkOrElse(GEMDIngredientSpec), 'spec', override=True, use_init=True)
+    material = Optional(LinkOrElse(GEMDMaterialRun), 'material', override=True)
+    process = Optional(LinkOrElse(GEMDProcessRun), 'process', override=True, use_init=True)
+    mass_fraction = Optional(Object(ContinuousValue), 'mass_fraction')
+    volume_fraction = Optional(Object(ContinuousValue), 'volume_fraction')
+    number_fraction = Optional(Object(ContinuousValue), 'number_fraction')
+    absolute_quantity = Optional(Object(ContinuousValue), 'absolute_quantity')
+    spec = Optional(LinkOrElse(GEMDIngredientSpec), 'spec', override=True, use_init=True)
 
     """
     Intentionally private because they have some unusual dynamics
     """
-    _name = PropertyOptional(String(), 'name')
-    _labels = PropertyOptional(PropertyList(String()), 'labels')
+    _name = Optional(String(), 'name')
+    _labels = Optional(List(String()), 'labels')
 
     def __init__(self,
                  *,
-                 uids: Optional[dict[str, str]] = None,
-                 tags: Optional[list[str]] = None,
-                 notes: Optional[str] = None,
-                 material: Optional[GEMDMaterialRun] = None,
-                 process: Optional[GEMDProcessRun] = None,
-                 mass_fraction: Optional[ContinuousValue] = None,
-                 volume_fraction: Optional[ContinuousValue] = None,
-                 number_fraction: Optional[ContinuousValue] = None,
-                 absolute_quantity: Optional[ContinuousValue] = None,
-                 spec: Optional[GEMDIngredientSpec] = None,
-                 file_links: Optional[list[FileLink]] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 material: GEMDMaterialRun | None = None,
+                 process: GEMDProcessRun | None = None,
+                 mass_fraction: ContinuousValue | None = None,
+                 volume_fraction: ContinuousValue | None = None,
+                 number_fraction: ContinuousValue | None = None,
+                 absolute_quantity: ContinuousValue | None = None,
+                 spec: GEMDIngredientSpec | None = None,
+                 file_links: list[FileLink] | None = None):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()

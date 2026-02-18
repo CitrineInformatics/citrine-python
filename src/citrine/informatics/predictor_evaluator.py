@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -90,10 +88,10 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
         Number of cross-validation folds
     n_trials: int
         Number of cross-validation trials, each contains ``n_folds`` folds
-    metrics: Optional[set[PredictorEvaluationMetric]]
+    metrics: set[PredictorEvaluationMetric] | None
         Optional set of metrics to compute for each response.
         Default is all metrics.
-    ignore_when_grouping: Optional[set[str]]
+    ignore_when_grouping: set[str] | None
         Set of descriptor keys to group together.
         Candidates with different values for the given keys and identical values
         for all other descriptors will be in the same group.
@@ -118,15 +116,15 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
                  responses: set[str],
                  n_folds: int = 5,
                  n_trials: int = 3,
-                 metrics: Optional[set[PredictorEvaluationMetric]] = None,
-                 ignore_when_grouping: Optional[set[str]] = None):
+                 metrics: set[PredictorEvaluationMetric] | None = None,
+                 ignore_when_grouping: set[str] | None = None):
         self.name: str = name
         self.description: str = description
         self._responses: set[str] = responses
-        self._metrics: Optional[set[PredictorEvaluationMetric]] = metrics
+        self._metrics: set[PredictorEvaluationMetric] | None = metrics
         self.n_folds: int = n_folds
         self.n_trials: int = n_trials
-        self.ignore_when_grouping: Optional[set[str]] = ignore_when_grouping
+        self.ignore_when_grouping: set[str] | None = ignore_when_grouping
 
     @property
     def responses(self) -> set[str]:
@@ -154,7 +152,7 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
         Set of descriptor keys to evaluate
     data_source: DataSource
         Source of holdout data
-    metrics: Optional[set[PredictorEvaluationMetric]]
+    metrics: set[PredictorEvaluationMetric] | None
         Optional set of metrics to compute for each response. Default is all metrics.
 
     """
@@ -172,12 +170,12 @@ class HoldoutSetEvaluator(Serializable["HoldoutSetEvaluator"], PredictorEvaluato
                  description: str = "",
                  responses: set[str],
                  data_source: DataSource,
-                 metrics: Optional[set[PredictorEvaluationMetric]] = None):
+                 metrics: set[PredictorEvaluationMetric] | None = None):
         self.name: str = name
         self.description: str = description
         self._responses: set[str] = responses
         self.data_source = data_source
-        self._metrics: Optional[set[PredictorEvaluationMetric]] = metrics
+        self._metrics: set[PredictorEvaluationMetric] | None = metrics
 
     @property
     def responses(self) -> set[str]:

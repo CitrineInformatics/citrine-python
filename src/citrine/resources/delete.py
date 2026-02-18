@@ -1,5 +1,4 @@
 import json
-from typing import Optional
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -16,7 +15,7 @@ def _async_gemd_batch_delete(
         id_list: list[LinkByUID | UUID | str | BaseEntity],
         team_id: UUID,
         session: Session,
-        dataset_id: Optional[UUID] = None,
+        dataset_id: UUID | None = None,
         timeout: float = 2 * 60,
         polling_delay: float = 1.0
 ) -> list[tuple[LinkByUID, ApiError]]:
@@ -42,7 +41,7 @@ def _async_gemd_batch_delete(
     session: Session
         The Citrine session.
 
-    dataset_id: Optional[UUID] = None
+    dataset_id: UUID | None = None
         An optional dataset ID, which if provided will mandate that all GEMD objects
         must be within the given dataset.
 

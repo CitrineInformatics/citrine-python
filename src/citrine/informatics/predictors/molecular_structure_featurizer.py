@@ -1,7 +1,6 @@
 # flake8: noqa
 # The docstring includes many long links that violate flake8, and it's easier to noqa
 # the whole file than to pick out the offending lines.
-from typing import Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
@@ -89,8 +88,8 @@ class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], Pre
                  *,
                  description: str,
                  input_descriptor: MolecularStructureDescriptor,
-                 features: Optional[list[str]] = None,
-                 excludes: Optional[list[str]] = None):
+                 features: list[str] | None = None,
+                 excludes: list[str] | None = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor = input_descriptor
