@@ -1,5 +1,3 @@
-from typing import List, Optional, Set
-
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.resource import Resource
@@ -47,7 +45,7 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         Descriptors that represent inputs to the model
     outputs: list[Descriptor]
         Descriptors that represents the output(s) of the model.
-    estimators: Optional[Set[AutoMLEstimator]]
+    estimators: set[AutoMLEstimator] | None
         Set of estimators to consider during during AutoML model selection.
         If None is provided, defaults to AutoMLEstimator.RANDOM_FOREST.
 
@@ -67,13 +65,13 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
                  name: str,
                  *,
                  description: str,
-                 outputs: List[Descriptor],
-                 inputs: List[Descriptor],
-                 estimators: Optional[Set[AutoMLEstimator]] = None):
+                 outputs: list[Descriptor],
+                 inputs: list[Descriptor],
+                 estimators: set[AutoMLEstimator] | None = None):
         self.name: str = name
         self.description: str = description
-        self.inputs: List[Descriptor] = inputs
-        self.estimators: Set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
+        self.inputs: list[Descriptor] = inputs
+        self.estimators: set[AutoMLEstimator] = estimators or {AutoMLEstimator.RANDOM_FOREST}
         self.outputs = outputs
 
     def __str__(self):

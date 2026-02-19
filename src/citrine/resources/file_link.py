@@ -1,9 +1,9 @@
 """A collection of FileLink objects."""
 import mimetypes
 import os
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, Tuple, Union, Dict, Iterable, Sequence
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 from uuid import UUID
@@ -87,7 +87,7 @@ class FileLinkMeta(DictSerializableMeta):
         cls.typ = properties.String('type', default="file_link", deserializable=False)
 
 
-def _get_ids_from_url(url: str) -> Tuple[Optional[UUID], Optional[UUID]]:
+def _get_ids_from_url(url: str) -> tuple[UUID | None, UUID | None]:
     """Attempt to extract file_id and version_id from a URL."""
     parsed = urlparse(url)
     if len(parsed.query) > 0 or len(parsed.fragment) > 0:
@@ -164,7 +164,7 @@ class FileLink(
         self.typ = FileLink.typ
 
     @classmethod
-    def from_path(cls, path: Union[str, Path]) -> "FileLink":
+    def from_path(cls, path: str | Path) -> "FileLink":
         """Construct a FileLink from a local Path."""
         path = Path(path)  # In case it was a string
         return cls(filename=path.name, url=path.expanduser().absolute().as_uri())
@@ -202,12 +202,12 @@ class FileCollection(Collection[FileLink]):
         self.team_id = team_id
 
     def _get_path(self,
-                  uid: Optional[Union[UUID, str]] = None,
+                  uid: UUID | str | None = None,
                   *,
-                  ignore_dataset: Optional[bool] = False,
-                  version: Union[str, UUID] = None,
-                  action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},) -> str:
+                  ignore_dataset: bool | None = False,
+                  version: str | UUID = None,
+                  action: str | Sequence[str] = [],
+                  query_terms: dict[str, str] = {},) -> str:
         """Build the path for taking an action with a particular file version."""
         if version is not None:
             action = ['versions', version] + ([action] if isinstance(action, str) else action)
@@ -230,17 +230,17 @@ class FileCollection(Collection[FileLink]):
         return FileLink.build(data)
 
     def get(self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            version: Optional[Union[UUID, str, int]] = None) -> FileLink:
+            version: UUID | str | int | None = None) -> FileLink:
         """
         Retrieve an on-platform FileLink from its filename or file uuid.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             A representation of the FileLink (Citrine id or file name)
-        version: Optional[UUID, str, int]
+        version: UUID | str | int | None
             The version, as a UUID or str(UUID) of the version_id or an int or
             str(int) of the version number.  If None, returns the file with the
             highest version number (most recent).
@@ -293,7 +293,7 @@ class FileCollection(Collection[FileLink]):
 
         return file
 
-    def upload(self, *, file_path: Union[str, Path], dest_name: str = None) -> FileLink:
+    def upload(self, *, file_path: str | Path, dest_name: str = None) -> FileLink:
         """
         Uploads a file to the dataset.
 
@@ -386,8 +386,8 @@ class FileCollection(Collection[FileLink]):
     def _search_by_file_name(self,
                              file_name: str,
                              dset_id: UUID,
-                             file_version_number: Optional[int] = None
-                             ) -> Optional[FileLink]:
+                             file_version_number: int | None = None
+                             ) -> FileLink | None:
         """
         Make a request to the backend to search a file by name.
 
@@ -400,7 +400,7 @@ class FileCollection(Collection[FileLink]):
             The name of the file.
         dset_id: UUID
             UUID that represents a dataset.
-        file_version_number: Optional[int]
+        file_version_number: int | None
             As optional, you can send a specific version number.
 
         Returns
@@ -427,7 +427,7 @@ class FileCollection(Collection[FileLink]):
 
     def _search_by_file_version_id(self,
                                    file_version_id: UUID
-                                   ) -> Optional[FileLink]:
+                                   ) -> FileLink | None:
         """
         Make a request to the backend to search a file by file version id.
 
@@ -458,8 +458,8 @@ class FileCollection(Collection[FileLink]):
     def _search_by_dataset_file_id(self,
                                    dataset_file_id: UUID,
                                    dset_id: UUID,
-                                   file_version_number: Optional[int] = None
-                                   ) -> Optional[FileLink]:
+                                   file_version_number: int | None = None
+                                   ) -> FileLink | None:
         """
         Make a request to the backend to search a file by dataset file id.
 
@@ -472,7 +472,7 @@ class FileCollection(Collection[FileLink]):
             UUID that represents a dataset file id.
         dset_id: UUID
             UUID that represents a dataset.
-        file_version_number: Optional[int]
+        file_version_number: int | None
             As optional, you can send a specific version number
 
         Returns
@@ -581,7 +581,7 @@ class FileCollection(Collection[FileLink]):
 
         return self.build({"filename": dest_name, "id": file_id, "version": version_id})
 
-    def download(self, *, file_link: Union[str, UUID, FileLink], local_path: Union[str, Path]):
+    def download(self, *, file_link: str | UUID | FileLink, local_path: str | Path):
         """
         Download the file associated with a given FileLink to the local computer.
 
@@ -610,7 +610,7 @@ class FileCollection(Collection[FileLink]):
         response_content = self.read(file_link=file_link)
         write_file_locally(response_content, final_path)
 
-    def read(self, *, file_link: Union[str, UUID, FileLink]) -> bytes:
+    def read(self, *, file_link: str | UUID | FileLink) -> bytes:
         """
         Read the file associated with a given FileLink.
 
@@ -648,7 +648,7 @@ class FileCollection(Collection[FileLink]):
         return download_response.content
 
     def ingest(self,
-               files: Iterable[Union[FileLink, Path, str]],
+               files: Iterable[FileLink | Path | str],
                *,
                upload: bool = False,
                raise_errors: bool = True,
@@ -656,15 +656,15 @@ class FileCollection(Collection[FileLink]):
                delete_dataset_contents: bool = False,
                delete_templates: bool = True,
                timeout: float = None,
-               polling_delay: Optional[float] = None,
-               project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+               polling_delay: float | None = None,
+               project: "Project | UUID | str | None" = None,  # noqa: F821
                ) -> "IngestionStatus":  # noqa: F821
         """
         [ALPHA] Ingest a set of CSVs and/or Excel Workbooks formatted per the gemd-ingest protocol.
 
         Parameters
         ----------
-        files: List[FileLink, Path, or str]
+        files: list[FileLink, Path, or str]
             A list of files from which GEMD objects should be built.
             A FileLink must contain an absolute URL or a relative path for an on-platform resource.
             Strings must be resolvable to a FileLink; if resolution fails, an exception is thrown.
@@ -683,17 +683,17 @@ class FileCollection(Collection[FileLink]):
         build_table: bool
             Whether to trigger a regeneration of the table config and building the table
             after ingestion.  Default: False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete old objects prior to creating new ones.  Default: False
         delete_templates: bool
             Whether to delete old templates if deleting old objects.  Default: True
-        timeout: Optional[float]
+        timeout: float | None
             Amount of time to wait on the job (in seconds) before giving up. Note that
             this number has no effect on the underlying job itself, which can also time
             out server-side.
-        polling_delay: Optional[float]
+        polling_delay: float | None
             How long to delay between each polling retry attempt.
 
 
@@ -709,7 +709,7 @@ class FileCollection(Collection[FileLink]):
         if build_table and project is None:
             raise ValueError("Building a table requires a target project.")
 
-        def resolve_with_local(candidate: Union[FileLink, Path, str]) -> FileLink:
+        def resolve_with_local(candidate: FileLink | Path | str) -> FileLink:
             """Resolve Path, str or FileLink to an absolute reference."""
             if upload:
                 if not isinstance(candidate, GEMDFileLink):
@@ -777,7 +777,7 @@ class FileCollection(Collection[FileLink]):
         data = self.session.delete_resource(self._get_path(file_id))
         return Response(body=data)
 
-    def _resolve_file_link(self, identifier: Union[str, UUID, FileLink]) -> FileLink:
+    def _resolve_file_link(self, identifier: str | UUID | FileLink) -> FileLink:
         """Generate the FileLink object referenced by the passed argument."""
         if isinstance(identifier, GEMDFileLink):
             if not isinstance(identifier, FileLink):  # Up-convert type with existing info

@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class AsynchronousObject:
     """Abstract class for objects that are asynchronously populated."""
 
@@ -8,7 +5,7 @@ class AsynchronousObject:
     _succeeded_statuses = []  # list of statuses that indicate 'succeeded'
     _failed_statuses = []  # list of statuses that indicate 'failed'
 
-    def _fetch_status(self) -> Optional[str]:
+    def _fetch_status(self) -> str | None:
         """Fetch the status of the resource.
 
         This is is the `status` attribute by default, but can be overridden if the status

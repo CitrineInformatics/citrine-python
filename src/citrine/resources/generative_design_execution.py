@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
-from typing import Union, Iterator
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -69,7 +69,7 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Generative Design Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Generative Design Executions cannot be deleted"

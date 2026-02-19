@@ -1,6 +1,7 @@
 import json
+from collections.abc import Iterable
 from logging import getLogger
-from typing import Union, Iterable, Optional, Any, Tuple
+from typing import Any
 
 import requests
 
@@ -101,7 +102,7 @@ class GemTableCollection(Collection[GemTable]):
         self.session: Session = session
         self.team_id = team_id
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
+    def get(self, uid: UUID | str, *, version: int | None = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
             path = self._get_path(uid, action=["versions", version])
@@ -126,8 +127,8 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: int | None,
+                            per_page: int) -> tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return data[self._collection_key], data.get('next', "")
@@ -154,8 +155,8 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: int | None,
+                            per_page: int) -> tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)
             path = format_escaped_url(
@@ -175,8 +176,8 @@ class GemTableCollection(Collection[GemTable]):
             # Don't deduplicate on uid since uids are shared between versions
             _fetch_versions, _build_versions, per_page, deduplicate=False)
 
-    def initiate_build(self, config: Union[TableConfig, str, UUID], *,
-                       version: Union[str, UUID] = None) -> JobSubmissionResponse:
+    def initiate_build(self, config: TableConfig | str | UUID, *,
+                       version: str | UUID = None) -> JobSubmissionResponse:
         """
         Initiates tables build with provided config.
 
@@ -228,7 +229,7 @@ class GemTableCollection(Collection[GemTable]):
         )
         return submission
 
-    def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
+    def get_by_build_job(self, job: JobSubmissionResponse | UUID, *,
                          timeout: float = 15 * 60) -> GemTable:
         """
         Gets table by build job, waiting for it to complete if necessary.
@@ -269,8 +270,8 @@ class GemTableCollection(Collection[GemTable]):
             logger.warning('\n\t'.join(warn_lines))
         return self.get(table_id, version=table_version)
 
-    def build_from_config(self, config: Union[TableConfig, str, UUID], *,
-                          version: Union[str, int] = None,
+    def build_from_config(self, config: TableConfig | str | UUID, *,
+                          version: str | int = None,
                           timeout: float = 15 * 60) -> GemTable:
         """
         Builds table from table config, waiting for build job to complete.
@@ -314,11 +315,11 @@ class GemTableCollection(Collection[GemTable]):
             "re-build the table, especially if new GEMD data are available."
         )
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    table_type = Union[GemTable, UUID, str]
+    table_type = GemTable | UUID | str
 
     def _read_raw(self, table: table_type) -> requests.Response:
         """

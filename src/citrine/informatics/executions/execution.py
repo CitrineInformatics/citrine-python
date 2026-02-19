@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Optional
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -21,29 +20,29 @@ class Execution(Pageable, AsynchronousObject, ABC):
     _in_progress_statuses = ["INPROGRESS"]
     _succeeded_statuses = ["SUCCEEDED"]
     _failed_statuses = ["FAILED"]
-    _session: Optional[Session] = None
-    project_id: Optional[UUID] = None
+    _session: Session | None = None
+    project_id: UUID | None = None
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the execution"""
     status = properties.Optional(properties.String(), 'status', serializable=False)
-    """:Optional[str]: short description of the execution's status"""
+    """:str | None: short description of the execution's status"""
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)
-    """:Optional[str]: more detailed description of the execution's status"""
+    """:str | None: more detailed description of the execution's status"""
     status_detail = properties.List(
         properties.Object(StatusDetail), 'status_detail', default=[], serializable=False
     )
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
-    """:Optional[UUID]: id of the user who created the resource"""
+    """:UUID | None: id of the user who created the resource"""
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
-    """:Optional[UUID]: id of the user who most recently updated the resource,
+    """:UUID | None: id of the user who most recently updated the resource,
     if it has been updated"""
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was created"""
+    """:datetime | None: date and time at which the resource was created"""
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was most recently updated,
+    """:datetime | None: date and time at which the resource was most recently updated,
     if it has been updated"""
 
     def __str__(self):

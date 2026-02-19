@@ -1,4 +1,3 @@
-from typing import List, Optional, Union
 from uuid import UUID
 
 from citrine._rest.engine_resource import EngineResourceWithoutStatus
@@ -36,8 +35,8 @@ class AnalysisWorkflow(EngineResourceWithoutStatus['AnalysisWorkflow'], Workflow
                  *,
                  name: str,
                  description: str,
-                 snapshot_id: Optional[Union[UUID, str]] = None,
-                 plots: List[dict] = []):
+                 snapshot_id: UUID | str | None = None,
+                 plots: list[dict] = []):
         self.name = name
         self.description = description
         self.snapshot_id = snapshot_id
@@ -66,10 +65,10 @@ class AnalysisWorkflowUpdatePayload(Resource['AnalysisWorkflowUpdatePayload']):
     description = properties.Optional(properties.String, 'description')
 
     def __init__(self,
-                 uid: Union[UUID, str],
+                 uid: UUID | str,
                  *,
-                 name: Optional[str] = None,
-                 description: Optional[str] = None):
+                 name: str | None = None,
+                 description: str | None = None):
         self.uid = uid
         self.name = name
         self.description = description

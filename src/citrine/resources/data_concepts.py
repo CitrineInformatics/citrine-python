@@ -1,7 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 import re
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
+from collections.abc import Iterable, Iterator
+from typing import List, TypeVar
 from uuid import UUID, uuid4
 
 from gemd.entity.dict_serializable import DictSerializable, DictSerializableMeta
@@ -12,10 +13,8 @@ from gemd.util import recursive_foreach, set_uuids
 
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.properties import String, Mapping, Object
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import UUID as PropertyUUID
+from citrine._serialization.properties import List as PropertyList, UUID as PropertyUUID
+from citrine._serialization.properties import Mapping, Object, Optional, String
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url, replace_objects_with_links, scrub_none
@@ -58,15 +57,15 @@ class DataConcepts(
     """
 
     """Properties inherited from GEMD Base Entitiy."""
-    uids = PropertyOptional(Mapping(String('scope'), String('id')), 'uids', override=True)
-    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    uids = Optional(Mapping(String('scope'), String('id')), 'uids', override=True)
+    tags = Optional(PropertyList(String()), 'tags', override=True)
 
     _type_key = "type"
     """str: key used to determine type of serialized object."""
 
     collection_dict = dict()
     """
-    Dict[str, class]: dictionary from the type key to the associated collection \
+    dict[str, class]: dictionary from the type key to the associated collection \
      for every class that extends DataConcepts.
 
     Only populated if the :func:`get_collection_type` method is invoked.
@@ -78,29 +77,29 @@ class DataConcepts(
     * audit_info contains who/when information about the resource on the citrine platform
     * dataset is the unique Citrine id of the dataset that owns this resource
     """
-    _audit_info = PropertyOptional(Object(AuditInfo), "audit_info", serializable=False)
-    _dataset = PropertyOptional(PropertyUUID, "dataset", serializable=False)
+    _audit_info = Optional(Object(AuditInfo), "audit_info", serializable=False)
+    _dataset = Optional(PropertyUUID, "dataset", serializable=False)
 
     def __init__(self):
         self.typ = self._typ_stash
 
     @property
-    def audit_info(self) -> Optional[AuditInfo]:
+    def audit_info(self) -> AuditInfo | None:
         """Get the audit info object."""
         return self._audit_info
 
     @property
-    def uid(self) -> Optional[UUID]:
+    def uid(self) -> UUID | None:
         """Get the Citrine Identifier (scope = "id"), or None if not registered."""
         return self.uids.get(CITRINE_SCOPE)
 
     @property
-    def dataset(self) -> Optional[UUID]:
+    def dataset(self) -> UUID | None:
         """Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """
         Determine the class of a serialized object.
 
@@ -124,7 +123,7 @@ class DataConcepts(
         return DictSerializable.class_mapping[data['type']]
 
     @classmethod
-    def get_collection_type(cls, data) -> "Type[DataConceptsCollection]":
+    def get_collection_type(cls, data) -> "type[DataConceptsCollection]":
         """
         Determine the associated collection type for a serialized data object.
 
@@ -178,7 +177,7 @@ class DataConcepts(
             DataConcepts.collection_dict[collection._individual_key] = collection
 
 
-def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID]) -> LinkByUID:
+def _make_link_by_uid(gemd_object_rep: str | UUID | BaseEntity | LinkByUID) -> LinkByUID:
     if isinstance(gemd_object_rep, BaseEntity):
         return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
@@ -213,14 +212,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     """
 
-    def __init__(self, *, session: Session, team_id: UUID, dataset_id: Optional[UUID] = None):
+    def __init__(self, *, session: Session, team_id: UUID, dataset_id: UUID | None = None):
         self.dataset_id = dataset_id
         self.session = session
         self.team_id = team_id
 
     @classmethod
     @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
+    def get_type(cls) -> type[Serializable]:
         """Return the resource type in the collection."""
 
     @property
@@ -255,7 +254,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return self.get_type().build(data)
 
     def list(self, *,
-             per_page: Optional[int] = 100,
+             per_page: int | None = 100,
              forward: bool = True) -> Iterator[ResourceType]:
         """
         Get all visible elements of the collection.
@@ -396,7 +395,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             Each object model as it now exists in the database.
 
         """
@@ -435,7 +434,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      wait_for_response: bool = True,
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
+                     return_model: bool = False) -> UUID | ResourceType | None:
         """
         Update a particular element of the collection with data validation.
 
@@ -465,7 +464,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        Optional[UUID]
+        UUID | None
             If wait_for_response if True, then this call will poll the backend, waiting
             for the eventual job result. In the case of successful validation/update,
             a return value of None is provided unless return_model is True, in which case
@@ -548,13 +547,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> ResourceType:
+    def get(self, uid: UUID | str | LinkByUID | BaseEntity) -> ResourceType:
         """
         Get an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, BaseEntity]
+        uid: UUID | str | LinkByUID | BaseEntity
             A representation of the object (Citrine id, LinkByUID, or the object itself)
 
         Returns
@@ -641,13 +640,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *, dry_run: bool = False):
+    def delete(self, uid: UUID | str | LinkByUID | BaseEntity, *, dry_run: bool = False):
         """
         Delete an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, BaseEntity]
+        uid: UUID | str | LinkByUID | BaseEntity
             A representation of the object (Citrine id, LinkByUID, or the object itself)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
@@ -660,7 +659,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
-    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def _get_relation(self, relation: str, uid: UUID | str | LinkByUID | BaseEntity,
                       forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.

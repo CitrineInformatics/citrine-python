@@ -2,8 +2,7 @@
 from abc import ABC
 from typing import TypeVar
 
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object
+from citrine._serialization.properties import Object, Optional, String
 from gemd.entity.template.attribute_template import AttributeTemplate as GEMDAttributeTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
 from citrine.resources.templates import Template, TemplateCollection
@@ -17,7 +16,7 @@ class AttributeTemplate(Template, GEMDAttributeTemplate, ABC):
     """
 
     name = String('name')
-    description = PropertyOptional(String(), 'description')
+    description = Optional(String(), 'description')
     bounds = Object(BaseBounds, 'bounds', override=True)
 
 

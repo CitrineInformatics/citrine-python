@@ -1,6 +1,6 @@
 """Resources that represent collections of design spaces."""
+from collections.abc import Iterable
 from functools import partial
-from typing import Iterable, Optional, Union
 from uuid import UUID
 
 
@@ -63,17 +63,17 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         else:
             return self._validate(updated_ds.uid)
 
-    def _validate(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
+    def _validate(self, uid: UUID | str) -> TopLevelDesignSpace:
         path = self._get_path(uid, action="validate")
         entity = self.session.put_resource(path, {}, version=self._api_version)
         return self.build(entity)
 
-    def archive(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
+    def archive(self, uid: UUID | str) -> TopLevelDesignSpace:
         """Archiving a design space removes it from view, but is not a hard delete.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the design space to archive
 
         """
@@ -81,12 +81,12 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def restore(self, uid: Union[UUID, str]) -> TopLevelDesignSpace:
+    def restore(self, uid: UUID | str) -> TopLevelDesignSpace:
         """Restore an archived design space.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the design space to restore
 
         """
@@ -94,7 +94,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def _list_base(self, *, per_page: int = 100, archived: Optional[bool] = None):
+    def _list_base(self, *, per_page: int = 100, archived: bool | None = None):
         filters = {}
         if archived is not None:
             filters["archived"] = archived
@@ -118,8 +118,8 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
 
     def create_default(self,
                        *,
-                       predictor_id: Union[UUID, str],
-                       predictor_version: Optional[Union[int, str]] = None,
+                       predictor_id: UUID | str,
+                       predictor_version: int | str | None = None,
                        mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
                        include_ingredient_fraction_constraints: bool = False,
                        include_label_fraction_constraints: bool = False,
@@ -143,7 +143,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         predictor_id: UUID
             UUID of the predictor used to construct the design space
 
-        predictor_version: Optional[Union[int, str]]
+        predictor_version: int | str | None
             Version of the predictor used to construct the design space
 
         mode: DefaultDesignSpaceMode
@@ -190,10 +190,10 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
 
     def convert_to_hierarchical(
             self,
-            uid: Union[UUID, str],
+            uid: UUID | str,
             *,
-            predictor_id: Union[UUID, str],
-            predictor_version: Optional[Union[int, str]] = None
+            predictor_id: UUID | str,
+            predictor_version: int | str | None = None
     ) -> HierarchicalDesignSpace:
         """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
 
@@ -205,11 +205,11 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
 
         Parameters
         ----------
-        uid: Union[str, UUID]
+        uid: str | UUID
             UUID of the existing product design space to convert to a hierarchical version
-        predictor_id: Union[UUID, str]
+        predictor_id: UUID | str
             UUID of a predictor associated with the design space.
-        predictor_version: Optional[Union[int, str]]
+        predictor_version: int | str | None
             Version of the predictor to use. Defaults to the most recent version.
 
         Returns
@@ -231,7 +231,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         data = self.session.post_resource(path, json=payload, version=self._api_version)
         return HierarchicalDesignSpace.build(TopLevelDesignSpace.wrap_instance(data["instance"]))
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Design Spaces cannot be deleted at this time."""
         msg = "Design Spaces cannot be deleted at this time. Use 'archive' instead."
         raise NotImplementedError(msg)

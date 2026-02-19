@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of projects."""
+from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import Optional, Dict, List, Union, Iterable, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -58,13 +58,13 @@ class Project(Resource['Project']):
     def __init__(self,
                  name: str,
                  *,
-                 description: Optional[str] = None,
-                 session: Optional[Session] = None,
-                 team_id: Optional[UUID] = None):
+                 description: str | None = None,
+                 session: Session | None = None,
+                 team_id: UUID | None = None):
         self.name: str = name
-        self.description: Optional[str] = description
+        self.description: str | None = description
         self.session: Session = session
-        self._team_id: Optional[UUID] = team_id
+        self._team_id: UUID | None = team_id
 
     def _post_dump(self, data: dict) -> dict:
         return {key: value for key, value in data.items() if value is not None}
@@ -86,7 +86,7 @@ class Project(Resource['Project']):
         return self._team_id
 
     @team_id.setter
-    def team_id(self, value: Optional[UUID]):
+    def team_id(self, value: UUID | None):
         self._team_id = value
 
     @classmethod
@@ -225,13 +225,13 @@ class Project(Resource['Project']):
             json={'ids': [resource_access["id"]]})
         return True
 
-    def list_members(self) -> Union[List[ProjectMember], List["TeamMember"]]:  # noqa: F821
+    def list_members(self) -> "list[ProjectMember] | list[TeamMember]":  # noqa: F821
         """
         List all of the members in the current project.
 
         Returns
         -------
-        List[ProjectMember] | List[TeamMember]
+        list[ProjectMember] | list[TeamMember]
             The members of the current project, or the members of the team
             containing the project if teams have been released.
 
@@ -266,7 +266,7 @@ class ProjectCollection(Collection[Project]):
     _resource = Project
     _api_version = 'v3'
 
-    def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
+    def __init__(self, session: Session, *, team_id: UUID | None = None):
         self.session = session
         self.team_id = team_id
 
@@ -291,7 +291,7 @@ class ProjectCollection(Collection[Project]):
             project.team_id = self.team_id
         return project
 
-    def get(self, uid: Union[UUID, str]) -> Project:
+    def get(self, uid: UUID | str) -> Project:
         """
         Get a particular project.
 
@@ -307,7 +307,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).get(uid)
 
-    def register(self, name: str, *, description: Optional[str] = None) -> Project:
+    def register(self, name: str, *, description: str | None = None) -> Project:
         """
         Create and upload new project.
 
@@ -331,7 +331,7 @@ class ProjectCollection(Collection[Project]):
         project = Project(name, description=description)
         return super().register(project)
 
-    def _list_base(self, *, per_page: int = 1000, archived: Optional[bool] = None):
+    def _list_base(self, *, per_page: int = 1000, archived: bool | None = None):
         filters = {}
         if archived is not None:
             filters["archived"] = str(archived).lower()
@@ -398,7 +398,7 @@ class ProjectCollection(Collection[Project]):
         """
         return self._list_base(per_page=per_page, archived=True)
 
-    def search_all(self, search_params: Optional[Dict]) -> Iterable[Dict]:
+    def search_all(self, search_params: dict | None) -> Iterable[dict]:
         """
         Search across all projects in a domain.
 
@@ -456,7 +456,7 @@ class ProjectCollection(Collection[Project]):
 
     def search(self,
                *,
-               search_params: Optional[dict] = None,
+               search_params: dict | None = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.
@@ -514,7 +514,7 @@ class ProjectCollection(Collection[Project]):
         return self._build_collection_elements(self.search_all(search_params))
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
 
-    def archive(self, uid: Union[UUID, str]) -> Response:
+    def archive(self, uid: UUID | str) -> Response:
         """Archive a project."""
         # Only the team-agnostic project archive is implemented
         if self.team_id is None:
@@ -523,7 +523,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).archive(uid)
 
-    def restore(self, uid: Union[UUID, str]) -> Response:
+    def restore(self, uid: UUID | str) -> Response:
         """Restore an archived project."""
         # Only the team-agnostic project restore is implemented
         if self.team_id is None:
@@ -532,7 +532,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return ProjectCollection(session=self.session).restore(uid)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """
         Delete a particular project.
 

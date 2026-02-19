@@ -1,11 +1,9 @@
 """Resources that represent measurement templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from collections.abc import Sequence
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Union as PropertyUnion
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import Object, SpecifiedMixedList, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, \
+    SpecifiedMixedList, Union
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
@@ -42,21 +40,21 @@ class MeasurementTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
-    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    conditions: list[ConditionTemplate] or list[ConditionTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    parameters: list[ParameterTemplate] or list[ParameterTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
-    properties: List[PropertyTemplate] or List[PropertyTemplate, \
+    properties: list[PropertyTemplate] or list[PropertyTemplate, \
     :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -66,58 +64,37 @@ class MeasurementTemplate(
 
     _response_key = GEMDMeasurementTemplate.typ  # 'measurement_template'
 
-    properties = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDPropertyTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'properties',
-        override=True
-    )
-    conditions = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDConditionTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'conditions',
-        override=True
-    )
-    parameters = PropertyOptional(
-        PropertyList(
-            PropertyUnion([LinkOrElse(GEMDParameterTemplate),
-                           SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
-                                               PropertyOptional(Object(BaseBounds))])]
-                          )
-        ),
-        'parameters',
-        override=True
-    )
+    properties = Optional(List(Union([LinkOrElse(GEMDPropertyTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'properties',
+                          override=True)
+    conditions = Optional(List(Union([LinkOrElse(GEMDConditionTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDConditionTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'conditions',
+                          override=True)
+    parameters = Optional(List(Union([LinkOrElse(GEMDParameterTemplate),
+                                      SpecifiedMixedList([LinkOrElse(GEMDParameterTemplate),
+                                                          Optional(Object(BaseBounds))])])),
+                          'parameters',
+                          override=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 properties: Optional[Sequence[Union[PropertyTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 conditions: Optional[Sequence[Union[ConditionTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ConditionTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 parameters: Optional[Sequence[Union[ParameterTemplate,
-                                                     LinkByUID,
-                                                     Sequence[Union[ParameterTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
-                                                     ]]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 properties: Sequence[PropertyTemplate | LinkByUID
+                                      | Sequence[PropertyTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 conditions: Sequence[ConditionTemplate | LinkByUID
+                                      | Sequence[ConditionTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 parameters: Sequence[ParameterTemplate | LinkByUID
+                                      | Sequence[ParameterTemplate | LinkByUID | BaseBounds | None]
+                                      ] | None = None,
+                 description: str | None = None,
+                 tags: list[str] | None = None):
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()
@@ -137,6 +114,6 @@ class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate
     _resource = MeasurementTemplate
 
     @classmethod
-    def get_type(cls) -> Type[MeasurementTemplate]:
+    def get_type(cls) -> type[MeasurementTemplate]:
         """Return the resource type in the collection."""
         return MeasurementTemplate

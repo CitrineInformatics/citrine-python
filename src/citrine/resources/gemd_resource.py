@@ -1,6 +1,6 @@
 """Collection class for generic GEMD objects and templates."""
 import re
-from typing import Type, Union, List, Tuple, Iterable
+from collections.abc import Iterable
 from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
@@ -33,7 +33,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         self.team_id = team_id
 
     @classmethod
-    def get_type(cls) -> Type[DataConcepts]:
+    def get_type(cls) -> type[DataConcepts]:
         """Return the resource type in the collection."""
         return DataConcepts
 
@@ -65,7 +65,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
                      *,
                      dry_run=False,
                      status_bar=False,
-                     include_nested=False) -> List[DataConcepts]:
+                     include_nested=False) -> list[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -102,7 +102,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             The registered versions
 
         """
@@ -173,11 +173,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def batch_delete(
             self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[LinkByUID | UUID | str | BaseEntity],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    ) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -198,7 +198,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -206,7 +206,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.

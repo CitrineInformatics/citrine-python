@@ -1,5 +1,4 @@
 from copy import copy
-from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
 from gemd.entity.object import MaterialRun
@@ -82,7 +81,7 @@ class TableConfig(Resource["TableConfig"]):
         List of row definitions that define the rows of the table
     columns: list[Column]
         Column definitions, which describe how the variables are shaped into the table
-    gemd_query: Optional[GemdQuery]
+    gemd_query: GemdQuery | None
         The query used to define the materials underpinning this table
     generation_algorithm: TableFromGemdQueryAlgorithm
         Which algorithm was used to generate the config based on the GemdQuery results
@@ -94,17 +93,17 @@ class TableConfig(Resource["TableConfig"]):
     _resource_type = ResourceTypeEnum.TABLE_DEFINITION
 
     @staticmethod
-    def _get_dups(lst: List) -> List:
+    def _get_dups(lst: list) -> list:
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
     config_uid = properties.Optional(properties.UUID(), 'definition_id')
-    """:Optional[UUID]: Unique ID of the table config, independent of its version."""
+    """:UUID | None: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
-    """:Optional[int]: The version of the table config, starting from 1.
+    """:int | None: The version of the table config, starting from 1.
     It increases every time the table config is updated."""
     version_uid = properties.Optional(properties.UUID(), 'id')
-    """:Optional[UUID]: Unique ID that specifies one version of one table config."""
+    """:UUID | None: Unique ID that specifies one version of one table config."""
 
     name = properties.String("name")
     description = properties.String("description")
@@ -120,12 +119,12 @@ class TableConfig(Resource["TableConfig"]):
     def __init__(self, name: str,
                  *,
                  description: str,
-                 datasets: List[UUID],
-                 variables: List[Variable],
-                 rows: List[Row],
-                 columns: List[Column],
+                 datasets: list[UUID],
+                 variables: list[Variable],
+                 rows: list[Row],
+                 columns: list[Column],
                  gemd_query: GemdQuery = None,
-                 generation_algorithm: Optional[TableFromGemdQueryAlgorithm] = None):
+                 generation_algorithm: TableFromGemdQueryAlgorithm | None = None):
         self.name = name
         self.description = description
         self.datasets = datasets
@@ -160,15 +159,15 @@ class TableConfig(Resource["TableConfig"]):
         return self.config_uid
 
     @uid.setter
-    def uid(self, new_uid: Union[str, UUID]) -> None:
+    def uid(self, new_uid: str | UUID) -> None:
         """Set the unique ID of the table config, independent of its version."""
         self.config_uid = new_uid
 
     def add_columns(self, *,
                     variable: Variable,
-                    columns: List[Column],
-                    name: Optional[str] = None,
-                    description: Optional[str] = None
+                    columns: list[Column],
+                    name: str | None = None,
+                    description: str | None = None
                     ) -> 'TableConfig':
         """Add a variable and one or more columns to this TableConfig (out-of-place).
 
@@ -182,9 +181,9 @@ class TableConfig(Resource["TableConfig"]):
             Variable to add and use in the added columns
         columns: list[Column]
             Columns to add, which must only reference the added variable
-        name: Optional[str]
+        name: str | None
             Optional renaming of the table
-        description: Optional[str]
+        description: str | None
             Optional re-description of the table
 
         """
@@ -210,11 +209,11 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients(self, *,
-                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
+                            process_template: LinkByUID | ProcessTemplate | str | UUID,
                             team: 'Team',
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
-                            unit: Optional[str] = None
+                            unit: str | None = None
                             ):
         """Add variables and columns for all of the possible ingredients in a process.
 
@@ -224,15 +223,15 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+        process_template: LinkByUID | ProcessTemplate | str | UUID
             representation of a registered process template
         team: Team
             a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
@@ -306,11 +305,11 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients_in_output(self, *,
-                                      process_templates: List[LinkByUID],
+                                      process_templates: list[LinkByUID],
                                       team: 'Team',
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
-                                      unit: Optional[str] = None
+                                      unit: str | None = None
                                       ):
         """Add variables and columns for all possible ingredients in a list of processes.
 
@@ -322,16 +321,16 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_templates: List[LinkByUID]
+        process_templates: list[LinkByUID]
             registered process templates from which to pull allowed ingredients and at which to
             halt searching
         team: Team
             a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
@@ -424,7 +423,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.session: Session = session
         self.team_id = team_id
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
+    def get(self, uid: UUID | str, *, version: int | None = None):
         """Get a table config.
 
         If no version is specified, then the most recent version is returned.
@@ -479,11 +478,11 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def default_for_material(
             self, *,
-            material: Union[MaterialRun, LinkByUID, str, UUID],
+            material: MaterialRun | LinkByUID | str | UUID,
             name: str,
             description: str = None,
-            algorithm: Optional[TableBuildAlgorithm] = None
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+            algorithm: TableBuildAlgorithm | None = None
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build best-guess default table config for provided terminal material's history.
 
@@ -498,7 +497,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Parameters
         ----------
-        material: Union[MaterialRun, LinkByUid, str, UUID]
+        material: MaterialRun | LinkByUid | str | UUID
             The terminal material whose history is used to construct a table config.
         name: str
             The name for the table config.
@@ -510,7 +509,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -543,9 +542,9 @@ class TableConfigCollection(Collection[TableConfig]):
             *,
             name: str = None,
             description: str = None,
-            algorithm: Optional[TableFromGemdQueryAlgorithm] = None,
+            algorithm: TableFromGemdQueryAlgorithm | None = None,
             register_config: bool = False
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build a TableConfig based on the results of a database query.
 
@@ -565,7 +564,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -598,7 +597,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def preview(self, *,
                 table_config: TableConfig,
-                preview_materials: List[LinkByUID] = None
+                preview_materials: list[LinkByUID] = None
                 ) -> dict:
         """Preview a Table Config on an explicit set of terminal materials.
 
@@ -606,7 +605,7 @@ class TableConfigCollection(Collection[TableConfig]):
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_materials: List[LinkByUID]
+        preview_materials: list[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
 
         """
@@ -672,6 +671,6 @@ class TableConfigCollection(Collection[TableConfig]):
                              " update()")
         return self.register(table_config)
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Table configs cannot be deleted at this time."""
         raise NotImplementedError("Table configs cannot be deleted at this time.")

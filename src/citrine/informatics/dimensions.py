@@ -1,5 +1,4 @@
 """Tools for working with Dimensions."""
-from typing import Optional, Type, List
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -17,7 +16,7 @@ class Dimension(PolymorphicSerializable['Dimension']):
     """
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             'ContinuousDimension': ContinuousDimension,
@@ -47,8 +46,8 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
 
     def __init__(self,
                  descriptor: RealDescriptor, *,
-                 lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None):
+                 lower_bound: float | None = None,
+                 upper_bound: float | None = None):
         self.descriptor: RealDescriptor = descriptor
         self.lower_bound = lower_bound if lower_bound is not None else descriptor.lower_bound
         self.upper_bound = upper_bound if upper_bound is not None else descriptor.upper_bound
@@ -75,8 +74,8 @@ class IntegerDimension(Serializable['IntegerDimension'], Dimension):
 
     def __init__(self,
                  descriptor: IntegerDescriptor, *,
-                 lower_bound: Optional[int] = None,
-                 upper_bound: Optional[int] = None):
+                 lower_bound: int | None = None,
+                 upper_bound: int | None = None):
         self.descriptor: IntegerDescriptor = descriptor
         self.lower_bound = lower_bound if lower_bound is not None else descriptor.lower_bound
         self.upper_bound = upper_bound if upper_bound is not None else descriptor.upper_bound
@@ -100,6 +99,6 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
 
     def __init__(self,
                  descriptor: Descriptor, *,
-                 values: List[str]):
+                 values: list[str]):
         self.descriptor: Descriptor = descriptor
-        self.values: List[str] = values
+        self.values: list[str] = values

@@ -1,7 +1,6 @@
 from gemd.enumeration.base_enumeration import BaseEnumeration
 from logging import getLogger
 from time import time, sleep
-from typing import Union
 from uuid import UUID
 from warnings import warn
 
@@ -47,12 +46,12 @@ class TaskNode(Resource['TaskNode']):
     """:str: the type of task running"""
     _status = properties.String("status")
     dependencies = PropertySet(String(), "dependencies")
-    """:Set[str]: all the tasks that this task is dependent on"""
+    """:set[str]: all the tasks that this task is dependent on"""
     failure_reason = properties.Optional(String(), "failure_reason")
     """:str: if a task has failed, the failure reason will be in this parameter"""
 
     @property
-    def status(self) -> Union[JobStatus, str]:
+    def status(self) -> JobStatus | str:
         """The last reported status of this particular task."""
         if resolved := JobStatus.from_str(self._status, exception=False):
             return resolved
@@ -60,7 +59,7 @@ class TaskNode(Resource['TaskNode']):
             return self._status
 
     @status.setter
-    def status(self, value: Union[JobStatus, str]) -> None:
+    def status(self, value: JobStatus | str) -> None:
         if JobStatus.from_str(value, exception=False) is None:
             warn(
                 f"{value} is not a recognized JobStatus; this will become an error as of v4.0.0.",
@@ -80,12 +79,12 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     _status = properties.String("status")
     """:str: The status of the job. One of "Running", "Success", or "Failure"."""
     tasks = properties.List(Object(TaskNode), "tasks")
-    """:List[TaskNode]: all of the constituent task required to complete this job"""
+    """:list[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
-    """:Optional[dict[str, str]]: job output properties and results"""
+    """:dict[str, str] | None: job output properties and results"""
 
     @property
-    def status(self) -> Union[JobStatus, str]:
+    def status(self) -> JobStatus | str:
         """The last reported status of this particular task."""
         if resolved := JobStatus.from_str(self._status, exception=False):
             return resolved
@@ -93,7 +92,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
             return self._status
 
     @status.setter
-    def status(self, value: Union[JobStatus, str]) -> None:
+    def status(self, value: JobStatus | str) -> None:
         if resolved := JobStatus.from_str(value, exception=False):
             if resolved not in [JobStatus.RUNNING, JobStatus.SUCCESS, JobStatus.FAILURE]:
                 warn(
@@ -110,9 +109,9 @@ class JobStatusResponse(Resource['JobStatusResponse']):
 
 
 def _poll_for_job_completion(session: Session,
-                             job: Union[JobSubmissionResponse, UUID, str],
+                             job: JobSubmissionResponse | UUID | str,
                              *,
-                             team_id: Union[UUID, str],
+                             team_id: UUID | str,
                              timeout: float = 2 * 60,
                              polling_delay: float = 2.0,
                              raise_errors: bool = True,

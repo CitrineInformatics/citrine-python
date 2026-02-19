@@ -1,4 +1,3 @@
-from typing import Optional, List
 from uuid import UUID
 
 from citrine._rest.engine_resource import EngineResource
@@ -26,9 +25,9 @@ class TemplateLink(Serializable["TemplateLink"]):
         Citrine ID referencing an on-platform material template.
     process_template: UUID
         Citrine ID referencing an on-platform process template.
-    material_template_name: Optional[str]
+    material_template_name: str | None
         Optional name of the material template.
-    process_template_name: Optional[str]
+    process_template_name: str | None
         Optional name of the process template.
 
     """
@@ -43,13 +42,13 @@ class TemplateLink(Serializable["TemplateLink"]):
             *,
             material_template: UUID,
             process_template: UUID,
-            material_template_name: Optional[str] = None,
-            process_template_name: Optional[str] = None
+            material_template_name: str | None = None,
+            process_template_name: str | None = None
     ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
-        self.material_template_name: Optional[str] = material_template_name
-        self.process_template_name: Optional[str] = process_template_name
+        self.material_template_name: str | None = material_template_name
+        self.process_template_name: str | None = process_template_name
 
 
 class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
@@ -61,17 +60,17 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
         A unique name used to reference the materials produced by this node in the design space.
         This name should be used to identify the material when used as an ingredient
         in the formulation subspace of a different node.
-    scope: Optional[str]
+    scope: str | None
         An optional custom scope used to identify the materials produced by this node.
-    attributes: List[Dimension]
+    attributes: list[Dimension]
         Set of dimensions included on materials produced by this node.
-    formulation_subspace: Optional[FormulationDesignSpace]
+    formulation_subspace: FormulationDesignSpace | None
         An optional formulation design space defining the ingredients, labels,
         and constraints for formulations in materials produced by this node.
-    template_link: Optional[TemplateLink]
+    template_link: TemplateLink | None
         A set of identifiers linking the materials produced by this node to
         material and process templates on the Citrine Platform.
-    display_name: Optional[str]
+    display_name: str | None
         Optional name for identifying the node on the Citrine Platform.
         Solely for display purposes (does not appear in generated hierarchical candidates)
 
@@ -90,18 +89,18 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
             self,
             *,
             name: str,
-            scope: Optional[str] = None,
-            attributes: Optional[List[Dimension]] = None,
-            formulation_subspace: Optional[FormulationDesignSpace] = None,
-            template_link: Optional[TemplateLink] = None,
-            display_name: Optional[str] = None
+            scope: str | None = None,
+            attributes: list[Dimension] | None = None,
+            formulation_subspace: FormulationDesignSpace | None = None,
+            template_link: TemplateLink | None = None,
+            display_name: str | None = None
     ):
         self.name = name
-        self.scope: Optional[str] = scope
+        self.scope: str | None = scope
         self.attributes = attributes or list()
-        self.formulation_subspace: Optional[FormulationDesignSpace] = formulation_subspace
-        self.template_link: Optional[TemplateLink] = template_link
-        self.display_name: Optional[str] = display_name
+        self.formulation_subspace: FormulationDesignSpace | None = formulation_subspace
+        self.template_link: TemplateLink | None = template_link
+        self.display_name: str | None = display_name
 
     def __repr__(self):
         display_name = self.display_name or self.name
@@ -144,9 +143,9 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
         Description of the design space
     root: MaterialNodeDefinition
         Terminal material node produced by the design space
-    subspaces: List[MaterialNodeDefinition]
+    subspaces: list[MaterialNodeDefinition]
         Sub material nodes produced by the design space
-    data_sources: List[DataSource]
+    data_sources: list[DataSource]
         Data sources used to inject known materials into the hierarchical candidates
 
     """
@@ -170,14 +169,14 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
             *,
             description: str,
             root: MaterialNodeDefinition,
-            subspaces: Optional[List[MaterialNodeDefinition]] = None,
-            data_sources: Optional[List[DataSource]] = None
+            subspaces: list[MaterialNodeDefinition] | None = None,
+            data_sources: list[DataSource] | None = None
     ):
         self.name: str = name
         self.description: str = description
         self.root: MaterialNodeDefinition = root
-        self.subspaces: List[MaterialNodeDefinition] = subspaces or list()
-        self.data_sources: List[DataSource] = data_sources or list()
+        self.subspaces: list[MaterialNodeDefinition] = subspaces or list()
+        self.data_sources: list[DataSource] = data_sources or list()
 
     def _post_dump(self, data: dict) -> dict:
         data = super()._post_dump(data)

@@ -1,5 +1,4 @@
 """Tools for working with Descriptors."""
-from typing import Type, Set, Union
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -38,7 +37,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     key = properties.String('descriptor_key')
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         return {
             "Categorical": CategoricalDescriptor,
@@ -60,7 +59,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         ----------
         other: Description
             the Description instance to compare to
-        attrs: List[str]
+        attrs: list[str]
             A list of attribute names to lookup and compare
 
         """
@@ -216,7 +215,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     ----------
     key: str
         the key corresponding to a descriptor
-    categories: Set[str]
+    categories: set[str]
         possible categories for this descriptor
 
     """
@@ -227,12 +226,12 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     def __eq__(self, other):
         return self._equals(other, ["key", "categories", "typ"])
 
-    def __init__(self, key: str, *, categories: Set[str]):
+    def __init__(self, key: str, *, categories: set[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: Set[str] = categories
+        self.categories: set[str] = categories
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
@@ -257,7 +256,7 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
         'type', default=FormulationKey.HIERARCHICAL.value, deserializable=False
     )
 
-    def __init__(self, key: Union[FormulationKey, str]):
+    def __init__(self, key: FormulationKey | str):
         self.key = FormulationKey.from_str(key, exception=True)
 
     def __eq__(self, other):

@@ -1,5 +1,3 @@
-from typing import Type
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -18,7 +16,7 @@ class DesignSubspace(PolymorphicSerializable["DesignSubspace"], DesignSpace):
     description = properties.Optional(properties.String(), "description")
 
     @classmethod
-    def get_type(cls, data) -> Type['DesignSubspace']:
+    def get_type(cls, data) -> type['DesignSubspace']:
         """Return the subtype."""
         from .data_source_design_space import DataSourceDesignSpace
         from .formulation_design_space import FormulationDesignSpace

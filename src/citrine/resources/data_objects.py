@@ -1,15 +1,14 @@
 """Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
 from abc import ABC
-from typing import Dict, Union, Optional, Iterator, List, TypeVar
+from collections.abc import Iterator
+from typing import TypeVar
 from uuid import uuid4
 
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import String, Object
-from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import List, Object, Optional, String
 from gemd.entity.file_link import FileLink
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
@@ -29,8 +28,8 @@ class DataObject(DataConcepts, BaseObject, ABC):
     DataObject must be extended along with `Resource`
     """
 
-    notes = PropertyOptional(String(), 'notes')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    notes = Optional(String(), 'notes')
+    file_links = Optional(List(Object(FileLink)), 'file_links', override=True)
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
@@ -41,7 +40,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def list_by_attribute_bounds(
             self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
+            attribute_bounds: dict[AttributeTemplate | LinkByUID, BaseBounds], *,
             forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
@@ -53,8 +52,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
         Parameters
         ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
+        attribute_bounds: dict[AttributeTemplate | \
+        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`, \
         :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.
@@ -109,9 +108,9 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def validate_templates(self, *,
                            model: DataObjectResourceType,
-                           object_template: Optional[ObjectTemplateResourceType] = None,
-                           ingredient_process_template: Optional[ProcessTemplate] = None)\
-            -> List[ValidationError]:
+                           object_template: ObjectTemplateResourceType | None = None,
+                           ingredient_process_template: ProcessTemplate | None = None)\
+            -> list[ValidationError]:
         """
         Validate a data object against its templates.
 
@@ -122,7 +121,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         :param object_template: optional object template to validate against
         :param ingredient_process_template: optional process template to validate ingredient
          against. Ignored unless data object is an IngredientSpec or IngredientRun.
-        :return: List[ValidationError] of validation errors encountered. Empty if successful.
+        :return: list[ValidationError] of validation errors encountered. Empty if successful.
         """
         path = self._get_path(ignore_dataset=True, action="validate-templates")
 

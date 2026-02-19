@@ -1,11 +1,9 @@
 """Resources that represent measurement spec data objects."""
-from typing import List, Dict, Optional, Type, Union, Iterator
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -33,20 +31,20 @@ class MeasurementSpec(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
         Long-form notes about the measurement spec.
-    conditions: List[Condition], optional
+    conditions: list[Condition], optional
         Conditions under which this measurement spec occurs.
-    parameters: List[Parameter], optional
+    parameters: list[Parameter], optional
         Parameters of this measurement spec.
     template: MeasurementTemplate
         A template bounding the valid values for the measurement's properties, parameters,
         and conditions.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
     """
@@ -54,24 +52,21 @@ class MeasurementSpec(
     _response_key = GEMDMeasurementSpec.typ  # 'measurement_spec'
 
     name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    template = PropertyOptional(LinkOrElse(GEMDMeasurementTemplate),
-                                'template',
-                                override=True,
-                                use_init=True,
-                                )
+    conditions = Optional(List(Object(Condition)), 'conditions', override=True)
+    parameters = Optional(List(Object(Parameter)), 'parameters', override=True)
+    template = Optional(LinkOrElse(GEMDMeasurementTemplate), 'template', override=True,
+                        use_init=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 parameters: Optional[List[Parameter]] = None,
-                 template: Optional[GEMDMeasurementTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 conditions: list[Condition] | None = None,
+                 parameters: list[Parameter] | None = None,
+                 template: GEMDMeasurementTemplate | None = None,
+                 file_links: list[FileLink] | None = None):
         if uids is None:
             uids = dict()
         super(ObjectSpec, self).__init__()
@@ -91,19 +86,19 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     _resource = MeasurementSpec
 
     @classmethod
-    def get_type(cls) -> Type[MeasurementSpec]:
+    def get_type(cls) -> type[MeasurementSpec]:
         """Return the resource type in the collection."""
         return MeasurementSpec
 
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
+                         uid: UUID | str | LinkByUID | GEMDMeasurementTemplate
                          ) -> Iterator[MeasurementSpec]:
         """
         Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
+        uid: UUID | str | LinkByUID | GEMDMeasurementTemplate
             A representation of of the measurement template whose measurement spec usages are
             to be located.
 

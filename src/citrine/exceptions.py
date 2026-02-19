@@ -1,6 +1,5 @@
 """Citrine-specific exceptions."""
 from types import SimpleNamespace
-from typing import Optional, List
 from urllib.parse import urlencode
 from uuid import UUID
 
@@ -34,7 +33,7 @@ class UnauthorizedRefreshToken(NonRetryableException):
 class NonRetryableHttpException(NonRetryableException):
     """An exception originating from an HTTP error from a Citrine API."""
 
-    def __init__(self, path: str, response: Optional[Response] = None):
+    def __init__(self, path: str, response: Response | None = None):
         self.url = path
         self.detailed_error_info = []
         if response is not None:
@@ -162,7 +161,7 @@ class PollingTimeoutError(NonRetryableException):
 class JobFailureError(NonRetryableException):
     """The asynchronous job completed with the given failure message."""
 
-    def __init__(self, *, message: str, job_id: UUID, failure_reasons: List[str]):
+    def __init__(self, *, message: str, job_id: UUID, failure_reasons: list[str]):
         super().__init__(message)
         self.job_id = job_id
         self.failure_reasons = failure_reasons

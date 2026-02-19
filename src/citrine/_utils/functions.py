@@ -1,7 +1,8 @@
-from abc import ABCMeta
 import os
+from abc import ABCMeta
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any
 from urllib.parse import quote, urlencode, urlparse
 from uuid import UUID
 from warnings import warn
@@ -118,7 +119,7 @@ def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
         return url
 
 
-def write_file_locally(content, local_path: Union[str, Path]):
+def write_file_locally(content: bytes, local_path: str | Path):
     """Take content from remote and ensure path exists."""
     if isinstance(local_path, str):
         if len(os.path.split(local_path)[-1]) == 0:
@@ -222,9 +223,9 @@ def generate_shared_meta(target: type):
 
 
 def migrate_deprecated_argument(
-        new_arg: Optional[Any],
+        new_arg: Any | None,
         new_arg_name: str,
-        old_arg: Optional[Any],
+        old_arg: Any | None,
         old_arg_name: str
 ) -> Any:
     """
@@ -237,11 +238,11 @@ def migrate_deprecated_argument(
 
     Parameters
     ----------
-    new_arg: Optional[Any]
+    new_arg: Any | None
         the value provided using the new argument (or None, if not provided)
     new_arg_name: str
         the new name of the argument (used for creating user-facing messages)
-    old_arg: Optional[Any]
+    old_arg: Any | None
         the value provided using the old argument (or None, if not provided)
     old_arg_name: str
         the old name of the argument (used for creating user-facing messages)
@@ -281,7 +282,7 @@ def format_escaped_url(
         the `format` template to which the escaped arguments will be bound
     *args : Iterable[str]
         Other arguments
-    **kwargs: Dict[str]
+    **kwargs: dict[str]
         Keyword arguments
 
     Returns
@@ -297,9 +298,9 @@ def format_escaped_url(
 
 def resource_path(*,
                   path_template: str,
-                  uid: Optional[Union[UUID, str]] = None,
-                  action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},
+                  uid: UUID | str | None = None,
+                  action: str | Sequence[str] = [],
+                  query_terms: dict[str, str] = {},
                   **kwargs
                   ) -> str:
     """Construct a url from a base path and, optionally, id and/or action."""

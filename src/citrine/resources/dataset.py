@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of datasets."""
-from typing import List, Optional, Union, Tuple, Iterator, Iterable
+from collections.abc import Iterator, Iterable
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -46,11 +46,11 @@ class Dataset(Resource['Dataset']):
     ----------
     name: str
         Name of the dataset. Can be used for searching.
-    summary: Optional[str]
+    summary: str | None
         An optional summary of this dataset.
-    description: Optional[str]
+    description: str | None
         An optional long-form description of the dataset.
-    unique_name: Optional[str]
+    unique_name: str | None
         An optional, globally unique name that can be used to retrieve the dataset.
 
     """
@@ -85,11 +85,11 @@ class Dataset(Resource['Dataset']):
     session = properties.Optional(properties.Object(Session), 'session',
                                   serializable=False, deserializable=False)
 
-    def __init__(self, name: str, *, summary: Optional[str] = None,
-                 description: Optional[str] = None, unique_name: Optional[str] = None):
+    def __init__(self, name: str, *, summary: str | None = None,
+                 description: str | None = None, unique_name: str | None = None):
         self.name: str = name
-        self.summary: Optional[str] = summary
-        self.description: Optional[str] = description
+        self.summary: str | None = summary
+        self.description: str | None = description
         self.unique_name = unique_name
 
         # The attributes below should not be set by the user. Instead they will be updated as the
@@ -218,7 +218,7 @@ class Dataset(Resource['Dataset']):
                      *,
                      dry_run: bool = False,
                      status_bar: bool = False,
-                     include_nested: bool = False) -> List[DataConcepts]:
+                     include_nested: bool = False) -> list[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -251,7 +251,7 @@ class Dataset(Resource['Dataset']):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             The registered versions
 
         """
@@ -266,13 +266,13 @@ class Dataset(Resource['Dataset']):
         """Update a data model object using the appropriate collection."""
         return self.gemd._collection_for(model).update(model)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
+    def delete(self, uid: UUID | str | LinkByUID | DataConcepts, *, dry_run=False):
         """
         Delete a GEMD resource from the appropriate collection.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, DataConcepts]
+        uid: UUID | str | LinkByUID | DataConcepts
             A representation of the resource to delete (Citrine id, LinkByUID, or the object)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
@@ -314,7 +314,7 @@ class Dataset(Resource['Dataset']):
             How long to delay between each polling retry attempt.
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.
@@ -347,11 +347,11 @@ class Dataset(Resource['Dataset']):
 
     def gemd_batch_delete(
             self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[LinkByUID | UUID | str | BaseEntity],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    ) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -372,7 +372,7 @@ class Dataset(Resource['Dataset']):
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -388,7 +388,7 @@ class Dataset(Resource['Dataset']):
 
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.

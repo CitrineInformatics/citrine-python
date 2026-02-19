@@ -1,5 +1,3 @@
-from typing import Type
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine.informatics.predictors import Predictor
@@ -17,7 +15,7 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
     description = properties.Optional(properties.String(), "description")
 
     @classmethod
-    def get_type(cls, data) -> Type['PredictorNode']:
+    def get_type(cls, data) -> type['PredictorNode']:
         """Return the subtype."""
         from .auto_ml_predictor import AutoMLPredictor
         from .attribute_accumulation_predictor import AttributeAccumulationPredictor

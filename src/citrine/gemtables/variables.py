@@ -1,5 +1,4 @@
 """Variable definitions for GEM Tables."""
-from typing import Type, Optional, List, Union, Tuple
 from uuid import UUID
 
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -66,11 +65,11 @@ class Variable(PolymorphicSerializable['Variable']):
             return False
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
-        types: List[Type[Serializable]] = [
+        types: list[type[Serializable]] = [
             TerminalMaterialInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, LocalAttribute, LocalAttributeAndObject,
             IngredientIdentifierByProcessTemplateAndName, IngredientLabelByProcessAndName,
@@ -109,7 +108,7 @@ class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  field: str):
         self.name = name
         self.headers = headers
@@ -125,9 +124,9 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -149,15 +148,15 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  template: attribute_type,
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -177,11 +176,11 @@ class AttributeByTemplateAfterProcessTemplate(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    attribute_template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    attribute_template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    process_template: Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_template: UUID | str | LinkByUID | ProcessTemplate
         process template that identifies the originating process
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -204,17 +203,17 @@ class AttributeByTemplateAfterProcessTemplate(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="attribute_after_process", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    process_type = UUID | str | LinkByUID | ProcessTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  attribute_template: attribute_type,
                  process_template: process_type,
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -240,11 +239,11 @@ class AttributeByTemplateAndObjectTemplate(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    attribute_template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    attribute_template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    object_template: Union[UUID, str, LinkByUID, BaseTemplate]
+    object_template: UUID | str | LinkByUID | BaseTemplate
         template that identifies the associated object
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -267,17 +266,17 @@ class AttributeByTemplateAndObjectTemplate(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="attribute_by_object", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    object_type = Union[UUID, str, LinkByUID, BaseTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    object_type = UUID | str | LinkByUID | BaseTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  attribute_template: attribute_type,
                  object_template: object_type,
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -297,9 +296,9 @@ class LocalAttribute(Serializable['LocalAttribute'], Variable):
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -321,15 +320,15 @@ class LocalAttribute(Serializable['LocalAttribute'], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="local_attribute", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  template: attribute_type,
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -348,11 +347,11 @@ class LocalAttributeAndObject(Serializable['LocalAttributeAndObject'], Variable)
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    object_template: Union[UUID, str, LinkByUID, AttributeTemplate]
+    object_template: UUID | str | LinkByUID | AttributeTemplate
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -375,17 +374,17 @@ class LocalAttributeAndObject(Serializable['LocalAttributeAndObject'], Variable)
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="local_attribute_and_object", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    object_type = Union[UUID, str, LinkByUID, BaseTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    object_type = UUID | str | LinkByUID | BaseTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  template: attribute_type,
                  object_template: object_type,
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -425,12 +424,12 @@ class IngredientIdentifierByProcessTemplateAndName(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_id_by_process_and_name", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  process_template: process_type,
                  ingredient_name: str,
                  scope: str,  # Note that the default is set server side
@@ -477,12 +476,12 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_label_by_process_and_name", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  process_template: process_type,
                  ingredient_name: str,
                  label: str,
@@ -524,12 +523,12 @@ class IngredientLabelsSetByProcessAndName(
                             default="ing_labels_set_by_process_and_name",
                             deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  process_template: process_type,
                  ingredient_name: str):
         self.name = name
@@ -575,17 +574,17 @@ class IngredientQuantityByProcessAndName(
                             deserializable=False)
     unit = properties.Optional(properties.String, "unit")
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  process_template: process_type,
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.process_template = _make_link_by_uid(process_template)
@@ -627,7 +626,7 @@ class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Var
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  scope: str = CITRINE_SCOPE):
         self.name = name
         self.headers = headers
@@ -667,7 +666,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     process_templates: list[LinkByUID]
         process templates that should not be traversed through when searching for a matching
         attribute.  The attribute may be present in these processes but not their ingredients.
-    attribute_constraints: List[Tuple[Union[UUID, str, LinkByUID, AttributeTemplate], Bounds]]
+    attribute_constraints: list[tuple[UUID | str | LinkByUID | AttributeTemplate, Bounds]]
         Optional
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
@@ -690,17 +689,17 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="attribute_in_trunk", deserializable=False)
 
-    attribute_type = Union[UUID, str, LinkByUID, AttributeTemplate]
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
-    constraint_type = Tuple[attribute_type, BaseBounds]
+    attribute_type = UUID | str | LinkByUID | AttributeTemplate
+    process_type = UUID | str | LinkByUID | ProcessTemplate
+    constraint_type = tuple[attribute_type, BaseBounds]
 
     def __init__(self,
                  name: str,
                  *,
-                 headers: List[str],
+                 headers: list[str],
                  attribute_template: attribute_type,
-                 process_templates: List[process_type],
-                 attribute_constraints: Optional[List[constraint_type]] = None,
+                 process_templates: list[process_type],
+                 attribute_constraints: list[constraint_type] | None = None,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
@@ -748,7 +747,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         sequence of column headers
     ingredient_name: str
         Name of the ingredient to search for
-    process_templates: list[Union[UUID, str, LinkByUID, ProcessTemplate]]
+    process_templates: list[UUID | str | LinkByUID | ProcessTemplate]
         Process templates halt the search for a matching ingredient name.
         These process templates are inclusive.
         The ingredient may be present in these processes but not before.
@@ -765,13 +764,13 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_id_in_output", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  ingredient_name: str,
-                 process_templates: List[process_type],
+                 process_templates: list[process_type],
                  scope: str = CITRINE_SCOPE,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
@@ -817,7 +816,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    process_templates: list[Union[UUID, str, LinkByUID, ProcessTemplate]]
+    process_templates: list[UUID | str | LinkByUID | ProcessTemplate]
         process templates that should not be traversed through when searching for a matching
         attribute.  The attribute may be present in these processes but not their ingredients.
     ingredient_name: str
@@ -831,12 +830,12 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     ingredient_name = properties.String('ingredient_name')
     typ = properties.String('type', default="ing_label_set_in_output", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
-                 process_templates: List[process_type],
+                 headers: list[str],
+                 process_templates: list[process_type],
                  ingredient_name: str):
         self.name = name
         self.headers = headers
@@ -885,7 +884,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         Dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
         Valid options are defined by
         :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
-    process_templates: list[Union[UUID, str, LinkByUID, ProcessTemplate]]
+    process_templates: list[UUID | str | LinkByUID | ProcessTemplate]
         Process templates halt the search for a matching ingredient name.
         These process templates are inclusive.
         The ingredient may be present in these processes but not before.
@@ -907,16 +906,16 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     unit = properties.Optional(properties.String, "unit")
     typ = properties.String('type', default="ing_quantity_in_output", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
-                 process_templates: List[process_type],
+                 process_templates: list[process_type],
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name
@@ -968,11 +967,11 @@ class LocalIngredientIdentifier(Serializable['LocalIngredientIdentifier'], Varia
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="local_ing_id", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  ingredient_name: str,
                  scope: str = CITRINE_SCOPE,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
@@ -1009,11 +1008,11 @@ class LocalIngredientLabelsSet(Serializable['LocalIngredientLabelsSet'], Variabl
     ingredient_name = properties.String('ingredient_name')
     typ = properties.String('type', default="local_ing_label_set", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  ingredient_name: str):
         self.name = name
         self.headers = headers
@@ -1058,15 +1057,15 @@ class LocalIngredientQuantity(Serializable['LocalIngredientQuantity'], Variable)
     unit = properties.Optional(properties.String, "unit")
     typ = properties.String('type', default="local_ing_quantity", deserializable=False)
 
-    process_type = Union[UUID, str, LinkByUID, ProcessTemplate]
+    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self,
                  name: str, *,
-                 headers: List[str],
+                 headers: list[str],
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: Optional[str] = None):
+                 unit: str | None = None):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name

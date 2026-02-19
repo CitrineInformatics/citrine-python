@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
-from typing import Optional, Union, Iterator
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -20,7 +20,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def __init__(self,
                  project_id: UUID,
                  session: Session,
-                 workflow_id: Optional[UUID] = None):
+                 workflow_id: UUID | None = None):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
@@ -32,7 +32,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, execution_input: Score, *, max_candidates: Optional[int] = None):
+    def trigger(self, execution_input: Score, *, max_candidates: int | None = None):
         """Trigger a Design Workflow execution given a score and a maximum number of candidates."""
         path = self._get_path()
         json = {'score': execution_input.dump(), "max_candidates": max_candidates}
@@ -47,12 +47,12 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a DesignExecution.")
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         """Archive a Design Workflow execution.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the execution to archive
 
         """
@@ -95,7 +95,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Design Workflow Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Design Executions cannot be deleted")

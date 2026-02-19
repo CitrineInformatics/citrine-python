@@ -1,5 +1,4 @@
 from os import environ
-from typing import Optional
 
 from citrine._session import Session
 from citrine.resources.catalyst import CatalystResource
@@ -21,7 +20,7 @@ class Citrine:
     host: str
         Host URL, generally '<your_site>.citrine-platform.com'.
         Default: environ.get('CITRINE_API_HOST')
-    port: Optional[str]
+    port: str | None
         Optional networking port.  Default: None
 
     """
@@ -31,7 +30,7 @@ class Citrine:
                  *,
                  scheme: str = None,
                  host: str = None,
-                 port: Optional[str] = None):
+                 port: str | None = None):
         if api_key is None:
             api_key = environ.get('CITRINE_API_KEY')
         if scheme is None:
