@@ -51,12 +51,10 @@ class MaterialRun(
         Links to associated files, with resource paths into the files API.
     default_labels: list[str], optional
         An optional set of default labels to apply to this material run.
-        Default labels are used to:
-          - Marking the material run as a potential replacement ingredient for a
-            particular label when generating new candidates using a
-            design space. Note that during design, default labels are only applicable
-            if the material run has no associated ingredient run within the
-            training set in question.
+        Default labels are used to mark the material run as a potential replacement ingredient
+        for a particular label when generating new candidates using a design space. Note that
+        during design, default labels are only applicable if the material run has no associated
+        ingredient run within the training set in question.
 
     """
 

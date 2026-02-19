@@ -48,9 +48,8 @@ class MaterialSpec(
         Links to associated files, with resource paths into the files API.
     default_labels: list[str], optional
         An optional set of default labels to apply to this material spec.
-        Default labels are used to:
-          - Populate labels on the ingredient spec, if none are explicitly
-            specified, when the material spec is later used in an ingredient spec
+        Default labels are used to populate labels on the ingredient spec, if none are explicitly
+        specified, when the material spec is later used in an ingredient spec.
 
     """
 
