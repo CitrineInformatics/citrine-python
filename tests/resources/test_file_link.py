@@ -21,6 +21,9 @@ from tests.utils.factories import (
 from tests.utils.session import FakeSession, FakeS3Client, FakeCall, FakeRequestResponseApiError
 
 
+PYTHON_VERSION_TUPLE = tuple(int(n) for n in platform.python_version_tuple()[:2])
+
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
@@ -47,7 +50,7 @@ def valid_data() -> dict:
             "asdf.xlsx", 
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
             marks=pytest.mark.xfail(
-                platform.system() == "Windows", 
+                platform.system() == "Windows" and PYTHON_VERSION_TUPLE <= (3, 13),
                 reason="windows-latest test servers omit xlsx from their registry", 
                 strict=True
             )
