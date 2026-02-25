@@ -251,16 +251,16 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     ml_predictor = AutoMLPredictor(
         name='ML Model for Density',
         description='Predict the density, given molecular features of the solvent',
-        inputs = features,
-        output = [output_desc]
+        inputs=features,
+        outputs=[output_desc]
     )
 
     # use a graph predictor to wrap together the featurizer and the machine learning model
     graph_predictor = GraphPredictor(
         name='Density from solvent molecular structure',
         description='Predict the density from the solvent molecular structure using molecular structure features.',
-        predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
+        predictors=[featurizer, ml_predictor],
+        training_data=[GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name

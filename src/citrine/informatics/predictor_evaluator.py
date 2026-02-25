@@ -55,7 +55,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 
         A name is required by all evaluators because it is used as the top-level key
         in the results returned by a
-        :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
+        :class:`citrine.informatics.executions.predictor_evaluation.PredictorEvaluation`.
         As such, the names of all evaluators within a single workflow must be unique.
         """
         raise NotImplementedError  # pragma: no cover

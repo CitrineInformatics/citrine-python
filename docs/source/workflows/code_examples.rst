@@ -66,7 +66,7 @@ This pattern is also extremely useful for performing optimization over complex o
         }
     )
 
-    physical_properties_predictor = AutoMLModel(
+    physical_properties_predictor = AutoMLPredictor(
         name = 'physical properties model',
         inputs = [
             wheat_flour_quantity,
