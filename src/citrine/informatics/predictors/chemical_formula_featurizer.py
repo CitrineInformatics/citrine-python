@@ -1,4 +1,4 @@
-from warnings import warn
+from deprecation import deprecated
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -153,11 +153,9 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
         self.powers = powers if powers is not None else [1.0]
 
     @property
+    @deprecated(deprecated_in="4.0.0", removed_in="5.0.0", details="Use 'powers' instead.")
     def powers_as_float(self) -> list[float]:
         """Powers when computing generalized weighted means of element properties."""
-        warn("'powers_as_float' is deprecated as of v4.0.0 in favor of 'powers', and will be "
-             "removed in v5.0.0",
-             DeprecationWarning)
         return self.powers
 
     def __str__(self):
