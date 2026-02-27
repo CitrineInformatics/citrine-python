@@ -83,7 +83,7 @@ def chemical_featurizer() -> ChemicalFormulaFeaturizer:
         input_descriptor=ChemicalFormulaDescriptor("formula"),
         features=["standard"],
         excludes=None,
-        powers=[1, 2]
+        powers=[1.0, 2.0]
     )
 
 
@@ -274,9 +274,8 @@ def test_chemical_featurizer(chemical_featurizer):
     assert chemical_featurizer.input_descriptor == ChemicalFormulaDescriptor("formula")
     assert chemical_featurizer.features == ["standard"]
     assert chemical_featurizer.excludes == []
-    with pytest.warns(UserWarning):
-        assert chemical_featurizer.powers == [1, 2]
-    with pytest.warns(PendingDeprecationWarning):
+    assert chemical_featurizer.powers == [1.0, 2.0]
+    with pytest.warns(DeprecationWarning):
         assert chemical_featurizer.powers_as_float == [1.0, 2.0]
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
@@ -287,15 +286,14 @@ def test_chemical_featurizer(chemical_featurizer):
         'input': ChemicalFormulaDescriptor("formula").dump(),
         'features': ['standard'],
         'excludes': [],
-        'powers': [1, 2],
+        'powers': [1.0, 2.0],
         'type': 'ChemicalFormulaFeaturizer'
     }
     
-    chemical_featurizer.powers = [0.5, -1]
-    with pytest.warns(PendingDeprecationWarning):
+    chemical_featurizer.powers = [0.5, -1.0]
+    with pytest.warns(DeprecationWarning):
         assert chemical_featurizer.powers_as_float == [0.5, -1.0]
-    with pytest.warns(UserWarning):
-        assert chemical_featurizer.powers == [0, -1]
+    assert chemical_featurizer.powers == [0.5, -1.0]
 
 
 def test_auto_ml(auto_ml):
@@ -351,24 +349,6 @@ def test_auto_ml_multiple_outputs(auto_ml_multiple_outputs):
     assert built.dump()['outputs'] == [z.dump(), y.dump()]
 
 
-def test_auto_ml_deprecated_training_data(auto_ml):
-    with pytest.deprecated_call():
-        pred = AutoMLPredictor(
-            name='AutoML Predictor',
-            description='Predicts z from inputs w and x',
-            inputs=auto_ml.inputs,
-            outputs=auto_ml.outputs,
-            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=1)]
-        )
-
-    new_training_data = [GemTableDataSource(table_id=uuid.uuid4(), table_version=2)]
-    with pytest.deprecated_call():
-        pred.training_data = new_training_data
-    
-    with pytest.deprecated_call():
-        assert pred.training_data == new_training_data
-
-
 def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     """Make sure the correct fields go to the correct places for an ingredients to formulation predictor."""
     assert ing_to_formulation_predictor.name == 'Ingredients to formulation predictor'
@@ -403,28 +383,6 @@ def test_mean_property_round_robin(mean_property_predictor):
     assert len(cat_props) == 1
 
 
-def test_mean_property_training_data_deprecated(mean_property_predictor):
-    with pytest.deprecated_call():
-        pred = MeanPropertyPredictor(
-            name='Mean property predictor',
-            description='Computes mean ingredient properties',
-            input_descriptor=mean_property_predictor.input_descriptor,
-            properties=mean_property_predictor.properties,
-            p=2.5,
-            impute_properties=True,
-            default_properties=mean_property_predictor.default_properties,
-            label=mean_property_predictor.label,
-            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=1)]
-        )
-    
-    new_training_data = [GemTableDataSource(table_id=uuid.uuid4(), table_version=2)]
-    with pytest.deprecated_call():
-        pred.training_data = new_training_data
-    
-    with pytest.deprecated_call():
-        assert pred.training_data == new_training_data
-
-
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
@@ -441,22 +399,6 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.output_descriptor.key == FormulationKey.FLAT.value
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
-
-
-def test_simplex_mixture_training_data_deprecated():
-    with pytest.deprecated_call():
-        pred = SimpleMixturePredictor(
-            name='Simple mixture predictor',
-            description='Computes mean ingredient properties',
-            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=1)]
-        )
-    
-    new_training_data = [GemTableDataSource(table_id=uuid.uuid4(), table_version=2)]
-    with pytest.deprecated_call():
-        pred.training_data = new_training_data
-    
-    with pytest.deprecated_call():
-        assert pred.training_data == new_training_data
 
 
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):

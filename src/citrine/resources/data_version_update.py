@@ -1,5 +1,4 @@
 """Record to hold branch data version update information."""
-from typing import List
 
 from citrine._rest.resource import PredictorRef, Resource
 from citrine._serialization import properties as properties
@@ -30,8 +29,8 @@ class BranchDataUpdate(Resource['BranchDataUpdate']):
 
     def __init__(self,
                  *,
-                 data_updates: List[DataVersionUpdate],
-                 predictors: List[PredictorRef]):
+                 data_updates: list[DataVersionUpdate],
+                 predictors: list[PredictorRef]):
         self.data_updates = data_updates
         self.predictors = predictors
 
@@ -51,7 +50,7 @@ class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
 
     def __init__(self,
                  *,
-                 data_updates: List[DataVersionUpdate],
-                 use_predictors: List[PredictorRef]):
+                 data_updates: list[DataVersionUpdate],
+                 use_predictors: list[PredictorRef]):
         self.data_updates = data_updates
         self.use_predictors = use_predictors

@@ -1,5 +1,5 @@
 import functools
-from typing import Iterator, Optional, Union
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -34,12 +34,12 @@ class Branch(Resource['Branch']):
     root_id = properties.UUID('metadata.root_id', serializable=False)
     version = properties.Integer('metadata.version', serializable=False)
 
-    project_id: Optional[UUID] = None
+    project_id: UUID | None = None
 
     def __init__(self,
                  name: str,
                  *,
-                 session: Optional[Session] = None):
+                 session: Session | None = None):
         self.name: str = name
         self.session: Session = session
 
@@ -57,7 +57,7 @@ class Branch(Resource['Branch']):
                                         branch_version=self.version)
 
     @property
-    def experiment_datasource(self) -> Optional[ExperimentDataSource]:
+    def experiment_datasource(self) -> ExperimentDataSource | None:
         """Return this branch's experiment data source, or None if one doesn't exist."""
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot retrieve datasource without project reference!')
@@ -106,8 +106,8 @@ class BranchCollection(Collection[Branch]):
 
     def get(self,
             *,
-            root_id: Union[UUID, str],
-            version: Optional[Union[int, str]] = LATEST_VER) -> Branch:
+            root_id: UUID | str,
+            version: int | str | None = LATEST_VER) -> Branch:
         """
         Retrieve a branch by its root ID and, optionally, its version number.
 
@@ -115,10 +115,10 @@ class BranchCollection(Collection[Branch]):
 
         Parameters
         ---------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique identifier of the branch root
 
-        version: Union[int, str], optional
+        version: int | str, optional
             The version of the branch to retrieve. If provided, must either be a positive integer,
             or "latest". Defaults to "latest".
 
@@ -141,13 +141,13 @@ class BranchCollection(Collection[Branch]):
                 params=params
             )
 
-    def get_by_version_id(self, *, version_id: Union[UUID, str]) -> Branch:
+    def get_by_version_id(self, *, version_id: UUID | str) -> Branch:
         """
         Given a branch version ID, retrieve the branch.
 
         Parameters
         ---------
-        version_id: Union[UUID, str]
+        version_id: UUID | str
             Unique ID of the branch version
 
         Returns
@@ -226,17 +226,17 @@ class BranchCollection(Collection[Branch]):
 
     def archive(self,
                 *,
-                root_id: Union[UUID, str],
-                version: Optional[Union[int, str]] = LATEST_VER):
+                root_id: UUID | str,
+                version: int | str | None = LATEST_VER):
         """
         Archive a branch.
 
         Parameters
         ----------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique ID of the branch root
 
-        version: Union[int, str], optional
+        version: int | str, optional
             The version of the branch. If provided, must either be a positive integer, or "latest".
             Defaults to "latest".
 
@@ -251,17 +251,17 @@ class BranchCollection(Collection[Branch]):
 
     def restore(self,
                 *,
-                root_id: Union[UUID, str],
-                version: Optional[Union[int, str]] = LATEST_VER):
+                root_id: UUID | str,
+                version: int | str | None = LATEST_VER):
         """
         Restore an archived branch.
 
         Parameters
         ----------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique ID of the branch root
 
-        version: Union[int, str], optional
+        version: int | str, optional
             The version of the branch. If provided, must either be a positive integer, or "latest".
             Defaults to "latest".
 
@@ -276,10 +276,10 @@ class BranchCollection(Collection[Branch]):
 
     def update_data(self,
                     *,
-                    root_id: Union[UUID, str],
-                    version: Optional[Union[int, str]] = LATEST_VER,
+                    root_id: UUID | str,
+                    version: int | str | None = LATEST_VER,
                     use_existing: bool = True,
-                    retrain_models: bool = False) -> Optional[Branch]:
+                    retrain_models: bool = False) -> Branch | None:
         """
         Automatically advance the branch to the next version.
 
@@ -288,10 +288,10 @@ class BranchCollection(Collection[Branch]):
 
         Parameters
         ----------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique ID of the branch root
 
-        version: Union[int, str], optional
+        version: int | str, optional
             The version of the branch. If provided, must either be a positive integer, or "latest".
             Defaults to "latest".
 
@@ -328,17 +328,17 @@ class BranchCollection(Collection[Branch]):
 
     def data_updates(self,
                      *,
-                     root_id: Union[UUID, str],
-                     version: Optional[Union[int, str]] = LATEST_VER) -> BranchDataUpdate:
+                     root_id: UUID | str,
+                     version: int | str | None = LATEST_VER) -> BranchDataUpdate:
         """
         Get data updates for a branch.
 
         Parameters
         ----------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique ID of the branch root
 
-        version: Union[int, str], optional
+        version: int | str, optional
             The version of the branch. If provided, must either be a positive integer, or "latest".
             Defaults to "latest".
 
@@ -357,7 +357,7 @@ class BranchCollection(Collection[Branch]):
         return BranchDataUpdate.build(data)
 
     def next_version(self,
-                     root_id: Union[UUID, str],
+                     root_id: UUID | str,
                      *,
                      branch_instructions: NextBranchVersionRequest,
                      retrain_models: bool = True):
@@ -366,7 +366,7 @@ class BranchCollection(Collection[Branch]):
 
         Parameters
         ----------
-        root_id: Union[UUID, str]
+        root_id: UUID | str
             Unique identifier of the branch root to advance to next version
 
         branch_instructions: NextBranchVersionRequest

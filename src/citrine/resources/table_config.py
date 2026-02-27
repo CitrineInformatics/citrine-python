@@ -1,7 +1,5 @@
 from copy import copy
-from typing import List, Union, Optional, Tuple
 from uuid import UUID
-from warnings import warn
 
 from gemd.entity.object import MaterialRun
 
@@ -12,7 +10,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, _pad_positional_args
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
@@ -28,7 +26,6 @@ from citrine.gemtables.variables import (
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:   # pragma: no cover
-    from citrine.resources.project import Project
     from citrine.resources.team import Team
 
 
@@ -84,7 +81,7 @@ class TableConfig(Resource["TableConfig"]):
         List of row definitions that define the rows of the table
     columns: list[Column]
         Column definitions, which describe how the variables are shaped into the table
-    gemd_query: Optional[GemdQuery]
+    gemd_query: GemdQuery | None
         The query used to define the materials underpinning this table
     generation_algorithm: TableFromGemdQueryAlgorithm
         Which algorithm was used to generate the config based on the GemdQuery results
@@ -96,17 +93,17 @@ class TableConfig(Resource["TableConfig"]):
     _resource_type = ResourceTypeEnum.TABLE_DEFINITION
 
     @staticmethod
-    def _get_dups(lst: List) -> List:
+    def _get_dups(lst: list) -> list:
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
     config_uid = properties.Optional(properties.UUID(), 'definition_id')
-    """:Optional[UUID]: Unique ID of the table config, independent of its version."""
+    """:UUID | None: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
-    """:Optional[int]: The version of the table config, starting from 1.
+    """:int | None: The version of the table config, starting from 1.
     It increases every time the table config is updated."""
     version_uid = properties.Optional(properties.UUID(), 'id')
-    """:Optional[UUID]: Unique ID that specifies one version of one table config."""
+    """:UUID | None: Unique ID that specifies one version of one table config."""
 
     name = properties.String("name")
     description = properties.String("description")
@@ -122,12 +119,12 @@ class TableConfig(Resource["TableConfig"]):
     def __init__(self, name: str,
                  *,
                  description: str,
-                 datasets: List[UUID],
-                 variables: List[Variable],
-                 rows: List[Row],
-                 columns: List[Column],
+                 datasets: list[UUID],
+                 variables: list[Variable],
+                 rows: list[Row],
+                 columns: list[Column],
                  gemd_query: GemdQuery = None,
-                 generation_algorithm: Optional[TableFromGemdQueryAlgorithm] = None):
+                 generation_algorithm: TableFromGemdQueryAlgorithm | None = None):
         self.name = name
         self.description = description
         self.datasets = datasets
@@ -162,15 +159,15 @@ class TableConfig(Resource["TableConfig"]):
         return self.config_uid
 
     @uid.setter
-    def uid(self, new_uid: Union[str, UUID]) -> None:
+    def uid(self, new_uid: str | UUID) -> None:
         """Set the unique ID of the table config, independent of its version."""
         self.config_uid = new_uid
 
     def add_columns(self, *,
                     variable: Variable,
-                    columns: List[Column],
-                    name: Optional[str] = None,
-                    description: Optional[str] = None
+                    columns: list[Column],
+                    name: str | None = None,
+                    description: str | None = None
                     ) -> 'TableConfig':
         """Add a variable and one or more columns to this TableConfig (out-of-place).
 
@@ -184,9 +181,9 @@ class TableConfig(Resource["TableConfig"]):
             Variable to add and use in the added columns
         columns: list[Column]
             Columns to add, which must only reference the added variable
-        name: Optional[str]
+        name: str | None
             Optional renaming of the table
-        description: Optional[str]
+        description: str | None
             Optional re-description of the table
 
         """
@@ -212,12 +209,11 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients(self, *,
-                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
-                            project: 'Project' = None,
-                            team: 'Team' = None,
+                            process_template: LinkByUID | ProcessTemplate | str | UUID,
+                            team: 'Team',
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
-                            unit: Optional[str] = None
+                            unit: str | None = None
                             ):
         """Add variables and columns for all of the possible ingredients in a process.
 
@@ -227,28 +223,18 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+        process_template: LinkByUID | ProcessTemplate | str | UUID
             representation of a registered process template
-        project: Project
-            a project that has access to the process template
+        team: Team
+            a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
-        if project is not None:
-            warn("Adding ingredients to a table config through a project is deprecated as of "
-                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
-                 DeprecationWarning)
-            principal = project
-        elif team is not None:
-            principal = team
-        else:
-            raise TypeError("Missing 1 required argument: team")
-
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -256,7 +242,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
         link = _make_link_by_uid(process_template)
-        process: ProcessTemplate = principal.process_templates.get(uid=link)
+        process: ProcessTemplate = team.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -319,12 +305,11 @@ class TableConfig(Resource["TableConfig"]):
         return new_config
 
     def add_all_ingredients_in_output(self, *,
-                                      process_templates: List[LinkByUID],
-                                      project: 'Project' = None,
-                                      team: 'Team' = None,
+                                      process_templates: list[LinkByUID],
+                                      team: 'Team',
                                       quantity_dimension: IngredientQuantityDimension,
                                       scope: str = CITRINE_SCOPE,
-                                      unit: Optional[str] = None
+                                      unit: str | None = None
                                       ):
         """Add variables and columns for all possible ingredients in a list of processes.
 
@@ -336,29 +321,19 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_templates: List[LinkByUID]
+        process_templates: list[LinkByUID]
             registered process templates from which to pull allowed ingredients and at which to
             halt searching
-        project: Project
-            a project that has access to the process template
+        team: Team
+            a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
-        scope: Optional[str]
+        scope: str | None
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
-        unit: Optional[str]
+        unit: str | None
             the units for the quantity, if selecting Absolute Quantity
 
         """
-        if project is not None:
-            warn("Adding ingredients to a table config through a project is deprecated as of "
-                 "3.4.0, and will be removed in 4.0.0. Please use a team instead.",
-                 DeprecationWarning)
-            principal = project
-        elif team is not None:
-            principal = team
-        else:
-            raise TypeError("Missing 1 required argument: team")
-
         dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
@@ -367,7 +342,7 @@ class TableConfig(Resource["TableConfig"]):
         }
         union_allowed_names = []
         for process_template_link in process_templates:
-            process: ProcessTemplate = principal.process_templates.get(process_template_link)
+            process: ProcessTemplate = team.process_templates.get(process_template_link)
             if not process.allowed_names:
                 raise RuntimeError(
                     f"Cannot add ingredients for process template '{process.name}' "
@@ -443,17 +418,12 @@ class TableConfigCollection(Collection[TableConfig]):
     # definition) are necessary
     _individual_key = None
 
-    def __init__(self, *args, team_id: UUID, project_id: UUID = None, session: Session = None):
-        args = _pad_positional_args(args, 2)
-        self.project_id = project_id or args[0]
-        self.session: Session = session or args[1]
+    def __init__(self, *, team_id: UUID, project_id: UUID, session: Session):
+        self.project_id = project_id
+        self.session: Session = session
         self.team_id = team_id
-        if self.project_id is None:
-            raise TypeError("Missing one required argument: project_id.")
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
+    def get(self, uid: UUID | str, *, version: int | None = None):
         """Get a table config.
 
         If no version is specified, then the most recent version is returned.
@@ -508,11 +478,11 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def default_for_material(
             self, *,
-            material: Union[MaterialRun, LinkByUID, str, UUID],
+            material: MaterialRun | LinkByUID | str | UUID,
             name: str,
             description: str = None,
-            algorithm: Optional[TableBuildAlgorithm] = None
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+            algorithm: TableBuildAlgorithm | None = None
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build best-guess default table config for provided terminal material's history.
 
@@ -527,7 +497,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Parameters
         ----------
-        material: Union[MaterialRun, LinkByUid, str, UUID]
+        material: MaterialRun | LinkByUid | str | UUID
             The terminal material whose history is used to construct a table config.
         name: str
             The name for the table config.
@@ -539,7 +509,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -572,9 +542,9 @@ class TableConfigCollection(Collection[TableConfig]):
             *,
             name: str = None,
             description: str = None,
-            algorithm: Optional[TableFromGemdQueryAlgorithm] = None,
+            algorithm: TableFromGemdQueryAlgorithm | None = None,
             register_config: bool = False
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+    ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build a TableConfig based on the results of a database query.
 
@@ -594,7 +564,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns
         -------
-        List[Tuple[Variable, Column]]
+        list[tuple[Variable, Column]]
             A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
 
@@ -627,7 +597,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     def preview(self, *,
                 table_config: TableConfig,
-                preview_materials: List[LinkByUID] = None
+                preview_materials: list[LinkByUID] = None
                 ) -> dict:
         """Preview a Table Config on an explicit set of terminal materials.
 
@@ -635,7 +605,7 @@ class TableConfigCollection(Collection[TableConfig]):
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_materials: List[LinkByUID]
+        preview_materials: list[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
 
         """
@@ -701,6 +671,6 @@ class TableConfigCollection(Collection[TableConfig]):
                              " update()")
         return self.register(table_config)
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Table configs cannot be deleted at this time."""
         raise NotImplementedError("Table configs cannot be deleted at this time.")

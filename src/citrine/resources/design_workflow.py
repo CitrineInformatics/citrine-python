@@ -1,5 +1,5 @@
+from collections.abc import Callable, Iterable
 from copy import deepcopy
-from typing import Callable, Union, Iterable, Optional, Tuple
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -22,8 +22,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                  project_id: UUID,
                  session: Session,
                  *,
-                 branch_root_id: Optional[UUID] = None,
-                 branch_version: Optional[int] = None):
+                 branch_root_id: UUID | None = None,
+                 branch_version: int | None = None):
         self.project_id: UUID = project_id
         self.session: Session = session
 
@@ -124,31 +124,31 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         return super().update(model)
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         """Archive a design workflow.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the workflow to archive
 
         """
         url = self._get_path(uid=uid, action="archive")
         self.session.put_resource(url, {}, version=self._api_version)
 
-    def restore(self, uid: Union[UUID, str]):
+    def restore(self, uid: UUID | str):
         """Restore an archived design workflow.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
+        uid: UUID | str
             Unique identifier of the workflow to restore
 
         """
         url = self._get_path(uid=uid, action="restore")
         self.session.put_resource(url, {}, version=self._api_version)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
@@ -161,13 +161,13 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                                         per_page=per_page)
 
     def _fetch_page(self,
-                    path: Optional[str] = None,
-                    fetch_func: Optional[Callable[..., dict]] = None,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    json_body: Optional[dict] = None,
-                    additional_params: Optional[dict] = None,
-                    ) -> Tuple[Iterable[dict], str]:
+                    path: str | None = None,
+                    fetch_func: Callable[..., dict] | None = None,
+                    page: int | None = None,
+                    per_page: int | None = None,
+                    json_body: dict | None = None,
+                    additional_params: dict | None = None,
+                    ) -> tuple[Iterable[dict], str]:
         params = additional_params or {}
         params["branch_root_id"] = self.branch_root_id
         params["branch_version"] = self.branch_version

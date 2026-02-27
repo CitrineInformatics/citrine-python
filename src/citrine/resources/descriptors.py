@@ -1,4 +1,3 @@
-from typing import List, Union
 from uuid import UUID
 
 from citrine._session import Session
@@ -16,22 +15,22 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, *, predictor: Union[GraphPredictor, PredictorNode],
-                                 inputs: List[Descriptor]) -> List[Descriptor]:
+    def from_predictor_responses(self, *, predictor: GraphPredictor | PredictorNode,
+                                 inputs: list[Descriptor]) -> list[Descriptor]:
         """
         Get responses for a predictor, given an input space.
 
         Parameters
         ----------
-        predictor : Union[Predictor, PredictorNode]
+        predictor : Predictor | PredictorNode
             Either a single predictor node or full predictor
              whose available responses are to be computed.
-        inputs : List[Descriptor]
+        inputs : list[Descriptor]
             The input space to the predictor.
 
         Returns
         -------
-        List[Descriptor]
+        list[Descriptor]
             The computable responses of the predictor given the provided input space (as
             descriptors).
 
@@ -51,7 +50,7 @@ class DescriptorMethods:
         )
         return [Descriptor.build(r) for r in response['responses']]
 
-    def from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
+    def from_data_source(self, *, data_source: DataSource) -> list[Descriptor]:
         """
         Get all descriptors associated with a data source.
 
@@ -62,7 +61,7 @@ class DescriptorMethods:
 
         Returns
         -------
-        List[Descriptor]
+        list[Descriptor]
             The list of descriptors associated with the given data_source.
 
         """

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.catalyst.language_model import LanguageModelChoice
@@ -22,10 +20,10 @@ class InsightsRequest(Serializable["InsightsRequest"]):
         self,
         *,
         question: str,
-        temperature: Optional[float] = 0.0,
-        language_model: Optional[LanguageModelChoice] = LanguageModelChoice.GPT_35_TURBO,
-        n_documents: Optional[int] = 5,
-        response_size: Optional[int] = 100,
+        temperature: float | None = 0.0,
+        language_model: LanguageModelChoice | None = LanguageModelChoice.GPT_35_TURBO,
+        n_documents: int | None = 5,
+        response_size: int | None = 100,
     ):
         self.question = question
         self.temperature = temperature

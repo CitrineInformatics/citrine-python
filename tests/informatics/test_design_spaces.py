@@ -27,15 +27,6 @@ def product_design_space() -> ProductDesignSpace:
 
 
 @pytest.fixture
-def enumerated_design_space() -> EnumeratedDesignSpace:
-    """Build an EnumeratedDesignSpace for testing."""
-    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
-    color = CategoricalDescriptor('color', categories=['r', 'g', 'b'])
-    data = [dict(x='0', color='r'), dict(x='1.0', color='b')]
-    return EnumeratedDesignSpace('enumerated', description='desc', descriptors=[x, color], data=data)
-
-
-@pytest.fixture
 def formulation_design_space() -> FormulationDesignSpace:
     desc = FormulationDescriptor.hierarchical()
     return FormulationDesignSpace(
@@ -98,16 +89,6 @@ def test_product_initialization(product_design_space):
     assert product_design_space.dimensions[2].descriptor.key == 'gamma'
 
 
-def test_enumerated_initialization(enumerated_design_space):
-    """Make sure the correct fields go to the correct places."""
-    assert enumerated_design_space.name == 'enumerated'
-    assert enumerated_design_space.description == 'desc'
-    assert len(enumerated_design_space.descriptors) == 2
-    assert enumerated_design_space.descriptors[0].key == 'x'
-    assert enumerated_design_space.descriptors[1].key == 'color'
-    assert enumerated_design_space.data == [{'x': '0', 'color': 'r'}, {'x': '1.0', 'color': 'b'}]
-
-
 def test_hierarchical_initialization(hierarchical_design_space):
     assert hierarchical_design_space.root.formulation_subspace is not None
     assert len(hierarchical_design_space.subspaces) == 1
@@ -121,19 +102,19 @@ def test_hierarchical_initialization(hierarchical_design_space):
 
 
 def test_data_source_build(valid_data_source_design_space_dict):
-    ds = DesignSpace.build(valid_data_source_design_space_dict)
-    assert ds.name == valid_data_source_design_space_dict["data"]["instance"]["name"]
-    assert ds.description == valid_data_source_design_space_dict["data"]["description"]
-    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data"]["instance"]["data_source"])
+    ds = DataSourceDesignSpace.build(valid_data_source_design_space_dict)
+    assert ds.name == valid_data_source_design_space_dict["name"]
+    assert ds.description == valid_data_source_design_space_dict["description"]
+    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data_source"])
     assert str(ds) == f"<DataSourceDesignSpace '{ds.name}'>"
 
 
 def test_data_source_initialization(valid_data_source_design_space_dict):
-    data = valid_data_source_design_space_dict["data"]
-    data_source = DataSource.build(data["instance"]["data_source"])
-    ds = DataSourceDesignSpace(name=data["instance"]["name"],
+    data = valid_data_source_design_space_dict
+    data_source = DataSource.build(data["data_source"])
+    ds = DataSourceDesignSpace(name=data["name"],
                                description=data["description"],
                                data_source=data_source)
-    assert ds.name == data["instance"]["name"]
+    assert ds.name == data["name"]
     assert ds.description == data["description"]
-    assert ds.data_source.dump() == data["instance"]["data_source"]
+    assert ds.data_source.dump() == data["data_source"]

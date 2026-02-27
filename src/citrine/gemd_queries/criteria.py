@@ -1,5 +1,4 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
-from typing import List, Type
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -45,9 +44,9 @@ class Criteria(PolymorphicSerializable):
     """Abstract concept of a criteria to apply when searching for materials."""
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
-        classes: List[Type[Criteria]] = [
+        classes: list[type[Criteria]] = [
             AndOperator, OrOperator,
             PropertiesCriteria, NameCriteria, MaterialRunClassificationCriteria,
             MaterialTemplatesCriteria, TagsCriteria, ConnectivityClassCriteria
@@ -91,9 +90,9 @@ class PropertiesCriteria(Serializable['PropertiesCriteria'], Criteria):
 
     Parameters
     ----------
-    property_templates_filter: Set[UUID]
+    property_templates_filter: set[UUID]
         The citrine IDs of the property templates matches must reference.
-    value_type_filter: Optional[PropertyFilterType]
+    value_type_filter: PropertyFilterType | None
         The value range matches must conform to.
 
     """
@@ -132,7 +131,7 @@ class MaterialRunClassificationCriteria(
 
     Parameters
     ----------
-    classifications: Set[MaterialClassification]
+    classifications: set[MaterialClassification]
         The classification, based on where in a material history an object appears.
 
     """
@@ -155,9 +154,9 @@ class MaterialTemplatesCriteria(Serializable['MaterialTemplatesCriteria'], Crite
 
     Parameters
     ----------
-    material_templates_identifiers: Set[UUID]
+    material_templates_identifiers: set[UUID]
         Which material templates to filter by.
-    tag_filters: Set[str]
+    tag_filters: set[str]
         Which tags to filter by.
 
     """
@@ -176,7 +175,7 @@ class TagsCriteria(Serializable['TagsCriteria'], Criteria):
 
     Parameters
     ----------
-    tags: Set[str]
+    tags: set[str]
         The set of tags to filter by. The meaning of this set depends on the filter_type.
     filter_type: TagFilterType
         The type of filter to apply to the tags:
@@ -197,9 +196,9 @@ class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Crite
 
     Parameters
     ----------
-    is_consumed: Optional[bool]
+    is_consumed: bool | None
         Whether the material is consumed.
-    is_produced: Optional[bool]
+    is_produced: bool | None
         Whether the material is produced.
 
     """

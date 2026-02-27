@@ -1,11 +1,9 @@
 """Resources that represent ingredient run data objects."""
-from typing import List, Dict, Optional, Type, Iterator, Union
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import String, LinkOrElse, Object
-from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.link_by_uid import LinkByUID
@@ -33,7 +31,7 @@ class IngredientRun(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -57,44 +55,40 @@ class IngredientRun(
         The absolute quantity of the ingredient in the process.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
     """
 
     _response_key = GEMDIngredientRun.typ  # 'ingredient_run'
 
-    material = PropertyOptional(LinkOrElse(GEMDMaterialRun), 'material', override=True)
-    process = PropertyOptional(LinkOrElse(GEMDProcessRun),
-                               'process',
-                               override=True,
-                               use_init=True,
-                               )
-    mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction')
-    volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction')
-    number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
-    absolute_quantity = PropertyOptional(Object(ContinuousValue), 'absolute_quantity')
-    spec = PropertyOptional(LinkOrElse(GEMDIngredientSpec), 'spec', override=True, use_init=True)
+    material = Optional(LinkOrElse(GEMDMaterialRun), 'material', override=True)
+    process = Optional(LinkOrElse(GEMDProcessRun), 'process', override=True, use_init=True)
+    mass_fraction = Optional(Object(ContinuousValue), 'mass_fraction')
+    volume_fraction = Optional(Object(ContinuousValue), 'volume_fraction')
+    number_fraction = Optional(Object(ContinuousValue), 'number_fraction')
+    absolute_quantity = Optional(Object(ContinuousValue), 'absolute_quantity')
+    spec = Optional(LinkOrElse(GEMDIngredientSpec), 'spec', override=True, use_init=True)
 
     """
     Intentionally private because they have some unusual dynamics
     """
-    _name = PropertyOptional(String(), 'name')
-    _labels = PropertyOptional(PropertyList(String()), 'labels')
+    _name = Optional(String(), 'name')
+    _labels = Optional(List(String()), 'labels')
 
     def __init__(self,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 material: Optional[GEMDMaterialRun] = None,
-                 process: Optional[GEMDProcessRun] = None,
-                 mass_fraction: Optional[ContinuousValue] = None,
-                 volume_fraction: Optional[ContinuousValue] = None,
-                 number_fraction: Optional[ContinuousValue] = None,
-                 absolute_quantity: Optional[ContinuousValue] = None,
-                 spec: Optional[GEMDIngredientSpec] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 material: GEMDMaterialRun | None = None,
+                 process: GEMDProcessRun | None = None,
+                 mass_fraction: ContinuousValue | None = None,
+                 volume_fraction: ContinuousValue | None = None,
+                 number_fraction: ContinuousValue | None = None,
+                 absolute_quantity: ContinuousValue | None = None,
+                 spec: GEMDIngredientSpec | None = None,
+                 file_links: list[FileLink] | None = None):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
@@ -117,19 +111,19 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     _resource = IngredientRun
 
     @classmethod
-    def get_type(cls) -> Type[IngredientRun]:
+    def get_type(cls) -> type[IngredientRun]:
         """Return the resource type in the collection."""
         return IngredientRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+                     uid: UUID | str | LinkByUID | GEMDIngredientSpec
                      ) -> Iterator[IngredientRun]:
         """
         Get the ingredient runs using the specified ingredient spec.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+        uid: UUID | str | LinkByUID | GEMDIngredientSpec
             A representation of the ingredient spec whose ingredient run usages are to be located.
 
         Returns
@@ -141,14 +135,14 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation(relation='ingredient-specs', uid=uid)
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+                        uid: UUID | str | LinkByUID | GEMDProcessRun
                         ) -> Iterator[IngredientRun]:
         """
         Get ingredients to a process.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+        uid: UUID | str | LinkByUID | GEMDProcessRun
             A representation of the process whose ingredients are to be located.
 
         Returns
@@ -160,14 +154,14 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation(relation='process-runs', uid=uid)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+                         uid: UUID | str | LinkByUID | GEMDMaterialRun
                          ) -> Iterator[IngredientRun]:
         """
         Get ingredients using the specified material.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+        uid: UUID | str | LinkByUID | GEMDMaterialRun
             A representation of the material whose ingredient run usages are to be located.
 
         Returns

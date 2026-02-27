@@ -1,8 +1,8 @@
 import csv
 import json
+from collections.abc import Iterator
 from functools import partial
 from io import StringIO
-from typing import Dict, Iterator, Optional, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -24,7 +24,7 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
     name = properties.String('name', serializable=False)
     """:str: name of the experiment"""
     description = properties.Optional(properties.String, 'description', serializable=False)
-    """:Optional[str]: description of the experiment"""
+    """:str | None: description of the experiment"""
     updated_time = properties.Datetime('updated_time', serializable=False)
     """:datetime: date and time at which the experiment was updated"""
 
@@ -36,7 +36,7 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
         """Candidate experiment snapshots are not directly instantiated by the user."""
         pass  # pragma: no cover
 
-    def _overrides_json(self) -> Dict[str, str]:
+    def _overrides_json(self) -> dict[str, str]:
         return {name: json.dumps(expt_value.value) for name, expt_value in self.overrides.items()}
 
 
@@ -106,8 +106,8 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
 
     def list(self, *,
              per_page: int = 100,
-             branch_version_id: Optional[Union[UUID, str]] = None,
-             version: Optional[Union[int, str]] = None) -> Iterator[ExperimentDataSource]:
+             branch_version_id: UUID | str | None = None,
+             version: int | str | None = None) -> Iterator[ExperimentDataSource]:
         """Paginate over the experiment data sources.
 
         Parameters
@@ -118,7 +118,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
             is specified it limits the maximum number of elements in the response.
         branch_version_id: UUID, optional
             Filter the list by the branch version ID.
-        version: Union[int, str], optional
+        version: int | str, optional
             Filter the list by the data source version. Also accepts "latest".
 
         Returns
@@ -138,7 +138,7 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
-    def read(self, datasource: Union[ExperimentDataSource, UUID, str]):
+    def read(self, datasource: ExperimentDataSource | UUID | str):
         """Reads the provided experiment data source into a CSV.
 
         If a UUID or str is provided, it's first retrieved from the platform.

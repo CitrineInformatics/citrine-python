@@ -1,4 +1,3 @@
-from typing import Dict
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -20,7 +19,7 @@ class ShapleyFeature(Resource):
                                 serializable=False)
 
     @property
-    def material_dict(self) -> Dict[UUID, float]:
+    def material_dict(self) -> dict[UUID, float]:
         """Presents the feature's effects as a dictionary by material."""
         return {material.material_id: material.value for material in self.materials}
 
@@ -32,7 +31,7 @@ class ShapleyOutput(Resource):
     features = properties.List(properties.Object(ShapleyFeature), 'features', serializable=False)
 
     @property
-    def feature_dict(self) -> Dict[str, Dict[UUID, float]]:
+    def feature_dict(self) -> dict[str, dict[UUID, float]]:
         """Presents the output's feature effects as a dictionary by feature."""
         return {feature.feature: feature.material_dict for feature in self.features}
 
@@ -50,7 +49,7 @@ class FeatureEffects(Resource):
                                   serializable=False)
 
     @classmethod
-    def _pre_build(cls, data: dict) -> Dict:
+    def _pre_build(cls, data: dict) -> dict:
         shapley = data.get("result")
         if not shapley:
             return data
@@ -74,7 +73,7 @@ class FeatureEffects(Resource):
         return data
 
     @property
-    def as_dict(self) -> Dict[str, Dict[str, Dict[UUID, float]]]:
+    def as_dict(self) -> dict[str, dict[str, dict[UUID, float]]]:
         """Presents the feature effects as a dictionary by output."""
         if self.outputs:
             return {output.output: output.feature_dict for output in self.outputs}

@@ -30,16 +30,6 @@ def run_noop_gemd_relation_search_test(search_for, search_with, collection, sear
         params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": per_page}
     )
 
-def test_deprication_of_positional_arguments():
-    session = FakeSession()
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        ProcessSpecCollection(uuid4(), uuid4(), session)
-    with pytest.raises(TypeError):
-        ProcessSpecCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
-
 def test_assign_audit_info():
     """Test that audit_info can be injected with build but not set"""
 

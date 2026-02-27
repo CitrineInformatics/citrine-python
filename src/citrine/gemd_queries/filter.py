@@ -1,5 +1,4 @@
 """Definitions for GemdQuery objects, and their sub-objects."""
-from typing import List, Type
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -12,9 +11,9 @@ class PropertyFilterType(PolymorphicSerializable):
     """Abstract concept of a criteria to apply when searching for materials."""
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
-        classes: List[Type[PropertyFilterType]] = [
+        classes: list[type[PropertyFilterType]] = [
             NominalCategoricalFilter,
             AllRealFilter, AllIntegerFilter
         ]
@@ -69,7 +68,7 @@ class NominalCategoricalFilter(Serializable['NominalCategoricalFilter'], Propert
 
     Parameters
     ----------
-    categories: Set[str]
+    categories: set[str]
         Which categorical values match.
 
     """

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
@@ -34,10 +32,10 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
 
     def __init__(self, *,
                  descriptor_key: str,
-                 lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None,
-                 lower_inclusive: Optional[bool] = None,
-                 upper_inclusive: Optional[bool] = None):
+                 lower_bound: float | None = None,
+                 upper_bound: float | None = None,
+                 lower_inclusive: bool | None = None,
+                 upper_inclusive: bool | None = None):
         self.descriptor_key = descriptor_key
 
         self.lower_bound = lower_bound

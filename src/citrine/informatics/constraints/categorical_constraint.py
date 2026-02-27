@@ -1,5 +1,3 @@
-from typing import List
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
@@ -27,7 +25,7 @@ class AcceptableCategoriesConstraint(Serializable['AcceptableCategoriesConstrain
     def __init__(self,
                  *,
                  descriptor_key: str,
-                 acceptable_categories: List[str]):
+                 acceptable_categories: list[str]):
         self.descriptor_key = descriptor_key
         self.acceptable_categories = acceptable_categories
 

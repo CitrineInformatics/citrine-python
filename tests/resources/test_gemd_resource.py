@@ -68,13 +68,6 @@ def test_invalid_collection_construction():
             dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
             session=session)
 
-def test_deprecation_of_positional_arguments(session):
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        fcol = GEMDResourceCollection(uuid4(), uuid4(), session)
-
 def sample_gems(nsamples, **kwargs):
     factories = [MaterialRunDataFactory, MaterialSpecDataFactory]
     return [random.choice(factories)(**kwargs) for _ in range(nsamples)]

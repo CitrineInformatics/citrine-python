@@ -59,18 +59,18 @@ Similarly, the ``wait_while_executing`` function will wait for a design or predi
 Checking Status
 ---------------
 
-After registering an asset, the ``status`` command can be used to obtain a static readout of the state of the asset on the platform (e.g., VALID, INVALID, VALIDATING, SUCCEEDED, FAILED, INPROGRESS). 
+After registering an asset, the ``status`` command can be used to obtain a static readout of the state of the asset on the platform (e.g., READY, INVALID, VALIDATING, SUCCEEDED, FAILED, INPROGRESS). 
 
 .. code-block:: python
 
     sintering_model = sintering_project.predictors.register(sintering_model)
     sintering_model.status
     
-The ``status_info`` command returns additional details about an asset's status that can be very useful for debugging.
+The ``status_detail`` command returns additional details about an asset's status that can be very useful for debugging.
 
 .. code-block:: python
 
-    sintering_model.status_info
+    sintering_model.status_detail
 
 Reading
 -------

@@ -1,13 +1,18 @@
 import time
 from pprint import pprint
-from typing import Union
 
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.executions.design_execution import DesignExecution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
-from citrine.informatics.executions import PredictorEvaluationExecution
+from citrine.informatics.executions import PredictorEvaluation
+
+
+ExecutionType = PredictorEvaluation \
+    | DesignExecution \
+    | GenerativeDesignExecution \
+    | SampleDesignSpaceExecution
 
 
 class ConditionTimeoutError(RuntimeError):
@@ -129,33 +134,18 @@ def wait_while_validating(
 
 def wait_while_executing(
     *,
-    collection: Union[
-        Collection[PredictorEvaluationExecution],
-        Collection[DesignExecution],
-        Collection[GenerativeDesignExecution],
-        Collection[SampleDesignSpaceExecution]
-    ],
-    execution: Union[
-        PredictorEvaluationExecution,
-        DesignExecution,
-        GenerativeDesignExecution,
-        SampleDesignSpaceExecution
-    ],
+    collection: Collection[ExecutionType],
+    execution: ExecutionType,
     print_status_info: bool = False,
     timeout: float = 1800.0,
-    interval: float = 3.0,
-) -> Union[
-        PredictorEvaluationExecution,
-        DesignExecution,
-        GenerativeDesignExecution,
-        SampleDesignSpaceExecution,
-]:
+    interval: float = 3.0
+) -> ExecutionType:
     """
     Wait until execution is finished.
 
     Parameters
     ----------
-    execution : Union[PredictorEvaluationExecution, DesignExecution]
+    execution : ExecutionType
         an execution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
@@ -163,14 +153,13 @@ def wait_while_executing(
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
-    collection : Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]]
+    collection : Collection[ExecutionType]
         Collection containing executions
 
     Returns
     -------
-    Union[PredictorEvaluationExecution, DesignExecution]
+    ExecutionType
         the updated execution after it has finished executing
-
 
     Raises
     ------

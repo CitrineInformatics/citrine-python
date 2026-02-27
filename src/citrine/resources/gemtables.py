@@ -1,6 +1,7 @@
 import json
+from collections.abc import Iterable
 from logging import getLogger
-from typing import Union, Iterable, Optional, Any, Tuple
+from typing import Any
 
 import requests
 
@@ -10,8 +11,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
-from citrine._utils.functions import format_escaped_url, _pad_positional_args, \
-    rewrite_s3_links_locally, write_file_locally
+from citrine._utils.functions import format_escaped_url, rewrite_s3_links_locally, \
+    write_file_locally
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig, TableConfigCollection
 
@@ -96,23 +97,12 @@ class GemTableCollection(Collection[GemTable]):
     _paginator: Paginator = GemTableVersionPaginator()
     _resource = GemTable
 
-    def __init__(self,
-                 *args,
-                 team_id: UUID = None,
-                 project_id: UUID = None,
-                 session: Session = None):
-        args = _pad_positional_args(args, 2)
-        self.project_id = project_id or args[0]
-        self.session: Session = session or args[1]
+    def __init__(self, *, team_id: UUID, project_id: UUID, session: Session):
+        self.project_id = project_id
+        self.session: Session = session
         self.team_id = team_id
-        if self.project_id is None:
-            raise TypeError("Missing one required argument: project_id.")
-        if self.team_id is None:
-            raise TypeError("Missing one required argument: team_id.")
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
+    def get(self, uid: UUID | str, *, version: int | None = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
             path = self._get_path(uid, action=["versions", version])
@@ -137,8 +127,8 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: int | None,
+                            per_page: int) -> tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return data[self._collection_key], data.get('next', "")
@@ -165,8 +155,8 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def _fetch_versions(page: Optional[int],
-                            per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: int | None,
+                            per_page: int) -> tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)
             path = format_escaped_url(
@@ -186,8 +176,8 @@ class GemTableCollection(Collection[GemTable]):
             # Don't deduplicate on uid since uids are shared between versions
             _fetch_versions, _build_versions, per_page, deduplicate=False)
 
-    def initiate_build(self, config: Union[TableConfig, str, UUID], *,
-                       version: Union[str, UUID] = None) -> JobSubmissionResponse:
+    def initiate_build(self, config: TableConfig | str | UUID, *,
+                       version: str | UUID = None) -> JobSubmissionResponse:
         """
         Initiates tables build with provided config.
 
@@ -239,7 +229,7 @@ class GemTableCollection(Collection[GemTable]):
         )
         return submission
 
-    def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
+    def get_by_build_job(self, job: JobSubmissionResponse | UUID, *,
                          timeout: float = 15 * 60) -> GemTable:
         """
         Gets table by build job, waiting for it to complete if necessary.
@@ -280,8 +270,8 @@ class GemTableCollection(Collection[GemTable]):
             logger.warning('\n\t'.join(warn_lines))
         return self.get(table_id, version=table_version)
 
-    def build_from_config(self, config: Union[TableConfig, str, UUID], *,
-                          version: Union[str, int] = None,
+    def build_from_config(self, config: TableConfig | str | UUID, *,
+                          version: str | int = None,
                           timeout: float = 15 * 60) -> GemTable:
         """
         Builds table from table config, waiting for build job to complete.
@@ -325,11 +315,11 @@ class GemTableCollection(Collection[GemTable]):
             "re-build the table, especially if new GEMD data are available."
         )
 
-    def delete(self, uid: Union[UUID, str]):
+    def delete(self, uid: UUID | str):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    table_type = Union[GemTable, UUID, str]
+    table_type = GemTable | UUID | str
 
     def _read_raw(self, table: table_type) -> requests.Response:
         """

@@ -1,5 +1,4 @@
 """Tools for working with Scores."""
-from typing import List, Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -52,12 +51,12 @@ class LIScore(Serializable['LIScore'], Score):
     typ = properties.String('type', default='MLI')
 
     def __init__(self, *,
-                 objectives: List[Objective],
-                 baselines: List[float],
-                 constraints: Optional[List[Constraint]] = None):
-        self.objectives: List[Objective] = objectives
-        self.baselines: List[float] = baselines
-        self.constraints: List[Constraint] = constraints or []
+                 objectives: list[Objective],
+                 baselines: list[float],
+                 constraints: list[Constraint] | None = None):
+        self.objectives: list[Objective] = objectives
+        self.baselines: list[float] = baselines
+        self.constraints: list[Constraint] = constraints or []
         self._name = "Likelihood of Improvement"
         self._description = ""
 
@@ -87,12 +86,12 @@ class EIScore(Serializable['EIScore'], Score):
     typ = properties.String('type', default='MEI')
 
     def __init__(self, *,
-                 objectives: List[Objective],
-                 baselines: List[float],
-                 constraints: Optional[List[Constraint]] = None):
-        self.objectives: List[Objective] = objectives
-        self.baselines: List[float] = baselines
-        self.constraints: List[Constraint] = constraints or []
+                 objectives: list[Objective],
+                 baselines: list[float],
+                 constraints: list[Constraint] | None = None):
+        self.objectives: list[Objective] = objectives
+        self.baselines: list[float] = baselines
+        self.constraints: list[Constraint] = constraints or []
         self._name = "Expected Improvement"
         self._description = ""
 
@@ -121,10 +120,10 @@ class EVScore(Serializable['EVScore'], Score):
     typ = properties.String('type', default='MEV')
 
     def __init__(self, *,
-                 objectives: List[Objective],
-                 constraints: Optional[List[Constraint]] = None):
-        self.objectives: List[Objective] = objectives
-        self.constraints: List[Constraint] = constraints or []
+                 objectives: list[Objective],
+                 constraints: list[Constraint] | None = None):
+        self.objectives: list[Objective] = objectives
+        self.constraints: list[Constraint] = constraints or []
         self._name = "Expected Value"
         self._description = ""
 

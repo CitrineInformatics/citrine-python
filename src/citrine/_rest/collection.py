@@ -1,10 +1,11 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator, Sequence, Dict
+from collections.abc import Iterable, Iterator, Sequence
+from typing import Generic, TypeVar
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource, ResourceRef
+from citrine._rest.resource import Resource
 from citrine._utils.functions import resource_path
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
@@ -28,17 +29,12 @@ class Collection(Generic[ResourceType], Pageable):
     _paginator: Paginator = Paginator()
     _api_version: str = "v1"
 
-    def _put_resource_ref(self, subpath: str, uid: Union[UUID, str]):
-        url = self._get_path(subpath)
-        ref = ResourceRef(uid)
-        return self.session.put_resource(url, ref.dump(), version=self._api_version)
-
     def _get_path(self,
-                  uid: Optional[Union[UUID, str]] = None,
+                  uid: UUID | str | None = None,
                   *,
                   ignore_dataset: bool = False,
-                  action: Union[str, Sequence[str]] = [],
-                  query_terms: Dict[str, str] = {},
+                  action: str | Sequence[str] = [],
+                  query_terms: dict[str, str] = {},
                   ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
         base = self._dataset_agnostic_path_template if ignore_dataset else self._path_template
@@ -49,7 +45,7 @@ class Collection(Generic[ResourceType], Pageable):
     def build(self, data: dict):
         """Build an individual element of the collection."""
 
-    def get(self, uid: Union[UUID, str]) -> ResourceType:
+    def get(self, uid: UUID | str) -> ResourceType:
         """Get a particular element of the collection."""
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
@@ -100,7 +96,7 @@ class Collection(Generic[ResourceType], Pageable):
         data = updated[self._individual_key] if self._individual_key else updated
         return self.build(data)
 
-    def delete(self, uid: Union[UUID, str]) -> Response:
+    def delete(self, uid: UUID | str) -> Response:
         """Delete a particular element of the collection."""
         url = self._get_path(uid)
         data = self.session.delete_resource(url, version=self._api_version)

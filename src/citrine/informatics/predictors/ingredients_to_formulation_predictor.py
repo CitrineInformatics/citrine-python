@@ -1,4 +1,4 @@
-from typing import Set, Mapping
+from collections.abc import Mapping
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -22,7 +22,7 @@ class IngredientsToFormulationPredictor(
     id_to_quantity: Mapping[str, RealDescriptor]
         Map from ingredient identifier to the descriptor that represents its quantity,
         e.g., ``{'water': RealDescriptor('water quantity', 0, 1, "")}``
-    labels: Mapping[str, Set[str]]
+    labels: Mapping[str, set[str]]
         Map from each label to all ingredients assigned that label, when present in a mixture,
         e.g., ``{'solvent': {'water'}}``
 
@@ -40,11 +40,11 @@ class IngredientsToFormulationPredictor(
                  *,
                  description: str,
                  id_to_quantity: Mapping[str, RealDescriptor],
-                 labels: Mapping[str, Set[str]]):
+                 labels: Mapping[str, set[str]]):
         self.name: str = name
         self.description: str = description
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
-        self.labels: Mapping[str, Set[str]] = labels
+        self.labels: Mapping[str, set[str]] = labels
 
     def __str__(self):
         return '<IngredientsToFormulationPredictor {!r}>'.format(self.name)

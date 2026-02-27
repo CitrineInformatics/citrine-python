@@ -1,5 +1,4 @@
 """Resources that represent property templates."""
-from typing import List, Dict, Optional, Type
 
 from citrine._rest.resource import GEMDResource
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
@@ -28,7 +27,7 @@ class PropertyTemplate(
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
@@ -41,9 +40,9 @@ class PropertyTemplate(
                  name: str,
                  *,
                  bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = None,
-                 description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 uids: dict[str, str] | None = None,
+                 description: str | None = None,
+                 tags: list[str] | None = None):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()
@@ -62,6 +61,6 @@ class PropertyTemplateCollection(AttributeTemplateCollection[PropertyTemplate]):
     _resource = PropertyTemplate
 
     @classmethod
-    def get_type(cls) -> Type[PropertyTemplate]:
+    def get_type(cls) -> type[PropertyTemplate]:
         """Return the resource type in the collection."""
         return PropertyTemplate

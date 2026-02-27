@@ -1,5 +1,4 @@
 """Resources that represent both individual and collections of users."""
-from typing import Optional
 
 from citrine._rest.admin_collection import AdminCollection
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -27,7 +26,7 @@ class User(Resource['User']):
     """
 
     _resource_type = ResourceTypeEnum.USER
-    _session: Optional[Session] = None
+    _session: Session | None = None
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screen_name')
@@ -39,10 +38,10 @@ class User(Resource['User']):
                  *,
                  screen_name: str,
                  email: str,
-                 position: Optional[str],
+                 position: str | None,
                  is_admin: bool):
         self.email: str = email
-        self.position: Optional[str] = position
+        self.position: str | None = position
         self.screen_name: str = screen_name
         self.is_admin: bool = is_admin
 

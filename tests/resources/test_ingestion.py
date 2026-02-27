@@ -36,16 +36,6 @@ def dataset(session: Session):
 
 
 @pytest.fixture
-def deprecated_dataset(session: Session):
-    deprecated_dataset = DatasetFactory(name='Test Dataset')
-    deprecated_dataset.uid = uuid4()
-    deprecated_dataset.session = session
-    deprecated_dataset.project_id = uuid4()
-
-    return deprecated_dataset
-
-
-@pytest.fixture
 def collection(dataset) -> IngestionCollection:
     return dataset.ingestions
 
@@ -81,16 +71,6 @@ def status() -> IngestionStatus:
     })
 
 
-def test_create_deprecated_collection(session, deprecated_dataset):
-    check_project = {'project': {'team': {'id': str(uuid4())}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        ingestions = deprecated_dataset.ingestions
-
-    assert session.calls == [FakeCall(method="GET", path=f'projects/{ingestions.project_id}')]
-    assert ingestions._path_template == f'projects/{ingestions.project_id}/ingestions'
-
-
 def test_not_implementeds(collection):
     """Test that unimplemented methods are still that."""
     with pytest.raises(NotImplementedError):
@@ -104,18 +84,6 @@ def test_not_implementeds(collection):
 
     with pytest.raises(NotImplementedError):
         collection.list()
-
-
-def test_deprecation_of_positional_arguments(session):
-    team_id = UUID('6b608f78-e341-422c-8076-35adc8828000')
-    check_project = {'project': {'team': {'id': team_id}}}
-    session.set_response(check_project)
-    with pytest.deprecated_call():
-        IngestionCollection(uuid4(), uuid4(), session)
-    with pytest.raises(TypeError):
-        IngestionCollection(project_id=uuid4(), dataset_id=uuid4(), session=None)
-    with pytest.raises(TypeError):
-        IngestionCollection(project_id=uuid4(), dataset_id=None, session=session)
 
 
 def test_poll_for_job_completion_signature(ingest, operation, status, monkeypatch):
@@ -267,22 +235,12 @@ def test_processing_exceptions(session, ingest, monkeypatch):
 def test_ingestion_with_table_build(session: FakeSession,
                                     ingest: Ingestion,
                                     dataset: Dataset,
-                                    deprecated_dataset: Dataset,
                                     file_link: FileLink):
     # build_objects_async will always approve, if we get that far
     session.set_responses(JobSubmissionResponseDataFactory())
 
     with pytest.raises(ValueError):
         ingest.build_objects_async(build_table=True)
-
-    with pytest.deprecated_call():
-        ingest.project_id = uuid4()
-    with pytest.deprecated_call():
-        assert ingest.project_id is not None
-    with pytest.deprecated_call():
-        ingest.build_objects_async(build_table=True)
-    with pytest.deprecated_call():
-        ingest.project_id = None
 
     project_uuid = uuid4()
     project = Project("Testing", session=session, team_id=dataset.team_id)

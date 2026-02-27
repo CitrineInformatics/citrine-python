@@ -22,19 +22,6 @@ def collection(session) -> ProcessSpecCollection:
         session=session)
 
 
-def test_create_deprecated_collection(session):
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    session.set_response({'project': {'team': {'id': UUID("6b608f78-e341-422c-8076-35adc8828000")}}})
-
-    with pytest.deprecated_call():
-        ProcessSpecCollection(
-            project_id=UUID(project_id),
-            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-            session=session)
-
-    assert session.calls == [FakeCall(method="GET", path=f'projects/{project_id}')]
-
-
 def test_list_by_template(collection: ProcessSpecCollection):
     run_noop_gemd_relation_search_test(
         search_for='process-specs',

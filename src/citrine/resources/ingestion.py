@@ -1,7 +1,5 @@
-from deprecation import deprecated
-from typing import Optional, Union, Iterator, Iterable, Collection as TypingCollection
+from collections.abc import Collection as TypingCollection, Iterator, Iterable
 from uuid import UUID
-from warnings import warn
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -9,7 +7,6 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import _data_manager_deprecation_checks, _pad_positional_args
 from citrine.exceptions import CitrineException, BadRequest
 from citrine.jobs.job import JobSubmissionResponse, JobFailureError, _poll_for_job_completion
 from citrine.resources.api_error import ApiError, ValidationError
@@ -117,14 +114,14 @@ class IngestionException(CitrineException):
     """[ALPHA] An exception that contains details of a failed ingestion."""
 
     uid = properties.Optional(properties.UUID(), 'ingestion_id', default=None)
-    """Optional[UUID]"""
+    """UUID | None"""
     status = properties.Enumeration(IngestionStatusType, "status")
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
-    """List[IngestionErrorTrace]"""
+    """list[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
-                 uid: Optional[UUID] = uid.default,
+                 uid: UUID | None = uid.default,
                  errors: Iterable[IngestionErrorTrace]):
         errors_ = list(errors)
         message = '; '.join(str(e) for e in errors_)
@@ -155,11 +152,11 @@ class IngestionStatus(Resource['IngestionStatus']):
     status = properties.Enumeration(IngestionStatusType, "status")
     """IngestionStatusType"""
     errors = properties.List(properties.Object(IngestionErrorTrace), "errors")
-    """List[IngestionErrorTrace]"""
+    """list[IngestionErrorTrace]"""
 
     def __init__(self,
                  *,
-                 uid: Optional[UUID] = uid.default,
+                 uid: UUID | None = uid.default,
                  status: IngestionStatusType = IngestionStatusType.INGESTION_CREATED,
                  errors: Iterable[IngestionErrorTrace]):
         self.uid = uid
@@ -190,33 +187,18 @@ class Ingestion(Resource['Ingestion']):
     uid = properties.UUID('ingestion_id')
     """UUID: Unique uuid4 identifier of this ingestion."""
     team_id = properties.Optional(properties.UUID, 'team_id', default=None)
-    _project_id = properties.Optional(properties.UUID, 'project_id', default=None)
     dataset_id = properties.UUID('dataset_id')
     session = properties.Object(Session, 'session', serializable=False)
     raise_errors = properties.Optional(properties.Boolean(), 'raise_errors', default=True)
 
-    @property
-    @deprecated(deprecated_in='3.11.0', removed_in='4.0.0',
-                details="The project_id attribute is deprecated since "
-                        "dataset access is now controlled through teams.")
-    def project_id(self) -> Optional[UUID]:
-        """[DEPRECATED] The project ID associated with this ingest."""
-        return self._project_id
-
-    @project_id.setter
-    @deprecated(deprecated_in='3.9.0', removed_in='4.0.0',
-                details="Use the project argument instead of setting the project_id attribute.")
-    def project_id(self, value: Optional[UUID]):
-        self._project_id = value
-
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                      project: "Project | UUID | str | None" = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
-                      polling_delay: Optional[float] = None
+                      polling_delay: float | None = None
                       ) -> IngestionStatus:
         """
         [ALPHA] Perform a complete ingestion operation, from start to finish.
@@ -228,18 +210,18 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
         delete_templates: bool
             Whether to delete all objects and templates (as opposed to not deleting
             templates) when `delete_dataset_contents` is True.  Default: True
-        timeout: Optional[float]
+        timeout: float | None
             Amount of time to wait on the job (in seconds) before giving up. Note that
             this number has no effect on the underlying job itself, which can also time
             out server-side.
-        polling_delay: Optional[float]
+        polling_delay: float | None
             How long to delay between each polling retry attempt.
 
         Returns
@@ -269,7 +251,7 @@ class Ingestion(Resource['Ingestion']):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                            project: "Project | UUID | str | None" = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """
@@ -279,7 +261,7 @@ class Ingestion(Resource['Ingestion']):
         ----------
         build_table: bool
             Whether to build a table immediately after ingestion.  Default : False
-        project: Optional[Project, UUID, or str]
+        project: Project | UUID | str | None
             Which project to use for table build if build_table is True.
         delete_dataset_contents: bool
             Whether to delete objects prior to generating new gemd objects.  Default: False.
@@ -303,15 +285,7 @@ class Ingestion(Resource['Ingestion']):
         if not build_table:
             project_id = None
         elif project is None:
-            if self._project_id is None:
-                raise ValueError("Building a table requires a target project.")
-            else:
-                warn(
-                    "Building a table with an implicit project is deprecated "
-                    "and will be removed in v4. Please pass a project explicitly.",
-                    DeprecationWarning
-                )
-                project_id = self._project_id
+            raise ValueError("Building a table requires a target project.")
         elif isinstance(project, Project):
             project_id = project.uid
         elif isinstance(project, UUID):
@@ -338,8 +312,8 @@ class Ingestion(Resource['Ingestion']):
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
                                 *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
+                                timeout: float | None = None,
+                                polling_delay: float | None = None
                                 ) -> IngestionStatus:
         """
         [ALPHA] Repeatedly ask server if a job associated with this ingestion has completed.
@@ -412,11 +386,11 @@ class FailedIngestion(Ingestion):
     def build_objects(self,
                       *,
                       build_table: bool = False,
-                      project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                      project: "Project | UUID | str | None" = None,  # noqa: F821
                       delete_dataset_contents: bool = False,
                       delete_templates: bool = True,
                       timeout: float = None,
-                      polling_delay: Optional[float] = None
+                      polling_delay: float | None = None
                       ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         return self.status()
@@ -424,7 +398,7 @@ class FailedIngestion(Ingestion):
     def build_objects_async(self,
                             *,
                             build_table: bool = False,
-                            project: Optional[Union["Project", UUID, str]] = None,  # noqa: F821
+                            project: "Project | UUID | str | None" = None,  # noqa: F821
                             delete_dataset_contents: bool = False,
                             delete_templates: bool = True) -> JobSubmissionResponse:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
@@ -437,8 +411,8 @@ class FailedIngestion(Ingestion):
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
                                 *,
-                                timeout: Optional[float] = None,
-                                polling_delay: Optional[float] = None
+                                timeout: float | None = None,
+                                polling_delay: float | None = None
                                 ) -> IngestionStatus:
         """[ALPHA] Satisfy the required interface for a failed ingestion."""
         raise JobFailureError(
@@ -486,38 +460,12 @@ class IngestionCollection(Collection[Ingestion]):
     _individual_key = None
     _collection_key = None
     _resource = Ingestion
+    _path_template = 'teams/{team_id}/ingestions'
 
-    def __init__(
-        self,
-        *args,
-        session: Session = None,
-        team_id: UUID = None,
-        dataset_id: UUID = None,
-        project_id: Optional[UUID] = None
-    ):
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
-        if self.session is None:
-            raise TypeError("Missing one required argument: session.")
-        if self.dataset_id is None:
-            raise TypeError("Missing one required argument: dataset_id.")
-
-        self.team_id = _data_manager_deprecation_checks(
-            session=self.session,
-            project_id=self.project_id,
-            team_id=team_id,
-            obj_type="Ingestions")
-
-    # After the Data Manager deprecation,
-    # this can be a Class Variable using the `teams/...` endpoint
-    @property
-    def _path_template(self):
-        if self.project_id is None:
-            return f'teams/{self.team_id}/ingestions'
-        else:
-            return f'projects/{self.project_id}/ingestions'
+    def __init__(self, *, session: Session, team_id: UUID, dataset_id: UUID):
+        self.dataset_id = dataset_id
+        self.session = session
+        self.team_id = team_id
 
     def build_from_file_links(self,
                               file_links: TypingCollection[FileLink],
@@ -572,7 +520,7 @@ class IngestionCollection(Collection[Ingestion]):
 
     def build(self, data: dict) -> Ingestion:
         """Build an instance of an Ingestion."""
-        result = Ingestion.build({**data, "session": self.session})
+        result = Ingestion.build(data | {"session": self.session})
         return result
 
     def register(self, model: Ingestion) -> Ingestion:

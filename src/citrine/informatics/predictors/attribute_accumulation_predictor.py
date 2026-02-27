@@ -1,5 +1,3 @@
-from typing import List
-
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import Descriptor
@@ -22,7 +20,7 @@ class AttributeAccumulationPredictor(Resource["AttributeAccumulationPredictor"],
                  name: str,
                  *,
                  description: str,
-                 attributes: List[Descriptor],
+                 attributes: list[Descriptor],
                  sequential: bool):
         self.name = name
         self.description = description

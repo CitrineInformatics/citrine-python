@@ -6,27 +6,27 @@ class AIResourceMetadata():
     """Abstract class for representing common metadata for Resources."""
 
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
-    """:Optional[UUID]: id of the user who created the resource"""
+    """:UUID | None: id of the user who created the resource"""
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was created"""
+    """:datetime | None: date and time at which the resource was created"""
 
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
-    """:Optional[UUID]: id of the user who most recently updated the resource,
+    """:UUID | None: id of the user who most recently updated the resource,
     if it has been updated"""
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was most recently updated,
+    """:datetime | None: date and time at which the resource was most recently updated,
     if it has been updated"""
 
     archived = properties.Boolean('archived', default=False)
     """:bool: whether the resource is archived (hidden but not deleted)"""
     archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
-    """:Optional[UUID]: id of the user who archived the resource, if it has been archived"""
+    """:UUID | None: id of the user who archived the resource, if it has been archived"""
     archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was archived,
+    """:datetime | None: date and time at which the resource was archived,
     if it has been archived"""
 
     status = properties.Optional(properties.String(), 'status', serializable=False)
-    """:Optional[str]: short description of the resource's status"""
+    """:str | None: short description of the resource's status"""
     status_detail = properties.List(properties.Object(StatusDetail), 'status_detail', default=[],
                                     serializable=False)
-    """:List[StatusDetail]: a list of structured status info, containing the message and level"""
+    """:list[StatusDetail]: a list of structured status info, containing the message and level"""

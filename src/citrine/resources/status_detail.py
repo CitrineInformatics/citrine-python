@@ -1,4 +1,4 @@
-from typing import TypeVar, Union
+from typing import TypeVar
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties
@@ -24,7 +24,7 @@ class StatusDetail(Serializable[StatusDetailType]):
     msg = properties.String("msg")
     level = properties.String("level")
 
-    def __init__(self, *, msg: str, level: Union[str, StatusLevelEnum]):
+    def __init__(self, *, msg: str, level: str | StatusLevelEnum):
         self.msg = msg
         self.level = StatusLevelEnum.from_str(level, exception=True)
 

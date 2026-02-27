@@ -1,11 +1,9 @@
 """Resources that represent process run data objects."""
-from typing import List, Dict, Optional, Type, Union, Iterator
+from collections.abc import Iterator
 from uuid import UUID
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Object, LinkOrElse
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -30,19 +28,19 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
         A collection of
         `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
-    tags: List[str], optional
+    tags: list[str], optional
         `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
         Long-form notes about the process run.
-    conditions: List[Condition], optional
+    conditions: list[Condition], optional
         Conditions under which this process run occurs.
-    parameters: List[Parameter], optional
+    parameters: list[Parameter], optional
         Parameters of this process run.
     spec: ProcessSpec
         Spec for this process run.
-    file_links: List[FileLink], optional
+    file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
     source: PerformedSource, optional
         Information about the person who performed the run and when.
@@ -52,22 +50,22 @@ class ProcessRun(GEMDResource['ProcessRun'], ObjectRun, GEMDProcessRun, typ=GEMD
     _response_key = GEMDProcessRun.typ  # 'process_run'
 
     name = String('name', override=True, use_init=True)
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
-    spec = PropertyOptional(LinkOrElse(GEMDProcessSpec), 'spec', override=True, use_init=True,)
-    source = PropertyOptional(Object(PerformedSource), "source", override=True)
+    conditions = Optional(List(Object(Condition)), 'conditions', override=True)
+    parameters = Optional(List(Object(Parameter)), 'parameters', override=True)
+    spec = Optional(LinkOrElse(GEMDProcessSpec), 'spec', override=True, use_init=True,)
+    source = Optional(Object(PerformedSource), "source", override=True)
 
     def __init__(self,
                  name: str,
                  *,
-                 uids: Optional[Dict[str, str]] = None,
-                 tags: Optional[List[str]] = None,
-                 notes: Optional[str] = None,
-                 conditions: Optional[List[Condition]] = None,
-                 parameters: Optional[List[Parameter]] = None,
-                 spec: Optional[GEMDProcessSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
+                 uids: dict[str, str] | None = None,
+                 tags: list[str] | None = None,
+                 notes: str | None = None,
+                 conditions: list[Condition] | None = None,
+                 parameters: list[Parameter] | None = None,
+                 spec: GEMDProcessSpec | None = None,
+                 file_links: list[FileLink] | None = None,
+                 source: PerformedSource | None = None):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
@@ -87,19 +85,19 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     _resource = ProcessRun
 
     @classmethod
-    def get_type(cls) -> Type[ProcessRun]:
+    def get_type(cls) -> type[ProcessRun]:
         """Return the resource type in the collection."""
         return ProcessRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+                     uid: UUID | str | LinkByUID | GEMDProcessSpec
                      ) -> Iterator[ProcessRun]:
         """
         Get the process runs using the specified process spec.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+        uid: UUID | str | LinkByUID | GEMDProcessSpec
             A representation of the process spec whose process run usages are to be located.
 
         Returns

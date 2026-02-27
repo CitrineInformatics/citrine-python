@@ -99,8 +99,8 @@ For categorical responses, performance metrics include the area under the receiv
 
 .. _execution-and-results:
 
-Execution and results
----------------------
+Evaluation and results
+----------------------
 
 Once triggered, you can track the evaluation's progress using its ``status`` and ``status_detail`` properties.
 The ``status`` can be one of ``INPROGRESS``, ``SUCCEEDED``, or ``FAILED``.
@@ -166,13 +166,20 @@ The predictor we'll evaluate is defined below:
 
     x = RealDescriptor(key='x', lower_bound=0.0, upper_bound=1.0, units='')
     y = RealDescriptor(key='y', lower_bound=0.0, upper_bound=1.0, units='')
-    predictor = AutoMLPredictor(
+    auto_ml_predictor = AutoMLPredictor(
         name='y predictor',
         description='predicts y given x',
         inputs=[y],
-        outputs=[x],
+        outputs=[x]
+    )
+    
+    predictor = GraphPredictor(
+        name='root predictor',
+        description='container for the auto ML predictor.',
+        predictors=[auto_ml_predictor],
         training_data=[data_source]
     )
+
 
 This predictor expects ``x`` as an input and predicts ``y``.
 Training data is provided by a :class:`~citrine.informatics.data_sources.GemTableDataSource` that contains ``x`` and ``y``.

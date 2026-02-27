@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from functools import partial
-from typing import Iterable
 from uuid import UUID
 
 from citrine._rest.resource import Resource

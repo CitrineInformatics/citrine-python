@@ -1,5 +1,3 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
@@ -19,7 +17,7 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
         minimum ingredient count
     max: int
         maximum ingredient count
-    label: Optional[str]
+    label: str | None
         Optional label to constrain.
         If specified, then only ingredients with the specified label will count towards the total.
         Default is ``None``; all ingredients count towards the total
@@ -36,11 +34,11 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
                  formulation_descriptor: FormulationDescriptor,
                  min: int,
                  max: int,
-                 label: Optional[str] = None):
+                 label: str | None = None):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.min: int = min
         self.max: int = max
-        self.label: Optional[str] = label
+        self.label: str | None = label
 
     def __str__(self):
         return f"<IngredientCountConstraint '{self.formulation_descriptor.key}'>"

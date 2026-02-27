@@ -1,19 +1,20 @@
+from collections.abc import Callable
 from copy import deepcopy
 from logging import getLogger
-from typing import TypeVar, Optional, Callable
+from typing import TypeVar
 
 from citrine.exceptions import NotFound
-from citrine.resources.team import TeamCollection, Team
-from citrine.resources.project import ProjectCollection, Project
-from citrine.resources.dataset import DatasetCollection, Dataset
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
+from citrine.resources.dataset import DatasetCollection, Dataset
+from citrine.resources.project import ProjectCollection, Project
+from citrine.resources.team import TeamCollection, Team
 from citrine._rest.collection import CreationType, Collection
 
 logger = getLogger(__name__)
 T = TypeVar('T')
 
 
-def find_collection(*, collection: Collection[T], name: str) -> Optional[T]:
+def find_collection(*, collection: Collection[T], name: str) -> T | None:
     """
     Looks through the pages of a collection for a resource with the specified name.
 

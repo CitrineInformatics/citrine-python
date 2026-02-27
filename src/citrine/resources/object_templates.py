@@ -2,7 +2,7 @@
 from abc import ABC
 from typing import TypeVar
 
-from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import Optional
 from citrine._serialization.properties import String
 from citrine.resources.templates import Template, TemplateCollection
 from gemd.entity.template.base_template import BaseTemplate as GEMDTemplate
@@ -16,7 +16,7 @@ class ObjectTemplate(Template, GEMDTemplate, ABC):
     """
 
     name = String('name')
-    description = PropertyOptional(String(), 'description')
+    description = Optional(String(), 'description')
 
 
 ObjectTemplateResourceType = TypeVar("ObjectTemplateResourceType", bound="ObjectTemplate")

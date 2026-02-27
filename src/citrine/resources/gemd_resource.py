@@ -1,6 +1,6 @@
 """Collection class for generic GEMD objects and templates."""
 import re
-from typing import Type, Union, List, Tuple, Iterable, Optional
+from collections.abc import Iterable
 from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
@@ -15,7 +15,7 @@ from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
 from citrine._utils.batcher import Batcher
-from citrine._utils.functions import _pad_positional_args, replace_objects_with_links, scrub_none
+from citrine._utils.functions import replace_objects_with_links, scrub_none
 
 
 BATCH_SIZE = 50
@@ -26,27 +26,14 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _collection_key = 'storables'
 
-    def __init__(
-        self,
-        *args,
-        dataset_id: UUID = None,
-        session: Session = None,
-        team_id: UUID = None,
-        project_id: Optional[UUID] = None
-    ):
-        super().__init__(*args,
-                         team_id=team_id,
-                         dataset_id=dataset_id,
-                         session=session,
-                         project_id=project_id)
-        args = _pad_positional_args(args, 3)
-        self.project_id = project_id or args[0]
-        self.dataset_id = dataset_id or args[1]
-        self.session = session or args[2]
+    def __init__(self, *, dataset_id: UUID, session: Session, team_id: UUID):
+        super().__init__(team_id=team_id, dataset_id=dataset_id, session=session)
+        self.dataset_id = dataset_id
+        self.session = session
         self.team_id = team_id
 
     @classmethod
-    def get_type(cls) -> Type[DataConcepts]:
+    def get_type(cls) -> type[DataConcepts]:
         """Return the resource type in the collection."""
         return DataConcepts
 
@@ -78,7 +65,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
                      *,
                      dry_run=False,
                      status_bar=False,
-                     include_nested=False) -> List[DataConcepts]:
+                     include_nested=False) -> list[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -115,7 +102,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Returns
         -------
-        List[DataConcepts]
+        list[DataConcepts]
             The registered versions
 
         """
@@ -186,11 +173,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def batch_delete(
             self,
-            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            id_list: list[LinkByUID | UUID | str | BaseEntity],
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0
-    ) -> List[Tuple[LinkByUID, ApiError]]:
+    ) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -211,7 +198,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        id_list: list[LinkByUID | UUID | str | BaseEntity]
             A list of the IDs of data objects to be removed. They can be passed
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
@@ -219,7 +206,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         Returns
         -------
-        List[Tuple[LinkByUID, ApiError]]
+        list[tuple[LinkByUID, ApiError]]
             A list of (LinkByUID, api_error) for each failure to delete an object.
             Note that this method doesn't raise an exception if an object fails to be
             deleted.

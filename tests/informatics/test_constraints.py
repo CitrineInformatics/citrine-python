@@ -184,32 +184,14 @@ def test_ingredient_ratio_interaction(ingredient_ratio_constraint):
     newval_set = {"foobasis1"}
     ingredient_ratio_constraint.basis_ingredients = newval_set
     assert ingredient_ratio_constraint.basis_ingredients == newval_set
-    with pytest.deprecated_call():
-        assert ingredient_ratio_constraint.basis_ingredient_names == newval_set
-
-    newval_set = {"foobasis2"}
-    with pytest.deprecated_call():
-        ingredient_ratio_constraint.basis_ingredient_names = newval_set
-    assert ingredient_ratio_constraint.basis_ingredients == newval_set
-    with pytest.deprecated_call():
-        assert ingredient_ratio_constraint.basis_ingredient_names == newval_set
 
     newval_set = {"foolabelbasis1"}
     ingredient_ratio_constraint.basis_labels = newval_set
     assert ingredient_ratio_constraint.basis_labels == newval_set
-    with pytest.deprecated_call():
-        assert ingredient_ratio_constraint.basis_label_names == newval_set
-
-    newval_set = {"foolabelbasis1"}
-    with pytest.deprecated_call():
-        ingredient_ratio_constraint.basis_label_names = newval_set
-    assert ingredient_ratio_constraint.basis_labels == newval_set
-    with pytest.deprecated_call():
-        assert ingredient_ratio_constraint.basis_label_names == newval_set
 
 
 def test_range_defaults():
-    """Check that deprecated and default values work as expected."""
+    """Check that default values work as expected."""
     assert ScalarRangeConstraint(descriptor_key="x").lower_bound is None
     assert ScalarRangeConstraint(descriptor_key="x").upper_bound is None
     assert ScalarRangeConstraint(descriptor_key="x").lower_inclusive is True
