@@ -517,19 +517,6 @@ class CrossValidationEvaluatorFactory(factory.DictFactory):
     type = "CrossValidationEvaluator"
 
 
-class PredictorEvaluationWorkflowFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    name = factory.Faker("company")
-    description = factory.Faker("catch_phrase")
-    archived = False
-    evaluators = factory.List([factory.SubFactory(CrossValidationEvaluatorFactory)])
-    type = "PredictorEvaluationWorkflow"
-    # TODO  Create Trait and status_detail content
-    status = "SUCCEEDED"
-    status_description = "READY"
-    status_detail = []
-
-
 class PredictorEvaluationDataFactory(factory.DictFactory):
     evaluators = factory.List([factory.SubFactory(CrossValidationEvaluatorFactory)])
 

@@ -820,18 +820,6 @@ def generic_entity():
 
 
 @pytest.fixture
-def predictor_evaluation_execution_dict(generic_entity):
-    ret = deepcopy(generic_entity)
-    ret.update({
-        "workflow_id": str(uuid.uuid4()),
-        "predictor_id": str(uuid.uuid4()),
-        "predictor_version": random.randint(1, 10),
-        "evaluator_names": ["Example evaluator"]
-    })
-    return ret
-
-
-@pytest.fixture
 def design_execution_dict(generic_entity):
     ret = generic_entity.copy()
     ret.update({
@@ -872,15 +860,3 @@ def example_generation_results():
             }
         }]
     }
-
-
-
-@pytest.fixture
-def predictor_evaluation_workflow_dict(generic_entity, example_cv_evaluator_dict, example_holdout_evaluator_dict):
-    ret = deepcopy(generic_entity)
-    ret.update({
-        "name": "Example PEW",
-        "description": "Example PEW for testing",
-        "evaluators": [example_cv_evaluator_dict, example_holdout_evaluator_dict]
-    })
-    return ret
