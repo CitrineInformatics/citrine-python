@@ -2,7 +2,6 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from logging import getLogger
 from time import time, sleep
 from uuid import UUID
-from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import Set as PropertySet, String, Object
@@ -51,20 +50,13 @@ class TaskNode(Resource['TaskNode']):
     """:str: if a task has failed, the failure reason will be in this parameter"""
 
     @property
-    def status(self) -> JobStatus | str:
+    def status(self) -> JobStatus:
         """The last reported status of this particular task."""
-        if resolved := JobStatus.from_str(self._status, exception=False):
-            return resolved
-        else:
-            return self._status
+        return JobStatus.from_str(self._status, exception=False)
 
     @status.setter
     def status(self, value: JobStatus | str) -> None:
-        if JobStatus.from_str(value, exception=False) is None:
-            warn(
-                f"{value} is not a recognized JobStatus; this will become an error as of v4.0.0.",
-                DeprecationWarning
-            )
+        JobStatus.from_str(value, exception=True)
         self._status = value
 
 
@@ -84,27 +76,18 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     """:dict[str, str] | None: job output properties and results"""
 
     @property
-    def status(self) -> JobStatus | str:
+    def status(self) -> JobStatus:
         """The last reported status of this particular task."""
-        if resolved := JobStatus.from_str(self._status, exception=False):
-            return resolved
-        else:
-            return self._status
+        return JobStatus.from_str(self._status, exception=False)
 
     @status.setter
     def status(self, value: JobStatus | str) -> None:
-        if resolved := JobStatus.from_str(value, exception=False):
-            if resolved not in [JobStatus.RUNNING, JobStatus.SUCCESS, JobStatus.FAILURE]:
-                warn(
-                    f"{value} is not a valid JobStatus for a JobStatusResponse; "
-                    f"this will become an error as of v4.0.0.",
-                    DeprecationWarning
-                )
-        else:
-            warn(
-                f"{value} is not a recognized JobStatus; this will become an error as of v4.0.0.",
-                DeprecationWarning
-            )
+        if resolved := JobStatus.from_str(value, exception=True):
+            valid = [JobStatus.RUNNING, JobStatus.SUCCESS, JobStatus.FAILURE]
+            if resolved not in valid:
+                raise ValueError(f"{value} is not a valid JobStatus for a JobStatusResponse; "
+                                 f"valid choices are {[x for x in valid]}")
+
         self._status = value
 
 
