@@ -123,6 +123,168 @@ The enumerated design space defined in this way might product the following cand
 Hierarchical Design Space
 -------------------------
 
+A :class:`~citrine.informatics.design_spaces.hierarchical_design_space.HierarchicalDesignSpace` produces candidates that represent full material histories.
+Unlike a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`, which produces flat candidates with composition represented only by raw ingredients, a hierarchical design space generates candidates with a tree structure: a terminal (root) material connected to sub-materials through formulation ingredients.
+
+The design space is defined by a **root** node and zero or more **sub-nodes**, each represented by a :class:`~citrine.informatics.design_spaces.hierarchical_design_space.MaterialNodeDefinition`.
+The root node defines the attributes and formulation contents of the terminal material in each candidate.
+Sub-nodes define any new materials that appear in the history of the terminal material.
+
+Commonly, each node in a hierarchical design space contains a :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace` as its ``formulation_subspace``, which defines the ingredients, labels, and constraints for that level of the material history.
+See `Formulation Design Space <#formulation-design-space>`__ below for details on configuring formulation subspaces.
+
+Nodes are connected through formulation ingredient names.
+If the root node contains a formulation subspace with an ingredient named ``"New Mixture-001"``, and a sub-node has its ``name`` set to ``"New Mixture-001"``, the resulting candidate will include that sub-node's material as an ingredient in the root material's formulation.
+This linking can be extended to sub-nodes referencing other sub-nodes, allowing arbitrarily deep material history shapes.
+
+Material Node Definitions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each :class:`~citrine.informatics.design_spaces.hierarchical_design_space.MaterialNodeDefinition` describes a single node in the material history and has the following fields:
+
+- ``name``: A unique identifier used to reference materials produced by this node.
+  When a formulation subspace on another node includes this name as an ingredient, the nodes become linked in the resulting candidate.
+- ``attributes``: A list of :class:`~citrine.informatics.dimensions.Dimension` objects defining the processing parameters on the materials produced by this node.
+  These dimensions are explored independently during Candidate Generation.
+- ``formulation_subspace``: An optional :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace` defining the ingredients, labels, and constraints for formulations on materials produced by this node.
+- ``template_link``: An optional :class:`~citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink` linking the node to material and process templates on the Citrine Platform.
+- ``scope``: An optional custom scope used to identify the materials produced by this node.
+- ``display_name``: An optional display name for identifying the node on the Citrine Platform (does not appear in generated candidates).
+
+Template Links
+~~~~~~~~~~~~~~
+
+A :class:`~citrine.informatics.design_spaces.hierarchical_design_space.TemplateLink` associates a node with on-platform material and process templates via their UUIDs.
+Template names can optionally be provided for readability.
+
+Data Sources
+~~~~~~~~~~~~
+
+:class:`~citrine.informatics.data_sources.DataSource` objects can be included on the design space to allow design over "known" materials.
+When constructing candidates, the Citrine Platform looks up ingredient names from formulation subspaces in the provided data sources and injects their composition and properties into the material history.
+When constructing a default hierarchical design space, the platform includes any data sources found on the associated predictor configuration.
+
+Creating a Hierarchical Design Space
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The easiest way to build a hierarchical design space is to use :func:`~citrine.resources.design_space.DesignSpaceCollection.create_default` with ``mode=DefaultDesignSpaceMode.HIERARCHICAL``.
+This inspects the predictor's training data to infer the material history shape and automatically constructs the root node, sub-nodes, dimensions, and formulation subspaces:
+
+.. code:: python
+
+    from citrine.informatics.design_spaces import DefaultDesignSpaceMode
+
+    design_space = project.design_spaces.create_default(
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+        mode=DefaultDesignSpaceMode.HIERARCHICAL,
+    )
+
+    registered_design_space = project.design_spaces.register(design_space)
+
+If you already have a registered :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`, you can convert it into an equivalent hierarchical design space using :func:`~citrine.resources.design_space.DesignSpaceCollection.convert_to_hierarchical`:
+
+.. code:: python
+
+    hierarchical_ds = project.design_spaces.convert_to_hierarchical(
+        product_design_space.uid,
+        predictor_id=predictor_id,
+        predictor_version=predictor_version,
+    )
+
+    registered_design_space = project.design_spaces.register(hierarchical_ds)
+
+Manual Construction Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following example creates a hierarchical design space for a coating material manually.
+The root node represents the final coating, which is a formulation of a binder and a pigment mixture.
+The pigment mixture is defined as a sub-node with its own formulation and a processing temperature attribute.
+
+.. code:: python
+
+    from citrine.informatics.constraints import IngredientCountConstraint
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.design_spaces import (
+        FormulationDesignSpace,
+        HierarchicalDesignSpace,
+    )
+    from citrine.informatics.design_spaces.hierarchical_design_space import (
+        MaterialNodeDefinition,
+    )
+    from citrine.informatics.dimensions import ContinuousDimension
+
+    # Define the formulation descriptor used across the design space
+    formulation_descriptor = FormulationDescriptor.hierarchical()
+
+    # --- Sub-node: Pigment Mixture ---
+    # This node defines a mixture of two pigments with a processing temperature.
+    pigment_formulation = FormulationDesignSpace(
+        name="Pigment blend",
+        description="Blend of pigment A and pigment B",
+        formulation_descriptor=formulation_descriptor,
+        ingredients={"Pigment A", "Pigment B"},
+        labels={"pigment": {"Pigment A", "Pigment B"}},
+        constraints={
+            IngredientCountConstraint(
+                formulation_descriptor=formulation_descriptor, min=2, max=2
+            )
+        },
+    )
+
+    temp_descriptor = RealDescriptor(
+        key="Mixing Temperature", lower_bound=273, upper_bound=500, units="K"
+    )
+    temp_dimension = ContinuousDimension(
+        descriptor=temp_descriptor, lower_bound=300, upper_bound=400
+    )
+
+    pigment_node = MaterialNodeDefinition(
+        name="Pigment Mixture",
+        attributes=[temp_dimension],
+        formulation_subspace=pigment_formulation,
+        display_name="Pigment Mixture",
+    )
+
+    # --- Root node: Final Coating ---
+    # The coating is a formulation of a binder and the pigment mixture defined above.
+    # The ingredient name "Pigment Mixture" matches the sub-node's name,
+    # which links them in the resulting candidates.
+    coating_formulation = FormulationDesignSpace(
+        name="Coating formulation",
+        description="Binder plus pigment mixture",
+        formulation_descriptor=formulation_descriptor,
+        ingredients={"Binder", "Pigment Mixture"},
+        labels={"resin": {"Binder"}, "filler": {"Pigment Mixture"}},
+        constraints={
+            IngredientCountConstraint(
+                formulation_descriptor=formulation_descriptor, min=2, max=2
+            )
+        },
+    )
+
+    root_node = MaterialNodeDefinition(
+        name="Final Coating",
+        formulation_subspace=coating_formulation,
+        display_name="Final Coating",
+    )
+
+    # --- Assemble the hierarchical design space ---
+    design_space = HierarchicalDesignSpace(
+        name="Coating design space",
+        description="Designs coatings from binder and a pigment mixture",
+        root=root_node,
+        subspaces=[pigment_node],
+        data_sources=[
+            GemTableDataSource(table_id=table_id, table_version=table_version)
+        ],
+    )
+
+    registered_design_space = project.design_spaces.register(design_space)
+
+In this example, each candidate produced by the design space will contain a terminal coating material whose formulation includes a "Binder" (resolved from the data source) and a "Pigment Mixture" (a newly designed material with its own formulation and mixing temperature).
+
 Data Source Design Space
 ------------------------
 
