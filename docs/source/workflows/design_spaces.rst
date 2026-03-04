@@ -164,6 +164,8 @@ Data Sources
 When constructing candidates, the Citrine Platform looks up ingredient names from formulation subspaces in the provided data sources and injects their composition and properties into the material history.
 When constructing a default hierarchical design space, the platform includes any data sources found on the associated predictor configuration.
 
+See our documentation on :doc:`Data Sources <data_sources>` for more information.
+
 Creating a Hierarchical Design Space
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
