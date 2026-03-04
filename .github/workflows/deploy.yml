@@ -14,7 +14,9 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Build
-        run: python setup.py sdist bdist_wheel
+        run: pip install --upgrade build
+      - name: Build
+        run: python -m build
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
