@@ -126,9 +126,9 @@ Hierarchical Design Space
 A :class:`~citrine.informatics.design_spaces.hierarchical_design_space.HierarchicalDesignSpace` produces candidates that represent full material histories.
 Unlike a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`, which produces flat candidates with composition represented only by raw ingredients, a hierarchical design space generates candidates with a tree structure: a terminal (root) material connected to sub-materials through formulation ingredients.
 
-The design space is defined by a **root** node and zero or more **sub-nodes**, each represented by a :class:`~citrine.informatics.design_spaces.hierarchical_design_space.MaterialNodeDefinition`.
+The design space is defined by a **root** node and zero or more **subspace** nodes, each represented by a :class:`~citrine.informatics.design_spaces.hierarchical_design_space.MaterialNodeDefinition`.
 The root node defines the attributes and formulation contents of the terminal material in each candidate.
-Sub-nodes define any new materials that appear in the history of the terminal material.
+Subspaces define any new materials that appear in the history of the terminal material.
 
 Commonly, each node in a hierarchical design space contains a :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace` as its ``formulation_subspace``, which defines the ingredients, labels, and constraints for that level of the material history.
 See `Formulation Design Space <#formulation-design-space>`__ below for details on configuring formulation subspaces.
