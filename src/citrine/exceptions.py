@@ -8,9 +8,26 @@ from requests import Response
 
 
 class CitrineException(Exception):
-    """The base exception class for Citrine-Python exceptions."""
+    """The base exception class for Citrine-Python exceptions.
 
-    pass
+    Parameters
+    ----------
+    *args
+        Positional arguments passed to the base Exception class.
+    hint : str, optional
+        An actionable suggestion for how the user can resolve
+        the error. Displayed after the main message.
+    """
+
+    def __init__(self, *args, hint=None):
+        super().__init__(*args)
+        self.hint = hint
+
+    def __str__(self):
+        base = super().__str__()
+        if self.hint:
+            return "{}\n\nHint: {}".format(base, self.hint)
+        return base
 
 
 class NonRetryableException(CitrineException):
