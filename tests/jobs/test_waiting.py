@@ -89,5 +89,7 @@ def test_wait_for_asynchronous_object(sleep_mock, time_mock):
     with pytest.raises(ConditionTimeoutError) as exception:
         wait_for_asynchronous_object(collection=collection, resource=resource, timeout=1.0)
 
-    assert str(exception.value) == ("Timeout of 1.0 seconds reached, "
-        "but task 123456 is still in progress")
+    msg = str(exception.value)
+    assert "1.0 seconds" in msg
+    assert "123456" in msg
+    assert "still in progress" in msg

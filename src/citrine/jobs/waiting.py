@@ -92,9 +92,12 @@ def wait_for_asynchronous_object(
         time.sleep(interval)
     if not is_finished():
         raise ConditionTimeoutError(
-            "Timeout of {timeout_length} seconds "
-            "reached, but task {uid} is still in progress".format(
-                timeout_length=timeout, uid=resource.uid)
+            "Timeout of {} seconds reached, but task {} "
+            "is still in progress. The server-side task "
+            "continues running independently of this client "
+            "timeout. Increase the 'timeout' parameter to "
+            "wait longer, or poll status manually.".format(
+                timeout, resource.uid)
         )
 
     current_resource = collection.get(resource.uid)
