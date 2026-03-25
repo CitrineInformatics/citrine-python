@@ -1,4 +1,10 @@
-"""Tools for working with Descriptors."""
+"""Data sources provide training data for predictors and design spaces.
+
+A DataSource specifies where the AI engine should read its data.
+The most common type is :class:`GemTableDataSource`, which
+references a GEM Table built from the platform's data model.
+
+"""
 from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
@@ -21,10 +27,15 @@ __all__ = [
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
-    """A source of data for the AI engine.
+    """Base class for data source specifications.
 
-    Data source provides a polymorphic interface for specifying different kinds of data as the
-    training data for predictors and the input data for some design spaces.
+    Use one of the concrete subclasses:
+
+    * :class:`GemTableDataSource` — a GEM Table (most common)
+    * :class:`ExperimentDataSourceRef` — reference to experiment
+      data
+    * :class:`SnapshotDataSource` — a snapshot of data
+    * :class:`CSVDataSource` — a CSV file (deprecated)
 
     """
 
@@ -126,15 +137,20 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
 
 
 class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
-    """A data source based on a GEM Table hosted on the data platform.
+    """A data source backed by a GEM Table on the platform.
+
+    This is the most common data source type. GEM Tables are
+    built from the platform's GEMD data model via table
+    configurations. Use ``list_tables()`` on a project to find
+    available table IDs and versions.
 
     Parameters
     ----------
-    table_id: UUID
-        Unique identifier for the GEM Table
-    table_version: Union[str,int]
-        Version number for the GEM Table. The first GEM table built from a configuration
-        has version = 1. Strings are cast to ints.
+    table_id : UUID
+        Unique identifier of the GEM Table.
+    table_version : int or str
+        Version number. The first table built from a
+        configuration has version 1. Strings are cast to int.
 
     """
 
