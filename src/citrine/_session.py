@@ -19,6 +19,7 @@ from citrine.exceptions import (
     CitrineException,
     Conflict,
     NotFound,
+    ServerError,
     Unauthorized,
     UnauthorizedRefreshToken,
     WorkflowNotReadyException)
@@ -209,7 +210,13 @@ class Session(requests.Session):
                 raise WorkflowNotReadyException(msg)
             else:
                 logger.error('%s %s %s', response.status_code, method, path)
-                raise CitrineException(response.text)
+                raise ServerError(
+                    method=method, path=path,
+                    status_code=response.status_code,
+                    response_text=response.text,
+                    request_id=response.headers.get(
+                        'x-request-id')
+                )
 
     @staticmethod
     def _extract_response_stacktrace(response: Response) -> Optional[str]:
