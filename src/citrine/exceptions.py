@@ -143,6 +143,39 @@ class NonRetryableHttpException(NonRetryableException):
 
         super().__init__("\n\t".join(self.detailed_error_info))
 
+    @property
+    def validation_errors(self):
+        """Shortcut to api_error.validation_errors, or empty list.
+
+        Returns
+        -------
+        list
+            List of ValidationError objects, or [] if no
+            api_error is available.
+        """
+        if self.api_error is not None:
+            return self.api_error.validation_errors
+        return []
+
+    def has_failure(self, failure_id):
+        """Check if a specific validation failure ID is present.
+
+        Parameters
+        ----------
+        failure_id : str
+            The failure_id to check for.
+
+        Returns
+        -------
+        bool
+            True if a validation error with the given
+            failure_id exists.
+        """
+        return any(
+            ve.failure_id == failure_id
+            for ve in self.validation_errors
+        )
+
 
 class NotFound(NonRetryableHttpException):
     """The requested resource was not found (HTTP 404).
