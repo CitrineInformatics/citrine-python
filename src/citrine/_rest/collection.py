@@ -18,7 +18,21 @@ CreationType = TypeVar('CreationType', bound='Resource')
 
 
 class Collection(Generic[ResourceType], Pageable):
-    """Abstract class for representing collections of REST resources."""
+    """Base class for server-backed resource collections.
+
+    A Collection provides CRUD operations for a specific
+    resource type. All collections support at minimum:
+
+    * ``get(uid)`` — fetch one resource by UID
+    * ``list()`` — paginate over all resources
+    * ``register(model)`` — create a new resource
+    * ``update(model)`` — update an existing resource
+    * ``delete(uid)`` — delete a resource
+
+    Concrete collections (e.g. ``ProjectCollection``,
+    ``DatasetCollection``) may add additional operations.
+
+    """
 
     _path_template: str = NotImplemented
     _dataset_agnostic_path_template: str = NotImplemented
@@ -50,7 +64,27 @@ class Collection(Generic[ResourceType], Pageable):
         """Build an individual element of the collection."""
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
-        """Get a particular element of the collection."""
+        """Fetch a single resource by its unique identifier.
+
+        Parameters
+        ----------
+        uid : UUID or str
+            The unique identifier of the resource.
+
+        Returns
+        -------
+        ResourceType
+            The resource object.
+
+        Raises
+        ------
+        ValueError
+            If ``uid`` is None (the object may not be
+            registered yet).
+        NotFound
+            If no resource with the given UID exists.
+
+        """
         if uid is None:
             raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         path = self._get_path(uid)
@@ -59,7 +93,25 @@ class Collection(Generic[ResourceType], Pageable):
         return self.build(data)
 
     def register(self, model: CreationType) -> CreationType:
-        """Create a new element of the collection by registering an existing resource."""
+        """Create a new resource on the platform.
+
+        Parameters
+        ----------
+        model : ResourceType
+            The resource to register. After registration, the
+            returned object will have a platform-assigned UID.
+
+        Returns
+        -------
+        ResourceType
+            The registered resource with server-assigned fields.
+
+        Raises
+        ------
+        ModuleRegistrationFailedException
+            If the platform rejects the resource.
+
+        """
         path = self._get_path()
         try:
             data = self.session.post_resource(path, model.dump(), version=self._api_version)
@@ -94,14 +146,39 @@ class Collection(Generic[ResourceType], Pageable):
                                         per_page=per_page)
 
     def update(self, model: CreationType) -> CreationType:
-        """Update a particular element of the collection."""
+        """Update an existing resource on the platform.
+
+        Parameters
+        ----------
+        model : ResourceType
+            The resource with updated fields. Must have a
+            valid ``uid`` (i.e., be previously registered).
+
+        Returns
+        -------
+        ResourceType
+            The updated resource as returned by the server.
+
+        """
         url = self._get_path(model.uid)
         updated = self.session.put_resource(url, model.dump(), version=self._api_version)
         data = updated[self._individual_key] if self._individual_key else updated
         return self.build(data)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """Delete a particular element of the collection."""
+        """Delete a resource by its unique identifier.
+
+        Parameters
+        ----------
+        uid : UUID or str
+            The unique identifier of the resource to delete.
+
+        Returns
+        -------
+        Response
+            The server response.
+
+        """
         url = self._get_path(uid)
         data = self.session.delete_resource(url, version=self._api_version)
         return Response(body=data)
