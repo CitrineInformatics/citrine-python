@@ -1,4 +1,12 @@
-"""Tools for working with Descriptors."""
+"""Descriptors define the type and range of material properties.
+
+A Descriptor specifies what kind of values a material property
+can hold (real numbers, integers, categories, chemical formulas,
+molecular structures, or formulations). Descriptors are used
+throughout the platform to define predictor inputs/outputs,
+design space dimensions, and constraints.
+
+"""
 from typing import Type, Set, Union
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -30,9 +38,18 @@ class FormulationKey(BaseEnumeration):
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """A Descriptor describes the range of values that a quantity can take on.
+    """Base class for all descriptor types.
 
-    Abstract type that returns the proper type given a serialized dict.
+    Descriptors define the type and valid range of a material
+    property. Use one of the concrete subclasses:
+
+    * :class:`RealDescriptor` — continuous real numbers
+    * :class:`IntegerDescriptor` — integer numbers
+    * :class:`CategoricalDescriptor` — discrete categories
+    * :class:`ChemicalFormulaDescriptor` — chemical formulas
+    * :class:`MolecularStructureDescriptor` — SMILES strings
+    * :class:`FormulationDescriptor` — mixture compositions
+
     """
 
     key = properties.String('descriptor_key')
