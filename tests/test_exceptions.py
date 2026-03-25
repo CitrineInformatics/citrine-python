@@ -1,7 +1,10 @@
 """Tests for the Citrine exception hierarchy."""
 import pytest
 
-from citrine.exceptions import CitrineException, NonRetryableException, ServerError
+from citrine.exceptions import (
+    BadRequest, CitrineException, NonRetryableException, NotFound,
+    ServerError, Unauthorized, WorkflowConflictException,
+)
 
 
 def test_citrine_exception_without_hint():
@@ -110,3 +113,29 @@ def test_server_error_is_non_retryable():
         status_code=500, response_text=""
     )
     assert isinstance(exc, NonRetryableException)
+
+
+# --- Default hint tests for HTTP exception subclasses ---
+
+def test_not_found_has_default_hint():
+    exc = NotFound("/test/path")
+    assert exc.hint is not None
+    assert "UID" in exc.hint
+
+
+def test_unauthorized_has_default_hint():
+    exc = Unauthorized("/test/path")
+    assert exc.hint is not None
+    assert "API key" in exc.hint
+
+
+def test_bad_request_has_default_hint():
+    exc = BadRequest("/test/path")
+    assert exc.hint is not None
+    assert "validation" in exc.hint.lower()
+
+
+def test_conflict_has_default_hint():
+    exc = WorkflowConflictException("/test/path")
+    assert exc.hint is not None
+    assert "retry" in exc.hint.lower()

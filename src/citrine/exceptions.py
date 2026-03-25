@@ -102,6 +102,8 @@ class NonRetryableHttpException(NonRetryableException):
 
     """
 
+    _default_hint = None  # Subclasses may set this
+
     def __init__(self, path: str, response: Optional[Response] = None):
         self.url = path
         self.detailed_error_info = []
@@ -156,7 +158,9 @@ class NonRetryableHttpException(NonRetryableException):
             self.code = None
             self.api_error = None
 
-        super().__init__("\n\t".join(self.detailed_error_info))
+        super().__init__(
+            "\n\t".join(self.detailed_error_info),
+            hint=self._default_hint)
 
     @property
     def validation_errors(self):
@@ -199,6 +203,11 @@ class NotFound(NonRetryableHttpException):
     exists in the expected project or dataset.
 
     """
+
+    _default_hint = (
+        "Verify the resource UID exists in the target "
+        "project/dataset. UIDs are case-sensitive."
+    )
 
     @staticmethod
     def build(*, message: str, method: str, path: str, params: dict = {}):
@@ -249,7 +258,10 @@ class Unauthorized(NonRetryableHttpException):
 
     """
 
-    pass
+    _default_hint = (
+        "Check that your API key is valid and has access "
+        "to this resource. Regenerate your key if expired."
+    )
 
 
 class BadRequest(NonRetryableHttpException):
@@ -260,7 +272,10 @@ class BadRequest(NonRetryableHttpException):
 
     """
 
-    pass
+    _default_hint = (
+        "Check the validation errors above for specific "
+        "field issues."
+    )
 
 
 class WorkflowConflictException(NonRetryableHttpException):
@@ -271,7 +286,11 @@ class WorkflowConflictException(NonRetryableHttpException):
 
     """
 
-    pass
+    _default_hint = (
+        "Another operation may be in progress on this "
+        "resource. Wait and retry, or check for "
+        "concurrent modifications."
+    )
 
 
 #: Alias for :class:`WorkflowConflictException`. A 409 can occur
