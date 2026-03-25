@@ -1,3 +1,10 @@
+"""Utilities for waiting on asynchronous platform operations.
+
+These functions poll the platform at a configurable interval
+until an asynchronous operation (predictor training, workflow
+validation, design execution) completes or a timeout is reached.
+
+"""
 import time
 from pprint import pprint
 from typing import Union
@@ -11,7 +18,17 @@ from citrine.informatics.executions import PredictorEvaluationExecution
 
 
 class ConditionTimeoutError(RuntimeError):
-    """Error that is raised when timeout is reached but the checked condition is still False."""
+    """The client-side polling timeout was exceeded.
+
+    Raised when an asynchronous operation (e.g. predictor
+    training, design execution) has not completed within the
+    specified ``timeout`` seconds. The server-side operation
+    continues running independently of this client timeout.
+
+    Increase the ``timeout`` parameter to wait longer, or
+    poll the resource status manually.
+
+    """
 
     pass
 

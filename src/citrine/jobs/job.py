@@ -16,9 +16,17 @@ logger = getLogger(__name__)
 
 
 class JobSubmissionResponse(Resource['JobSubmissionResponse']):
-    """A response to a submit-job request for the job submission framework.
+    """Response from submitting an asynchronous job to the platform.
 
-    This is returned as a successful response from the remote service.
+    Returned by operations that trigger server-side work (e.g.,
+    ingestion, table building). Use the ``job_id`` to poll for
+    completion status.
+
+    Attributes
+    ----------
+    job_id : UUID
+        Unique identifier for tracking the submitted job.
+
     """
 
     job_id = properties.UUID("job_id")
