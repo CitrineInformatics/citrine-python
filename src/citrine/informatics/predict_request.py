@@ -7,9 +7,29 @@ from citrine.informatics.design_candidate import DesignMaterial
 
 
 class PredictRequest(Serializable["PredictRequest"]):
-    """A Citrine Predict Request.
+    """A request to predict properties for a specific material.
 
-    This class represents the candidate computed by a design execution.
+    Typically constructed from an existing design candidate to
+    re-predict with modified inputs, or to run a what-if
+    analysis on a specific material configuration.
+
+    Parameters
+    ----------
+    material_id : UUID
+        Unique identifier of the material to predict on.
+    identifiers : list[str]
+        List of identifier strings for this material (e.g.
+        sample IDs, lot numbers).
+    material : DesignMaterial
+        The material definition containing descriptor values
+        to use as predictor inputs.
+    created_from_id : UUID
+        The UID of the design candidate this request was
+        derived from.
+    random_seed : int, optional
+        Seed for reproducible stochastic predictions. If
+        omitted, the platform chooses a random seed.
+
     """
 
     material_id = properties.UUID('material_id')
