@@ -165,7 +165,12 @@ def _poll_for_job_completion(session: Session,
             logger.error(f'Job exceeded user timeout of {timeout} seconds. '
                          f'Note job on server is unaffected by this timeout.')
             logger.debug('Last status: {}'.format(status.dump()))
-            raise PollingTimeoutError('Job {} timed out.'.format(job_id))
+            raise PollingTimeoutError(
+                'Polling for job {} exceeded timeout of {} seconds. '
+                'The job may still be running on the server. '
+                'Increase the timeout parameter or check job '
+                'status manually.'.format(job_id, timeout)
+            )
     if status.status == JobStatus.FAILURE:
         logger.debug(f'Job terminated with Failure status: {status.dump()}')
         if raise_errors:
