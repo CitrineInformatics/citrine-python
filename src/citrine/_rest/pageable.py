@@ -1,5 +1,8 @@
+from logging import getLogger
 from typing import Optional, Iterable, Dict, Tuple, Callable, Union, Sequence
 from uuid import UUID
+
+logger = getLogger(__name__)
 
 
 class Pageable():
@@ -87,6 +90,10 @@ class Pageable():
         try:
             next_uri = data.get('next', "")
         except AttributeError:
+            logger.warning(
+                "Response data is not a dict (type: %s); "
+                "pagination may be incomplete.",
+                type(data).__name__)
             next_uri = ""
 
         # A 'None' collection key implies response has a top-level array

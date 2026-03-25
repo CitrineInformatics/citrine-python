@@ -255,7 +255,7 @@ class Ingestion(Resource['Ingestion']):
                                            delete_templates=delete_templates)
         except IngestionException as e:
             if self.raise_errors:
-                raise e
+                raise
             else:
                 return IngestionStatus.from_exception(e)
 
@@ -331,9 +331,9 @@ class Ingestion(Resource['Ingestion']):
             )
         except BadRequest as e:
             if e.api_error is not None:
-                raise IngestionException.from_api_error(e.api_error)
+                raise IngestionException.from_api_error(e.api_error) from e
             else:
-                raise e
+                raise
 
     def poll_for_job_completion(self,
                                 job: JobSubmissionResponse,
@@ -560,11 +560,11 @@ class IngestionCollection(Collection[Ingestion]):
                 else:
                     errors = [IngestionErrorTrace(msg=e.api_error.message)]
                 if raise_errors:
-                    raise IngestionException(errors=errors)
+                    raise IngestionException(errors=errors) from e
                 else:
                     return FailedIngestion(errors=errors)
             else:
-                raise e
+                raise
         return self.build({
             **response,
             "raise_errors": raise_errors
