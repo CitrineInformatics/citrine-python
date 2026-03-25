@@ -66,7 +66,7 @@ class Collection(Generic[ResourceType], Pageable):
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
         except NonRetryableException as e:
-            raise ModuleRegistrationFailedException(model.__class__.__name__, e)
+            raise ModuleRegistrationFailedException(model.__class__.__name__, e) from e
 
     def list(self, *, per_page: int = 100) -> Iterator[ResourceType]:
         """
