@@ -1,4 +1,18 @@
-"""Citrine-specific exceptions."""
+"""Exception hierarchy for the Citrine Python SDK.
+
+All Citrine-specific exceptions inherit from :class:`CitrineException`.
+Exceptions are divided into two categories:
+
+* **Non-retryable** — the request will fail again if retried without
+  changes (e.g., bad input, missing resource, auth failure).
+* **Retryable** — the request may succeed on a subsequent attempt
+  (e.g., server temporarily unavailable, workflow still validating).
+
+HTTP-specific exceptions inherit from
+:class:`NonRetryableHttpException` and carry the status code,
+response body, and parsed API error details (when available).
+
+"""
 from types import SimpleNamespace
 from typing import Optional, List
 from urllib.parse import urlencode
@@ -8,31 +22,70 @@ from requests import Response
 
 
 class CitrineException(Exception):
-    """The base exception class for Citrine-Python exceptions."""
+    """Base exception for all Citrine SDK errors.
+
+    All exceptions raised by this library inherit from this
+    class, so ``except CitrineException`` will catch any
+    Citrine-specific error.
+
+    """
 
     pass
 
 
 class NonRetryableException(CitrineException):
-    """Indicates that a non-retryable error occurred."""
+    """An error that will not succeed if the same request is retried.
+
+    Common causes include invalid input, missing resources, or
+    insufficient permissions. Fix the underlying issue before
+    retrying.
+
+    """
 
     pass
 
 
 class RetryableException(CitrineException):
-    """Indicates an error occurred but it is retryable."""
+    """An error that may succeed if the request is retried later.
+
+    The server returned a transient error. Callers can safely
+    retry the request after a short delay.
+
+    """
 
     pass
 
 
 class UnauthorizedRefreshToken(NonRetryableException):
-    """The token used to refresh authentication is invalid."""
+    """The API key used to refresh authentication is invalid.
+
+    This typically means the API key has expired or been
+    revoked. Generate a new key from the platform's account
+    settings page.
+
+    """
 
     pass
 
 
 class NonRetryableHttpException(NonRetryableException):
-    """An exception originating from an HTTP error from a Citrine API."""
+    """An HTTP error response from the Citrine Platform API.
+
+    Attributes
+    ----------
+    url : str
+        The API path that was requested.
+    code : int or None
+        The HTTP status code (e.g. 400, 404).
+    response_text : str or None
+        The raw response body.
+    api_error : ApiError or None
+        Parsed error details including validation errors,
+        if the response contained a JSON error body.
+    detailed_error_info : list[str]
+        Human-readable error lines joined in ``str(exc)``.
+
+    """
 
     def __init__(self, path: str, response: Optional[Response] = None):
         self.url = path
@@ -82,7 +135,12 @@ class NonRetryableHttpException(NonRetryableException):
 
 
 class NotFound(NonRetryableHttpException):
-    """A particular url was not found. (http status 404)."""
+    """The requested resource was not found (HTTP 404).
+
+    Verify that the resource UID is correct and that it
+    exists in the expected project or dataset.
+
+    """
 
     @staticmethod
     def build(*, message: str, method: str, path: str, params: dict = {}):
@@ -126,41 +184,78 @@ class NotFound(NonRetryableHttpException):
 
 
 class Unauthorized(NonRetryableHttpException):
-    """The user is unauthorized to make this api call. (http status 401)."""
+    """Authentication or authorization failed (HTTP 401/403).
+
+    Check that your API key is valid and that you have
+    permission to access the requested resource.
+
+    """
 
     pass
 
 
 class BadRequest(NonRetryableHttpException):
-    """The user is trying to perform an invalid operation. (http status 400)."""
+    """The request was invalid (HTTP 400).
+
+    Inspect ``api_error.validation_errors`` for details about
+    which fields failed validation.
+
+    """
 
     pass
 
 
 class WorkflowConflictException(NonRetryableHttpException):
-    """There is a conflict preventing the workflow from being executed. (http status 409)."""
+    """A conflict prevented the operation (HTTP 409).
+
+    Another operation may be in progress on this resource.
+    Wait and retry, or check for concurrent modifications.
+
+    """
 
     pass
 
 
-# A 409 is a Conflict, and can be raised anywhere a conflict occurs, not just in a workflow.
+#: Alias for :class:`WorkflowConflictException`. A 409 can occur
+#: in any context, not just workflows.
 Conflict = WorkflowConflictException
 
 
 class WorkflowNotReadyException(RetryableException):
-    """The workflow is not ready to be executed. I.e., still validating. (http status 425)."""
+    """The workflow is still validating (HTTP 425).
+
+    This is a transient state. Use ``wait_while_validating()``
+    to poll until the workflow is ready, or retry after a
+    short delay.
+
+    """
 
     pass
 
 
 class PollingTimeoutError(NonRetryableException):
-    """Polling for an asynchronous result has exceeded the timeout."""
+    """The client-side polling timeout was exceeded.
+
+    The server-side job may still be running. Increase the
+    ``timeout`` parameter to wait longer, or check the job
+    status manually.
+
+    """
 
     pass
 
 
 class JobFailureError(NonRetryableException):
-    """The asynchronous job completed with the given failure message."""
+    """A server-side job completed with a failure status.
+
+    Attributes
+    ----------
+    job_id : UUID
+        The unique identifier of the failed job.
+    failure_reasons : list[str]
+        One reason string per failed task within the job.
+
+    """
 
     def __init__(self, *, message: str, job_id: UUID, failure_reasons: List[str]):
         super().__init__(message)
@@ -169,7 +264,13 @@ class JobFailureError(NonRetryableException):
 
 
 class ModuleRegistrationFailedException(NonRetryableException):
-    """A module failed to register."""
+    """A module (predictor, design space, etc.) failed to register.
+
+    The original exception from the API is included in the
+    message. Check that the module configuration is valid
+    and that all referenced resources exist.
+
+    """
 
     def __init__(self, moduleType: str, exc: Exception):
         err = 'The "{0}" failed to register. {1}: {2}'.format(
