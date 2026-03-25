@@ -1,3 +1,22 @@
+"""Feature importance via Shapley values for trained predictors.
+
+Shapley values quantify how much each input feature
+contributes to a predictor's output for each material in the
+training set. Positive values indicate the feature pushes the
+prediction higher; negative values push it lower. The
+magnitude reflects the strength of the effect.
+
+Access feature effects via
+:attr:`~citrine.informatics.predictors.graph_predictor.GraphPredictor.feature_effects`.
+
+The class hierarchy is:
+
+* :class:`FeatureEffects` — top level, one per predictor
+* :class:`ShapleyOutput` — one per predicted output
+* :class:`ShapleyFeature` — one per input feature
+* :class:`ShapleyMaterial` — one per training material
+
+"""
 from typing import Dict
 from uuid import UUID
 
@@ -6,14 +25,33 @@ from citrine._serialization import properties
 
 
 class ShapleyMaterial(Resource):
-    """The feature effect of a material."""
+    """Shapley value for one material and one feature.
+
+    Attributes
+    ----------
+    material_id : UUID
+        Identifier of the training material.
+    value : float
+        Shapley value. Positive means the feature pushes
+        the prediction higher; negative means lower.
+
+    """
 
     material_id = properties.UUID('material_id', serializable=False)
     value = properties.Float('value', serializable=False)
 
 
 class ShapleyFeature(Resource):
-    """All feature effects for this feature by material."""
+    """Shapley values for one input feature across all materials.
+
+    Attributes
+    ----------
+    feature : str
+        Name of the input feature.
+    materials : list[ShapleyMaterial]
+        Shapley values for each training material.
+
+    """
 
     feature = properties.String('feature', serializable=False)
     materials = properties.List(properties.Object(ShapleyMaterial), 'materials',
@@ -26,7 +64,16 @@ class ShapleyFeature(Resource):
 
 
 class ShapleyOutput(Resource):
-    """All feature effects for this output by feature."""
+    """Shapley values for one predicted output, grouped by feature.
+
+    Attributes
+    ----------
+    output : str
+        Name of the predicted output.
+    features : list[ShapleyFeature]
+        Shapley values broken down by input feature.
+
+    """
 
     output = properties.String('output', serializable=False)
     features = properties.List(properties.Object(ShapleyFeature), 'features', serializable=False)
@@ -38,7 +85,27 @@ class ShapleyOutput(Resource):
 
 
 class FeatureEffects(Resource):
-    """Captures information about the feature effects associated with a predictor."""
+    """Feature importance results for a trained predictor.
+
+    Contains Shapley values showing how each input feature
+    affects each predicted output for every material in the
+    training set. Use :attr:`as_dict` for a convenient nested
+    dictionary representation.
+
+    Attributes
+    ----------
+    predictor_id : UUID
+        The predictor these results belong to.
+    predictor_version : int
+        The predictor version that was analyzed.
+    status : str
+        Computation status (e.g. ``'Succeeded'``).
+    failure_reason : str or None
+        Reason for failure, if status is not succeeded.
+    outputs : list[ShapleyOutput] or None
+        The computed Shapley values, grouped by output.
+
+    """
 
     predictor_id = properties.UUID('metadata.predictor_id', serializable=False)
     predictor_version = properties.Integer('metadata.predictor_version', serializable=False)
