@@ -11,18 +11,40 @@ from citrine.resources.user import UserCollection
 class Citrine:
     """The entry point for interacting with the Citrine Platform.
 
+    Create an instance of this class to access projects, teams,
+    users, and other platform resources. All API calls are
+    authenticated using the provided API key.
+
     Parameters
     ----------
-    api_key: str
-        Unique key that allows a user to access the Citrine Platform.
-        Default: environ.get('CITRINE_API_KEY')
-    scheme: str
-        Networking protocol; usually https.  Default: https
-    host: str
-        Host URL, generally '<your_site>.citrine-platform.com'.
-        Default: environ.get('CITRINE_API_HOST')
-    port: Optional[str]
-        Optional networking port.  Default: None
+    api_key : str, optional
+        API key for authentication. Obtain one from your
+        platform's account settings page. Falls back to the
+        ``CITRINE_API_KEY`` environment variable if not provided.
+    scheme : str, optional
+        URL scheme. Default: ``'https'``.
+    host : str, optional
+        Platform hostname, e.g. ``'mysite.citrine-platform.com'``.
+        Falls back to the ``CITRINE_API_HOST`` environment
+        variable if not provided.
+    port : str, optional
+        Network port. Default: ``None`` (use scheme default).
+
+    Raises
+    ------
+    ValueError
+        If ``host`` is not provided and ``CITRINE_API_HOST``
+        is not set.
+
+    Examples
+    --------
+    >>> from citrine import Citrine
+    >>> client = Citrine(
+    ...     api_key='your-api-key',
+    ...     host='mysite.citrine-platform.com'
+    ... )
+    >>> for project in client.projects.list():
+    ...     print(project.name)
 
     """
 
@@ -51,20 +73,51 @@ class Citrine:
 
     @property
     def projects(self) -> ProjectCollection:
-        """Return a resource representing all visible projects."""
+        """Access all projects visible to the authenticated user.
+
+        Returns
+        -------
+        ProjectCollection
+            A collection supporting ``.list()``, ``.get(uid)``,
+            and ``.register()`` operations on projects.
+
+        """
         return ProjectCollection(self.session)
 
     @property
     def users(self) -> UserCollection:
-        """Return the collection of all users."""
+        """Access all users on the platform.
+
+        Returns
+        -------
+        UserCollection
+            A collection supporting ``.list()`` and ``.get(uid)``
+            operations on users.
+
+        """
         return UserCollection(self.session)
 
     @property
     def teams(self) -> TeamCollection:
-        """Returns a resource representing all visible teams."""
+        """Access all teams visible to the authenticated user.
+
+        Returns
+        -------
+        TeamCollection
+            A collection supporting ``.list()``, ``.get(uid)``,
+            and ``.register()`` operations on teams.
+
+        """
         return TeamCollection(self.session)
 
     @property
     def catalyst(self) -> CatalystResource:
-        """Return a resource representing Catalyst."""
+        """Access the Catalyst multi-tenant data platform.
+
+        Returns
+        -------
+        CatalystResource
+            A resource for interacting with Catalyst services.
+
+        """
         return CatalystResource(self.session)
