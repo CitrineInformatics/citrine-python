@@ -94,8 +94,11 @@ def test_get_refresh_token_failure(session: Session):
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
 
-        with pytest.raises(UnauthorizedRefreshToken):
+        with pytest.raises(UnauthorizedRefreshToken) as exc_info:
             session.get_resource('/foo')
+        msg = str(exc_info.value)
+        assert "refresh authentication token" in msg
+        assert "api-keys" in msg
 
 
 def test_get_no_refresh(session: Session):
