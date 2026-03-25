@@ -1,7 +1,7 @@
 """Tests for the Citrine exception hierarchy."""
 import pytest
 
-from citrine.exceptions import CitrineException
+from citrine.exceptions import CitrineException, NonRetryableException, ServerError
 
 
 def test_citrine_exception_without_hint():
@@ -47,3 +47,66 @@ def test_hint_preserved_through_subclass():
     exc = MyError("oops", hint="Fix it.")
     assert exc.hint == "Fix it."
     assert "Hint: Fix it." in str(exc)
+
+
+# --- ServerError tests ---
+
+def test_server_error_attributes():
+    exc = ServerError(
+        method="POST", path="/api/v1/foo",
+        status_code=502, response_text="Bad Gateway",
+        request_id="abc-123"
+    )
+    assert exc.method == "POST"
+    assert exc.path == "/api/v1/foo"
+    assert exc.status_code == 502
+    assert exc.response_text == "Bad Gateway"
+    assert exc.request_id == "abc-123"
+
+
+def test_server_error_message_includes_context():
+    exc = ServerError(
+        method="GET", path="/api/v1/bar",
+        status_code=500, response_text="internal error"
+    )
+    msg = str(exc)
+    assert "500" in msg
+    assert "GET" in msg
+    assert "/api/v1/bar" in msg
+    assert "internal error" in msg
+
+
+def test_server_error_includes_request_id_in_message():
+    exc = ServerError(
+        method="PUT", path="/x",
+        status_code=503, response_text="",
+        request_id="req-456"
+    )
+    msg = str(exc)
+    assert "req-456" in msg
+
+
+def test_server_error_truncates_long_response():
+    long_text = "x" * 1000
+    exc = ServerError(
+        method="GET", path="/",
+        status_code=500, response_text=long_text
+    )
+    assert len(exc.response_text) == 500
+
+
+def test_server_error_has_hint():
+    exc = ServerError(
+        method="GET", path="/",
+        status_code=500, response_text="err"
+    )
+    assert exc.hint is not None
+    assert "server-side" in exc.hint.lower()
+
+
+def test_server_error_is_non_retryable():
+    exc = ServerError(
+        method="GET", path="/",
+        status_code=500, response_text=""
+    )
+    assert isinstance(exc, NonRetryableException)

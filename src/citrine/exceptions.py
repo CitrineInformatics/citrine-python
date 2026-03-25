@@ -334,3 +334,44 @@ class ModuleRegistrationFailedException(NonRetryableException):
         err = 'The "{0}" failed to register. {1}: {2}'.format(
             moduleType, exc.__class__.__name__, str(exc))
         super().__init__(err)
+
+
+class ServerError(NonRetryableException):
+    """A server-side error (5xx) occurred on the Citrine API.
+
+    Parameters
+    ----------
+    method : str
+        The HTTP method of the request (e.g. GET, POST).
+    path : str
+        The API path that was requested.
+    status_code : int
+        The HTTP status code returned by the server.
+    response_text : str
+        The body of the error response (truncated to 500 chars).
+    request_id : str, optional
+        The server-assigned request ID for support reference.
+    """
+
+    def __init__(self, *, method, path, status_code,
+                 response_text, request_id=None):
+        self.method = method
+        self.path = path
+        self.status_code = status_code
+        self.request_id = request_id
+        self.response_text = response_text[:500] if response_text else ""
+
+        parts = ["Server error {} from {} {}".format(
+            status_code, method, path)]
+        if request_id:
+            parts.append("Request ID: {}".format(request_id))
+        if self.response_text:
+            parts.append("Response: {}".format(self.response_text))
+
+        hint = ("This is a server-side issue. If it persists, "
+                "contact Citrine support")
+        if request_id:
+            hint += " with request ID '{}'.".format(request_id)
+        else:
+            hint += "."
+        super().__init__("\n".join(parts), hint=hint)

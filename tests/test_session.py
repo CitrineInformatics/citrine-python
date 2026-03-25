@@ -6,6 +6,7 @@ from citrine.exceptions import (
     Conflict,
     NonRetryableException,
     NotFound,
+    ServerError,
     Unauthorized,
     WorkflowNotReadyException,
     RetryableException)
@@ -331,10 +332,13 @@ def test_failed_put_with_stacktrace(session: Session):
                 json={'debug_stacktrace': 'blew up!'}
             )
 
-            with pytest.raises(Exception) as e:
+            with pytest.raises(ServerError) as e:
                 session.put_resource('/bad-endpoint', json={})
 
-        assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
+        assert e.value.status_code == 500
+        assert e.value.method == "PUT"
+        assert e.value.path == "/bad-endpoint"
+        assert "blew up!" in e.value.response_text
 
 
 def test_cursor_paged_resource():
