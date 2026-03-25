@@ -1,4 +1,12 @@
-"""Tools for working with Dimensions."""
+"""Dimensions define the search space for design executions.
+
+Each dimension specifies the range of values that a single
+descriptor can take during candidate generation. Dimensions
+are assembled into a
+:class:`~citrine.informatics.design_spaces.DataSourceDesignSpace`
+to define the full search space.
+
+"""
 from typing import Optional, Type, List
 
 from citrine._serialization import properties
@@ -10,9 +18,14 @@ __all__ = ['Dimension', 'ContinuousDimension', 'IntegerDimension', 'EnumeratedDi
 
 
 class Dimension(PolymorphicSerializable['Dimension']):
-    """A Dimension describes the values that a quantity can take in the context of a design space.
+    """Base class for design space dimensions.
 
-    Abstract type that returns the proper type given a serialized dict.
+    A Dimension restricts one descriptor to a specific range
+    of values. Use the concrete subclasses:
+
+    * :class:`ContinuousDimension` — real-valued range
+    * :class:`IntegerDimension` — integer range
+    * :class:`EnumeratedDimension` — finite set of values
 
     """
 
@@ -27,16 +40,21 @@ class Dimension(PolymorphicSerializable['Dimension']):
 
 
 class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
-    """A continuous, real-valued dimension.
+    """A continuous, real-valued dimension with inclusive bounds.
+
+    If bounds are not specified, they default to the
+    descriptor's own lower and upper bounds.
 
     Parameters
     ----------
-    descriptor: RealDescriptor
-        a descriptor of the single dimension
-    lower_bound: float
-        inclusive lower bound
-    upper_bound: float
-        inclusive upper bound
+    descriptor : RealDescriptor
+        The descriptor this dimension applies to.
+    lower_bound : float, optional
+        Inclusive lower bound for candidate values. Defaults
+        to the descriptor's ``lower_bound``.
+    upper_bound : float, optional
+        Inclusive upper bound for candidate values. Defaults
+        to the descriptor's ``upper_bound``.
 
     """
 
@@ -55,16 +73,21 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
 
 
 class IntegerDimension(Serializable['IntegerDimension'], Dimension):
-    """An integer-valued dimension with inclusive lower and upper bounds.
+    """An integer-valued dimension with inclusive bounds.
+
+    If bounds are not specified, they default to the
+    descriptor's own lower and upper bounds.
 
     Parameters
     ----------
-    descriptor: IntegerDescriptor
-        a descriptor of the single dimension
-    lower_bound: int
-        inclusive lower bound
-    upper_bound: int
-        inclusive upper bound
+    descriptor : IntegerDescriptor
+        The descriptor this dimension applies to.
+    lower_bound : int, optional
+        Inclusive lower bound. Defaults to the descriptor's
+        ``lower_bound``.
+    upper_bound : int, optional
+        Inclusive upper bound. Defaults to the descriptor's
+        ``upper_bound``.
 
     """
 
@@ -83,14 +106,20 @@ class IntegerDimension(Serializable['IntegerDimension'], Dimension):
 
 
 class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
-    """A finite, enumerated dimension.
+    """A dimension defined by a finite set of allowed values.
+
+    Use this for categorical descriptors or when you want to
+    restrict a continuous descriptor to specific discrete
+    values (e.g. only certain temperatures).
 
     Parameters
     ----------
-    descriptor: Descriptor
-        a descriptor of the single dimension
-    values: list[str]
-        list of values that can be parsed by the descriptor
+    descriptor : Descriptor
+        The descriptor this dimension applies to.
+    values : list[str]
+        Allowed values as strings. Each string must be
+        parseable by the descriptor (e.g. valid categories
+        for a CategoricalDescriptor).
 
     """
 
