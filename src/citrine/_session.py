@@ -118,7 +118,16 @@ class Session(requests.Session):
                                             json=data)
 
         if response.status_code != 200:
-            raise UnauthorizedRefreshToken()
+            raise UnauthorizedRefreshToken(
+                "Failed to refresh authentication token.",
+                hint=(
+                    "Your API key may have expired or been "
+                    "revoked. Generate a new one at "
+                    "{}://{}/account/api-keys or set the "
+                    "CITRINE_API_KEY environment variable."
+                    .format(self.scheme, self.authority)
+                )
+            )
         self.access_token = response.json()['access_token']
         self.access_token_expiration = datetime.fromtimestamp(
             jwt.decode(
