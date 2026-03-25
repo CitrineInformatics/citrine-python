@@ -51,6 +51,8 @@ class UnauthorizedRefreshToken(NonRetryableException):
 class NonRetryableHttpException(NonRetryableException):
     """An exception originating from an HTTP error from a Citrine API."""
 
+    _default_hint = None  # Subclasses may set this
+
     def __init__(self, path: str, response: Optional[Response] = None):
         self.url = path
         self.detailed_error_info = []
@@ -95,11 +97,18 @@ class NonRetryableHttpException(NonRetryableException):
             self.code = None
             self.api_error = None
 
-        super().__init__("\n\t".join(self.detailed_error_info))
+        super().__init__(
+            "\n\t".join(self.detailed_error_info),
+            hint=self._default_hint)
 
 
 class NotFound(NonRetryableHttpException):
     """A particular url was not found. (http status 404)."""
+
+    _default_hint = (
+        "Verify the resource UID exists in the target "
+        "project/dataset. UIDs are case-sensitive."
+    )
 
     @staticmethod
     def build(*, message: str, method: str, path: str, params: dict = {}):
@@ -145,19 +154,29 @@ class NotFound(NonRetryableHttpException):
 class Unauthorized(NonRetryableHttpException):
     """The user is unauthorized to make this api call. (http status 401)."""
 
-    pass
+    _default_hint = (
+        "Check that your API key is valid and has access "
+        "to this resource. Regenerate your key if expired."
+    )
 
 
 class BadRequest(NonRetryableHttpException):
     """The user is trying to perform an invalid operation. (http status 400)."""
 
-    pass
+    _default_hint = (
+        "Check the validation errors above for specific "
+        "field issues."
+    )
 
 
 class WorkflowConflictException(NonRetryableHttpException):
     """There is a conflict preventing the workflow from being executed. (http status 409)."""
 
-    pass
+    _default_hint = (
+        "Another operation may be in progress on this "
+        "resource. Wait and retry, or check for "
+        "concurrent modifications."
+    )
 
 
 # A 409 is a Conflict, and can be raised anywhere a conflict occurs, not just in a workflow.
