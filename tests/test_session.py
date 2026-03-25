@@ -5,6 +5,8 @@ from citrine.exceptions import (
     BadRequest,
     Conflict,
     NonRetryableException,
+    NotFound,
+    Unauthorized,
     WorkflowNotReadyException,
     RetryableException)
 
@@ -159,6 +161,54 @@ def test_status_code_400(session: Session):
             session.get_resource('/foo')
         assert einfo.value.api_error.validation_errors[0].failure_message \
                == resp_json['validation_errors'][0]['failure_message']
+
+
+def test_validation_errors_property(session: Session):
+    with requests_mock.Mocker() as m:
+        resp_json = {
+            'code': 400,
+            'message': 'validation failed',
+            'validation_errors': [
+                {
+                    'failure_message': 'field required',
+                    'failure_id': 'missing_field',
+                },
+            ],
+        }
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              status_code=400, json=resp_json)
+        with pytest.raises(BadRequest) as einfo:
+            session.get_resource('/foo')
+        assert len(einfo.value.validation_errors) == 1
+        assert einfo.value.validation_errors[0].failure_id \
+            == 'missing_field'
+
+
+def test_has_failure_method(session: Session):
+    with requests_mock.Mocker() as m:
+        resp_json = {
+            'code': 400,
+            'message': 'bad',
+            'validation_errors': [
+                {'failure_id': 'field_x_required'},
+            ],
+        }
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              status_code=400, json=resp_json)
+        with pytest.raises(BadRequest) as einfo:
+            session.get_resource('/foo')
+        assert einfo.value.has_failure('field_x_required')
+        assert not einfo.value.has_failure('nonexistent')
+
+
+def test_validation_errors_empty_without_api_error(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/foo',
+              status_code=404)
+        with pytest.raises(NotFound) as einfo:
+            session.get_resource('/foo')
+        assert einfo.value.validation_errors == []
+        assert not einfo.value.has_failure('anything')
 
 
 def test_status_code_401(session: Session):
