@@ -95,9 +95,13 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
                   base_class: typing.Optional[type] = None) -> SerializedType:
         if not isinstance(value, self.underlying_types):
             base_name = self._error_source(base_class)
+            value_repr = repr(value)
+            if len(value_repr) > 100:
+                value_repr = value_repr[:100] + "..."
             raise ValueError(
-                f'{type(value)} {value} is not one of valid types: '
-                f'{self.underlying_types}{base_name}'
+                f'{type(value).__name__} is not one of valid '
+                f'types: {self.underlying_types}{base_name}. '
+                f'Value: {value_repr}'
             )
         return self._serialize(value)
 
@@ -107,9 +111,13 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             if isinstance(value, self.underlying_types):
                 return value  # Don't worry if it was already deserialized
             base_name = self._error_source(base_class)
+            value_repr = repr(value)
+            if len(value_repr) > 100:
+                value_repr = value_repr[:100] + "..."
             raise ValueError(
-                f'{type(value)} {value} is not one of valid types: '
-                f'{self.serialized_types}{base_name}'
+                f'{type(value).__name__} is not one of valid '
+                f'types: {self.serialized_types}{base_name}. '
+                f'Value: {value_repr}'
             )
         return self._deserialize(value)
 
@@ -129,9 +137,16 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             next_value = value.get(field)
             if next_value is None:
                 if self.default is None and not self.optional:
-                    msg = "Unable to deserialize {} into {}, missing a required field: {}".format(
-                        data, self.underlying_types, field)
-                    raise ValueError(msg)
+                    data_preview = str(data)
+                    if len(data_preview) > 200:
+                        data_preview = data_preview[:200] + "..."
+                    raise ValueError(
+                        "Unable to deserialize into {}: "
+                        "missing required field '{}'. "
+                        "Data: {}".format(
+                            self.underlying_types,
+                            field, data_preview)
+                    )
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
                 # or if its value is null.
                 # Use the default value and stop traversing, even if we have not yet reached

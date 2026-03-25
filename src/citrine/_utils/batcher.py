@@ -36,7 +36,11 @@ class BatchByType(Batcher):
         for obj in objects:
             if obj.to_link() in seen:  # Repeat in the iterable; don't add it to the batch
                 if seen[obj.to_link()] != obj:  # verify that it's a replicate
-                    raise ValueError(f"Colliding objects for {obj.to_link()}")
+                    raise ValueError(
+                        "Colliding objects for {}: two different "
+                        "objects share the same identifier. Ensure "
+                        "each object has a unique UID.".format(
+                            obj.to_link()))
             else:
                 by_type[obj.typ].append(obj)
                 for scope in obj.uids:
@@ -80,7 +84,16 @@ class BatchByDependency(Batcher):
                 local_set = {index.get(x, x) for x in depends[obj] if index.get(x, x) in obj_set}
                 full_set = set(local_set)
                 if len(full_set) > batch_size:
-                    raise ValueError(f"Object {obj.name} has more than {batch_size} dependencies.")
+                    sample = [getattr(d, 'name', str(d))
+                              for d in list(full_set)[:10]]
+                    raise ValueError(
+                        "Object '{}' has {} dependencies, "
+                        "exceeding batch_size={}. First {}: {}. "
+                        "Increase batch_size or simplify the "
+                        "dependency graph.".format(
+                            obj.name, len(full_set),
+                            batch_size, len(sample), sample)
+                    )
 
                 for subobj in local_set:
                     full_set.update(depends[subobj])
