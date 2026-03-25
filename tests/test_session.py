@@ -5,6 +5,7 @@ from citrine.exceptions import (
     BadRequest,
     Conflict,
     NonRetryableException,
+    NotFound,
     WorkflowNotReadyException,
     RetryableException)
 
@@ -111,6 +112,41 @@ def test_get_not_found(session: Session):
         m.get('http://citrine-testing.fake/api/v1/foo', status_code=404)
         with pytest.raises(NotFound):
             session.get_resource('/foo')
+
+
+def test_request_id_captured_in_http_exception(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get(
+            'http://citrine-testing.fake/api/v1/foo',
+            status_code=404,
+            headers={'x-request-id': 'test-req-123'}
+        )
+        with pytest.raises(NotFound) as exc_info:
+            session.get_resource('/foo')
+        assert exc_info.value.request_id == 'test-req-123'
+        assert 'test-req-123' in str(exc_info.value)
+
+
+def test_method_stored_on_http_exception(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get(
+            'http://citrine-testing.fake/api/v1/foo',
+            status_code=404
+        )
+        with pytest.raises(NotFound) as exc_info:
+            session.get_resource('/foo')
+        assert exc_info.value.method == 'GET'
+
+
+def test_request_id_none_when_header_absent(session: Session):
+    with requests_mock.Mocker() as m:
+        m.get(
+            'http://citrine-testing.fake/api/v1/foo',
+            status_code=404
+        )
+        with pytest.raises(NotFound) as exc_info:
+            session.get_resource('/foo')
+        assert exc_info.value.request_id is None
 
 
 def test_status_code_409(session: Session):
