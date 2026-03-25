@@ -37,19 +37,29 @@ class NonRetryableHttpException(NonRetryableException):
     def __init__(self, path: str, response: Optional[Response] = None):
         self.url = path
         self.detailed_error_info = []
+        self.request_id = None
+        self.method = "unknown"
         if response is not None:
             self.response_text = response.text
             self.code = response.status_code
 
-            method = "unknown"
             if response.request is not None:
-                method = response.request.method
+                self.method = response.request.method
+
+            headers = getattr(response, 'headers', {}) or {}
+            self.request_id = (
+                headers.get('x-request-id')
+                or headers.get('x-correlation-id')
+            )
 
             self.detailed_error_info.append(
                 "{} (code: {}) returned from {} request to path: '{}'".format(
-                    response.reason, self.code, method, path
+                    response.reason, self.code, self.method, path
                 )
             )
+            if self.request_id:
+                self.detailed_error_info.append(
+                    "Request ID: {}".format(self.request_id))
             try:
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
