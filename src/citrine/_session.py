@@ -171,13 +171,13 @@ class Session(requests.Session):
                 self._refresh_access_token()
                 response = self._request_with_retry(method, uri, **kwargs)
         except AttributeError:
-            # Catch AttributeErrors and log response
-            # The 401 status will be handled further down
-            logger.error("Failed to decode json from response: {}".format(response.text))
+            # json() returned non-dict (e.g. list/string); 401 handled below
+            logger.debug("Response JSON is not a dict (status %s): %s",
+                         response.status_code, response.text[:200])
         except ValueError:
-            # Ignore ValueErrors thrown by attempting to decode json bodies. This
-            # might occur if we get a 401 response without a JSON body
-            pass
+            # Response has no JSON body (common for 401); 401 handled below
+            logger.debug("Response with status %s has no JSON body",
+                         response.status_code)
 
         if 200 <= response.status_code <= 299:
             logger.info('%s %s %s', response.status_code, method, path)
@@ -258,11 +258,11 @@ class Session(requests.Session):
                     lacked the required 'application/json' Content-Type in the header.""")
 
         except JSONDecodeError as err:
-            logger.info('Response at path %s with status code %s failed json parsing with'
-                        ' exception %s. Returning empty value.',
-                        path,
-                        response.status_code,
-                        err.msg)
+            logger.warning(
+                'Response at path %s with status code %s failed JSON '
+                'parsing (%s). Returning empty dict — downstream code '
+                'may behave unexpectedly.',
+                path, response.status_code, err.msg)
 
         return extracted_response
 
