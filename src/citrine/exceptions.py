@@ -120,7 +120,7 @@ class NotFound(NonRetryableHttpException):
                 status_code=404,
                 request=SimpleNamespace(method=method.upper()),
                 reason="Not Found",
-                json=lambda self: {"code": 404, "message": message, "validation_errors": []}
+                json=lambda: {"code": 404, "message": message, "validation_errors": []}
             )
         )
 

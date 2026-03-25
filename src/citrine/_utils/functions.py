@@ -32,8 +32,10 @@ def validate_type(data_dict: dict, type_name: str) -> dict:
     data_dict_copy = data_dict.copy()
     if 'type' in data_dict_copy:
         if data_dict_copy['type'] != type_name:
-            raise Exception(
-                "Object type must be {}, but was instead {}.".format(type_name, data_dict['type']))
+            raise TypeError(
+                "Object type must be '{}', but was '{}'. "
+                "Verify you are passing the correct object type."
+                .format(type_name, data_dict['type']))
     else:
         data_dict_copy['type'] = type_name
 
@@ -258,7 +260,7 @@ def migrate_deprecated_argument(
         if new_arg is None:
             return old_arg
         else:
-            raise ValueError(f"Cannot specify both \'{new_arg_name}\' and \'{new_arg_name}\'")
+            raise ValueError(f"Cannot specify both \'{new_arg_name}\' and \'{old_arg_name}\'")
     elif new_arg is None:
         raise ValueError(f"Please specify \'{new_arg_name}\'")
     return new_arg
