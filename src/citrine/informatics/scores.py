@@ -1,4 +1,20 @@
-"""Tools for working with Scores."""
+"""Scores rank candidate materials during design executions.
+
+A score combines one or more :class:`~citrine.informatics.objectives.Objective`
+instances with optional :class:`~citrine.informatics.constraints.Constraint`
+instances. The platform evaluates each candidate against the score and
+returns candidates ranked from best to worst.
+
+Three score types are available:
+
+* :class:`LIScore` (Likelihood of Improvement) — multi-objective
+  sequential optimization. Requires baseline values.
+* :class:`EIScore` (Expected Improvement) — single-objective
+  sequential optimization. Requires baseline values.
+* :class:`EVScore` (Expected Value) — multi-objective sum of
+  predicted values. No baselines needed.
+
+"""
 from typing import List, Optional
 
 from citrine._serialization import properties
@@ -11,9 +27,12 @@ __all__ = ['Score', 'LIScore', 'EIScore', 'EVScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """A Score is used to rank materials according to objectives and constraints.
+    """Base class for scoring strategies used in design executions.
 
-    Abstract type that returns the proper type given a serialized dict.
+    A Score ranks candidate materials by combining objectives
+    (what to optimize) with constraints (what limits to respect).
+    Use one of the concrete subclasses: :class:`LIScore`,
+    :class:`EIScore`, or :class:`EVScore`.
 
     """
 
@@ -31,18 +50,27 @@ class Score(PolymorphicSerializable['Score']):
 
 
 class LIScore(Serializable['LIScore'], Score):
-    """Evaluates the likelihood of scoring better than some baselines for given objectives.
+    """Likelihood of Improvement — multi-objective sequential optimization.
+
+    Ranks candidates by the probability that they simultaneously
+    improve on *every* baseline. Best for iterative experimental
+    campaigns where you want to beat your current best results
+    across all objectives at once.
 
     Parameters
     ----------
-    objectives: list[Objective]
-        objectives (e.g., maximize, minimize, tune, etc.)
-        If multiple objectives are specified then this score evaluates the likelihood of
-        simultaneously exceeding all objectives.
-    baselines: list[float]
-        best-so-far values for the various objectives (there must be one for each objective)
-    constraints: list[Constraint]
-        constraints limiting the allowed values that material instances can have
+    objectives : list[Objective]
+        One or more objectives (e.g. ScalarMaxObjective,
+        ScalarMinObjective). Multiple objectives are treated
+        as a joint requirement: the score is the probability
+        of exceeding *all* baselines simultaneously.
+    baselines : list[float]
+        Current best-known value for each objective, in the
+        same order as ``objectives``. One baseline per
+        objective is required.
+    constraints : list[Constraint], optional
+        Constraints that candidates must satisfy. Candidates
+        violating any constraint receive a score of zero.
 
     """
 
@@ -66,18 +94,27 @@ class LIScore(Serializable['LIScore'], Score):
 
 
 class EIScore(Serializable['EIScore'], Score):
-    """
-    Evaluates the expected magnitude of improvement beyond baselines for a given objective.
+    """Expected Improvement — single-objective sequential optimization.
+
+    Ranks candidates by the expected magnitude of improvement
+    beyond the baseline. Unlike LIScore, this considers *how
+    much* better a candidate is, not just the probability of
+    being better. Best for single-objective campaigns where
+    you want the largest possible gains.
 
     Parameters
     ----------
-    objectives: list[Objective]
-        objectives (e.g., maximize, minimize, tune, etc.)
-        EIScore does not support more than 1 objective at this time.
-    baselines: list[float]
-        best-so-far values for the various objectives (there must be one for each objective)
-    constraints: list[Constraint]
-        constraints limiting the allowed values that material instances can have
+    objectives : list[Objective]
+        Exactly one objective. EIScore does not support
+        multiple objectives; use LIScore for multi-objective
+        optimization.
+    baselines : list[float]
+        Current best-known value for the objective. Must
+        contain exactly one value matching the single
+        objective.
+    constraints : list[Constraint], optional
+        Constraints that candidates must satisfy. Candidates
+        violating any constraint receive a score of zero.
 
     """
 
@@ -101,18 +138,26 @@ class EIScore(Serializable['EIScore'], Score):
 
 
 class EVScore(Serializable['EVScore'], Score):
-    """
-    Evaluates the expected value for given objectives.
+    """Expected Value — multi-objective optimization without baselines.
+
+    Ranks candidates by the sum of predicted values across all
+    objectives. Unlike LIScore and EIScore, no baselines are
+    needed. Useful as a starting point when you have no
+    existing experimental results.
+
+    When multiple objectives are specified, their individual
+    scores are summed with equal weight. The relative
+    weighting cannot be controlled directly; instead, adjust
+    the descriptor scales or units to influence the balance.
 
     Parameters
     ----------
-    objectives: list[Objective]
-        objectives (e.g., maximize, minimize, tune, etc.)
-        If multiple objectives are specified, their scores are summed together. This allows
-        for simultaneous optimization of multiple objectives, although the weighting of the
-        various objectives cannot be directly specified.
-    constraints: list[Constraint]
-        constraints limiting the allowed values that material instances can have
+    objectives : list[Objective]
+        One or more objectives. Scores are summed across all
+        objectives.
+    constraints : list[Constraint], optional
+        Constraints that candidates must satisfy. Candidates
+        violating any constraint receive a score of zero.
 
     """
 
