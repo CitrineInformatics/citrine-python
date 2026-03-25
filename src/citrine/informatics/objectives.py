@@ -1,4 +1,10 @@
-"""Tools for working with Objectives."""
+"""Objectives define optimization goals for design executions.
+
+An Objective specifies what property to optimize and in which
+direction. Objectives are passed to :class:`~citrine.informatics.scores.Score`
+instances to define the optimization strategy.
+
+"""
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -8,10 +14,12 @@ __all__ = ['Objective', 'ScalarMaxObjective', 'ScalarMinObjective']
 
 
 class Objective(PolymorphicSerializable['Objective']):
-    """
-    An Objective describes a goal for a score associated with a single descriptor.
+    """Base class for optimization objectives.
 
-    Abstract type that returns the proper type given a serialized dict.
+    An Objective ties a scoring direction (maximize or minimize)
+    to a specific descriptor key. Use :class:`ScalarMaxObjective`
+    to maximize a property or :class:`ScalarMinObjective` to
+    minimize it.
 
     """
 
@@ -27,13 +35,17 @@ class Objective(PolymorphicSerializable['Objective']):
 
 
 class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
-    """
-    Simple single-response maximization objective with optional bounds.
+    """Maximize a real-valued material property.
+
+    The design execution will prefer candidates with higher
+    predicted values for the specified descriptor.
 
     Parameters
     ----------
-    descriptor_key: str
-        the key from which to pull the values
+    descriptor_key : str
+        The key of the descriptor to maximize. Must match a
+        descriptor key defined in the predictor's outputs
+        (e.g. ``'Tensile Strength'``).
 
     """
 
@@ -48,13 +60,17 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
 
 
 class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
-    """
-    Simple single-response minimization objective with optional bounds.
+    """Minimize a real-valued material property.
+
+    The design execution will prefer candidates with lower
+    predicted values for the specified descriptor.
 
     Parameters
     ----------
-    descriptor_key: str
-        the key from which to pull the values
+    descriptor_key : str
+        The key of the descriptor to minimize. Must match a
+        descriptor key defined in the predictor's outputs
+        (e.g. ``'Cost'``).
 
     """
 

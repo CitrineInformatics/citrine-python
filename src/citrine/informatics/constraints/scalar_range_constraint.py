@@ -8,20 +8,27 @@ __all__ = ['ScalarRangeConstraint']
 
 
 class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
-    """Represents an inequality constraint on a real-valued material attribute.
+    """Constrain a real-valued property to a numeric range.
+
+    Candidates whose predicted value for the specified
+    descriptor falls outside the range receive a score of
+    zero in the design execution.
 
     Parameters
     ----------
-    descriptor_key: str
-        the key corresponding to a descriptor
-    lower_bound: float
-        the minimum value in the range
-    upper_bound: float
-        the maximum value in the range
-    lower_inclusive: bool
-        if True, will include the lower bound value in the range (default: true)
-    upper_inclusive: bool
-        if True, will include the max value in the range (default: true)
+    descriptor_key : str
+        The key of the descriptor to constrain. Must match
+        a descriptor key defined in the predictor.
+    lower_bound : float, optional
+        Minimum allowed value. If omitted, no lower limit.
+    upper_bound : float, optional
+        Maximum allowed value. If omitted, no upper limit.
+    lower_inclusive : bool, optional
+        Whether the lower bound is inclusive (``>=``) or
+        exclusive (``>``). Default: ``True`` (inclusive).
+    upper_inclusive : bool, optional
+        Whether the upper bound is inclusive (``<=``) or
+        exclusive (``<``). Default: ``True`` (inclusive).
 
     """
 
