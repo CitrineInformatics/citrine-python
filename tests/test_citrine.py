@@ -1,4 +1,5 @@
 import platform
+import warnings
 from datetime import datetime, timezone
 
 import jwt
@@ -6,6 +7,7 @@ import pytest
 import requests_mock
 
 from citrine import Citrine
+from citrine._utils.functions import migrate_deprecated_argument
 
 
 def refresh_token(expiration: datetime = None) -> dict:
@@ -103,3 +105,20 @@ def test_citrine_user_agent():
             # enforce them to be ints.  It's common to see strings used
             # as the patch version
             assert len(product_version.split('.')) == 3
+
+
+def test_citrine_deprecation_warnings_visible_by_default():
+    import importlib
+
+    import citrine
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.resetwarnings()
+        # Mirror Python's default filter: DeprecationWarning hidden outside __main__.
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+        importlib.reload(citrine)
+
+        migrate_deprecated_argument(None, "new", "value", "old")
+
+    deprecations = [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert any("'old' is deprecated" in str(w.message) for w in deprecations)
