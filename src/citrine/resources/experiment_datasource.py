@@ -5,6 +5,8 @@ from functools import partial
 from io import StringIO
 from uuid import UUID
 
+from deprecation import deprecated
+
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -32,6 +34,8 @@ class CandidateExperimentSnapshot(Serializable['CandidateExperimentSnapshot']):
                                    'overrides')
     """:dict[str, ExperimentValue]: dictionary of candidate material variable overrides"""
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, *args, **kwargs):
         """Candidate experiment snapshots are not directly instantiated by the user."""
         pass  # pragma: no cover
@@ -58,6 +62,8 @@ class ExperimentDataSource(Serializable['ExperimentDataSource']):
     create_time = properties.Datetime('metadata.created.time', serializable=False)
     """:datetime: date and time at which this data source was created"""
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, *args, **kwargs):
         """Experiment data sources are not directly instantiated by the user."""
         pass  # pragma: no cover
@@ -93,6 +99,10 @@ class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
     _resource = ExperimentDataSource
     _collection_key = 'response'
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates on the platform. "
+                        "Alternatively, you may convert the candidate into a collection of GEMD "
+                        "objects manually.")
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session

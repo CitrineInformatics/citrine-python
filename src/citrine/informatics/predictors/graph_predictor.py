@@ -48,8 +48,6 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
     description = properties.Optional(properties.String(), 'data.description')
     predictors = properties.List(properties.Object(PredictorNode), 'data.instance.predictors')
 
-    # the default seems to be defined in instances, not the class itself
-    # this is tested in test_graph_default_training_data
     training_data = properties.List(
         properties.Object(DataSource), 'data.instance.training_data', default=[]
     )

@@ -23,7 +23,8 @@ def session():
 
 @pytest.fixture
 def collection(session) -> ExperimentDataSourceCollection:
-    return ExperimentDataSourceCollection(uuid.uuid4(), session)
+    with pytest.deprecated_call():
+        return ExperimentDataSourceCollection(uuid.uuid4(), session)
 
 
 @pytest.fixture
