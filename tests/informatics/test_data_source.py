@@ -45,11 +45,6 @@ def test_invalid_eq(data_source):
     assert not data_source == other
 
 
-def test_invalid_eq(deprecated_data_source):
-    other = None
-    assert not deprecated_data_source == other
-
-
 def test_invalid_deser():
     with pytest.raises(ValueError):
         DataSource.build({})

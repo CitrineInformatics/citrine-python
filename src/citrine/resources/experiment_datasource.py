@@ -92,7 +92,7 @@ class ExperimentDataSource(Serializable['ExperimentDataSource']):
 
 
 class ExperimentDataSourceCollection(Collection[ExperimentDataSource]):
-    """Represents the collection of all experiment data sources associated with a project."""
+    """[DEPRECATED] The collection of all experiment data sources associated with a project."""
 
     _path_template = 'projects/{project_id}/candidate-experiment-datasources'
     _individual_key = None
