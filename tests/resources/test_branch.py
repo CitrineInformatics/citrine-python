@@ -537,7 +537,9 @@ def test_experiment_datasource(session, collection):
     session.set_response({'response': [erds]})
 
     # When / Then
-    assert branch.experiment_datasource is not None
+    with pytest.deprecated_call():
+        assert branch.experiment_datasource is not None
+
     assert session.calls == [
         FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
     ]
@@ -550,7 +552,9 @@ def test_no_experiment_datasource(session, collection):
     session.set_response({'response': []})
 
     # When / Then
-    assert branch.experiment_datasource is None
+    with pytest.deprecated_call():
+        assert branch.experiment_datasource is None
+
     assert session.calls == [
         FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
     ]

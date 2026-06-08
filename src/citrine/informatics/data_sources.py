@@ -2,6 +2,8 @@
 from abc import abstractmethod
 from uuid import UUID
 
+from deprecation import deprecated
+
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -115,7 +117,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
 
 class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):
-    """A reference to a data source based on an experiment result hosted on the data platform.
+    """[DEPRECATED] A reference to a data source based on an experiment result on the platform.
 
     Parameters
     ----------
@@ -129,6 +131,10 @@ class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSourc
 
     _data_source_type = "experiments"
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates on the platform. "
+                        "Alternatively, you may convert the candidate into a collection of GEMD "
+                        "objects manually.")
     def __init__(self, *, datasource_id: UUID):
         self.datasource_id: UUID = datasource_id
 

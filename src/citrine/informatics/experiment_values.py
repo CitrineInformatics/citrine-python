@@ -1,3 +1,5 @@
+from deprecation import deprecated
+
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
@@ -14,10 +16,17 @@ __all__ = [
 
 
 class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
-    """An container for experiment values.
+    """[DEPRECATED] An container for experiment values.
 
     Abstract type that returns the proper type given a serialized dict.
     """
+
+    @classmethod
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
+    def build(cls, data: dict) -> 'ExperimentValue':
+        """Build the underlying type."""
+        return super().build(data)
 
     @classmethod
     def get_type(cls, data) -> type[Serializable]:
@@ -67,62 +76,74 @@ class ExperimentValue(PolymorphicSerializable['ExperimentValue']):
 
 
 class RealExperimentValue(Serializable['RealExperimentValue'], ExperimentValue):
-    """A floating point experiment result."""
+    """[DEPRECATED] A floating point experiment result."""
 
     value = properties.Float('value')
     typ = properties.String('type', default='RealValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: float):
         self.value = value
 
 
 class IntegerExperimentValue(Serializable['IntegerExperimentValue'], ExperimentValue):
-    """An integer value experiment result."""
+    """[DEPRECATED] An integer value experiment result."""
 
     value = properties.Integer('value')
     typ = properties.String('type', default='IntegerValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: int):
         self.value = value
 
 
 class CategoricalExperimentValue(Serializable['CategoricalExperimentValue'], ExperimentValue):
-    """An experiment result with a categorical value."""
+    """[DEPRECATED] An experiment result with a categorical value."""
 
     value = properties.String('value')
     typ = properties.String('type', default='CategoricalValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: str):
         self.value = value
 
 
 class MixtureExperimentValue(Serializable['MixtureExperimentValue'], ExperimentValue):
-    """An experiment result mapping ingredients and labels to real values."""
+    """[DEPRECATED] An experiment result mapping ingredients and labels to real values."""
 
     value = properties.Mapping(properties.String, properties.Float, 'value')
     typ = properties.String('type', default='MixtureValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: dict[str, float]):
         self.value = value
 
 
 class ChemicalFormulaExperimentValue(Serializable['ChemicalFormulaExperimentValue'],
                                      ExperimentValue):
-    """Experiment value for a chemical formula."""
+    """[DEPRECATED] Experiment value for a chemical formula."""
 
     value = properties.String('value')
     typ = properties.String('type', default='InorganicValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: str):
         self.value = value
 
 
 class MolecularStructureExperimentValue(Serializable['MolecularStructureExperimentValue'],
                                         ExperimentValue):
-    """Experiment value for a molecular structure."""
+    """[DEPRECATED] Experiment value for a molecular structure."""
 
     value = properties.String('value')
     typ = properties.String('type', default='OrganicValue', deserializable=False)
 
+    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
+                details="Replaced by creating materials from candidates.")
     def __init__(self, value: str):
         self.value = value

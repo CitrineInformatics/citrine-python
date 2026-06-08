@@ -5,7 +5,7 @@ import uuid
 from copy import deepcopy
 
 from citrine.exceptions import BadRequest, Conflict, ModuleRegistrationFailedException, NotFound
-from citrine.informatics.data_sources import GemTableDataSource
+from citrine.informatics.data_sources import ExperimentDataSourceRef, GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
     AutoMLPredictor,
@@ -754,3 +754,20 @@ def test_rename_description_only(valid_graph_predictor_data):
     versions_path = _PredictorVersionCollection._path_template.format(project_id=pc.project_id, uid=pred_id)
     expected_payload = {"name": None, "description": new_description}
     assert session.calls == [FakeCall(method="PUT", path=f"{versions_path}/{pred_version}/rename", json=expected_payload)]
+
+
+def test_get_predictor_with_experiment_data_source_deprecated(valid_graph_predictor_data):
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.deprecated_call():
+        erds = ExperimentDataSourceRef(datasource_id=uuid.uuid4())
+    entity = deepcopy(valid_graph_predictor_data)
+    entity["data"]["instance"]["training_data"] = [erds.dump()]
+    
+    session.set_responses(entity)
+
+    # When
+    with pytest.deprecated_call():
+        pc.get(uuid.uuid4())

@@ -12,21 +12,24 @@ from citrine.informatics.experiment_values import ExperimentValue, \
 
 
 @pytest.fixture(params=[
-    CategoricalExperimentValue("categorical"),
-    ChemicalFormulaExperimentValue("(Ca)1(O)3(Si)1"),
-    IntegerExperimentValue(7),
-    MixtureExperimentValue({"ingredient1": 0.3, "ingredient2": 0.7}),
-    MolecularStructureExperimentValue("CC1(CC(CC(N1)(C)C)NCCCCCCNC2CC(NC(C2)(C)C)(C)C)C.C1COCCN1C2=NC(=NC(=N2)Cl)Cl"),
-    RealExperimentValue(3.5)
+    (CategoricalExperimentValue, ("categorical", )),
+    (ChemicalFormulaExperimentValue, ("(Ca)1(O)3(Si)1",)),
+    (IntegerExperimentValue, (7,)),
+    (MixtureExperimentValue, ({"ingredient1": 0.3, "ingredient2": 0.7},)),
+    (MolecularStructureExperimentValue, ("CC1(CC(CC(N1)(C)C)NCCCCCCNC2CC(NC(C2)(C)C)(C)C)C.C1COCCN1C2=NC(=NC(=N2)Cl)Cl",)),
+    (RealExperimentValue, (3.5,))
 ])
 def experiment_value(request):
-    return request.param
+    cls, args = request.param
+    with pytest.deprecated_call():
+        return cls(*args)
 
 
 def test_deser_from_parent(experiment_value):
     # Serialize and deserialize the experiment values, making sure they are round-trip serializable
     data = experiment_value.dump()
-    experiment_value_deserialized = ExperimentValue.build(data)
+    with pytest.deprecated_call():
+        experiment_value_deserialized = ExperimentValue.build(data)
     assert experiment_value == experiment_value_deserialized
 
 

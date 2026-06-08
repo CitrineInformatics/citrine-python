@@ -1,4 +1,5 @@
 """Resources that represent collections of predictors."""
+import warnings
 from collections.abc import Iterable
 from functools import partial
 from typing import Any
@@ -11,7 +12,7 @@ from citrine._rest.resource import Resource
 from citrine._rest.paginator import Paginator
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.informatics.data_sources import DataSource
+from citrine.informatics.data_sources import DataSource, ExperimentDataSourceRef
 from citrine.informatics.design_candidate import HierarchicalDesignMaterial
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.status_detail import StatusDetail
@@ -107,6 +108,16 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
         }
         return partial(self._fetch_page, **fetcher_params)
 
+    def _check_data_sources(self, predictor: GraphPredictor):
+        for data_source in predictor.training_data:
+            print(data_source)
+            if isinstance(data_source, ExperimentDataSourceRef):
+                warnings.warn("This predictor contains an experiment result, which is being "
+                              "replaced by creating materials from candidates on the platform. "
+                              "Alternatively, you may convert the candidate into a collection of "
+                              "GEMD objects manually.",
+                              DeprecationWarning)
+
     def build(self, data: dict) -> GraphPredictor:
         """Build an individual Predictor."""
         predictor: GraphPredictor = GraphPredictor.build(data)
@@ -120,7 +131,9 @@ class _PredictorVersionCollection(Collection[GraphPredictor]):
             version: int | str = MOST_RECENT_VER) -> GraphPredictor:
         path = self._construct_path(uid, version)
         entity = self.session.get_resource(path, version=self._api_version)
-        return self.build(entity)
+        predictor = self.build(entity)
+        self._check_data_sources(predictor)
+        return predictor
 
     def get_featurized_training_data(
             self,
