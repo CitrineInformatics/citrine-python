@@ -35,6 +35,7 @@ def formulation_design_space() -> FormulationDesignSpace:
         formulation_descriptor=desc,
         ingredients={"dog", "cat", "bird"},
         labels={"canine": {"dog"}, "feline": {"cat"}},
+        untested_ingredients={"fish", "hamster"},
         constraints={
             IngredientCountConstraint(formulation_descriptor=desc, min=1, max=2)
         }
@@ -77,6 +78,29 @@ def material_node_definition(formulation_design_space) -> MaterialNodeDefinition
         attributes=[temp_dimension, color_dimension],
         display_name="Special Material"
     )
+
+
+def test_formulation_initialization(formulation_design_space):
+    """Make sure the correct fields go to the correct places."""
+    assert formulation_design_space.name == 'Formulation DS'
+    assert formulation_design_space.ingredients == {"dog", "cat", "bird"}
+    assert formulation_design_space.untested_ingredients == {"fish", "hamster"}
+    # The untested split survives serialization.
+    assert set(formulation_design_space.dump()["untested_ingredients"]) \
+        == {"fish", "hamster"}
+
+
+def test_formulation_untested_ingredients_default():
+    """untested_ingredients is optional and defaults to None."""
+    desc = FormulationDescriptor.hierarchical()
+    ds = FormulationDesignSpace(
+        name="No untested",
+        description="Does formulations",
+        formulation_descriptor=desc,
+        ingredients={"dog"},
+        constraints={IngredientCountConstraint(formulation_descriptor=desc, min=1, max=1)}
+    )
+    assert ds.untested_ingredients is None
 
 
 def test_product_initialization(product_design_space):

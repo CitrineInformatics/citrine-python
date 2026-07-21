@@ -56,6 +56,7 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
         assert design_space.formulation_descriptor.key == expected_descriptor.key
         assert design_space.ingredients == {'foo'}
         assert design_space.labels == {'bar': {'foo'}}
+        assert design_space.untested_ingredients == {'qux'}
         assert len(design_space.constraints) == 1
         actual_constraint: IngredientCountConstraint = next(iter(design_space.constraints))
         assert actual_constraint.formulation_descriptor == expected_descriptor
@@ -67,6 +68,18 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
 def test_formulation_serialization(valid_formulation_design_space_data):
     """Ensure that a serialized FormulationDesignSpace looks sane."""
     design_space_serialization_check(valid_formulation_design_space_data, FormulationDesignSpace)
+
+
+def test_formulation_without_untested_ingredients(valid_formulation_design_space_data):
+    """A payload lacking untested_ingredients still deserializes (field is optional).
+
+    Pins backward compatibility with design spaces that predate the field: the
+    field must stay optional, so older payloads without the key don't fail to build.
+    """
+    data = deepcopy(valid_formulation_design_space_data)
+    del data['untested_ingredients']
+    design_space: FormulationDesignSpace = FormulationDesignSpace.build(data)
+    assert design_space.untested_ingredients is None
 
 
 def test_invalid_design_subspace_type(invalid_design_subspace_data):
