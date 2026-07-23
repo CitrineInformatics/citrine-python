@@ -86,6 +86,7 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.formulation_descriptor.key == FormulationKey.HIERARCHICAL.value
     assert design_space.ingredients == {'foo'}
     assert design_space.labels == {'bar': {'foo'}}
+    assert design_space.untested_ingredients == {'qux'}
     assert len(design_space.constraints) == 1
     assert design_space.resolution == 0.1
 

@@ -60,6 +60,7 @@ def valid_product_design_space_data():
                         formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['foo'],
                         labels={'bar': ['foo']},
+                        untested_ingredients=['qux'],
                         constraints=[],
                         resolution=0.1
                     ),
@@ -70,6 +71,7 @@ def valid_product_design_space_data():
                         formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
                         ingredients=['baz'],
                         labels={},
+                        untested_ingredients=None,
                         constraints=[],
                         resolution=0.1
                     )
@@ -130,6 +132,7 @@ def valid_formulation_design_space_data():
         formulation_descriptor=descriptor.dump(),
         ingredients=['foo'],
         labels={'bar': ['foo']},
+        untested_ingredients=['qux'],
         constraints=[constraint.dump()],
         resolution=0.1
     )

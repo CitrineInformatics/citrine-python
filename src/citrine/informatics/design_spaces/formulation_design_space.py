@@ -30,6 +30,10 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
     labels: Mapping[str, set[str]] | None
         map from a label to each ingredient that should given that label
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
+    untested_ingredients: set[str] | None
+        names of ingredients to explore that are absent from the predictor's training
+        data. This should be a subset of ``ingredients`` and will be empty if there are
+        no novel input materials.
     resolution: float, optional
         Minimum increment used to specify ingredient quantities.
         Default is 0.0001.
@@ -42,6 +46,8 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
         properties.String,
         properties.Set(properties.String)
     ), 'labels')
+    untested_ingredients = properties.Optional(
+        properties.Set(properties.String), 'untested_ingredients')
     constraints = properties.Set(properties.Object(Constraint), 'constraints')
     resolution = properties.Float('resolution')
 
@@ -55,6 +61,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
                  ingredients: set[str],
                  constraints: set[Constraint],
                  labels: Mapping[str, set[str]] | None = None,
+                 untested_ingredients: set[str] | None = None,
                  resolution: float = 0.0001):
         self.name: str = name
         self.description: str = description
@@ -62,6 +69,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
         self.ingredients: set[str] = ingredients
         self.constraints: set[Constraint] = constraints
         self.labels: Mapping[str, set[str]] | None = labels
+        self.untested_ingredients: set[str] | None = untested_ingredients
         self.resolution: float = resolution
 
     def __str__(self):

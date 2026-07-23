@@ -333,6 +333,11 @@ Labels provide a way to map a string to a set of ingredient names.
 For example, salt can be labeled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
 An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.
 
+Every ingredient that can appear in a formulation is listed in ``ingredients``.
+The optional ``untested_ingredients`` set is a subset of ``ingredients``: it names those ingredients that are absent from the predictor's training data.
+Leave ``untested_ingredients`` empty, or omit it, when there are no such novel ingredients.
+When you build the design space with :meth:`~citrine.resources.design_space.DesignSpaceCollection.create_default`, it is populated for you.
+
 Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
 There are three types of constraint that can be specified as part of a formulation design space:
 
