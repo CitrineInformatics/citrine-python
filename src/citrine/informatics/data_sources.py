@@ -2,8 +2,6 @@
 from abc import abstractmethod
 from uuid import UUID
 
-from deprecation import deprecated
-
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
@@ -12,7 +10,6 @@ from citrine.resources.gemtables import GemTable
 __all__ = [
     'DataSource',
     'GemTableDataSource',
-    'ExperimentDataSourceRef',
     'SnapshotDataSource',
 ]
 
@@ -33,7 +30,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
     @classmethod
     def _subclass_list(self) -> list[type[Serializable]]:
-        return [GemTableDataSource, ExperimentDataSourceRef, SnapshotDataSource]
+        return [GemTableDataSource, SnapshotDataSource]
 
     @classmethod
     def get_type(cls, data) -> type[Serializable]:
@@ -114,37 +111,6 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
         """
         return GemTableDataSource(table_id=table.uid, table_version=table.version)
-
-
-class ExperimentDataSourceRef(Serializable['ExperimentDataSourceRef'], DataSource):
-    """[DEPRECATED] A reference to a data source based on an experiment result on the platform.
-
-    Parameters
-    ----------
-    datasource_id: UUID
-        Unique identifier for the Experiment Data Source
-
-    """
-
-    typ = properties.String('type', default='experiments_data_source', deserializable=False)
-    datasource_id = properties.UUID("datasource_id")
-
-    _data_source_type = "experiments"
-
-    @deprecated(deprecated_in="4.1.0", removed_in="5.0.0",
-                details="Replaced by creating materials from candidates on the platform. "
-                        "Alternatively, you may convert the candidate into a collection of GEMD "
-                        "objects manually.")
-    def __init__(self, *, datasource_id: UUID):
-        self.datasource_id: UUID = datasource_id
-
-    @classmethod
-    def _data_source_id_builder(cls, *args) -> DataSource:
-        return ExperimentDataSourceRef(datasource_id=UUID(args[0]))
-
-    def to_data_source_id(self) -> str:
-        """Generate the data_source_id for this DataSource."""
-        return f"{self._data_source_type}::{self.datasource_id}"
 
 
 class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
