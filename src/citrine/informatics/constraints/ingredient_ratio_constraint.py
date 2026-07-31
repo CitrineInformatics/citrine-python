@@ -49,7 +49,7 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
     # The backend provides basis ingredients and basis labels as a dictionary from the key to a
     # multiplier. However, for ingredient ratio constraints, the multiplier in the denominator
     # should always be one, so we can't allow users to enter it. We need to use properties for this
-    # behavior. It also allows us to display deprecation warnings for the coming type change.
+    # behavior.
     _basis_ingredients = properties.Mapping(
         properties.String, properties.Float, 'basis_ingredients', default={})
     _basis_labels = properties.Mapping(
