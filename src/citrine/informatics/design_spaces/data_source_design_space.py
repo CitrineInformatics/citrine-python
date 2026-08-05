@@ -1,6 +1,7 @@
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
+from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.subspace import DesignSubspace
 
 __all__ = ['DataSourceDesignSpace']
@@ -17,10 +18,15 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSubspace):
         the description of the design space
     data_source: DataSource
         the source of data for this design space
+    descriptors: list[Descriptor]
+        the descriptors that the platform derives from the data source. This is
+        populated by the platform and is read-only.
 
     """
 
     data_source = properties.Object(DataSource, 'data_source')
+    descriptors = properties.List(
+        properties.Object(Descriptor), 'descriptors', serializable=False, default=[])
 
     typ = properties.String('type', default='DataSourceDesignSpace', deserializable=False)
 
