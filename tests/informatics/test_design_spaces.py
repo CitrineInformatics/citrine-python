@@ -126,11 +126,15 @@ def test_hierarchical_initialization(hierarchical_design_space):
 
 
 def test_data_source_build(valid_data_source_design_space_dict):
-    ds = DataSourceDesignSpace.build(valid_data_source_design_space_dict)
-    assert ds.name == valid_data_source_design_space_dict["name"]
-    assert ds.description == valid_data_source_design_space_dict["description"]
-    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["data_source"])
+    descriptor = RealDescriptor("x", lower_bound=0, upper_bound=1, units="")
+    data = dict(valid_data_source_design_space_dict, descriptors=[descriptor.dump()])
+    ds = DataSourceDesignSpace.build(data)
+    assert ds.name == data["name"]
+    assert ds.description == data["description"]
+    assert ds.data_source == DataSource.build(data["data_source"])
     assert str(ds) == f"<DataSourceDesignSpace '{ds.name}'>"
+    assert ds.descriptors == [descriptor]
+    assert "descriptors" not in ds.dump()
 
 
 def test_data_source_initialization(valid_data_source_design_space_dict):
@@ -142,3 +146,4 @@ def test_data_source_initialization(valid_data_source_design_space_dict):
     assert ds.name == data["name"]
     assert ds.description == data["description"]
     assert ds.data_source.dump() == data["data_source"]
+    assert ds.descriptors == []
