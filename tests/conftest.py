@@ -813,8 +813,6 @@ def generic_entity():
         "status": "INPROGRESS",
         "status_description": "VALIDATING",
         "status_detail": [{"level": "Info", "msg": "System processing"}],
-        "experimental": False,
-        "experimental_reasons": [],
         "create_time": '2020-04-23T15:46:26Z',
         "update_time": '2020-04-23T15:46:26Z',
         "created_by": user,
