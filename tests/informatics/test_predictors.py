@@ -275,8 +275,6 @@ def test_chemical_featurizer(chemical_featurizer):
     assert chemical_featurizer.features == ["standard"]
     assert chemical_featurizer.excludes == []
     assert chemical_featurizer.powers == [1.0, 2.0]
-    with pytest.warns(DeprecationWarning):
-        assert chemical_featurizer.powers_as_float == [1.0, 2.0]
 
     assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
 
@@ -291,8 +289,6 @@ def test_chemical_featurizer(chemical_featurizer):
     }
     
     chemical_featurizer.powers = [0.5, -1.0]
-    with pytest.warns(DeprecationWarning):
-        assert chemical_featurizer.powers_as_float == [0.5, -1.0]
     assert chemical_featurizer.powers == [0.5, -1.0]
 
 

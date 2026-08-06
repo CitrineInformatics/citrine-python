@@ -287,24 +287,6 @@ def valid_graph_predictor_data_empty():
 
 
 @pytest.fixture
-def valid_deprecated_expression_predictor_data():
-    """Produce valid data used for tests."""
-    from citrine.informatics.descriptors import RealDescriptor
-    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
-    return dict(
-        type='Expression',
-        name='Expression predictor',
-        description='Computes shear modulus from Youngs modulus and Poissons ratio',
-        expression='Y / (2 * (1 + v))',
-        output=shear_modulus.dump(),
-        aliases={
-            'Y': "Property~Young's modulus",
-            'v': "Property~Poisson's ratio",
-        }
-    )
-
-
-@pytest.fixture
 def valid_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
