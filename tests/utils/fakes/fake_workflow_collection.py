@@ -2,7 +2,6 @@ from typing import TypeVar, Union
 from uuid import uuid4, UUID
 
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
 

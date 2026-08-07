@@ -9,7 +9,6 @@ from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import NextBranchVersionRequest, DataVersionUpdate, BranchDataUpdate
 from citrine.resources.branch import Branch, BranchCollection
 from tests.utils.factories import BranchDataFactory, BranchRootDataFactory, \
-    CandidateExperimentSnapshotDataFactory, ExperimentDataSourceDataFactory, \
     BranchDataFieldFactory, BranchMetadataFieldFactory, BranchDataUpdateFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -525,44 +524,3 @@ def test_branch_data_updates_nochange(session, collection, branch_path):
     v2branch = collection.update_data(root_id=branch.root_id, version=branch.version)
 
     assert v2branch is None
-
-
-def test_experiment_datasource(session, collection):
-    # Given
-    erds_path = f'projects/{collection.project_id}/candidate-experiment-datasources'
-
-    erds = ExperimentDataSourceDataFactory()
-
-    branch = collection.build(BranchDataFactory())
-    session.set_response({'response': [erds]})
-
-    # When / Then
-    with pytest.deprecated_call():
-        assert branch.experiment_datasource is not None
-
-    assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
-    ]
-
-
-def test_no_experiment_datasource(session, collection):
-    # Given
-    erds_path = f'projects/{collection.project_id}/candidate-experiment-datasources'
-    branch = collection.build(BranchDataFactory())
-    session.set_response({'response': []})
-
-    # When / Then
-    with pytest.deprecated_call():
-        assert branch.experiment_datasource is None
-
-    assert session.calls == [
-        FakeCall(method='GET', path=erds_path, params={'branch': str(branch.uid), 'version': LATEST_VER, 'per_page': 100, 'page': 1})
-    ]
-
-
-def test_experiment_data_source_no_project_id(session):
-    branch = BranchCollection(None, session).build(BranchDataFactory())
-    with pytest.raises(AttributeError):
-        branch.experiment_datasource
-
-    assert not session.calls

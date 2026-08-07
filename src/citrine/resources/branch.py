@@ -9,8 +9,6 @@ from citrine._session import Session
 from citrine.exceptions import NotFound
 from citrine.resources.data_version_update import BranchDataUpdate, NextBranchVersionRequest
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.experiment_datasource import (ExperimentDataSourceCollection,
-                                                     ExperimentDataSource)
 
 
 LATEST_VER = "latest"  # Refers to the most recently created branch version.
@@ -55,15 +53,6 @@ class Branch(Resource['Branch']):
                                         session=self.session,
                                         branch_root_id=self.root_id,
                                         branch_version=self.version)
-
-    @property
-    def experiment_datasource(self) -> ExperimentDataSource | None:
-        """Return this branch's experiment data source, or None if one doesn't exist."""
-        if getattr(self, 'project_id', None) is None:
-            raise AttributeError('Cannot retrieve datasource without project reference!')
-        erds = ExperimentDataSourceCollection(project_id=self.project_id, session=self.session)
-        branch_erds_iter = erds.list(branch_version_id=self.uid, version=LATEST_VER)
-        return next(branch_erds_iter, None)
 
     def _post_dump(self, data: dict) -> dict:
         # Only the data portion of an entity is sent to the server.
