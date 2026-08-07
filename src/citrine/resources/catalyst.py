@@ -1,16 +1,16 @@
-from citrine.informatics.catalyst.insights import InsightsResponse, InsightsRequest
-from citrine.informatics.catalyst.assistant import AssistantResponse, AssistantRequest
-from citrine.informatics.predictors.graph_predictor import GraphPredictor
-from citrine.resources.user import UserCollection
 from citrine._session import Session
 from citrine._utils.functions import resource_path
+from citrine.informatics.catalyst.assistant import AssistantRequest, AssistantResponse
+from citrine.informatics.catalyst.insights import InsightsRequest, InsightsResponse
+from citrine.informatics.predictors.graph_predictor import GraphPredictor
+from citrine.resources.user import UserCollection
 
 
 class CatalystResource:
     """Encapsulates th ability to invoke Catalyst."""
 
-    _path_template: str = '/catalyst'
-    _api_version = 'v1'
+    _path_template: str = "/catalyst"
+    _api_version = "v1"
 
     def __init__(self, session: Session):
         self.session: Session = session

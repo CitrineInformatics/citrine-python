@@ -5,37 +5,31 @@ from citrine._serialization import properties as properties
 from citrine._serialization.serializable import Serializable
 
 
-class DataVersionUpdate(Serializable['DataVersionUpdate']):
+class DataVersionUpdate(Serializable["DataVersionUpdate"]):
     """Container for data updates."""
 
-    current = properties.String('current')
-    latest = properties.String('latest')
+    current = properties.String("current")
+    latest = properties.String("latest")
 
-    def __init__(self,
-                 *,
-                 current: str,
-                 latest: str):
+    def __init__(self, *, current: str, latest: str):
         self.current = current
         self.latest = latest
 
-    typ = properties.String('type', default='DataVersionUpdate')
+    typ = properties.String("type", default="DataVersionUpdate")
 
 
-class BranchDataUpdate(Resource['BranchDataUpdate']):
+class BranchDataUpdate(Resource["BranchDataUpdate"]):
     """Branch data updates with predictors using the versions indicated."""
 
     data_updates = properties.List(properties.Object(DataVersionUpdate), "data_updates")
     predictors = properties.List(properties.Object(PredictorRef), "predictors")
 
-    def __init__(self,
-                 *,
-                 data_updates: list[DataVersionUpdate],
-                 predictors: list[PredictorRef]):
+    def __init__(self, *, data_updates: list[DataVersionUpdate], predictors: list[PredictorRef]):
         self.data_updates = data_updates
         self.predictors = predictors
 
 
-class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
+class NextBranchVersionRequest(Resource["NextBranchVersionRequest"]):
     """
     Instructions for how the next version of a branch should handle its predictors.
 
@@ -48,9 +42,8 @@ class NextBranchVersionRequest(Resource['NextBranchVersionRequest']):
     data_updates = properties.List(properties.Object(DataVersionUpdate), "data_updates")
     use_predictors = properties.List(properties.Object(PredictorRef), "use_predictors")
 
-    def __init__(self,
-                 *,
-                 data_updates: list[DataVersionUpdate],
-                 use_predictors: list[PredictorRef]):
+    def __init__(
+        self, *, data_updates: list[DataVersionUpdate], use_predictors: list[PredictorRef]
+    ):
         self.data_updates = data_updates
         self.use_predictors = use_predictors

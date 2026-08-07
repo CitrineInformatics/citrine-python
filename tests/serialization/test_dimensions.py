@@ -1,26 +1,25 @@
 """Tests for citrine.informatics.dimensions serialization."""
-import uuid
 
 import pytest
 
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-from citrine.informatics.dimensions import Dimension, ContinuousDimension, EnumeratedDimension
+from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor
+from citrine.informatics.dimensions import ContinuousDimension, Dimension, EnumeratedDimension
 
 
 @pytest.fixture
 def valid_continuous_data():
     """Produce valid continuous dimension data."""
     return dict(
-        type='ContinuousDimension',
+        type="ContinuousDimension",
         descriptor=dict(
-            type='Real',
-            descriptor_key='alpha',
-            units='',
+            type="Real",
+            descriptor_key="alpha",
+            units="",
             lower_bound=5.0,
             upper_bound=10.0,
         ),
         lower_bound=6.0,
-        upper_bound=7.0
+        upper_bound=7.0,
     )
 
 
@@ -28,13 +27,13 @@ def valid_continuous_data():
 def valid_enumerated_data():
     """Produce valid enumerated dimension data."""
     return dict(
-        type='EnumeratedDimension',
+        type="EnumeratedDimension",
         descriptor=dict(
-            type='Categorical',
-            descriptor_key='color',
-            descriptor_values=['blue', 'green', 'red'],
+            type="Categorical",
+            descriptor_key="color",
+            descriptor_values=["blue", "green", "red"],
         ),
-        list=['red']
+        list=["red"],
     )
 
 
@@ -67,7 +66,7 @@ def test_simple_enumerated_deserialization(valid_enumerated_data):
     """Ensure that a deserialized EnumeratedDimension looks sane."""
     dimension: EnumeratedDimension = EnumeratedDimension.build(valid_enumerated_data)
     assert type(dimension) == EnumeratedDimension
-    assert dimension.values == ['red']
+    assert dimension.values == ["red"]
     assert type(dimension.descriptor) == CategoricalDescriptor
 
 
@@ -75,7 +74,7 @@ def test_polymorphic_enumerated_deserialization(valid_enumerated_data):
     """Ensure that a polymorphically deserialized EnumeratedDimension looks sane."""
     dimension: EnumeratedDimension = Dimension.build(valid_enumerated_data)
     assert type(dimension) == EnumeratedDimension
-    assert dimension.values == ['red']
+    assert dimension.values == ["red"]
     assert type(dimension.descriptor) == CategoricalDescriptor
 
 

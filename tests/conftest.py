@@ -1,39 +1,30 @@
-import random
 import uuid
-from copy import deepcopy
 
 import pytest
 
 from citrine.informatics.predictors import AutoMLEstimator
 from citrine.resources.status_detail import StatusDetail, StatusLevelEnum
-from tests.utils.factories import (PredictorEntityDataFactory, PredictorDataDataFactory,
-                                   PredictorMetadataDataFactory, StatusDataFactory)
+from tests.utils.factories import (
+    PredictorDataDataFactory,
+    PredictorEntityDataFactory,
+    PredictorMetadataDataFactory,
+    StatusDataFactory,
+)
 
 
 def build_predictor_entity(instance, status_name="READY", status_detail=[]):
     user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
+    time = "2020-04-23T15:46:26Z"
     return dict(
         id=str(uuid.uuid4()),
         data=dict(
-            name=instance.get("name"),
-            description=instance.get("description"),
-            instance=instance
+            name=instance.get("name"), description=instance.get("description"), instance=instance
         ),
         metadata=dict(
-            status=dict(
-                name=status_name,
-                detail=status_detail
-            ),
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            )
-        )
+            status=dict(name=status_name, detail=status_detail),
+            created=dict(user=user, time=time),
+            updated=dict(user=user, time=time),
+        ),
     )
 
 
@@ -41,80 +32,72 @@ def build_predictor_entity(instance, status_name="READY", status_detail=[]):
 def valid_product_design_space_data():
     """Produce valid product design space data."""
     from citrine.informatics.descriptors import FormulationDescriptor
+
     user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
+    time = "2020-04-23T15:46:26Z"
     return dict(
         id=str(uuid.uuid4()),
         data=dict(
-            name='my design space',
-            description='does some things',
+            name="my design space",
+            description="does some things",
             instance=dict(
-                type='ProductDesignSpace',
-                name='my design space',
-                description='does some things',
+                type="ProductDesignSpace",
+                name="my design space",
+                description="does some things",
                 subspaces=[
                     dict(
-                        type='FormulationDesignSpace',
-                        name='first subspace',
-                        description='',
+                        type="FormulationDesignSpace",
+                        name="first subspace",
+                        description="",
                         formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
-                        ingredients=['foo'],
-                        labels={'bar': ['foo']},
-                        untested_ingredients=['qux'],
+                        ingredients=["foo"],
+                        labels={"bar": ["foo"]},
+                        untested_ingredients=["qux"],
                         constraints=[],
-                        resolution=0.1
+                        resolution=0.1,
                     ),
                     dict(
-                        type='FormulationDesignSpace',
-                        name='second subspace',
-                        description='formulates some things',
+                        type="FormulationDesignSpace",
+                        name="second subspace",
+                        description="formulates some things",
                         formulation_descriptor=FormulationDescriptor.hierarchical().dump(),
-                        ingredients=['baz'],
+                        ingredients=["baz"],
                         labels={},
                         untested_ingredients=None,
                         constraints=[],
-                        resolution=0.1
-                    )
+                        resolution=0.1,
+                    ),
                 ],
                 dimensions=[
                     dict(
-                        type='ContinuousDimension',
+                        type="ContinuousDimension",
                         descriptor=dict(
-                            type='Real',
-                            descriptor_key='alpha',
-                            units='',
+                            type="Real",
+                            descriptor_key="alpha",
+                            units="",
                             lower_bound=5.0,
                             upper_bound=10.0,
                         ),
                         lower_bound=6.0,
-                        upper_bound=7.0
+                        upper_bound=7.0,
                     ),
                     dict(
-                        type='EnumeratedDimension',
+                        type="EnumeratedDimension",
                         descriptor=dict(
-                            type='Categorical',
-                            descriptor_key='color',
-                            descriptor_values=['blue', 'green', 'red'],
+                            type="Categorical",
+                            descriptor_key="color",
+                            descriptor_values=["blue", "green", "red"],
                         ),
-                        list=['red']
-                    )
-                ]
-            )
+                        list=["red"],
+                    ),
+                ],
+            ),
         ),
         metadata=dict(
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            ),
-            status=dict(
-                name='VALIDATING',
-                detail=[]
-            )
-        )
+            created=dict(user=user, time=time),
+            updated=dict(user=user, time=time),
+            status=dict(name="VALIDATING", detail=[]),
+        ),
     )
 
 
@@ -123,103 +106,89 @@ def valid_formulation_design_space_data():
     """Produce valid formulation design space data."""
     from citrine.informatics.constraints import IngredientCountConstraint
     from citrine.informatics.descriptors import FormulationDescriptor
+
     descriptor = FormulationDescriptor.hierarchical()
     constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
     return dict(
-        type='FormulationDesignSpace',
-        name='formulation design space',
-        description='formulates some things',
+        type="FormulationDesignSpace",
+        name="formulation design space",
+        description="formulates some things",
         formulation_descriptor=descriptor.dump(),
-        ingredients=['foo'],
-        labels={'bar': ['foo']},
-        untested_ingredients=['qux'],
+        ingredients=["foo"],
+        labels={"bar": ["foo"]},
+        untested_ingredients=["qux"],
         constraints=[constraint.dump()],
-        resolution=0.1
+        resolution=0.1,
     )
 
 
 @pytest.fixture
 def valid_hierarchical_design_space_data(
-        valid_material_node_definition_data,
-        valid_gem_data_source_dict
+    valid_material_node_definition_data, valid_gem_data_source_dict
 ):
     """Produce valid hierarchical design space data."""
     import copy
-    name = 'hierarchical design space'
-    description = 'does things but in levels'
+
+    name = "hierarchical design space"
+    description = "does things but in levels"
     user = str(uuid.uuid4())
-    time = '2020-04-23T15:46:26Z'
+    time = "2020-04-23T15:46:26Z"
     return dict(
         id=str(uuid.uuid4()),
         data=dict(
             name=name,
             description=description,
             instance=dict(
-                type='HierarchicalDesignSpace',
+                type="HierarchicalDesignSpace",
                 name=name,
                 description=description,
                 root=copy.deepcopy(valid_material_node_definition_data),
                 subspaces=[copy.deepcopy(valid_material_node_definition_data)],
-                data_sources=[valid_gem_data_source_dict]
-            )
+                data_sources=[valid_gem_data_source_dict],
+            ),
         ),
         metadata=dict(
-            created=dict(
-                user=user,
-                time=time
-            ),
-            updated=dict(
-                user=user,
-                time=time
-            ),
-            archived=dict(
-                user=user,
-                time=time
-            ),
-            status=dict(
-                name='VALIDATING',
-                detail=[]
-            )
-        )
+            created=dict(user=user, time=time),
+            updated=dict(user=user, time=time),
+            archived=dict(user=user, time=time),
+            status=dict(name="VALIDATING", detail=[]),
+        ),
     )
 
 
 @pytest.fixture
 def valid_material_node_definition_data(valid_formulation_design_space_data):
     return dict(
-        identifier=dict(
-            id=f"Material Node-{uuid.uuid4()}",
-            scope="Custom Scope"
-        ),
+        identifier=dict(id=f"Material Node-{uuid.uuid4()}", scope="Custom Scope"),
         attributes=[
             dict(
-                type='ContinuousDimension',
+                type="ContinuousDimension",
                 descriptor=dict(
-                    type='Real',
-                    descriptor_key='alpha',
-                    units='',
+                    type="Real",
+                    descriptor_key="alpha",
+                    units="",
                     lower_bound=5.0,
                     upper_bound=10.0,
                 ),
                 lower_bound=6.0,
-                upper_bound=7.0
+                upper_bound=7.0,
             ),
             dict(
-                type='EnumeratedDimension',
+                type="EnumeratedDimension",
                 descriptor=dict(
-                    type='Categorical',
-                    descriptor_key='color',
-                    descriptor_values=['blue', 'green', 'red'],
+                    type="Categorical",
+                    descriptor_key="color",
+                    descriptor_values=["blue", "green", "red"],
                 ),
-                list=['red']
-            )
+                list=["red"],
+            ),
         ],
         formulation=valid_formulation_design_space_data,
         template=dict(
             material_template=str(uuid.uuid4()),
             process_template=str(uuid.uuid4()),
         ),
-        display_name="Material Node"
+        display_name="Material Node",
     )
 
 
@@ -227,8 +196,8 @@ def valid_material_node_definition_data(valid_formulation_design_space_data):
 def valid_gem_data_source_dict():
     return {
         "type": "hosted_table_data_source",
-        "table_id": 'e5c51369-8e71-4ec6-b027-1f92bdc14762',
-        "table_version": 2
+        "table_id": "e5c51369-8e71-4ec6-b027-1f92bdc14762",
+        "table_version": 2,
     }
 
 
@@ -236,39 +205,41 @@ def valid_gem_data_source_dict():
 def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
+
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
-        type='AutoML',
-        name='AutoML predictor',
-        description='Predicts z from input x',
+        type="AutoML",
+        name="AutoML predictor",
+        description="Predicts z from input x",
         inputs=[x.dump()],
         outputs=[z.dump()],
-        estimators=[AutoMLEstimator.RANDOM_FOREST.value]
+        estimators=[AutoMLEstimator.RANDOM_FOREST.value],
     )
 
 
 @pytest.fixture
 def valid_graph_predictor_data(
-        valid_simple_mixture_predictor_data,
-        valid_label_fractions_predictor_data,
-        valid_expression_predictor_data,
-        valid_mean_property_predictor_data,
-        valid_auto_ml_predictor_data
+    valid_simple_mixture_predictor_data,
+    valid_label_fractions_predictor_data,
+    valid_expression_predictor_data,
+    valid_mean_property_predictor_data,
+    valid_auto_ml_predictor_data,
 ):
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
+
     instance = dict(
-        name='Graph predictor',
-        description='description',
+        name="Graph predictor",
+        description="description",
         predictors=[
             valid_simple_mixture_predictor_data,
             valid_label_fractions_predictor_data,
             valid_expression_predictor_data,
             valid_mean_property_predictor_data,
-            valid_auto_ml_predictor_data
+            valid_auto_ml_predictor_data,
         ],
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
+        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -277,11 +248,11 @@ def valid_graph_predictor_data(
 def valid_graph_predictor_data_empty():
     """Another predictor valid data used for tests."""
     instance = dict(
-        type='Graph',
-        name='Empty Graph predictor',
-        description='description',
+        type="Graph",
+        name="Empty Graph predictor",
+        description="description",
         predictors=[],
-        training_data=[]
+        training_data=[],
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -290,19 +261,26 @@ def valid_graph_predictor_data_empty():
 def valid_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
-    youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-    poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+
+    shear_modulus = RealDescriptor(
+        "Property~Shear modulus", lower_bound=0, upper_bound=100, units="GPa"
+    )
+    youngs_modulus = RealDescriptor(
+        "Property~Young's modulus", lower_bound=0, upper_bound=100, units="GPa"
+    )
+    poissons_ratio = RealDescriptor(
+        "Property~Poisson's ratio", lower_bound=-1, upper_bound=0.5, units=""
+    )
     return dict(
-        type='AnalyticExpression',
-        name='Expression predictor',
-        description='Computes shear modulus from Youngs modulus and Poissons ratio',
-        expression='Y / (2 * (1 + v))',
+        type="AnalyticExpression",
+        name="Expression predictor",
+        description="Computes shear modulus from Youngs modulus and Poissons ratio",
+        expression="Y / (2 * (1 + v))",
         output=shear_modulus.dump(),
         aliases={
-            'Y': youngs_modulus.dump(),
-            'v': poissons_ratio.dump(),
-        }
+            "Y": youngs_modulus.dump(),
+            "v": poissons_ratio.dump(),
+        },
     )
 
 
@@ -310,40 +288,37 @@ def valid_expression_predictor_data():
 def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metrics):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
+
     x = RealDescriptor("x", lower_bound=0, upper_bound=1, units="")
     y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=101, units="")
     return dict(
-        id='7c2dda5d-675a-41b6-829c-e485163f0e43',
-        module_id='31c7f311-6f3d-4a93-9387-94cc877f170c',
-        status='OK',
-        create_time='2020-04-23T15:46:26Z',
-        update_time='2020-04-23T15:46:26Z',
+        id="7c2dda5d-675a-41b6-829c-e485163f0e43",
+        module_id="31c7f311-6f3d-4a93-9387-94cc877f170c",
+        status="OK",
+        create_time="2020-04-23T15:46:26Z",
+        update_time="2020-04-23T15:46:26Z",
         report=dict(
             models=[
                 dict(
-                    name='GeneralLoloModel_1',
-                    type='ML Model',
+                    name="GeneralLoloModel_1",
+                    type="ML Model",
                     inputs=[x.key],
                     outputs=[y.key],
-                    display_name='ML Model',
+                    display_name="ML Model",
                     model_settings=[
                         dict(
-                            name='Algorithm',
-                            value='Ensemble of non-linear estimators',
+                            name="Algorithm",
+                            value="Ensemble of non-linear estimators",
                             children=[
-                                dict(name='Number of estimators', value=64, children=[]),
-                                dict(name='Leaf model', value='Mean', children=[]),
-                                dict(name='Use jackknife', value=True, children=[])
-                            ]
+                                dict(name="Number of estimators", value=64, children=[]),
+                                dict(name="Leaf model", value="Mean", children=[]),
+                                dict(name="Use jackknife", value=True, children=[]),
+                            ],
                         )
                     ],
                     feature_importances=[
-                        dict(
-                            response_key='y',
-                            importances=dict(x=1.00),
-                            top_features=5
-                        )
+                        dict(response_key="y", importances=dict(x=1.00), top_features=5)
                     ],
                     selection_summary=dict(
                         n_folds=4,
@@ -351,48 +326,44 @@ def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metr
                             dict(
                                 model_settings=[
                                     dict(
-                                        name='Algorithm',
-                                        value='Ensemble of non-linear estimators',
+                                        name="Algorithm",
+                                        value="Ensemble of non-linear estimators",
                                         children=[
-                                            dict(name='Number of estimators', value=64, children=[]),
-                                            dict(name='Leaf model', value='Mean', children=[]),
-                                            dict(name='Use jackknife', value=True, children=[])
-                                        ]
+                                            dict(
+                                                name="Number of estimators", value=64, children=[]
+                                            ),
+                                            dict(name="Leaf model", value="Mean", children=[]),
+                                            dict(name="Use jackknife", value=True, children=[]),
+                                        ],
                                     )
                                 ],
                                 response_results=dict(
                                     response_name=dict(
                                         metrics=dict(
                                             predicted_vs_actual=example_categorical_pva_metrics,
-                                            f1=example_f1_metrics
+                                            f1=example_f1_metrics,
                                         )
                                     )
-                                )
+                                ),
                             )
-                        ]
+                        ],
                     ),
-                    predictor_configuration_name="Predict y from x with ML"
+                    predictor_configuration_name="Predict y from x with ML",
                 ),
                 dict(
-                    name='GeneralLosslessModel_2',
-                    type='Analytic Model',
+                    name="GeneralLosslessModel_2",
+                    type="Analytic Model",
                     inputs=[x.key, y.key],
                     outputs=[z.key],
-                    display_name='GeneralLosslessModel_2',
-                    model_settings=[
-                        dict(
-                            name="Expression",
-                            value="(z) <- (x + y)",
-                            children=[]
-                        )
-                    ],
+                    display_name="GeneralLosslessModel_2",
+                    model_settings=[dict(name="Expression", value="(z) <- (x + y)", children=[])],
                     feature_importances=[],
                     predictor_configuration_name="Expression for z",
-                    predictor_configuration_uid="249bf32c-6f3d-4a93-9387-94cc877f170c"
-                )
+                    predictor_configuration_uid="249bf32c-6f3d-4a93-9387-94cc877f170c",
+                ),
             ],
-            descriptors=[x.dump(), y.dump(), z.dump()]
-        )
+            descriptors=[x.dump(), y.dump(), z.dump()],
+        ),
     )
 
 
@@ -400,18 +371,21 @@ def valid_predictor_report_data(example_categorical_pva_metrics, example_f1_metr
 def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
+
     return dict(
-        type='IngredientsToSimpleMixture',
-        name='Ingredients to formulation predictor',
-        description='Constructs mixtures from ingredients',
+        type="IngredientsToSimpleMixture",
+        name="Ingredients to formulation predictor",
+        description="Constructs mixtures from ingredients",
         id_to_quantity={
-            'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
-            'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
+            "water": RealDescriptor(
+                "water quantity", lower_bound=0, upper_bound=1, units=""
+            ).dump(),
+            "salt": RealDescriptor("salt quantity", lower_bound=0, upper_bound=1, units="").dump(),
         },
         labels={
-            'solvent': ['water'],
-            'solute': ['salt'],
-        }
+            "solvent": ["water"],
+            "solute": ["salt"],
+        },
     )
 
 
@@ -419,17 +393,18 @@ def valid_ing_formulation_predictor_data():
 def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
+
     formulation_descriptor = FormulationDescriptor.hierarchical()
     return dict(
-        type='GeneralizedMeanProperty',
-        name='Mean property predictor',
-        description='Computes mean ingredient properties',
+        type="GeneralizedMeanProperty",
+        name="Mean property predictor",
+        description="Computes mean ingredient properties",
         input=formulation_descriptor.dump(),
-        properties=['density'],
+        properties=["density"],
         p=2,
         impute_properties=True,
-        default_properties={'density': 1.0},
-        label='solvent'
+        default_properties={"density": 1.0},
+        label="solvent",
     )
 
 
@@ -437,18 +412,19 @@ def valid_generalized_mean_property_predictor_data():
 def valid_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+
     formulation_descriptor = FormulationDescriptor.flat()
-    density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
+    density = RealDescriptor(key="density", lower_bound=0, upper_bound=100, units="g/cm^3")
     return dict(
-        type='MeanProperty',
-        name='Mean property predictor',
-        description='Computes mean ingredient properties',
+        type="MeanProperty",
+        name="Mean property predictor",
+        description="Computes mean ingredient properties",
         input=formulation_descriptor.dump(),
         properties=[density.dump()],
         p=2.0,
         impute_properties=True,
-        default_properties={'density': 1.0},
-        label='solvent'
+        default_properties={"density": 1.0},
+        label="solvent",
     )
 
 
@@ -456,12 +432,13 @@ def valid_mean_property_predictor_data():
 def valid_label_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
+
     return dict(
-        type='LabelFractions',
-        name='Label fractions predictor',
-        description='Computes relative proportions of labeled ingredients',
+        type="LabelFractions",
+        name="Label fractions predictor",
+        description="Computes relative proportions of labeled ingredients",
         input=FormulationDescriptor.hierarchical().dump(),
-        labels=['solvent']
+        labels=["solvent"],
     )
 
 
@@ -469,12 +446,13 @@ def valid_label_fractions_predictor_data():
 def valid_ingredient_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
+
     return dict(
-        type='IngredientFractions',
-        name='Ingredient fractions predictor',
-        description='Computes ingredient fractions',
+        type="IngredientFractions",
+        name="Ingredient fractions predictor",
+        description="Computes ingredient fractions",
         input=FormulationDescriptor.hierarchical().dump(),
-        ingredients=['Blue dye', 'Red dye']
+        ingredients=["Blue dye", "Red dye"],
     )
 
 
@@ -484,7 +462,7 @@ def valid_data_source_design_space_dict(valid_gem_data_source_dict):
         type="DataSourceDesignSpace",
         name="Example valid data source design space",
         description="Example valid data source design space based on a GEM Table Data Source.",
-        data_source=valid_gem_data_source_dict
+        data_source=valid_gem_data_source_dict,
     )
 
 
@@ -492,15 +470,16 @@ def valid_data_source_design_space_dict(valid_gem_data_source_dict):
 def invalid_predictor_node_data():
     """Produce invalid valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
+
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
-        type='invalid',
-        name='my predictor',
-        description='does some things',
+        type="invalid",
+        name="my predictor",
+        description="does some things",
         inputs=[x.dump(), y.dump()],
-        output=z.dump()
+        output=z.dump(),
     )
 
 
@@ -508,23 +487,24 @@ def invalid_predictor_node_data():
 def invalid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
+
     x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     instance = dict(
-        type='invalid',
-        name='my predictor',
-        description='does some things badly',
+        type="invalid",
+        name="my predictor",
+        description="does some things badly",
         predictors=[x.dump(), y.dump()],
     )
     detail = [
-        StatusDetail(level=StatusLevelEnum.WARNING, msg='Something is wrong'),
-        StatusDetail(level="Error", msg='Very wrong')
+        StatusDetail(level=StatusLevelEnum.WARNING, msg="Something is wrong"),
+        StatusDetail(level="Error", msg="Very wrong"),
     ]
-    status = StatusDataFactory(name='INVALID', detail=detail)
+    status = StatusDataFactory(name="INVALID", detail=detail)
     return PredictorEntityDataFactory(
         data=PredictorDataDataFactory(instance=instance),
-        meatadata=PredictorMetadataDataFactory(status=status)
+        meatadata=PredictorMetadataDataFactory(status=status),
     )
 
 
@@ -532,11 +512,11 @@ def invalid_graph_predictor_data():
 def invalid_design_subspace_data():
     """Produce invalid valid data used for tests."""
     return dict(
-        type='invalid',
-        name='my design space',
-        description='does some things',
+        type="invalid",
+        name="my design space",
+        description="does some things",
         subspaces=[],
-        dimensions=[]
+        dimensions=[],
     )
 
 
@@ -544,9 +524,9 @@ def invalid_design_subspace_data():
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     return dict(
-        type='SimpleMixture',
-        name='Simple mixture predictor',
-        description='simple mixture description'
+        type="SimpleMixture",
+        name="Simple mixture predictor",
+        description="simple mixture description",
     )
 
 
@@ -559,10 +539,8 @@ def example_cv_evaluator_dict():
         "responses": ["salt?", "saltiness"],
         "n_folds": 6,
         "n_trials": 8,
-        "metrics": [
-            {"type": "PVA"}, {"type": "RMSE"}, {"type": "F1"}
-        ],
-        "ignore_when_grouping": ["temperature"]
+        "metrics": [{"type": "PVA"}, {"type": "RMSE"}, {"type": "F1"}],
+        "ignore_when_grouping": ["temperature"],
     }
 
 
@@ -574,24 +552,18 @@ def example_holdout_evaluator_dict(valid_gem_data_source_dict):
         "description": "",
         "responses": ["sweetness"],
         "data_source": valid_gem_data_source_dict,
-        "metrics": [{"type": "RMSE"}]
+        "metrics": [{"type": "RMSE"}],
     }
+
 
 @pytest.fixture()
 def example_rmse_metrics():
-    return {
-        "type": "RealMetricValue",
-        "mean": 0.4,
-        "standard_error": 0.12
-    }
+    return {"type": "RealMetricValue", "mean": 0.4, "standard_error": 0.12}
 
 
 @pytest.fixture
 def example_f1_metrics():
-    return {
-        "type": "RealMetricValue",
-        "mean": 0.3
-    }
+    return {"type": "RealMetricValue", "mean": 0.3}
 
 
 @pytest.fixture
@@ -604,18 +576,10 @@ def example_real_pva_metrics():
                 "identifiers": ["Foo", "Bar"],
                 "trial": 1,
                 "fold": 3,
-                "predicted": {
-                    "type": "RealMetricValue",
-                    "mean": 1.0,
-                    "standard_error": 0.12
-                },
-                "actual": {
-                    "type": "RealMetricValue",
-                    "mean": 1.2,
-                    "standard_error": 0.0
-                }
+                "predicted": {"type": "RealMetricValue", "mean": 1.0, "standard_error": 0.12},
+                "actual": {"type": "RealMetricValue", "mean": 1.2, "standard_error": 0.0},
             }
-        ]
+        ],
     }
 
 
@@ -629,20 +593,21 @@ def example_categorical_pva_metrics():
                 "identifiers": ["Foo", "Bar"],
                 "trial": 1,
                 "fold": 3,
-                "predicted": {
-                    "salt": 0.3,
-                    "not salt": 0.7
-                },
-                "actual": {
-                    "not salt": 1.0
-                }
+                "predicted": {"salt": 0.3, "not salt": 0.7},
+                "actual": {"not salt": 1.0},
             }
-        ]
+        ],
     }
 
 
 @pytest.fixture()
-def example_cv_result_dict(example_cv_evaluator_dict, example_rmse_metrics, example_categorical_pva_metrics, example_f1_metrics, example_real_pva_metrics):
+def example_cv_result_dict(
+    example_cv_evaluator_dict,
+    example_rmse_metrics,
+    example_categorical_pva_metrics,
+    example_f1_metrics,
+    example_real_pva_metrics,
+):
     return {
         "type": "CrossValidationResult",
         "evaluator": example_cv_evaluator_dict,
@@ -650,16 +615,16 @@ def example_cv_result_dict(example_cv_evaluator_dict, example_rmse_metrics, exam
             "salt?": {
                 "metrics": {
                     "predicted_vs_actual": example_categorical_pva_metrics,
-                    "f1": example_f1_metrics
+                    "f1": example_f1_metrics,
                 }
             },
             "saltiness": {
                 "metrics": {
                     "predicted_vs_actual": example_real_pva_metrics,
-                    "rmse": example_rmse_metrics
+                    "rmse": example_rmse_metrics,
                 }
-            }
-        }
+            },
+        },
     }
 
 
@@ -668,13 +633,7 @@ def example_holdout_result_dict(example_holdout_evaluator_dict, example_rmse_met
     return {
         "type": "HoldoutSetResult",
         "evaluator": example_holdout_evaluator_dict,
-        "response_results": {
-            "sweetness": {
-                "metrics": {
-                    "rmse": example_rmse_metrics
-                }
-            }
-        }
+        "response_results": {"sweetness": {"metrics": {"rmse": example_rmse_metrics}}},
     }
 
 
@@ -687,8 +646,8 @@ def sample_design_space_execution_dict(generic_entity):
             "status": {
                 "major": ret.get("status"),
                 "minor": ret.get("status_description"),
-                "detail": ret.get("status_detail")
-            }
+                "detail": ret.get("status_detail"),
+            },
         }
     )
     return ret
@@ -697,30 +656,28 @@ def sample_design_space_execution_dict(generic_entity):
 @pytest.fixture()
 def example_design_material():
     return {
-        'vars': {
-            'Temperature': {'type': 'R', 'm': 475.8, 's': 0},
-            'Flour': {'type': 'C', 'cp': {'flour': 100.0}},
-            'Water': {'type': 'M', 'q': {'water': 72.5}, 'l': {}},
-            'Salt': {'type': 'F', 'f': 'NaCl'},
-            'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
+        "vars": {
+            "Temperature": {"type": "R", "m": 475.8, "s": 0},
+            "Flour": {"type": "C", "cp": {"flour": 100.0}},
+            "Water": {"type": "M", "q": {"water": 72.5}, "l": {}},
+            "Salt": {"type": "F", "f": "NaCl"},
+            "Yeast": {"type": "S", "s": "O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15"},
         },
-        'identifiers': {
-            'id': str(uuid.uuid4()),
-            'identifiers': [],
-            'material_template': str(uuid.uuid4()),
-            'process_template': str(uuid.uuid4())
-        }
+        "identifiers": {
+            "id": str(uuid.uuid4()),
+            "identifiers": [],
+            "material_template": str(uuid.uuid4()),
+            "process_template": str(uuid.uuid4()),
+        },
     }
 
 
 @pytest.fixture()
 def example_hierarchical_design_material(example_design_material):
     return {
-        'terminal': example_design_material,
-        'sub_materials': [example_design_material],
-        'mixtures': {
-            str(uuid.uuid4()): {'q': {'A': 0.5, 'B': 0.5}, 'l': {}}
-        }
+        "terminal": example_design_material,
+        "sub_materials": [example_design_material],
+        "mixtures": {str(uuid.uuid4()): {"q": {"A": 0.5, "B": 0.5}, "l": {}}},
     }
 
 
@@ -729,48 +686,47 @@ def example_hierarchical_candidates(example_hierarchical_design_material):
     return {
         "page": 2,
         "per_page": 4,
-        "response": [{
-            "id": str(uuid.uuid4()),
-            "primary_score": 0,
-            "rank": 1,
-            "material": example_hierarchical_design_material,
-            "name": "Example candidate",
-            "hidden": True,
-            "comments": [
-                {
-                    "message": "a message",
-                    "created": {
-                        "user": str(uuid.uuid4()),
-                        "time": '2025-02-20T10:46:26Z'
+        "response": [
+            {
+                "id": str(uuid.uuid4()),
+                "primary_score": 0,
+                "rank": 1,
+                "material": example_hierarchical_design_material,
+                "name": "Example candidate",
+                "hidden": True,
+                "comments": [
+                    {
+                        "message": "a message",
+                        "created": {"user": str(uuid.uuid4()), "time": "2025-02-20T10:46:26Z"},
                     }
-                }
-            ]
-        }]
+                ],
+            }
+        ],
     }
+
 
 @pytest.fixture()
 def example_candidates(example_design_material):
     return {
         "page": 2,
         "per_page": 4,
-        "response": [{
-            "id": str(uuid.uuid4()),
-            "material_id": str(uuid.uuid4()),
-            "identifiers": [],
-            "primary_score": 0,
-            "material": example_design_material,
-            "name": "Example candidate",
-            "hidden": True,
-            "comments": [
-                {
-                    "message": "a message",
-                    "created": {
-                        "user": str(uuid.uuid4()),
-                        "time": '2025-02-20T10:46:26Z'
+        "response": [
+            {
+                "id": str(uuid.uuid4()),
+                "material_id": str(uuid.uuid4()),
+                "identifiers": [],
+                "primary_score": 0,
+                "material": example_design_material,
+                "name": "Example candidate",
+                "hidden": True,
+                "comments": [
+                    {
+                        "message": "a message",
+                        "created": {"user": str(uuid.uuid4()), "time": "2025-02-20T10:46:26Z"},
                     }
-                }
-            ]
-        }]
+                ],
+            }
+        ],
     }
 
 
@@ -778,13 +734,14 @@ def example_candidates(example_design_material):
 def example_sample_design_space_response(example_hierarchical_design_material):
     return {
         "per_page": 4,
-        "response": [{
-            "id": str(uuid.uuid4()),
-            "execution_id": str(uuid.uuid4()),
-            "material": example_hierarchical_design_material
-        }]
+        "response": [
+            {
+                "id": str(uuid.uuid4()),
+                "execution_id": str(uuid.uuid4()),
+                "material": example_hierarchical_design_material,
+            }
+        ],
     }
-
 
 
 @pytest.fixture
@@ -795,8 +752,8 @@ def generic_entity():
         "status": "INPROGRESS",
         "status_description": "VALIDATING",
         "status_detail": [{"level": "Info", "msg": "System processing"}],
-        "create_time": '2020-04-23T15:46:26Z',
-        "update_time": '2020-04-23T15:46:26Z',
+        "create_time": "2020-04-23T15:46:26Z",
+        "update_time": "2020-04-23T15:46:26Z",
         "created_by": user,
         "updated_by": user,
     }
@@ -805,19 +762,21 @@ def generic_entity():
 @pytest.fixture
 def design_execution_dict(generic_entity):
     ret = generic_entity.copy()
-    ret.update({
-        "workflow_id": str(uuid.uuid4()),
-        "version_number": 2,
-        "score": {
-            "type": "MLI",
-            "baselines": [],
-            "constraints": [],
-            "objectives": [],
-            "name": "score",
-            "description": ""
-        },
-        "descriptors": []
-    })
+    ret.update(
+        {
+            "workflow_id": str(uuid.uuid4()),
+            "version_number": 2,
+            "score": {
+                "type": "MLI",
+                "baselines": [],
+                "constraints": [],
+                "objectives": [],
+                "name": "score",
+                "description": "",
+            },
+            "descriptors": [],
+        }
+    )
     return ret
 
 
@@ -832,14 +791,16 @@ def example_generation_results():
     return {
         "page": 1,
         "per_page": 4,
-        "response": [{
-            "id": str(uuid.uuid4()),
-            "execution_id": str(uuid.uuid4()),
-            "result": {
-                "seed": "CCCCO",
-                "mutated": "CCCN",
-                "fingerprint_similarity": 0.41,
-                "fingerprint_type": "ECFP4",
+        "response": [
+            {
+                "id": str(uuid.uuid4()),
+                "execution_id": str(uuid.uuid4()),
+                "result": {
+                    "seed": "CCCCO",
+                    "mutated": "CCCN",
+                    "fingerprint_similarity": 0.41,
+                    "fingerprint_type": "ECFP4",
+                },
             }
-        }]
+        ],
     }

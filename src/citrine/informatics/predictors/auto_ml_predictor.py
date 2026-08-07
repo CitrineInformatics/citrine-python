@@ -5,7 +5,7 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['AutoMLPredictor', 'AutoMLEstimator']
+__all__ = ["AutoMLEstimator", "AutoMLPredictor"]
 
 
 class AutoMLEstimator(BaseEnumeration):
@@ -51,23 +51,25 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
 
     """
 
-    inputs = _properties.List(_properties.Object(Descriptor), 'inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'outputs')
+    inputs = _properties.List(_properties.Object(Descriptor), "inputs")
+    outputs = _properties.List(_properties.Object(Descriptor), "outputs")
     estimators = _properties.Set(
         _properties.Enumeration(AutoMLEstimator),
-        'estimators',
-        default={AutoMLEstimator.RANDOM_FOREST}
+        "estimators",
+        default={AutoMLEstimator.RANDOM_FOREST},
     )
 
-    typ = _properties.String('type', default='AutoML', deserializable=False)
+    typ = _properties.String("type", default="AutoML", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 outputs: list[Descriptor],
-                 inputs: list[Descriptor],
-                 estimators: set[AutoMLEstimator] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        outputs: list[Descriptor],
+        inputs: list[Descriptor],
+        estimators: set[AutoMLEstimator] | None = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.inputs: list[Descriptor] = inputs
@@ -75,4 +77,4 @@ class AutoMLPredictor(Resource["AutoMLPredictor"], PredictorNode):
         self.outputs = outputs
 
     def __str__(self):
-        return '<AutoMLPredictor {!r}>'.format(self.name)
+        return f"<AutoMLPredictor {self.name!r}>"

@@ -13,7 +13,8 @@ from gemd.entity.link_by_uid import LinkByUID
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
     from gemd.entity.attribute.base_attribute import BaseAttribute
-    from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
+
+    from citrine.resources.data_concepts import CITRINE_SCOPE, DataConcepts
 
     if isinstance(object_or_id, BaseAttribute):
         raise ValueError("Attributes do not have ids.")
@@ -23,20 +24,23 @@ def get_object_id(object_or_id):
     if isinstance(object_or_id, LinkByUID):
         if object_or_id.scope == CITRINE_SCOPE:
             return object_or_id.id
-        raise ValueError("LinkByUID must be scoped to citrine scope {}, "
-                         "instead is {}".format(CITRINE_SCOPE, object_or_id.scope))
-    raise TypeError("{} must be a data concepts object or LinkByUID".format(object_or_id))
+        raise ValueError(
+            f"LinkByUID must be scoped to citrine scope {CITRINE_SCOPE}, "
+            f"instead is {object_or_id.scope}"
+        )
+    raise TypeError(f"{object_or_id} must be a data concepts object or LinkByUID")
 
 
 def validate_type(data_dict: dict, type_name: str) -> dict:
     """Ensure that dict has field 'type' with given value."""
     data_dict_copy = data_dict.copy()
-    if 'type' in data_dict_copy:
-        if data_dict_copy['type'] != type_name:
+    if "type" in data_dict_copy:
+        if data_dict_copy["type"] != type_name:
             raise Exception(
-                "Object type must be {}, but was instead {}.".format(type_name, data_dict['type']))
+                "Object type must be {}, but was instead {}.".format(type_name, data_dict["type"])
+            )
     else:
-        data_dict_copy['type'] = type_name
+        data_dict_copy["type"] = type_name
 
     return data_dict_copy
 
@@ -70,7 +74,7 @@ def replace_objects_with_links(json: dict) -> dict:
 def object_to_link(obj: Any) -> Any:
     """See if an object is a dictionary that can be converted into a Link, and if so, convert."""
     if isinstance(obj, dict):
-        if 'type' in obj and 'uids' in obj and obj['type'] != LinkByUID.typ:
+        if "type" in obj and "uids" in obj and obj["type"] != LinkByUID.typ:
             return object_to_link_by_uid(obj)
         else:
             return replace_objects_with_links(obj)
@@ -82,8 +86,9 @@ def object_to_link(obj: Any) -> Any:
 def object_to_link_by_uid(json: dict) -> dict:
     """Convert an object dictionary into a LinkByUID dictionary, if possible."""
     from citrine.resources.data_concepts import CITRINE_SCOPE
-    if 'uids' in json:
-        uids = json['uids']
+
+    if "uids" in json:
+        uids = json["uids"]
         if not isinstance(uids, dict) or not uids:
             return json
         if CITRINE_SCOPE in uids:
@@ -112,8 +117,9 @@ def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
     if s3_endpoint_url is not None:
         # Given an explicit endpoint to use instead
         parsed_s3_endpoint = urlparse(s3_endpoint_url)
-        return parsed_url._replace(scheme=parsed_s3_endpoint.scheme,
-                                   netloc=parsed_s3_endpoint.netloc).geturl()
+        return parsed_url._replace(
+            scheme=parsed_s3_endpoint.scheme, netloc=parsed_s3_endpoint.netloc
+        ).geturl()
     else:
         # Else return the URL unmodified
         return url
@@ -132,7 +138,7 @@ def write_file_locally(content: bytes, local_path: str | Path):
         raise ValueError(f"A filename must be provided in the path ({local_path})")
 
     local_path.parent.mkdir(parents=True, exist_ok=True)
-    local_path.open(mode='wb').write(content)
+    local_path.open(mode="wb").write(content)
 
 
 class MigratedClassMeta(ABCMeta):
@@ -176,18 +182,23 @@ class MigratedClassMeta(ABCMeta):
         if not any(isinstance(b, MigratedClassMeta) for b in bases):
             # First generation
             if len(bases) != 1:
-                raise TypeError(f"Migrated Classes must reference precisely one target. "
-                                f"{bases} found.")
+                raise TypeError(
+                    f"Migrated Classes must reference precisely one target. {bases} found."
+                )
             if deprecated_in is None or removed_in is None:
-                raise TypeError("Migrated Classes must include `deprecated_in` "
-                                "and `removed_in` arguments.")
+                raise TypeError(
+                    "Migrated Classes must include `deprecated_in` and `removed_in` arguments."
+                )
             cls._deprecation_info[cls] = (bases[0], deprecated_in, removed_in)
 
             def _new(*args_, **kwargs_):
-                warn(f"Importing {name} from {cls.__module__} is deprecated as of "
-                     f"{deprecated_in} and will be removed in {removed_in}. "
-                     f"Please import {bases[0].__name__} from {bases[0].__module__} instead.",
-                     DeprecationWarning, stacklevel=2)
+                warn(
+                    f"Importing {name} from {cls.__module__} is deprecated as of "
+                    f"{deprecated_in} and will be removed in {removed_in}. "
+                    f"Please import {bases[0].__name__} from {bases[0].__module__} instead.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
                 return bases[0](*args_[1:], **kwargs_)
 
             cls.__new__ = _new
@@ -196,18 +207,20 @@ class MigratedClassMeta(ABCMeta):
             if base in cls._deprecation_info:
                 # Second generation
                 alias, this_deprecated_in, this_removed_in = cls._deprecation_info[base]
-                warn(f"Importing {base.__name__} from {base.__module__} is deprecated as of "
-                     f"{this_deprecated_in} and will be removed in {this_removed_in}. "
-                     f"Please import {alias.__name__} from {alias.__module__} instead.",
-                     DeprecationWarning, stacklevel=2)
+                warn(
+                    f"Importing {base.__name__} from {base.__module__} is deprecated as of "
+                    f"{this_deprecated_in} and will be removed in {this_removed_in}. "
+                    f"Please import {alias.__name__} from {alias.__module__} instead.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
 
     def __instancecheck__(cls, instance):
-        return any(cls.__subclasscheck__(c)
-                   for c in {type(instance), instance.__class__})
+        return any(cls.__subclasscheck__(c) for c in {type(instance), instance.__class__})
 
     def __subclasscheck__(cls, subclass):
         try:
-            return issubclass(subclass, cls._deprecation_info.get(cls, (type(None), ))[0])
+            return issubclass(subclass, cls._deprecation_info.get(cls, (type(None),))[0])
         except RecursionError:
             return False
 
@@ -217,16 +230,15 @@ def generate_shared_meta(target: type):
     if issubclass(MigratedClassMeta, type(target)):
         return MigratedClassMeta
     else:
+
         class _CustomMeta(MigratedClassMeta, type(target)):
             pass
+
         return _CustomMeta
 
 
 def migrate_deprecated_argument(
-        new_arg: Any | None,
-        new_arg_name: str,
-        old_arg: Any | None,
-        old_arg_name: str
+    new_arg: Any | None, new_arg_name: str, old_arg: Any | None, old_arg_name: str
 ) -> Any:
     """
     Facilitates the migration of an argument's name.
@@ -254,22 +266,17 @@ def migrate_deprecated_argument(
 
     """
     if old_arg is not None:
-        warn(f"\'{old_arg_name}\' is deprecated in favor of \'{new_arg_name}\'",
-             DeprecationWarning)
+        warn(f"'{old_arg_name}' is deprecated in favor of '{new_arg_name}'", DeprecationWarning)
         if new_arg is None:
             return old_arg
         else:
-            raise ValueError(f"Cannot specify both \'{new_arg_name}\' and \'{new_arg_name}\'")
+            raise ValueError(f"Cannot specify both '{new_arg_name}' and '{new_arg_name}'")
     elif new_arg is None:
-        raise ValueError(f"Please specify \'{new_arg_name}\'")
+        raise ValueError(f"Please specify '{new_arg_name}'")
     return new_arg
 
 
-def format_escaped_url(
-        template: str,
-        *args,
-        **kwargs
-) -> str:
+def format_escaped_url(template: str, *args, **kwargs) -> str:
     """
     Escape arguments with percent encoding and bind them to a template of a URL.
 
@@ -291,21 +298,23 @@ def format_escaped_url(
         the formatted URL
 
     """
-    return template.format(*[quote(str(x), safe='') for x in args],
-                           **{k: quote(str(v), safe='') for (k, v) in kwargs.items()}
-                           )
+    return template.format(
+        *[quote(str(x), safe="") for x in args],
+        **{k: quote(str(v), safe="") for (k, v) in kwargs.items()},
+    )
 
 
-def resource_path(*,
-                  path_template: str,
-                  uid: UUID | str | None = None,
-                  action: str | Sequence[str] = [],
-                  query_terms: dict[str, str] = {},
-                  **kwargs
-                  ) -> str:
+def resource_path(
+    *,
+    path_template: str,
+    uid: UUID | str | None = None,
+    action: str | Sequence[str] = [],
+    query_terms: dict[str, str] = {},
+    **kwargs,
+) -> str:
     """Construct a url from a base path and, optionally, id and/or action."""
     base = urlparse(path_template)
-    path = base.path.split('/')
+    path = base.path.split("/")
 
     if uid is not None:
         path.append("{uid}")
@@ -317,6 +326,6 @@ def resource_path(*,
     path.extend(["{}"] * len(action))
 
     query = urlencode(query_terms)
-    new_url = base._replace(path='/'.join(path), query=query).geturl()
+    new_url = base._replace(path="/".join(path), query=query).geturl()
 
     return format_escaped_url(new_url, *action, **kwargs, uid=uid)

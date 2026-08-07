@@ -1,16 +1,17 @@
 from collections.abc import Mapping
 
-from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.attribute import PropertyAndConditions
 from gemd.entity.object import (
-    ProcessSpec,
-    ProcessRun,
     MaterialSpec,
-    MeasurementSpec,
     MeasurementRun,
+    MeasurementSpec,
+    ProcessRun,
+    ProcessSpec,
 )
 from gemd.entity.value.base_value import BaseValue
 from gemd.util.impl import recursive_flatmap
+
+from citrine.resources.data_concepts import DataConcepts
 
 
 def make_attribute_table(gems: list[DataConcepts]) -> list[Mapping[str, BaseValue]]:
@@ -41,9 +42,7 @@ def make_attribute_table(gems: list[DataConcepts]) -> list[Mapping[str, BaseValu
         A list of dictionaries where each dictionary represents an object and its attributes.
 
     """
-    flattened_gems = recursive_flatmap(
-        obj=gems, func=lambda x: [x], unidirectional=False
-    )
+    flattened_gems = recursive_flatmap(obj=gems, func=lambda x: [x], unidirectional=False)
     types_with_attributes = (
         ProcessSpec,
         ProcessRun,
@@ -52,9 +51,7 @@ def make_attribute_table(gems: list[DataConcepts]) -> list[Mapping[str, BaseValu
         MeasurementRun,
     )
     all_rows = []
-    attributed_gems = [
-        x for x in flattened_gems if isinstance(x, types_with_attributes)
-    ]
+    attributed_gems = [x for x in flattened_gems if isinstance(x, types_with_attributes)]
     for gem in attributed_gems:
         row_dict = {"object": gem, "object_type": type(gem).__name__}
         if hasattr(gem, "conditions"):

@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
+
 from collections.abc import Iterator
 from uuid import UUID
 
@@ -12,15 +13,12 @@ from citrine.resources.response import Response
 class DesignExecutionCollection(Collection["DesignExecution"]):
     """A collection of DesignExecutions."""
 
-    _path_template = '/projects/{project_id}/design-workflows/{workflow_id}/executions'  # noqa
+    _path_template = "/projects/{project_id}/design-workflows/{workflow_id}/executions"  # noqa
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = executions.DesignExecution
 
-    def __init__(self,
-                 project_id: UUID,
-                 session: Session,
-                 workflow_id: UUID | None = None):
+    def __init__(self, project_id: UUID, session: Session, workflow_id: UUID | None = None):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
@@ -35,7 +33,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def trigger(self, execution_input: Score, *, max_candidates: int | None = None):
         """Trigger a Design Workflow execution given a score and a maximum number of candidates."""
         path = self._get_path()
-        json = {'score': execution_input.dump(), "max_candidates": max_candidates}
+        json = {"score": execution_input.dump(), "max_candidates": max_candidates}
         data = self.session.post_resource(path, json)
         return self.build(data)
 
@@ -56,8 +54,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             Unique identifier of the execution to archive
 
         """
-        raise NotImplementedError(
-            "Design Executions cannot be archived")
+        raise NotImplementedError("Design Executions cannot be archived")
 
     def restore(self, uid: UUID):
         """Restore an archived Design Workflow execution.
@@ -68,8 +65,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             Unique identifier of the execution to restore
 
         """
-        raise NotImplementedError(
-            "Design Executions cannot be restored")
+        raise NotImplementedError("Design Executions cannot be restored")
 
     def list(self, *, per_page: int = 100) -> Iterator[executions.DesignExecution]:
         """
@@ -91,11 +87,12 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=self._fetch_page,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def delete(self, uid: UUID | str) -> Response:
         """Design Workflow Executions cannot be deleted or archived."""
-        raise NotImplementedError(
-            "Design Executions cannot be deleted")
+        raise NotImplementedError("Design Executions cannot be deleted")

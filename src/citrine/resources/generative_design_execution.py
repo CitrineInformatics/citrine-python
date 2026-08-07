@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of design workflow executions."""
+
 from collections.abc import Iterator
 from uuid import UUID
 
@@ -12,9 +13,9 @@ from citrine.resources.response import Response
 class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"]):
     """A collection of GenerativeDesignExecutions."""
 
-    _path_template = '/projects/{project_id}/generative-design/executions'
+    _path_template = "/projects/{project_id}/generative-design/executions"
     _individual_key = None
-    _collection_key = 'response'
+    _collection_key = "response"
     _resource = GenerativeDesignExecution
 
     def __init__(self, project_id: UUID, session: Session):
@@ -65,12 +66,12 @@ class GenerativeDesignExecutionCollection(Collection["GenerativeDesignExecution"
             Resources in this collection.
 
         """
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=self._fetch_page,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def delete(self, uid: UUID | str) -> Response:
         """Generative Design Executions cannot be deleted or archived."""
-        raise NotImplementedError(
-            "Generative Design Executions cannot be deleted"
-        )
+        raise NotImplementedError("Generative Design Executions cannot be deleted")

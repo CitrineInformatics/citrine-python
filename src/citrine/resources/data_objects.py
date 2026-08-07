@@ -1,24 +1,25 @@
 """Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
+
 from abc import ABC
 from collections.abc import Iterator
 from typing import TypeVar
 from uuid import uuid4
 
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.file_link import FileLink
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object.base_object import BaseObject
+from gemd.entity.template.attribute_template import AttributeTemplate
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
 
-from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
 from citrine._serialization.properties import List, Object, Optional, String
-from gemd.entity.file_link import FileLink
+from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
 from citrine.resources.process_template import ProcessTemplate
-from gemd.entity.object.base_object import BaseObject
-from gemd.entity.bounds.base_bounds import BaseBounds
-from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.template.attribute_template import AttributeTemplate
 
 
 class DataObject(DataConcepts, BaseObject, ABC):
@@ -28,8 +29,8 @@ class DataObject(DataConcepts, BaseObject, ABC):
     DataObject must be extended along with `Resource`
     """
 
-    notes = Optional(String(), 'notes')
-    file_links = Optional(List(Object(FileLink)), 'file_links', override=True)
+    notes = Optional(String(), "notes")
+    file_links = Optional(List(Object(FileLink)), "file_links", override=True)
 
 
 DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
@@ -39,9 +40,12 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
 
     def list_by_attribute_bounds(
-            self,
-            attribute_bounds: dict[AttributeTemplate | LinkByUID, BaseBounds], *,
-            forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
+        self,
+        attribute_bounds: dict[AttributeTemplate | LinkByUID, BaseBounds],
+        *,
+        forward: bool = True,
+        per_page: int = 100,
+    ) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
 
@@ -79,7 +83,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         body = self._get_attribute_bounds_search_body(attribute_bounds)
         params = {}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            params["dataset_id"] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.post_resource,
             # "Ignoring" dataset because it is in the query params (and required)
@@ -87,30 +91,36 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             json=body,
             forward=forward,
             per_page=per_page,
-            params=params)
+            params=params,
+        )
         return (self.build(raw) for raw in raw_objects)
 
     @staticmethod
     def _get_attribute_bounds_search_body(attribute_bounds):
         if not isinstance(attribute_bounds, dict):
-            raise TypeError('attribute_bounds must be a dict mapping template to bounds; '
-                            'got {}'.format(attribute_bounds))
+            raise TypeError(
+                "attribute_bounds must be a dict mapping template to bounds; "
+                f"got {attribute_bounds}"
+            )
         if len(attribute_bounds) != 1:
-            raise NotImplementedError('Currently, only searches with exactly one template '
-                                      'to bounds mapping are supported; got {}'
-                                      .format(attribute_bounds))
+            raise NotImplementedError(
+                "Currently, only searches with exactly one template "
+                f"to bounds mapping are supported; got {attribute_bounds}"
+            )
         return {
-            'attribute_bounds': {
+            "attribute_bounds": {
                 get_object_id(templ): bounds.as_dict()
                 for templ, bounds in attribute_bounds.items()
             }
         }
 
-    def validate_templates(self, *,
-                           model: DataObjectResourceType,
-                           object_template: ObjectTemplateResourceType | None = None,
-                           ingredient_process_template: ProcessTemplate | None = None)\
-            -> list[ValidationError]:
+    def validate_templates(
+        self,
+        *,
+        model: DataObjectResourceType,
+        object_template: ObjectTemplateResourceType | None = None,
+        ingredient_process_template: ProcessTemplate | None = None,
+    ) -> list[ValidationError]:
         """
         Validate a data object against its templates.
 
@@ -132,11 +142,13 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
         request_data = {"dataObject": dumped_data}
         if object_template is not None:
-            request_data["objectTemplate"] = \
-                replace_objects_with_links(scrub_none(object_template.dump()))
+            request_data["objectTemplate"] = replace_objects_with_links(
+                scrub_none(object_template.dump())
+            )
         if ingredient_process_template is not None:
-            request_data["ingredientProcessTemplate"] = \
-                replace_objects_with_links(scrub_none(ingredient_process_template.dump()))
+            request_data["ingredientProcessTemplate"] = replace_objects_with_links(
+                scrub_none(ingredient_process_template.dump())
+            )
         try:
             self.session.put_resource(path, request_data)
             return []

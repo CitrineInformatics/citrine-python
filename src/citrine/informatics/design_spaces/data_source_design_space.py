@@ -4,10 +4,10 @@ from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.subspace import DesignSubspace
 
-__all__ = ['DataSourceDesignSpace']
+__all__ = ["DataSourceDesignSpace"]
 
 
-class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSubspace):
+class DataSourceDesignSpace(Resource["DataSourceDesignSpace"], DesignSubspace):
     """An enumeration of candidates stored in a data source.
 
     Parameters
@@ -24,20 +24,17 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSubspace):
 
     """
 
-    data_source = properties.Object(DataSource, 'data_source')
+    data_source = properties.Object(DataSource, "data_source")
     descriptors = properties.List(
-        properties.Object(Descriptor), 'descriptors', serializable=False, default=[])
+        properties.Object(Descriptor), "descriptors", serializable=False, default=[]
+    )
 
-    typ = properties.String('type', default='DataSourceDesignSpace', deserializable=False)
+    typ = properties.String("type", default="DataSourceDesignSpace", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 data_source: DataSource):
+    def __init__(self, name: str, *, description: str, data_source: DataSource):
         self.name: str = name
         self.description: str = description
         self.data_source: DataSource = data_source
 
     def __str__(self):
-        return '<DataSourceDesignSpace {!r}>'.format(self.name)
+        return f"<DataSourceDesignSpace {self.name!r}>"

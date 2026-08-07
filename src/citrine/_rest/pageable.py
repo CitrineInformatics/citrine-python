@@ -2,32 +2,34 @@ from collections.abc import Callable, Iterable, Sequence
 from uuid import UUID
 
 
-class Pageable():
+class Pageable:
     """Class that allows paging."""
 
     _collection_key: str = NotImplemented
     _api_version: str = "v1"
 
-    def _get_path(self,
-                  uid: UUID | str | None = None,
-                  *,
-                  ignore_dataset: bool = False,
-                  action: str | Sequence[str] = [],
-                  query_terms: dict[str, str] = {},
-                  ) -> str:
+    def _get_path(
+        self,
+        uid: UUID | str | None = None,
+        *,
+        ignore_dataset: bool = False,
+        action: str | Sequence[str] = [],
+        query_terms: dict[str, str] = {},
+    ) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
         raise NotImplementedError  # pragma: no cover
 
-    def _fetch_page(self,
-                    path: str | None = None,
-                    fetch_func: Callable[..., dict] | None = None,
-                    page: int | None = None,
-                    per_page: int | None = None,
-                    json_body: dict | None = None,
-                    additional_params: dict | None = None,
-                    *,
-                    version: str | None = None
-                    ) -> tuple[Iterable[dict], str]:
+    def _fetch_page(
+        self,
+        path: str | None = None,
+        fetch_func: Callable[..., dict] | None = None,
+        page: int | None = None,
+        per_page: int | None = None,
+        json_body: dict | None = None,
+        additional_params: dict | None = None,
+        *,
+        version: str | None = None,
+    ) -> tuple[Iterable[dict], str]:
         """
         Fetch visible elements.  This does not handle pagination.
 
@@ -85,7 +87,7 @@ class Pageable():
         data = fetch_func(path, params=params, version=version, **json_body)
 
         try:
-            next_uri = data.get('next', "")
+            next_uri = data.get("next", "")
         except AttributeError:
             next_uri = ""
 
@@ -99,10 +101,9 @@ class Pageable():
 
         return collection, next_uri
 
-    def _page_params(self,
-                     page: int | None,
-                     per_page: int | None,
-                     module_type: str | None = None) -> dict[str, int]:
+    def _page_params(
+        self, page: int | None, per_page: int | None, module_type: str | None = None
+    ) -> dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page

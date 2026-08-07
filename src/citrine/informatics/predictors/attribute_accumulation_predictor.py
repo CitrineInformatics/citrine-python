@@ -11,21 +11,18 @@ class AttributeAccumulationPredictor(Resource["AttributeAccumulationPredictor"],
     create it when necessary.
     """
 
-    attributes = _properties.List(_properties.Object(Descriptor), 'attributes')
-    sequential = _properties.Boolean('sequential')
+    attributes = _properties.List(_properties.Object(Descriptor), "attributes")
+    sequential = _properties.Boolean("sequential")
 
-    typ = _properties.String('type', default='AttributeAccumulation', deserializable=False)
+    typ = _properties.String("type", default="AttributeAccumulation", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 attributes: list[Descriptor],
-                 sequential: bool):
+    def __init__(
+        self, name: str, *, description: str, attributes: list[Descriptor], sequential: bool
+    ):
         self.name = name
         self.description = description
         self.attributes = attributes
         self.sequential = sequential
 
     def __str__(self):
-        return '<AttributeAccumulationPredictor {!r}>'.format(self.name)
+        return f"<AttributeAccumulationPredictor {self.name!r}>"

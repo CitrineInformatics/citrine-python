@@ -5,15 +5,17 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
-__all__ = ['PredictorEvaluationMetric',
-           'RMSE',
-           'NDME',
-           'RSquared',
-           'StandardRMSE',
-           'PVA',
-           'F1',
-           'AreaUnderROC',
-           'CoverageProbability']
+__all__ = [
+    "F1",
+    "NDME",
+    "PVA",
+    "RMSE",
+    "AreaUnderROC",
+    "CoverageProbability",
+    "PredictorEvaluationMetric",
+    "RSquared",
+    "StandardRMSE",
+]
 
 logger = getLogger(__name__)
 
@@ -170,11 +172,10 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                 raw_float = float(coverage_level)
             except ValueError:
                 raise ValueError(
-                    "Invalid coverage level string '{requested_level}'. "
+                    f"Invalid coverage level string '{coverage_level}'. "
                     "Coverage level must represent a floating point number between "
-                    "0 and 1 (non-inclusive).".format(
-                        requested_level=coverage_level
-                    ))
+                    "0 and 1 (non-inclusive)."
+                )
         elif isinstance(coverage_level, float):
             raw_float = coverage_level
         else:
@@ -186,16 +187,14 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
         if not isclose(_level_float, raw_float):
             logger.warning(
                 "Coverage level can only be specified to 3 decimal places."
-                "Requested level '{requested_level}' will be rounded "
-                "to {rounded_level}.".format(
-                    requested_level=coverage_level,
-                    rounded_level=_level_float
-                ))
+                f"Requested level '{coverage_level}' will be rounded "
+                f"to {_level_float}."
+            )
 
-        self._level_str = "{:5.3f}".format(_level_float)
+        self._level_str = f"{_level_float:5.3f}"
 
     def __repr__(self):
-        return "coverage_probability_{}".format(self._level_str)
+        return f"coverage_probability_{self._level_str}"
 
     def __str__(self):
-        return "Coverage Probability ({})".format(self._level_str)
+        return f"Coverage Probability ({self._level_str})"

@@ -1,11 +1,12 @@
 """Top-level class for all object template objects and collections thereof."""
+
 from abc import ABC
 from typing import TypeVar
 
-from citrine._serialization.properties import Optional
-from citrine._serialization.properties import String
-from citrine.resources.templates import Template, TemplateCollection
 from gemd.entity.template.base_template import BaseTemplate as GEMDTemplate
+
+from citrine._serialization.properties import Optional, String
+from citrine.resources.templates import Template, TemplateCollection
 
 
 class ObjectTemplate(Template, GEMDTemplate, ABC):
@@ -15,8 +16,8 @@ class ObjectTemplate(Template, GEMDTemplate, ABC):
     ObjectTemplate must be extended along with `Resource`
     """
 
-    name = String('name')
-    description = Optional(String(), 'description')
+    name = String("name")
+    description = Optional(String(), "description")
 
 
 ObjectTemplateResourceType = TypeVar("ObjectTemplateResourceType", bound="ObjectTemplate")

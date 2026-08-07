@@ -5,7 +5,6 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 
-
 __all__ = ["DefaultDesignSpaceMode", "DesignSpaceSettings"]
 
 
@@ -16,8 +15,8 @@ class DefaultDesignSpaceMode(BaseEnumeration):
     * HIERARCHICAL results in a hierarchical design space resembling the shape of training data
     """
 
-    ATTRIBUTE = 'ATTRIBUTE'
-    HIERARCHICAL = 'HIERARCHICAL'
+    ATTRIBUTE = "ATTRIBUTE"
+    HIERARCHICAL = "HIERARCHICAL"
 
 
 class DesignSpaceSettings(Resource["DesignSpaceSettings"]):
@@ -25,8 +24,7 @@ class DesignSpaceSettings(Resource["DesignSpaceSettings"]):
 
     predictor_id = properties.UUID("predictor_id")
     predictor_version = properties.Optional(
-        properties.Union([properties.Integer(), properties.String()]),
-        'predictor_version'
+        properties.Union([properties.Integer(), properties.String()]), "predictor_version"
     )
     mode = properties.Optional(properties.Enumeration(DefaultDesignSpaceMode), "mode")
     exclude_intermediates = properties.Optional(properties.Boolean(), "exclude_intermediates")
@@ -43,16 +41,18 @@ class DesignSpaceSettings(Resource["DesignSpaceSettings"]):
         properties.Boolean(), "include_parameter_constraints"
     )
 
-    def __init__(self,
-                 *,
-                 predictor_id: UUID | str,
-                 predictor_version: int | str | None = None,
-                 mode: DefaultDesignSpaceMode | None = None,
-                 exclude_intermediates: bool | None = None,
-                 include_ingredient_fraction_constraints: bool | None = None,
-                 include_label_fraction_constraints: bool | None = None,
-                 include_label_count_constraints: bool | None = None,
-                 include_parameter_constraints: bool | None = None):
+    def __init__(
+        self,
+        *,
+        predictor_id: UUID | str,
+        predictor_version: int | str | None = None,
+        mode: DefaultDesignSpaceMode | None = None,
+        exclude_intermediates: bool | None = None,
+        include_ingredient_fraction_constraints: bool | None = None,
+        include_label_fraction_constraints: bool | None = None,
+        include_label_count_constraints: bool | None = None,
+        include_parameter_constraints: bool | None = None,
+    ):
         self.predictor_id = predictor_id
         self.predictor_version = predictor_version
         self.mode = mode

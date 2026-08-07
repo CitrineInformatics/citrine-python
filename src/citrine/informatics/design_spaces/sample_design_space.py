@@ -2,7 +2,7 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 
 
-class SampleDesignSpaceInput(Serializable['SampleDesignSpaceInput']):
+class SampleDesignSpaceInput(Serializable["SampleDesignSpaceInput"]):
     """A Citrine Sample Design Space Execution Input.
 
     Parameters

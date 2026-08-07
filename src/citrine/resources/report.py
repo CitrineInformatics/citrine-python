@@ -1,4 +1,5 @@
 """A resource that represents a single module report."""
+
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -7,7 +8,7 @@ from citrine._utils.functions import format_escaped_url
 from citrine.informatics.reports import Report
 
 
-class ReportResource(Resource['ReportResource']):
+class ReportResource(Resource["ReportResource"]):
     """Defines a resource for fetching reports from a module.
 
     Parameters
@@ -17,24 +18,25 @@ class ReportResource(Resource['ReportResource']):
 
     """
 
-    _path_template = '/projects/{project_id}/predictors/{predictor_id}/versions/{version}/report'
-    _api_version = 'v3'
+    _path_template = "/projects/{project_id}/predictors/{predictor_id}/versions/{version}/report"
+    _api_version = "v3"
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session = session
 
-    def get(self,
-            *,
-            predictor_id: UUID | str,
-            predictor_version: int | str | None = None) -> Report:
+    def get(
+        self, *, predictor_id: UUID | str, predictor_version: int | str | None = None
+    ) -> Report:
         """Gets a single report keyed on the predictor ID and (optionally) version."""
         version = predictor_version or "most_recent"
 
-        url_path = format_escaped_url(self._path_template,
-                                      project_id=self.project_id,
-                                      predictor_id=str(predictor_id),
-                                      version=version)
+        url_path = format_escaped_url(
+            self._path_template,
+            project_id=self.project_id,
+            predictor_id=str(predictor_id),
+            version=version,
+        )
         data = self.session.get_resource(url_path, version=self._api_version)
 
         report = Report.build(data)

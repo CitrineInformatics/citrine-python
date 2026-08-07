@@ -1,20 +1,20 @@
-from uuid import uuid4, UUID
-from typing import List, Dict, Tuple, Optional, Union, Iterable, TypeVar, Generic
+import builtins
+from collections.abc import Iterable
+from typing import Generic, TypeVar
+from uuid import UUID, uuid4
 
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._session import Session
 from citrine.exceptions import NotFound
-from citrine.resources.material_run import MaterialRun
-from citrine.resources.gemtables import GemTable, GemTableCollection
-from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
-
 from citrine.gemtables.columns import Column
 from citrine.gemtables.variables import Variable
-
+from citrine.resources.gemtables import GemTable, GemTableCollection
+from citrine.resources.material_run import MaterialRun
+from citrine.resources.table_config import TableBuildAlgorithm, TableConfig, TableConfigCollection
 from tests.utils.functions import normalize_uid
 
-ResourceType = TypeVar('ResourceType', bound='Resource')
+ResourceType = TypeVar("ResourceType", bound="Resource")
 
 
 class VersionedResourceStorage(Generic[ResourceType]):
@@ -24,7 +24,7 @@ class VersionedResourceStorage(Generic[ResourceType]):
         self._resources = {}
 
     @property
-    def resources(self) -> Dict[UUID, Dict[int, ResourceType]]:
+    def resources(self) -> dict[UUID, dict[int, ResourceType]]:
         return self._resources
 
     def register(self, resource: ResourceType, *, version: int) -> None:
@@ -38,7 +38,7 @@ class VersionedResourceStorage(Generic[ResourceType]):
         latest_version = max(versions.keys())
         return versions[latest_version]
 
-    def get(self, uid: Union[str, UUID], *, version: Optional[int] = None) -> Optional[ResourceType]:
+    def get(self, uid: str | UUID, *, version: int | None = None) -> ResourceType | None:
         uid = normalize_uid(uid)
         if uid not in self.resources:
             return None
@@ -48,23 +48,22 @@ class VersionedResourceStorage(Generic[ResourceType]):
             versions = self.resources[uid]
             return versions.get(version, None)
 
-    def list_by_uid(self, uid: Union[str, UUID]) -> List[ResourceType]:
+    def list_by_uid(self, uid: str | UUID) -> list[ResourceType]:
         uid = normalize_uid(uid)
         versions = self.resources.get(uid, {})
         sorted_versions = sorted(versions.keys())
         return [versions[v] for v in sorted_versions]
 
-    def list_latest(self) -> List[ResourceType]:
+    def list_latest(self) -> list[ResourceType]:
         return [self._get_latest(uid) for uid in self.resources.keys()]
 
 
 class FakeTableConfigCollection(TableConfigCollection):
-
     def __init__(self, team_id: UUID, project_id: UUID, session: Session):
         super().__init__(team_id=team_id, project_id=project_id, session=session)
         self._storage = VersionedResourceStorage[TableConfig]()
 
-    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
+    def get(self, uid: UUID | str, *, version: int | None = None):
         config = self._storage.get(uid, version=version)
         if config is None:
             raise NotFound("")
@@ -85,38 +84,41 @@ class FakeTableConfigCollection(TableConfigCollection):
 
         return table_config
 
-    def list(self, page: Optional[int] = None, per_page: int = 100) -> Iterable[TableConfig]:
+    def list(self, page: int | None = None, per_page: int = 100) -> Iterable[TableConfig]:
         configs = self._storage.list_latest()
         if page is None:
             return iter(configs)
         else:
-            return iter(configs[(page - 1)*per_page:page*per_page])
+            return iter(configs[(page - 1) * per_page : page * per_page])
 
     def default_for_material(
-        self, *,
-        material: Union[MaterialRun, LinkByUID, str, UUID],
+        self,
+        *,
+        material: MaterialRun | LinkByUID | str | UUID,
         name: str,
         description: str = None,
-        algorithm: Optional[TableBuildAlgorithm] = None,
-        scope: str = None
-    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
+        algorithm: TableBuildAlgorithm | None = None,
+        scope: str = None,
+    ) -> tuple[TableConfig, builtins.list[tuple[Variable, Column]]]:
         table_config = TableConfig(
-            name=name, description="", datasets=[],
-            rows=[], variables=[], columns=[]
+            name=name, description="", datasets=[], rows=[], variables=[], columns=[]
         )
         return table_config, []
 
 
 class FakeGemTableCollection(GemTableCollection):
-
     def __init__(self, team_id: UUID, project_id: UUID, session: Session):
         super().__init__(team_id=team_id, project_id=project_id, session=session)
         self._config_map = {}  # Map config UID to table UID
         self._table_storage = VersionedResourceStorage[GemTable]()
 
-    def build_from_config(self, config: Union[TableConfig, str, UUID], *,
-                          version: Union[str, int] = None,
-                          timeout: float = 15 * 60) -> GemTable:
+    def build_from_config(
+        self,
+        config: TableConfig | str | UUID,
+        *,
+        version: str | int = None,
+        timeout: float = 15 * 60,
+    ) -> GemTable:
         if isinstance(config, TableConfig):
             config_uid = config.config_uid
         else:
@@ -136,9 +138,7 @@ class FakeGemTableCollection(GemTableCollection):
 
         return table
 
-    def list_by_config(self, table_config_uid: UUID,
-                       *,
-                       per_page: int = 100) -> Iterable[GemTable]:
+    def list_by_config(self, table_config_uid: UUID, *, per_page: int = 100) -> Iterable[GemTable]:
         config_uid = normalize_uid(table_config_uid)
         if config_uid not in self._config_map:
             return iter([])
@@ -146,9 +146,6 @@ class FakeGemTableCollection(GemTableCollection):
             table_id = self._config_map[config_uid]
             return self.list_versions(table_id, per_page=per_page)
 
-    def list_versions(self,
-                      uid: UUID,
-                      *,
-                      per_page: int = 100) -> Iterable[GemTable]:
+    def list_versions(self, uid: UUID, *, per_page: int = 100) -> Iterable[GemTable]:
         tables = self._table_storage.list_by_uid(uid)
         return iter(tables)

@@ -1,9 +1,9 @@
 from copy import copy
+from typing import TYPE_CHECKING
 from uuid import UUID
 
-from gemd.entity.object import MaterialRun
-
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import MaterialRun
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.collection import Collection
@@ -11,21 +11,30 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.dataset import DatasetCollection
-from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
-from citrine.resources.process_template import ProcessTemplate
 from citrine.gemd_queries.gemd_query import GemdQuery
-from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn, \
-    ConcatColumn
+from citrine.gemtables.columns import (
+    Column,
+    ConcatColumn,
+    IdentityColumn,
+    MeanColumn,
+    OriginalUnitsColumn,
+)
 from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import (
-    Variable, IngredientIdentifierByProcessTemplateAndName, IngredientQuantityByProcessAndName,
-    IngredientQuantityDimension, IngredientIdentifierInOutput, IngredientQuantityInOutput,
-    IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
+    IngredientIdentifierByProcessTemplateAndName,
+    IngredientIdentifierInOutput,
+    IngredientLabelsSetByProcessAndName,
+    IngredientLabelsSetInOutput,
+    IngredientQuantityByProcessAndName,
+    IngredientQuantityDimension,
+    IngredientQuantityInOutput,
+    Variable,
 )
+from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
+from citrine.resources.dataset import DatasetCollection
+from citrine.resources.process_template import ProcessTemplate
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:   # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
     from citrine.resources.team import Team
 
 
@@ -97,12 +106,12 @@ class TableConfig(Resource["TableConfig"]):
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
-    config_uid = properties.Optional(properties.UUID(), 'definition_id')
+    config_uid = properties.Optional(properties.UUID(), "definition_id")
     """:UUID | None: Unique ID of the table config, independent of its version."""
-    version_number = properties.Optional(properties.Integer, 'version_number')
+    version_number = properties.Optional(properties.Integer, "version_number")
     """:int | None: The version of the table config, starting from 1.
     It increases every time the table config is updated."""
-    version_uid = properties.Optional(properties.UUID(), 'id')
+    version_uid = properties.Optional(properties.UUID(), "id")
     """:UUID | None: Unique ID that specifies one version of one table config."""
 
     name = properties.String("name")
@@ -116,15 +125,18 @@ class TableConfig(Resource["TableConfig"]):
         properties.Enumeration(TableFromGemdQueryAlgorithm), "generation_algorithm"
     )
 
-    def __init__(self, name: str,
-                 *,
-                 description: str,
-                 datasets: list[UUID],
-                 variables: list[Variable],
-                 rows: list[Row],
-                 columns: list[Column],
-                 gemd_query: GemdQuery = None,
-                 generation_algorithm: TableFromGemdQueryAlgorithm | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        datasets: list[UUID],
+        variables: list[Variable],
+        rows: list[Row],
+        columns: list[Column],
+        gemd_query: GemdQuery = None,
+        generation_algorithm: TableFromGemdQueryAlgorithm | None = None,
+    ):
         self.name = name
         self.description = description
         self.datasets = datasets
@@ -140,18 +152,22 @@ class TableConfig(Resource["TableConfig"]):
         names = [x.name for x in variables]
         dup_names = self._get_dups(names)
         if len(dup_names) > 0:
-            raise ValueError("Multiple variables defined these names,"
-                             " which much be unique: {}".format(dup_names))
+            raise ValueError(
+                f"Multiple variables defined these names, which much be unique: {dup_names}"
+            )
         headers = [x.headers for x in variables]
         dup_headers = self._get_dups(headers)
         if len(dup_headers) > 0:
-            raise ValueError("Multiple variables defined these headers,"
-                             " which much be unique: {}".format(dup_headers))
+            raise ValueError(
+                f"Multiple variables defined these headers, which much be unique: {dup_headers}"
+            )
 
         missing_variables = [x.data_source for x in columns if x.data_source not in names]
         if len(missing_variables) > 0:
-            raise ValueError("The data_source of the columns must match one of the variable names,"
-                             " but {} were missing".format(missing_variables))
+            raise ValueError(
+                "The data_source of the columns must match one of the variable names,"
+                f" but {missing_variables} were missing"
+            )
 
     @property
     def uid(self) -> UUID:
@@ -163,12 +179,14 @@ class TableConfig(Resource["TableConfig"]):
         """Set the unique ID of the table config, independent of its version."""
         self.config_uid = new_uid
 
-    def add_columns(self, *,
-                    variable: Variable,
-                    columns: list[Column],
-                    name: str | None = None,
-                    description: str | None = None
-                    ) -> 'TableConfig':
+    def add_columns(
+        self,
+        *,
+        variable: Variable,
+        columns: list[Column],
+        name: str | None = None,
+        description: str | None = None,
+    ) -> "TableConfig":
         """Add a variable and one or more columns to this TableConfig (out-of-place).
 
         This method checks that the variable name is not already in use and that the columns
@@ -188,12 +206,13 @@ class TableConfig(Resource["TableConfig"]):
 
         """
         if variable.name in [x.name for x in self.variables]:
-            raise ValueError("The variable name {} is already used".format(variable.name))
+            raise ValueError(f"The variable name {variable.name} is already used")
 
         mismatched_data_source = [x for x in columns if x.data_source != variable.name]
         if len(mismatched_data_source):
-            raise ValueError("Column.data_source must be {} but found {}"
-                             .format(variable.name, mismatched_data_source))
+            raise ValueError(
+                f"Column.data_source must be {variable.name} but found {mismatched_data_source}"
+            )
 
         new_config = TableConfig(
             name=name or self.name,
@@ -201,20 +220,22 @@ class TableConfig(Resource["TableConfig"]):
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
-            columns=copy(self.columns) + columns
+            columns=copy(self.columns) + columns,
         )
         new_config.version_number = copy(self.version_number)
         new_config.config_uid = copy(self.config_uid)
         new_config.version_uid = copy(self.version_uid)
         return new_config
 
-    def add_all_ingredients(self, *,
-                            process_template: LinkByUID | ProcessTemplate | str | UUID,
-                            team: 'Team',
-                            quantity_dimension: IngredientQuantityDimension,
-                            scope: str = CITRINE_SCOPE,
-                            unit: str | None = None
-                            ):
+    def add_all_ingredients(
+        self,
+        *,
+        process_template: LinkByUID | ProcessTemplate | str | UUID,
+        team: "Team",
+        quantity_dimension: IngredientQuantityDimension,
+        scope: str = CITRINE_SCOPE,
+        unit: str | None = None,
+    ):
         """Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the id of
@@ -239,38 +260,43 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
             IngredientQuantityDimension.VOLUME: "volume fraction",
-            IngredientQuantityDimension.NUMBER: "number fraction"
+            IngredientQuantityDimension.NUMBER: "number fraction",
         }
         link = _make_link_by_uid(process_template)
         process: ProcessTemplate = team.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
-                "Cannot add ingredients for process template \'{}\' because it has no defined "
-                "ingredients (allowed_names is not defined).".format(process.name))
+                f"Cannot add ingredients for process template '{process.name}' because it "
+                "has no defined ingredients (allowed_names is not defined)."
+            )
 
         new_variables = []
         new_columns = []
         for name in process.allowed_names:
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
-                name='_'.join([process.name, name, str(hash(link.id + name + scope))]),
+                name="_".join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
                 process_template=link,
                 ingredient_name=name,
-                scope=scope
+                scope=scope,
             )
             quantity_variable = IngredientQuantityByProcessAndName(
-                name='_'.join([process.name, name, str(hash(
-                    link.id + name + dimension_display[quantity_dimension]))]),
+                name="_".join(
+                    [
+                        process.name,
+                        name,
+                        str(hash(link.id + name + dimension_display[quantity_dimension])),
+                    ]
+                ),
                 headers=[process.name, name, dimension_display[quantity_dimension]],
                 process_template=link,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
-                unit=unit
+                unit=unit,
             )
             label_variable = IngredientLabelsSetByProcessAndName(
-                name='_'.join([process.name, name, str(hash(
-                    link.id + name + 'Labels'))]),
-                headers=[process.name, name, 'Labels'],
+                name="_".join([process.name, name, str(hash(link.id + name + "Labels"))]),
+                headers=[process.name, name, "Labels"],
                 process_template=link,
                 ingredient_name=name,
             )
@@ -287,7 +313,7 @@ class TableConfig(Resource["TableConfig"]):
                 new_columns.append(
                     ConcatColumn(
                         data_source=label_variable.name,
-                        subcolumn=IdentityColumn(data_source=label_variable.name)
+                        subcolumn=IdentityColumn(data_source=label_variable.name),
                     )
                 )
 
@@ -297,20 +323,22 @@ class TableConfig(Resource["TableConfig"]):
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
-            columns=copy(self.columns) + new_columns
+            columns=copy(self.columns) + new_columns,
         )
         new_config.version_number = copy(self.version_number)
         new_config.config_uid = copy(self.config_uid)
         new_config.version_uid = copy(self.version_uid)
         return new_config
 
-    def add_all_ingredients_in_output(self, *,
-                                      process_templates: list[LinkByUID],
-                                      team: 'Team',
-                                      quantity_dimension: IngredientQuantityDimension,
-                                      scope: str = CITRINE_SCOPE,
-                                      unit: str | None = None
-                                      ):
+    def add_all_ingredients_in_output(
+        self,
+        *,
+        process_templates: list[LinkByUID],
+        team: "Team",
+        quantity_dimension: IngredientQuantityDimension,
+        scope: str = CITRINE_SCOPE,
+        unit: str | None = None,
+    ):
         """Add variables and columns for all possible ingredients in a list of processes.
 
         For each allowed ingredient name in the union of all passed process templates there is a
@@ -338,7 +366,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
             IngredientQuantityDimension.VOLUME: "volume fraction",
-            IngredientQuantityDimension.NUMBER: "number fraction"
+            IngredientQuantityDimension.NUMBER: "number fraction",
         }
         union_allowed_names = []
         for process_template_link in process_templates:
@@ -355,23 +383,23 @@ class TableConfig(Resource["TableConfig"]):
         new_columns = []
         for name in union_allowed_names:
             identifier_variable = IngredientIdentifierInOutput(
-                name='_'.join([name, str(hash(name + scope))]),
+                name="_".join([name, str(hash(name + scope))]),
                 headers=[name, scope],
                 process_templates=process_templates,
                 ingredient_name=name,
-                scope=scope
+                scope=scope,
             )
             quantity_variable = IngredientQuantityInOutput(
-                name='_'.join([name, str(hash(name + dimension_display[quantity_dimension]))]),
+                name="_".join([name, str(hash(name + dimension_display[quantity_dimension]))]),
                 headers=[name, dimension_display[quantity_dimension]],
                 process_templates=process_templates,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
-                unit=unit
+                unit=unit,
             )
             label_variable = IngredientLabelsSetInOutput(
-                name='_'.join([name, str(hash(name + 'Labels'))]),
-                headers=[name, 'Labels'],
+                name="_".join([name, str(hash(name + "Labels"))]),
+                headers=[name, "Labels"],
                 process_templates=process_templates,
                 ingredient_name=name,
             )
@@ -388,7 +416,7 @@ class TableConfig(Resource["TableConfig"]):
                 new_columns.append(
                     ConcatColumn(
                         data_source=label_variable.name,
-                        subcolumn=IdentityColumn(data_source=label_variable.name)
+                        subcolumn=IdentityColumn(data_source=label_variable.name),
                     )
                 )
 
@@ -398,7 +426,7 @@ class TableConfig(Resource["TableConfig"]):
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
-            columns=copy(self.columns) + new_columns
+            columns=copy(self.columns) + new_columns,
         )
         new_config.version_number = copy(self.version_number)
         new_config.config_uid = copy(self.config_uid)
@@ -410,8 +438,8 @@ class TableConfigCollection(Collection[TableConfig]):
     """Represents the collection of all Table Configs associated with a project."""
 
     # FIXME (DML): use newly named properties when they're available
-    _path_template = 'projects/{project_id}/ara-definitions'
-    _collection_key = 'definitions'
+    _path_template = "projects/{project_id}/ara-definitions"
+    _collection_key = "definitions"
     _resource = TableConfig
 
     # NOTE: This isn't actually an 'individual key' - both parts (version and
@@ -437,9 +465,9 @@ class TableConfigCollection(Collection[TableConfig]):
         else:
             path = self._get_path(uid)
             data = self.session.get_resource(path)
-            version_numbers = [version_data['version_number'] for version_data in data['versions']]
+            version_numbers = [version_data["version_number"] for version_data in data["versions"]]
             index = version_numbers.index(max(version_numbers))
-            data['version'] = data['versions'][index]
+            data["version"] = data["versions"][index]
         return self.build(data)
 
     def get_for_table(self, table: "GemTable") -> TableConfig:  # noqa: F821
@@ -459,29 +487,33 @@ class TableConfigCollection(Collection[TableConfig]):
         """
         # the route to fetch the config is built off the display table route tree
         path = format_escaped_url(
-            'projects/{}/display-tables/{}/versions/{}/definition',
-            self.project_id, table.uid, table.version)
+            "projects/{}/display-tables/{}/versions/{}/definition",
+            self.project_id,
+            table.uid,
+            table.version,
+        )
         data = self.session.get_resource(path)
         return self.build(data)
 
     def build(self, data: dict) -> TableConfig:
         """Build an individual Table Config from a dictionary."""
-        version_data = data['version']
-        table_config = TableConfig.build(version_data['ara_definition'])
-        table_config.version_number = version_data['version_number']
-        table_config.version_uid = version_data['id']
-        table_config.config_uid = data['definition']['id']
+        version_data = data["version"]
+        table_config = TableConfig.build(version_data["ara_definition"])
+        table_config.version_number = version_data["version_number"]
+        table_config.version_uid = version_data["id"]
+        table_config.config_uid = data["definition"]["id"]
         table_config.team_id = self.team_id
         table_config.project_id = self.project_id
         table_config.session = self.session
         return table_config
 
     def default_for_material(
-            self, *,
-            material: MaterialRun | LinkByUID | str | UUID,
-            name: str,
-            description: str = None,
-            algorithm: TableBuildAlgorithm | None = None
+        self,
+        *,
+        material: MaterialRun | LinkByUID | str | UUID,
+        name: str,
+        description: str = None,
+        algorithm: TableBuildAlgorithm | None = None,
     ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build best-guess default table config for provided terminal material's history.
@@ -517,33 +549,33 @@ class TableConfigCollection(Collection[TableConfig]):
         """
         link = _make_link_by_uid(material)
         params = {
-            'id': link.id,
-            'scope': link.scope,
-            'name': name,
+            "id": link.id,
+            "scope": link.scope,
+            "name": name,
         }
         if description is not None:
-            params['description'] = description
+            params["description"] = description
         if algorithm is not None:
             if isinstance(algorithm, TableBuildAlgorithm):
-                params['algorithm'] = algorithm.value
+                params["algorithm"] = algorithm.value
             else:  # Not per spec, but be forgiving
-                params['algorithm'] = str(algorithm)
+                params["algorithm"] = str(algorithm)
         data = self.session.get_resource(
-            format_escaped_url('teams/{}/table-configs/default', self.team_id),
+            format_escaped_url("teams/{}/table-configs/default", self.team_id),
             params=params,
         )
-        config = TableConfig.build(data['config'])
-        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
+        config = TableConfig.build(data["config"])
+        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data["ambiguous"]]
         return config, ambiguous
 
     def from_query(
-            self,
-            gemd_query: GemdQuery,
-            *,
-            name: str = None,
-            description: str = None,
-            algorithm: TableFromGemdQueryAlgorithm | None = None,
-            register_config: bool = False
+        self,
+        gemd_query: GemdQuery,
+        *,
+        name: str = None,
+        description: str = None,
+        algorithm: TableFromGemdQueryAlgorithm | None = None,
+        register_config: bool = False,
     ) -> tuple[TableConfig, list[tuple[Variable, Column]]]:
         """
         Build a TableConfig based on the results of a database query.
@@ -570,35 +602,33 @@ class TableConfigCollection(Collection[TableConfig]):
 
         """
         if name is None:
-            collection = DatasetCollection(
-                session=self.session,
-                team_id=self.team_id
+            collection = DatasetCollection(session=self.session, team_id=self.team_id)
+            name = (
+                f"Automatic Table for Dataset: "
+                f"{', '.join([collection.get(x).name for x in gemd_query.datasets])}"
             )
-            name = (f"Automatic Table for Dataset: "
-                    f"{', '.join([collection.get(x).name for x in gemd_query.datasets])}")
 
         params = {"name": name}
         if description is not None:
-            params['description'] = description
+            params["description"] = description
         if algorithm is not None:
-            params['algorithm'] = algorithm
+            params["algorithm"] = algorithm
         data = self.session.post_resource(
-            format_escaped_url('teams/{}/table-configs/from-query', self.team_id),
+            format_escaped_url("teams/{}/table-configs/from-query", self.team_id),
             params=params,
-            json=gemd_query.dump()
+            json=gemd_query.dump(),
         )
-        config = TableConfig.build(data['config'])
-        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
+        config = TableConfig.build(data["config"])
+        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data["ambiguous"]]
 
         if register_config:
             return self.register(config), ambiguous
         else:
             return config, ambiguous
 
-    def preview(self, *,
-                table_config: TableConfig,
-                preview_materials: list[LinkByUID] = None
-                ) -> dict:
+    def preview(
+        self, *, table_config: TableConfig, preview_materials: list[LinkByUID] = None
+    ) -> dict:
         """Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
@@ -609,13 +639,10 @@ class TableConfigCollection(Collection[TableConfig]):
             List of links to the material runs to use as terminal materials in the preview
 
         """
-        path = format_escaped_url(
-            "teams/{}/ara-definitions/preview",
-            self.team_id
-        )
+        path = format_escaped_url("teams/{}/ara-definitions/preview", self.team_id)
         body = {
             "definition": table_config.dump(),
-            "rows": [x.as_dict() for x in preview_materials]
+            "rows": [x.as_dict() for x in preview_materials],
         }
         return self.session.post_resource(path, body)
 
@@ -665,10 +692,12 @@ class TableConfigCollection(Collection[TableConfig]):
         :return: The updated Table Config with updated metadata
         """
         if table_config.config_uid is None:
-            raise ValueError("Cannot update Table Config without a config_uid."
-                             " Please either use register() to initially register this"
-                             " Table Config or retrieve the registered details before calling"
-                             " update()")
+            raise ValueError(
+                "Cannot update Table Config without a config_uid."
+                " Please either use register() to initially register this"
+                " Table Config or retrieve the registered details before calling"
+                " update()"
+            )
         return self.register(table_config)
 
     def delete(self, uid: UUID | str):

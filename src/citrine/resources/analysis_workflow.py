@@ -2,10 +2,12 @@ import functools
 from collections.abc import Iterator
 from uuid import UUID
 
-from citrine.informatics.workflows.analysis_workflow import AnalysisWorkflow, \
-    AnalysisWorkflowUpdatePayload
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.informatics.workflows.analysis_workflow import (
+    AnalysisWorkflow,
+    AnalysisWorkflowUpdatePayload,
+)
 
 
 class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
@@ -18,11 +20,11 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
 
     """
 
-    _api_version = 'v1'
-    _path_template = '/teams/{team_id}/analysis-workflows'
+    _api_version = "v1"
+    _path_template = "/teams/{team_id}/analysis-workflows"
     _individual_key = None
     _resource = AnalysisWorkflow
-    _collection_key = 'response'
+    _collection_key = "response"
 
     def __init__(self, session: Session, *, team_id: UUID):
         self.session = session
@@ -61,9 +63,11 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
 
     def _list_with_params(self, *, per_page: int, **kwargs) -> Iterator[AnalysisWorkflow]:
         page_fetcher = functools.partial(self._fetch_page, additional_params=kwargs)
-        return self._paginator.paginate(page_fetcher=page_fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=page_fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def archive(self, uid: UUID | str) -> AnalysisWorkflow:
         """Archive an analysis workflow, hiding it from default listings."""
@@ -77,11 +81,9 @@ class AnalysisWorkflowCollection(Collection[AnalysisWorkflow]):
         entity = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(entity)
 
-    def update(self,
-               uid: UUID | str,
-               *,
-               name: str | None = None,
-               description: str | None = None) -> AnalysisWorkflow:
+    def update(
+        self, uid: UUID | str, *, name: str | None = None, description: str | None = None
+    ) -> AnalysisWorkflow:
         """Update the name and/or description of the analysis workflow."""
         aw_update = AnalysisWorkflowUpdatePayload(uid=uid, name=name, description=description)
         return super().update(aw_update)

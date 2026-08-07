@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of projects."""
+
 from collections.abc import Iterable, Iterator
 from functools import partial
 from uuid import UUID
@@ -13,16 +14,15 @@ from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
-from citrine.resources.generative_design_execution import \
-    GenerativeDesignExecutionCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 
 
-class Project(Resource['Project']):
+class Project(Resource["Project"]):
     """
     A Citrine Project.
 
@@ -40,27 +40,29 @@ class Project(Resource['Project']):
 
     """
 
-    _response_key = 'project'
+    _response_key = "project"
     _resource_type = ResourceTypeEnum.PROJECT
 
-    name = properties.String('name')
-    description = properties.Optional(properties.String(), 'description')
-    uid = properties.Optional(properties.UUID(), 'id')
+    name = properties.String("name")
+    description = properties.Optional(properties.String(), "description")
+    uid = properties.Optional(properties.UUID(), "id")
     """UUID: Unique uuid4 identifier of this project."""
-    status = properties.Optional(properties.String(), 'status')
+    status = properties.Optional(properties.String(), "status")
     """str: Status of the project."""
-    created_at = properties.Optional(properties.Datetime(), 'created_at')
+    created_at = properties.Optional(properties.Datetime(), "created_at")
     """int: Time the project was created, in seconds since epoch."""
-    archived = properties.Optional(properties.Boolean, 'archived')
+    archived = properties.Optional(properties.Boolean, "archived")
     """bool: Whether the project is archived."""
     _team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str | None = None,
-                 session: Session | None = None,
-                 team_id: UUID | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str | None = None,
+        session: Session | None = None,
+        team_id: UUID | None = None,
+    ):
         self.name: str = name
         self.description: str | None = description
         self.session: Session = session
@@ -70,18 +72,17 @@ class Project(Resource['Project']):
         return {key: value for key, value in data.items() if value is not None}
 
     def __str__(self):
-        return '<Project {!r}>'.format(self.name)
+        return f"<Project {self.name!r}>"
 
     def _path(self):
-        return format_escaped_url('/projects/{project_id}', project_id=self.uid)
+        return format_escaped_url("/projects/{project_id}", project_id=self.uid)
 
     @property
     def team_id(self):
         """Returns the Team's id-scoped UUID."""
         if self._team_id is None:
             self._team_id = self.get_team_id_from_project_id(
-                session=self.session,
-                project_id=self.uid
+                session=self.session, project_id=self.uid
             )
         return self._team_id
 
@@ -92,8 +93,8 @@ class Project(Resource['Project']):
     @classmethod
     def get_team_id_from_project_id(cls, session: Session, project_id: UUID):
         """Returns the UUID of the Team that owns the project with the provided project_id."""
-        response = session.get_resource(path=f'projects/{project_id}', version="v3")
-        return response['project']['team']['id']
+        response = session.get_resource(path=f"projects/{project_id}", version="v3")
+        return response["project"]["team"]["id"]
 
     @property
     def branches(self) -> BranchCollection:
@@ -138,9 +139,9 @@ class Project(Resource['Project']):
     @property
     def table_configs(self) -> TableConfigCollection:
         """Return a resource representing all Table Configs in the project."""
-        return TableConfigCollection(team_id=self.team_id,
-                                     project_id=self.uid,
-                                     session=self.session)
+        return TableConfigCollection(
+            team_id=self.team_id, project_id=self.uid, session=self.session
+        )
 
     def publish(self, *, resource: Resource):
         """
@@ -168,8 +169,9 @@ class Project(Resource['Project']):
 
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-publish",
-            version='v3',
-            json={'ids': [resource_access["id"]]})
+            version="v3",
+            json={"ids": [resource_access["id"]]},
+        )
         return True
 
     def un_publish(self, *, resource: Resource):
@@ -194,8 +196,9 @@ class Project(Resource['Project']):
 
         self.session.checked_post(
             f"{self._path()}/published-resources/{resource_type}/batch-un-publish",
-            version='v3',
-            json={'ids': [resource_access["id"]]})
+            version="v3",
+            json={"ids": [resource_access["id"]]},
+        )
         return True
 
     def pull_in_resource(self, *, resource: Resource):
@@ -218,11 +221,12 @@ class Project(Resource['Project']):
         if resource_type == ResourceTypeEnum.DATASET:
             raise ValueError("Pulling a dataset into a project is unnecessary.")
 
-        base_url = f'/teams/{self.team_id}{self._path()}'
+        base_url = f"/teams/{self.team_id}{self._path()}"
         self.session.checked_post(
-            f'{base_url}/outside-resources/{resource_type}/batch-pull-in',
-            version='v3',
-            json={'ids': [resource_access["id"]]})
+            f"{base_url}/outside-resources/{resource_type}/batch-pull-in",
+            version="v3",
+            json={"ids": [resource_access["id"]]},
+        )
         return True
 
     def list_members(self) -> "list[ProjectMember] | list[TeamMember]":  # noqa: F821
@@ -258,13 +262,14 @@ class ProjectCollection(Collection[Project]):
     @property
     def _path_template(self):
         if self.team_id is None:
-            return '/projects'
+            return "/projects"
         else:
-            return '/teams/{team_id}/projects'
-    _individual_key = 'project'
-    _collection_key = 'projects'
+            return "/teams/{team_id}/projects"
+
+    _individual_key = "project"
+    _collection_key = "projects"
     _resource = Project
-    _api_version = 'v3'
+    _api_version = "v3"
 
     def __init__(self, session: Session, *, team_id: UUID | None = None):
         self.session = session
@@ -325,8 +330,9 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.team_id is None:
-            raise NotImplementedError("Cannot register a project without a team ID. "
-                                      "Use team.projects.register.")
+            raise NotImplementedError(
+                "Cannot register a project without a team ID. Use team.projects.register."
+            )
 
         project = Project(name, description=description)
         return super().register(project)
@@ -337,9 +343,11 @@ class ProjectCollection(Collection[Project]):
             filters["archived"] = str(archived).lower()
 
         fetcher = partial(self._fetch_page, additional_params=filters, version=self._api_version)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def list(self, *, per_page: int = 1000) -> Iterator[Project]:
         """
@@ -440,24 +448,25 @@ class ProjectCollection(Collection[Project]):
 
         """
         collections = []
-        query_params = {'userId': ""}
+        query_params = {"userId": ""}
 
-        json = {} if search_params is None else {'search_params': search_params}
+        json = {} if search_params is None else {"search_params": search_params}
 
-        data = self.session.post_resource(self._get_path(action="search"),
-                                          params=query_params,
-                                          json=json,
-                                          version=self._api_version)
+        data = self.session.post_resource(
+            self._get_path(action="search"),
+            params=query_params,
+            json=json,
+            version=self._api_version,
+        )
 
         if self._collection_key is not None:
             collections = data[self._collection_key]
 
         return collections
 
-    def search(self,
-               *,
-               search_params: dict | None = None,
-               per_page: int = 1000) -> Iterable[Project]:
+    def search(
+        self, *, search_params: dict | None = None, per_page: int = 1000
+    ) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.
 

@@ -6,7 +6,7 @@ from citrine._serialization import properties
 from citrine._session import Session
 
 
-class User(Resource['User']):
+class User(Resource["User"]):
     """
     A Citrine User.
 
@@ -28,18 +28,13 @@ class User(Resource['User']):
     _resource_type = ResourceTypeEnum.USER
     _session: Session | None = None
 
-    uid = properties.Optional(properties.UUID, 'id')
-    screen_name = properties.String('screen_name')
-    position = properties.Optional(properties.String(), 'position')
-    email = properties.String('email')
-    is_admin = properties.Boolean('is_admin')
+    uid = properties.Optional(properties.UUID, "id")
+    screen_name = properties.String("screen_name")
+    position = properties.Optional(properties.String(), "position")
+    email = properties.String("email")
+    is_admin = properties.Boolean("is_admin")
 
-    def __init__(self,
-                 *,
-                 screen_name: str,
-                 email: str,
-                 position: str | None,
-                 is_admin: bool):
+    def __init__(self, *, screen_name: str, email: str, position: str | None, is_admin: bool):
         self.email: str = email
         self.position: str | None = position
         self.screen_name: str = screen_name
@@ -51,7 +46,7 @@ class User(Resource['User']):
         return self.email.split("@")[-1] == "citrine.io"
 
     def __str__(self):
-        return '<User {!r}>'.format(self.screen_name)
+        return f"<User {self.screen_name!r}>"
 
     def get(self):
         """Retrieve a specific user from the database."""
@@ -61,9 +56,9 @@ class User(Resource['User']):
 class UserCollection(AdminCollection[User]):
     """Represents the collection of all users."""
 
-    _path_template = '/users'
-    _collection_key = 'users'
-    _individual_key = 'user'
+    _path_template = "/users"
+    _collection_key = "users"
+    _individual_key = "user"
     _resource = User
 
     def __init__(self, session: Session):
@@ -71,7 +66,7 @@ class UserCollection(AdminCollection[User]):
 
     def me(self):
         """Get information about the current user."""
-        data = self.session.get_resource(self._path_template + '/me')
+        data = self.session.get_resource(self._path_template + "/me")
         return self.build(data)
 
     def build(self, data):
@@ -93,15 +88,8 @@ class UserCollection(AdminCollection[User]):
         user._session = self.session
         return user
 
-    def register(self,
-                 *,
-                 screen_name: str,
-                 email: str,
-                 position: str,
-                 is_admin: bool) -> User:
+    def register(self, *, screen_name: str, email: str, position: str, is_admin: bool) -> User:
         """Register a User."""
-        return super().register(User(
-            screen_name=screen_name,
-            email=email,
-            position=position,
-            is_admin=is_admin))
+        return super().register(
+            User(screen_name=screen_name, email=email, position=position, is_admin=is_admin)
+        )

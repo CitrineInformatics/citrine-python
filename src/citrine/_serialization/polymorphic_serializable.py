@@ -3,8 +3,7 @@ from typing import Generic, TypeVar
 
 from citrine._serialization.serializable import Serializable
 
-
-SelfType = TypeVar('SelfType', bound='PolymorphicSerializable')
+SelfType = TypeVar("SelfType", bound="PolymorphicSerializable")
 
 
 class PolymorphicSerializable(Generic[SelfType]):

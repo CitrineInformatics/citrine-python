@@ -22,7 +22,7 @@ class Response:
             return "No body available"
 
     def __repr__(self):
-        return f'Response({self._get_status_string()!r}, {self._get_body_string()!r})'
+        return f"Response({self._get_status_string()!r}, {self._get_body_string()!r})"
 
     def __str__(self):
-        return f'<Response {self._get_status_string()!r}>'
+        return f"<Response {self._get_status_string()!r}>"

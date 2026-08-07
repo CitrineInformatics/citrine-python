@@ -10,12 +10,12 @@ from citrine._utils.functions import resource_path
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
-ResourceType = TypeVar('ResourceType', bound=Resource)
+ResourceType = TypeVar("ResourceType", bound=Resource)
 
 # Python does not support a TypeVar being used as a bound for another TypeVar.
 # Thus, this will never be particularly type safe on its own. The solution is to
 # have subclasses override the create method.
-CreationType = TypeVar('CreationType', bound='Resource')
+CreationType = TypeVar("CreationType", bound="Resource")
 
 
 class Collection(Generic[ResourceType], Pageable):
@@ -25,21 +25,23 @@ class Collection(Generic[ResourceType], Pageable):
     _dataset_agnostic_path_template: str = NotImplemented
     _individual_key: str = NotImplemented
     _resource: ResourceType = NotImplemented
-    _collection_key: str = 'entries'
+    _collection_key: str = "entries"
     _paginator: Paginator = Paginator()
     _api_version: str = "v1"
 
-    def _get_path(self,
-                  uid: UUID | str | None = None,
-                  *,
-                  ignore_dataset: bool = False,
-                  action: str | Sequence[str] = [],
-                  query_terms: dict[str, str] = {},
-                  ) -> str:
+    def _get_path(
+        self,
+        uid: UUID | str | None = None,
+        *,
+        ignore_dataset: bool = False,
+        action: str | Sequence[str] = [],
+        query_terms: dict[str, str] = {},
+    ) -> str:
         """Construct a url from __base_path__ and, optionally, id and/or action."""
         base = self._dataset_agnostic_path_template if ignore_dataset else self._path_template
-        return resource_path(path_template=base, uid=uid, action=action, query_terms=query_terms,
-                             **self.__dict__)
+        return resource_path(
+            path_template=base, uid=uid, action=action, query_terms=query_terms, **self.__dict__
+        )
 
     @abstractmethod
     def build(self, data: dict):
@@ -85,9 +87,11 @@ class Collection(Generic[ResourceType], Pageable):
             Use list() to force evaluation of all results into an in-memory list.
 
         """
-        return self._paginator.paginate(page_fetcher=self._fetch_page,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=self._fetch_page,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
@@ -102,8 +106,7 @@ class Collection(Generic[ResourceType], Pageable):
         data = self.session.delete_resource(url, version=self._api_version)
         return Response(body=data)
 
-    def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterator[ResourceType]:
+    def _build_collection_elements(self, collection: Iterable[dict]) -> Iterator[ResourceType]:
         """
         For each element in the collection, build the appropriate resource type.
 

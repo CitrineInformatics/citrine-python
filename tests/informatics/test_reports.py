@@ -1,6 +1,6 @@
 """Tests reports initialization."""
-from citrine.informatics.reports import PredictorReport, ModelSummary, FeatureImportanceReport, Report
-from citrine.informatics.descriptors import RealDescriptor
+
+from citrine.informatics.reports import PredictorReport, Report
 
 
 def test_status(valid_predictor_report_data):

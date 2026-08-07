@@ -16,21 +16,22 @@ class DesignSubspace(PolymorphicSerializable["DesignSubspace"], DesignSpace):
     description = properties.Optional(properties.String(), "description")
 
     @classmethod
-    def get_type(cls, data) -> type['DesignSubspace']:
+    def get_type(cls, data) -> type["DesignSubspace"]:
         """Return the subtype."""
         from .data_source_design_space import DataSourceDesignSpace
         from .formulation_design_space import FormulationDesignSpace
 
         type_dict = {
-            'FormulationDesignSpace': FormulationDesignSpace,
-            'DataSourceDesignSpace': DataSourceDesignSpace,
+            "FormulationDesignSpace": FormulationDesignSpace,
+            "DataSourceDesignSpace": DataSourceDesignSpace,
         }
 
-        typ = type_dict.get(data['type'])
+        typ = type_dict.get(data["type"])
         if typ is not None:
             return typ
         else:
             raise ValueError(
-                '{} is not a valid design subspace type. '
-                'Must be in {}.'.format(data['type'], type_dict.keys())
+                "{} is not a valid design subspace type. Must be in {}.".format(
+                    data["type"], type_dict.keys()
+                )
             )

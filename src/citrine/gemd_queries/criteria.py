@@ -2,17 +2,24 @@
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-from citrine._serialization.serializable import Serializable
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.serializable import Serializable
 from citrine.gemd_queries.filter import PropertyFilterType
 
-__all__ = ['MaterialClassification', 'TextSearchType', 'TagFilterType',
-           'AndOperator', 'OrOperator',
-           'PropertiesCriteria', 'NameCriteria',
-           'MaterialRunClassificationCriteria', 'MaterialTemplatesCriteria',
-           'TagsCriteria', 'ConnectivityClassCriteria'
-           ]
+__all__ = [
+    "AndOperator",
+    "ConnectivityClassCriteria",
+    "MaterialClassification",
+    "MaterialRunClassificationCriteria",
+    "MaterialTemplatesCriteria",
+    "NameCriteria",
+    "OrOperator",
+    "PropertiesCriteria",
+    "TagFilterType",
+    "TagsCriteria",
+    "TextSearchType",
+]
 
 
 class MaterialClassification(BaseEnumeration):
@@ -47,14 +54,19 @@ class Criteria(PolymorphicSerializable):
     def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
         classes: list[type[Criteria]] = [
-            AndOperator, OrOperator,
-            PropertiesCriteria, NameCriteria, MaterialRunClassificationCriteria,
-            MaterialTemplatesCriteria, TagsCriteria, ConnectivityClassCriteria
+            AndOperator,
+            OrOperator,
+            PropertiesCriteria,
+            NameCriteria,
+            MaterialRunClassificationCriteria,
+            MaterialTemplatesCriteria,
+            TagsCriteria,
+            ConnectivityClassCriteria,
         ]
-        return {klass.typ: klass for klass in classes}[data['type']]
+        return {klass.typ: klass for klass in classes}[data["type"]]
 
 
-class AndOperator(Serializable['AndOperator'], Criteria):
+class AndOperator(Serializable["AndOperator"], Criteria):
     """
     Combine multiple criteria, requiring EACH to be true for a match.
 
@@ -66,10 +78,10 @@ class AndOperator(Serializable['AndOperator'], Criteria):
     """
 
     criteria = properties.List(properties.Object(Criteria), "criteria")
-    typ = properties.String('type', default="and_operator", deserializable=False)
+    typ = properties.String("type", default="and_operator", deserializable=False)
 
 
-class OrOperator(Serializable['OrOperator'], Criteria):
+class OrOperator(Serializable["OrOperator"], Criteria):
     """
     Combine multiple criteria, requiring ANY to be true for a match.
 
@@ -81,10 +93,10 @@ class OrOperator(Serializable['OrOperator'], Criteria):
     """
 
     criteria = properties.List(properties.Object(Criteria), "criteria")
-    typ = properties.String('type', default="or_operator", deserializable=False)
+    typ = properties.String("type", default="or_operator", deserializable=False)
 
 
-class PropertiesCriteria(Serializable['PropertiesCriteria'], Criteria):
+class PropertiesCriteria(Serializable["PropertiesCriteria"], Criteria):
     """
     Look for materials with a particular Property and optionally Value types & ranges.
 
@@ -101,10 +113,10 @@ class PropertiesCriteria(Serializable['PropertiesCriteria'], Criteria):
     value_type_filter = properties.Optional(
         properties.Object(PropertyFilterType), "value_type_filter"
     )
-    typ = properties.String('type', default="properties_criteria", deserializable=False)
+    typ = properties.String("type", default="properties_criteria", deserializable=False)
 
 
-class NameCriteria(Serializable['NameCriteria'], Criteria):
+class NameCriteria(Serializable["NameCriteria"], Criteria):
     """
     Look for materials with particular names.
 
@@ -117,14 +129,13 @@ class NameCriteria(Serializable['NameCriteria'], Criteria):
 
     """
 
-    name = properties.String('name')
-    search_type = properties.Enumeration(TextSearchType, 'search_type')
-    typ = properties.String('type', default="name_criteria", deserializable=False)
+    name = properties.String("name")
+    search_type = properties.Enumeration(TextSearchType, "search_type")
+    typ = properties.String("type", default="name_criteria", deserializable=False)
 
 
 class MaterialRunClassificationCriteria(
-    Serializable['MaterialRunClassificationCriteria'],
-    Criteria
+    Serializable["MaterialRunClassificationCriteria"], Criteria
 ):
     """
     Look for materials with particular classification, defined by MaterialClassification.
@@ -137,16 +148,14 @@ class MaterialRunClassificationCriteria(
     """
 
     classifications = properties.Set(
-        properties.Enumeration(MaterialClassification), 'classifications'
+        properties.Enumeration(MaterialClassification), "classifications"
     )
     typ = properties.String(
-        'type',
-        default="material_run_classification_criteria",
-        deserializable=False
+        "type", default="material_run_classification_criteria", deserializable=False
     )
 
 
-class MaterialTemplatesCriteria(Serializable['MaterialTemplatesCriteria'], Criteria):
+class MaterialTemplatesCriteria(Serializable["MaterialTemplatesCriteria"], Criteria):
     """
     Look for materials with particular Material Templates and tags.
 
@@ -162,14 +171,13 @@ class MaterialTemplatesCriteria(Serializable['MaterialTemplatesCriteria'], Crite
     """
 
     material_templates_identifiers = properties.Set(
-        properties.UUID,
-        "material_templates_identifiers"
+        properties.UUID, "material_templates_identifiers"
     )
-    tag_filters = properties.Set(properties.String, 'tag_filters')
-    typ = properties.String('type', default="material_template_criteria", deserializable=False)
+    tag_filters = properties.Set(properties.String, "tag_filters")
+    typ = properties.String("type", default="material_template_criteria", deserializable=False)
 
 
-class TagsCriteria(Serializable['TagsCriteria'], Criteria):
+class TagsCriteria(Serializable["TagsCriteria"], Criteria):
     """
     Look for materials with particular tags.
 
@@ -185,12 +193,12 @@ class TagsCriteria(Serializable['TagsCriteria'], Criteria):
 
     """
 
-    tags = properties.Set(properties.String, 'tags')
-    filter_type = properties.Enumeration(TagFilterType, 'filter_type')
-    typ = properties.String('type', default="tags_criteria", deserializable=False)
+    tags = properties.Set(properties.String, "tags")
+    filter_type = properties.Enumeration(TagFilterType, "filter_type")
+    typ = properties.String("type", default="tags_criteria", deserializable=False)
 
 
-class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Criteria):
+class ConnectivityClassCriteria(Serializable["ConnectivityClassCriteria"], Criteria):
     """
     Look for materials with particular connectivity classes.
 
@@ -203,6 +211,6 @@ class ConnectivityClassCriteria(Serializable['ConnectivityClassCriteria'], Crite
 
     """
 
-    is_consumed = properties.Optional(properties.Boolean, 'is_consumed')
-    is_produced = properties.Optional(properties.Boolean, 'is_produced')
-    typ = properties.String('type', default="connectivity_class_criteria", deserializable=False)
+    is_consumed = properties.Optional(properties.Boolean, "is_consumed")
+    is_produced = properties.Optional(properties.Boolean, "is_produced")
+    typ = properties.String("type", default="connectivity_class_criteria", deserializable=False)

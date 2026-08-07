@@ -2,95 +2,100 @@ import uuid
 
 import arrow
 import pytest
-from gemd.enumeration.base_enumeration import BaseEnumeration
+from gemd.entity.attribute.condition import Condition
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object import ProcessSpec
-from gemd.entity.attribute.condition import Condition
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.properties import (
+    UUID,
     Datetime,
     Enumeration,
     Float,
     Integer,
     LinkOrElse,
-    Set,
-    SpecifiedMixedList,
     Object,
     Optional,
+    Set,
+    SpecifiedMixedList,
     String,
     Union,
-    UUID
 )
-from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric, RMSE, CoverageProbability
+from citrine.informatics.predictor_evaluation_metrics import (
+    RMSE,
+    CoverageProbability,
+    PredictorEvaluationMetric,
+)
 from citrine.resources.dataset import Dataset
+
 from ._data import (
-    VALID_SERIALIZATIONS,
-    VALID_STRINGS,
     INVALID_DESERIALIZATION_TYPES,
     INVALID_INSTANCES,
     INVALID_SERIALIZED_INSTANCES,
+    VALID_SERIALIZATIONS,
+    VALID_STRINGS,
 )
 
 
-@pytest.mark.parametrize('prop_type,value,serialized', VALID_SERIALIZATIONS)
+@pytest.mark.parametrize("prop_type,value,serialized", VALID_SERIALIZATIONS)
 def test_simple_property_serde(prop_type, value, serialized):
     prop = prop_type()
     assert prop.deserialize(serialized) == value
     assert prop.serialize(value) == serialized
 
 
-@pytest.mark.parametrize('prop_type,value', INVALID_INSTANCES)
+@pytest.mark.parametrize("prop_type,value", INVALID_INSTANCES)
 def test_invalid_property_serialization(prop_type, value):
     prop = prop_type()
     with pytest.raises(Exception):
         prop.serialize(value)
 
 
-@pytest.mark.parametrize('prop_type,serialized', INVALID_SERIALIZED_INSTANCES)
+@pytest.mark.parametrize("prop_type,serialized", INVALID_SERIALIZED_INSTANCES)
 def test_invalid_property_deserialization(prop_type, serialized):
     prop = prop_type()
     with pytest.raises(Exception):
         prop.deserialize(serialized)
 
 
-@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+@pytest.mark.parametrize("prop_type,serialized", INVALID_DESERIALIZATION_TYPES)
 def test_invalid_deserialization_type(prop_type, serialized):
     prop = prop_type()
     with pytest.raises(ValueError):
         prop.deserialize(serialized)
 
 
-@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+@pytest.mark.parametrize("prop_type,serialized", INVALID_DESERIALIZATION_TYPES)
 def test_invalid_deserialization_type_with_base_class(prop_type, serialized):
     class BaseTest:
         pass
 
     prop = prop_type()
-    prop.serialization_path = 'ser_path'
+    prop.serialization_path = "ser_path"
     with pytest.raises(ValueError) as excinfo:
         prop.deserialize(serialized, base_class=BaseTest().__class__)
 
     # Check that the exception includes the calling class name and argument
     if not isinstance(prop, UUID):
-        assert 'BaseTest:ser_path' in str(excinfo.value)
+        assert "BaseTest:ser_path" in str(excinfo.value)
 
 
-@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+@pytest.mark.parametrize("prop_type,serialized", INVALID_DESERIALIZATION_TYPES)
 def test_invalid_deserialization_type_with_dataset(prop_type, serialized):
     # Supplying a Daatset instance as the base_class should include it's
     # name in the exception value string (UUIDs are a special case)
     dset = Dataset(name="dset", summary="test dataset", description="description")
 
     prop = prop_type()
-    prop.serialization_path = 'ser_path'
+    prop.serialization_path = "ser_path"
     with pytest.raises(ValueError) as excinfo:
         prop.deserialize(serialized, base_class=dset.__class__)
 
     if not isinstance(prop, UUID):
-        assert 'Dataset:ser_path' in str(excinfo.value)
+        assert "Dataset:ser_path" in str(excinfo.value)
 
 
-@pytest.mark.parametrize('prop_type,path,expected', VALID_STRINGS)
+@pytest.mark.parametrize("prop_type,path,expected", VALID_STRINGS)
 def test_valid_property_deserialization(prop_type, path, expected):
     assert expected == str(prop_type(path))
 
@@ -101,19 +106,19 @@ def test_serialize_to_dict_error():
 
 
 def test_valid_serialize_to_dict():
-    assert {'my_foo': 100} == Integer('my_foo').serialize_to_dict({}, 100)
+    assert {"my_foo": 100} == Integer("my_foo").serialize_to_dict({}, 100)
 
 
 def test_serialize_dot_value_to_dict():
-    assert {'my': {'foo': 100}} == Integer('my.foo').serialize_to_dict({}, 100)
+    assert {"my": {"foo": 100}} == Integer("my.foo").serialize_to_dict({}, 100)
 
 
 def test_set_int_property_from_string():
     class Foo:
-        bar = Integer('bar')
+        bar = Integer("bar")
 
     f = Foo()
-    f.bar = '12'
+    f.bar = "12"
 
     assert 12 == f.bar
 
@@ -134,7 +139,9 @@ def test_float_cannot_deserialize_bool():
 
 
 def test_deserialize_string_datetime():
-    assert arrow.get('2019-07-19T10:46:08+00:00').datetime == Datetime().deserialize('2019-07-19T10:46:08+00:00')
+    assert arrow.get("2019-07-19T10:46:08+00:00").datetime == Datetime().deserialize(
+        "2019-07-19T10:46:08+00:00"
+    )
 
 
 def test_datetime_cannot_deserialize_float():
@@ -149,14 +156,14 @@ def test_mixed_list_requires_property_list():
 
 def test_deserialize_mixed_list():
     ml = SpecifiedMixedList([Integer, String])
-    assert [1, '2'] == ml.deserialize([1, '2'])
+    assert [1, "2"] == ml.deserialize([1, "2"])
     assert [1, None] == ml.deserialize([1])
 
 
 def test_mixed_list_cannot_deserialize_larger_lists():
     ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
-        ml.deserialize([1, '2'])
+        ml.deserialize([1, "2"])
     with pytest.raises(ValueError):
         ml.deserialize([1, 2])
 
@@ -164,7 +171,7 @@ def test_mixed_list_cannot_deserialize_larger_lists():
 def test_mixed_list_cannot_serialize_larger_lists():
     ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
-        ml.serialize([1, '2'])
+        ml.serialize([1, "2"])
     with pytest.raises(ValueError):
         ml.serialize([1, 2])
 
@@ -231,7 +238,7 @@ def test_invalid_object_deserialize():
 
     obj = Object(Foo)
     with pytest.raises(AttributeError):
-        obj.deserialize({'key': 'value'})
+        obj.deserialize({"key": "value"})
 
 
 def test_linkorelse_deserialize_requires_serializable():
@@ -243,28 +250,30 @@ def test_linkorelse_deserialize_requires_serializable():
 def test_linkorelse_deserialize_requires_scope_and_id():
     loe = LinkOrElse()
     with pytest.raises(ValueError, match=r"missing.+required"):
-        loe.deserialize({'type': LinkByUID.typ})
+        loe.deserialize({"type": LinkByUID.typ})
 
 
 def test_linkorelse_raises_deep_errors():
     loe = LinkOrElse()
     with pytest.raises(TypeError):
-        loe.deserialize({
-            'type': ProcessSpec.typ,
-            'name': 'Badly structured',
-            'conditions': [{'type': Condition.typ, "value": 'invalid structure'}],
-        })
+        loe.deserialize(
+            {
+                "type": ProcessSpec.typ,
+                "name": "Badly structured",
+                "conditions": [{"type": Condition.typ, "value": "invalid structure"}],
+            }
+        )
 
 
 def test_linkorelse_deserialize():
     loe = LinkOrElse()
-    lbu = loe.deserialize({'type': LinkByUID.typ, 'scope': 'foo', 'id': str(uuid.uuid4())})
+    lbu = loe.deserialize({"type": LinkByUID.typ, "scope": "foo", "id": str(uuid.uuid4())})
     assert isinstance(lbu, LinkByUID)
 
 
 def test_optional_repr():
     opt = Optional(String)
-    assert '<Optional[<String None>] None>' == str(opt)
+    assert "<Optional[<String None>] None>" == str(opt)
 
 
 def test_set_serialize_sortable():

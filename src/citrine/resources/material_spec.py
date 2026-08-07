@@ -1,11 +1,8 @@
 """Resources that represent material spec data objects."""
+
 from collections.abc import Iterator
 from uuid import UUID
 
-from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
-from citrine.resources._default_labels import _inject_default_label_tags
-from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
 from gemd.entity.link_by_uid import LinkByUID
@@ -13,12 +10,14 @@ from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
 
+from citrine._rest.resource import GEMDResource
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
+from citrine.resources._default_labels import _inject_default_label_tags
+from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
+
 
 class MaterialSpec(
-    GEMDResource['MaterialSpec'],
-    ObjectSpec,
-    GEMDMaterialSpec,
-    typ=GEMDMaterialSpec.typ
+    GEMDResource["MaterialSpec"], ObjectSpec, GEMDMaterialSpec, typ=GEMDMaterialSpec.typ
 ):
     """
     A material specification.
@@ -55,39 +54,49 @@ class MaterialSpec(
 
     _response_key = GEMDMaterialSpec.typ  # 'material_spec'
 
-    name = String('name', override=True, use_init=True)
-    process = Optional(LinkOrElse(GEMDProcessSpec), 'process', override=True, use_init=True)
-    properties = Optional(List(Object(PropertyAndConditions)), 'properties', override=True)
-    template = Optional(LinkOrElse(GEMDMaterialTemplate), 'template', override=True, use_init=True)
+    name = String("name", override=True, use_init=True)
+    process = Optional(LinkOrElse(GEMDProcessSpec), "process", override=True, use_init=True)
+    properties = Optional(List(Object(PropertyAndConditions)), "properties", override=True)
+    template = Optional(LinkOrElse(GEMDMaterialTemplate), "template", override=True, use_init=True)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: dict[str, str] | None = None,
-                 tags: list[str] | None = None,
-                 notes: str | None = None,
-                 process: GEMDProcessSpec | None = None,
-                 properties: list[PropertyAndConditions] | None = None,
-                 template: GEMDMaterialTemplate | None = None,
-                 file_links: list[FileLink] | None = None,
-                 default_labels: list[str] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: dict[str, str] | None = None,
+        tags: list[str] | None = None,
+        notes: str | None = None,
+        process: GEMDProcessSpec | None = None,
+        properties: list[PropertyAndConditions] | None = None,
+        template: GEMDMaterialTemplate | None = None,
+        file_links: list[FileLink] | None = None,
+        default_labels: list[str] | None = None,
+    ):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
         super(ObjectSpec, self).__init__()
-        GEMDMaterialSpec.__init__(self, name=name, uids=uids,
-                                  tags=all_tags, process=process, properties=properties,
-                                  template=template, file_links=file_links, notes=notes)
+        GEMDMaterialSpec.__init__(
+            self,
+            name=name,
+            uids=uids,
+            tags=all_tags,
+            process=process,
+            properties=properties,
+            template=template,
+            file_links=file_links,
+            notes=notes,
+        )
 
     def __str__(self):
-        return '<Material spec {!r}>'.format(self.name)
+        return f"<Material spec {self.name!r}>"
 
 
 class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     """Represents the collection of all material specs associated with a dataset."""
 
-    _individual_key = 'material_spec'
-    _collection_key = 'material_specs'
+    _individual_key = "material_spec"
+    _collection_key = "material_specs"
     _resource = MaterialSpec
 
     @classmethod
@@ -95,9 +104,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    def list_by_template(self,
-                         uid: UUID | str | LinkByUID | GEMDMaterialTemplate
-                         ) -> Iterator[MaterialSpec]:
+    def list_by_template(
+        self, uid: UUID | str | LinkByUID | GEMDMaterialTemplate
+    ) -> Iterator[MaterialSpec]:
         """
         Get the material specs using the specified material template.
 
@@ -112,11 +121,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             The material specs using the specified material template.
 
         """
-        return self._get_relation('material-templates', uid=uid)
+        return self._get_relation("material-templates", uid=uid)
 
-    def get_by_process(self,
-                       uid: UUID | str | LinkByUID | GEMDProcessSpec
-                       ) -> MaterialSpec | None:
+    def get_by_process(self, uid: UUID | str | LinkByUID | GEMDProcessSpec) -> MaterialSpec | None:
         """
         Get output material of a process.
 
@@ -131,4 +138,4 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        return next(self._get_relation(relation='process-specs', uid=uid, per_page=1), None)
+        return next(self._get_relation(relation="process-specs", uid=uid, per_page=1), None)

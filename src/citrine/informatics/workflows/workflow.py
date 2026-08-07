@@ -1,12 +1,12 @@
 """Tools for working with workflow resources."""
+
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
-from citrine._session import Session
 from citrine._serialization import properties
+from citrine._session import Session
 
-
-__all__ = ['Workflow']
+__all__ = ["Workflow"]
 
 
 class Workflow(AsynchronousObject):
@@ -26,7 +26,7 @@ class Workflow(AsynchronousObject):
 
     project_id: UUID | None = None
     """:UUID | None: Unique ID of the project that contains this workflow."""
-    name = properties.String('name')
-    description = properties.Optional(properties.String, 'description')
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    name = properties.String("name")
+    description = properties.Optional(properties.String, "description")
+    uid = properties.Optional(properties.UUID, "id", serializable=False)
     """:UUID | None: Citrine Platform unique identifier"""

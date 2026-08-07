@@ -1,4 +1,5 @@
 """Tools for working with Descriptors."""
+
 from abc import abstractmethod
 from uuid import UUID
 
@@ -8,13 +9,13 @@ from citrine._serialization.serializable import Serializable
 from citrine.resources.gemtables import GemTable
 
 __all__ = [
-    'DataSource',
-    'GemTableDataSource',
-    'SnapshotDataSource',
+    "DataSource",
+    "GemTableDataSource",
+    "SnapshotDataSource",
 ]
 
 
-class DataSource(PolymorphicSerializable['DataSource']):
+class DataSource(PolymorphicSerializable["DataSource"]):
     """A source of data for the AI engine.
 
     Data source provides a polymorphic interface for specifying different kinds of data as the
@@ -66,7 +67,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         """Generate the data_source_id for this DataSource."""
 
 
-class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
+class GemTableDataSource(Serializable["GemTableDataSource"], DataSource):
     """A data source based on a GEM Table hosted on the data platform.
 
     Parameters
@@ -79,16 +80,13 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
 
     """
 
-    typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
+    typ = properties.String("type", default="hosted_table_data_source", deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
 
     _data_source_type = "gemd"
 
-    def __init__(self,
-                 *,
-                 table_id: UUID,
-                 table_version: int | str):
+    def __init__(self, *, table_id: UUID, table_version: int | str):
         self.table_id: UUID = table_id
         self.table_version: int | str = table_version
 
@@ -113,7 +111,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         return GemTableDataSource(table_id=table.uid, table_version=table.version)
 
 
-class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
+class SnapshotDataSource(Serializable["SnapshotDataSource"], DataSource):
     """A reference to a data source based on a Snapshot on the data platform.
 
     Parameters
@@ -123,7 +121,7 @@ class SnapshotDataSource(Serializable['SnapshotDataSource'], DataSource):
 
     """
 
-    typ = properties.String('type', default='snapshot_data_source', deserializable=False)
+    typ = properties.String("type", default="snapshot_data_source", deserializable=False)
     snapshot_id = properties.UUID("snapshot_id")
 
     _data_source_type = "snapshot"

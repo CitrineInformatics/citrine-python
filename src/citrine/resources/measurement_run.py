@@ -1,10 +1,8 @@
 """Resources that represent measurement run data objects."""
+
 from collections.abc import Iterator
 from uuid import UUID
 
-from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
-from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.attribute.property import Property
@@ -15,12 +13,13 @@ from gemd.entity.object.measurement_run import MeasurementRun as GEMDMeasurement
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
 from gemd.entity.source.performed_source import PerformedSource
 
+from citrine._rest.resource import GEMDResource
+from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
+from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
+
 
 class MeasurementRun(
-    GEMDResource['MeasurementRun'],
-    ObjectRun,
-    GEMDMeasurementRun,
-    typ=GEMDMeasurementRun.typ
+    GEMDResource["MeasurementRun"], ObjectRun, GEMDMeasurementRun, typ=GEMDMeasurementRun.typ
 ):
     """
     A measurement run.
@@ -60,45 +59,61 @@ class MeasurementRun(
 
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
-    name = String('name', override=True, use_init=True)
-    conditions = Optional(List(Object(Condition)), 'conditions', override=True)
-    parameters = Optional(List(Object(Parameter)), 'parameters', override=True)
-    properties = Optional(List(Object(Property)), 'properties', override=True)
-    spec = Optional(LinkOrElse(GEMDMeasurementSpec), 'spec', override=True, use_init=True,)
+    name = String("name", override=True, use_init=True)
+    conditions = Optional(List(Object(Condition)), "conditions", override=True)
+    parameters = Optional(List(Object(Parameter)), "parameters", override=True)
+    properties = Optional(List(Object(Property)), "properties", override=True)
+    spec = Optional(
+        LinkOrElse(GEMDMeasurementSpec),
+        "spec",
+        override=True,
+        use_init=True,
+    )
     material = Optional(LinkOrElse(GEMDMaterialRun), "material", override=True, use_init=True)
     source = Optional(Object(PerformedSource), "source", override=True)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: dict[str, str] | None = None,
-                 tags: list[str] | None = None,
-                 notes: str | None = None,
-                 conditions: list[Condition] | None = None,
-                 properties: list[Property] | None = None,
-                 parameters: list[Parameter] | None = None,
-                 spec: GEMDMeasurementSpec | None = None,
-                 material: GEMDMaterialRun | None = None,
-                 file_links: list[FileLink] | None = None,
-                 source: PerformedSource | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: dict[str, str] | None = None,
+        tags: list[str] | None = None,
+        notes: str | None = None,
+        conditions: list[Condition] | None = None,
+        properties: list[Property] | None = None,
+        parameters: list[Parameter] | None = None,
+        spec: GEMDMeasurementSpec | None = None,
+        material: GEMDMaterialRun | None = None,
+        file_links: list[FileLink] | None = None,
+        source: PerformedSource | None = None,
+    ):
         if uids is None:
             uids = dict()
         super(ObjectRun, self).__init__()
-        GEMDMeasurementRun.__init__(self, name=name, uids=uids,
-                                    material=material,
-                                    tags=tags, conditions=conditions, properties=properties,
-                                    parameters=parameters, spec=spec,
-                                    file_links=file_links, notes=notes, source=source)
+        GEMDMeasurementRun.__init__(
+            self,
+            name=name,
+            uids=uids,
+            material=material,
+            tags=tags,
+            conditions=conditions,
+            properties=properties,
+            parameters=parameters,
+            spec=spec,
+            file_links=file_links,
+            notes=notes,
+            source=source,
+        )
 
     def __str__(self):
-        return '<Measurement run {!r}>'.format(self.name)
+        return f"<Measurement run {self.name!r}>"
 
 
 class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     """Represents the collection of all measurement runs associated with a dataset."""
 
-    _individual_key = 'measurement_run'
-    _collection_key = 'measurement_runs'
+    _individual_key = "measurement_run"
+    _collection_key = "measurement_runs"
     _resource = MeasurementRun
 
     @classmethod
@@ -106,9 +121,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self,
-                     uid: UUID | str | LinkByUID | GEMDMeasurementSpec
-                     ) -> Iterator[MeasurementRun]:
+    def list_by_spec(
+        self, uid: UUID | str | LinkByUID | GEMDMeasurementSpec
+    ) -> Iterator[MeasurementRun]:
         """
         Get the measurement runs using the specified measurement spec.
 
@@ -123,11 +138,11 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurement runs using the specified measurement spec.
 
         """
-        return self._get_relation('measurement-specs', uid=uid)
+        return self._get_relation("measurement-specs", uid=uid)
 
-    def list_by_material(self,
-                         uid: UUID | str | LinkByUID | GEMDMaterialRun
-                         ) -> Iterator[MeasurementRun]:
+    def list_by_material(
+        self, uid: UUID | str | LinkByUID | GEMDMaterialRun
+    ) -> Iterator[MeasurementRun]:
         """
         Get measurements of the specified material.
 
@@ -142,4 +157,4 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
             The measurements of the specified material
 
         """
-        return self._get_relation(relation='material-runs', uid=uid)
+        return self._get_relation(relation="material-runs", uid=uid)

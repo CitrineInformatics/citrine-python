@@ -1,9 +1,11 @@
 """Top-level class for all object run objects and collections thereof."""
+
 from abc import ABC
 from typing import TypeVar
 
-from citrine.resources.data_objects import DataObject, DataObjectCollection
 from gemd.entity.object.has_spec import HasSpec
+
+from citrine.resources.data_objects import DataObject, DataObjectCollection
 
 
 class ObjectRun(DataObject, HasSpec, ABC):

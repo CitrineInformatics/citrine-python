@@ -1,16 +1,19 @@
+import builtins
 from collections.abc import Iterable, Iterator
 from functools import partial
-from typing import List
 from uuid import UUID
 
-from citrine.informatics.executions.predictor_evaluation import PredictorEvaluation, \
-    PredictorEvaluationRequest, PredictorEvaluatorsResponse
-from citrine.informatics.predictor_evaluator import PredictorEvaluator
-from citrine.informatics.predictors import GraphPredictor
-from citrine.resources.predictor import LATEST_VER as LATEST_PRED_VER
 from citrine._rest.collection import Collection
 from citrine._rest.resource import PredictorRef
 from citrine._session import Session
+from citrine.informatics.executions.predictor_evaluation import (
+    PredictorEvaluation,
+    PredictorEvaluationRequest,
+    PredictorEvaluatorsResponse,
+)
+from citrine.informatics.predictor_evaluator import PredictorEvaluator
+from citrine.informatics.predictors import GraphPredictor
+from citrine.resources.predictor import LATEST_VER as LATEST_PRED_VER
 
 
 class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
@@ -23,11 +26,11 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
 
     """
 
-    _api_version = 'v1'
-    _path_template = '/projects/{project_id}/predictor-evaluations'
+    _api_version = "v1"
+    _path_template = "/projects/{project_id}/predictor-evaluations"
     _individual_key = None
     _resource = PredictorEvaluation
-    _collection_key = 'response'
+    _collection_key = "response"
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -40,13 +43,14 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         evaluation.project_id = self.project_id
         return evaluation
 
-    def _list_base(self,
-                   *,
-                   per_page: int = 100,
-                   predictor_id: UUID | None = None,
-                   predictor_version: int | str | None = None,
-                   archived: bool | None = None
-                   ) -> Iterator[PredictorEvaluation]:
+    def _list_base(
+        self,
+        *,
+        per_page: int = 100,
+        predictor_id: UUID | None = None,
+        predictor_version: int | str | None = None,
+        archived: bool | None = None,
+    ) -> Iterator[PredictorEvaluation]:
         params = {"archived": archived}
         if predictor_id is not None:
             params["predictor_id"] = str(predictor_id)
@@ -54,44 +58,53 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
             params["predictor_version"] = predictor_version
 
         fetcher = partial(self._fetch_page, additional_params=params)
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
-    def list_all(self,
-                 *,
-                 per_page: int = 100,
-                 predictor_id: UUID | None = None,
-                 predictor_version: int | str | None = None
-                 ) -> Iterable[PredictorEvaluation]:
+    def list_all(
+        self,
+        *,
+        per_page: int = 100,
+        predictor_id: UUID | None = None,
+        predictor_version: int | str | None = None,
+    ) -> Iterable[PredictorEvaluation]:
         """List all predictor evaluations."""
-        return self._list_base(per_page=per_page,
-                               predictor_id=predictor_id,
-                               predictor_version=predictor_version)
+        return self._list_base(
+            per_page=per_page, predictor_id=predictor_id, predictor_version=predictor_version
+        )
 
-    def list(self,
-             *,
-             per_page: int = 100,
-             predictor_id: UUID | None = None,
-             predictor_version: int | str | None = None
-             ) -> Iterable[PredictorEvaluation]:
+    def list(
+        self,
+        *,
+        per_page: int = 100,
+        predictor_id: UUID | None = None,
+        predictor_version: int | str | None = None,
+    ) -> Iterable[PredictorEvaluation]:
         """List non-archived predictor evaluations."""
-        return self._list_base(per_page=per_page,
-                               predictor_id=predictor_id,
-                               predictor_version=predictor_version,
-                               archived=False)
+        return self._list_base(
+            per_page=per_page,
+            predictor_id=predictor_id,
+            predictor_version=predictor_version,
+            archived=False,
+        )
 
-    def list_archived(self,
-                      *,
-                      per_page: int = 100,
-                      predictor_id: UUID | None = None,
-                      predictor_version: int | str | None = None
-                      ) -> Iterable[PredictorEvaluation]:
+    def list_archived(
+        self,
+        *,
+        per_page: int = 100,
+        predictor_id: UUID | None = None,
+        predictor_version: int | str | None = None,
+    ) -> Iterable[PredictorEvaluation]:
         """List archived predictor evaluations."""
-        return self._list_base(per_page=per_page,
-                               predictor_id=predictor_id,
-                               predictor_version=predictor_version,
-                               archived=True)
+        return self._list_base(
+            per_page=per_page,
+            predictor_id=predictor_id,
+            predictor_version=predictor_version,
+            archived=True,
+        )
 
     def archive(self, uid: UUID | str):
         """Archive an evaluation."""
@@ -105,7 +118,7 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         result = self.session.put_resource(url, {}, version=self._api_version)
         return self.build(result)
 
-    def default_from_config(self, config: GraphPredictor) -> List[PredictorEvaluator]:
+    def default_from_config(self, config: GraphPredictor) -> builtins.list[PredictorEvaluator]:
         """Retrieve the default evaluators for an arbitrary (but valid) predictor config.
 
         See :func:`~citrine.resources.PredictorEvaluationCollection.default` for details
@@ -116,11 +129,9 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         result = self.session.post_resource(path, json=payload, version=self._api_version)
         return PredictorEvaluatorsResponse.build(result).evaluators
 
-    def default(self,
-                *,
-                predictor_id: UUID | str,
-                predictor_version: int | str = LATEST_PRED_VER
-                ) -> List[PredictorEvaluator]:
+    def default(
+        self, *, predictor_id: UUID | str, predictor_version: int | str = LATEST_PRED_VER
+    ) -> builtins.list[PredictorEvaluator]:
         """Retrieve the default evaluators for a stored predictor.
 
         The current default evaluators perform 5-fold, 3-trial cross-validation on all valid
@@ -153,11 +164,13 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
         result = self.session.post_resource(path, json=payload, version=self._api_version)
         return PredictorEvaluatorsResponse.build(result).evaluators
 
-    def trigger(self,
-                *,
-                predictor_id: UUID | str,
-                predictor_version: int | str = LATEST_PRED_VER,
-                evaluators: List[PredictorEvaluator]) -> PredictorEvaluation:
+    def trigger(
+        self,
+        *,
+        predictor_id: UUID | str,
+        predictor_version: int | str = LATEST_PRED_VER,
+        evaluators: builtins.list[PredictorEvaluator],
+    ) -> PredictorEvaluation:
         """Evaluate a predictor using the provided evaluators.
 
         Parameters
@@ -175,17 +188,15 @@ class PredictorEvaluationCollection(Collection[PredictorEvaluation]):
 
         """
         path = self._get_path("trigger")
-        payload = PredictorEvaluationRequest(evaluators=evaluators,
-                                             predictor_id=predictor_id,
-                                             predictor_version=predictor_version).dump()
+        payload = PredictorEvaluationRequest(
+            evaluators=evaluators, predictor_id=predictor_id, predictor_version=predictor_version
+        ).dump()
         result = self.session.post_resource(path, payload, version=self._api_version)
         return self.build(result)
 
-    def trigger_default(self,
-                        *,
-                        predictor_id: UUID | str,
-                        predictor_version: int | str = LATEST_PRED_VER
-                        ) -> PredictorEvaluation:
+    def trigger_default(
+        self, *, predictor_id: UUID | str, predictor_version: int | str = LATEST_PRED_VER
+    ) -> PredictorEvaluation:
         """Evaluate a predictor using the default evaluators.
 
         See :func:`~citrine.resources.PredictorCollection.default` for details on the evaluators.

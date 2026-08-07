@@ -1,16 +1,17 @@
 """Resources that represent property templates."""
 
-from citrine._rest.resource import GEMDResource
-from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
+from citrine._rest.resource import GEMDResource
+from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
+
 
 class PropertyTemplate(
-    GEMDResource['PropertyTemplate'],
+    GEMDResource["PropertyTemplate"],
     AttributeTemplate,
     GEMDPropertyTemplate,
-    typ=GEMDPropertyTemplate.typ
+    typ=GEMDPropertyTemplate.typ,
 ):
     """
     A property template.
@@ -36,28 +37,31 @@ class PropertyTemplate(
 
     _response_key = GEMDPropertyTemplate.typ  # 'property_template'
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 bounds: BaseBounds,
-                 uids: dict[str, str] | None = None,
-                 description: str | None = None,
-                 tags: list[str] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        bounds: BaseBounds,
+        uids: dict[str, str] | None = None,
+        description: str | None = None,
+        tags: list[str] | None = None,
+    ):
         if uids is None:
             uids = dict()
         super(AttributeTemplate, self).__init__()
-        GEMDPropertyTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
-                                      uids=uids, description=description)
+        GEMDPropertyTemplate.__init__(
+            self, name=name, bounds=bounds, tags=tags, uids=uids, description=description
+        )
 
     def __str__(self):
-        return '<Property template {!r}>'.format(self.name)
+        return f"<Property template {self.name!r}>"
 
 
 class PropertyTemplateCollection(AttributeTemplateCollection[PropertyTemplate]):
     """A collection of property templates."""
 
-    _individual_key = 'property_template'
-    _collection_key = 'property_templates'
+    _individual_key = "property_template"
+    _collection_key = "property_templates"
     _resource = PropertyTemplate
 
     @classmethod
