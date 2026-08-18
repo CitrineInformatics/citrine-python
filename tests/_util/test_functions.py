@@ -1,6 +1,7 @@
 import uuid
 import warnings
 from pathlib import Path
+from urllib.parse import urlparse
 
 import pytest
 from gemd.entity.attribute.property import Property
@@ -193,7 +194,9 @@ def test_format_escaped_url():
     url = format_escaped_url(
         "http://base.com/{}/{}/{word1}/{word2}", 1, "&", word1="fine", word2="+/?#"
     )
-    assert "http://base.com/" in url
+    parsed = urlparse(url)
+    assert parsed.scheme == "http"
+    assert parsed.netloc == "base.com"
     assert "fine" in url
     assert "1" in url
     for c in "&" + "+?#":
