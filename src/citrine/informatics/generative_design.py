@@ -125,9 +125,7 @@ class GenerativeDesignInput(Serializable["GenerativeDesignInput"]):
         properties.Enumeration(StructureExclusion), "structure_exclusions"
     )
     min_substructure_counts = properties.Mapping(
-        properties.String(),
-        properties.Integer(),
-        "min_substructure_counts",
+        properties.String(), properties.Integer(), "min_substructure_counts"
     )
 
     def __init__(

@@ -303,4 +303,4 @@ def test_wait():
         method="GET",
         path=f"/projects/{pec.project_id}/predictor-evaluations/{in_progress_response['id']}",
     )
-    assert (len(responses) * [expected_call]) == session.calls
+    assert len(responses) * [expected_call] == session.calls

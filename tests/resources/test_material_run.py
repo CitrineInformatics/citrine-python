@@ -80,14 +80,10 @@ def test_register_all(collection, session):
     assert [r.name for r in runs] == [r.name for r in registered]
     assert len(session.calls) == 1
     assert session.calls[0].method == "PUT"
-    assert (
-        GEMDResourceCollection(
-            team_id=collection.team_id,
-            dataset_id=collection.dataset_id,
-            session=collection.session,
-        )._get_path()
-        in session.calls[0].path
-    )
+    path = GEMDResourceCollection(
+        team_id=collection.team_id, dataset_id=collection.dataset_id, session=collection.session
+    )._get_path()
+    assert path in session.calls[0].path
     with pytest.raises(RuntimeError):
         MaterialRunCollection(
             team_id=collection.team_id, dataset_id=None, session=session
@@ -295,10 +291,7 @@ def test_cursor_paginated_searches(collection, session):
         collection.list_by_attribute_bounds([1, 5], per_page=2)
     with pytest.raises(NotImplementedError):
         collection.list_by_attribute_bounds(
-            {
-                LinkByUIDFactory(): IntegerBounds(1, 5),
-                LinkByUIDFactory(): IntegerBounds(1, 5),
-            },
+            {LinkByUIDFactory(): IntegerBounds(1, 5), LinkByUIDFactory(): IntegerBounds(1, 5)},
             per_page=2,
         )
     with pytest.raises(RuntimeError):

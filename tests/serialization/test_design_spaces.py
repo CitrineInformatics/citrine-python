@@ -39,12 +39,10 @@ def test_product_serialization(valid_product_design_space_data):
     design_space = ProductDesignSpace.build(valid_product_design_space_data)
     serialized = design_space.dump()
     serialized["id"] = valid_product_design_space_data["id"]
-    assert (
-        serialized["instance"]["subspaces"][0] == original_data["data"]["instance"]["subspaces"][0]
-    )
-    assert (
-        serialized["instance"]["subspaces"][1] == original_data["data"]["instance"]["subspaces"][1]
-    )
+    serialized_subspaces = serialized["instance"]["subspaces"]
+    original_subspaces = original_data["data"]["instance"]["subspaces"]
+    assert serialized_subspaces[0] == original_subspaces[0]
+    assert serialized_subspaces[1] == original_subspaces[1]
 
 
 def test_formulation_deserialization(valid_formulation_design_space_data):

@@ -411,16 +411,10 @@ def test_create_or_update_unique_found_design_workflow(session):
     returned_dw = create_or_update(collection=collection, resource=dw2)
 
     assert returned_dw.name == dw2.name
-    assert (
-        returned_dw.branch_root_id
-        == collection.branch_root_id
-        == UUID(branch_data["metadata"]["root_id"])
-    )
-    assert (
-        returned_dw.branch_version
-        == collection.branch_version
-        == branch_data["metadata"]["version"]
-    )
+    expected_root_id = UUID(branch_data["metadata"]["root_id"])
+    assert returned_dw.branch_root_id == collection.branch_root_id == expected_root_id
+    expected_version = branch_data["metadata"]["version"]
+    assert returned_dw.branch_version == collection.branch_version == expected_version
 
 
 def test_create_or_update_raise_error_multiple_found(predictor_collection):

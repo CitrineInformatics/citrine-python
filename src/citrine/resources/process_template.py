@@ -93,6 +93,7 @@ class ProcessTemplate(
         "parameters",
         override=True,
     )
+
     allowed_labels = Optional(List(String()), "allowed_labels", override=True)
     allowed_names = Optional(List(String()), "allowed_names", override=True)
 

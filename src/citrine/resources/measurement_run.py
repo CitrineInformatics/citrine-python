@@ -63,12 +63,7 @@ class MeasurementRun(
     conditions = Optional(List(Object(Condition)), "conditions", override=True)
     parameters = Optional(List(Object(Parameter)), "parameters", override=True)
     properties = Optional(List(Object(Property)), "properties", override=True)
-    spec = Optional(
-        LinkOrElse(GEMDMeasurementSpec),
-        "spec",
-        override=True,
-        use_init=True,
-    )
+    spec = Optional(LinkOrElse(GEMDMeasurementSpec), "spec", override=True, use_init=True)
     material = Optional(LinkOrElse(GEMDMaterialRun), "material", override=True, use_init=True)
     source = Optional(Object(PerformedSource), "source", override=True)
 

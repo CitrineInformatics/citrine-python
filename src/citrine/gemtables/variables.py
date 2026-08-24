@@ -14,6 +14,20 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 
+_AttributeType = UUID | str | LinkByUID | AttributeTemplate
+_ConstraintType = tuple[_AttributeType, BaseBounds]
+_ObjectType = UUID | str | LinkByUID | BaseTemplate
+_ProcessType = UUID | str | LinkByUID | ProcessTemplate
+
+
+def _build_attribute_constraints(
+    attribute_constraints: list[_ConstraintType] | None,
+) -> list[tuple[LinkByUID, BaseBounds]] | None:
+    """Resolve attribute-constraint templates to LinkByUID pairs, preserving None."""
+    if attribute_constraints is None:
+        return None
+    return [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
+
 
 class IngredientQuantityDimension(BaseEnumeration):
     """The dimension of an ingredient quantity.
@@ -93,7 +107,7 @@ class Variable(PolymorphicSerializable["Variable"]):
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
-            raise ValueError("Unrecognized type: {}".format(data["type"]))
+            raise ValueError(f"Unrecognized type: {data['type']}")
 
         return res
 
@@ -159,26 +173,19 @@ class AttributeByTemplate(Serializable["AttributeByTemplate"], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="attribute_by_template", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        template: attribute_type,
-        attribute_constraints: list[constraint_type] | None = None,
+        template: _AttributeType,
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.template = _make_link_by_uid(template)
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -222,29 +229,21 @@ class AttributeByTemplateAfterProcessTemplate(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="attribute_after_process", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        attribute_template: attribute_type,
-        process_template: process_type,
-        attribute_constraints: list[constraint_type] | None = None,
+        attribute_template: _AttributeType,
+        process_template: _ProcessType,
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.attribute_template = _make_link_by_uid(attribute_template)
         self.process_template = _make_link_by_uid(process_template)
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -293,29 +292,21 @@ class AttributeByTemplateAndObjectTemplate(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="attribute_by_object", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    object_type = UUID | str | LinkByUID | BaseTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        attribute_template: attribute_type,
-        object_template: object_type,
-        attribute_constraints: list[constraint_type] | None = None,
+        attribute_template: _AttributeType,
+        object_template: _ObjectType,
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.attribute_template = _make_link_by_uid(attribute_template)
         self.object_template = _make_link_by_uid(object_template)
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -354,26 +345,19 @@ class LocalAttribute(Serializable["LocalAttribute"], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="local_attribute", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        template: attribute_type,
-        attribute_constraints: list[constraint_type] | None = None,
+        template: _AttributeType,
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.template = _make_link_by_uid(template)
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -415,29 +399,21 @@ class LocalAttributeAndObject(Serializable["LocalAttributeAndObject"], Variable)
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="local_attribute_and_object", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    object_type = UUID | str | LinkByUID | BaseTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        template: attribute_type,
-        object_template: object_type,
-        attribute_constraints: list[constraint_type] | None = None,
+        template: _AttributeType,
+        object_template: _ObjectType,
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.template = _make_link_by_uid(template)
         self.object_template = _make_link_by_uid(object_template)
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -471,14 +447,12 @@ class IngredientIdentifierByProcessTemplateAndName(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="ing_id_by_process_and_name", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        process_template: process_type,
+        process_template: _ProcessType,
         ingredient_name: str,
         scope: str,  # Note that the default is set server side
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
@@ -525,14 +499,12 @@ class IngredientLabelByProcessAndName(Serializable["IngredientLabelByProcessAndN
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="ing_label_by_process_and_name", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        process_template: process_type,
+        process_template: _ProcessType,
         ingredient_name: str,
         label: str,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
@@ -574,14 +546,12 @@ class IngredientLabelsSetByProcessAndName(
         "type", default="ing_labels_set_by_process_and_name", deserializable=False
     )
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        process_template: process_type,
+        process_template: _ProcessType,
         ingredient_name: str,
     ):
         self.name = name
@@ -629,14 +599,12 @@ class IngredientQuantityByProcessAndName(
     )
     unit = properties.Optional(properties.String, "unit")
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        process_template: process_type,
+        process_template: _ProcessType,
         ingredient_name: str,
         quantity_dimension: IngredientQuantityDimension,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
@@ -745,29 +713,21 @@ class AttributeInOutput(Serializable["AttributeInOutput"], Variable):
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="attribute_in_trunk", deserializable=False)
 
-    attribute_type = UUID | str | LinkByUID | AttributeTemplate
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-    constraint_type = tuple[attribute_type, BaseBounds]
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        attribute_template: attribute_type,
-        process_templates: list[process_type],
-        attribute_constraints: list[constraint_type] | None = None,
+        attribute_template: _AttributeType,
+        process_templates: list[_ProcessType],
+        attribute_constraints: list[_ConstraintType] | None = None,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
         self.name = name
         self.headers = headers
         self.attribute_template = _make_link_by_uid(attribute_template)
         self.process_templates = [_make_link_by_uid(x) for x in process_templates]
-        self.attribute_constraints = (
-            None
-            if attribute_constraints is None
-            else [(_make_link_by_uid(x[0]), x[1]) for x in attribute_constraints]
-        )
+        self.attribute_constraints = _build_attribute_constraints(attribute_constraints)
         self.type_selector = type_selector
 
 
@@ -825,15 +785,13 @@ class IngredientIdentifierInOutput(Serializable["IngredientIdentifierInOutput"],
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="ing_id_in_output", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
         ingredient_name: str,
-        process_templates: list[process_type],
+        process_templates: list[_ProcessType],
         scope: str = CITRINE_SCOPE,
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
     ):
@@ -894,14 +852,12 @@ class IngredientLabelsSetInOutput(Serializable["IngredientLabelsSetInOutput"], V
     ingredient_name = properties.String("ingredient_name")
     typ = properties.String("type", default="ing_label_set_in_output", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
         *,
         headers: list[str],
-        process_templates: list[process_type],
+        process_templates: list[_ProcessType],
         ingredient_name: str,
     ):
         self.name = name
@@ -973,8 +929,6 @@ class IngredientQuantityInOutput(Serializable["IngredientQuantityInOutput"], Var
     unit = properties.Optional(properties.String, "unit")
     typ = properties.String("type", default="ing_quantity_in_output", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
@@ -982,7 +936,7 @@ class IngredientQuantityInOutput(Serializable["IngredientQuantityInOutput"], Var
         headers: list[str],
         ingredient_name: str,
         quantity_dimension: IngredientQuantityDimension,
-        process_templates: list[process_type],
+        process_templates: list[_ProcessType],
         type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
         unit: str | None = None,
     ):
@@ -1038,8 +992,6 @@ class LocalIngredientIdentifier(Serializable["LocalIngredientIdentifier"], Varia
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String("type", default="local_ing_id", deserializable=False)
 
-    process_type = UUID | str | LinkByUID | ProcessTemplate
-
     def __init__(
         self,
         name: str,
@@ -1081,8 +1033,6 @@ class LocalIngredientLabelsSet(Serializable["LocalIngredientLabelsSet"], Variabl
     headers = properties.List(properties.String, "headers")
     ingredient_name = properties.String("ingredient_name")
     typ = properties.String("type", default="local_ing_label_set", deserializable=False)
-
-    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(self, name: str, *, headers: list[str], ingredient_name: str):
         self.name = name
@@ -1127,8 +1077,6 @@ class LocalIngredientQuantity(Serializable["LocalIngredientQuantity"], Variable)
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     unit = properties.Optional(properties.String, "unit")
     typ = properties.String("type", default="local_ing_quantity", deserializable=False)
-
-    process_type = UUID | str | LinkByUID | ProcessTemplate
 
     def __init__(
         self,

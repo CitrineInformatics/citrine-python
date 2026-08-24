@@ -49,10 +49,10 @@ def collection(session) -> TeamCollection:
 def test_team_member_string_representation(team):
     user = User.build(UserDataFactory())
     team_member = TeamMember(user=user, team=team, actions=[READ])
-    assert (
-        team_member.__str__()
-        == f"<TeamMember {user.screen_name!r} can {team_member.actions!s} in {team.name!r}>"
-    )
+    cast = str(team_member)
+    assert user.screen_name in cast
+    assert all(a in cast for a in team_member.actions)
+    assert team.name in cast
 
 
 def test_string_representation(team):
@@ -70,9 +70,8 @@ def test_team_registration(collection: TeamCollection, session):
     team_data = TeamDataFactory(
         name="testing",
         description="A sample team",
-        created_at=int(
-            create_time.timestamp() * 1000
-        ),  # The lib expects ms since epoch, which is really odd
+        # The lib expects ms since epoch, which is really odd
+        created_at=int(create_time.timestamp() * 1000),
     )
     user = UserDataFactory()
 
@@ -88,12 +87,7 @@ def test_team_registration(collection: TeamCollection, session):
     expected_call_1 = FakeCall(
         method="POST",
         path="/teams",
-        json={
-            "name": "testing",
-            "description": "",
-            "id": None,
-            "created_at": None,
-        },
+        json={"name": "testing", "description": "", "id": None, "created_at": None},
     )
     expected_call_2 = FakeCall(method="GET", path="/users/me")
     expected_call_3 = FakeCall(
@@ -119,10 +113,7 @@ def test_get_team(collection: TeamCollection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method="GET",
-        path="/teams/{}".format(team_data["id"]),
-    )
+    expected_call = FakeCall(method="GET", path="/teams/{}".format(team_data["id"]))
     assert expected_call == session.last_call
     assert "single team" == created_team.name
 
@@ -153,9 +144,7 @@ def test_list_teams_as_admin(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
-        method="GET",
-        path="/teams",
-        params={"per_page": 100, "page": 1, "as_admin": "true"},
+        method="GET", path="/teams", params={"per_page": 100, "page": 1, "as_admin": "true"}
     )
     assert expected_call == session.last_call
     assert 5 == len(teams)

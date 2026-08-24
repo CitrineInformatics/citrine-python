@@ -60,9 +60,8 @@ def test_automatic_async_update():
     )
 
     session.set_responses(
-        BadRequest(
-            ""
-        ),  # Attempted POST throws BadRequest because, for example, the template bounds are being narrowed.
+        # Attempted POST throws BadRequest because, e.g., the template bounds are being narrowed.
+        BadRequest(""),
         {"job_id": str(uuid4())},  # Call async route, returning a job_id.
         {"job_type": "", "status": "Success", "tasks": []},  # Check job status, it succeeded.
         template.dump(),  # Get the resource.
@@ -70,23 +69,18 @@ def test_automatic_async_update():
     new_template = collection.update(template)
     assert new_template == template  # Check that resource is returned.
     # First call should be an attempt to POST the resource
+    post_url = f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates"
     assert session.calls[0].method == "POST"
-    assert (
-        session.calls[0].path
-        == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates"
-    )
+
+    assert session.calls[0].path == post_url
     # Second call should be a PUT to the async route
+    put_url = f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}/async"
     assert session.calls[1].method == "PUT"
-    assert (
-        session.calls[1].path
-        == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}/async"
-    )
+    assert session.calls[1].path == put_url
     # Last call should get the resource
+    get_url = f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}"
     assert session.last_call.method == "GET"
-    assert (
-        session.last_call.path
-        == f"teams/{collection.team_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}"
-    )
+    assert session.last_call.path == get_url
 
 
 def test_process_template_equals():

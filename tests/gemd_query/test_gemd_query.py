@@ -36,19 +36,13 @@ def test_criteria_rebuild():
     query_copy = GemdQuery.build(query.dump())
 
     assert len(query.criteria) == len(query_copy.criteria)
-    assert (
-        query.criteria[0].property_templates_filter
-        == query_copy.criteria[0].property_templates_filter
-    )
-    assert (
-        query.criteria[0].value_type_filter.unit == query_copy.criteria[0].value_type_filter.unit
-    )
-    assert (
-        query.criteria[0].value_type_filter.lower == query_copy.criteria[0].value_type_filter.lower
-    )
-    assert (
-        query.criteria[0].value_type_filter.upper == query_copy.criteria[0].value_type_filter.upper
-    )
+    for field in (
+        lambda x: x.property_templates_filter,
+        lambda x: x.value_type_filter.unit,
+        lambda x: x.value_type_filter.lower,
+        lambda x: x.value_type_filter.upper,
+    ):
+        assert field(query.criteria[0]) == field(query_copy.criteria[0])
     assert query.datasets == query_copy.datasets
     assert query.object_types == query_copy.object_types
     assert query.schema_version == query_copy.schema_version

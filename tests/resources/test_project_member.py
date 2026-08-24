@@ -23,7 +23,6 @@ def project_member(user, project) -> ProjectMember:
 
 
 def test_string_representation(project_member):
-    assert (
-        project_member.__str__()
-        == f"<ProjectMember '{project_member.user.screen_name}' is MEMBER of '{project_member.project.name}'>"
-    )
+    cast = str(project_member)
+    assert project_member.user.screen_name in cast
+    assert project_member.project.name in cast

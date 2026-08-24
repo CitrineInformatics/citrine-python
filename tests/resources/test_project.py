@@ -179,9 +179,8 @@ def test_project_registration(collection: ProjectCollection, session):
     project_data = ProjectDataFactory(
         name="testing",
         description="A sample project",
-        created_at=int(
-            create_time.timestamp() * 1000
-        ),  # The lib expects ms since epoch, which is really odd
+        # The lib expects ms since epoch, which is really odd
+        created_at=int(create_time.timestamp() * 1000),
     )
     session.set_response({"project": project_data})
     team_id = collection.team_id
@@ -211,10 +210,7 @@ def test_get_project(collection: ProjectCollection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method="GET",
-        path="/projects/{}".format(project_data["id"]),
-    )
+    expected_call = FakeCall(method="GET", path="/projects/{}".format(project_data["id"]))
     assert expected_call == session.last_call
     assert "single project" == created_project.name
 
@@ -486,9 +482,7 @@ def test_list_members(project, session):
     user["actions"] = READ
     user.pop("position")
 
-    team_data = TeamDataFactory(
-        id=str(project.team_id),
-    )
+    team_data = TeamDataFactory(id=str(project.team_id))
 
     session.set_responses({"team": team_data}, {"users": [user]})
 

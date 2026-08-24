@@ -31,9 +31,7 @@ def _make_list_of_gems():
             name="process 1",
             spec=ProcessSpec(
                 name="nestled Spec",
-                conditions=[
-                    Condition(name="cond 1", value=NormalReal(mean=6, std=0.3, units="")),
-                ],
+                conditions=[Condition(name="cond 1", value=NormalReal(mean=6, std=0.3, units=""))],
             ),
             parameters=[
                 Parameter(name="param 1", value=NormalReal(mean=4.2, std=0.1, units="g")),

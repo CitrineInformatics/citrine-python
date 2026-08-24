@@ -64,7 +64,6 @@ class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
     def __init__(self, *, mean: float, std: float):
         self.mean = mean
         self.std = std
-        # pragma: no cover
 
 
 class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
@@ -81,7 +80,6 @@ class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
 
     def __init__(self, *, probabilities: dict):
         self.probabilities = probabilities
-        # pragma: no cover
 
 
 class Mixture(Serializable["Mixture"], DesignVariable):
@@ -101,7 +99,6 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     def __init__(self, *, quantities: dict, labels: dict | None = None):
         self.quantities = quantities
         self.labels = labels or {}
-        # pragma: no cover
 
 
 class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
@@ -114,7 +111,6 @@ class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
 
     def __init__(self, *, formula: str):
         self.formula = formula
-        # pragma: no cover
 
 
 class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
@@ -127,7 +123,6 @@ class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
 
     def __init__(self, *, smiles: str):
         self.smiles = smiles
-        # pragma: no cover
 
 
 class DesignMaterial(Serializable["DesignMaterial"]):

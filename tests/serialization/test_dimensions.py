@@ -9,32 +9,32 @@ from citrine.informatics.dimensions import ContinuousDimension, Dimension, Enume
 @pytest.fixture
 def valid_continuous_data():
     """Produce valid continuous dimension data."""
-    return dict(
-        type="ContinuousDimension",
-        descriptor=dict(
-            type="Real",
-            descriptor_key="alpha",
-            units="",
-            lower_bound=5.0,
-            upper_bound=10.0,
-        ),
-        lower_bound=6.0,
-        upper_bound=7.0,
-    )
+    return {
+        "type": "ContinuousDimension",
+        "descriptor": {
+            "type": "Real",
+            "descriptor_key": "alpha",
+            "units": "",
+            "lower_bound": 5.0,
+            "upper_bound": 10.0,
+        },
+        "lower_bound": 6.0,
+        "upper_bound": 7.0,
+    }
 
 
 @pytest.fixture
 def valid_enumerated_data():
     """Produce valid enumerated dimension data."""
-    return dict(
-        type="EnumeratedDimension",
-        descriptor=dict(
-            type="Categorical",
-            descriptor_key="color",
-            descriptor_values=["blue", "green", "red"],
-        ),
-        list=["red"],
-    )
+    return {
+        "type": "EnumeratedDimension",
+        "descriptor": {
+            "type": "Categorical",
+            "descriptor_key": "color",
+            "descriptor_values": ["blue", "green", "red"],
+        },
+        "list": ["red"],
+    }
 
 
 def test_simple_continuous_deserialization(valid_continuous_data):

@@ -54,12 +54,7 @@ class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMD
     name = String("name", override=True, use_init=True)
     conditions = Optional(List(Object(Condition)), "conditions", override=True)
     parameters = Optional(List(Object(Parameter)), "parameters", override=True)
-    spec = Optional(
-        LinkOrElse(GEMDProcessSpec),
-        "spec",
-        override=True,
-        use_init=True,
-    )
+    spec = Optional(LinkOrElse(GEMDProcessSpec), "spec", override=True, use_init=True)
     source = Optional(Object(PerformedSource), "source", override=True)
 
     def __init__(

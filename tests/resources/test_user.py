@@ -119,10 +119,7 @@ def test_delete_user(collection, session):
     collection.delete(user["id"])
 
     session.set_response({"message": "User was deleted"})
-    expected_call = FakeCall(
-        method="DELETE",
-        path="/users/{}".format(user["id"]),
-    )
+    expected_call = FakeCall(method="DELETE", path="/users/{}".format(user["id"]))
 
     assert 1 == session.num_calls
     assert expected_call == session.last_call
@@ -134,7 +131,7 @@ def test_get_me(collection, session):
     session.set_response(user)
 
     # When
-    current_user = collection.me()
+    _ = collection.me()
 
     # Then
     expected_call = FakeCall(method="GET", path="/users/me")

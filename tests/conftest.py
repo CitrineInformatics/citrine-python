@@ -184,10 +184,7 @@ def valid_material_node_definition_data(valid_formulation_design_space_data):
             ),
         ],
         formulation=valid_formulation_design_space_data,
-        template=dict(
-            material_template=str(uuid.uuid4()),
-            process_template=str(uuid.uuid4()),
-        ),
+        template=dict(material_template=str(uuid.uuid4()), process_template=str(uuid.uuid4())),
         display_name="Material Node",
     )
 
@@ -277,10 +274,7 @@ def valid_expression_predictor_data():
         description="Computes shear modulus from Youngs modulus and Poissons ratio",
         expression="Y / (2 * (1 + v))",
         output=shear_modulus.dump(),
-        aliases={
-            "Y": youngs_modulus.dump(),
-            "v": poissons_ratio.dump(),
-        },
+        aliases={"Y": youngs_modulus.dump(), "v": poissons_ratio.dump()},
     )
 
 
@@ -382,10 +376,7 @@ def valid_ing_formulation_predictor_data():
             ).dump(),
             "salt": RealDescriptor("salt quantity", lower_bound=0, upper_bound=1, units="").dump(),
         },
-        labels={
-            "solvent": ["water"],
-            "solute": ["salt"],
-        },
+        labels={"solvent": ["water"], "solute": ["salt"]},
     )
 
 
@@ -752,8 +743,8 @@ def generic_entity():
         "status": "INPROGRESS",
         "status_description": "VALIDATING",
         "status_detail": [{"level": "Info", "msg": "System processing"}],
-        "create_time": '2020-04-23T15:46:26Z',
-        "update_time": '2020-04-23T15:46:26Z',
+        "create_time": "2020-04-23T15:46:26Z",
+        "update_time": "2020-04-23T15:46:26Z",
         "created_by": user,
         "updated_by": user,
     }

@@ -59,9 +59,8 @@ def test_repeat_serialization_gemd(collection, session):
     # When
     collection.register(proc)
     session.set_response(MaterialSpecDataFactory(name="Test gemd mutation"))
-    registered = collection.register(
-        mat
-    )  # This will serialize the linked process as a side effect
+    # This will serialize the linked process as a side effect
+    registered = collection.register(mat)
 
     # Then
     assert "<Material spec 'Test gemd mutation'>" == str(registered)

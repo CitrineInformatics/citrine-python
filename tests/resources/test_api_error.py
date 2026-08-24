@@ -30,11 +30,7 @@ def test_deserialization():
     missing_id = {
         "code": 400,
         "message": "an error",
-        "validation_errors": [
-            {
-                "failure_message": msg,
-            }
-        ],
+        "validation_errors": [{"failure_message": msg}],
     }
     error = ApiError.build(missing_id)
     assert error.validation_errors[0].failure_message == msg

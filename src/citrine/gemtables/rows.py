@@ -31,7 +31,7 @@ class Row(PolymorphicSerializable["Row"]):
         types: list[type[Serializable]] = [MaterialRunByTemplate]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
-            raise ValueError("Unrecognized type: {}".format(data["type"]))
+            raise ValueError(f"Unrecognized type: {data['type']}")
         return res
 
 

@@ -290,10 +290,7 @@ def test_ingestion_with_table_build(
     }
     session.set_responses(
         full_build_job,
-        JobStatusResponseDataFactory(
-            job_id=full_build_job["job_id"],
-            output=output,
-        ),
+        JobStatusResponseDataFactory(job_id=full_build_job["job_id"], output=output),
         JobStatusResponseDataFactory(),
         IngestionStatusResponseDataFactory(),
     )

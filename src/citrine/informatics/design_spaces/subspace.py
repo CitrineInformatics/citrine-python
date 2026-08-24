@@ -31,7 +31,6 @@ class DesignSubspace(PolymorphicSerializable["DesignSubspace"], DesignSpace):
             return typ
         else:
             raise ValueError(
-                "{} is not a valid design subspace type. Must be in {}.".format(
-                    data["type"], type_dict.keys()
-                )
+                f"{data['type']} is not a valid design subspace type. "
+                f"Must be in {type_dict.keys()}."
             )

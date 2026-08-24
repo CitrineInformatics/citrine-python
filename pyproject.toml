@@ -57,6 +57,18 @@ docs = [
     "sphinxcontrib-apidoc==0.6.0",
 ]
 
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.format]
+# Collapse collections that fit on one line even if they carry a trailing comma,
+# instead of exploding them across multiple lines.
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint.isort]
+# Required to be false when format.skip-magic-trailing-comma is true.
+split-on-trailing-comma = false
+
 [tool.pytest.ini_options]
 testpaths = [
     "tests",

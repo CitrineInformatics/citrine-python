@@ -176,8 +176,7 @@ def mean_property_predictor() -> MeanPropertyPredictor:
 def simple_mixture_predictor() -> SimpleMixturePredictor:
     """Build a simple mixture predictor for testing."""
     return SimpleMixturePredictor(
-        name="Simple mixture predictor",
-        description="Computes mean ingredient properties",
+        name="Simple mixture predictor", description="Computes mean ingredient properties"
     )
 
 
@@ -412,11 +411,10 @@ def test_attribute_accumulation_property_initialization(attribute_accumulation_p
 def test_status(graph_predictor, valid_graph_predictor_data):
     """Ensure we can check the status of predictor validation."""
     # A locally built predictor should be "False" for all status checks
-    assert (
-        not graph_predictor.in_progress()
-        and not graph_predictor.failed()
-        and not graph_predictor.succeeded()
-    )
+    assert graph_predictor.in_progress() is False
+    assert graph_predictor.failed() is False
+    assert graph_predictor.succeeded() is False
+
     # A deserialized predictor should have the correct status
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()

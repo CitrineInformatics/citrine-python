@@ -548,11 +548,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         """
         link = _make_link_by_uid(material)
-        params = {
-            "id": link.id,
-            "scope": link.scope,
-            "name": name,
-        }
+        params = {"id": link.id, "scope": link.scope, "name": name}
         if description is not None:
             params["description"] = description
         if algorithm is not None:
@@ -561,8 +557,7 @@ class TableConfigCollection(Collection[TableConfig]):
             else:  # Not per spec, but be forgiving
                 params["algorithm"] = str(algorithm)
         data = self.session.get_resource(
-            format_escaped_url("teams/{}/table-configs/default", self.team_id),
-            params=params,
+            format_escaped_url("teams/{}/table-configs/default", self.team_id), params=params
         )
         config = TableConfig.build(data["config"])
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data["ambiguous"]]

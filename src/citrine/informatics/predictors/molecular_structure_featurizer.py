@@ -99,4 +99,4 @@ class MolecularStructureFeaturizer(Resource["MolecularStructureFeaturizer"], Pre
         self.excludes = excludes if excludes is not None else []
 
     def __str__(self):
-        return "<MolecularStructureFeaturizer {!r}>".format(self.name)
+        return f"<MolecularStructureFeaturizer {self.name!r}>"

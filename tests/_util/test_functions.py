@@ -51,7 +51,7 @@ def test_get_object_id_wrong_type():
 
 
 def test_validate_type_wrong_type():
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         validate_type({"type": "int"}, "foo")
 
 
@@ -186,8 +186,8 @@ def test_migrate_deprecated_argument():
     with pytest.warns(DeprecationWarning) as caught:
         # If the old argument is specified, return the value and throw a deprecation warning
         assert migrate_deprecated_argument(None, "new name", 15, "old name") == 15
-        msg = str(caught[0].message)
-        assert "old name" in msg and "new name" in msg
+    msg = str(caught[0].message)
+    assert "old name" in msg and "new name" in msg
 
 
 def test_format_escaped_url():

@@ -67,9 +67,7 @@ def test_trigger_execution(
     assert session.last_call == FakeCall(
         method="POST",
         path=expected_path,
-        json={
-            "n_candidates": sample_design_space_execution_input.n_candidates,
-        },
+        json={"n_candidates": sample_design_space_execution_input.n_candidates},
     )
 
 

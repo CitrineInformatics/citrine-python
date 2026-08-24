@@ -8,13 +8,13 @@ from citrine.informatics.descriptors import Descriptor, RealDescriptor
 @pytest.fixture
 def valid_data():
     """Produce valid descriptor data."""
-    return dict(
-        type="Real",
-        descriptor_key="alpha",
-        units="",
-        lower_bound=5.0,
-        upper_bound=10.0,
-    )
+    return {
+        "type": "Real",
+        "descriptor_key": "alpha",
+        "units": "",
+        "lower_bound": 5.0,
+        "upper_bound": 10.0,
+    }
 
 
 def test_simple_deserialization(valid_data):

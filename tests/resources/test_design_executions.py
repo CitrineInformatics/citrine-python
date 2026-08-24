@@ -18,9 +18,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> DesignExecutionCollection:
     return DesignExecutionCollection(
-        project_id=uuid.uuid4(),
-        workflow_id=uuid.uuid4(),
-        session=session,
+        project_id=uuid.uuid4(), workflow_id=uuid.uuid4(), session=session
     )
 
 

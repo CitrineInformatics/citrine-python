@@ -45,10 +45,7 @@ class SampleDesignSpaceExecution(Resource["SampleDesignSpaceExecution"], Executi
             yield SampleSearchSpaceResultCandidate.build(sample_result)
 
     def results(
-        self,
-        *,
-        page: int | None = None,
-        per_page: int = 100,
+        self, *, page: int | None = None, per_page: int = 100
     ) -> Iterable[SampleSearchSpaceResultCandidate]:
         """Fetch the Sample Design Space Results for the particular execution, paginated."""
         path = self._path() + f"{self.uid}/results"
@@ -57,11 +54,7 @@ class SampleDesignSpaceExecution(Resource["SampleDesignSpaceExecution"], Executi
             page_fetcher=fetcher, collection_builder=self._build_results, per_page=per_page
         )
 
-    def result(
-        self,
-        *,
-        result_id: UUID,
-    ) -> SampleSearchSpaceResultCandidate:
+    def result(self, *, result_id: UUID) -> SampleSearchSpaceResultCandidate:
         """Fetch a Sample Design Space Result for the particular UID."""
         path = self._path() + f"{self.uid}/results/{result_id}"
         data = self._session.get_resource(path, version=self._api_version)

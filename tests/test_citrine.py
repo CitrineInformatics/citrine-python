@@ -31,12 +31,8 @@ def test_citrine_signature(monkeypatch):
             "http://citrine-testing.fake:8080/api/v1/tokens/refresh", json=token_refresh_response
         )
 
-        assert (
-            "1234"
-            == Citrine(
-                api_key="1234", scheme="http", host="citrine-testing.fake", port="8080"
-            ).session.refresh_token
-        )
+        citrine = Citrine(api_key="1234", scheme="http", host="citrine-testing.fake", port="8080")
+        assert citrine.session.refresh_token == "1234"
 
     # Validate defaults
     with requests_mock.Mocker() as m:

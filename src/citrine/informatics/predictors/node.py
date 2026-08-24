@@ -45,7 +45,6 @@ class PredictorNode(PolymorphicSerializable["PredictorNode"], Predictor):
             return typ
         else:
             raise ValueError(
-                "{} is not a valid predictor node type. Must be in {}.".format(
-                    data["type"], type_dict.keys()
-                )
+                f"{data['type']} is not a valid predictor node type. "
+                f"Must be in {type_dict.keys()}."
             )

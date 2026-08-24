@@ -49,11 +49,7 @@ class SampleDesignSpaceExecutionCollection(Collection["SampleDesignSpaceExecutio
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a SampleDesignSpaceExecution.")
 
-    def list(
-        self,
-        *,
-        per_page: int = 10,
-    ) -> Iterator[SampleDesignSpaceExecution]:
+    def list(self, *, per_page: int = 10) -> Iterator[SampleDesignSpaceExecution]:
         """
         Paginate over the elements of the collection.
 

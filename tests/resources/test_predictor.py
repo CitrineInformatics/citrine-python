@@ -171,9 +171,7 @@ def test_register_no_train(valid_graph_predictor_data):
     predictor = pc.build(entity)
 
     predictors_path = f"/projects/{pc.project_id}/predictors"
-    expected_calls = [
-        FakeCall(method="POST", path=predictors_path, json=predictor.dump()),
-    ]
+    expected_calls = [FakeCall(method="POST", path=predictors_path, json=predictor.dump())]
 
     pc.register(predictor, train=False)
 
@@ -237,9 +235,7 @@ def test_update_no_train(valid_graph_predictor_data):
 
     predictors_path = PredictorCollection._path_template.format(project_id=pc.project_id)
     entity_path = f"{predictors_path}/{entity['id']}"
-    expected_calls = [
-        FakeCall(method="PUT", path=entity_path, json=predictor.dump()),
-    ]
+    expected_calls = [FakeCall(method="PUT", path=entity_path, json=predictor.dump())]
 
     pc.update(predictor, train=False)
 
@@ -289,7 +285,7 @@ def test_train(valid_graph_predictor_data):
     expected_calls = [
         FakeCall(
             method="PUT", path=f"{entity_path}/train", params={"create_version": True}, json={}
-        ),
+        )
     ]
 
     pc.train(predictor.uid)

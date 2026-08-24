@@ -62,19 +62,8 @@ def test_bounds_optional():
         return LinkByUID(id=str(uuid4()), scope=str(uuid4()))
 
     for template_type, attribute_args in [
-        (
-            MaterialTemplate,
-            [
-                ("properties", PropertyTemplate),
-            ],
-        ),
-        (
-            ProcessTemplate,
-            [
-                ("conditions", ConditionTemplate),
-                ("parameters", ParameterTemplate),
-            ],
-        ),
+        (MaterialTemplate, [("properties", PropertyTemplate)]),
+        (ProcessTemplate, [("conditions", ConditionTemplate), ("parameters", ParameterTemplate)]),
         (
             MeasurementTemplate,
             [

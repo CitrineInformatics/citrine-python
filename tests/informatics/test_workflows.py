@@ -36,18 +36,12 @@ def session() -> FakeSession:
 def collection(session, branch_data) -> DesignWorkflowCollection:
     session.set_response(branch_data)
 
-    return DesignWorkflowCollection(
-        project_id=uuid4(),
-        session=session,
-    )
+    return DesignWorkflowCollection(project_id=uuid4(), session=session)
 
 
 @pytest.fixture
 def execution_collection(session) -> DesignExecutionCollection:
-    return DesignExecutionCollection(
-        project_id=uuid4(),
-        session=session,
-    )
+    return DesignExecutionCollection(project_id=uuid4(), session=session)
 
 
 PROJECT_ID = uuid4()

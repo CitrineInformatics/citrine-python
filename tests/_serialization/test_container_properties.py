@@ -56,9 +56,7 @@ def test_mapping_property_list_of_pairs(
 ):
     prop = properties.Mapping(key_type, value_type, ser_as_list_of_pairs=True)
     value = {key_value: value_value}
-    serialized = [
-        (key_serialized, value_serialized),
-    ]
+    serialized = [(key_serialized, value_serialized)]
     assert prop.deserialize(serialized) == value
     unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
 

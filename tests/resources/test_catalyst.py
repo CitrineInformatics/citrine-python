@@ -246,12 +246,9 @@ def test_assistant_config(
 
     assert isinstance(resp, AssistantResponseConfig)
     assert session.calls == expected_calls
-    assert (
-        resp.predictor.dump()
-        == GraphPredictor.build(
-            GraphPredictor.wrap_instance(assistant_config_data_orig["data"]["config"])
-        ).dump()
-    )
+
+    graph_dict = GraphPredictor.wrap_instance(assistant_config_data_orig["data"]["config"])
+    assert GraphPredictor.build(graph_dict).dump() == resp.predictor.dump()
 
 
 def test_assistant_unsupported(
@@ -356,11 +353,7 @@ def test_insights_internal_user(session, catalyst, internal_user_data, insights_
     }
     expected_calls = [
         FakeCall(method="GET", path="/users/me"),
-        FakeCall(
-            method="POST",
-            path="/catalyst/documents/search",
-            json=expected_insights_request,
-        ),
+        FakeCall(method="POST", path="/catalyst/documents/search", json=expected_insights_request),
     ]
 
     assert session.calls == expected_calls

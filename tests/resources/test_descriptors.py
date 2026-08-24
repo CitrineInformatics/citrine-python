@@ -49,10 +49,8 @@ def test_from_predictor_responses():
         )
         for r in response_json["responses"]
     ]
-    assert (
-        session.last_call.path
-        == f"/projects/{descriptors.project_id}/material-descriptors/predictor-responses"
-    )
+    url = f"/projects/{descriptors.project_id}/material-descriptors/predictor-responses"
+    assert session.last_call.path == url
     assert session.last_call.method == "POST"
 
     graph = GraphPredictor(
@@ -109,8 +107,6 @@ def test_from_data_source():
         )
         for r in response_json["descriptors"]
     ]
-    assert (
-        session.last_call.path
-        == f"/projects/{descriptors.project_id}/material-descriptors/from-data-source"
-    )
+    url = f"/projects/{descriptors.project_id}/material-descriptors/from-data-source"
+    assert session.last_call.path == url
     assert session.last_call.method == "POST"

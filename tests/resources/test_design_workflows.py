@@ -28,10 +28,7 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection_without_branch(session) -> DesignWorkflowCollection:
-    return DesignWorkflowCollection(
-        project_id=uuid.uuid4(),
-        session=session,
-    )
+    return DesignWorkflowCollection(project_id=uuid.uuid4(), session=session)
 
 
 @pytest.fixture
@@ -201,8 +198,7 @@ def test_update(session, branch_data, workflow, collection_without_branch):
     # Given
     post_dict = workflow.dump()
     session.set_responses(
-        {"per_page": 1, "next": "", "response": []},
-        {**post_dict, "status_description": "status"},
+        {"per_page": 1, "next": "", "response": []}, {**post_dict, "status_description": "status"}
     )
 
     # When

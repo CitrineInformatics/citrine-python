@@ -48,12 +48,10 @@ def test_session_signature(monkeypatch):
             "ftp://citrine-testing.fake:8080/api/v1/tokens/refresh", json=token_refresh_response
         )
 
-        assert (
-            "1234"
-            == Session(
-                refresh_token="1234", scheme="ftp", host="citrine-testing.fake", port="8080"
-            ).refresh_token
+        session = Session(
+            refresh_token="1234", scheme="ftp", host="citrine-testing.fake", port="8080"
         )
+        assert "1234" == session.refresh_token
 
     # Validate defaults
     with requests_mock.Mocker() as m:
@@ -152,19 +150,14 @@ def test_status_code_400(session: Session):
         resp_json = {
             "code": 400,
             "message": "a message",
-            "validation_errors": [
-                {
-                    "failure_message": "you have failed",
-                },
-            ],
+            "validation_errors": [{"failure_message": "you have failed"}],
         }
         m.get("http://citrine-testing.fake/api/v1/foo", status_code=400, json=resp_json)
         with pytest.raises(BadRequest) as einfo:
             session.get_resource("/foo")
-        assert (
-            einfo.value.api_error.validation_errors[0].failure_message
-            == resp_json["validation_errors"][0]["failure_message"]
-        )
+        actual = einfo.value.api_error.validation_errors[0].failure_message
+        expected = resp_json["validation_errors"][0]["failure_message"]
+        assert actual == expected
 
 
 def test_status_code_401(session: Session):
@@ -276,18 +269,11 @@ def test_cursor_paged_resource():
     fake_request = make_fake_cursor_request_function(full_result_set)
 
     # varying page size should not affect final result
-    assert (
-        list(Session.cursor_paged_resource(fake_request, "foo", forward=True, per_page=10))
-        == full_result_set
-    )
-    assert (
-        list(Session.cursor_paged_resource(fake_request, "foo", forward=True, per_page=26))
-        == full_result_set
-    )
-    assert (
-        list(Session.cursor_paged_resource(fake_request, "foo", forward=True, per_page=40))
-        == full_result_set
-    )
+    for per_page in (10, 26, 40):
+        result = list(
+            Session.cursor_paged_resource(fake_request, "foo", forward=True, per_page=per_page)
+        )
+        assert result == full_result_set
 
 
 def test_bad_json_response(session: Session):

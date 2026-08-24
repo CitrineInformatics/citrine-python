@@ -361,17 +361,13 @@ def test_branch_data_updates(session, collection, branch_path):
         FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
         FakeCall(method="GET", path=expected_path, version="v2"),
     ]
-    assert (
-        expected_data_updates["data_updates"][0]["current"]
-        == actual_data_updates.data_updates[0].current
-    )
-    assert (
-        expected_data_updates["data_updates"][0]["latest"]
-        == actual_data_updates.data_updates[0].latest
-    )
-    assert expected_data_updates["predictors"][0]["predictor_id"] == str(
-        actual_data_updates.predictors[0].uid
-    )
+    expected_update = expected_data_updates["data_updates"][0]
+    actual_update = actual_data_updates.data_updates[0]
+    assert expected_update["current"] == actual_update.current
+    assert expected_update["latest"] == actual_update.latest
+    expected_predictor = expected_data_updates["predictors"][0]
+    actual_predictor = actual_data_updates.predictors[0]
+    assert expected_predictor["predictor_id"] == str(actual_predictor.uid)
 
 
 def test_data_updates_version_omitted(session, collection, branch_path):
@@ -400,17 +396,13 @@ def test_data_updates_version_omitted(session, collection, branch_path):
         FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
         FakeCall(method="GET", path=expected_path, version="v2"),
     ]
-    assert (
-        expected_data_updates["data_updates"][0]["current"]
-        == actual_data_updates.data_updates[0].current
-    )
-    assert (
-        expected_data_updates["data_updates"][0]["latest"]
-        == actual_data_updates.data_updates[0].latest
-    )
-    assert expected_data_updates["predictors"][0]["predictor_id"] == str(
-        actual_data_updates.predictors[0].uid
-    )
+    expected_update = expected_data_updates["data_updates"][0]
+    actual_update = actual_data_updates.data_updates[0]
+    assert expected_update["current"] == actual_update.current
+    assert expected_update["latest"] == actual_update.latest
+    expected_predictor = expected_data_updates["predictors"][0]
+    actual_predictor = actual_data_updates.predictors[0]
+    assert expected_predictor["predictor_id"] == str(actual_predictor.uid)
 
 
 def test_branch_next_version(session, collection, branch_path):

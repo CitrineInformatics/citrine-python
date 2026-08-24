@@ -101,9 +101,7 @@ class AugmentedProvider(Provider):
         return smiles[:-1]  # Always has a superfluous ) at the end
 
     def unix_milliseconds(
-        self,
-        end_milliseconds: int | None = None,
-        start_milliseconds: int | None = None,
+        self, end_milliseconds: int | None = None, start_milliseconds: int | None = None
     ) -> float:
         """
         Get a timestamp in milliseconds between January 1, 1970 and now, unless

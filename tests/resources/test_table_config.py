@@ -442,39 +442,21 @@ def test_add_all_ingredients_via_team(session, team):
     assert len(def1.variables) == len(allowed_names) * 3
     assert len(def1.columns) == len(def1.variables)
     for name in allowed_names:
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers and isinstance(var, IngredientQuantityByProcessAndName)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers and isinstance(var, IngredientQuantityByProcessAndName)
         )
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers
-                    and isinstance(var, IngredientIdentifierByProcessTemplateAndName)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers
+            and isinstance(var, IngredientIdentifierByProcessTemplateAndName)
         )
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers and isinstance(var, IngredientLabelsSetByProcessAndName)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers and isinstance(var, IngredientLabelsSetByProcessAndName)
         )
 
     session.set_response(
@@ -496,16 +478,10 @@ def test_add_all_ingredients_via_team(session, team):
     assert len(new_columns) == len(allowed_names) * 2
     assert def2.config_uid == def1.config_uid
     for name in allowed_names:
-        assert (
-            next(
-                (
-                    var
-                    for var in new_variables
-                    if name in var.headers and isinstance(var, IngredientQuantityByProcessAndName)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in new_variables
+            if name in var.headers and isinstance(var, IngredientQuantityByProcessAndName)
         )
 
     session.set_response(
@@ -576,38 +552,20 @@ def test_add_all_ingredients_in_output_via_team(session, team):
     assert len(def1.variables) == len(union_allowed_names) * 3
     assert len(def1.columns) == len(def1.variables)
     for name in union_allowed_names:
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers and isinstance(var, IngredientQuantityInOutput)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers and isinstance(var, IngredientQuantityInOutput)
         )
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers and isinstance(var, IngredientIdentifierInOutput)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers and isinstance(var, IngredientIdentifierInOutput)
         )
-        assert (
-            next(
-                (
-                    var
-                    for var in def1.variables
-                    if name in var.headers and isinstance(var, IngredientLabelsSetInOutput)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in def1.variables
+            if name in var.headers and isinstance(var, IngredientLabelsSetInOutput)
         )
 
     session.set_responses(
@@ -634,16 +592,10 @@ def test_add_all_ingredients_in_output_via_team(session, team):
     assert len(new_columns) == len(union_allowed_names) * 2
     assert def2.config_uid == def1.config_uid
     for name in union_allowed_names:
-        assert (
-            next(
-                (
-                    var
-                    for var in new_variables
-                    if name in var.headers and isinstance(var, IngredientQuantityInOutput)
-                ),
-                None,
-            )
-            is not None
+        assert any(
+            var
+            for var in new_variables
+            if name in var.headers and isinstance(var, IngredientQuantityInOutput)
         )
 
     session.set_responses(
@@ -665,14 +617,8 @@ def test_add_all_ingredients_in_output_via_team(session, team):
 
     # If the process template has an empty allowed_names list then an error should be raised
     session.set_responses(
-        ProcessTemplate(
-            process1_name,
-            uids={"id": process1_id},
-        ).dump(),
-        ProcessTemplate(
-            process2_name,
-            uids={"id": process2_id},
-        ).dump(),
+        ProcessTemplate(process1_name, uids={"id": process1_id}).dump(),
+        ProcessTemplate(process2_name, uids={"id": process2_id}).dump(),
     )
     with pytest.raises(RuntimeError):
         empty_defn().add_all_ingredients_in_output(
@@ -740,11 +686,9 @@ def test_register_existing(collection, session):
     assert session.num_calls == 1
 
     # Ensure we PUT if we were called with a table config id
+    url = f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
     assert session.last_call.method == "PUT"
-    assert (
-        session.last_call.path
-        == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
-    )
+    assert session.last_call.path == url
 
 
 def test_update(collection, session):
@@ -769,11 +713,9 @@ def test_update(collection, session):
     assert session.num_calls == 1
 
     # Ensure we POST if we weren't created with a table config id
+    url = f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
     assert session.last_call.method == "PUT"
-    assert (
-        session.last_call.path
-        == f"projects/{collection.project_id}/ara-definitions/{table_config.config_uid}"
-    )
+    assert session.last_call.path == url
 
 
 def test_update_unregistered_fail(collection, session):

@@ -8,11 +8,7 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine.resources.gemtables import GemTable
 
-__all__ = [
-    "DataSource",
-    "GemTableDataSource",
-    "SnapshotDataSource",
-]
+__all__ = ["DataSource", "GemTableDataSource", "SnapshotDataSource"]
 
 
 class DataSource(PolymorphicSerializable["DataSource"]):

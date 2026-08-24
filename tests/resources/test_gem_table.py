@@ -196,9 +196,7 @@ def test_build_from_config(collection: GemTableCollection, session):
                 "display_table_id": expected_table_data["id"],
                 "display_table_version": str(expected_table_data["version"]),
                 "table_warnings": json.dumps(
-                    [
-                        {"limited_results": ["foo", "bar"], "total_count": 3},
-                    ]
+                    [{"limited_results": ["foo", "bar"], "total_count": 3}]
                 ),
             },
         },

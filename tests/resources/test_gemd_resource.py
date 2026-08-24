@@ -404,18 +404,15 @@ def test_delete(gemd_collection, session):
 
     for obj in targets:
         for dry_run in True, False:
-            session.set_response(
-                obj.dump()
-            )  # Delete calls get, must return object data internally
+            # Delete calls get, must return object data internally
+            session.set_response(obj.dump())
             gemd_collection.delete(obj, dry_run=dry_run)
             assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(
                 gemd_collection._path_template
             )
 
-            # And again, with uids
-            session.set_response(
-                obj.dump()
-            )  # Delete calls get, must return object data internally
+            # And again, with uids (repeating delete bypass)
+            session.set_response(obj.dump())
             gemd_collection.delete(obj.uid, dry_run=dry_run)
             assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(
                 gemd_collection._path_template
@@ -576,12 +573,7 @@ def test_type_passthrough(gemd_collection, session):
         ),
     ]
     session.set_response(
-        {
-            "objects": [
-                dict(low_tmpl.dump(), **metadata),
-                dict(high_tmpl.dump(), **metadata),
-            ]
-        }
+        {"objects": [dict(low_tmpl.dump(), **metadata), dict(high_tmpl.dump(), **metadata)]}
     )
     low_tmpl, high_tmpl = gemd_collection.register_all([low_tmpl, high_tmpl])
     assert low_tmpl.dataset is not None
@@ -613,9 +605,7 @@ def test_type_passthrough(gemd_collection, session):
             "bar",
             uids={CITRINE_SCOPE: str(uuid4())},
             template=ptempl,
-            conditions=[
-                Condition(name="high", value=NominalInteger(14), template=high_tmpl),
-            ],
+            conditions=[Condition(name="high", value=NominalInteger(14), template=high_tmpl)],
         ),
         ProcessSpec("baz", uids={CITRINE_SCOPE: str(uuid4())}),
     ]

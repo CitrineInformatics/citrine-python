@@ -5,11 +5,7 @@ import pytest
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.data_concepts import (
-    CITRINE_SCOPE,
-    DataConcepts,
-    _make_link_by_uid,
-)
+from citrine.resources.data_concepts import CITRINE_SCOPE, DataConcepts, _make_link_by_uid
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 from tests.utils.session import FakeCall

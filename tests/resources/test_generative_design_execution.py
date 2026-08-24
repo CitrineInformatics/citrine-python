@@ -19,10 +19,7 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection(session) -> GenerativeDesignExecutionCollection:
-    return GenerativeDesignExecutionCollection(
-        project_id=uuid.uuid4(),
-        session=session,
-    )
+    return GenerativeDesignExecutionCollection(project_id=uuid.uuid4(), session=session)
 
 
 @pytest.fixture

@@ -40,13 +40,12 @@ class FakeCall:
 
         return (
             self.method == other.method
-            and self.path.lstrip("/")
-            == other.path.lstrip("/")  # Leading slashes don't affect results
+            # Leading slashes don't affect results
+            and self.path.lstrip("/") == other.path.lstrip("/")
             and self.json == other.json
             and self.params == other.params
-            and (
-                not self.version or not other.version or self.version == other.version
-            )  # Allows users to check the URL version without forcing everyone to.
+            # Allows users to check the URL version without forcing everyone to.
+            and (not self.version or not other.version or self.version == other.version)
         )
 
 

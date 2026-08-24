@@ -7,10 +7,7 @@ import pytest
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import *
 
-from . import (
-    predictor_node_serialization_check,
-    valid_serialization_output,
-)
+from . import predictor_node_serialization_check, valid_serialization_output
 
 
 def test_auto_ml_deserialization(valid_auto_ml_predictor_data):
@@ -45,9 +42,9 @@ def test_graph_serialization(valid_graph_predictor_data):
     graph_data_copy = deepcopy(valid_graph_predictor_data)
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     serialized = predictor.dump()
-    assert (
-        serialized["instance"]["predictors"] == graph_data_copy["data"]["instance"]["predictors"]
-    )
+    serialized_predictors = serialized["instance"]["predictors"]
+    expected_predictors = graph_data_copy["data"]["instance"]["predictors"]
+    assert serialized_predictors == expected_predictors
     assert serialized == valid_serialization_output(graph_data_copy["data"])
 
 

@@ -99,10 +99,7 @@ class IngestionErrorTrace(Resource["IngestionErrorTrace"]):
     @classmethod
     def from_validation_error(cls, source: ValidationError) -> "IngestionErrorTrace":
         """[ALPHA] Generate an IngestionErrorTrace from a ValidationError."""
-        return cls(
-            msg=source.failure_message,
-            level=IngestionErrorLevel.ERROR,
-        )
+        return cls(msg=source.failure_message, level=IngestionErrorLevel.ERROR)
 
     def __str__(self):
         return f"{self!r}: {self.msg}"
@@ -137,11 +134,8 @@ class IngestionException(CitrineException):
     def from_api_error(cls, source: ApiError) -> "IngestionException":
         """[ALPHA] Build an IngestionException from an ApiError."""
         if len(source.validation_errors) > 0:
-            return cls(
-                errors=[
-                    IngestionErrorTrace.from_validation_error(x) for x in source.validation_errors
-                ]
-            )
+            return cls(errors=[IngestionErrorTrace.from_validation_error(x)
+                               for x in source.validation_errors])  # fmt: skip
         else:
             return cls(errors=[IngestionErrorTrace(msg=source.message)])
 
@@ -454,10 +448,7 @@ class FailedIngestion(Ingestion):
             )
         else:
             return IngestionStatus.build(
-                {
-                    "status": IngestionStatusType.INGESTION_CREATED,
-                    "errors": self.errors,
-                }
+                {"status": IngestionStatusType.INGESTION_CREATED, "errors": self.errors}
             )
 
 

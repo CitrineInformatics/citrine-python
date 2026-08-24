@@ -55,13 +55,11 @@ def test_design_space_build(valid_product_design_space_data):
 
     # Then
     assert str(design_space.uid) == design_space_id
-    assert design_space.name == valid_product_design_space_data["data"]["instance"]["name"]
-    assert (
-        design_space.dimensions[0].descriptor.key
-        == valid_product_design_space_data["data"]["instance"]["dimensions"][0]["descriptor"][
-            "descriptor_key"
-        ]
-    )
+    instance = valid_product_design_space_data["data"]["instance"]
+    assert design_space.name == instance["name"]
+    expected_key = instance["dimensions"][0]["descriptor"]["descriptor_key"]
+    actual_key = design_space.dimensions[0].descriptor.key
+    assert expected_key == actual_key
 
 
 def test_design_space_build_with_status_detail(valid_product_design_space_data):
@@ -345,9 +343,7 @@ def test_archive(valid_product_design_space_data):
     archived_design_space = dsc.archive(ds_id)
 
     assert archived_design_space.is_archived
-    assert session.calls == [
-        FakeCall(method="PUT", path=f"{base_path}/{ds_id}/archive", json={}),
-    ]
+    assert session.calls == [FakeCall(method="PUT", path=f"{base_path}/{ds_id}/archive", json={})]
 
 
 def test_restore(valid_product_design_space_data):
@@ -364,9 +360,7 @@ def test_restore(valid_product_design_space_data):
     restored_design_space = dsc.restore(ds_id)
 
     assert not restored_design_space.is_archived
-    assert session.calls == [
-        FakeCall(method="PUT", path=f"{base_path}/{ds_id}/restore", json={}),
-    ]
+    assert session.calls == [FakeCall(method="PUT", path=f"{base_path}/{ds_id}/restore", json={})]
 
 
 def test_get_none():
@@ -391,9 +385,7 @@ def test_failed_register(valid_product_design_space_data):
     retval = dsc.register(ds)
 
     base_path = f"/projects/{dsc.project_id}/design-spaces"
-    assert session.calls == [
-        FakeCall(method="POST", path=base_path, json=ds.dump()),
-    ]
+    assert session.calls == [FakeCall(method="POST", path=base_path, json=ds.dump())]
     assert retval.dump() == ds.dump()
 
 
@@ -427,9 +419,7 @@ def test_failed_update(valid_product_design_space_data):
     retval = dsc.update(ds)
 
     base_path = f"/projects/{dsc.project_id}/design-spaces"
-    assert session.calls == [
-        FakeCall(method="PUT", path=f"{base_path}/{ds.uid}", json=ds.dump()),
-    ]
+    assert session.calls == [FakeCall(method="PUT", path=f"{base_path}/{ds.uid}", json=ds.dump())]
     assert retval.dump() == ds.dump()
 
 

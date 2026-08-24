@@ -231,9 +231,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             project_id=self.project_id,
             design_space_id=uid,
         )
-        payload = {
-            "predictor_id": str(predictor_id),
-        }
+        payload = {"predictor_id": str(predictor_id)}
         if predictor_version:
             payload["predictor_version"] = predictor_version
         data = self.session.post_resource(path, json=payload, version=self._api_version)

@@ -26,7 +26,6 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
 
     def __init__(self):
         """These are results, so they should be built rather than constructed."""
-        # pragma: no cover
 
     @classmethod
     def get_type(cls, data) -> type[Serializable]:

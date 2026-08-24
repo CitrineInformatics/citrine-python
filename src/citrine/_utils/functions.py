@@ -36,8 +36,8 @@ def validate_type(data_dict: dict, type_name: str) -> dict:
     data_dict_copy = data_dict.copy()
     if "type" in data_dict_copy:
         if data_dict_copy["type"] != type_name:
-            raise Exception(
-                "Object type must be {}, but was instead {}.".format(type_name, data_dict["type"])
+            raise ValueError(
+                f"Object type must be {type_name}, but was instead {data_dict['type']}."
             )
     else:
         data_dict_copy["type"] = type_name

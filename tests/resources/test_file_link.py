@@ -157,12 +157,7 @@ def test_upload(collection: FileCollection, session, tmpdir, monkeypatch):
             "secret_access_key": "abbb8777",
             "session_token": "hefheuhuhhu83772333",
         },
-        "uploads": [
-            {
-                "s3_key": "66377378",
-                "upload_id": "111",
-            }
-        ],
+        "uploads": [{"s3_key": "66377378", "upload_id": "111"}],
     }
 
     for dest_name in dest_names:
@@ -319,11 +314,7 @@ def test_list_file_links(collection: FileCollection, session, valid_data):
     version = str(uuid4())
     filename = "materials.txt"
     # The actual response contains more fields, but these are the only ones we use.
-    returned_data = {
-        "id": file_id,
-        "version": version,
-        "filename": filename,
-    }
+    returned_data = {"id": file_id, "version": version, "filename": filename}
     returned_data["unversioned_url"] = (
         f"http://test.domain.net:8002/api/v1/files/{returned_data['id']}"
     )
@@ -363,11 +354,7 @@ def test_file_download(collection: FileCollection, session, tmpdir):
         FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid)
     )
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
-    session.set_response(
-        {
-            "pre_signed_read_link": pre_signed_url,
-        }
-    )
+    session.set_response({"pre_signed_read_link": pre_signed_url})
     target_dir = str(tmpdir) + "some/new/directory/"
     target_file = target_dir + filename
 
@@ -417,11 +404,7 @@ def test_read(collection: FileCollection, session, tmp_path):
         FileLinkDataFactory(url=url, filename=filename, id=file_uid, version=version_uid)
     )
     pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
-    session.set_response(
-        {
-            "pre_signed_read_link": pre_signed_url,
-        }
-    )
+    session.set_response({"pre_signed_read_link": pre_signed_url})
 
     with requests_mock.mock() as mock_get:
         mock_get.get(pre_signed_url, text="lorem ipsum")
@@ -525,8 +508,7 @@ def test_ingest(collection: FileCollection, session):
     ingest_files_resp = IngestFilesResponseDataFactory()
     job_id_resp = JobSubmissionResponseDataFactory()
     job_status_resp = JobStatusResponseDataFactory(
-        job_id=job_id_resp["job_id"],
-        job_type="create-gemd-objects",
+        job_id=job_id_resp["job_id"], job_type="create-gemd-objects"
     )
     ingest_status_resp = IngestionStatusResponseDataFactory()
 
@@ -698,10 +680,7 @@ def test_get_ids_from_url(collection: FileCollection):
         f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}",
         f"/files/{uuid4()}/versions/{uuid4()}",
     ]
-    file = [
-        f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}",
-        f"/files/{uuid4()}",
-    ]
+    file = [f"teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}", f"/files/{uuid4()}"]
     bad = [
         f"/teams/{uuid4()}/datasets/{uuid4()}/files/{uuid4()}/versions/{uuid4()}/action",
         f"/teams/{uuid4()}/datasets/{uuid4()}/{uuid4()}/versions/{uuid4()}",
@@ -767,10 +746,7 @@ def test_get(collection: FileCollection, session):
     assert collection.get(uid=raw_files[0]["id"], version=raw_files[0]["version_number"]) == file0
 
     session.set_response({"files": [raw_files[1]]})
-    assert (
-        collection.get(uid=raw_files[1]["filename"], version=raw_files[1]["version_number"])
-        == file1
-    )
+    assert collection.get(uid=raw_files[1]["filename"], version=raw_files[1]["version_number"]) == file1  # fmt: skip
 
     session.set_response({"files": [raw_files[1]]})
     assert collection.get(uid=raw_files[1]["filename"], version=raw_files[1]["version"]) == file1
