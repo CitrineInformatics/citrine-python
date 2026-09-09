@@ -3,10 +3,24 @@
 from abc import ABC
 from typing import TypeVar
 
+from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.template.base_template import BaseTemplate as GEMDTemplate
 
-from citrine._serialization.properties import Optional, String
+from citrine._serialization.properties import (
+    LinkOrElse,
+    Object,
+    Optional,
+    Serializable,
+    SpecifiedMixedList,
+    String,
+    Union,
+)
 from citrine.resources.templates import Template, TemplateCollection
+
+
+def _attr_tuple(tempate_class: Serializable) -> Serializable:
+    tuple_form = SpecifiedMixedList([LinkOrElse(tempate_class), Optional(Object(BaseBounds))])
+    return Union([LinkOrElse(tempate_class), tuple_form])
 
 
 class ObjectTemplate(Template, GEMDTemplate, ABC):

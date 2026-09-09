@@ -12,16 +12,13 @@ from gemd.entity.template.parameter_template import ParameterTemplate as GEMDPar
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import (
-    LinkOrElse,
-    List,
-    Object,
-    Optional,
-    SpecifiedMixedList,
-    Union,
-)
+from citrine._serialization.properties import List, Optional
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
+from citrine.resources.object_templates import (
+    ObjectTemplate,
+    ObjectTemplateCollection,
+    _attr_tuple,
+)
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate
 
@@ -73,48 +70,9 @@ class MeasurementTemplate(
 
     _response_key = GEMDMeasurementTemplate.typ  # 'measurement_template'
 
-    properties = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDPropertyTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDPropertyTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "properties",
-        override=True,
-    )
-    conditions = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDConditionTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDConditionTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "conditions",
-        override=True,
-    )
-    parameters = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDParameterTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDParameterTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "parameters",
-        override=True,
-    )
+    properties = Optional(List(_attr_tuple(GEMDPropertyTemplate)), "properties", override=True)
+    conditions = Optional(List(_attr_tuple(GEMDConditionTemplate)), "conditions", override=True)
+    parameters = Optional(List(_attr_tuple(GEMDParameterTemplate)), "parameters", override=True)
 
     def __init__(
         self,

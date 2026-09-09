@@ -9,17 +9,13 @@ from gemd.entity.template.parameter_template import ParameterTemplate as GEMDPar
 from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import (
-    LinkOrElse,
-    List,
-    Object,
-    Optional,
-    SpecifiedMixedList,
-    String,
-    Union,
-)
+from citrine._serialization.properties import List, Optional, String
 from citrine.resources.condition_template import ConditionTemplate
-from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
+from citrine.resources.object_templates import (
+    ObjectTemplate,
+    ObjectTemplateCollection,
+    _attr_tuple,
+)
 from citrine.resources.parameter_template import ParameterTemplate
 
 
@@ -65,34 +61,8 @@ class ProcessTemplate(
 
     _response_key = GEMDProcessTemplate.typ  # 'process_template'
 
-    conditions = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDConditionTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDConditionTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "conditions",
-        override=True,
-    )
-    parameters = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDParameterTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDParameterTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "parameters",
-        override=True,
-    )
+    conditions = Optional(List(_attr_tuple(GEMDConditionTemplate)), "conditions", override=True)
+    parameters = Optional(List(_attr_tuple(GEMDParameterTemplate)), "parameters", override=True)
 
     allowed_labels = Optional(List(String()), "allowed_labels", override=True)
     allowed_names = Optional(List(String()), "allowed_names", override=True)

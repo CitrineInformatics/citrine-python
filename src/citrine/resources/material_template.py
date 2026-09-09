@@ -8,15 +8,12 @@ from gemd.entity.template.material_template import MaterialTemplate as GEMDMater
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
 from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import (
-    LinkOrElse,
-    List,
-    Object,
-    Optional,
-    SpecifiedMixedList,
-    Union,
+from citrine._serialization.properties import List, Optional
+from citrine.resources.object_templates import (
+    ObjectTemplate,
+    ObjectTemplateCollection,
+    _attr_tuple,
 )
-from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.property_template import PropertyTemplate
 
 
@@ -57,20 +54,7 @@ class MaterialTemplate(
 
     _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
-    properties = Optional(
-        List(
-            Union(
-                [
-                    LinkOrElse(GEMDPropertyTemplate),
-                    SpecifiedMixedList(
-                        [LinkOrElse(GEMDPropertyTemplate), Optional(Object(BaseBounds))]
-                    ),
-                ]
-            )
-        ),
-        "properties",
-        override=True,
-    )
+    properties = Optional(List(_attr_tuple(GEMDPropertyTemplate)), "properties", override=True)
 
     def __init__(
         self,
