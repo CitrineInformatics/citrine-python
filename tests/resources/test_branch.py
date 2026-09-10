@@ -6,12 +6,19 @@ from dateutil import tz
 
 from citrine._rest.resource import PredictorRef
 from citrine.exceptions import NotFound
-from citrine.resources.data_version_update import NextBranchVersionRequest, DataVersionUpdate, BranchDataUpdate
 from citrine.resources.branch import Branch, BranchCollection
-from tests.utils.factories import BranchDataFactory, BranchRootDataFactory, \
-    BranchDataFieldFactory, BranchMetadataFieldFactory, BranchDataUpdateFactory
-from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
-
+from citrine.resources.data_version_update import (
+    BranchDataUpdate,
+    DataVersionUpdate,
+    NextBranchVersionRequest,
+)
+from tests.utils.factories import (
+    BranchDataFactory,
+    BranchDataFieldFactory,
+    BranchDataUpdateFactory,
+    BranchMetadataFieldFactory,
+)
+from tests.utils.session import FakeCall, FakePaginatedSession, FakeSession
 
 LATEST_VER = "latest"
 
@@ -28,10 +35,7 @@ def paginated_session() -> FakePaginatedSession:
 
 @pytest.fixture
 def collection(session) -> BranchCollection:
-    return BranchCollection(
-        project_id=uuid.uuid4(),
-        session=session
-    )
+    return BranchCollection(project_id=uuid.uuid4(), session=session)
 
 
 @pytest.fixture
@@ -42,7 +46,7 @@ def branch_path(collection) -> str:
 def test_str():
     name = "Test Branch name"
     branch = Branch(name=name)
-    assert str(branch) == f'<Branch {name!r}>'
+    assert str(branch) == f"<Branch {name!r}>"
 
 
 def test_branch_build(collection):
@@ -57,17 +61,13 @@ def test_branch_build(collection):
 def test_branch_register(session, collection, branch_path):
     # Given
     root_id = str(uuid.uuid4())
-    name = 'branch-name'
+    name = "branch-name"
     now = datetime.now(tz.UTC).replace(microsecond=0)
     now_ms = int(now.timestamp() * 1000)  # ms since epoch
-    branch_data = BranchDataFactory(data=BranchDataFieldFactory(name=name),
-                                    metadata=BranchMetadataFieldFactory(
-                                        created={
-                                            'time': now_ms
-                                        },
-                                        updated={
-                                            'time': now_ms
-                                        }))
+    branch_data = BranchDataFactory(
+        data=BranchDataFieldFactory(name=name),
+        metadata=BranchMetadataFieldFactory(created={"time": now_ms}, updated={"time": now_ms}),
+    )
     session.set_response(branch_data)
 
     # When
@@ -75,14 +75,7 @@ def test_branch_register(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    expected_call = FakeCall(
-        method='POST',
-        path=branch_path,
-        json={
-            'name': name
-        },
-        version="v2"
-    )
+    expected_call = FakeCall(method="POST", path=branch_path, json={"name": name}, version="v2")
 
     assert expected_call == session.last_call
     assert new_branch.uid is not None
@@ -94,8 +87,8 @@ def test_branch_register(session, collection, branch_path):
 def test_branch_get(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    root_id = branch_data['metadata']['root_id']
-    version = branch_data['metadata']['version']
+    root_id = branch_data["metadata"]["root_id"]
+    version = branch_data["metadata"]["version"]
     session.set_response({"response": [branch_data]})
 
     # When
@@ -103,7 +96,11 @@ def test_branch_get(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'page': 1, 'per_page': 1, 'root': root_id, 'version': version})
+    assert session.last_call == FakeCall(
+        method="GET",
+        path=branch_path,
+        params={"page": 1, "per_page": 1, "root": root_id, "version": version},
+    )
 
 
 def test_branch_get_not_found(session, collection, branch_path):
@@ -118,7 +115,7 @@ def test_branch_get_not_found(session, collection, branch_path):
 def test_branch_get_by_version_id(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    version_id = branch_data['id']
+    version_id = branch_data["id"]
     session.set_response(branch_data)
 
     # When
@@ -126,21 +123,23 @@ def test_branch_get_by_version_id(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=f"{branch_path}/{version_id}")
+    assert session.last_call == FakeCall(method="GET", path=f"{branch_path}/{version_id}")
 
 
 def test_branch_list(session, collection, branch_path):
     # Given
     branch_count = 5
     branches_data = BranchDataFactory.create_batch(branch_count)
-    session.set_response({'response': branches_data})
+    session.set_response({"response": branches_data})
 
     # When
     branches = list(collection.list())
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': False, 'page': 1, 'per_page': 20})
+    assert session.last_call == FakeCall(
+        method="GET", path=branch_path, params={"archived": False, "page": 1, "per_page": 20}
+    )
     assert len(branches) == branch_count
 
 
@@ -148,14 +147,16 @@ def test_branch_list_all(session, collection, branch_path):
     # Given
     branch_count = 5
     branches_data = BranchDataFactory.create_batch(branch_count)
-    session.set_response({'response': branches_data})
+    session.set_response({"response": branches_data})
 
     # When
     branches = list(collection.list_all())
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'per_page': 20, 'page': 1})
+    assert session.last_call == FakeCall(
+        method="GET", path=branch_path, params={"per_page": 20, "page": 1}
+    )
 
 
 def test_branch_delete(session, collection, branch_path):
@@ -167,7 +168,7 @@ def test_branch_delete(session, collection, branch_path):
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='DELETE', path=f'{branch_path}/{branch_id}')
+    assert session.last_call == FakeCall(method="DELETE", path=f"{branch_path}/{branch_id}")
 
 
 def test_branch_update(session, collection, branch_path):
@@ -181,15 +182,13 @@ def test_branch_update(session, collection, branch_path):
     # Then
     assert session.num_calls == 1
     expected_call = FakeCall(
-        method='PUT',
-        path=f'{branch_path}/{branch_data["id"]}',
-        json={
-            'name': branch_data['data']['name']
-        },
-        version='v2'
+        method="PUT",
+        path=f"{branch_path}/{branch_data['id']}",
+        json={"name": branch_data["data"]["name"]},
+        version="v2",
     )
     assert session.last_call == expected_call
-    assert updated_branch.name == branch_data['data']['name']
+    assert updated_branch.name == branch_data["data"]["name"]
 
 
 def test_branch_get_design_workflows(collection):
@@ -214,23 +213,21 @@ def test_branch_get_design_workflows_no_project_id(session):
 def test_branch_archive(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(archived=True))
-    branch_id = branch_data['id']
-    root_id = branch_data['metadata']['root_id']
-    version = branch_data['metadata']['version']
+    branch_id = branch_data["id"]
+    root_id = branch_data["metadata"]["root_id"]
+    version = branch_data["metadata"]["version"]
     branch_data_get_resp = {"response": [branch_data]}
-    branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': version
-    }
+    branch_data_get_params = {"page": 1, "per_page": 1, "root": str(root_id), "version": version}
     session.set_responses(branch_data_get_resp, branch_data)
 
     # When
     archived_branch = collection.archive(root_id=root_id, version=version)
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/archive'
+    expected_path = f"{branch_path}/{branch_id}/archive"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='PUT', path=expected_path, json={})
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="PUT", path=expected_path, json={}),
     ]
     assert archived_branch.archived is True
 
@@ -238,11 +235,14 @@ def test_branch_archive(session, collection, branch_path):
 def test_archive_version_omitted(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(archived=True))
-    branch_id = branch_data['id']
-    root_id = branch_data['metadata']['root_id']
+    branch_id = branch_data["id"]
+    root_id = branch_data["metadata"]["root_id"]
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': LATEST_VER
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_id),
+        "version": LATEST_VER,
     }
     session.set_responses(branch_data_get_resp, branch_data)
 
@@ -250,10 +250,10 @@ def test_archive_version_omitted(session, collection, branch_path):
     archived_branch = collection.archive(root_id=root_id)
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/archive'
+    expected_path = f"{branch_path}/{branch_id}/archive"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='PUT', path=expected_path, json={})
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="PUT", path=expected_path, json={}),
     ]
     assert archived_branch.archived is True
 
@@ -261,23 +261,21 @@ def test_archive_version_omitted(session, collection, branch_path):
 def test_branch_restore(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(archived=False))
-    branch_id = branch_data['id']
-    root_id = branch_data['metadata']['root_id']
-    version = branch_data['metadata']['version']
+    branch_id = branch_data["id"]
+    root_id = branch_data["metadata"]["root_id"]
+    version = branch_data["metadata"]["version"]
     branch_data_get_resp = {"response": [branch_data]}
-    branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': version
-    }
+    branch_data_get_params = {"page": 1, "per_page": 1, "root": str(root_id), "version": version}
     session.set_responses(branch_data_get_resp, branch_data)
 
     # When
     restored_branch = collection.restore(root_id=root_id, version=version)
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/restore'
+    expected_path = f"{branch_path}/{branch_id}/restore"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='PUT', path=expected_path, json={})
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="PUT", path=expected_path, json={}),
     ]
     assert restored_branch.archived is False
 
@@ -285,11 +283,14 @@ def test_branch_restore(session, collection, branch_path):
 def test_restore_version_omitted(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(archived=False))
-    branch_id = branch_data['id']
-    root_id = branch_data['metadata']['root_id']
+    branch_id = branch_data["id"]
+    root_id = branch_data["metadata"]["root_id"]
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_id), 'version': LATEST_VER
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_id),
+        "version": LATEST_VER,
     }
     session.set_responses(branch_data_get_resp, branch_data)
 
@@ -297,10 +298,10 @@ def test_restore_version_omitted(session, collection, branch_path):
     restored_branch = collection.restore(root_id=root_id)
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/restore'
+    expected_path = f"{branch_path}/{branch_id}/restore"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='PUT', path=expected_path, json={})
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="PUT", path=expected_path, json={}),
     ]
     assert restored_branch.archived is False
 
@@ -309,20 +310,26 @@ def test_branch_list_archived(session, collection, branch_path):
     # Given
     branch_count = 5
     branches_data = BranchDataFactory.create_batch(branch_count)
-    session.set_response({'response': branches_data})
+    session.set_response({"response": branches_data})
 
     # When
     branches = list(collection.list_archived())
 
     # Then
     assert session.num_calls == 1
-    assert session.last_call == FakeCall(method='GET', path=branch_path, params={'archived': True, 'per_page': 20, 'page': 1})
+    assert session.last_call == FakeCall(
+        method="GET", path=branch_path, params={"archived": True, "per_page": 20, "page": 1}
+    )
 
 
 # Needed for coverage checks
 def test_branch_data_update_inits():
-    data_updates = [DataVersionUpdate(current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
-                                      latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
+    data_updates = [
+        DataVersionUpdate(
+            current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
+            latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2",
+        )
+    ]
     predictors = [PredictorRef("aa971886-d17c-43b4-b602-5af7b44fcd5a", 2)]
     branch_update = BranchDataUpdate(data_updates=data_updates, predictors=predictors)
     assert branch_update.data_updates[0].current == "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1"
@@ -331,92 +338,112 @@ def test_branch_data_update_inits():
 def test_branch_data_updates(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    root_branch_id = branch_data['metadata']['root_id']
-    branch_id = branch_data['id']
+    root_branch_id = branch_data["metadata"]["root_id"]
+    branch_id = branch_data["id"]
     expected_data_updates = BranchDataUpdateFactory()
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_branch_id), 'version': branch_data['metadata']['version']
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_branch_id),
+        "version": branch_data["metadata"]["version"],
     }
     session.set_responses(branch_data_get_resp, expected_data_updates)
 
     # When
-    actual_data_updates = collection.data_updates(root_id=root_branch_id, version=branch_data['metadata']['version'])
+    actual_data_updates = collection.data_updates(
+        root_id=root_branch_id, version=branch_data["metadata"]["version"]
+    )
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/data-version-updates-predictor'
+    expected_path = f"{branch_path}/{branch_id}/data-version-updates-predictor"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=expected_path, version='v2')
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="GET", path=expected_path, version="v2"),
     ]
-    assert expected_data_updates['data_updates'][0]['current'] == actual_data_updates.data_updates[0].current
-    assert expected_data_updates['data_updates'][0]['latest'] == actual_data_updates.data_updates[0].latest
-    assert expected_data_updates['predictors'][0]['predictor_id'] == str(actual_data_updates.predictors[0].uid)
+    expected_update = expected_data_updates["data_updates"][0]
+    actual_update = actual_data_updates.data_updates[0]
+    assert expected_update["current"] == actual_update.current
+    assert expected_update["latest"] == actual_update.latest
+    expected_predictor = expected_data_updates["predictors"][0]
+    actual_predictor = actual_data_updates.predictors[0]
+    assert expected_predictor["predictor_id"] == str(actual_predictor.uid)
 
 
 def test_data_updates_version_omitted(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    root_branch_id = branch_data['metadata']['root_id']
-    branch_id = branch_data['id']
+    root_branch_id = branch_data["metadata"]["root_id"]
+    branch_id = branch_data["id"]
     expected_data_updates = BranchDataUpdateFactory()
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_branch_id), 'version': branch_data['metadata']['version']
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_branch_id),
+        "version": branch_data["metadata"]["version"],
     }
     session.set_responses(branch_data_get_resp, expected_data_updates)
 
     # When
-    actual_data_updates = collection.data_updates(root_id=root_branch_id, version=branch_data['metadata']['version'])
+    actual_data_updates = collection.data_updates(
+        root_id=root_branch_id, version=branch_data["metadata"]["version"]
+    )
 
     # Then
-    expected_path = f'{branch_path}/{branch_id}/data-version-updates-predictor'
+    expected_path = f"{branch_path}/{branch_id}/data-version-updates-predictor"
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=expected_path, version='v2')
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="GET", path=expected_path, version="v2"),
     ]
-    assert expected_data_updates['data_updates'][0]['current'] == actual_data_updates.data_updates[0].current
-    assert expected_data_updates['data_updates'][0]['latest'] == actual_data_updates.data_updates[0].latest
-    assert expected_data_updates['predictors'][0]['predictor_id'] == str(actual_data_updates.predictors[0].uid)
-
-
+    expected_update = expected_data_updates["data_updates"][0]
+    actual_update = actual_data_updates.data_updates[0]
+    assert expected_update["current"] == actual_update.current
+    assert expected_update["latest"] == actual_update.latest
+    expected_predictor = expected_data_updates["predictors"][0]
+    actual_predictor = actual_data_updates.predictors[0]
+    assert expected_predictor["predictor_id"] == str(actual_predictor.uid)
 
 
 def test_branch_next_version(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    root_branch_id = branch_data['metadata']['root_id']
+    root_branch_id = branch_data["metadata"]["root_id"]
     session.set_response(branch_data)
-    data_updates = [DataVersionUpdate(current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
-                                      latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2")]
+    data_updates = [
+        DataVersionUpdate(
+            current="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
+            latest="gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2",
+        )
+    ]
     predictors = [PredictorRef("aa971886-d17c-43b4-b602-5af7b44fcd5a", 2)]
     req = NextBranchVersionRequest(data_updates=data_updates, use_predictors=predictors)
 
     # When
-    branchv2 = collection.next_version(root_id=root_branch_id, branch_instructions=req, retrain_models=False)
+    branchv2 = collection.next_version(
+        root_id=root_branch_id, branch_instructions=req, retrain_models=False
+    )
 
     # Then
-    expected_path = f'{branch_path}/next-version-predictor'
-    expected_call = FakeCall(method='POST',
-                             path=expected_path,
-                             params={'root': str(root_branch_id),
-                                     'retrain_models': False},
-                             json={
-                                 'data_updates': [
-                                     {
-                                         'current': 'gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1',
-                                         'latest': 'gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2',
-                                         'type': 'DataVersionUpdate'
-                                     }
-                                 ],
-                                 'use_predictors': [
-                                     {
-                                         'predictor_id': 'aa971886-d17c-43b4-b602-5af7b44fcd5a',
-                                         'predictor_version': 2
-                                     }
-                                 ]
-                             },
-                             version='v2')
+    expected_path = f"{branch_path}/next-version-predictor"
+    expected_call = FakeCall(
+        method="POST",
+        path=expected_path,
+        params={"root": str(root_branch_id), "retrain_models": False},
+        json={
+            "data_updates": [
+                {
+                    "current": "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::1",
+                    "latest": "gemd::16f91e7e-0214-4866-8d7f-a4d5c2125d2b::2",
+                    "type": "DataVersionUpdate",
+                }
+            ],
+            "use_predictors": [
+                {"predictor_id": "aa971886-d17c-43b4-b602-5af7b44fcd5a", "predictor_version": 2}
+            ],
+        },
+        version="v2",
+    )
     assert session.num_calls == 1
     assert session.last_call == expected_call
     assert str(branchv2.root_id) == root_branch_id
@@ -428,12 +455,15 @@ def test_branch_data_updates_normal(session, collection, branch_path):
     root_branch_id = branch_data["metadata"]["root_id"]
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_branch_id), 'version': branch_data['metadata']['version']
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_branch_id),
+        "version": branch_data["metadata"]["version"],
     }
 
     session.set_response(branch_data_get_resp)
 
-    branch = collection.get(root_id=root_branch_id, version=branch_data['metadata']['version'])
+    branch = collection.get(root_id=root_branch_id, version=branch_data["metadata"]["version"])
 
     data_updates = BranchDataUpdateFactory()
     v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
@@ -441,30 +471,34 @@ def test_branch_data_updates_normal(session, collection, branch_path):
     v2branch = collection.update_data(root_id=branch.root_id, version=branch.version)
 
     # Then
-    next_version_call = FakeCall(method='POST',
-                                 path=f'{branch_path}/next-version-predictor',
-                                 params={'root': str(root_branch_id), 'retrain_models': False},
-                                 json={
-                                     'data_updates': [
-                                         {
-                                             'current': data_updates['data_updates'][0]['current'],
-                                             'latest': data_updates['data_updates'][0]['latest'],
-                                             'type': 'DataVersionUpdate'
-                                         }
-                                     ],
-                                     'use_predictors': [
-                                         {
-                                             'predictor_id': data_updates['predictors'][0]['predictor_id'],
-                                             'predictor_version': data_updates['predictors'][0]['predictor_version']
-                                         }
-                                     ]
-                                 },
-                                 version='v2')
+    next_version_call = FakeCall(
+        method="POST",
+        path=f"{branch_path}/next-version-predictor",
+        params={"root": str(root_branch_id), "retrain_models": False},
+        json={
+            "data_updates": [
+                {
+                    "current": data_updates["data_updates"][0]["current"],
+                    "latest": data_updates["data_updates"][0]["latest"],
+                    "type": "DataVersionUpdate",
+                }
+            ],
+            "use_predictors": [
+                {
+                    "predictor_id": data_updates["predictors"][0]["predictor_id"],
+                    "predictor_version": data_updates["predictors"][0]["predictor_version"],
+                }
+            ],
+        },
+        version="v2",
+    )
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=f'{branch_path}/{branch_data["id"]}/data-version-updates-predictor'),
-        next_version_call
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(
+            method="GET", path=f"{branch_path}/{branch_data['id']}/data-version-updates-predictor"
+        ),
+        next_version_call,
     ]
     assert str(v2branch.root_id) == root_branch_id
 
@@ -472,41 +506,49 @@ def test_branch_data_updates_normal(session, collection, branch_path):
 def test_branch_data_updates_latest(session, collection, branch_path):
     # Given
     branch_data = BranchDataFactory()
-    root_branch_id = branch_data['metadata']['root_id']
+    root_branch_id = branch_data["metadata"]["root_id"]
     branch_data_get_resp = {"response": [branch_data]}
     branch_data_get_params = {
-        'page': 1, 'per_page': 1, 'root': str(root_branch_id), 'version': branch_data['metadata']['version']
+        "page": 1,
+        "per_page": 1,
+        "root": str(root_branch_id),
+        "version": branch_data["metadata"]["version"],
     }
     session.set_response(branch_data_get_resp)
 
-    branch = collection.get(root_id=root_branch_id, version=branch_data['metadata']['version'])
+    branch = collection.get(root_id=root_branch_id, version=branch_data["metadata"]["version"])
 
     data_updates = BranchDataUpdateFactory()
     v2branch_data = BranchDataFactory(metadata=BranchMetadataFieldFactory(root_id=root_branch_id))
     session.set_responses(branch_data_get_resp, data_updates, v2branch_data)
-    v2branch = collection.update_data(root_id=branch.root_id, version=branch.version, use_existing=False, retrain_models=True)
+    v2branch = collection.update_data(
+        root_id=branch.root_id, version=branch.version, use_existing=False, retrain_models=True
+    )
 
     # Then
-    next_version_call = FakeCall(method='POST',
-                             path=f'{branch_path}/next-version-predictor',
-                             params={'root': str(root_branch_id),
-                                     'retrain_models': True},
-                             json={
-                                 'data_updates': [
-                                     {
-                                         'current': data_updates['data_updates'][0]['current'],
-                                         'latest': data_updates['data_updates'][0]['latest'],
-                                         'type': 'DataVersionUpdate'
-                                     }
-                                 ],
-                                 'use_predictors': []
-                             },
-                             version='v2')
+    next_version_call = FakeCall(
+        method="POST",
+        path=f"{branch_path}/next-version-predictor",
+        params={"root": str(root_branch_id), "retrain_models": True},
+        json={
+            "data_updates": [
+                {
+                    "current": data_updates["data_updates"][0]["current"],
+                    "latest": data_updates["data_updates"][0]["latest"],
+                    "type": "DataVersionUpdate",
+                }
+            ],
+            "use_predictors": [],
+        },
+        version="v2",
+    )
     assert session.calls == [
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=branch_path, params=branch_data_get_params),
-        FakeCall(method='GET', path=f'{branch_path}/{branch_data["id"]}/data-version-updates-predictor'),
-        next_version_call
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(method="GET", path=branch_path, params=branch_data_get_params),
+        FakeCall(
+            method="GET", path=f"{branch_path}/{branch_data['id']}/data-version-updates-predictor"
+        ),
+        next_version_call,
     ]
     assert str(v2branch.root_id) == root_branch_id
 
@@ -517,7 +559,9 @@ def test_branch_data_updates_nochange(session, collection, branch_path):
     branch_data_get_resp = {"response": [branch_data]}
     session.set_response(branch_data_get_resp)
 
-    branch = collection.get(root_id=branch_data['metadata']['root_id'], version=branch_data['metadata']['version'])
+    branch = collection.get(
+        root_id=branch_data["metadata"]["root_id"], version=branch_data["metadata"]["version"]
+    )
 
     data_updates = BranchDataUpdateFactory(data_updates=[], predictors=[])
     session.set_responses(branch_data_get_resp, data_updates)

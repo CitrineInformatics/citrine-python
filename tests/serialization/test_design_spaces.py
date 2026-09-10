@@ -1,15 +1,20 @@
 """Tests for citrine.informatics.design_spaces serialization."""
-from copy import copy, deepcopy
-from uuid import UUID
+
+from copy import deepcopy
 
 import pytest
 
-from . import design_space_serialization_check, valid_serialization_output
 from citrine.informatics.constraints import IngredientCountConstraint
-from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor,\
-    FormulationDescriptor
-from citrine.informatics.design_spaces import DesignSpace, DesignSubspace, FormulationDesignSpace, ProductDesignSpace, TopLevelDesignSpace
+from citrine.informatics.descriptors import FormulationDescriptor
+from citrine.informatics.design_spaces import (
+    DesignSubspace,
+    FormulationDesignSpace,
+    ProductDesignSpace,
+    TopLevelDesignSpace,
+)
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
+
+from . import design_space_serialization_check
 
 
 def test_product_deserialization(valid_product_design_space_data):
@@ -17,15 +22,15 @@ def test_product_deserialization(valid_product_design_space_data):
     for designSpaceClass in [ProductDesignSpace, TopLevelDesignSpace]:
         data = deepcopy(valid_product_design_space_data)
         design_space: ProductDesignSpace = designSpaceClass.build(data)
-        assert design_space.name == 'my design space'
-        assert design_space.description == 'does some things'
+        assert design_space.name == "my design space"
+        assert design_space.description == "does some things"
         assert type(design_space.dimensions[0]) == ContinuousDimension
         assert design_space.dimensions[0].lower_bound == 6.0
         assert type(design_space.dimensions[1]) == EnumeratedDimension
-        assert design_space.dimensions[1].values == ['red']
+        assert design_space.dimensions[1].values == ["red"]
         assert type(design_space.subspaces[0]) == FormulationDesignSpace
         assert type(design_space.subspaces[1]) == FormulationDesignSpace
-        assert design_space.subspaces[1].ingredients == {'baz'}
+        assert design_space.subspaces[1].ingredients == {"baz"}
 
 
 def test_product_serialization(valid_product_design_space_data):
@@ -33,9 +38,11 @@ def test_product_serialization(valid_product_design_space_data):
     original_data = deepcopy(valid_product_design_space_data)
     design_space = ProductDesignSpace.build(valid_product_design_space_data)
     serialized = design_space.dump()
-    serialized['id'] = valid_product_design_space_data['id']
-    assert serialized['instance']['subspaces'][0] == original_data['data']['instance']['subspaces'][0]
-    assert serialized['instance']['subspaces'][1] == original_data['data']['instance']['subspaces'][1]
+    serialized["id"] = valid_product_design_space_data["id"]
+    serialized_subspaces = serialized["instance"]["subspaces"]
+    original_subspaces = original_data["data"]["instance"]["subspaces"]
+    assert serialized_subspaces[0] == original_subspaces[0]
+    assert serialized_subspaces[1] == original_subspaces[1]
 
 
 def test_formulation_deserialization(valid_formulation_design_space_data):
@@ -45,18 +52,18 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
     """
     expected_descriptor = FormulationDescriptor.hierarchical()
     expected_constraint = IngredientCountConstraint(
-        formulation_descriptor=expected_descriptor,
-        min=0,
-        max=1
+        formulation_descriptor=expected_descriptor, min=0, max=1
     )
     for designSpaceClass in [DesignSubspace, FormulationDesignSpace]:
-        design_space: FormulationDesignSpace = designSpaceClass.build(valid_formulation_design_space_data)
-        assert design_space.name == 'formulation design space'
-        assert design_space.description == 'formulates some things'
+        design_space: FormulationDesignSpace = designSpaceClass.build(
+            valid_formulation_design_space_data
+        )
+        assert design_space.name == "formulation design space"
+        assert design_space.description == "formulates some things"
         assert design_space.formulation_descriptor.key == expected_descriptor.key
-        assert design_space.ingredients == {'foo'}
-        assert design_space.labels == {'bar': {'foo'}}
-        assert design_space.untested_ingredients == {'qux'}
+        assert design_space.ingredients == {"foo"}
+        assert design_space.labels == {"bar": {"foo"}}
+        assert design_space.untested_ingredients == {"qux"}
         assert len(design_space.constraints) == 1
         actual_constraint: IngredientCountConstraint = next(iter(design_space.constraints))
         assert actual_constraint.formulation_descriptor == expected_descriptor
@@ -77,7 +84,7 @@ def test_formulation_without_untested_ingredients(valid_formulation_design_space
     field must stay optional, so older payloads without the key don't fail to build.
     """
     data = deepcopy(valid_formulation_design_space_data)
-    del data['untested_ingredients']
+    del data["untested_ingredients"]
     design_space: FormulationDesignSpace = FormulationDesignSpace.build(data)
     assert design_space.untested_ingredients is None
 

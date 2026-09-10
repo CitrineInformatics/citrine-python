@@ -1,32 +1,134 @@
 """Tests for citrine.informatics.variables."""
+
 import pytest
 from gemd.entity.bounds.real_bounds import RealBounds
-
-from citrine.gemtables.variables import *
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine.gemtables.variables import *
 
-@pytest.fixture(params=[
-    TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"),
-    XOR(name="terminal name or sample_type", headers=["Root", "Info"], variables=[TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"), TerminalMaterialInfo(name="terminal name", headers=["Root", "Sample Type"], field="sample_type")]),
-    AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
-    AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
-    AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), object_template=LinkByUID(scope="template", id="object")),
-    AttributeInOutput(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_templates=[LinkByUID(scope="template", id="object")]),
-    LocalAttribute(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
-    LocalAttributeAndObject(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), object_template=LinkByUID(scope="templates", id="object"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
-    IngredientIdentifierByProcessTemplateAndName(name="ingredient id", headers=["density"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", scope="scope"),
-    IngredientIdentifierInOutput(name="ingredient id", headers=["ingredient id"], ingredient_name="ingredient", process_templates=[LinkByUID(scope="template", id="object")], scope="scope"),
-    LocalIngredientIdentifier(name="ingredient id", headers=["ingredient id"], ingredient_name="ingredient", scope="scope"),
-    IngredientLabelByProcessAndName(name="ingredient label", headers=["label"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", label="label"),
-    IngredientLabelsSetByProcessAndName(name="ingredient label", headers=["label"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient"),
-    IngredientLabelsSetInOutput(name="ingredient label", headers=["label"], process_templates=[LinkByUID(scope="template", id="process")], ingredient_name="ingredient"),
-    LocalIngredientLabelsSet(name="ingredient label", headers=["label"], ingredient_name="ingredient"),
-    IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.ABSOLUTE, unit='kg'),
-    IngredientQuantityInOutput(name="ingredient quantity", headers=["ingredient quantity"], ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.MASS, process_templates=[LinkByUID(scope="template", id="object")]),
-    LocalIngredientQuantity(name="ingredient quantity", headers=["ingredient quantity"], ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.MASS),
-    TerminalMaterialIdentifier(name="terminal id", headers=["id"], scope="scope")
-])
+
+@pytest.fixture(
+    params=[
+        TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"),
+        XOR(
+            name="terminal name or sample_type",
+            headers=["Root", "Info"],
+            variables=[
+                TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"),
+                TerminalMaterialInfo(
+                    name="terminal name", headers=["Root", "Sample Type"], field="sample_type"
+                ),
+            ],
+        ),
+        AttributeByTemplate(
+            name="density",
+            headers=["density"],
+            template=LinkByUID(scope="templates", id="density"),
+            attribute_constraints=[
+                [LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]
+            ],
+        ),
+        AttributeByTemplateAfterProcessTemplate(
+            name="density",
+            headers=["density"],
+            attribute_template=LinkByUID(scope="template", id="density"),
+            process_template=LinkByUID(scope="template", id="process"),
+        ),
+        AttributeByTemplateAndObjectTemplate(
+            name="density",
+            headers=["density"],
+            attribute_template=LinkByUID(scope="template", id="density"),
+            object_template=LinkByUID(scope="template", id="object"),
+        ),
+        AttributeInOutput(
+            name="density",
+            headers=["density"],
+            attribute_template=LinkByUID(scope="template", id="density"),
+            process_templates=[LinkByUID(scope="template", id="object")],
+        ),
+        LocalAttribute(
+            name="density",
+            headers=["density"],
+            template=LinkByUID(scope="templates", id="density"),
+            attribute_constraints=[
+                [LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]
+            ],
+        ),
+        LocalAttributeAndObject(
+            name="density",
+            headers=["density"],
+            template=LinkByUID(scope="templates", id="density"),
+            object_template=LinkByUID(scope="templates", id="object"),
+            attribute_constraints=[
+                [LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]
+            ],
+        ),
+        IngredientIdentifierByProcessTemplateAndName(
+            name="ingredient id",
+            headers=["density"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            scope="scope",
+        ),
+        IngredientIdentifierInOutput(
+            name="ingredient id",
+            headers=["ingredient id"],
+            ingredient_name="ingredient",
+            process_templates=[LinkByUID(scope="template", id="object")],
+            scope="scope",
+        ),
+        LocalIngredientIdentifier(
+            name="ingredient id",
+            headers=["ingredient id"],
+            ingredient_name="ingredient",
+            scope="scope",
+        ),
+        IngredientLabelByProcessAndName(
+            name="ingredient label",
+            headers=["label"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            label="label",
+        ),
+        IngredientLabelsSetByProcessAndName(
+            name="ingredient label",
+            headers=["label"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+        ),
+        IngredientLabelsSetInOutput(
+            name="ingredient label",
+            headers=["label"],
+            process_templates=[LinkByUID(scope="template", id="process")],
+            ingredient_name="ingredient",
+        ),
+        LocalIngredientLabelsSet(
+            name="ingredient label", headers=["label"], ingredient_name="ingredient"
+        ),
+        IngredientQuantityByProcessAndName(
+            name="ingredient quantity dimension",
+            headers=["quantity"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+            unit="kg",
+        ),
+        IngredientQuantityInOutput(
+            name="ingredient quantity",
+            headers=["ingredient quantity"],
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.MASS,
+            process_templates=[LinkByUID(scope="template", id="object")],
+        ),
+        LocalIngredientQuantity(
+            name="ingredient quantity",
+            headers=["ingredient quantity"],
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.MASS,
+        ),
+        TerminalMaterialIdentifier(name="terminal id", headers=["id"], scope="scope"),
+    ]
+)
 def variable(request):
     return request.param
 
@@ -57,7 +159,7 @@ def test_quantity_dimension_serializes_to_string():
         headers=["quantity"],
         process_template=LinkByUID(scope="template", id="process"),
         ingredient_name="ingredient",
-        quantity_dimension=IngredientQuantityDimension.NUMBER
+        quantity_dimension=IngredientQuantityDimension.NUMBER,
     )
     variable_data = variable.dump()
     assert variable_data["quantity_dimension"] == "number"
@@ -69,7 +171,7 @@ def test_absolute_units():
         headers=["quantity"],
         process_template=LinkByUID(scope="template", id="process"),
         ingredient_name="ingredient",
-        quantity_dimension=IngredientQuantityDimension.NUMBER
+        quantity_dimension=IngredientQuantityDimension.NUMBER,
     )
     IngredientQuantityByProcessAndName(
         name="This should be fine, too",
@@ -77,7 +179,7 @@ def test_absolute_units():
         process_template=LinkByUID(scope="template", id="process"),
         ingredient_name="ingredient",
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
-        unit='kg'
+        unit="kg",
     )
     with pytest.raises(ValueError):
         IngredientQuantityByProcessAndName(
@@ -85,7 +187,7 @@ def test_absolute_units():
             headers=["quantity"],
             process_template=LinkByUID(scope="template", id="process"),
             ingredient_name="ingredient",
-            quantity_dimension="bunk"
+            quantity_dimension="bunk",
         )
     with pytest.raises(ValueError):
         IngredientQuantityByProcessAndName(
@@ -93,7 +195,7 @@ def test_absolute_units():
             headers=["quantity"],
             process_template=LinkByUID(scope="template", id="process"),
             ingredient_name="ingredient",
-            quantity_dimension=IngredientQuantityDimension.ABSOLUTE
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         )
     with pytest.raises(ValueError):
         IngredientQuantityByProcessAndName(
@@ -102,7 +204,7 @@ def test_absolute_units():
             process_template=LinkByUID(scope="template", id="process"),
             ingredient_name="ingredient",
             quantity_dimension=IngredientQuantityDimension.NUMBER,
-            unit='kg'
+            unit="kg",
         )
 
     # And again, for IngredientQuantityInOutput
@@ -111,7 +213,7 @@ def test_absolute_units():
         headers=["quantity"],
         process_templates=[LinkByUID(scope="template", id="process")],
         ingredient_name="ingredient",
-        quantity_dimension=IngredientQuantityDimension.NUMBER
+        quantity_dimension=IngredientQuantityDimension.NUMBER,
     )
     IngredientQuantityInOutput(
         name="This should be fine, too",
@@ -119,7 +221,7 @@ def test_absolute_units():
         process_templates=[LinkByUID(scope="template", id="process")],
         ingredient_name="ingredient",
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
-        unit='kg'
+        unit="kg",
     )
     with pytest.raises(ValueError):
         IngredientQuantityInOutput(
@@ -127,7 +229,7 @@ def test_absolute_units():
             headers=["quantity"],
             process_templates=[LinkByUID(scope="template", id="process")],
             ingredient_name="ingredient",
-            quantity_dimension="bunk"
+            quantity_dimension="bunk",
         )
     with pytest.raises(ValueError):
         IngredientQuantityInOutput(
@@ -135,7 +237,7 @@ def test_absolute_units():
             headers=["quantity"],
             process_templates=[LinkByUID(scope="template", id="process")],
             ingredient_name="ingredient",
-            quantity_dimension=IngredientQuantityDimension.ABSOLUTE
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         )
     with pytest.raises(ValueError):
         IngredientQuantityInOutput(
@@ -144,7 +246,7 @@ def test_absolute_units():
             process_templates=[LinkByUID(scope="template", id="process")],
             ingredient_name="ingredient",
             quantity_dimension=IngredientQuantityDimension.NUMBER,
-            unit='kg'
+            unit="kg",
         )
 
     # And again, for LocalIngredientQuantity
@@ -152,28 +254,28 @@ def test_absolute_units():
         name="This should be fine",
         headers=["quantity"],
         ingredient_name="ingredient",
-        quantity_dimension=IngredientQuantityDimension.NUMBER
+        quantity_dimension=IngredientQuantityDimension.NUMBER,
     )
     LocalIngredientQuantity(
         name="This should be fine, too",
         headers=["quantity"],
         ingredient_name="ingredient",
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
-        unit='kg'
+        unit="kg",
     )
     with pytest.raises(ValueError):
         LocalIngredientQuantity(
             name="Invalid quantity dimension as string",
             headers=["quantity"],
             ingredient_name="ingredient",
-            quantity_dimension="bunk"
+            quantity_dimension="bunk",
         )
     with pytest.raises(ValueError):
         LocalIngredientQuantity(
             name="This needs units",
             headers=["quantity"],
             ingredient_name="ingredient",
-            quantity_dimension=IngredientQuantityDimension.ABSOLUTE
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         )
     with pytest.raises(ValueError):
         LocalIngredientQuantity(
@@ -181,5 +283,5 @@ def test_absolute_units():
             headers=["quantity"],
             ingredient_name="ingredient",
             quantity_dimension=IngredientQuantityDimension.NUMBER,
-            unit='kg'
+            unit="kg",
         )

@@ -2,6 +2,7 @@ import pytest
 
 from citrine.resources._default_labels import _inject_default_label_tags
 
+
 @pytest.mark.parametrize(
     "original_tags, default_labels, expected",
     [

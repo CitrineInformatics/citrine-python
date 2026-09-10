@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from collections.abc import Iterable
 
-from citrine.resources.data_concepts import DataConcepts
-
 from gemd.util import make_index, writable_sort_order
+
+from citrine.resources.data_concepts import DataConcepts
 
 
 class Batcher(ABC):
@@ -15,12 +15,12 @@ class Batcher(ABC):
         """Collect a list of DataConcepts into batches according to some batching algorithm."""
 
     @staticmethod
-    def by_type() -> 'BatchByType':
+    def by_type() -> "BatchByType":
         """Return a BatchByType batcher."""
         return BatchByType()
 
     @staticmethod
-    def by_dependency() -> 'BatchByDependency':
+    def by_dependency() -> "BatchByDependency":
         """Return a BatchByDependency batcher."""
         return BatchByDependency()
 
@@ -45,7 +45,7 @@ class BatchByType(Batcher):
         for typ_group in typ_groups:
             num_batches = len(typ_group) // batch_size
             for batch_num in range(num_batches + 1):
-                batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
+                batch = typ_group[batch_num * batch_size : (batch_num + 1) * batch_size]
                 batches.append(batch)
         for i in reversed(range(len(batches) - 1)):
             if len(batches[i]) + len(batches[i + 1]) <= batch_size:
@@ -84,8 +84,7 @@ class BatchByDependency(Batcher):
 
                 for subobj in local_set:
                     full_set.update(depends[subobj])
-                depends[obj] = sorted(list(full_set),
-                                      key=lambda x: writable_sort_order(x))
+                depends[obj] = sorted(list(full_set), key=lambda x: writable_sort_order(x))
                 for dependant in reversed(depends[obj]):
                     supported_by[dependant].append(obj)
 

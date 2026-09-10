@@ -1,4 +1,5 @@
 """Tests for citrine.informatics.objectives."""
+
 import pytest
 
 from citrine.informatics.objectives import Objective, ScalarMaxObjective, ScalarMinObjective
@@ -7,17 +8,13 @@ from citrine.informatics.objectives import Objective, ScalarMaxObjective, Scalar
 @pytest.fixture
 def scalar_max_objective() -> ScalarMaxObjective:
     """Build a ScalarMaxObjective."""
-    return ScalarMaxObjective(
-        descriptor_key="z"
-    )
+    return ScalarMaxObjective(descriptor_key="z")
 
 
 @pytest.fixture
 def scalar_min_objective() -> ScalarMinObjective:
     """Build a ScalarMinObjective."""
-    return ScalarMinObjective(
-        descriptor_key="z"
-    )
+    return ScalarMinObjective(descriptor_key="z")
 
 
 def test_scalar_max_dumps(scalar_max_objective):

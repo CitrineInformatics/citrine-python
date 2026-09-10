@@ -1,16 +1,12 @@
-from typing import Optional
-
 from citrine.resources.team import Team, TeamCollection
 
 
 class FakeTeam(Team):
-
     def __init__(self, name):
         self.name = name
 
 
 class FakeTeamCollection(TeamCollection):
-
     def __init__(self, session):
         super().__init__(session=session)
         self.teams = []
@@ -20,8 +16,8 @@ class FakeTeamCollection(TeamCollection):
         self.teams.append(model)
         return model
 
-    def list(self, page: Optional[int] = None, per_page: int = 100):
+    def list(self, page: int | None = None, per_page: int = 100):
         if page is None:
             return self.teams
         else:
-            return self.teams[(page - 1) * per_page:page * per_page]
+            return self.teams[(page - 1) * per_page : page * per_page]

@@ -1,35 +1,37 @@
-from typing import Optional, Union
 from uuid import UUID, uuid4
 
 from citrine.exceptions import NotFound
 from citrine.resources.project import Project, ProjectCollection
-from tests.utils.fakes import FakeDatasetCollection
-from tests.utils.fakes import FakeDesignSpaceCollection, FakeDesignWorkflowCollection
-from tests.utils.fakes import FakeGemTableCollection, FakeTableConfigCollection
-from tests.utils.fakes import FakePredictorCollection
-from tests.utils.fakes import FakeDescriptorMethods
+from tests.utils.fakes import (
+    FakeDatasetCollection,
+    FakeDescriptorMethods,
+    FakeDesignSpaceCollection,
+    FakeDesignWorkflowCollection,
+    FakeGemTableCollection,
+    FakePredictorCollection,
+    FakeTableConfigCollection,
+)
 from tests.utils.session import FakeSession
 
 
 class FakeProjectCollection(ProjectCollection):
-
-    def __init__(self, search_implemented: bool = True, team_id: Optional[Union[UUID, str]] = None):
+    def __init__(self, search_implemented: bool = True, team_id: UUID | str | None = None):
         super().__init__(session=FakeSession, team_id=team_id)
         self.projects = []
         self.search_implemented = search_implemented
 
-    def register(self, name: str, description: Optional[str] = None) -> Project:
+    def register(self, name: str, description: str | None = None) -> Project:
         project = FakeProject(name=name)
         self.projects.append(project)
         return project
 
-    def list(self, page: Optional[int] = None, per_page: int = 100):
+    def list(self, page: int | None = None, per_page: int = 100):
         if page is None:
             return self.projects
         else:
-            return self.projects[(page - 1) * per_page:page * per_page]
+            return self.projects[(page - 1) * per_page : page * per_page]
 
-    def search(self, search_params: Optional[dict] = None, per_page: int = 100):
+    def search(self, search_params: dict | None = None, per_page: int = 100):
         if not self.search_implemented:
             raise NotFound("search")
 
@@ -56,7 +58,6 @@ class FakeProjectCollection(ProjectCollection):
 
 
 class FakeProject(Project):
-
     def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
         super().__init__(name=name, description=description, session=session)
         self.uid = uuid4()
@@ -66,8 +67,12 @@ class FakeProject(Project):
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
         self._datasets = FakeDatasetCollection(team_id=self.team_id, session=self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
-        self._tables = FakeGemTableCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
-        self._table_configs = FakeTableConfigCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
+        self._tables = FakeGemTableCollection(
+            team_id=self.team_id, project_id=self.uid, session=self.session
+        )
+        self._table_configs = FakeTableConfigCollection(
+            team_id=self.team_id, project_id=self.uid, session=self.session
+        )
 
     @property
     def datasets(self) -> FakeDatasetCollection:

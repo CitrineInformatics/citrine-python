@@ -3,7 +3,7 @@ from citrine._serialization import properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['ChemicalFormulaFeaturizer']
+__all__ = ["ChemicalFormulaFeaturizer"]
 
 
 class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], PredictorNode):
@@ -128,21 +128,23 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
 
     """
 
-    input_descriptor = properties.Object(ChemicalFormulaDescriptor, 'input')
-    features = properties.List(properties.String, 'features')
-    excludes = properties.List(properties.String, 'excludes', default=[])
-    powers = properties.List(properties.Float, 'powers')
+    input_descriptor = properties.Object(ChemicalFormulaDescriptor, "input")
+    features = properties.List(properties.String, "features")
+    excludes = properties.List(properties.String, "excludes", default=[])
+    powers = properties.List(properties.Float, "powers")
 
-    typ = properties.String('type', default='ChemicalFormulaFeaturizer', deserializable=False)
+    typ = properties.String("type", default="ChemicalFormulaFeaturizer", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: ChemicalFormulaDescriptor,
-                 features: list[str] | None = None,
-                 excludes: list[str] | None = None,
-                 powers: list[float] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: ChemicalFormulaDescriptor,
+        features: list[str] | None = None,
+        excludes: list[str] | None = None,
+        powers: list[float] | None = None,
+    ):
         self.name = name
         self.description = description
         self.input_descriptor = input_descriptor
@@ -151,4 +153,4 @@ class ChemicalFormulaFeaturizer(Resource["ChemicalFormulaFeaturizer"], Predictor
         self.powers = powers if powers is not None else [1.0]
 
     def __str__(self):
-        return '<ChemicalFormulaFeaturizer {!r}>'.format(self.name)
+        return f"<ChemicalFormulaFeaturizer {self.name!r}>"

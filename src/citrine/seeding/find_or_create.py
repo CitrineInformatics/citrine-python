@@ -3,15 +3,15 @@ from copy import deepcopy
 from logging import getLogger
 from typing import TypeVar
 
+from citrine._rest.collection import Collection, CreationType
 from citrine.exceptions import NotFound
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
-from citrine.resources.dataset import DatasetCollection, Dataset
-from citrine.resources.project import ProjectCollection, Project
-from citrine.resources.team import TeamCollection, Team
-from citrine._rest.collection import CreationType, Collection
+from citrine.resources.dataset import Dataset, DatasetCollection
+from citrine.resources.project import Project, ProjectCollection
+from citrine.resources.team import Team, TeamCollection
 
 logger = getLogger(__name__)
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def find_collection(*, collection: Collection[T], name: str) -> T | None:
@@ -25,12 +25,11 @@ def find_collection(*, collection: Collection[T], name: str) -> T | None:
             # try to use search if it is available
             # call list() to collapse the iterator, otherwise the NotFound
             # won't show up until collection_list is used
-            collection_list = list(collection.search(search_params={
-                "name": {
-                    "value": name,
-                    "search_method": "EXACT"
-                }
-            }))
+            collection_list = list(
+                collection.search(
+                    search_params={"name": {"value": name, "search_method": "EXACT"}}
+                )
+            )
         except (NotFound, NotImplementedError):
             # Search must not be available yet or any more
             collection_list = collection.list()
@@ -39,19 +38,18 @@ def find_collection(*, collection: Collection[T], name: str) -> T | None:
 
     matching_resources = [resource for resource in collection_list if resource.name == name]
     if len(matching_resources) > 1:
-        raise ValueError("Found multiple collections with name '{}'".format(name))
+        raise ValueError(f"Found multiple collections with name '{name}'")
     if len(matching_resources) == 1:
         result = matching_resources.pop()
-        logger.info('Found existing: {}'.format(result))
+        logger.info(f"Found existing: {result}")
         return result
     else:
         return None
 
 
-def get_by_name_or_create(*,
-                          collection: Collection[T],
-                          name: str,
-                          default_provider: Callable[..., T]) -> T:
+def get_by_name_or_create(
+    *, collection: Collection[T], name: str, default_provider: Callable[..., T]
+) -> T:
     """
     Tries to find a collection by its name (returns first hit).
 
@@ -61,7 +59,7 @@ def get_by_name_or_create(*,
     if found:
         return found
     else:
-        logger.info('Failed to find resource with name {}, creating one instead.'.format(name))
+        logger.info(f"Failed to find resource with name {name}, creating one instead.")
         return default_provider()
 
 
@@ -75,21 +73,21 @@ def get_by_name_or_raise_error(*, collection: Collection[T], name: str) -> T:
     if found:
         return found
     else:
-        raise ValueError("Did not find resource with the given name: {}".format(name))
+        raise ValueError(f"Did not find resource with the given name: {name}")
 
 
-def find_or_create_project(*,
-                           project_collection: ProjectCollection,
-                           project_name: str,
-                           raise_error: bool = False) -> Project:
+def find_or_create_project(
+    *, project_collection: ProjectCollection, project_name: str, raise_error: bool = False
+) -> Project:
     """
     Tries to find a project by name (returns first hit).
 
     If not found, creates a new project with the given name
     """
     if project_collection.team_id is None:
-        raise NotImplementedError("Collection must have a team ID, such as when retrieved with "
-                                  "find_or_create_team.")
+        raise NotImplementedError(
+            "Collection must have a team ID, such as when retrieved with find_or_create_team."
+        )
 
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
@@ -97,15 +95,14 @@ def find_or_create_project(*,
         project = get_by_name_or_create(
             collection=project_collection,
             name=project_name,
-            default_provider=lambda: project_collection.register(project_name)
+            default_provider=lambda: project_collection.register(project_name),
         )
     return project
 
 
-def find_or_create_team(*,
-                        team_collection: TeamCollection,
-                        team_name: str,
-                        raise_error: bool = False) -> Team:
+def find_or_create_team(
+    *, team_collection: TeamCollection, team_name: str, raise_error: bool = False
+) -> Team:
     """
     Tries to find a team by name (returns first hit).
 
@@ -117,15 +114,14 @@ def find_or_create_team(*,
         team = get_by_name_or_create(
             collection=team_collection,
             name=team_name,
-            default_provider=lambda: team_collection.register(team_name)
+            default_provider=lambda: team_collection.register(team_name),
         )
     return team
 
 
-def find_or_create_dataset(*,
-                           dataset_collection: DatasetCollection,
-                           dataset_name: str,
-                           raise_error: bool = False) -> Dataset:
+def find_or_create_dataset(
+    *, dataset_collection: DatasetCollection, dataset_name: str, raise_error: bool = False
+) -> Dataset:
     """
     Tries to find a dataset by name (returns first hit).
 
@@ -139,14 +135,14 @@ def find_or_create_dataset(*,
             name=dataset_name,
             default_provider=lambda: dataset_collection.register(
                 Dataset(dataset_name, summary="seed summ.", description="seed desc.")
-            )
+            ),
         )
     return dataset
 
 
-def create_or_update(*,
-                     collection: Collection[CreationType],
-                     resource: CreationType) -> CreationType:
+def create_or_update(
+    *, collection: Collection[CreationType], resource: CreationType
+) -> CreationType:
     """
     Update a resource of a given name belonging to a collection.
 
@@ -169,7 +165,7 @@ def create_or_update(*,
     """
     old_resource = find_collection(collection=collection, name=resource.name)
     if old_resource:
-        logger.info("Updating module: {}".format(resource.name))
+        logger.info(f"Updating module: {resource.name}")
         # Copy so that passed-in resource is unaffected
         new_resource = deepcopy(resource)
         new_resource.uid = old_resource.uid
@@ -180,5 +176,5 @@ def create_or_update(*,
             new_resource.branch_version = old_resource.branch_version
         return collection.update(new_resource)
     else:
-        logger.info("Registering new module:  {}".format(resource.name))
+        logger.info(f"Registering new module:  {resource.name}")
         return collection.register(resource)

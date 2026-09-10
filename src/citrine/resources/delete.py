@@ -6,18 +6,18 @@ from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.api_error import ApiError
 from citrine.jobs.job import _poll_for_job_completion
+from citrine.resources.api_error import ApiError
 from citrine.resources.data_concepts import _make_link_by_uid
 
 
 def _async_gemd_batch_delete(
-        id_list: list[LinkByUID | UUID | str | BaseEntity],
-        team_id: UUID,
-        session: Session,
-        dataset_id: UUID | None = None,
-        timeout: float = 2 * 60,
-        polling_delay: float = 1.0
+    id_list: list[LinkByUID | UUID | str | BaseEntity],
+    team_id: UUID,
+    session: Session,
+    dataset_id: UUID | None = None,
+    timeout: float = 2 * 60,
+    polling_delay: float = 1.0,
 ) -> list[tuple[LinkByUID, ApiError]]:
     """
     Shared implementation of Async GEMD Batch deletion.
@@ -64,15 +64,14 @@ def _async_gemd_batch_delete(
     scoped_uids = []
     for uid in id_list:  # And now normalize to id/scope pairs
         link_by_uid = _make_link_by_uid(uid)
-        scoped_uids.append({'scope': link_by_uid.scope, 'id': link_by_uid.id})
+        scoped_uids.append({"scope": link_by_uid.scope, "id": link_by_uid.id})
 
-    body = {'ids': scoped_uids}
+    body = {"ids": scoped_uids}
 
     if dataset_id is not None:
-        body.update({'dataset_id': str(dataset_id)})
+        body.update({"dataset_id": str(dataset_id)})
     if team_id is not None:
-        path = format_escaped_url('/teams/{team_id}/gemd/async-batch-delete',
-                                  team_id=team_id)
+        path = format_escaped_url("/teams/{team_id}/gemd/async-batch-delete", team_id=team_id)
     else:
         raise TypeError("Missing one required argument: team_id")
     response = session.post_resource(path, body)
@@ -84,15 +83,12 @@ def _async_gemd_batch_delete(
         session=session,
         job_id=job_id,
         timeout=timeout,
-        polling_delay=polling_delay)
+        polling_delay=polling_delay,
+    )
 
 
 def _poll_for_async_batch_delete_result(
-        team_id: UUID,
-        session: Session,
-        job_id: str,
-        timeout: float,
-        polling_delay: float
+    team_id: UUID, session: Session, job_id: str, timeout: float, polling_delay: float
 ) -> list[tuple[LinkByUID, ApiError]]:
     """
     Poll for the result of an asynchronous batch delete (or a deletion of dataset contents).
@@ -125,11 +121,10 @@ def _poll_for_async_batch_delete_result(
 
     """
     response = _poll_for_job_completion(
-        session=session,
-        team_id=team_id,
-        job=job_id,
-        timeout=timeout,
-        polling_delay=polling_delay)
+        session=session, team_id=team_id, job=job_id, timeout=timeout, polling_delay=polling_delay
+    )
 
-    return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.build(f['cause']))
-            for f in json.loads(response.output.get('failures', '[]'))]
+    return [
+        (LinkByUID(f["id"]["scope"], f["id"]["id"]), ApiError.build(f["cause"]))
+        for f in json.loads(response.output.get("failures", "[]"))
+    ]

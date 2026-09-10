@@ -6,10 +6,10 @@ from citrine.informatics.constraints import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.design_spaces.subspace import DesignSubspace
 
-__all__ = ['FormulationDesignSpace']
+__all__ = ["FormulationDesignSpace"]
 
 
-class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace):
+class FormulationDesignSpace(Resource["FormulationDesignSpace"], DesignSubspace):
     """Design space composed of mixtures of ingredients.
 
     Parameters
@@ -40,29 +40,31 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    ingredients = properties.Set(properties.String, 'ingredients')
-    labels = properties.Optional(properties.Mapping(
-        properties.String,
-        properties.Set(properties.String)
-    ), 'labels')
+    formulation_descriptor = properties.Object(FormulationDescriptor, "formulation_descriptor")
+    ingredients = properties.Set(properties.String, "ingredients")
+    labels = properties.Optional(
+        properties.Mapping(properties.String, properties.Set(properties.String)), "labels"
+    )
     untested_ingredients = properties.Optional(
-        properties.Set(properties.String), 'untested_ingredients')
-    constraints = properties.Set(properties.Object(Constraint), 'constraints')
-    resolution = properties.Float('resolution')
+        properties.Set(properties.String), "untested_ingredients"
+    )
+    constraints = properties.Set(properties.Object(Constraint), "constraints")
+    resolution = properties.Float("resolution")
 
-    typ = properties.String('type', default='FormulationDesignSpace', deserializable=False)
+    typ = properties.String("type", default="FormulationDesignSpace", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 formulation_descriptor: FormulationDescriptor,
-                 ingredients: set[str],
-                 constraints: set[Constraint],
-                 labels: Mapping[str, set[str]] | None = None,
-                 untested_ingredients: set[str] | None = None,
-                 resolution: float = 0.0001):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        formulation_descriptor: FormulationDescriptor,
+        ingredients: set[str],
+        constraints: set[Constraint],
+        labels: Mapping[str, set[str]] | None = None,
+        untested_ingredients: set[str] | None = None,
+        resolution: float = 0.0001,
+    ):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
@@ -73,4 +75,4 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSubspace)
         self.resolution: float = resolution
 
     def __str__(self):
-        return '<FormulationDesignSpace {!r}>'.format(self.name)
+        return f"<FormulationDesignSpace {self.name!r}>"

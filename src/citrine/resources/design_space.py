@@ -1,14 +1,18 @@
 """Resources that represent collections of design spaces."""
+
 from collections.abc import Iterable
 from functools import partial
 from uuid import UUID
 
-
-from citrine._utils.functions import format_escaped_url
-from citrine.informatics.design_spaces import DefaultDesignSpaceMode, DesignSpaceSettings, \
-    HierarchicalDesignSpace, TopLevelDesignSpace
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
+from citrine.informatics.design_spaces import (
+    DefaultDesignSpaceMode,
+    DesignSpaceSettings,
+    HierarchicalDesignSpace,
+    TopLevelDesignSpace,
+)
 
 
 class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
@@ -21,11 +25,11 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
 
     """
 
-    _api_version = 'v3'
-    _path_template = '/projects/{project_id}/design-spaces'
+    _api_version = "v3"
+    _path_template = "/projects/{project_id}/design-spaces"
     _individual_key = None
     _resource = TopLevelDesignSpace
-    _collection_key = 'response'
+    _collection_key = "response"
     _enumerated_cell_limit = 128 * 2000
 
     def __init__(self, project_id: UUID, session: Session):
@@ -100,9 +104,11 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             filters["archived"] = archived
 
         fetcher = partial(self._fetch_page, additional_params=filters, version="v4")
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_collection_elements,
-                                        per_page=per_page)
+        return self._paginator.paginate(
+            page_fetcher=fetcher,
+            collection_builder=self._build_collection_elements,
+            per_page=per_page,
+        )
 
     def list_all(self, *, per_page: int = 20) -> Iterable[TopLevelDesignSpace]:
         """List all design spaces."""
@@ -116,15 +122,17 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         """List archived design spaces."""
         return self._list_base(per_page=per_page, archived=True)
 
-    def create_default(self,
-                       *,
-                       predictor_id: UUID | str,
-                       predictor_version: int | str | None = None,
-                       mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
-                       include_ingredient_fraction_constraints: bool = False,
-                       include_label_fraction_constraints: bool = False,
-                       include_label_count_constraints: bool = False,
-                       include_parameter_constraints: bool = False) -> TopLevelDesignSpace:
+    def create_default(
+        self,
+        *,
+        predictor_id: UUID | str,
+        predictor_version: int | str | None = None,
+        mode: DefaultDesignSpaceMode = DefaultDesignSpaceMode.ATTRIBUTE,
+        include_ingredient_fraction_constraints: bool = False,
+        include_label_fraction_constraints: bool = False,
+        include_label_count_constraints: bool = False,
+        include_parameter_constraints: bool = False,
+    ) -> TopLevelDesignSpace:
         """Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
@@ -172,7 +180,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             Default design space
 
         """
-        path = f'projects/{self.project_id}/design-spaces/default'
+        path = f"projects/{self.project_id}/design-spaces/default"
         settings = DesignSpaceSettings(
             predictor_id=predictor_id,
             predictor_version=predictor_version,
@@ -180,7 +188,7 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
             include_ingredient_fraction_constraints=include_ingredient_fraction_constraints,
             include_label_fraction_constraints=include_label_fraction_constraints,
             include_label_count_constraints=include_label_count_constraints,
-            include_parameter_constraints=include_parameter_constraints
+            include_parameter_constraints=include_parameter_constraints,
         )
 
         data = self.session.post_resource(path, json=settings.dump(), version=self._api_version)
@@ -189,11 +197,11 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         return ds
 
     def convert_to_hierarchical(
-            self,
-            uid: UUID | str,
-            *,
-            predictor_id: UUID | str,
-            predictor_version: int | str | None = None
+        self,
+        uid: UUID | str,
+        *,
+        predictor_id: UUID | str,
+        predictor_version: int | str | None = None,
     ) -> HierarchicalDesignSpace:
         """Convert an existing ProductDesignSpace into an equivalent HierarchicalDesignSpace.
 
@@ -221,11 +229,9 @@ class DesignSpaceCollection(Collection[TopLevelDesignSpace]):
         path = format_escaped_url(
             "projects/{project_id}/design-spaces/{design_space_id}/convert-hierarchical",
             project_id=self.project_id,
-            design_space_id=uid
+            design_space_id=uid,
         )
-        payload = {
-            "predictor_id": str(predictor_id),
-        }
+        payload = {"predictor_id": str(predictor_id)}
         if predictor_version:
             payload["predictor_version"] = predictor_version
         data = self.session.post_resource(path, json=payload, version=self._api_version)

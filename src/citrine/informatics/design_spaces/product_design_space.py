@@ -1,14 +1,14 @@
 from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
-from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
 from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
 from citrine.informatics.design_spaces.subspace import DesignSubspace
+from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
 from citrine.informatics.dimensions import Dimension
 
-__all__ = ['ProductDesignSpace']
+__all__ = ["ProductDesignSpace"]
 
 
-class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpace):
+class ProductDesignSpace(EngineResource["ProductDesignSpace"], TopLevelDesignSpace):
     """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.
@@ -28,21 +28,25 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpa
 
     _settings = properties.Optional(properties.Object(DesignSpaceSettings), "metadata.settings")
 
-    subspaces = properties.List(properties.Object(DesignSubspace), 'data.instance.subspaces',
-                                default=[])
+    subspaces = properties.List(
+        properties.Object(DesignSubspace), "data.instance.subspaces", default=[]
+    )
     dimensions = properties.Optional(
-        properties.List(properties.Object(Dimension)), 'data.instance.dimensions'
+        properties.List(properties.Object(Dimension)), "data.instance.dimensions"
     )
 
-    typ = properties.String('data.instance.type', default='ProductDesignSpace',
-                            deserializable=False)
+    typ = properties.String(
+        "data.instance.type", default="ProductDesignSpace", deserializable=False
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 subspaces: list[DesignSubspace] | None = None,
-                 dimensions: list[Dimension] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        subspaces: list[DesignSubspace] | None = None,
+        dimensions: list[Dimension] | None = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.subspaces: list[DesignSubspace] = subspaces or []
@@ -57,4 +61,4 @@ class ProductDesignSpace(EngineResource['ProductDesignSpace'], TopLevelDesignSpa
         return data
 
     def __str__(self):
-        return '<ProductDesignSpace {!r}>'.format(self.name)
+        return f"<ProductDesignSpace {self.name!r}>"

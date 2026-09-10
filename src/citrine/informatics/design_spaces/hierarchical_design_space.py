@@ -4,16 +4,12 @@ from citrine._rest.engine_resource import EngineResource
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.dimensions import Dimension
 from citrine.informatics.design_spaces import FormulationDesignSpace
-from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
 from citrine.informatics.design_spaces.design_space_settings import DesignSpaceSettings
+from citrine.informatics.design_spaces.top_level_design_space import TopLevelDesignSpace
+from citrine.informatics.dimensions import Dimension
 
-__all__ = [
-    "TemplateLink",
-    "MaterialNodeDefinition",
-    "HierarchicalDesignSpace"
-]
+__all__ = ["HierarchicalDesignSpace", "MaterialNodeDefinition", "TemplateLink"]
 
 
 class TemplateLink(Serializable["TemplateLink"]):
@@ -38,12 +34,12 @@ class TemplateLink(Serializable["TemplateLink"]):
     process_template_name = properties.Optional(properties.String, "process_template_name")
 
     def __init__(
-            self,
-            *,
-            material_template: UUID,
-            process_template: UUID,
-            material_template_name: str | None = None,
-            process_template_name: str | None = None
+        self,
+        *,
+        material_template: UUID,
+        process_template: UUID,
+        material_template_name: str | None = None,
+        process_template_name: str | None = None,
     ):
         self.material_template: UUID = material_template
         self.process_template: UUID = process_template
@@ -86,14 +82,14 @@ class MaterialNodeDefinition(Serializable["MaterialNodeDefinition"]):
     display_name = properties.Optional(properties.String, "display_name")
 
     def __init__(
-            self,
-            *,
-            name: str,
-            scope: str | None = None,
-            attributes: list[Dimension] | None = None,
-            formulation_subspace: FormulationDesignSpace | None = None,
-            template_link: TemplateLink | None = None,
-            display_name: str | None = None
+        self,
+        *,
+        name: str,
+        scope: str | None = None,
+        attributes: list[Dimension] | None = None,
+        formulation_subspace: FormulationDesignSpace | None = None,
+        template_link: TemplateLink | None = None,
+        display_name: str | None = None,
     ):
         self.name = name
         self.scope: str | None = scope
@@ -156,21 +152,19 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
     subspaces = properties.List(
         properties.Object(MaterialNodeDefinition), "data.instance.subspaces"
     )
-    data_sources = properties.List(
-        properties.Object(DataSource), "data.instance.data_sources"
-    )
+    data_sources = properties.List(properties.Object(DataSource), "data.instance.data_sources")
     typ = properties.String(
         "data.instance.type", default="HierarchicalDesignSpace", deserializable=False
     )
 
     def __init__(
-            self,
-            name: str,
-            *,
-            description: str,
-            root: MaterialNodeDefinition,
-            subspaces: list[MaterialNodeDefinition] | None = None,
-            data_sources: list[DataSource] | None = None
+        self,
+        name: str,
+        *,
+        description: str,
+        root: MaterialNodeDefinition,
+        subspaces: list[MaterialNodeDefinition] | None = None,
+        data_sources: list[DataSource] | None = None,
     ):
         self.name: str = name
         self.description: str = description
@@ -187,4 +181,4 @@ class HierarchicalDesignSpace(EngineResource["HierarchicalDesignSpace"], TopLeve
         return data
 
     def __repr__(self):
-        return f'<HierarchicalDesignSpace {self.name}>'
+        return f"<HierarchicalDesignSpace {self.name}>"

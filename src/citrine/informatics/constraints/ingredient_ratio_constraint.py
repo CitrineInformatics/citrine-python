@@ -3,10 +3,10 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
-__all__ = ['IngredientRatioConstraint']
+__all__ = ["IngredientRatioConstraint"]
 
 
-class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Constraint):
+class IngredientRatioConstraint(Serializable["IngredientRatioConstraint"], Constraint):
     """A formulation constraint operating on the ratio of quantities of ingredients and a basis.
 
     Example: "6 to 7 parts ingredient A per 100 parts ingredient B" becomes
@@ -34,37 +34,43 @@ class IngredientRatioConstraint(Serializable['IngredientRatioConstraint'], Const
 
     """
 
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
-    min = properties.Float('min')
-    max = properties.Float('max')
+    formulation_descriptor = properties.Object(FormulationDescriptor, "formulation_descriptor")
+    min = properties.Float("min")
+    max = properties.Float("max")
 
     # The backend provides ingredients and labels as dictionaries, but presently only allows one
     # between them. To clarify customer interaction, we only allow a single one of each to be set.
     # Since our serde library doesn't allow extracting from a dict with unknown keys, we do it by
     # hiding the dictionaries and exposing properties.
     _ingredients = properties.Mapping(
-        properties.String, properties.Float, 'ingredients', default={})
-    _labels = properties.Mapping(properties.String, properties.Float, 'labels', default={})
+        properties.String, properties.Float, "ingredients", default={}
+    )
+    _labels = properties.Mapping(properties.String, properties.Float, "labels", default={})
 
     # The backend provides basis ingredients and basis labels as a dictionary from the key to a
     # multiplier. However, for ingredient ratio constraints, the multiplier in the denominator
     # should always be one, so we can't allow users to enter it. We need to use properties for this
     # behavior.
     _basis_ingredients = properties.Mapping(
-        properties.String, properties.Float, 'basis_ingredients', default={})
+        properties.String, properties.Float, "basis_ingredients", default={}
+    )
     _basis_labels = properties.Mapping(
-        properties.String, properties.Float, 'basis_labels', default={})
+        properties.String, properties.Float, "basis_labels", default={}
+    )
 
-    typ = properties.String('type', default='IngredientRatio')
+    typ = properties.String("type", default="IngredientRatio")
 
-    def __init__(self, *,
-                 formulation_descriptor: FormulationDescriptor,
-                 min: float,
-                 max: float,
-                 ingredient: tuple[str, float] | None = None,
-                 label: tuple[str, float] | None = None,
-                 basis_ingredients: set[str] = set(),
-                 basis_labels: set[str] = set()):
+    def __init__(
+        self,
+        *,
+        formulation_descriptor: FormulationDescriptor,
+        min: float,
+        max: float,
+        ingredient: tuple[str, float] | None = None,
+        label: tuple[str, float] | None = None,
+        basis_ingredients: set[str] = set(),
+        basis_labels: set[str] = set(),
+    ):
         self.formulation_descriptor = formulation_descriptor
         self.min = min
         self.max = max

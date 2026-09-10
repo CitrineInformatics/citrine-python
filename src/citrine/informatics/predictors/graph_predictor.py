@@ -7,16 +7,16 @@ from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.feature_effects import FeatureEffects
+from citrine.informatics.predictors import Predictor, PredictorNode
 from citrine.informatics.predictors.single_predict_request import SinglePredictRequest
 from citrine.informatics.predictors.single_prediction import SinglePrediction
-from citrine.informatics.predictors import PredictorNode, Predictor
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 
-__all__ = ['GraphPredictor']
+__all__ = ["GraphPredictor"]
 
 
-class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObject, Predictor):
+class GraphPredictor(VersionedEngineResource["GraphPredictor"], AsynchronousObject, Predictor):
     """A predictor interface that stitches individual predictor nodes together.
 
     The GraphPredictor is the only predictor that can be registered on the Citrine Platform
@@ -41,21 +41,21 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    uid = properties.Optional(properties.UUID, "id", serializable=False)
     """:UUID | None: Citrine Platform unique identifier"""
 
-    name = properties.String('data.name')
-    description = properties.Optional(properties.String(), 'data.description')
-    predictors = properties.List(properties.Object(PredictorNode), 'data.instance.predictors')
+    name = properties.String("data.name")
+    description = properties.Optional(properties.String(), "data.description")
+    predictors = properties.List(properties.Object(PredictorNode), "data.instance.predictors")
 
     training_data = properties.List(
-        properties.Object(DataSource), 'data.instance.training_data', default=[]
+        properties.Object(DataSource), "data.instance.training_data", default=[]
     )
 
     version = properties.Optional(
         properties.Union([properties.Integer(), properties.String()]),
-        'metadata.version',
-        serializable=False
+        "metadata.version",
+        serializable=False,
     )
 
     _api_version = "v3"
@@ -66,26 +66,28 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
     _succeeded_statuses = ["READY"]
     _failed_statuses = ["INVALID", "ERROR"]
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 predictors: list[PredictorNode],
-                 training_data: list[DataSource] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        predictors: list[PredictorNode],
+        training_data: list[DataSource] | None = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.training_data: list[DataSource] = training_data or []
         self.predictors: list[PredictorNode] = predictors
 
     def __str__(self):
-        return '<GraphPredictor {!r}>'.format(self.name)
+        return f"<GraphPredictor {self.name!r}>"
 
     def _path(self):
         return format_escaped_url(
-            '/projects/{project_id}/predictors/{predictor_id}/versions/{version}',
+            "/projects/{project_id}/predictors/{predictor_id}/versions/{version}",
             project_id=self._project_id,
             predictor_id=str(self.uid),
-            version=self.version
+            version=self.version,
         )
 
     @staticmethod
@@ -98,15 +100,19 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
             "data": {
                 "name": predictor_data.get("name", ""),
                 "description": predictor_data.get("description", ""),
-                "instance": predictor_data
+                "instance": predictor_data,
             }
         }
 
     @property
     def report(self) -> Report:
         """Fetch the predictor report."""
-        if self.uid is None or self._session is None or self._project_id is None \
-                or getattr(self, "version", None) is None:
+        if (
+            self.uid is None
+            or self._session is None
+            or self._project_id is None
+            or getattr(self, "version", None) is None
+        ):
             msg = "Cannot get the report for a predictor that wasn't read from the platform"
             raise ValueError(msg)
         report_resource = ReportResource(self._project_id, self._session)
@@ -115,12 +121,12 @@ class GraphPredictor(VersionedEngineResource['GraphPredictor'], AsynchronousObje
     @property
     def feature_effects(self) -> FeatureEffects:
         """Retrieve the feature effects for all outputs in the predictor's training data.."""
-        path = self._path() + '/shapley/query'
+        path = self._path() + "/shapley/query"
         response = self._session.post_resource(path, {}, version=self._api_version)
         return FeatureEffects.build(response)
 
     def predict(self, predict_request: SinglePredictRequest) -> SinglePrediction:
         """Make a one-off prediction with this predictor."""
-        path = self._path() + '/predict'
+        path = self._path() + "/predict"
         res = self._session.post_resource(path, predict_request.dump(), version=self._api_version)
         return SinglePrediction.build(res)

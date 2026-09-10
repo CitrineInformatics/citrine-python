@@ -7,9 +7,7 @@ from citrine._rest.collection import Collection, ResourceType
 class AdminCollection(Collection[ResourceType]):
     """Abstract class for representing collections of REST resources with as_admin access."""
 
-    def list(
-        self, *, per_page: int = 100, as_admin: bool = False
-    ) -> Iterator[ResourceType]:
+    def list(self, *, per_page: int = 100, as_admin: bool = False) -> Iterator[ResourceType]:
         """
         Paginate over the elements of the collection.
 

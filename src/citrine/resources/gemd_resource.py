@@ -1,22 +1,31 @@
 """Collection class for generic GEMD objects and templates."""
+
 import re
 from collections.abc import Iterable
 from uuid import UUID, uuid4
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.util import recursive_flatmap, recursive_foreach, set_uuids, \
-    make_index, substitute_objects
+from gemd.util import (
+    make_index,
+    recursive_flatmap,
+    recursive_foreach,
+    set_uuids,
+    substitute_objects,
+)
 from tqdm.auto import tqdm
 
-from citrine.resources.api_error import ApiError
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, \
-    CITRINE_SCOPE, CITRINE_TAG_PREFIX
-from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
 from citrine._utils.batcher import Batcher
 from citrine._utils.functions import replace_objects_with_links, scrub_none
-
+from citrine.resources.api_error import ApiError
+from citrine.resources.data_concepts import (
+    CITRINE_SCOPE,
+    CITRINE_TAG_PREFIX,
+    DataConcepts,
+    DataConceptsCollection,
+)
+from citrine.resources.delete import _async_gemd_batch_delete
 
 BATCH_SIZE = 50
 
@@ -24,7 +33,7 @@ BATCH_SIZE = 50
 class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
-    _collection_key = 'storables'
+    _collection_key = "storables"
 
     def __init__(self, *, dataset_id: UUID, session: Session, team_id: UUID):
         super().__init__(team_id=team_id, dataset_id=dataset_id, session=session)
@@ -60,12 +69,14 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """
         return super().build(data)
 
-    def register_all(self,
-                     models: Iterable[DataConcepts],
-                     *,
-                     dry_run=False,
-                     status_bar=False,
-                     include_nested=False) -> list[DataConcepts]:
+    def register_all(
+        self,
+        models: Iterable[DataConcepts],
+        *,
+        dry_run=False,
+        status_bar=False,
+        include_nested=False,
+    ) -> list[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -109,7 +120,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
-        params = {'dry_run': dry_run}
+        params = {"dry_run": dry_run}
 
         if include_nested:
             models = recursive_flatmap(models, lambda o: [o], unidirectional=False)
@@ -134,11 +145,9 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         for batch in iterator:
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
-                path + '/batch',
-                json={'objects': objects},
-                params=params
+                path + "/batch", json={"objects": objects}, params=params
             )
-            registered = [self.build(obj) for obj in response_data['objects']]
+            registered = [self.build(obj) for obj in response_data["objects"]]
             result_index.update(make_index(registered))
             substitute_objects(registered, result_index, inplace=True)
 
@@ -158,8 +167,9 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
                         citr_id = result.uids.pop(CITRINE_SCOPE, None)
                         result_index.pop(LinkByUID(scope=CITRINE_SCOPE, id=citr_id), None)
                     if result.tags is not None:
-                        todo = [tag for tag in result.tags
-                                if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                        todo = [
+                            tag for tag in result.tags if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)
+                        ]
                         for tag in todo:  # Covering this block would require dark art
                             if tag not in obj.tags:
                                 result.tags.remove(tag)
@@ -167,16 +177,17 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             resources.extend(registered)
 
         if dry_run:  # No-op if not dry-run
-            recursive_foreach(list(models) + list(resources),
-                              lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+            recursive_foreach(
+                list(models) + list(resources), lambda x: x.uids.pop(temp_scope, None)
+            )  # Strip temp uids
         return resources
 
     def batch_delete(
-            self,
-            id_list: list[LinkByUID | UUID | str | BaseEntity],
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
+        self,
+        id_list: list[LinkByUID | UUID | str | BaseEntity],
+        *,
+        timeout: float = 2 * 60,
+        polling_delay: float = 1.0,
     ) -> list[tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
@@ -218,4 +229,5 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             session=self.session,
             dataset_id=self.dataset_id,
             timeout=timeout,
-            polling_delay=polling_delay)
+            polling_delay=polling_delay,
+        )

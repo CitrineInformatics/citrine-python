@@ -5,37 +5,36 @@ import pytest
 
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
-
 from tests.utils.factories import BranchDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeCall, FakeSession
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def basic_design_workflow_data():
     return {
-        'id': str(uuid.uuid4()),
-        'name': 'Test Workflow',
-        'status': 'SUCCEEDED',
-        'status_description': 'READY',
-        'design_space_id': str(uuid.uuid4()),
-        'predictor_id': str(uuid.uuid4()),
-        'branch_id': str(uuid.uuid4()),
-        'module_type': 'DESIGN_WORKFLOW',
-        'create_time': datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T"),
-        'created_by': str(uuid.uuid4()),
+        "id": str(uuid.uuid4()),
+        "name": "Test Workflow",
+        "status": "SUCCEEDED",
+        "status_description": "READY",
+        "design_space_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
+        "branch_id": str(uuid.uuid4()),
+        "module_type": "DESIGN_WORKFLOW",
+        "create_time": datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T"),
+        "created_by": str(uuid.uuid4()),
     }
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def failed_design_workflow_data(basic_design_workflow_data):
     return {
         **basic_design_workflow_data,
-        'status': 'FAILED',
-        'status_description': 'ERROR',
-        'status_detail': [
-            {'level': 'WARNING', 'msg': 'Something is wrong'},
-            {'level': 'Error', 'msg': 'Very wrong'}
-        ]
+        "status": "FAILED",
+        "status_description": "ERROR",
+        "status_detail": [
+            {"level": "WARNING", "msg": "Something is wrong"},
+            {"level": "Error", "msg": "Very wrong"},
+        ],
     }
 
 
@@ -61,16 +60,19 @@ def test_build_design_workflow(session, basic_design_workflow_data):
 
 
 def test_list_workflows(session, basic_design_workflow_data):
-    #Given
+    # Given
     workflow_collection = DesignWorkflowCollection(project_id=uuid.uuid4(), session=session)
-    session.set_responses({'response': [basic_design_workflow_data], 'page': 1, 'per_page': 20})
+    session.set_responses({"response": [basic_design_workflow_data], "page": 1, "per_page": 20})
 
     # When
     workflows = list(workflow_collection.list(per_page=20))
 
     # Then
-    expected_design_call = FakeCall(method='GET', path='/projects/{}/modules'.format(workflow_collection.project_id),
-                                   params={'per_page': 20, 'module_type': 'DESIGN_WORKFLOW'})
+    expected_design_call = FakeCall(
+        method="GET",
+        path=f"/projects/{workflow_collection.project_id}/modules",
+        params={"per_page": 20, "module_type": "DESIGN_WORKFLOW"},
+    )
     assert 1 == session.num_calls
     assert len(workflows) == 1
     assert isinstance(workflows[0], DesignWorkflow)

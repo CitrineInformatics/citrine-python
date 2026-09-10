@@ -3,11 +3,13 @@ from collections.abc import Mapping
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import (
-    CategoricalDescriptor, FormulationDescriptor, RealDescriptor
+    CategoricalDescriptor,
+    FormulationDescriptor,
+    RealDescriptor,
 )
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['MeanPropertyPredictor']
+__all__ = ["MeanPropertyPredictor"]
 
 
 class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
@@ -54,36 +56,37 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'input')
+    input_descriptor = _properties.Object(FormulationDescriptor, "input")
     properties = _properties.List(
         _properties.Union(
             [_properties.Object(RealDescriptor), _properties.Object(CategoricalDescriptor)]
         ),
-        'properties'
+        "properties",
     )
-    p = _properties.Float('p')
-    impute_properties = _properties.Boolean('impute_properties')
-    label = _properties.Optional(_properties.String, 'label')
+    p = _properties.Float("p")
+    impute_properties = _properties.Boolean("impute_properties")
+    label = _properties.Optional(_properties.String, "label")
     default_properties = _properties.Optional(
         _properties.Mapping(
-            _properties.String,
-            _properties.Union([_properties.String, _properties.Float])
+            _properties.String, _properties.Union([_properties.String, _properties.Float])
         ),
-        'default_properties'
+        "default_properties",
     )
 
-    typ = _properties.String('type', default='MeanProperty', deserializable=False)
+    typ = _properties.String("type", default="MeanProperty", deserializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str,
-                 input_descriptor: FormulationDescriptor,
-                 properties: list[RealDescriptor | CategoricalDescriptor],
-                 p: float,
-                 impute_properties: bool,
-                 label: str | None = None,
-                 default_properties: Mapping[str, str | float] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str,
+        input_descriptor: FormulationDescriptor,
+        properties: list[RealDescriptor | CategoricalDescriptor],
+        p: float,
+        impute_properties: bool,
+        label: str | None = None,
+        default_properties: Mapping[str, str | float] | None = None,
+    ):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
@@ -94,4 +97,4 @@ class MeanPropertyPredictor(Resource["MeanPropertyPredictor"], PredictorNode):
         self.default_properties: Mapping[str, str | float] | None = default_properties
 
     def __str__(self):
-        return '<MeanPropertyPredictor {!r}>'.format(self.name)
+        return f"<MeanPropertyPredictor {self.name!r}>"

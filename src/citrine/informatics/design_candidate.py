@@ -2,28 +2,27 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
-
 __all__ = [
-    'DesignCandidate',
-    'HierarchicalDesignCandidate',
-    'DesignMaterial',
-    'HierarchicalDesignMaterial',
-    'SampleSearchSpaceResultCandidate',
-    'DesignVariable',
-    'MeanAndStd',
-    'TopCategories',
-    'Mixture',
-    'ChemicalFormula',
-    'MolecularStructure',
+    "ChemicalFormula",
+    "DesignCandidate",
+    "DesignMaterial",
+    "DesignVariable",
+    "HierarchicalDesignCandidate",
+    "HierarchicalDesignMaterial",
+    "MeanAndStd",
+    "Mixture",
+    "MolecularStructure",
+    "SampleSearchSpaceResultCandidate",
+    "TopCategories",
 ]
 
 
 class DesignCandidateComment(Serializable["DesignCandidateComment"]):
-    message = properties.String('message')
+    message = properties.String("message")
     """:str: the text of the comment"""
-    created_by = properties.UUID('created.user')
+    created_by = properties.UUID("created.user")
     """:UUID: id of the user who created the comment"""
-    create_time = properties.Datetime('created.time')
+    create_time = properties.Datetime("created.time")
     """:datetime: date and time at which the comment was created"""
 
 
@@ -45,7 +44,7 @@ class DesignVariable(PolymorphicSerializable["DesignVariable"]):
             "C": TopCategories,
             "M": Mixture,
             "F": ChemicalFormula,
-            "S": MolecularStructure
+            "S": MolecularStructure,
         }[data["type"]]
 
 
@@ -55,17 +54,16 @@ class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
     This does not imply that the distribution is Normal.
     """
 
-    mean = properties.Float('m')
+    mean = properties.Float("m")
     """:float: mean of the continuous distribution"""
-    std = properties.Float('s')
+    std = properties.Float("s")
     """:float: standard deviation of the continuous distribution"""
-    typ = properties.String('type', default='R', deserializable=False)
+    typ = properties.String("type", default="R", deserializable=False)
     """:str: polymorphic type code"""
 
     def __init__(self, *, mean: float, std: float):
         self.mean = mean
         self.std = std
-        pass  # pragma: no cover
 
 
 class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
@@ -75,14 +73,13 @@ class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
     may have non-zero probabilities.
     """
 
-    probabilities = properties.Mapping(properties.String, properties.Float, 'cp')
+    probabilities = properties.Mapping(properties.String, properties.Float, "cp")
     """:dict[str, float]: mapping from category names to their probabilities"""
-    typ = properties.String('type', default='C', deserializable=False)
+    typ = properties.String("type", default="C", deserializable=False)
     """:str: polymorphic type code"""
 
     def __init__(self, *, probabilities: dict):
         self.probabilities = probabilities
-        pass  # pragma: no cover
 
 
 class Mixture(Serializable["Mixture"], DesignVariable):
@@ -92,62 +89,58 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     truncation (but there may be rounding).
     """
 
-    quantities = properties.Mapping(properties.String, properties.Float, 'q')
+    quantities = properties.Mapping(properties.String, properties.Float, "q")
     """:dict[str, float]: mapping from ingredient identifiers to their quantities"""
-    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'l')
+    labels = properties.Mapping(properties.String, properties.Set(properties.String), "l")
     """:dict[str, set[str]]: mapping from label identifiers to their associated ingredients"""
-    typ = properties.String('type', default='M', deserializable=False)
+    typ = properties.String("type", default="M", deserializable=False)
     """:str: polymorphic type code"""
 
     def __init__(self, *, quantities: dict, labels: dict | None = None):
         self.quantities = quantities
         self.labels = labels or {}
-        pass  # pragma: no cover
 
 
 class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
     """Chemical formula as a string."""
 
-    formula = properties.String('f')
+    formula = properties.String("f")
     """:str: chemical formula"""
-    typ = properties.String('type', default='F', deserializable=False)
+    typ = properties.String("type", default="F", deserializable=False)
     """:str: polymorphic type code"""
 
     def __init__(self, *, formula: str):
         self.formula = formula
-        pass  # pragma: no cover
 
 
 class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
     """SMILES string representation of a molecular structure."""
 
-    smiles = properties.String('s')
+    smiles = properties.String("s")
     """:str: SMILES string"""
-    typ = properties.String('type', default='S', deserializable=False)
+    typ = properties.String("type", default="S", deserializable=False)
     """:str: polymorphic type code"""
 
     def __init__(self, *, smiles: str):
         self.smiles = smiles
-        pass  # pragma: no cover
 
 
 class DesignMaterial(Serializable["DesignMaterial"]):
     """Description of the material that was designed, as a set of DesignVariables."""
 
-    material_id = properties.UUID('identifiers.id')
+    material_id = properties.UUID("identifiers.id")
     """:UUID: unique internal Citrine id of the material"""
-    identifiers = properties.List(properties.String, 'identifiers.external', default=[])
+    identifiers = properties.List(properties.String, "identifiers.external", default=[])
     """:list[str]: globally unique identifiers assigned to the material"""
-    process_template = properties.Optional(properties.UUID, 'identifiers.process_template')
+    process_template = properties.Optional(properties.UUID, "identifiers.process_template")
     """:UUID | None: GEMD process template that describes the process to create this material"""
-    material_template = properties.Optional(properties.UUID, 'identifiers.material_template')
+    material_template = properties.Optional(properties.UUID, "identifiers.material_template")
     """:UUID | None: GEMD material template that describes this material"""
-    values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
+    values = properties.Mapping(properties.String, properties.Object(DesignVariable), "vars")
     """:dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
     def __init__(self, *, values: dict):
         self.values = values
-        pass
 
 
 class HierarchicalDesignMaterial(Serializable["HierarchicalDesignMaterial"]):
@@ -159,11 +152,11 @@ class HierarchicalDesignMaterial(Serializable["HierarchicalDesignMaterial"]):
     that associates each material (by Citrine ID) with the ingredients that comprise it.
     """
 
-    root = properties.Object(DesignMaterial, 'terminal')
+    root = properties.Object(DesignMaterial, "terminal")
     """:DesignMaterial: root material containing features and predicted properties"""
-    sub_materials = properties.List(properties.Object(DesignMaterial), 'sub_materials')
+    sub_materials = properties.List(properties.Object(DesignMaterial), "sub_materials")
     """:list[DesignMaterial]: all other materials appearing in the history of the root"""
-    mixtures = properties.Mapping(properties.UUID, properties.Object(Mixture), 'mixtures')
+    mixtures = properties.Mapping(properties.UUID, properties.Object(Mixture), "mixtures")
     """:dict[UUID, Mixture]: mapping from Citrine ID to components the material is composed of"""
 
 
@@ -173,26 +166,26 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     This class represents the candidate computed by a design execution.
     """
 
-    uid = properties.UUID('id')
+    uid = properties.UUID("id")
     """:UUID: unique external Citrine id of the material"""
-    material_id = properties.UUID('material_id')
+    material_id = properties.UUID("material_id")
     """:UUID: unique internal Citrine id of the material"""
-    identifiers = properties.List(properties.String(), 'identifiers')
+    identifiers = properties.List(properties.String(), "identifiers")
     """:list[str]: globally unique identifiers assigned to the material"""
-    primary_score = properties.Float('primary_score')
+    primary_score = properties.Float("primary_score")
     """:float: numerical score describing how well the candidate satisfies the objectives
     and constraints (higher is better)"""
-    material = properties.Object(DesignMaterial, 'material')
+    material = properties.Object(DesignMaterial, "material")
     """:DesignMaterial: the material returned by the design workflow"""
-    name = properties.String('name')
+    name = properties.String("name")
     """:str: the name of the candidate"""
-    hidden = properties.Boolean('hidden')
+    hidden = properties.Boolean("hidden")
     """:str: whether the candidate is marked hidden"""
-    pinned_by = properties.Optional(properties.UUID, 'pinned.user')
+    pinned_by = properties.Optional(properties.UUID, "pinned.user")
     """:UUID | None: id of the user who pinned the candidate, if it's been pinned"""
-    pinned_time = properties.Optional(properties.Datetime, 'pinned.time')
+    pinned_time = properties.Optional(properties.Datetime, "pinned.time")
     """:datetime | None: date and time at which the candidate was pinned, if it's been pinned"""
-    comments = properties.List(properties.Object(DesignCandidateComment), 'comments', default=[])
+    comments = properties.List(properties.Object(DesignCandidateComment), "comments", default=[])
     """:list[DesignCandidateComment]: the list of comments on the candidate, with metadata."""
 
 
@@ -202,9 +195,9 @@ class HierarchicalDesignCandidate(Serializable["HierarchicalDesignCandidate"]):
     This class represents the candidate computed by a design execution.
     """
 
-    uid = properties.UUID('id')
+    uid = properties.UUID("id")
     """:UUID: unique external Citrine ID of the material"""
-    primary_score = properties.Float('primary_score')
+    primary_score = properties.Float("primary_score")
     """:float: numerical score describing how well the candidate satisfies the objectives
     and constraints (higher is better)"""
     rank = properties.Integer("rank")
@@ -219,9 +212,9 @@ class SampleSearchSpaceResultCandidate(Serializable["SampleSearchSpaceResultCand
     This class represents the candidate computed by a design execution.
     """
 
-    uid = properties.UUID('id')
+    uid = properties.UUID("id")
     """:UUID: unique external Citrine ID of the material"""
-    execution_uid = properties.UUID('id')
+    execution_uid = properties.UUID("id")
     """:UUID: unique external Citrine ID of the execution"""
     material = properties.Object(HierarchicalDesignMaterial, "material")
     """:HierarchicalDesignMaterial: the material returned by the design workflow"""

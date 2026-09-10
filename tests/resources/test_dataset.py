@@ -1,31 +1,31 @@
 from collections import defaultdict
-from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
+from gemd.demo.cake import get_demo_scope, get_template_scope, make_cake
 from gemd.entity.bounds.integer_bounds import IntegerBounds
-from gemd.demo.cake import make_cake, get_demo_scope, get_template_scope
-from gemd.util import recursive_flatmap, flatten
+from gemd.util import flatten, recursive_flatmap
 
 from citrine.exceptions import NotFound
-from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
+from citrine.resources.condition_template import ConditionTemplate, ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
-from citrine.resources.gemd_resource import GEMDResourceCollection
-from citrine.resources.material_run import MaterialRunCollection, MaterialRun
-from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
-from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
-from citrine.resources.measurement_run import MeasurementRunCollection, MeasurementRun
-from citrine.resources.measurement_spec import MeasurementSpec, MeasurementSpecCollection
-from citrine.resources.measurement_template import MeasurementTemplate, \
-    MeasurementTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection, ParameterTemplate
-from citrine.resources.process_run import ProcessRunCollection, ProcessRun
-from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
-from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
-from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
-from tests.utils.factories import DatasetDataFactory, DatasetFactory
 from citrine.resources.delete import _async_gemd_batch_delete
-from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
+from citrine.resources.material_run import MaterialRun, MaterialRunCollection
+from citrine.resources.material_spec import MaterialSpec, MaterialSpecCollection
+from citrine.resources.material_template import MaterialTemplate, MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRun, MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpec, MeasurementSpecCollection
+from citrine.resources.measurement_template import (
+    MeasurementTemplate,
+    MeasurementTemplateCollection,
+)
+from citrine.resources.parameter_template import ParameterTemplate, ParameterTemplateCollection
+from citrine.resources.process_run import ProcessRun, ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpec, ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplate, ProcessTemplateCollection
+from citrine.resources.property_template import PropertyTemplate, PropertyTemplateCollection
+from tests.utils.factories import DatasetDataFactory, DatasetFactory
+from tests.utils.session import FakeCall, FakePaginatedSession, FakeSession
 
 
 @pytest.fixture
@@ -40,43 +40,42 @@ def paginated_session() -> FakePaginatedSession:
 
 @pytest.fixture
 def collection(session) -> DatasetCollection:
-    return DatasetCollection(
-        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        session=session
-    )
+    return DatasetCollection(team_id=UUID("6b608f78-e341-422c-8076-35adc8828545"), session=session)
 
 
 @pytest.fixture
 def paginated_collection(paginated_session) -> DatasetCollection:
     return DatasetCollection(
-        team_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        session=paginated_session
+        team_id=UUID("6b608f78-e341-422c-8076-35adc8828545"), session=paginated_session
     )
 
 
 @pytest.fixture(scope="function")
 def dataset():
-    dataset = DatasetFactory(name='Test Dataset')
-    dataset.team_id = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    dataset = DatasetFactory(name="Test Dataset")
+    dataset.team_id = UUID("6b608f78-e341-422c-8076-35adc8828545")
     dataset.uid = UUID("503d7bf6-8e2d-4d29-88af-257af0d4fe4a")
     dataset.session = FakeSession()
 
     return dataset
 
+
 def test_register_dataset(collection, session):
     # Given
-    name = 'Test Dataset'
-    summary = 'testing summary'
-    description = 'testing description'
+    name = "Test Dataset"
+    summary = "testing summary"
+    description = "testing description"
     session.set_response(DatasetDataFactory(name=name, summary=summary, description=description))
 
     # When
-    dataset = collection.register(DatasetFactory(name=name, summary=summary, description=description))
+    dataset = collection.register(
+        DatasetFactory(name=name, summary=summary, description=description)
+    )
 
     expected_call = FakeCall(
-        method='POST',
-        path='teams/{}/datasets'.format(collection.team_id),
-        json={'name': name, 'summary': summary, 'description': description}
+        method="POST",
+        path=f"teams/{collection.team_id}/datasets",
+        json={"name": name, "summary": summary, "description": description},
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -85,20 +84,33 @@ def test_register_dataset(collection, session):
 
 def test_register_dataset_with_idempotent_put(collection, session):
     # Given
-    name = 'Test Dataset'
-    summary = 'testing summary'
-    description = 'testing description'
-    unique_name = 'foo'
-    session.set_response(DatasetDataFactory(name=name, summary=summary, description=description, unique_name=unique_name))
+    name = "Test Dataset"
+    summary = "testing summary"
+    description = "testing description"
+    unique_name = "foo"
+    session.set_response(
+        DatasetDataFactory(
+            name=name, summary=summary, description=description, unique_name=unique_name
+        )
+    )
 
     # When
     session.use_idempotent_dataset_put = True
-    dataset = collection.register(DatasetFactory(name=name, summary=summary, description=description, unique_name=unique_name))
+    dataset = collection.register(
+        DatasetFactory(
+            name=name, summary=summary, description=description, unique_name=unique_name
+        )
+    )
 
     expected_call = FakeCall(
-        method='PUT',
-        path='teams/{}/datasets'.format(collection.team_id),
-        json={'name': name, 'summary': summary, 'description': description, 'unique_name': unique_name}
+        method="PUT",
+        path=f"teams/{collection.team_id}/datasets",
+        json={
+            "name": name,
+            "summary": summary,
+            "description": description,
+            "unique_name": unique_name,
+        },
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -107,24 +119,22 @@ def test_register_dataset_with_idempotent_put(collection, session):
 
 def test_register_dataset_with_existing_id(collection, session):
     # Given
-    name = 'Test Dataset'
-    summary = 'testing summary'
-    description = 'testing description'
+    name = "Test Dataset"
+    summary = "testing summary"
+    description = "testing description"
     session.set_response(DatasetDataFactory(name=name, summary=summary, description=description))
 
     # When
-    dataset = DatasetFactory(name=name, summary=summary,
-                   description=description)
+    dataset = DatasetFactory(name=name, summary=summary, description=description)
 
-    ds_uid = UUID('cafebeef-e341-422c-8076-35adc8828545')
+    ds_uid = UUID("cafebeef-e341-422c-8076-35adc8828545")
     dataset.uid = ds_uid
     dataset = collection.register(dataset)
 
     expected_call = FakeCall(
-        method='PUT',
-        path='teams/{}/datasets/{}'.format(collection.team_id, ds_uid),
-        json={'name': name, 'summary': summary, 'description': description,
-              'id': str(ds_uid)}
+        method="PUT",
+        path=f"teams/{collection.team_id}/datasets/{ds_uid}",
+        json={"name": name, "summary": summary, "description": description, "id": str(ds_uid)},
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -133,7 +143,7 @@ def test_register_dataset_with_existing_id(collection, session):
 
 def test_get_by_unique_name_with_single_result(collection, session):
     # Given
-    name = 'Test Dataset'
+    name = "Test Dataset"
     unique_name = "foo"
     session.set_response([DatasetDataFactory(name=name, unique_name=unique_name)])
 
@@ -142,8 +152,7 @@ def test_get_by_unique_name_with_single_result(collection, session):
 
     # Then
     expected_call = FakeCall(
-        method='GET',
-        path='teams/{}/datasets?unique_name={}'.format(collection.team_id, unique_name)
+        method="GET", path=f"teams/{collection.team_id}/datasets?unique_name={unique_name}"
     )
     assert session.num_calls == 1
     assert expected_call == session.last_call
@@ -188,15 +197,21 @@ def test_list_datasets(paginated_collection, paginated_session):
 
     # Then
     assert 3 == paginated_session.num_calls
-    expected_first_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
-                                   params={'per_page': 20, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
-                                  params={'page': 3, 'per_page': 20})
+    expected_first_call = FakeCall(
+        method="GET",
+        path=f"teams/{paginated_collection.team_id}/datasets",
+        params={"per_page": 20, "page": 1},
+    )
+    expected_last_call = FakeCall(
+        method="GET",
+        path=f"teams/{paginated_collection.team_id}/datasets",
+        params={"page": 3, "per_page": 20},
+    )
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
     assert 50 == len(datasets)
 
-    expected_uids = [d['id'] for d in datasets_data]
+    expected_uids = [d["id"] for d in datasets_data]
     dataset_ids = [str(d.uid) for d in datasets]
     assert dataset_ids == expected_uids
 
@@ -214,15 +229,21 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
 
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
-    expected_first_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
-                                   params={'per_page': batch_size, 'page': 1})
-    expected_last_call = FakeCall(method='GET', path='teams/{}/datasets'.format(paginated_collection.team_id),
-                                  params={'page': 2, 'per_page': batch_size})
+    expected_first_call = FakeCall(
+        method="GET",
+        path=f"teams/{paginated_collection.team_id}/datasets",
+        params={"per_page": batch_size, "page": 1},
+    )
+    expected_last_call = FakeCall(
+        method="GET",
+        path=f"teams/{paginated_collection.team_id}/datasets",
+        params={"page": 2, "per_page": batch_size},
+    )
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
     assert len(datasets) == batch_size
 
-    expected_uids = [d['id'] for d in datasets_data[0:batch_size]]
+    expected_uids = [d["id"] for d in datasets_data[0:batch_size]]
     dataset_ids = [str(d.uid) for d in datasets]
     assert dataset_ids == expected_uids
 
@@ -236,8 +257,7 @@ def test_delete_dataset(collection, session, dataset):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='DELETE', path='teams/{}/datasets/{}'.format(
-        collection.team_id, uid))
+    expected_call = FakeCall(method="DELETE", path=f"teams/{collection.team_id}/datasets/{uid}")
     assert expected_call == session.last_call
 
 
@@ -327,11 +347,11 @@ def test_gemd_posts(dataset):
         MeasurementRunCollection: MeasurementRun("foo"),
         PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
-        ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+        ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1)),
     }
 
     for collection, obj in expected.items():
-        obj.name = 'This is my name'
+        obj.name = "This is my name"
 
         # Register the objects
         assert len(obj.uids) == 0
@@ -342,7 +362,7 @@ def test_gemd_posts(dataset):
             assert pair[1] == registered.uids[pair[0]]
 
         # Update the objects
-        registered.name = 'Name change!'
+        registered.name = "Name change!"
         updated = dataset.update(registered)
         assert registered.name == updated.name
         assert len(updated.uids) == 1
@@ -413,9 +433,11 @@ def test_register_all_iterable(dataset):
         del wet_dict[c.to_link(scope)]
     assert len(wet_dict) == 0, f"{len(wet_dict)} unmatched objects"
 
+
 def test_batch_delete_malformed(session):
     with pytest.raises(TypeError):
         _async_gemd_batch_delete(id_list=[uuid4()], session=session, team_id=None, dataset_id=None)
+
 
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""
@@ -427,25 +449,25 @@ def test_gemd_batch_delete(dataset):
 @pytest.mark.parametrize("remove_templates", [False, True])
 def test_delete_contents(dataset, prompt_to_confirm, remove_templates):
 
-    job_resp = {
-        'job_id': '1234'
-    }
+    job_resp = {"job_id": "1234"}
 
     failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
+        "job_type": "batch_delete",
+        "status": "Success",
+        "tasks": [],
+        "output": {
             # Keep in mind this is a stringified JSON value. Eww.
-            'failures': '[]'
-        }
+            "failures": "[]"
+        },
     }
 
     session = dataset.session
     session.set_responses(job_resp, failed_job_resp)
 
     # When
-    del_resp = dataset.delete_contents(prompt_to_confirm=prompt_to_confirm, remove_templates=remove_templates)
+    del_resp = dataset.delete_contents(
+        prompt_to_confirm=prompt_to_confirm, remove_templates=remove_templates
+    )
 
     # Then
     assert len(del_resp) == 0
@@ -453,36 +475,30 @@ def test_delete_contents(dataset, prompt_to_confirm, remove_templates):
     # Ensure we made the expected delete call
     path = f"teams/{dataset.team_id}/datasets/{dataset.uid}/contents"
     params = {"remove_templates": remove_templates}
-    expected_call = FakeCall(
-        method='DELETE',
-        path=path,
-        params=params
-    )
+    expected_call = FakeCall(method="DELETE", path=path, params=params)
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call
 
 
 def test_delete_contents_ok(dataset, monkeypatch):
 
-    job_resp = {
-        'job_id': '1234'
-    }
+    job_resp = {"job_id": "1234"}
 
     failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
+        "job_type": "batch_delete",
+        "status": "Success",
+        "tasks": [],
+        "output": {
             # Keep in mind this is a stringified JSON value. Eww.
-            'failures': '[]'
-        }
+            "failures": "[]"
+        },
     }
 
     session = dataset.session
     session.set_responses(job_resp, failed_job_resp)
 
-    user_responses = iter(['bad user response', 'Y'])
-    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
+    user_responses = iter(["bad user response", "Y"])
+    monkeypatch.setattr("builtins.input", lambda: next(user_responses))
 
     # When
     del_resp = dataset.delete_contents(prompt_to_confirm=True)
@@ -492,16 +508,16 @@ def test_delete_contents_ok(dataset, monkeypatch):
 
     # Ensure we made the expected delete call
     expected_call = FakeCall(
-        method='DELETE',
-        path='teams/{}/datasets/{}/contents'.format(dataset.team_id, dataset.uid),
-        params={"remove_templates": True}
+        method="DELETE",
+        path=f"teams/{dataset.team_id}/datasets/{dataset.uid}/contents",
+        params={"remove_templates": True},
     )
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call
 
 
 def test_delete_contents_abort(dataset, monkeypatch):
-    user_responses = iter(['N'])
-    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
+    user_responses = iter(["N"])
+    monkeypatch.setattr("builtins.input", lambda: next(user_responses))
     with pytest.raises(RuntimeError):
         dataset.delete_contents(prompt_to_confirm=True)

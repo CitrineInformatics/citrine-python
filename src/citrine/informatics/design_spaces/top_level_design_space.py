@@ -1,4 +1,5 @@
 """Tools for working with design spaces."""
+
 from uuid import UUID
 
 from citrine._rest.asynchronous_object import AsynchronousObject
@@ -6,31 +7,29 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine.resources.sample_design_space_execution import \
-    SampleDesignSpaceExecutionCollection
+from citrine.resources.sample_design_space_execution import SampleDesignSpaceExecutionCollection
+
+__all__ = ["TopLevelDesignSpace"]
 
 
-__all__ = ['TopLevelDesignSpace']
-
-
-class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], AsynchronousObject):
+class TopLevelDesignSpace(PolymorphicSerializable["TopLevelDesignSpace"], AsynchronousObject):
     """A top-level Citrine Design Space describes the set of materials that can be made.
 
     Abstract type that returns the proper type given a serialized dict.
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    uid = properties.Optional(properties.UUID, "id", serializable=False)
     """:UUID | None: Citrine Platform unique identifier"""
-    name = properties.String('data.name')
-    description = properties.Optional(properties.String(), 'data.description')
+    name = properties.String("data.name")
+    description = properties.Optional(properties.String(), "data.description")
 
-    locked_by = properties.Optional(properties.UUID, 'metadata.locked.user',
-                                    serializable=False)
+    locked_by = properties.Optional(properties.UUID, "metadata.locked.user", serializable=False)
     """:UUID | None: id of the user whose action cause the design space to
     be locked, if it is locked"""
-    lock_time = properties.Optional(properties.Datetime, 'metadata.locked.time',
-                                    serializable=False)
+    lock_time = properties.Optional(
+        properties.Datetime, "metadata.locked.time", serializable=False
+    )
     """:datetime | None: date and time at which the resource was locked,
     if it is locked"""
 
@@ -44,7 +43,7 @@ class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], Asynch
             "data": {
                 "name": subspace_data.get("name", ""),
                 "description": subspace_data.get("description", ""),
-                "instance": subspace_data
+                "instance": subspace_data,
             }
         }
 
@@ -58,13 +57,13 @@ class TopLevelDesignSpace(PolymorphicSerializable['TopLevelDesignSpace'], Asynch
     @classmethod
     def get_type(cls, data) -> type[Serializable]:
         """Return the subtype."""
-        from .product_design_space import ProductDesignSpace
         from .hierarchical_design_space import HierarchicalDesignSpace
+        from .product_design_space import ProductDesignSpace
 
         return {
-            'ProductDesignSpace': ProductDesignSpace,
-            'HierarchicalDesignSpace': HierarchicalDesignSpace
-        }[data['data']['instance']['type']]
+            "ProductDesignSpace": ProductDesignSpace,
+            "HierarchicalDesignSpace": HierarchicalDesignSpace,
+        }[data["data"]["instance"]["type"]]
 
     @property
     def is_locked(self) -> bool:

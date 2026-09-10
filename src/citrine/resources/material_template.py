@@ -1,22 +1,27 @@
 """Resources that represent material templates."""
+
 from collections.abc import Sequence
 
-from citrine._rest.resource import GEMDResource
-from citrine._serialization.properties import LinkOrElse, List, Object, Optional, \
-    SpecifiedMixedList, Union
-from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
-from citrine.resources.property_template import PropertyTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
 from gemd.entity.template.property_template import PropertyTemplate as GEMDPropertyTemplate
 
+from citrine._rest.resource import GEMDResource
+from citrine._serialization.properties import List, Optional
+from citrine.resources.object_templates import (
+    ObjectTemplate,
+    ObjectTemplateCollection,
+    _attr_tuple,
+)
+from citrine.resources.property_template import PropertyTemplate
+
 
 class MaterialTemplate(
-    GEMDResource['MaterialTemplate'],
+    GEMDResource["MaterialTemplate"],
     ObjectTemplate,
     GEMDMaterialTemplate,
-    typ=GEMDMaterialTemplate.typ
+    typ=GEMDMaterialTemplate.typ,
 ):
     """
     A material template.
@@ -49,39 +54,41 @@ class MaterialTemplate(
 
     _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
-    properties = Optional(List(Union([LinkOrElse(GEMDPropertyTemplate),
-                                      SpecifiedMixedList([LinkOrElse(GEMDPropertyTemplate),
-                                                          Optional(Object(BaseBounds))])])),
-                          'properties', override=True)
+    properties = Optional(List(_attr_tuple(GEMDPropertyTemplate)), "properties", override=True)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 uids: dict[str, str] | None = None,
-                 properties: Sequence[PropertyTemplate | LinkByUID
-                                      | Sequence[PropertyTemplate | LinkByUID | BaseBounds | None]
-                                      ] | None = None,
-                 description: str | None = None,
-                 tags: list[str] | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        uids: dict[str, str] | None = None,
+        properties: Sequence[
+            PropertyTemplate
+            | LinkByUID
+            | Sequence[PropertyTemplate | LinkByUID | BaseBounds | None]
+        ]
+        | None = None,
+        description: str | None = None,
+        tags: list[str] | None = None,
+    ):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()
-        GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
-                                      uids=uids, tags=tags,
-                                      description=description)
+        GEMDMaterialTemplate.__init__(
+            self, name=name, properties=properties, uids=uids, tags=tags, description=description
+        )
 
     def __str__(self):
-        return '<Material template {!r}>'.format(self.name)
+        return f"<Material template {self.name!r}>"
 
 
 class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     """A collection of material templates."""
 
-    _individual_key = 'material_template'
-    _collection_key = 'material_templates'
+    _individual_key = "material_template"
+    _collection_key = "material_templates"
     _resource = MaterialTemplate
 
     @classmethod

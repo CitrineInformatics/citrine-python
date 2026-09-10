@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import TypeVar, Union
-from uuid import uuid4, UUID
+from typing import TypeVar
+from uuid import UUID, uuid4
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
@@ -10,15 +10,13 @@ from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.predictor import PredictorCollection
-
-from tests.utils.functions import normalize_uid
 from tests.utils.fakes import FakeCollection
+from tests.utils.functions import normalize_uid
 
-ModuleType = TypeVar('ModuleType', bound='Module')
+ModuleType = TypeVar("ModuleType", bound="Module")
 
 
 class FakeModuleCollection(FakeCollection[ModuleType], Collection[ModuleType]):
-
     def __init__(self, project_id, session):
         FakeCollection.__init__(self)
         self.project_id = project_id
@@ -34,30 +32,20 @@ class FakeModuleCollection(FakeCollection[ModuleType], Collection[ModuleType]):
         module.archive_time = datetime.now()
         return module
 
-class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCollection):
 
+class FakeDesignSpaceCollection(FakeModuleCollection[DesignSpace], DesignSpaceCollection):
     def create_default(self, *, predictor_id: UUID) -> DesignSpace:
         return ProductDesignSpace(
-            f"Default design space",
-            description="",
-            dimensions=[],
-            subspaces=[]
+            "Default design space", description="", dimensions=[], subspaces=[]
         )
 
 
 class FakePredictorCollection(FakeModuleCollection[GraphPredictor], PredictorCollection):
-
     def create_default(
-            self,
-            *,
-            training_data: DataSource,
-            pattern="PLAIN",
-            prefer_valid=True
+        self, *, training_data: DataSource, pattern="PLAIN", prefer_valid=True
     ) -> GraphPredictor:
         return GraphPredictor(
-            name=f"Default {pattern.lower()} predictor",
-            description="",
-            predictors=[]
+            name=f"Default {pattern.lower()} predictor", description="", predictors=[]
         )
-    
+
     auto_configure = create_default

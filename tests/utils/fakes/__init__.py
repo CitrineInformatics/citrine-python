@@ -1,3 +1,7 @@
+# isort: skip_file
+# Import order is significant here: modules that define names re-imported by
+# sibling modules (e.g. FakeDesignWorkflowCollection) must be imported first to
+# avoid circular-import errors during package initialization.
 from .fake_collection import *
 from .fake_file_collection import *
 from .fake_dataset_collection import *

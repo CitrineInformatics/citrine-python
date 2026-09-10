@@ -1,11 +1,15 @@
-import pytest
 import uuid
 
-from citrine.informatics.generative_design import GenerativeDesignInput
+import pytest
+
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
+from citrine.informatics.generative_design import (
+    FingerprintType,
+    GenerativeDesignInput,
+    StructureExclusion,
+)
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
-from citrine.informatics.generative_design import FingerprintType, StructureExclusion
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeCall, FakeSession
 
 
 @pytest.fixture
@@ -15,14 +19,13 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def collection(session) -> GenerativeDesignExecutionCollection:
-    return GenerativeDesignExecutionCollection(
-        project_id=uuid.uuid4(),
-        session=session,
-    )
+    return GenerativeDesignExecutionCollection(project_id=uuid.uuid4(), session=session)
 
 
 @pytest.fixture
-def generative_design_execution(collection: GenerativeDesignExecutionCollection, generative_design_execution_dict) -> GenerativeDesignExecution:
+def generative_design_execution(
+    collection: GenerativeDesignExecutionCollection, generative_design_execution_dict
+) -> GenerativeDesignExecution:
     return collection.build(generative_design_execution_dict)
 
 
@@ -46,7 +49,9 @@ def test_build_new_execution(collection, generative_design_execution_dict):
     assert execution.status_detail
 
 
-def test_trigger_execution(collection: GenerativeDesignExecutionCollection, generative_design_execution_dict, session):
+def test_trigger_execution(
+    collection: GenerativeDesignExecutionCollection, generative_design_execution_dict, session
+):
     # Given
     session.set_response(generative_design_execution_dict)
     design_execution_input = GenerativeDesignInput(
@@ -63,26 +68,26 @@ def test_trigger_execution(collection: GenerativeDesignExecutionCollection, gene
 
     # Then
     assert str(actual_execution.uid) == generative_design_execution_dict["id"]
-    expected_path = '/projects/{}/generative-design/executions'.format(
-        collection.project_id,
-    )
+    expected_path = f"/projects/{collection.project_id}/generative-design/executions"
     assert session.last_call == FakeCall(
-        method='POST',
+        method="POST",
         path=expected_path,
         json={
-            'seeds': design_execution_input.seeds,
-            'fingerprint_type': design_execution_input.fingerprint_type.value,
-            'min_fingerprint_similarity': design_execution_input.min_fingerprint_similarity,
-            'mutation_per_seed': design_execution_input.mutation_per_seed,
-            'structure_exclusions': [
+            "seeds": design_execution_input.seeds,
+            "fingerprint_type": design_execution_input.fingerprint_type.value,
+            "min_fingerprint_similarity": design_execution_input.min_fingerprint_similarity,
+            "mutation_per_seed": design_execution_input.mutation_per_seed,
+            "structure_exclusions": [
                 exclusion.value for exclusion in design_execution_input.structure_exclusions
             ],
-            'min_substructure_counts': design_execution_input.min_substructure_counts,
-        }
+            "min_substructure_counts": design_execution_input.min_substructure_counts,
+        },
     )
 
 
-def test_generative_design_execution_results(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
+def test_generative_design_execution_results(
+    generative_design_execution: GenerativeDesignExecution, session, example_generation_results
+):
     # Given
     session.set_response(example_generation_results)
 
@@ -90,28 +95,25 @@ def test_generative_design_execution_results(generative_design_execution: Genera
     list(generative_design_execution.results(per_page=4))
 
     # Then
-    expected_path = '/projects/{}/generative-design/executions/{}/results'.format(
-        generative_design_execution.project_id,
-        generative_design_execution.uid,
+    expected_path = f"/projects/{generative_design_execution.project_id}/generative-design/executions/{generative_design_execution.uid}/results"
+    assert session.last_call == FakeCall(
+        method="GET", path=expected_path, params={"per_page": 4, "page": 1}
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4, "page": 1})
 
 
-def test_generative_design_execution_result(generative_design_execution: GenerativeDesignExecution, session, example_generation_results):
+def test_generative_design_execution_result(
+    generative_design_execution: GenerativeDesignExecution, session, example_generation_results
+):
     # Given
     session.set_response(example_generation_results["response"][0])
 
     # When
-    result_id=example_generation_results["response"][0]["id"]
+    result_id = example_generation_results["response"][0]["id"]
     generative_design_execution.result(result_id=result_id)
 
     # Then
-    expected_path = '/projects/{}/generative-design/executions/{}/results/{}'.format(
-        generative_design_execution.project_id,
-        generative_design_execution.uid,
-        result_id,
-    )
-    assert session.last_call == FakeCall(method='GET', path=expected_path)
+    expected_path = f"/projects/{generative_design_execution.project_id}/generative-design/executions/{generative_design_execution.uid}/results/{result_id}"
+    assert session.last_call == FakeCall(method="GET", path=expected_path)
 
 
 def test_list(collection: GenerativeDesignExecutionCollection, session):
@@ -119,11 +121,9 @@ def test_list(collection: GenerativeDesignExecutionCollection, session):
     lst = list(collection.list(per_page=4))
     assert len(lst) == 0
 
-    expected_path = '/projects/{}/generative-design/executions'.format(collection.project_id)
+    expected_path = f"/projects/{collection.project_id}/generative-design/executions"
     assert session.last_call == FakeCall(
-        method='GET',
-        path=expected_path,
-        params={"page": 1, "per_page": 4}
+        method="GET", path=expected_path, params={"page": 1, "per_page": 4}
     )
 
 

@@ -1,10 +1,12 @@
 """Top-level class for all attribute template objects and collections thereof."""
+
 from abc import ABC
 from typing import TypeVar
 
-from citrine._serialization.properties import Object, Optional, String
-from gemd.entity.template.attribute_template import AttributeTemplate as GEMDAttributeTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.template.attribute_template import AttributeTemplate as GEMDAttributeTemplate
+
+from citrine._serialization.properties import Object, Optional, String
 from citrine.resources.templates import Template, TemplateCollection
 
 
@@ -15,9 +17,9 @@ class AttributeTemplate(Template, GEMDAttributeTemplate, ABC):
     AttributeTemplate must be extended along with `Resource`
     """
 
-    name = String('name')
-    description = Optional(String(), 'description')
-    bounds = Object(BaseBounds, 'bounds', override=True)
+    name = String("name")
+    description = Optional(String(), "description")
+    bounds = Object(BaseBounds, "bounds", override=True)
 
 
 AttributeTemplateResourceType = TypeVar("AttributeTemplateResourceType", bound="AttributeTemplate")

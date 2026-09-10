@@ -2,10 +2,10 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints.constraint import Constraint
 
-__all__ = ['IntegerRangeConstraint']
+__all__ = ["IntegerRangeConstraint"]
 
 
-class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint):
+class IntegerRangeConstraint(Serializable["IntegerRangeConstraint"], Constraint):
     """[ALPHA] Represents an inequality constraint on an integer-valued material attribute.
 
     Warning: IntegerRangeConstraints are not fully supported by the Citrine Platform web interface
@@ -26,18 +26,21 @@ class IntegerRangeConstraint(Serializable['IntegerRangeConstraint'], Constraint)
 
     """
 
-    descriptor_key = properties.String('descriptor_key')
-    lower_bound = properties.Optional(properties.Float, 'min')
-    upper_bound = properties.Optional(properties.Float, 'max')
-    typ = properties.String('type', default='IntegerRange')
+    descriptor_key = properties.String("descriptor_key")
+    lower_bound = properties.Optional(properties.Float, "min")
+    upper_bound = properties.Optional(properties.Float, "max")
+    typ = properties.String("type", default="IntegerRange")
 
-    def __init__(self, *,
-                 descriptor_key: str,
-                 lower_bound: int | None = None,
-                 upper_bound: int | None = None):
+    def __init__(
+        self,
+        *,
+        descriptor_key: str,
+        lower_bound: int | None = None,
+        upper_bound: int | None = None,
+    ):
         self.descriptor_key = descriptor_key
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
     def __str__(self):
-        return '<IntegerRangeConstraint {!r}>'.format(self.descriptor_key)
+        return f"<IntegerRangeConstraint {self.descriptor_key!r}>"

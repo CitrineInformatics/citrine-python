@@ -13,7 +13,7 @@ from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.resources.status_detail import StatusDetail
 
 
-class PredictorEvaluatorsResponse(Serializable['EvaluatorsPayload']):
+class PredictorEvaluatorsResponse(Serializable["EvaluatorsPayload"]):
     """Container object for a default predictor evaluator response."""
 
     evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
@@ -22,39 +22,43 @@ class PredictorEvaluatorsResponse(Serializable['EvaluatorsPayload']):
         self.evaluators = evaluators
 
 
-class PredictorEvaluationRequest(Serializable['EvaluatorsPayload']):
+class PredictorEvaluationRequest(Serializable["EvaluatorsPayload"]):
     """Container object for a predictor evaluation request."""
 
     predictor = properties.Object(PredictorRef, "predictor")
     evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
 
-    def __init__(self,
-                 *,
-                 evaluators: list[PredictorEvaluator],
-                 predictor_id: UUID | str,
-                 predictor_version: int | str | None = None):
+    def __init__(
+        self,
+        *,
+        evaluators: list[PredictorEvaluator],
+        predictor_id: UUID | str,
+        predictor_version: int | str | None = None,
+    ):
         self.evaluators = evaluators
         self.predictor = PredictorRef(predictor_id, predictor_version)
 
 
-class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], AsynchronousObject):
+class PredictorEvaluation(EngineResourceWithoutStatus["PredictorEvaluation"], AsynchronousObject):
     """The evaluation of a predictor's performance."""
 
-    uid: UUID = properties.UUID('id', serializable=False)
+    uid: UUID = properties.UUID("id", serializable=False)
     """:UUID: Unique identifier of the evaluation"""
-    evaluators = properties.List(properties.Object(PredictorEvaluator), "data.evaluators",
-                                 serializable=False)
+    evaluators = properties.List(
+        properties.Object(PredictorEvaluator), "data.evaluators", serializable=False
+    )
     """:list[PredictorEvaluator]:the predictor evaluators that were executed. These are used
     when calling the ``results()`` method."""
-    predictor_id = properties.UUID('metadata.predictor_id', serializable=False)
+    predictor_id = properties.UUID("metadata.predictor_id", serializable=False)
     """:UUID:"""
-    predictor_version = properties.Integer('metadata.predictor_version', serializable=False)
-    status = properties.String('metadata.status.major', serializable=False)
+    predictor_version = properties.Integer("metadata.predictor_version", serializable=False)
+    status = properties.String("metadata.status.major", serializable=False)
     """:str: short description of the evaluation's status"""
-    status_description = properties.String('metadata.status.minor', serializable=False)
+    status_description = properties.String("metadata.status.minor", serializable=False)
     """:str: more detailed description of the evaluation's status"""
-    status_detail = properties.List(properties.Object(StatusDetail), 'metadata.status.detail',
-                                    default=[], serializable=False)
+    status_detail = properties.List(
+        properties.Object(StatusDetail), "metadata.status.detail", default=[], serializable=False
+    )
     """:list[StatusDetail]: a list of structured status info, containing the message and level"""
 
     project_id: UUID | None = None
@@ -65,12 +69,12 @@ class PredictorEvaluation(EngineResourceWithoutStatus['PredictorEvaluation'], As
 
     def _path(self):
         return format_escaped_url(
-            '/projects/{project_id}/predictor-evaluations/{evaluation_id}',
+            "/projects/{project_id}/predictor-evaluations/{evaluation_id}",
             project_id=str(self.project_id),
-            evaluation_id=str(self.uid)
+            evaluation_id=str(self.uid),
         )
 
-    @lru_cache()
+    @lru_cache
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
         """
         Get a specific evaluation result by the name of the evaluator that produced it.

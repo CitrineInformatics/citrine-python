@@ -3,7 +3,7 @@ from citrine._serialization import properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import PredictorNode
 
-__all__ = ['SimpleMixturePredictor']
+__all__ = ["SimpleMixturePredictor"]
 
 
 class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
@@ -18,14 +18,14 @@ class SimpleMixturePredictor(Resource["SimpleMixturePredictor"], PredictorNode):
 
     """
 
-    typ = properties.String('type', default='SimpleMixture', deserializable=False)
+    typ = properties.String("type", default="SimpleMixture", deserializable=False)
 
     def __init__(self, name: str, *, description: str):
         self.name: str = name
         self.description: str = description
 
     def __str__(self):
-        return '<SimpleMixturePredictor {!r}>'.format(self.name)
+        return f"<SimpleMixturePredictor {self.name!r}>"
 
     @property
     def input_descriptor(self) -> FormulationDescriptor:

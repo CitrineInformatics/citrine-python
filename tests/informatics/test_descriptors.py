@@ -1,4 +1,5 @@
 """Tests for citrine.informatics.descriptors."""
+
 import json
 
 import pytest
@@ -6,15 +7,17 @@ import pytest
 from citrine.informatics.descriptors import *
 
 
-@pytest.fixture(params=[
-    RealDescriptor('alpha', lower_bound=0, upper_bound=100, units=""),
-    IntegerDescriptor('count', lower_bound=0, upper_bound=100),
-    ChemicalFormulaDescriptor('formula'),
-    MolecularStructureDescriptor("organic"),
-    CategoricalDescriptor("my categorical", categories=["a", "b"]),
-    CategoricalDescriptor("categorical", categories=["*"]),
-    FormulationDescriptor.hierarchical()
-])
+@pytest.fixture(
+    params=[
+        RealDescriptor("alpha", lower_bound=0, upper_bound=100, units=""),
+        IntegerDescriptor("count", lower_bound=0, upper_bound=100),
+        ChemicalFormulaDescriptor("formula"),
+        MolecularStructureDescriptor("organic"),
+        CategoricalDescriptor("my categorical", categories=["a", "b"]),
+        CategoricalDescriptor("categorical", categories=["*"]),
+        FormulationDescriptor.hierarchical(),
+    ]
+)
 def descriptor(request):
     return request.param
 

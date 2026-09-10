@@ -1,11 +1,12 @@
 from typing import TypeVar
 from uuid import UUID
 
-from citrine._serialization.serializable import Serializable
-from citrine._serialization import properties
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.enumeration.base_enumeration import BaseEnumeration
 from gemd.util import make_index, substitute_objects
+
+from citrine._serialization import properties
+from citrine._serialization.serializable import Serializable
 
 
 class ResourceTypeEnum(BaseEnumeration):
@@ -30,7 +31,7 @@ class ResourceTypeEnum(BaseEnumeration):
     TABLE_DEFINITION = "TABLE_DEFINITION"
 
 
-Self = TypeVar('Self', bound='Resource')
+Self = TypeVar("Self", bound="Resource")
 
 
 class Resource(Serializable[Self]):
@@ -42,13 +43,10 @@ class Resource(Serializable[Self]):
 
     def access_control_dict(self) -> dict:
         """Return an access control entity representation of this resource. Internal use only."""
-        return {
-            "type": self._resource_type.value,
-            "id": str(self.uid)
-        }
+        return {"type": self._resource_type.value, "id": str(self.uid)}
 
 
-GEMDSelf = TypeVar('GEMDSelf', bound='GEMDResource')
+GEMDSelf = TypeVar("GEMDSelf", bound="GEMDResource")
 
 
 class GEMDResource(Resource[GEMDSelf]):
@@ -58,8 +56,10 @@ class GEMDResource(Resource[GEMDSelf]):
     def build(cls, data: dict) -> GEMDSelf:
         """Convert a raw, nested dictionary into Objects."""
         if "context" in data and len(data) == 2:
+
             def _inflate(x):
                 return DictSerializable.class_mapping[x["type"]].build(x)
+
             key = next(k for k in data if k != "context")
             idx = make_index([_inflate(x) for x in data["context"] + [data[key]]])
             lst = [idx[k] for k in idx]
@@ -91,13 +91,12 @@ class GEMDResource(Resource[GEMDSelf]):
         return result
 
 
-class PredictorRef(Serializable['PredictorRef']):
+class PredictorRef(Serializable["PredictorRef"]):
     """A reference to a resource by UID."""
 
-    uid = properties.UUID('predictor_id')
+    uid = properties.UUID("predictor_id")
     version = properties.Optional(
-        properties.Union([properties.Integer(), properties.String()]),
-        'predictor_version'
+        properties.Union([properties.Integer(), properties.String()]), "predictor_version"
     )
 
     def __init__(self, uid: UUID | str, version: int | str | None = None):

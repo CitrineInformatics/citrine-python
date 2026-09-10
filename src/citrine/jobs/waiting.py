@@ -1,32 +1,28 @@
 import time
 from pprint import pprint
 
-from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
+from citrine._rest.collection import Collection
+from citrine.informatics.executions import PredictorEvaluation
 from citrine.informatics.executions.design_execution import DesignExecution
 from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
 from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
-from citrine.informatics.executions import PredictorEvaluation
 
-
-ExecutionType = PredictorEvaluation \
-    | DesignExecution \
-    | GenerativeDesignExecution \
-    | SampleDesignSpaceExecution
+ExecutionType = (
+    PredictorEvaluation | DesignExecution | GenerativeDesignExecution | SampleDesignSpaceExecution
+)
 
 
 class ConditionTimeoutError(RuntimeError):
     """Error that is raised when timeout is reached but the checked condition is still False."""
-
-    pass
 
 
 def _print_string_status(
     status: str, start_time: float, line_start: str = "", line_end: str = "\r"
 ):
     print(
-        "{}Status = {:<25}Elapsed time".format(line_start, status),
-        " = {}s".format(str(int(time.time() - start_time)).rjust(3)),
+        f"{line_start}Status = {status:<25}Elapsed time",
+        f" = {str(int(time.time() - start_time)).rjust(3)}s",
         end=line_end,
     )
 
@@ -37,7 +33,7 @@ def wait_for_asynchronous_object(
     collection: Collection[AsynchronousObject],
     print_status_info: bool = False,
     timeout: float = 1800.0,
-    interval: float = 3.0
+    interval: float = 3.0,
 ) -> AsynchronousObject:
     """
     Wait until an asynchronous object has finished.
@@ -80,13 +76,11 @@ def wait_for_asynchronous_object(
         time.sleep(interval)
     if not is_finished():
         raise ConditionTimeoutError(
-            "Timeout of {timeout_length} seconds "
-            "reached, but task {uid} is still in progress".format(
-                timeout_length=timeout, uid=resource.uid)
+            f"Timeout of {timeout} seconds reached, but task {resource.uid} is still in progress"
         )
 
     current_resource = collection.get(resource.uid)
-    if print_status_info and hasattr(current_resource, 'status_detail'):
+    if print_status_info and hasattr(current_resource, "status_detail"):
         print("\nStatus info:")
         pprint([detail.msg for detail in current_resource.status_detail])
     return current_resource
@@ -127,9 +121,13 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    return wait_for_asynchronous_object(resource=module, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout,
-                                        interval=interval)
+    return wait_for_asynchronous_object(
+        resource=module,
+        collection=collection,
+        print_status_info=print_status_info,
+        timeout=timeout,
+        interval=interval,
+    )
 
 
 def wait_while_executing(
@@ -138,7 +136,7 @@ def wait_while_executing(
     execution: ExecutionType,
     print_status_info: bool = False,
     timeout: float = 1800.0,
-    interval: float = 3.0
+    interval: float = 3.0,
 ) -> ExecutionType:
     """
     Wait until execution is finished.
@@ -167,6 +165,10 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    return wait_for_asynchronous_object(resource=execution, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout,
-                                        interval=interval)
+    return wait_for_asynchronous_object(
+        resource=execution,
+        collection=collection,
+        print_status_info=print_status_info,
+        timeout=timeout,
+        interval=interval,
+    )

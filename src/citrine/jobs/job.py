@@ -1,19 +1,21 @@
-from gemd.enumeration.base_enumeration import BaseEnumeration
 from logging import getLogger
-from time import time, sleep
+from time import sleep, time
 from uuid import UUID
 
+from gemd.enumeration.base_enumeration import BaseEnumeration
+
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._serialization import properties
+from citrine._serialization.properties import Object, String
+from citrine._serialization.properties import Set as PropertySet
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import PollingTimeoutError, JobFailureError
+from citrine.exceptions import JobFailureError, PollingTimeoutError
 
 logger = getLogger(__name__)
 
 
-class JobSubmissionResponse(Resource['JobSubmissionResponse']):
+class JobSubmissionResponse(Resource["JobSubmissionResponse"]):
     """A response to a submit-job request for the job submission framework.
 
     This is returned as a successful response from the remote service.
@@ -33,7 +35,7 @@ class JobStatus(BaseEnumeration):
     FAILURE = "Failure"
 
 
-class TaskNode(Resource['TaskNode']):
+class TaskNode(Resource["TaskNode"]):
     """Individual task status.
 
     The TaskNode describes a component of an overall job.
@@ -60,7 +62,7 @@ class TaskNode(Resource['TaskNode']):
         self._status = value
 
 
-class JobStatusResponse(Resource['JobStatusResponse']):
+class JobStatusResponse(Resource["JobStatusResponse"]):
     """A response to a job status check.
 
     The JobStatusResponse summarizes the status for the entire job.
@@ -72,7 +74,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     """:str: The status of the job. One of "Running", "Success", or "Failure"."""
     tasks = properties.List(Object(TaskNode), "tasks")
     """:list[TaskNode]: all of the constituent task required to complete this job"""
-    output = properties.Optional(properties.Mapping(String, String), 'output')
+    output = properties.Optional(properties.Mapping(String, String), "output")
     """:dict[str, str] | None: job output properties and results"""
 
     @property
@@ -85,20 +87,23 @@ class JobStatusResponse(Resource['JobStatusResponse']):
         if resolved := JobStatus.from_str(value, exception=True):
             valid = [JobStatus.RUNNING, JobStatus.SUCCESS, JobStatus.FAILURE]
             if resolved not in valid:
-                raise ValueError(f"{value} is not a valid JobStatus for a JobStatusResponse; "
-                                 f"valid choices are {[x for x in valid]}")
+                raise ValueError(
+                    f"{value} is not a valid JobStatus for a JobStatusResponse; "
+                    f"valid choices are {[x for x in valid]}"
+                )
 
         self._status = value
 
 
-def _poll_for_job_completion(session: Session,
-                             job: JobSubmissionResponse | UUID | str,
-                             *,
-                             team_id: UUID | str,
-                             timeout: float = 2 * 60,
-                             polling_delay: float = 2.0,
-                             raise_errors: bool = True,
-                             ) -> JobStatusResponse:
+def _poll_for_job_completion(
+    session: Session,
+    job: JobSubmissionResponse | UUID | str,
+    *,
+    team_id: UUID | str,
+    timeout: float = 2 * 60,
+    polling_delay: float = 2.0,
+    raise_errors: bool = True,
+) -> JobStatusResponse:
     """
     Polls for job completion given a timeout.
 
@@ -129,8 +134,8 @@ def _poll_for_job_completion(session: Session,
         job_id = job.job_id
     else:
         job_id = job  # pragma: no cover
-    path = format_escaped_url('teams/{}/execution/job-status', team_id)
-    params = {'job_id': job_id}
+    path = format_escaped_url("teams/{}/execution/job-status", team_id)
+    params = {"job_id": job_id}
     start_time = time()
     while True:
         response = session.get_resource(path=path, params=params)
@@ -139,17 +144,19 @@ def _poll_for_job_completion(session: Session,
             break
         elif time() - start_time < timeout:
             logger.info(
-                f'Job still in progress, polling status again in {polling_delay:.2f} seconds.'
+                f"Job still in progress, polling status again in {polling_delay:.2f} seconds."
             )
 
             sleep(polling_delay)
         else:
-            logger.error(f'Job exceeded user timeout of {timeout} seconds. '
-                         f'Note job on server is unaffected by this timeout.')
-            logger.debug('Last status: {}'.format(status.dump()))
-            raise PollingTimeoutError('Job {} timed out.'.format(job_id))
+            logger.error(
+                f"Job exceeded user timeout of {timeout} seconds. "
+                f"Note job on server is unaffected by this timeout."
+            )
+            logger.debug(f"Last status: {status.dump()}")
+            raise PollingTimeoutError(f"Job {job_id} timed out.")
     if status.status == JobStatus.FAILURE:
-        logger.debug(f'Job terminated with Failure status: {status.dump()}')
+        logger.debug(f"Job terminated with Failure status: {status.dump()}")
         if raise_errors:
             failure_reasons = []
             for task in status.tasks:
@@ -157,9 +164,10 @@ def _poll_for_job_completion(session: Session,
                     logger.error(f'Task {task.id} failed with reason "{task.failure_reason}"')
                     failure_reasons.append(task.failure_reason)
             raise JobFailureError(
-                message=f'Job {job_id} terminated with Failure status. '
-                        f'Failure reasons: {failure_reasons}',
+                message=f"Job {job_id} terminated with Failure status. "
+                f"Failure reasons: {failure_reasons}",
                 job_id=job_id,
-                failure_reasons=failure_reasons)
+                failure_reasons=failure_reasons,
+            )
 
     return status

@@ -1,4 +1,4 @@
-__all__ = ['DesignSpace']
+__all__ = ["DesignSpace"]
 
 
 class DesignSpace:

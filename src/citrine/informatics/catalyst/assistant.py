@@ -1,8 +1,8 @@
-from citrine.informatics.predictors import GraphPredictor
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.catalyst.language_model import LanguageModelChoice
+from citrine.informatics.predictors import GraphPredictor
 
 
 class AssistantRequest(Serializable["AssistantRequest"]):
@@ -11,14 +11,20 @@ class AssistantRequest(Serializable["AssistantRequest"]):
     question = properties.String("question")
     predictor = properties.Object(GraphPredictor, "config")
     temperature = properties.Optional(properties.Float, "temperature", default=0.0)
-    language_model = properties.Optional(properties.Enumeration(LanguageModelChoice),
-                                         "language_model", default=LanguageModelChoice.GPT_4)
+    language_model = properties.Optional(
+        properties.Enumeration(LanguageModelChoice),
+        "language_model",
+        default=LanguageModelChoice.GPT_4,
+    )
 
-    def __init__(self, *,
-                 question: str,
-                 predictor: GraphPredictor,
-                 temperature: float | None = 0.0,
-                 language_model: LanguageModelChoice | None = LanguageModelChoice.GPT_4):
+    def __init__(
+        self,
+        *,
+        question: str,
+        predictor: GraphPredictor,
+        temperature: float | None = 0.0,
+        language_model: LanguageModelChoice | None = LanguageModelChoice.GPT_4,
+    ):
         self.question = question
         self.predictor = predictor
         self.temperature = temperature
@@ -34,22 +40,22 @@ class AssistantResponse(PolymorphicSerializable["AssistantResponse"]):
     """The parent type for all Model Assistant responses."""
 
     @classmethod
-    def get_type(cls, data) -> type['AssistantResponse']:
+    def get_type(cls, data) -> type["AssistantResponse"]:
         """Return the subtype."""
         type_dict = {
             "message": AssistantResponseMessage,
             "modified-config": AssistantResponseConfig,
             "unsupported": AssistantResponseUnsupported,
             "input-error": AssistantResponseInputErrors,
-            "exec-error": AssistantResponseExecError
+            "exec-error": AssistantResponseExecError,
         }
-        typ = type_dict.get(data['type'])
+        typ = type_dict.get(data["type"])
         if typ is not None:
             return typ
         else:
             raise ValueError(
-                f'{data["type"]} is not a valid assistant response type. '
-                f'Must be in {type_dict.keys()}.'
+                f"{data['type']} is not a valid assistant response type. "
+                f"Must be in {type_dict.keys()}."
             )
 
 
@@ -70,8 +76,9 @@ class AssistantResponseConfig(Serializable["AssistantResponseConfig"], Assistant
         return data
 
 
-class AssistantResponseUnsupported(Serializable["AssistantResponseUnsupported"],
-                                   AssistantResponse):
+class AssistantResponseUnsupported(
+    Serializable["AssistantResponseUnsupported"], AssistantResponse
+):
     """A successful model assistant invocation, but for an unsupported query.
 
     This will cover any user query which the model assistant could not map to a functionality it
@@ -91,8 +98,9 @@ class AssistantResponseInputError(Serializable["AssistantResponseInputError"], A
     error = properties.String("error")
 
 
-class AssistantResponseInputErrors(Serializable["AssistantResponseInputErrors"],
-                                   AssistantResponse):
+class AssistantResponseInputErrors(
+    Serializable["AssistantResponseInputErrors"], AssistantResponse
+):
     """A failed model assistant invocation, due to malformed input.
 
     This should only happen if there's some field omitted by the client, or one of its values is

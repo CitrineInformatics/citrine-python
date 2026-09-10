@@ -1,17 +1,15 @@
-from typing import TypeVar, Union
-from uuid import uuid4, UUID
+from typing import TypeVar
+from uuid import UUID
 
 from citrine._session import Session
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
-
 from tests.utils.fakes import FakeCollection
 
-WorkflowType = TypeVar('WorkflowType', bound='Workflow')
+WorkflowType = TypeVar("WorkflowType", bound="Workflow")
 
 
 class FakeWorkflowCollection(FakeCollection[WorkflowType]):
-
     def __init__(self, project_id, session: Session):
         FakeCollection.__init__(self)
         self.project_id = project_id
@@ -22,7 +20,7 @@ class FakeWorkflowCollection(FakeCollection[WorkflowType]):
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: Union[UUID, str]):
+    def archive(self, uid: UUID | str):
         # Search for workflow via UID to ensure exists
         # If found, flip archived=True with no return
         workflow = self.get(uid)
@@ -30,5 +28,7 @@ class FakeWorkflowCollection(FakeCollection[WorkflowType]):
         self.update(workflow)
 
 
-class FakeDesignWorkflowCollection(FakeWorkflowCollection[DesignWorkflow], DesignWorkflowCollection):
+class FakeDesignWorkflowCollection(
+    FakeWorkflowCollection[DesignWorkflow], DesignWorkflowCollection
+):
     pass

@@ -6,30 +6,26 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.objectives import Objective
 
-__all__ = ['Score', 'LIScore', 'EIScore', 'EVScore']
+__all__ = ["EIScore", "EVScore", "LIScore", "Score"]
 
 
-class Score(PolymorphicSerializable['Score']):
+class Score(PolymorphicSerializable["Score"]):
     """A Score is used to rank materials according to objectives and constraints.
 
     Abstract type that returns the proper type given a serialized dict.
 
     """
 
-    _name = properties.String('name')
-    _description = properties.String('description')
+    _name = properties.String("name")
+    _description = properties.String("description")
 
     @classmethod
     def get_type(cls, data):
         """Return the subtype."""
-        return {
-            'MLI': LIScore,
-            'MEI': EIScore,
-            'MEV': EVScore
-        }[data['type']]
+        return {"MLI": LIScore, "MEI": EIScore, "MEV": EVScore}[data["type"]]
 
 
-class LIScore(Serializable['LIScore'], Score):
+class LIScore(Serializable["LIScore"], Score):
     """Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
@@ -45,15 +41,18 @@ class LIScore(Serializable['LIScore'], Score):
 
     """
 
-    baselines = properties.List(properties.Float, 'baselines')
-    objectives = properties.List(properties.Object(Objective), 'objectives')
-    constraints = properties.List(properties.Object(Constraint), 'constraints')
-    typ = properties.String('type', default='MLI')
+    baselines = properties.List(properties.Float, "baselines")
+    objectives = properties.List(properties.Object(Objective), "objectives")
+    constraints = properties.List(properties.Object(Constraint), "constraints")
+    typ = properties.String("type", default="MLI")
 
-    def __init__(self, *,
-                 objectives: list[Objective],
-                 baselines: list[float],
-                 constraints: list[Constraint] | None = None):
+    def __init__(
+        self,
+        *,
+        objectives: list[Objective],
+        baselines: list[float],
+        constraints: list[Constraint] | None = None,
+    ):
         self.objectives: list[Objective] = objectives
         self.baselines: list[float] = baselines
         self.constraints: list[Constraint] = constraints or []
@@ -61,10 +60,10 @@ class LIScore(Serializable['LIScore'], Score):
         self._description = ""
 
     def __str__(self):
-        return '<LIScore>'
+        return "<LIScore>"
 
 
-class EIScore(Serializable['EIScore'], Score):
+class EIScore(Serializable["EIScore"], Score):
     """
     Evaluates the expected magnitude of improvement beyond baselines for a given objective.
 
@@ -80,15 +79,18 @@ class EIScore(Serializable['EIScore'], Score):
 
     """
 
-    baselines = properties.List(properties.Float, 'baselines')
-    objectives = properties.List(properties.Object(Objective), 'objectives')
-    constraints = properties.List(properties.Object(Constraint), 'constraints')
-    typ = properties.String('type', default='MEI')
+    baselines = properties.List(properties.Float, "baselines")
+    objectives = properties.List(properties.Object(Objective), "objectives")
+    constraints = properties.List(properties.Object(Constraint), "constraints")
+    typ = properties.String("type", default="MEI")
 
-    def __init__(self, *,
-                 objectives: list[Objective],
-                 baselines: list[float],
-                 constraints: list[Constraint] | None = None):
+    def __init__(
+        self,
+        *,
+        objectives: list[Objective],
+        baselines: list[float],
+        constraints: list[Constraint] | None = None,
+    ):
         self.objectives: list[Objective] = objectives
         self.baselines: list[float] = baselines
         self.constraints: list[Constraint] = constraints or []
@@ -96,10 +98,10 @@ class EIScore(Serializable['EIScore'], Score):
         self._description = ""
 
     def __str__(self):
-        return '<EIScore>'
+        return "<EIScore>"
 
 
-class EVScore(Serializable['EVScore'], Score):
+class EVScore(Serializable["EVScore"], Score):
     """
     Evaluates the expected value for given objectives.
 
@@ -115,17 +117,17 @@ class EVScore(Serializable['EVScore'], Score):
 
     """
 
-    objectives = properties.List(properties.Object(Objective), 'objectives')
-    constraints = properties.List(properties.Object(Constraint), 'constraints')
-    typ = properties.String('type', default='MEV')
+    objectives = properties.List(properties.Object(Objective), "objectives")
+    constraints = properties.List(properties.Object(Constraint), "constraints")
+    typ = properties.String("type", default="MEV")
 
-    def __init__(self, *,
-                 objectives: list[Objective],
-                 constraints: list[Constraint] | None = None):
+    def __init__(
+        self, *, objectives: list[Objective], constraints: list[Constraint] | None = None
+    ):
         self.objectives: list[Objective] = objectives
         self.constraints: list[Constraint] = constraints or []
         self._name = "Expected Value"
         self._description = ""
 
     def __str__(self):
-        return '<EVScore>'
+        return "<EVScore>"

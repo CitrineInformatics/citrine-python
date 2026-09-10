@@ -1,16 +1,16 @@
 from uuid import UUID
 
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.design_execution import DesignExecutionCollection
-from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
-__all__ = ['DesignWorkflow']
+__all__ = ["DesignWorkflow"]
 
 
-class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
+class DesignWorkflow(Resource["DesignWorkflow"], Workflow, AIResourceMetadata):
     """Object that generates scored materials that may approach higher values of the score.
 
     Parameters
@@ -28,30 +28,33 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     """
 
-    design_space_id = properties.Optional(properties.UUID, 'design_space_id')
-    predictor_id = properties.Optional(properties.UUID, 'predictor_id')
+    design_space_id = properties.Optional(properties.UUID, "design_space_id")
+    predictor_id = properties.Optional(properties.UUID, "predictor_id")
     predictor_version = properties.Optional(
-        properties.Union([properties.Integer, properties.String]), 'predictor_version')
-    branch_root_id: UUID | None = properties.Optional(properties.UUID, 'branch_root_id')
+        properties.Union([properties.Integer, properties.String]), "predictor_version"
+    )
+    branch_root_id: UUID | None = properties.Optional(properties.UUID, "branch_root_id")
     """:UUID | None: Root ID of the branch that contains this workflow."""
-    branch_version: int | None = properties.Optional(properties.Integer, 'branch_version')
+    branch_version: int | None = properties.Optional(properties.Integer, "branch_version")
     """:int | None: Version number of the branch that contains this workflow."""
     data_source = properties.Optional(properties.Object(DataSource), "data_source")
 
-    status_description = properties.String('status_description', serializable=False)
+    status_description = properties.String("status_description", serializable=False)
     """:str: more detailed description of the workflow's status"""
-    typ = properties.String('type', default='DesignWorkflow', deserializable=False)
+    typ = properties.String("type", default="DesignWorkflow", deserializable=False)
 
-    _branch_id: UUID | None = properties.Optional(properties.UUID, 'branch_id', serializable=False)
+    _branch_id: UUID | None = properties.Optional(properties.UUID, "branch_id", serializable=False)
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 design_space_id: UUID | None = None,
-                 predictor_id: UUID | None = None,
-                 predictor_version: int | str | None = None,
-                 data_source: DataSource | None = None,
-                 description: str | None = None):
+    def __init__(
+        self,
+        name: str,
+        *,
+        design_space_id: UUID | None = None,
+        predictor_id: UUID | None = None,
+        predictor_version: int | str | None = None,
+        data_source: DataSource | None = None,
+        description: str | None = None,
+    ):
         self.name = name
         self.design_space_id = design_space_id
         self.predictor_id = predictor_id
@@ -60,7 +63,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         self.description = description
 
     def __str__(self):
-        return '<DesignWorkflow {!r}>'.format(self.name)
+        return f"<DesignWorkflow {self.name!r}>"
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
@@ -82,10 +85,11 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     @property
     def design_executions(self) -> DesignExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
-        if getattr(self, 'project_id', None) is None:
-            raise AttributeError('Cannot initialize execution without project reference!')
+        if getattr(self, "project_id", None) is None:
+            raise AttributeError("Cannot initialize execution without project reference!")
         return DesignExecutionCollection(
-            project_id=self.project_id, session=self._session, workflow_id=self.uid)
+            project_id=self.project_id, session=self._session, workflow_id=self.uid
+        )
 
     @property
     def data_source_id(self) -> str | None:
