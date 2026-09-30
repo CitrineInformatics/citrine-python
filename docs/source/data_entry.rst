@@ -12,6 +12,7 @@ The Citrine Python client implementations are consistent with the GEMD_ model sp
 
 The Citrine Python client is built on top of and entirely interoperable with the gemd-python_ package.
 Any method that accepts the Citrine Python client's implementations of data model objects should also accept those from GEMD.
+A run may also reference its template directly through its ``template`` field, and an :class:`~citrine.resources.ingredient_run.IngredientRun` may carry its own ``name`` and ``labels``.
 
 Identifying Data Model Objects
 ---------------------------------

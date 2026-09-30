@@ -31,6 +31,7 @@ def valid_data():
             }
         ],
         parameters=[],
+        template=None,
         spec={
             "type": "process_spec",
             "name": "Spec for proc 1",

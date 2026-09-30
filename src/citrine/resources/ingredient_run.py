@@ -9,6 +9,7 @@ from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
 from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
+from gemd.entity.setters import validate_list, validate_str
 from gemd.entity.value.continuous_value import ContinuousValue
 
 from citrine._rest.resource import GEMDResource
@@ -54,6 +55,10 @@ class IngredientRun(
         The absolute quantity of the ingredient in the process.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
+    name: str, optional
+        The ingredient's own name. When unset, the name of the spec applies.
+    labels: list[str], optional
+        The ingredient's own labels. When unset, the labels of the spec apply.
     file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
 
@@ -88,6 +93,8 @@ class IngredientRun(
         number_fraction: ContinuousValue | None = None,
         absolute_quantity: ContinuousValue | None = None,
         spec: GEMDIngredientSpec | None = None,
+        name: str | None = None,
+        labels: list[str] | None = None,
         file_links: list[FileLink] | None = None,
     ):
         if uids is None:
@@ -107,6 +114,34 @@ class IngredientRun(
             spec=spec,
             file_links=file_links,
         )
+        self.name = name
+        self.labels = labels
+
+    @property
+    def name(self) -> str | None:
+        """The ingredient's own name when set, otherwise the name of its spec."""
+        if self._name is not None:
+            return self._name
+        if isinstance(self.spec, GEMDIngredientSpec):
+            return self.spec.name
+        return None
+
+    @name.setter
+    def name(self, name: str | None):
+        self._name = None if name is None else validate_str(name)
+
+    @property
+    def labels(self) -> list[str] | None:
+        """The ingredient's own labels when set, otherwise the labels of its spec."""
+        if self._labels is not None:
+            return self._labels
+        if isinstance(self.spec, GEMDIngredientSpec):
+            return self.spec.labels
+        return None
+
+    @labels.setter
+    def labels(self, labels: list[str] | None):
+        self._labels = None if labels is None else validate_list(labels, str)
 
     def __str__(self):
         return f"<Ingredient run {self.name!r}>"

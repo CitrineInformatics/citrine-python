@@ -10,13 +10,16 @@ from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.source.performed_source import PerformedSource
+from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
 from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
-from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
+from citrine.resources.object_runs import ObjectRunCollection, TemplatedObjectRun
 
 
-class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMDProcessRun.typ):
+class ProcessRun(
+    GEMDResource["ProcessRun"], TemplatedObjectRun, GEMDProcessRun, typ=GEMDProcessRun.typ
+):
     """
     A process run.
 
@@ -42,6 +45,9 @@ class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMD
         Parameters of this process run.
     spec: ProcessSpec
         Spec for this process run.
+    template: ProcessTemplate, optional
+        A template bounding the valid values for this run's conditions and parameters.
+        When unset, the template of the spec applies.
     file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
     source: PerformedSource, optional
@@ -55,6 +61,7 @@ class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMD
     conditions = Optional(List(Object(Condition)), "conditions", override=True)
     parameters = Optional(List(Object(Parameter)), "parameters", override=True)
     spec = Optional(LinkOrElse(GEMDProcessSpec), "spec", override=True, use_init=True)
+    _template = Optional(LinkOrElse(GEMDProcessTemplate), "template")
     source = Optional(Object(PerformedSource), "source", override=True)
 
     def __init__(
@@ -67,12 +74,13 @@ class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMD
         conditions: list[Condition] | None = None,
         parameters: list[Parameter] | None = None,
         spec: GEMDProcessSpec | None = None,
+        template: GEMDProcessTemplate | LinkByUID | None = None,
         file_links: list[FileLink] | None = None,
         source: PerformedSource | None = None,
     ):
         if uids is None:
             uids = dict()
-        super(ObjectRun, self).__init__()
+        super(TemplatedObjectRun, self).__init__()
         GEMDProcessRun.__init__(
             self,
             name=name,
@@ -85,6 +93,12 @@ class ProcessRun(GEMDResource["ProcessRun"], ObjectRun, GEMDProcessRun, typ=GEMD
             notes=notes,
             source=source,
         )
+        self.template = template
+
+    @staticmethod
+    def _template_type() -> type:
+        """Return the template type this run accepts."""
+        return GEMDProcessTemplate
 
     def __str__(self):
         return f"<Process run {self.name!r}>"

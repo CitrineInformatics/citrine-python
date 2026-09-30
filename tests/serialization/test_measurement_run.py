@@ -48,6 +48,7 @@ def valid_data():
             "process": None,
             "sample_type": "experimental",
             "spec": None,
+            "template": None,
             "file_links": [],
             "type": "material_run",
             "audit_info": {
@@ -59,6 +60,7 @@ def valid_data():
             "dataset": str(uuid4()),
         },
         spec=None,
+        template=None,
         file_links=[],
         type="measurement_run",
         source={

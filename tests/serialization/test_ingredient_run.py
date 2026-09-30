@@ -27,6 +27,7 @@ def valid_data():
             "process": None,
             "sample_type": "unknown",
             "spec": None,
+            "template": None,
         },
         process=None,
         mass_fraction={"type": "normal_real", "mean": 0.5, "std": 0.1, "units": "dimensionless"},

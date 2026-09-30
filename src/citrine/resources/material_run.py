@@ -16,11 +16,11 @@ from citrine._utils.functions import format_escaped_url
 from citrine.resources._default_labels import _inject_default_label_tags
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
+from citrine.resources.object_runs import ObjectRunCollection, TemplatedObjectRun
 
 
 class MaterialRun(
-    GEMDResource["MaterialRun"], ObjectRun, GEMDMaterialRun, typ=GEMDMaterialRun.typ
+    GEMDResource["MaterialRun"], TemplatedObjectRun, GEMDMaterialRun, typ=GEMDMaterialRun.typ
 ):
     """
     A material run.
@@ -46,6 +46,9 @@ class MaterialRun(
         "unknown." Default is "unknown."
     spec: MaterialSpec
         The material specification of which this is an instance.
+    template: MaterialTemplate, optional
+        The material template this run is an instance of.
+        When unset, the template of the spec applies.
     file_links: list[FileLink], optional
         Links to associated files, with resource paths into the files API.
     default_labels: list[str], optional
@@ -63,6 +66,7 @@ class MaterialRun(
     process = Optional(LinkOrElse(GEMDProcessRun), "process", override=True, use_init=True)
     sample_type = Optional(String, "sample_type", override=True)
     spec = Optional(LinkOrElse(GEMDMaterialSpec), "spec", override=True, use_init=True)
+    _template = Optional(LinkOrElse(GEMDMaterialTemplate), "template")
 
     def __init__(
         self,
@@ -74,13 +78,14 @@ class MaterialRun(
         process: GEMDProcessRun | None = None,
         sample_type: str | None = "unknown",
         spec: GEMDMaterialSpec | None = None,
+        template: GEMDMaterialTemplate | LinkByUID | None = None,
         file_links: list[FileLink] | None = None,
         default_labels: list[str] | None = None,
     ):
         if uids is None:
             uids = dict()
         all_tags = _inject_default_label_tags(tags, default_labels)
-        super(ObjectRun, self).__init__()
+        super(TemplatedObjectRun, self).__init__()
         GEMDMaterialRun.__init__(
             self,
             name=name,
@@ -92,6 +97,12 @@ class MaterialRun(
             file_links=file_links,
             notes=notes,
         )
+        self.template = template
+
+    @staticmethod
+    def _template_type() -> type:
+        """Return the template type this run accepts."""
+        return GEMDMaterialTemplate
 
     def __str__(self):
         return f"<Material run {self.name!r}>"

@@ -12,14 +12,20 @@ from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.measurement_run import MeasurementRun as GEMDMeasurementRun
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
 from gemd.entity.source.performed_source import PerformedSource
+from gemd.entity.template.measurement_template import (
+    MeasurementTemplate as GEMDMeasurementTemplate,
+)
 
 from citrine._rest.resource import GEMDResource
 from citrine._serialization.properties import LinkOrElse, List, Object, Optional, String
-from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
+from citrine.resources.object_runs import ObjectRunCollection, TemplatedObjectRun
 
 
 class MeasurementRun(
-    GEMDResource["MeasurementRun"], ObjectRun, GEMDMeasurementRun, typ=GEMDMeasurementRun.typ
+    GEMDResource["MeasurementRun"],
+    TemplatedObjectRun,
+    GEMDMeasurementRun,
+    typ=GEMDMeasurementRun.typ,
 ):
     """
     A measurement run.
@@ -46,6 +52,9 @@ class MeasurementRun(
         Properties that are measured during this measurement run.
     spec: MeasurementSpec
         The measurement specification of which this is an instance.
+    template: MeasurementTemplate, optional
+        A template bounding the valid values for this run's attributes.
+        When unset, the template of the spec applies.
     material: MaterialRun
         The material run being measured.
     spec: MaterialSpec
@@ -64,6 +73,7 @@ class MeasurementRun(
     parameters = Optional(List(Object(Parameter)), "parameters", override=True)
     properties = Optional(List(Object(Property)), "properties", override=True)
     spec = Optional(LinkOrElse(GEMDMeasurementSpec), "spec", override=True, use_init=True)
+    _template = Optional(LinkOrElse(GEMDMeasurementTemplate), "template")
     material = Optional(LinkOrElse(GEMDMaterialRun), "material", override=True, use_init=True)
     source = Optional(Object(PerformedSource), "source", override=True)
 
@@ -78,13 +88,14 @@ class MeasurementRun(
         properties: list[Property] | None = None,
         parameters: list[Parameter] | None = None,
         spec: GEMDMeasurementSpec | None = None,
+        template: GEMDMeasurementTemplate | LinkByUID | None = None,
         material: GEMDMaterialRun | None = None,
         file_links: list[FileLink] | None = None,
         source: PerformedSource | None = None,
     ):
         if uids is None:
             uids = dict()
-        super(ObjectRun, self).__init__()
+        super(TemplatedObjectRun, self).__init__()
         GEMDMeasurementRun.__init__(
             self,
             name=name,
@@ -99,6 +110,12 @@ class MeasurementRun(
             notes=notes,
             source=source,
         )
+        self.template = template
+
+    @staticmethod
+    def _template_type() -> type:
+        """Return the template type this run accepts."""
+        return GEMDMeasurementTemplate
 
     def __str__(self):
         return f"<Measurement run {self.name!r}>"

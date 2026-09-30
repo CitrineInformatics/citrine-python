@@ -41,3 +41,27 @@ def test_equals():
     assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
     citrine_obj.notes = "Something else"
     assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_template_round_trip():
+    """A run's own template takes precedence over the spec's and survives dump and build."""
+    from gemd.entity.link_by_uid import LinkByUID
+
+    from citrine.resources.process_run import ProcessRun as CitrineProcessRun
+    from citrine.resources.process_spec import ProcessSpec
+    from citrine.resources.process_template import ProcessTemplate
+
+    spec_template = ProcessTemplate("spec template", uids={"id": "spec-template"})
+    spec = ProcessSpec("spec", uids={"id": "spec"}, template=spec_template)
+    run = CitrineProcessRun("run", uids={"id": "run"}, spec=spec)
+    assert run.template == spec_template
+    assert run.dump()["template"] is None
+
+    link = LinkByUID("id", "own-template")
+    run.template = link
+    assert run.template == link
+    built = CitrineProcessRun.build(run.dump())
+    assert built.template == link
+
+    with pytest.raises(TypeError):
+        run.template = spec

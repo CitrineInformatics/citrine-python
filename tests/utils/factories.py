@@ -783,6 +783,7 @@ class MaterialRunDataFactory(factory.DictFactory):
     process = factory.SubFactory(LinkByUIDDataFactory)
     sample_type = MaterialRunFactory.sample_type
     spec = factory.SubFactory(LinkByUIDDataFactory)
+    template = None
     file_links = factory.List([factory.SubFactory(FileLinkDataFactory)])
     type = "material_run"
 

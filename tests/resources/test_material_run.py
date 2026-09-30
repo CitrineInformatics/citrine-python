@@ -1,5 +1,5 @@
 import json
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 from gemd.demo.cake import change_scope, make_cake
@@ -18,12 +18,14 @@ from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.material_run import MaterialRun as CitrineRun
 from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_template import MaterialTemplate
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.factories import (
     LinkByUIDFactory,
     MaterialRunDataFactory,
     MaterialRunFactory,
     MaterialSpecDataFactory,
+    MaterialSpecFactory,
     MaterialTemplateFactory,
     ProcessTemplateFactory,
 )
@@ -592,3 +594,71 @@ def test_args_only(collection):
     not_dry = collection.register_all([obj], dry_run=False)
     assert obj in not_dry
     assert obj.spec not in not_dry
+
+
+def test_template_precedence():
+    """A run's own template takes precedence over the template of its spec."""
+    spec_template = MaterialTemplateFactory()
+    spec = MaterialSpecFactory(template=spec_template)
+    run = CitrineRun("run", spec=spec)
+    assert run.template == spec_template, "Falls back to the spec's template"
+    assert run.dump()["template"] is None, "Only the run's own template is serialized"
+
+    own_template = MaterialTemplateFactory()
+    run.template = own_template
+    assert run.template == own_template
+    assert run.dump()["template"] == own_template.dump()
+
+    run.template = None
+    assert run.template == spec_template
+
+    with pytest.raises(TypeError):
+        run.template = spec
+
+
+def test_template_round_trip():
+    """A template link survives dump and build."""
+    link = LinkByUIDFactory()
+    run = CitrineRun("run", uids={"id": str(uuid4())}, template=link)
+    data = run.dump()
+    assert data["template"] == link.as_dict()
+    built = CitrineRun.build(data)
+    assert built.template == link
+    assert built == run
+
+
+def test_build_with_context_hydrates_template():
+    """A template in the context replaces the link on the run."""
+    template = MaterialTemplateFactory()
+    run = CitrineRun("run", uids={"id": str(uuid4())}, template=template.to_link())
+    built = CitrineRun.build({"object": run.dump(), "context": [template.dump()]})
+    assert isinstance(built.template, MaterialTemplate)
+    assert built.template == template
+
+
+def test_register_all_writes_template_before_run(collection, session):
+    """A run with a template and no spec is written after its template."""
+    template = MaterialTemplateFactory()
+    run = CitrineRun("run", uids={"id": str(uuid4())}, template=template)
+
+    registered = collection.register_all([run, template])
+
+    assert len(session.calls) == 1
+    objects = session.calls[0].json["objects"]
+    assert [obj["type"] for obj in objects] == ["material_template", "material_run"]
+    assert objects[1]["template"]["type"] == "link_by_uid"
+    assert registered[1].template == registered[0]
+
+
+def test_dry_run_register_all_batches_template_with_run(collection, session):
+    """A dry run keeps a run and its own template in one batch."""
+    template = MaterialTemplateFactory()
+    run = CitrineRun("run", uids={"id": str(uuid4())}, template=template)
+
+    collection.register_all([run, template], dry_run=True)
+
+    assert len(session.calls) == 1
+    assert {obj["type"] for obj in session.calls[0].json["objects"]} == {
+        "material_template",
+        "material_run",
+    }
