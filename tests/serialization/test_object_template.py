@@ -49,9 +49,17 @@ def test_object_template_serde():
     )
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
+    # Attribute template/bounds pairs are normalized to tuples, matching gemd
+    for template in (meas_template, proc_template, ProcessTemplate.build(proc_template.dump())):
+        for pairs in (template.conditions, template.parameters):
+            assert all(isinstance(pair, tuple) for pair in pairs)
+
     # Check that serde still works if the template is a LinkByUID
     pressure_template.uids["id"] = "12345"  # uids['id'] not populated by default
-    proc_template.conditions[0][0] = LinkByUID("id", pressure_template.uids["id"])
+    proc_template.conditions[0] = (
+        LinkByUID("id", pressure_template.uids["id"]),
+        proc_template.conditions[0][1],
+    )
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
 
