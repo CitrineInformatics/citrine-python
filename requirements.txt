@@ -5,4 +5,4 @@ gemd==2.3.2
 pyjwt==2.15.0
 requests==2.34.2
 tqdm==4.68.3
-urllib3==2.7.0
+urllib3==2.8.0
