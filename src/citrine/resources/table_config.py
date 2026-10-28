@@ -39,7 +39,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 def _distinct_ingredient_names(team: "Team", process_template: LinkByUID) -> set[str]:
-    """Collect the ingredient names used by the process specs that share a template."""
+    """Return distinct ingredient names from process specs that use the template."""
     names = set()
     for process_spec in team.process_specs.list_by_template(process_template):
         for ingredient_spec in team.ingredient_specs.list_by_process(process_spec):
@@ -245,14 +245,15 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for every ingredient name used in a process.
+        """Add ingredient variables and columns using data associated with a process template.
 
-        The method lists the process specs that use the template and the ingredient specs of
-        each, within the data you can read, and collects the distinct ingredient names. For each
-        of those names there is a column for the id of the ingredient, a column for the
-        ingredient labels, and a column for the quantity of the ingredient. If the quantities are
-        given in absolute amounts then there is also a column for units. A template whose process
-        specs use no ingredients adds no columns.
+        Collect distinct ingredient names from the ingredient specs of process specs that use
+        the template. Discovery includes the data accessible to the team. Add columns in sorted
+        ingredient name order, with columns for the identifier, labels, and quantity of each
+        ingredient. Absolute quantities also have a column for units.
+
+        Return a new Table Config with the added variables and columns. If discovery finds no
+        ingredient names, return a copy with the same variables and columns.
 
         Parameters
         ------------
@@ -346,23 +347,25 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for every ingredient name used in a list of processes.
+        """Add ingredient variables and columns for the outputs of process templates.
 
-        The method lists the process specs that use each template and the ingredient specs of
-        each, within the data you can read, and collects the distinct ingredient names. For each
-        of those names there is a column for the id of the ingredient, a column for the ingredient
-        labels, and a column for the quantity of the ingredient. Columns are filled with the
-        "InOutput" method halting at any of the passed process templates. If the quantities are
-        given in absolute amounts then there is also a column for units. Templates whose process
-        specs use no ingredients add no columns.
+        Collect distinct ingredient names from the ingredient specs of process specs that use
+        any of the templates. Discovery includes the data accessible to the team. Combine names
+        across templates and add columns in sorted ingredient name order. Each name has columns
+        for the identifier, labels, and quantity. Absolute quantities also have a column for units.
+
+        Populate columns using the "InOutput" method, which stops searching at processes that
+        use any of the supplied templates. Return a new Table Config with the added variables
+        and columns. If discovery finds no ingredient names, return a copy with the same
+        variables and columns.
 
         Parameters
         ------------
         process_templates: list[LinkByUID]
-            registered process templates whose ingredient names to pull and at which to halt
-            searching
+            registered process templates used to discover ingredient names and stop the
+            "InOutput" search
         team: Team
-            a team that has access to the process template
+            a team that has access to the process templates
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
         scope: str | None

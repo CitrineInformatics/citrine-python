@@ -430,7 +430,7 @@ def _ingredient_specs(*names) -> list[IngredientSpec]:
 
 
 def test_add_all_ingredients_via_team(session, team):
-    """Test the behavior of AraDefinition.add_all_ingredients."""
+    """Test the behavior of TableConfig.add_all_ingredients."""
     # GIVEN a template used by two process specs whose ingredient names overlap
     process_id = "3a308f78-e341-f39c-8076-35a2c88292ad"
     process_name = "mixing"

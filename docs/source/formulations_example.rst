@@ -181,8 +181,8 @@ For example, the process template to represent blending should include ``blend_t
 Although it contains no attributes, we should pay particular attention to the templates that represent the mixing processes.
 These will be used to convert GEMD data into formulations.
 It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
-The template includes a comprehensive list of all allowed labels.
-The table helpers take the ingredient names from the ingredient specs that use the template, so the template carries only labels.
+The mixing template defines the allowed ingredient labels.
+The table helpers discover ingredient names from the ingredient specs of process specs that use this template.
 
 .. code-block:: python
 
@@ -199,11 +199,11 @@ The table helpers take the ingredient names from the ingredient specs that use t
 .. Hint:: Here we must distinguish between "name" and "identifier".
     "Name" in this case is an abstract way of describing the types of things that go into a process.
     "Identifier" is the unique way of referring to one particular material.
-    In this example the ingredients use the name "lime juice," which does not specify the specific material.
+    In this example, the ingredient name "lime juice" describes a type of input rather than a particular material.
     For simplicity, this example only includes one type of lime juice, "bottled lime juice," but we might also have "fresh-squeezed lime juice" or several batches of bottled lime juice, each with their own unique identifier.
     In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
 
-    Choose consistent ingredient names, because each distinct name becomes a super-column in the eventual table.
+    Use consistent ingredient names to group the same type of input under one super-column in the table.
     In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 
     If a suitable set of names are not known, it is possible to be generic: "mixing input 1," "mixing input 2," etc.

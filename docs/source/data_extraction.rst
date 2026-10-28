@@ -87,13 +87,13 @@ Note the inclusion of two Datasets above.
 In general, you should have at least two Datasets referenced because Objects and Templates are generally associated with different Datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
-One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every ingredient name found in a process.
-The user provides a link to a process template.
-The method lists the process specs under the template, then the ingredient specs of each, within the data you can read.
-It collects the distinct ingredient names from those specs.
-This creates an id variable/column, a labels variable/column, and a quantity variable/column for each of those names.
-The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
-If the quantities are reported in absolute amounts, then there is also a column for the units.
+Use :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients` to add ingredient variables and columns to a copy of a Table Config.
+Provide a process template and a team with access to the data.
+The method finds process specs that use the template, then collects distinct names from their ingredient specs.
+It uses the data accessible to the team and adds columns in sorted ingredient name order.
+Each name has variables and columns for the ingredient identifier, labels, and quantity.
+Choose how to report quantities: mass fraction, volume fraction, number fraction, or absolute quantity.
+Absolute quantities also have a column for units.
 
 The code below takes the ``table_config`` object defined in the preceding code block and adds the ingredient amounts for a "batter mixing" process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
 Assume that the process template is accessible from a known Project, ``project``.
@@ -108,9 +108,9 @@ Assume that the process template is accessible from a known Project, ``project``
         quantity_dimension=IngredientQuantityDimension.MASS
     )
 
-If the process specs that use the template include an ingredient named, e.g., "flour", then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
-The columns depend on the data.
-For a template with ingredient-free process specs, the method returns the Table Config unchanged.
+For example, if a process spec that uses the template has an ingredient named "flour", the returned Table Config includes columns such as ``batter mixing~flour~id`` and ``batter mixing~flour~mass fraction~mean``.
+The set of columns reflects the ingredient names available when you call the method.
+If the method finds no process specs or ingredient names, it returns a copy with the same variables and columns.
 
 Previewing tables
 -----------------
