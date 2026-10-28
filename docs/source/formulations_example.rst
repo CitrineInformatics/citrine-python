@@ -203,8 +203,6 @@ The table helpers take the ingredient names from the ingredient specs that use t
     For simplicity, this example only includes one type of lime juice, "bottled lime juice," but we might also have "fresh-squeezed lime juice" or several batches of bottled lime juice, each with their own unique identifier.
     In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
 
-    Older code may still pass ``allowed_names`` to ``ProcessTemplate``.
-    The platform accepts that list and ignores it.
     Choose consistent ingredient names, because each distinct name becomes a super-column in the eventual table.
     In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 

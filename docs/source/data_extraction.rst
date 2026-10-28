@@ -91,8 +91,6 @@ One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_in
 The user provides a link to a process template.
 The method lists the process specs under the template, then the ingredient specs of each, within the data you can read.
 It collects the distinct ingredient names from those specs.
-The platform accepts an ``allowed_names`` list on a template and ignores it.
-Which names appear depends only on the ingredient specs.
 This creates an id variable/column, a labels variable/column, and a quantity variable/column for each of those names.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts, then there is also a column for the units.

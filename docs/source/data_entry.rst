@@ -272,8 +272,6 @@ has return value:
 
 For ingredients, the associated object template is a process template that is provided as a separate parameter. Any
 value provided to the ``object_template`` parameter for an ingredient will be ignored.
-The platform checks ingredient labels against the template's ``allowed_labels`` and leaves ingredient names unchecked.
-It ignores any ``allowed_names`` on the template.
 
 Example with validation errors for an ingredient:
 
