@@ -181,7 +181,8 @@ For example, the process template to represent blending should include ``blend_t
 Although it contains no attributes, we should pay particular attention to the templates that represent the mixing processes.
 These will be used to convert GEMD data into formulations.
 It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
-The template includes a comprehensive list of all allowed names and labels.
+The template includes a comprehensive list of all allowed labels.
+The platform takes the ingredient names from the ingredient specs that use the template, so the template carries only labels.
 
 .. code-block:: python
 
@@ -191,7 +192,6 @@ The template includes a comprehensive list of all allowed names and labels.
         ProcessTemplate(
             "mix",
             uids={"margaritas-id": "mix template"},
-            allowed_names=["simple syrup", "sugar", "water", "lime juice", "orange liqueur", "tequila", "ice"],
             allowed_labels=["sweetener", "acid", "alcohol", "simple syrup"]
         )
     )
@@ -199,11 +199,14 @@ The template includes a comprehensive list of all allowed names and labels.
 .. Hint:: Here we must distinguish between "name" and "identifier".
     "Name" in this case is an abstract way of describing the types of things that go into a process.
     "Identifier" is the unique way of referring to one particular material.
-    In this example the template allows the name "lime juice," but does not specify the specific material.
+    In this example the ingredients use the name "lime juice," which does not specify the specific material.
     For simplicity, this example only includes one type of lime juice, "bottled lime juice," but we might also have "fresh-squeezed lime juice" or several batches of bottled lime juice, each with their own unique identifier.
     In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
 
-    Specifying ``allowed_names`` is not required for GEMD, but will make it easier to build the eventual table.
+    Older code may still pass ``allowed_names`` to ``ProcessTemplate``.
+    The platform accepts that list and ignores it.
+    When you fetch the template, that field holds the distinct ingredient names its process specs use.
+    Choose consistent ingredient names, because each distinct name becomes a super-column in the eventual table.
     In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 
     If a suitable set of names are not known, it is possible to be generic: "mixing input 1," "mixing input 2," etc.

@@ -236,11 +236,14 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for all of the possible ingredients in a process.
+        """Add variables and columns for every ingredient name used in a process.
 
-        For each allowed ingredient name in the process template there is a column for the id of
-        the ingredient, id for ingredient labels, and a column for the quantity of the ingredient.
-        If the quantities are given in absolute amounts then there is also a column for units.
+        The platform reports the distinct ingredient names used by the process specs that share
+        the template, limited to the data you can read, in the template's ``allowed_names`` field.
+        For each of those names there is a column for the id of the ingredient, a column for the
+        ingredient labels, and a column for the quantity of the ingredient. If the quantities are
+        given in absolute amounts then there is also a column for units. A template whose process
+        specs use no ingredients adds no columns.
 
         Parameters
         ------------
@@ -264,15 +267,10 @@ class TableConfig(Resource["TableConfig"]):
         }
         link = _make_link_by_uid(process_template)
         process: ProcessTemplate = team.process_templates.get(uid=link)
-        if not process.allowed_names:
-            raise RuntimeError(
-                f"Cannot add ingredients for process template '{process.name}' because it "
-                "has no defined ingredients (allowed_names is not defined)."
-            )
 
         new_variables = []
         new_columns = []
-        for name in process.allowed_names:
+        for name in sorted(set(process.allowed_names)):
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
                 name="_".join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
@@ -339,19 +337,21 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for all possible ingredients in a list of processes.
+        """Add variables and columns for every ingredient name used in a list of processes.
 
-        For each allowed ingredient name in the union of all passed process templates there is a
-        column for the id of the ingredient and a column for the quantity of the ingredient.
-        Columns are filled with the "InOutput" method halting at any of the passed process
-        templates. If the quantities are given in absolute amounts then there is also a column for
-        units.
+        The platform reports the distinct ingredient names used by the process specs that share
+        each template in the template's ``allowed_names`` field. For each name in the union of
+        those lists there is a column for the id of the ingredient, a column for the ingredient
+        labels, and a column for the quantity of the ingredient. Columns are filled with the
+        "InOutput" method halting at any of the passed process templates. If the quantities are
+        given in absolute amounts then there is also a column for units. Templates whose process
+        specs use no ingredients add no columns.
 
         Parameters
         ------------
         process_templates: list[LinkByUID]
-            registered process templates from which to pull allowed ingredients and at which to
-            halt searching
+            registered process templates whose ingredient names to pull and at which to halt
+            searching
         team: Team
             a team that has access to the process template
         quantity_dimension: IngredientQuantityDimension
@@ -368,20 +368,14 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction",
         }
-        union_allowed_names = []
+        ingredient_names = set()
         for process_template_link in process_templates:
             process: ProcessTemplate = team.process_templates.get(process_template_link)
-            if not process.allowed_names:
-                raise RuntimeError(
-                    f"Cannot add ingredients for process template '{process.name}' "
-                    "because it has no defined ingredients (allowed_names is not defined)"
-                )
-            else:
-                union_allowed_names = list(set(union_allowed_names) | set(process.allowed_names))
+            ingredient_names.update(process.allowed_names)
 
         new_variables = []
         new_columns = []
-        for name in union_allowed_names:
+        for name in sorted(ingredient_names):
             identifier_variable = IngredientIdentifierInOutput(
                 name="_".join([name, str(hash(name + scope))]),
                 headers=[name, scope],

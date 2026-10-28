@@ -496,14 +496,36 @@ def test_add_all_ingredients_via_team(session, team):
             quantity_dimension=IngredientQuantityDimension.VOLUME,
         )
 
-    # If the process template has an empty allowed_names list then an error should be raised
+    # If the platform reports no ingredient names then no columns are added
     session.set_response(ProcessTemplate(process_name, uids={"id": process_id}).dump())
-    with pytest.raises(RuntimeError):
-        empty_defn().add_all_ingredients(
-            process_template=process_link,
-            team=team,
-            quantity_dimension=IngredientQuantityDimension.VOLUME,
-        )
+    def3 = empty_defn().add_all_ingredients(
+        process_template=process_link,
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert def3.variables == []
+    assert def3.columns == []
+
+
+def test_add_all_ingredients_duplicate_names(session, team):
+    """Duplicate names in the response produce one set of columns per distinct name."""
+    process_id = "3a308f78-e341-f39c-8076-35a2c88292ad"
+    process_link = LinkByUID("id", process_id)
+    session.set_response(
+        ProcessTemplate(
+            "mixing", uids={"id": process_id}, allowed_names=["methanol", "acetone", "methanol"]
+        ).dump()
+    )
+
+    defn = empty_defn().add_all_ingredients(
+        process_template=process_link,
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+
+    assert len(defn.variables) == 2 * 3
+    assert len(defn.columns) == len(defn.variables)
+    assert [var.headers[1] for var in defn.variables] == ["acetone"] * 3 + ["methanol"] * 3
 
 
 def test_add_all_ingredients_no_principal(session):
@@ -615,17 +637,33 @@ def test_add_all_ingredients_in_output_via_team(session, team):
             quantity_dimension=IngredientQuantityDimension.VOLUME,
         )
 
-    # If the process template has an empty allowed_names list then an error should be raised
+    # If one template reports no ingredient names then the other template's names are used
+    session.set_responses(
+        ProcessTemplate(process1_name, uids={"id": process1_id}).dump(),
+        ProcessTemplate(
+            process2_name, uids={"id": process2_id}, allowed_names=allowed_names2
+        ).dump(),
+    )
+    def3 = empty_defn().add_all_ingredients_in_output(
+        process_templates=[process1_link, process2_link],
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert len(def3.variables) == len(allowed_names2) * 3
+    assert [var.headers[0] for var in def3.variables[::3]] == sorted(allowed_names2)
+
+    # If no template reports ingredient names then no columns are added
     session.set_responses(
         ProcessTemplate(process1_name, uids={"id": process1_id}).dump(),
         ProcessTemplate(process2_name, uids={"id": process2_id}).dump(),
     )
-    with pytest.raises(RuntimeError):
-        empty_defn().add_all_ingredients_in_output(
-            process_templates=[process1_link, process2_link],
-            team=team,
-            quantity_dimension=IngredientQuantityDimension.VOLUME,
-        )
+    def4 = empty_defn().add_all_ingredients_in_output(
+        process_templates=[process1_link, process2_link],
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert def4.variables == []
+    assert def4.columns == []
 
 
 def test_add_all_ingredients_in_output_no_principal(session):

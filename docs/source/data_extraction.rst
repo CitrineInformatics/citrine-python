@@ -87,9 +87,12 @@ Note the inclusion of two Datasets above.
 In general, you should have at least two Datasets referenced because Objects and Templates are generally associated with different Datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
-One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
-The user provides a link to a process template that has a non-empty set of ``allowed_names`` (the allowed names of the ingredient runs and specs in the process).
-This creates an id variable/column and a quantity variable/column for each allowed name.
+One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every ingredient name found in a process.
+The user provides a link to a process template.
+The platform finds the distinct ingredient names in the ingredient specs of every process spec under the template, within the data you can read.
+It returns those names in the template's ``allowed_names`` field.
+The field keeps its name for compatibility, but it is no longer a constraint: the platform accepts an ``allowed_names`` list supplied on a template and ignores it.
+This creates an id variable/column, a labels variable/column, and a quantity variable/column for each of those names.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts, then there is also a column for the units.
 
@@ -106,7 +109,9 @@ Assume that the process template is accessible from a known Project, ``project``
         quantity_dimension=IngredientQuantityDimension.MASS
     )
 
-If the process template's allowed names includes, e.g., "flour", then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
+If the process specs that use the template include an ingredient named, e.g., "flour", then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
+The columns depend on the data.
+For a template with ingredient-free process specs, the method returns the Table Config unchanged.
 
 Previewing tables
 -----------------

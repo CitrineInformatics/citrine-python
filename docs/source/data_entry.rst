@@ -272,12 +272,14 @@ has return value:
 
 For ingredients, the associated object template is a process template that is provided as a separate parameter. Any
 value provided to the ``object_template`` parameter for an ingredient will be ignored.
+The platform checks ingredient labels against the template's ``allowed_labels`` and leaves ingredient names unchecked.
+It ignores any ``allowed_names`` on the template.
 
 Example with validation errors for an ingredient:
 
 .. code-block:: python
 
-    process_template = ProcessTemplate("pt", allowed_names=["foo"], allowed_labels=["bar"])
+    process_template = ProcessTemplate("pt", allowed_labels=["bar"])
     process_spec = ProcessSpec("ps", template=process_template)
 
     mat_process_spec = ProcessSpec("mps")
@@ -298,5 +300,4 @@ has return value:
 
 .. code-block:: python
 
-    [{'failure_message': 'Ingredient label ingredient not in list of allowed labels Set(bar)', 'property': None, 'failure_id': 'ingredient.label.allowed', 'input': None, 'type': NotImplemented},
-     {'failure_message': 'Ingredient name is not in list of allowed names Set(foo)', 'property': None, 'failure_id': 'ingredient.name.allowed', 'input': None, 'type': NotImplemented}]
+    [{'failure_message': 'Ingredient label ingredient not in list of allowed labels Set(bar)', 'property': None, 'failure_id': 'ingredient.label.allowed', 'input': None, 'type': NotImplemented}]
