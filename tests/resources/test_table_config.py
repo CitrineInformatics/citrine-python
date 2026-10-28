@@ -19,7 +19,9 @@ from citrine.gemtables.variables import (
     TerminalMaterialInfo,
 )
 from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.project import Project
 from citrine.resources.table_config import (
@@ -418,18 +420,36 @@ def test_add_columns():
     assert "already used" in str(excinfo.value)
 
 
+def _page(*objects) -> dict:
+    """Build one page of a relation listing from the given objects."""
+    return {"contents": [obj.dump() for obj in objects]}
+
+
+def _ingredient_specs(*names) -> list[IngredientSpec]:
+    return [IngredientSpec(name, uids={"id": str(uuid4())}) for name in names]
+
+
 def test_add_all_ingredients_via_team(session, team):
-    """Test the behavior of AraDefinition.add_all_ingredients."""
-    # GIVEN
+    """Test the behavior of TableConfig.add_all_ingredients."""
+    # GIVEN a template used by two process specs whose ingredient names overlap
     process_id = "3a308f78-e341-f39c-8076-35a2c88292ad"
     process_name = "mixing"
-    allowed_names = ["gold nanoparticles", "methanol", "acetone"]
     process_link = LinkByUID("id", process_id)
-    session.set_response(
-        ProcessTemplate(process_name, uids={"id": process_id}, allowed_names=allowed_names).dump()
-    )
+    template = ProcessTemplate(process_name, uids={"id": process_id})
+    spec1 = ProcessSpec("mix 1", uids={"id": str(uuid4())})
+    spec2 = ProcessSpec("mix 2", uids={"id": str(uuid4())})
+    ingredient_names = ["gold nanoparticles", "methanol", "acetone"]
+
+    def queue_discovery():
+        session.set_responses(
+            template.dump(),
+            _page(spec1, spec2),
+            _page(*_ingredient_specs("gold nanoparticles", "methanol")),
+            _page(*_ingredient_specs("methanol", "acetone")),
+        )
 
     # WHEN we add all ingredients in a volume basis
+    queue_discovery()
     empty = empty_defn()
     def1 = empty.add_all_ingredients(
         process_template=process_link,
@@ -439,9 +459,10 @@ def test_add_all_ingredients_via_team(session, team):
     def1.config_uid = uuid4()
 
     # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
-    assert len(def1.variables) == len(allowed_names) * 3
+    assert len(def1.variables) == len(ingredient_names) * 3
     assert len(def1.columns) == len(def1.variables)
-    for name in allowed_names:
+    assert [var.headers[1] for var in def1.variables[::3]] == sorted(ingredient_names)
+    for name in ingredient_names:
         assert any(
             var
             for var in def1.variables
@@ -459,10 +480,8 @@ def test_add_all_ingredients_via_team(session, team):
             if name in var.headers and isinstance(var, IngredientLabelsSetByProcessAndName)
         )
 
-    session.set_response(
-        ProcessTemplate(process_name, uids={"id": process_id}, allowed_names=allowed_names).dump()
-    )
     # WHEN we add all ingredients to the same Table Config as absolute quantities
+    queue_discovery()
     def2 = def1.add_all_ingredients(
         process_template=process_link,
         team=team,
@@ -474,21 +493,19 @@ def test_add_all_ingredients_via_team(session, team):
     #   There should be 2 new columns for each name, one for the quantity and one for the units
     new_variables = def2.variables[len(def1.variables) :]
     new_columns = def2.columns[len(def1.columns) :]
-    assert len(new_variables) == len(allowed_names)
-    assert len(new_columns) == len(allowed_names) * 2
+    assert len(new_variables) == len(ingredient_names)
+    assert len(new_columns) == len(ingredient_names) * 2
     assert def2.config_uid == def1.config_uid
-    for name in allowed_names:
+    for name in ingredient_names:
         assert any(
             var
             for var in new_variables
             if name in var.headers and isinstance(var, IngredientQuantityByProcessAndName)
         )
 
-    session.set_response(
-        ProcessTemplate(process_name, uids={"id": process_id}, allowed_names=allowed_names).dump()
-    )
     # WHEN we add all ingredients to the same Table Config in a volume basis
     # THEN it raises an exception because these variables and columns already exist
+    queue_discovery()
     with pytest.raises(ValueError):
         def2.add_all_ingredients(
             process_template=process_link,
@@ -496,14 +513,15 @@ def test_add_all_ingredients_via_team(session, team):
             quantity_dimension=IngredientQuantityDimension.VOLUME,
         )
 
-    # If the process template has an empty allowed_names list then an error should be raised
-    session.set_response(ProcessTemplate(process_name, uids={"id": process_id}).dump())
-    with pytest.raises(RuntimeError):
-        empty_defn().add_all_ingredients(
-            process_template=process_link,
-            team=team,
-            quantity_dimension=IngredientQuantityDimension.VOLUME,
-        )
+    # If no process spec uses the template then no columns are added
+    session.set_responses(template.dump(), _page())
+    def3 = empty_defn().add_all_ingredients(
+        process_template=process_link,
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert def3.variables == []
+    assert def3.columns == []
 
 
 def test_add_all_ingredients_no_principal(session):
@@ -517,29 +535,25 @@ def test_add_all_ingredients_no_principal(session):
 
 def test_add_all_ingredients_in_output_via_team(session, team):
     """Test the behavior of TableConfig.add_all_ingredients_in_output."""
-    # GIVEN
-    process1_id = "3a308f78-e341-f39c-8076-35a2c88292ad"
-    process1_name = "mixing"
-    allowed_names1 = ["gold nanoparticles", "methanol", "acetone"]
-    process1_link = LinkByUID("id", process1_id)
+    # GIVEN two templates whose process specs use overlapping ingredient names
+    process1_link = LinkByUID("id", "3a308f78-e341-f39c-8076-35a2c88292ad")
+    process2_link = LinkByUID("id", "519ab440-fbda-4768-ad63-5e09b420285c")
+    spec1 = ProcessSpec("mix", uids={"id": str(uuid4())})
+    spec2 = ProcessSpec("solvent mix", uids={"id": str(uuid4())})
+    names1 = ["gold nanoparticles", "methanol", "acetone"]
+    names2 = ["methanol", "acetone", "ethanol", "water"]
+    union_names = sorted(set(names1) | set(names2))
 
-    process2_id = "519ab440-fbda-4768-ad63-5e09b420285c"
-    process2_name = "solvent_mixing"
-    allowed_names2 = ["methanol", "acetone", "ethanol", "water"]
-    process2_link = LinkByUID("id", process2_id)
-
-    union_allowed_names = list(set(allowed_names1) | set(allowed_names2))
-
-    session.set_responses(
-        ProcessTemplate(
-            process1_name, uids={"id": process1_id}, allowed_names=allowed_names1
-        ).dump(),
-        ProcessTemplate(
-            process2_name, uids={"id": process2_id}, allowed_names=allowed_names2
-        ).dump(),
-    )
+    def queue_discovery():
+        session.set_responses(
+            _page(spec1),
+            _page(*_ingredient_specs(*names1)),
+            _page(spec2),
+            _page(*_ingredient_specs(*names2)),
+        )
 
     # WHEN we add all ingredients in a volume basis
+    queue_discovery()
     empty = empty_defn()
     def1 = empty.add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
@@ -549,9 +563,10 @@ def test_add_all_ingredients_in_output_via_team(session, team):
     def1.config_uid = uuid4()
 
     # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
-    assert len(def1.variables) == len(union_allowed_names) * 3
+    assert len(def1.variables) == len(union_names) * 3
     assert len(def1.columns) == len(def1.variables)
-    for name in union_allowed_names:
+    assert [var.headers[0] for var in def1.variables[::3]] == union_names
+    for name in union_names:
         assert any(
             var
             for var in def1.variables
@@ -568,15 +583,8 @@ def test_add_all_ingredients_in_output_via_team(session, team):
             if name in var.headers and isinstance(var, IngredientLabelsSetInOutput)
         )
 
-    session.set_responses(
-        ProcessTemplate(
-            process1_name, uids={"id": process1_id}, allowed_names=allowed_names1
-        ).dump(),
-        ProcessTemplate(
-            process2_name, uids={"id": process2_id}, allowed_names=allowed_names2
-        ).dump(),
-    )
     # WHEN we add all ingredients to the same Table Config as absolute quantities
+    queue_discovery()
     def2 = def1.add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
         team=team,
@@ -588,26 +596,19 @@ def test_add_all_ingredients_in_output_via_team(session, team):
     #   There should be 2 new columns for each name, one for the quantity and one for the units
     new_variables = def2.variables[len(def1.variables) :]
     new_columns = def2.columns[len(def1.columns) :]
-    assert len(new_variables) == len(union_allowed_names)
-    assert len(new_columns) == len(union_allowed_names) * 2
+    assert len(new_variables) == len(union_names)
+    assert len(new_columns) == len(union_names) * 2
     assert def2.config_uid == def1.config_uid
-    for name in union_allowed_names:
+    for name in union_names:
         assert any(
             var
             for var in new_variables
             if name in var.headers and isinstance(var, IngredientQuantityInOutput)
         )
 
-    session.set_responses(
-        ProcessTemplate(
-            process1_name, uids={"id": process1_id}, allowed_names=allowed_names1
-        ).dump(),
-        ProcessTemplate(
-            process2_name, uids={"id": process2_id}, allowed_names=allowed_names2
-        ).dump(),
-    )
     # WHEN we add all ingredients to the same Table Config in a volume basis
     # THEN it raises an exception because these variables and columns already exist
+    queue_discovery()
     with pytest.raises(ValueError):
         def2.add_all_ingredients_in_output(
             process_templates=[process1_link, process2_link],
@@ -615,17 +616,25 @@ def test_add_all_ingredients_in_output_via_team(session, team):
             quantity_dimension=IngredientQuantityDimension.VOLUME,
         )
 
-    # If the process template has an empty allowed_names list then an error should be raised
-    session.set_responses(
-        ProcessTemplate(process1_name, uids={"id": process1_id}).dump(),
-        ProcessTemplate(process2_name, uids={"id": process2_id}).dump(),
+    # If one template has no process specs then the other template's names are used
+    session.set_responses(_page(), _page(spec2), _page(*_ingredient_specs(*names2)))
+    def3 = empty_defn().add_all_ingredients_in_output(
+        process_templates=[process1_link, process2_link],
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
     )
-    with pytest.raises(RuntimeError):
-        empty_defn().add_all_ingredients_in_output(
-            process_templates=[process1_link, process2_link],
-            team=team,
-            quantity_dimension=IngredientQuantityDimension.VOLUME,
-        )
+    assert len(def3.variables) == len(names2) * 3
+    assert [var.headers[0] for var in def3.variables[::3]] == sorted(names2)
+
+    # If no template has process specs then no columns are added
+    session.set_responses(_page())
+    def4 = empty_defn().add_all_ingredients_in_output(
+        process_templates=[process1_link, process2_link],
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert def4.variables == []
+    assert def4.columns == []
 
 
 def test_add_all_ingredients_in_output_no_principal(session):
