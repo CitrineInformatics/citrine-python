@@ -182,7 +182,7 @@ Although it contains no attributes, we should pay particular attention to the te
 These will be used to convert GEMD data into formulations.
 It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
 The template includes a comprehensive list of all allowed labels.
-The platform takes the ingredient names from the ingredient specs that use the template, so the template carries only labels.
+The table helpers take the ingredient names from the ingredient specs that use the template, so the template carries only labels.
 
 .. code-block:: python
 
@@ -205,7 +205,6 @@ The platform takes the ingredient names from the ingredient specs that use the t
 
     Older code may still pass ``allowed_names`` to ``ProcessTemplate``.
     The platform accepts that list and ignores it.
-    When you fetch the template, that field holds the distinct ingredient names its process specs use.
     Choose consistent ingredient names, because each distinct name becomes a super-column in the eventual table.
     In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 

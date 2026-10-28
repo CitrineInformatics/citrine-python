@@ -89,9 +89,10 @@ In general, you should have at least two Datasets referenced because Objects and
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
 One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every ingredient name found in a process.
 The user provides a link to a process template.
-The platform finds the distinct ingredient names in the ingredient specs of every process spec under the template, within the data you can read.
-It returns those names in the template's ``allowed_names`` field.
-The field keeps its name for compatibility, but it is no longer a constraint: the platform accepts an ``allowed_names`` list supplied on a template and ignores it.
+The method lists the process specs under the template, then the ingredient specs of each, within the data you can read.
+It collects the distinct ingredient names from those specs.
+The platform accepts an ``allowed_names`` list on a template and ignores it.
+The data alone decides which names appear.
 This creates an id variable/column, a labels variable/column, and a quantity variable/column for each of those names.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts, then there is also a column for the units.

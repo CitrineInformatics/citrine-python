@@ -38,6 +38,15 @@ if TYPE_CHECKING:  # pragma: no cover
     from citrine.resources.team import Team
 
 
+def _distinct_ingredient_names(team: "Team", process_template: LinkByUID) -> set[str]:
+    """Collect the ingredient names used by the process specs that share a template."""
+    names = set()
+    for process_spec in team.process_specs.list_by_template(process_template):
+        for ingredient_spec in team.ingredient_specs.list_by_process(process_spec):
+            names.add(ingredient_spec.name)
+    return names
+
+
 class TableBuildAlgorithm(BaseEnumeration):
     """The algorithm to use in automatically building a Table Configuration.
 
@@ -238,9 +247,9 @@ class TableConfig(Resource["TableConfig"]):
     ):
         """Add variables and columns for every ingredient name used in a process.
 
-        The platform reports the distinct ingredient names used by the process specs that share
-        the template, limited to the data you can read, in the template's ``allowed_names`` field.
-        For each of those names there is a column for the id of the ingredient, a column for the
+        The method lists the process specs that use the template and the ingredient specs of
+        each, within the data you can read, and collects the distinct ingredient names. For each
+        of those names there is a column for the id of the ingredient, a column for the
         ingredient labels, and a column for the quantity of the ingredient. If the quantities are
         given in absolute amounts then there is also a column for units. A template whose process
         specs use no ingredients adds no columns.
@@ -270,7 +279,7 @@ class TableConfig(Resource["TableConfig"]):
 
         new_variables = []
         new_columns = []
-        for name in sorted(set(process.allowed_names)):
+        for name in sorted(_distinct_ingredient_names(team, link)):
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
                 name="_".join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
@@ -339,9 +348,9 @@ class TableConfig(Resource["TableConfig"]):
     ):
         """Add variables and columns for every ingredient name used in a list of processes.
 
-        The platform reports the distinct ingredient names used by the process specs that share
-        each template in the template's ``allowed_names`` field. For each name in the union of
-        those lists there is a column for the id of the ingredient, a column for the ingredient
+        The method lists the process specs that use each template and the ingredient specs of
+        each, within the data you can read, and collects the distinct ingredient names. For each
+        of those names there is a column for the id of the ingredient, a column for the ingredient
         labels, and a column for the quantity of the ingredient. Columns are filled with the
         "InOutput" method halting at any of the passed process templates. If the quantities are
         given in absolute amounts then there is also a column for units. Templates whose process
@@ -370,8 +379,7 @@ class TableConfig(Resource["TableConfig"]):
         }
         ingredient_names = set()
         for process_template_link in process_templates:
-            process: ProcessTemplate = team.process_templates.get(process_template_link)
-            ingredient_names.update(process.allowed_names)
+            ingredient_names.update(_distinct_ingredient_names(team, process_template_link))
 
         new_variables = []
         new_columns = []
