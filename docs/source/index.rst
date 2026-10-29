@@ -36,7 +36,6 @@ Table of Contents
 
    getting_started/index
    data_entry
-   data_extraction
    workflows/index
    formulations_example
    FAQ/index

@@ -58,7 +58,7 @@ The following example demonstrates how to use the Citrine Python client to creat
    graph_predictor = GraphPredictor(
        name = 'Root predictor',
        predictors = [auto_ml_predictor],
-       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)]
+       training_data = [SnapshotDataSource(snapshot_id=training_data_snapshot_id)]
    )
 
    predictor = create_or_update(collection=project.predictors,
@@ -80,18 +80,18 @@ A sub-predictor **cannot** be another ``GraphPredictor``.
 Training data can be specified when creating a graph predictor.
 
 The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`.
-Assume that there exists a GEM Table with columns for time, bulk modulus, and Poisson's ratio.
+Assume that there exists a snapshot with columns for time, bulk modulus, and Poisson's ratio.
 We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
 
 .. code:: python
 
     from citrine.informatics.predictors import AutoMLPredictor, ExpressionPredictor, GraphPredictor
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
     time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
     bulk_modulus = RealDescriptor("Bulk Modulus", lower_bound=0, upper_bound=1E3, units="GPa")
     poissons_ratio = RealDescriptor("Poisson\'s Ratio", lower_bound=0, upper_bound=0.5, units="")
-    training_data = GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)
+    training_data = SnapshotDataSource(snapshot_id=training_data_snapshot_id)
 
     bulk_modulus_predictor = AutoMLPredictor(
         name="predict bulk modulus from tempering time",
@@ -166,7 +166,7 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
 .. code:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor
 
     youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
@@ -187,7 +187,7 @@ The following example demonstrates how to create an :class:`~citrine.informatics
     graph_predictor = GraphPredictor(
         name = 'Root predictor',
         predictors = [shear_modulus_predictor],
-        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)]
+        training_data = [SnapshotDataSource(snapshot_id=training_data_snapshot_id)]
     )
 
     # register or update predictor by name
@@ -218,7 +218,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
     from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor, MolecularStructureFeaturizer
     from citrine.seeding.find_or_create import create_or_update
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
 
     # descriptor for the molecular structure input
@@ -260,7 +260,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Density from solvent molecular structure',
         description='Predict the density from the solvent molecular structure using molecular structure features.',
         predictors=[featurizer, ml_predictor],
-        training_data=[GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
+        training_data=[SnapshotDataSource(snapshot_id=training_data_snapshot_id)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
@@ -295,7 +295,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     from citrine.informatics.descriptors import ChemicalFormulaDescriptor, RealDescriptor
     from citrine.informatics.predictors import AutoMLPredictor, ChemicalFormulaFeaturizer, GraphPredictor
     from citrine.seeding.find_or_create import create_or_update
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
 
     # descriptor for the chemical formula input
@@ -338,7 +338,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Melting temperature from alloy chemical formula',
         description='Predict the melting temperature from the alloy chemical formula using chemical formula features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=training_data_table_version)] # training data shared by all sub-predictors
+        training_data = [SnapshotDataSource(snapshot_id=training_data_snapshot_id)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
@@ -371,11 +371,8 @@ yielding just the quantities of the leaf constituents salt and water.
 
     from citrine.informatics.predictors import GraphPredictor, SimpleMixturePredictor
 
-    # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(
-        table_id=table_uid,
-        table_version=table_version
-    )
+    # snapshot with simple mixtures and their ingredients
+    data_source = SnapshotDataSource(snapshot_id=snapshot_id)
 
     mixture_predictor = SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -463,7 +460,7 @@ to compute the mean solute density and the distribution of acetone solubility in
 
 .. code:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import GraphPredictor, MeanPropertyPredictor
 
@@ -476,11 +473,8 @@ to compute the mean solute density and the distribution of acetone solubility in
         key='acetone solubility', categories={'Soluble', 'Insoluble', 'Slightly Soluble'}
     )
 
-    # table with formulations and their ingredients
-    data_source = GemTableDataSource(
-        table_id=table_uid,
-        table_version=table_version
-    )
+    # snapshot with formulations and their ingredients
+    data_source = SnapshotDataSource(snapshot_id=snapshot_id)
 
     mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
@@ -617,7 +611,7 @@ Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication
 Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
 
 Each predictor is trained on the subset of the combined data that is valid for the model.
-If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any data sources specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
 
 Single Predictions

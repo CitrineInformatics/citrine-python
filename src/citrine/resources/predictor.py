@@ -50,9 +50,9 @@ class AsyncDefaultPredictor(Resource["AsyncDefaultPredictor"]):
 class AutoConfigureMode(BaseEnumeration):
     """The format to use in building auto-configured assets.
 
-    * PLAIN corresponds to a single-row GEM table and plain predictor
-    * FORMULATION corresponds to a multi-row GEM table and formulations predictor
-    * INFER auto-detects the GEM table and predictor type
+    * PLAIN corresponds to a plain predictor
+    * FORMULATION corresponds to a formulations predictor
+    * INFER auto-detects the predictor type from the data source
     """
 
     PLAIN = "PLAIN"
@@ -383,8 +383,8 @@ class PredictorCollection(Collection[GraphPredictor]):
         """
         Check if there are updates available for a predictor.
 
-        Typically these are updates to the training data. For example, a GEM Table may have
-        been re-built to include additional rows.
+        Typically these are updates to the training data. For example, a snapshot may have
+        been re-taken to include additional rows.
 
         This check does not update the predictor; it just returns the update that is available.
         To perform the update, the response should then be used to call PredictorCollection.update

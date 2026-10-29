@@ -61,7 +61,7 @@ Assume that there is a training data table with known id and version.
 
     from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
     # create input descriptors
     x = RealDescriptor(key='x', lower_bound=0, upper_bound=10, units='')
@@ -82,10 +82,7 @@ Assume that there is a training data table with known id and version.
             name='ML predictor for z',
             description='Predicts z from x and y',
             predictors=[auto_ml_predictor]
-            training_data=[GemTableDataSource(
-                table_id = training_table_id,
-                table_version = training_table_version
-            )]
+            training_data=[SnapshotDataSource(snapshot_id=training_snapshot_id)]
         )
     )
 

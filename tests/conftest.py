@@ -124,7 +124,7 @@ def valid_formulation_design_space_data():
 
 @pytest.fixture
 def valid_hierarchical_design_space_data(
-    valid_material_node_definition_data, valid_gem_data_source_dict
+    valid_material_node_definition_data, valid_snapshot_data_source_dict
 ):
     """Produce valid hierarchical design space data."""
     import copy
@@ -144,7 +144,7 @@ def valid_hierarchical_design_space_data(
                 description=description,
                 root=copy.deepcopy(valid_material_node_definition_data),
                 subspaces=[copy.deepcopy(valid_material_node_definition_data)],
-                data_sources=[valid_gem_data_source_dict],
+                data_sources=[valid_snapshot_data_source_dict],
             ),
         ),
         metadata=dict(
@@ -190,16 +190,15 @@ def valid_material_node_definition_data(valid_formulation_design_space_data):
 
 
 @pytest.fixture()
-def valid_gem_data_source_dict():
+def valid_snapshot_data_source_dict():
     return {
-        "type": "hosted_table_data_source",
-        "table_id": "e5c51369-8e71-4ec6-b027-1f92bdc14762",
-        "table_version": 2,
+        "type": "snapshot_data_source",
+        "snapshot_id": "e5c51369-8e71-4ec6-b027-1f92bdc14762",
     }
 
 
 @pytest.fixture
-def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
+def valid_auto_ml_predictor_data(valid_snapshot_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
 
@@ -224,7 +223,7 @@ def valid_graph_predictor_data(
     valid_auto_ml_predictor_data,
 ):
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
     instance = dict(
         name="Graph predictor",
@@ -236,7 +235,7 @@ def valid_graph_predictor_data(
             valid_mean_property_predictor_data,
             valid_auto_ml_predictor_data,
         ],
-        training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()],
+        training_data=[SnapshotDataSource(snapshot_id=uuid.uuid4()).dump()],
     )
     return PredictorEntityDataFactory(data=PredictorDataDataFactory(instance=instance))
 
@@ -448,12 +447,12 @@ def valid_ingredient_fractions_predictor_data():
 
 
 @pytest.fixture
-def valid_data_source_design_space_dict(valid_gem_data_source_dict):
+def valid_data_source_design_space_dict(valid_snapshot_data_source_dict):
     return dict(
         type="DataSourceDesignSpace",
         name="Example valid data source design space",
-        description="Example valid data source design space based on a GEM Table Data Source.",
-        data_source=valid_gem_data_source_dict,
+        description="Example valid data source design space based on a Snapshot Data Source.",
+        data_source=valid_snapshot_data_source_dict,
     )
 
 
@@ -536,13 +535,13 @@ def example_cv_evaluator_dict():
 
 
 @pytest.fixture
-def example_holdout_evaluator_dict(valid_gem_data_source_dict):
+def example_holdout_evaluator_dict(valid_snapshot_data_source_dict):
     return {
         "type": "HoldoutSetEvaluator",
         "name": "Example holdout evaluator",
         "description": "",
         "responses": ["sweetness"],
-        "data_source": valid_gem_data_source_dict,
+        "data_source": valid_snapshot_data_source_dict,
         "metrics": [{"type": "RMSE"}],
     }
 

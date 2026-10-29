@@ -13,4 +13,3 @@ In this first section, we will cover teams, projects, datasets, and the basic me
 We will also briefly describe data objects and AI modules.
 For more information on uploading and working with data objects, see :doc:`this section <../data_entry>`.
 A thorough explanation of the various AI modules and how to use them can be found :doc:`here <../workflows/getting_started>`.
-Finally, documentation on how to extract information about data objects and express it in a tabular format so it can be consumed by AI modules is found :doc:`here <../data_extraction>`.

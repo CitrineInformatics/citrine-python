@@ -313,8 +313,6 @@ def test_un_share(team, other_team, session):
     [
         (ResourceTypeEnum.DATASET, "dataset_ids"),
         (ResourceTypeEnum.MODULE, "module_ids"),
-        (ResourceTypeEnum.TABLE, "table_ids"),
-        (ResourceTypeEnum.TABLE_DEFINITION, "table_definition_ids"),
     ],
 )
 def test_list_resource_ids(team, session, resource_type, method):

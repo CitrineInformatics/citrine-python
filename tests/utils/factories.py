@@ -15,6 +15,7 @@ from gemd.enumeration import SampleType
 from citrine.gemd_queries.criteria import *
 from citrine.gemd_queries.filter import *
 from citrine.gemd_queries.gemd_query import *
+from citrine.informatics.data_sources import SnapshotDataSource
 from citrine.informatics.scores import LIScore
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.jobs.job import JobStatus
@@ -25,7 +26,6 @@ from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.process_template import ProcessTemplate
-from citrine.resources.table_config import TableConfigInitiator
 
 
 class AugmentedProvider(Provider):
@@ -211,35 +211,6 @@ class UserDataFactory(factory.DictFactory):
     is_admin = factory.Faker("boolean")
 
 
-class GemTableDataFactory(factory.DictFactory):
-    """Individual GemTable responses.
-
-    Returned from the URL:
-    * gem-tables/{table_identity_id}/versions/{table_version_id}
-    * table-configs/{table_config_uid_str}/gem-tables
-    """
-
-    id = factory.Faker("uuid4")
-    version = factory.Faker("random_digit_not_null")
-    signed_download_url = factory.Faker("uri")
-
-
-class ListGemTableVersionsDataFactory(factory.DictFactory):
-    """List-based GemTable responses.
-
-    Returned from the URLs:
-    * gem-tables/
-    * gem-tables/{table_identity_id}
-    """
-
-    # Explicitly set version numbers so that they are distinct
-    tables = factory.List(
-        [
-            factory.SubFactory(GemTableDataFactory, version=1),
-            factory.SubFactory(GemTableDataFactory, version=4),
-            factory.SubFactory(GemTableDataFactory, version=2),
-        ]
-    )
 
 
 class RealFilterDataFactory(factory.DictFactory):
@@ -331,87 +302,24 @@ class GemdQueryDataFactory(factory.DictFactory):
     schema_version = 1
 
 
-class TableConfigMainMetaDataDataFactory(factory.DictFactory):
-    """This is the metadata for the primary definition ID of the TableConfig."""
-
-    id = factory.Faker("uuid4")
-    deleted = False
-    create_time = factory.Faker("unix_milliseconds")
-    created_by = factory.Faker("uuid4")
-    update_time = factory.Faker("unix_milliseconds")
-    updated_by = factory.Faker("uuid4")
 
 
-class TableConfigDataFactory(factory.DictFactory):
-    """This is simply the Blob stored in a Table Config Version."""
-
-    name = factory.Faker("company")
-    description = factory.Faker("bs")
-    # TODO  Create factories for definitions
-    rows = []
-    columns = []
-    variables = []
-    datasets = factory.List([factory.Faker("uuid4")])
-    gemd_query = factory.SubFactory(GemdQueryDataFactory)
 
 
-class TableConfigVersionMetaDataDataFactory(factory.DictFactory):
-    ara_definition = factory.SubFactory(TableConfigDataFactory)
-    id = factory.Faker("uuid4")
-    definition_id = factory.Faker("uuid4")
-    version_number = factory.Faker("random_digit_not_null")
-    deleted = False
-    create_time = factory.Faker("unix_milliseconds")
-    created_by = factory.Faker("uuid4")
-    update_time = factory.Faker("unix_milliseconds")
-    updated_by = factory.Faker("uuid4")
-    initiator = str(TableConfigInitiator.CITRINE_PYTHON)
+
+class SnapshotDataSourceDataFactory(factory.DictFactory):
+    type = "snapshot_data_source"
+    snapshot_id = factory.Faker("uuid4")
 
 
-class TableConfigResponseDataFactory(factory.DictFactory):
-    """This is the TableConfig object that encapsulates both version and definition info from the server.
-
-    It is returned from the URLs:
-    * projects/{project_id}/display-tables/{uid}/versions/{version}/definition
-
-    """
-
-    definition = factory.SubFactory(TableConfigMainMetaDataDataFactory)
-    version = factory.SubFactory(TableConfigVersionMetaDataDataFactory)
-
-
-class ListTableConfigResponseDataFactory(factory.DictFactory):
-    """This encapsulates all of the versions of a table config object."""
-
-    definition = factory.SubFactory(TableConfigMainMetaDataDataFactory)
-    # Explicitly set version numbers so that they are distinct
-    versions = factory.List(
-        [
-            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=1),
-            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=4),
-            factory.SubFactory(TableConfigVersionMetaDataDataFactory, version_number=2),
-        ]
-    )
-
-
-class TableDataSourceDataFactory(factory.DictFactory):
-    type = "hosted_table_data_source"
-    table_id = factory.Faker("uuid4")
-    table_version = factory.Faker("random_digit_not_null")
-
-
-from citrine.informatics.data_sources import GemTableDataSource
-
-
-class TableDataSourceFactory(factory.Factory):
+class SnapshotDataSourceFactory(factory.Factory):
     class Meta:
-        model = GemTableDataSource
+        model = SnapshotDataSource
 
     class Params:
-        data_factory = factory.SubFactory(TableDataSourceDataFactory)
+        data_factory = factory.SubFactory(SnapshotDataSourceDataFactory)
 
-    table_id = factory.LazyAttribute(lambda o: o.data_factory["table_id"])
-    table_version = factory.LazyAttribute(lambda o: o.data_factory["table_version"])
+    snapshot_id = factory.LazyAttribute(lambda o: o.data_factory["snapshot_id"])
 
 
 class StatusDataFactory(factory.DictFactory):
@@ -433,7 +341,7 @@ class PredictorInstanceDataFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     predictors = []  # TODO  Create PredictorDataFactory
-    training_data = factory.List([factory.SubFactory(TableDataSourceDataFactory)])
+    training_data = factory.List([factory.SubFactory(SnapshotDataSourceDataFactory)])
     type = "Graph"
 
 
@@ -452,7 +360,7 @@ class PredictorEntityDataFactory(factory.DictFactory):
 
 
 class AsyncDefaultPredictorResponseMetadataFactory(factory.DictFactory):
-    data_source = factory.SubFactory(TableDataSourceDataFactory)
+    data_source = factory.SubFactory(SnapshotDataSourceDataFactory)
     created = factory.SubFactory(UserTimestampDataFactory)
     updated = factory.SubFactory(UserTimestampDataFactory)
     # TODO  Create Trait and status_detail content
@@ -575,7 +483,7 @@ class DesignSpaceDataFactory(factory.DictFactory):
 
 class DesignWorkflowDataFactory(factory.DictFactory):
     class Params:
-        data_source = factory.SubFactory(TableDataSourceFactory)
+        data_source = factory.SubFactory(SnapshotDataSourceFactory)
         branch = factory.SubFactory(BranchDataFactory)
         times = factory.List([factory.Faker("unix_milliseconds") for i in range(3)])
         register = factory.Trait(

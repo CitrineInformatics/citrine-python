@@ -9,12 +9,12 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from tests.utils.factories import (
     BranchDataFactory,
     DesignWorkflowDataFactory,
-    TableDataSourceFactory,
+    SnapshotDataSourceFactory,
 )
 from tests.utils.session import FakeCall, FakeSession
 
 PARTIAL_DW_ARGS = (
-    ("data_source_id", lambda: TableDataSourceFactory().to_data_source_id()),
+    ("data_source_id", lambda: SnapshotDataSourceFactory().to_data_source_id()),
     ("predictor_id", lambda: str(uuid.uuid4())),
     ("design_space_id", lambda: str(uuid.uuid4())),
 )
@@ -267,7 +267,7 @@ def test_update_branch_not_found(collection, workflow):
 def test_data_source_id(workflow):
     original_id = workflow.data_source_id
     assert workflow.data_source.to_data_source_id() == original_id
-    workflow.data_source.table_version += 1
+    workflow.data_source.snapshot_id = uuid.uuid4()
     assert workflow.data_source.to_data_source_id() != original_id
     assert workflow.data_source.to_data_source_id() == workflow.data_source_id
 

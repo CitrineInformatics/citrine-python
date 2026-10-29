@@ -7,9 +7,7 @@ from tests.utils.fakes import (
     FakeDescriptorMethods,
     FakeDesignSpaceCollection,
     FakeDesignWorkflowCollection,
-    FakeGemTableCollection,
     FakePredictorCollection,
-    FakeTableConfigCollection,
 )
 from tests.utils.session import FakeSession
 
@@ -67,12 +65,6 @@ class FakeProject(Project):
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
         self._datasets = FakeDatasetCollection(team_id=self.team_id, session=self.session)
         self._predictors = FakePredictorCollection(self.uid, self.session)
-        self._tables = FakeGemTableCollection(
-            team_id=self.team_id, project_id=self.uid, session=self.session
-        )
-        self._table_configs = FakeTableConfigCollection(
-            team_id=self.team_id, project_id=self.uid, session=self.session
-        )
 
     @property
     def datasets(self) -> FakeDatasetCollection:
@@ -93,11 +85,3 @@ class FakeProject(Project):
     @property
     def predictors(self) -> FakePredictorCollection:
         return self._predictors
-
-    @property
-    def tables(self) -> FakeGemTableCollection:
-        return self._tables
-
-    @property
-    def table_configs(self) -> FakeTableConfigCollection:
-        return self._table_configs

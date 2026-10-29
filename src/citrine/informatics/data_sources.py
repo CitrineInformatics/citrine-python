@@ -6,9 +6,8 @@ from uuid import UUID
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine.resources.gemtables import GemTable
 
-__all__ = ["DataSource", "GemTableDataSource", "SnapshotDataSource"]
+__all__ = ["DataSource", "SnapshotDataSource"]
 
 
 class DataSource(PolymorphicSerializable["DataSource"]):
@@ -27,7 +26,7 @@ class DataSource(PolymorphicSerializable["DataSource"]):
 
     @classmethod
     def _subclass_list(self) -> list[type[Serializable]]:
-        return [GemTableDataSource, SnapshotDataSource]
+        return [SnapshotDataSource]
 
     @classmethod
     def get_type(cls, data) -> type[Serializable]:
@@ -61,50 +60,6 @@ class DataSource(PolymorphicSerializable["DataSource"]):
     @abstractmethod
     def to_data_source_id(self) -> str:
         """Generate the data_source_id for this DataSource."""
-
-
-class GemTableDataSource(Serializable["GemTableDataSource"], DataSource):
-    """A data source based on a GEM Table hosted on the data platform.
-
-    Parameters
-    ----------
-    table_id: UUID
-        Unique identifier for the GEM Table
-    table_version: str | int
-        Version number for the GEM Table. The first GEM table built from a configuration
-        has version = 1. Strings are cast to ints.
-
-    """
-
-    typ = properties.String("type", default="hosted_table_data_source", deserializable=False)
-    table_id = properties.UUID("table_id")
-    table_version = properties.Integer("table_version")
-
-    _data_source_type = "gemd"
-
-    def __init__(self, *, table_id: UUID, table_version: int | str):
-        self.table_id: UUID = table_id
-        self.table_version: int | str = table_version
-
-    @classmethod
-    def _data_source_id_builder(cls, *args) -> DataSource:
-        return GemTableDataSource(table_id=UUID(args[0]), table_version=args[1])
-
-    def to_data_source_id(self) -> str:
-        """Generate the data_source_id for this DataSource."""
-        return f"{self._data_source_type}::{self.table_id}::{self.table_version}"
-
-    @classmethod
-    def from_gemtable(cls, table: GemTable) -> "GemTableDataSource":
-        """Generate a DataSource that corresponds to a GemTable.
-
-        Parameters
-        ----------
-        table: GemTable
-            The GemTable object to reference
-
-        """
-        return GemTableDataSource(table_id=table.uid, table_version=table.version)
 
 
 class SnapshotDataSource(Serializable["SnapshotDataSource"], DataSource):

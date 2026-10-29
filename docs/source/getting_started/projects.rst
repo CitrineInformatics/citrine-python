@@ -2,7 +2,7 @@
 Projects
 ========
 
-A Project is the basic container for AI Assets on the Citrine Platform, such as GEM Tables, Predictors, Design Spaces, and Design Workflows.
+A Project is the basic container for AI Assets on the Citrine Platform, such as Predictors, Design Spaces, and Design Workflows.
 Access rights on resources inside a Project are managed, granted, and revoked at the Team level.
 
 Users are individuals using the Citrine Platform, and they are made members of a Team.

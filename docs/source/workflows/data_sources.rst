@@ -6,26 +6,19 @@ Data Sources
 Data sources are used by modules to pull data from outside of the AI engine.
 For example, a :doc:`predictor <predictors>` may need to define external training data.
 
-GEM Table Data Source
----------------------
+Snapshot Data Source
+--------------------
 
-An :class:`~citrine.informatics.data_sources.GemTableDataSource` references a GEM Table.
-As explained more in the :doc:`documentation <../data_extraction>`, GEM Tables provide a structured version of on-platform data.
-GEM Tables are specified by the display table uuid, version number, and optional formulation descriptor.
-A formulation descriptor must be specified if formulations should be built from the data source.
-If specified, any formulations emitted by the data source are stored using the provided descriptor.
-The example below assumes that the uuid and the version of the desired GEM Table are known.
+A :class:`~citrine.informatics.data_sources.SnapshotDataSource` references a snapshot of on-platform data by its id.
+Create the snapshot on the Citrine Platform, then copy its id.
 
 .. code:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.predictors import AutoMLPredictor, GraphPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
-    data_source = GemTableDataSource(
-        table_id = "842434fd-11fe-4324-815c-7db93c7ed81e",
-        table_version = "2"
-    )
+    data_source = SnapshotDataSource(snapshot_id="842434fd-11fe-4324-815c-7db93c7ed81e")
 
     auto_ml_predictor = AutoMLPredictor(
         name = "Band gap predictor",
@@ -43,8 +36,3 @@ The example below assumes that the uuid and the version of the desired GEM Table
         predictors = [auto_ml_predictor],
         training_data = [data_source]
     )
-        
-
-Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-The last term in the column header is a suffix associated with the specific column definition rather than the variable.
-It should be omitted from the descriptor key.

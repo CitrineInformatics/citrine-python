@@ -13,13 +13,11 @@ from citrine.resources.branch import BranchCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.response import Response
-from citrine.resources.table_config import TableConfigCollection
 
 
 class Project(Resource["Project"]):
@@ -130,18 +128,6 @@ class Project(Resource["Project"]):
     def generative_design_executions(self) -> GenerativeDesignExecutionCollection:
         """Return a collection representing all visible generative design executions."""
         return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
-
-    @property
-    def tables(self) -> GemTableCollection:
-        """Return a resource representing all visible Tables."""
-        return GemTableCollection(team_id=self.team_id, project_id=self.uid, session=self.session)
-
-    @property
-    def table_configs(self) -> TableConfigCollection:
-        """Return a resource representing all Table Configs in the project."""
-        return TableConfigCollection(
-            team_id=self.team_id, project_id=self.uid, session=self.session
-        )
 
     def publish(self, *, resource: Resource):
         """

@@ -70,7 +70,7 @@ class TeamResourceIDs:
     team_id: str or uuid
         ID of the team.
     resource_type: str
-        The resource type to list, one of DATASET/MODULE/TABLE/TABLE_DEFINITION
+        The resource type to list, one of DATASET/MODULE
 
     """
 
@@ -415,22 +415,6 @@ class Team(Resource["Team"]):
         """Return a TeamResourceIDs instance for listing published module IDs."""
         return TeamResourceIDs(
             session=self.session, team_id=self.uid, resource_type=ResourceTypeEnum.MODULE.value
-        )
-
-    @property
-    def table_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table IDs."""
-        return TeamResourceIDs(
-            session=self.session, team_id=self.uid, resource_type=ResourceTypeEnum.TABLE.value
-        )
-
-    @property
-    def table_definition_ids(self) -> TeamResourceIDs:
-        """Return a TeamResourceIDs instance for listing published table definition IDs."""
-        return TeamResourceIDs(
-            session=self.session,
-            team_id=self.uid,
-            resource_type=ResourceTypeEnum.TABLE_DEFINITION.value,
         )
 
     @property

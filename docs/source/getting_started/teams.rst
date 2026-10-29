@@ -124,16 +124,14 @@ A user's actions in a team can be updated. The method
 
 Listing Publish Resources in a Team
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Teams can list the published IDs for datasets, modules, tables and table
-definitions available in a team.  Using the `list_readable`,
+Teams can list the published IDs for datasets and modules available in a
+team.  Using the `list_readable`,
 `list_writeable`, or `list_shareable` methods to list IDs with these
 permissions.  Note: these calls return a list of string uids, not the
 complete resource objects.
 
 :func:`~citrine.resources.team.Team.dataset_ids`,
-:func:`~citrine.resources.team.Team.module_ids`,
-:func:`~citrine.resources.team.Team.table_ids`,
-:func:`~citrine.resources.team.Team.table_definition_ids`.
+:func:`~citrine.resources.team.Team.module_ids`.
 
 
 .. code-block:: python

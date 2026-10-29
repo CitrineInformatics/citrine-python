@@ -17,8 +17,8 @@ class ResourceTypeEnum(BaseEnumeration):
     * DATASET is a Dataset
     * MODULE is a Module: a Predictor or Design Space
     * USER is a user
-    * TABLE is a GemTable
-    * TABLE_DEFINITION is a TableConfig
+    * TABLE is a GEM Table
+    * TABLE_DEFINITION is a GEM Table configuration
 
     """
 

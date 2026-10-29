@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from citrine.informatics.data_sources import GemTableDataSource
+from citrine.informatics.data_sources import SnapshotDataSource
 from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
 from citrine.informatics.predictors import GraphPredictor, MolecularStructureFeaturizer
 from citrine.resources.descriptors import DescriptorMethods
@@ -93,9 +93,7 @@ def test_from_data_source():
     }
     session.set_response(response_json)
     descriptors = DescriptorMethods(uuid4(), session)
-    data_source = GemTableDataSource(
-        table_id="43357a66-3644-4959-8115-77b2630aca45", table_version=123
-    )
+    data_source = SnapshotDataSource(snapshot_id="43357a66-3644-4959-8115-77b2630aca45")
 
     results = descriptors.from_data_source(data_source=data_source)
     assert results == [

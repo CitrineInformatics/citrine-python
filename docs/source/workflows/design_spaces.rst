@@ -78,12 +78,12 @@ And temperature is described by a continuous dimension.
 
 .. code:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor
     from citrine.informatics.design_spaces import DataSourceDesignSpace, ProductDesignSpace
     from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 
-    pigment_data_source = data_source=GemTableDataSource(table_id=table_id, table_version=table_version)
+    pigment_data_source = SnapshotDataSource(snapshot_id=snapshot_id)
     enumerated_space = DataSourceDesignSpace(
         name="amounts of pigments A and B",
         description="total amount of pigment is 100 grams",
@@ -206,7 +206,7 @@ The pigment mixture is defined as a sub-node with its own formulation and a proc
 .. code:: python
 
     from citrine.informatics.constraints import IngredientCountConstraint
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.design_spaces import (
         FormulationDesignSpace,
@@ -278,9 +278,7 @@ The pigment mixture is defined as a sub-node with its own formulation and a proc
         description="Designs coatings from binder and a pigment mixture",
         root=root_node,
         subspaces=[pigment_node],
-        data_sources=[
-            GemTableDataSource(table_id=table_id, table_version=table_version)
-        ],
+        data_sources=[SnapshotDataSource(snapshot_id=snapshot_id)],
     )
 
     registered_design_space = project.design_spaces.register(design_space)
@@ -294,20 +292,16 @@ A :class:`~citrine.informatics.design_spaces.data_source_design_space.DataSource
 Any data source can be used and no additional information is needed.
 When registered, this type of design space must be a subspace of a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`.
 
-For example, assume you have a :class:`~citrine.resources.gemtables.GemTable` that contains one
-:class:`~citrine.gemtables.rows.Row` for each candidate that you wish to test.
-Assume the table's ``table_id`` and ``table_version`` are known.
-The example code below creates a registers a design space based on this Gem Table.
+For example, assume you have a snapshot that contains one row for each candidate that you wish to test.
+Assume the snapshot's ``snapshot_id`` is known.
+The example code below creates and registers a design space based on this snapshot.
 
 .. code:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
     from citrine.informatics.design_spaces import DataSourceDesignSpace, ProductDesignSpace
 
-    data_source = GemTableDataSource(
-        table_id=table_id,
-        table_version=table_version
-    )
+    data_source = SnapshotDataSource(snapshot_id=snapshot_id)
 
     data_source_design_space = DataSourceDesignSpace(
         name="my candidates",

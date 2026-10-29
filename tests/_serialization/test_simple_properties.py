@@ -296,3 +296,21 @@ def test_set_serialize_unsortable():
     serialized = Set(Object(PredictorEvaluationMetric)).serialize(data)
     for metric in data:
         assert metric.dump() in serialized
+
+
+def test_mixed_list_set_deserializes_elements():
+    import uuid
+
+    from citrine._serialization.properties import UUID as UUIDProperty
+    from citrine._serialization.serializable import Serializable
+
+    class HasMixedList(Serializable["HasMixedList"]):
+        items = SpecifiedMixedList(
+            [Integer, UUIDProperty, SpecifiedMixedList([UUIDProperty])], "items"
+        )
+
+        def __init__(self, items):
+            self.items = items
+
+    uid = uuid.uuid4()
+    assert HasMixedList([1, str(uid), [str(uid)]]).items == [1, uid, [uid]]

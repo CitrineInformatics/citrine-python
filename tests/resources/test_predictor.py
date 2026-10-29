@@ -7,7 +7,7 @@ from unittest import mock
 import pytest
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
-from citrine.informatics.data_sources import GemTableDataSource
+from citrine.informatics.data_sources import SnapshotDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import (
     AutoMLPredictor,
@@ -24,7 +24,7 @@ from tests.conftest import build_predictor_entity
 from tests.utils.factories import (
     AsyncDefaultPredictorResponseFactory,
     AsyncDefaultPredictorResponseMetadataFactory,
-    TableDataSourceDataFactory,
+    SnapshotDataSourceDataFactory,
 )
 from tests.utils.session import FakeCall, FakeRequestResponse, FakeSession
 
@@ -467,12 +467,12 @@ def test_unexpected_pattern():
     # Then
     with pytest.raises(ValueError):
         pc.create_default(
-            training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0),
+            training_data=SnapshotDataSource(snapshot_id=uuid.uuid4()),
             pattern="yogurt",
         )
     with pytest.raises(ValueError):
         pc.create_default_async(
-            training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0),
+            training_data=SnapshotDataSource(snapshot_id=uuid.uuid4()),
             pattern="yogurt",
         )
 
@@ -490,7 +490,7 @@ def test_create_default_mode_pattern(valid_graph_predictor_data):
 
     # When
     pc.create_default(
-        training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0),
+        training_data=SnapshotDataSource(snapshot_id=uuid.uuid4()),
         pattern=AutoConfigureMode.INFER,
     )
 
@@ -512,7 +512,7 @@ def test_returned_predictor(valid_graph_predictor_data):
 
     # When
     result = pc.create_default(
-        training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN"
+        training_data=SnapshotDataSource(snapshot_id=uuid.uuid4()), pattern="PLAIN"
     )
 
     # Then the response is parsed in a predictor
@@ -695,10 +695,8 @@ def test_create_default_async():
 
     mode = "PLAIN"
     prefer_valid = False
-    ds = GemTableDataSource(table_id=uuid.uuid4(), table_version=1)
-    data_source_payload = TableDataSourceDataFactory(
-        table_id=str(ds.table_id), table_version=ds.table_version
-    )
+    ds = SnapshotDataSource(snapshot_id=uuid.uuid4())
+    data_source_payload = SnapshotDataSourceDataFactory(snapshot_id=str(ds.snapshot_id))
     expected_payload = {
         "data_source": data_source_payload,
         "pattern": mode,

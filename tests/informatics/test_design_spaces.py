@@ -5,7 +5,7 @@ import uuid
 import pytest
 
 from citrine.informatics.constraints import IngredientCountConstraint
-from citrine.informatics.data_sources import DataSource, GemTableDataSource
+from citrine.informatics.data_sources import DataSource, SnapshotDataSource
 from citrine.informatics.descriptors import (
     CategoricalDescriptor,
     FormulationDescriptor,
@@ -57,7 +57,7 @@ def hierarchical_design_space(material_node_definition) -> HierarchicalDesignSpa
         description="Does things in levels",
         root=material_node_definition,
         subspaces=[material_node_definition],
-        data_sources=[GemTableDataSource(table_id=uuid.uuid4(), table_version=2)],
+        data_sources=[SnapshotDataSource(snapshot_id=uuid.uuid4())],
     )
 
 

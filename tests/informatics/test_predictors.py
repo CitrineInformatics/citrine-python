@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from citrine.informatics.data_sources import GemTableDataSource
+from citrine.informatics.data_sources import SnapshotDataSource
 from citrine.informatics.descriptors import (
     CategoricalDescriptor,
     ChemicalFormulaDescriptor,
@@ -42,11 +42,9 @@ chain_type = CategoricalDescriptor(
 flat_formulation = FormulationDescriptor.flat()
 water_quantity = RealDescriptor("water quantity", lower_bound=0, upper_bound=1, units="")
 salt_quantity = RealDescriptor("salt quantity", lower_bound=0, upper_bound=1, units="")
-data_source = GemTableDataSource(
-    table_id=uuid.UUID("e5c51369-8e71-4ec6-b027-1f92bdc14762"), table_version=0
-)
-formulation_data_source = GemTableDataSource(
-    table_id=uuid.UUID("6894a181-81d2-4304-9dfa-a6c5b114d8bc"), table_version=0
+data_source = SnapshotDataSource(snapshot_id=uuid.UUID("e5c51369-8e71-4ec6-b027-1f92bdc14762"))
+formulation_data_source = SnapshotDataSource(
+    snapshot_id=uuid.UUID("6894a181-81d2-4304-9dfa-a6c5b114d8bc")
 )
 
 

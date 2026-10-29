@@ -182,7 +182,6 @@ Although it contains no attributes, we should pay particular attention to the te
 These will be used to convert GEMD data into formulations.
 It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
 The mixing template defines the allowed ingredient labels.
-The table helpers discover ingredient names from the ingredient specs of process specs that use this template.
 
 .. code-block:: python
 
@@ -203,8 +202,8 @@ The table helpers discover ingredient names from the ingredient specs of process
     For simplicity, this example only includes one type of lime juice, "bottled lime juice," but we might also have "fresh-squeezed lime juice" or several batches of bottled lime juice, each with their own unique identifier.
     In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
 
-    Use consistent ingredient names to group the same type of input under one super-column in the table.
-    In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
+    Use consistent ingredient names to group the same type of input together in the training data.
+    In this case, the use of lime juice in the margarita is described by the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 
     If a suitable set of names are not known, it is possible to be generic: "mixing input 1," "mixing input 2," etc.
 
@@ -264,196 +263,27 @@ A rendering of this example material history is shown below.
 
 Repeating this process once for each margarita sample, we can build up a rich dataset for machine learning.
 
-Building a Table
-----------------
+Creating a Snapshot
+-------------------
 
-We now build a GEM Table to represent the margaritas' material histories in tabular format.
-This table will be used as training data when building a machine learning graphical model.
-For more detailed information on GEM Tables, see the section on :doc:`data extraction <data_extraction>`.
-
-In order to make a GEM Table, we start with a Table Configuration object.
-In this example we will build up the configuration in small steps.
-As we will see, templates are crucial to configuring the table.
-
-The code below defines the rows and defines one column that contains the identifier of each row.
-
-.. code-block:: python
-
-    from citrine.resources.table_config import TableConfig
-    from citrine.gemtables.rows import MaterialRunByTemplate
-    from citrine.gemtables.variables import TerminalMaterialIdentifier
-    from citrine.gemtables.columns import IdentityColumn
-
-
-    material_templates_to_include = [
-        blended_margarita_template, simple_syrup_template, base_material_template
-    ]
-    scope = "margaritas-id"
-
-    config = TableConfig(
-        name="margarita formulations table",
-        description="",
-        datasets=[dataset.uid],
-        rows=[
-            MaterialRunByTemplate(
-                templates=[LinkByUID.from_entity(t, scope) for t in material_templates_to_include]
-            )
-        ],
-        variables=[TerminalMaterialIdentifier(name="name", headers=["name"], scope=scope)],
-        columns=[IdentityColumn(data_source="name")]
-    )
-
-Let's step through the pieces of this code.
-We gave the configuration a name and description for human-readability.
-We defined the datasets that contain the material histories; for the purposes of this example we assume everything is in the dataset ``dataset``.
-We then defined the rows as being based on all materials that link to one of a set of Material Templates.
-For the purposes of this example, assume that we have defined separate material templates for the base materials, the simple syrups, the margaritas, and the blended margaritas.
-Notice that we do _not_ include the material template for the unblended margaritas.
-For the purposes of machine learning, we want to compress the mixing and blending into a single training row.
-
-We define a single variable/column that contains a unique identifier for each row.
-Every object on the Citrine Platform has a unique id with scope ``id``, but these are difficult for a human to read.
-In this example we assume that we have given the materials human-readable uniquely identifying names with scope "margaritas-id."
-These names will appear in the first column of the table.
-
-We now use the :func:`~citrine.resources.table_config.TableConfig.add_columns` method to expand the configuration.
-We first use the :class:`~citrine.gemtables.variables.AttributeByTemplate` variable to record the attributes.
-For those attributes that may have non-zero uncertainty, we include columns for both mean and standard deviation.
-
-.. code-block:: python
-
-    from citrine.gemtables.variables import AttributeByTemplate
-    from citrine.gemtables.columns import MeanColumn, StdDevColumn
-
-    scope = "margaritas-id"
-    config = config.add_columns(
-        variable=AttributeByTemplate(
-            name="price",
-            headers=["price"],
-            template=LinkByUID(scope, "price template")
-        ),
-        columns=[MeanColumn(data_source="price")]
-    )
-    config = config.add_columns(
-        variable=AttributeByTemplate(
-            name="sucrose fraction",
-            headers=["sucrose fraction"],
-            template=LinkByUID(scope, "sucrose fraction template")
-        ),
-        columns=[MeanColumn(data_source="sucrose fraction"), StdDevColumn(data_source="sucrose fraction")]
-    )
-    config = config.add_columns(
-        variable=AttributeByTemplate(
-            name="blend time",
-            headers=["margarita", "blend time"],
-            template=LinkByUID(scope, "blend time template")
-        ),
-        columns=[MeanColumn(data_source="blend time")]
-    )
-    config = config.add_columns(
-        variable=AttributeByTemplate(
-            name="tastiness",
-            headers=["margarita", "tastiness"],
-            template=LinkByUID(scope, "tastiness property template")
-        ),
-        columns=[MeanColumn(data_source="tastiness"), StdDevColumn(data_source="tastiness")]
-    )
-
-The ``name`` is only used to link a variable to columns.
-The ``headers`` are used to structure the table *and also create the names of the eventual descriptors*.
-The figure below shows how some of the columns may be rendered in a GEM Table.
-Because they both have the "margarita" heading, "blend time" and "tastiness" are grouped together.
-
-.. figure:: _static/GEM_Table_formulation_properties.png
-    :align: center
-
-    GEM Table "margarita properties" columns
-
-We now add a set of three variables for each mixing ingredient: one for the identifier, one for the quantity, and one for the labels.
-The code block below shows how we would add a set of columns for "simple syrup."
-This must be repeated once for each ingredient.
-
-.. code-block:: python
-
-    from citrine.gemtables.variables import (
-        IngredientIdentifierInOutput,
-        IngredientQuantityInOutput,
-        IngredientLabelsSetInOutput,
-        IngredientQuantityDimension
-    )
-    from citrine.gemtables.columns import ConcatColumn
-
-    ing_name = "simple syrup"
-    mix_template_link = LinkByUID.from_entity(mix_template, scope)
-    identity_var = IngredientIdentifierInOutput(
-        name=f"{ing_name} identifier",
-        headers=[ing_name, "Identifier"],
-        ingredient_name=ing_name,
-        process_templates=[mix_template_link],
-        scope=scope
-    )
-    quantity_var = IngredientQuantityInOutput(
-        name=f"{ing_name} mass",
-        headers=[ing_name, "Mass"],
-        process_templates=[mix_template_link],
-        ingredient_name=ing_name,
-        quantity_dimension=IngredientQuantityDimension.MASS,
-    )
-    labels_var = IngredientLabelsSetInOutput(
-        name=f"{ing_name} labels",
-        headers=[ing_name, "Labels"],
-        process_templates=[mix_template_link],
-        ingredient_name=ing_name
-    )
-    config = config.add_columns(
-        variable=identity_var, columns=[IdentityColumn(data_source=identity_var.name)]
-    )
-    config = config.add_columns(
-        variable=quantity_var, columns=[MeanColumn(data_source=quantity_var.name)],
-    )
-    config = config.add_columns(
-        variable=labels_var,
-        columns=[
-            ConcatColumn(
-                data_source=labels_var.name,
-                subcolumn=IdentityColumn(data_source=labels_var.name)
-            )
-        ]
-    )
-
-The figure below shows how these three columns may be rendered in a GEM Table.
-
-.. figure:: _static/GEM_Table_formulation_ingredient.png
-    :align: center
-
-    GEM Table "simple syrup ingredient" columns
-
-Lastly, we register the configuration and build the table.
-Note that this can be a long-running process depending on how many cells are in the table.
-To build the table asynchronously, use :func:`~citrine.resources.gemtables.GemTableCollection.initiate_build`.
-
-.. code-block:: python
-
-    config = project.table_configs.register(config)
-    table = project.tables.build_from_config(config)
+We now take a snapshot of the margaritas' material histories.
+This snapshot will be used as training data when building a machine learning graphical model.
+Create the snapshot on the Citrine Platform from the dataset ``dataset``, then copy its id.
 
 Training a Predictor
 --------------------
 
-With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
-The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the GEM Table, ``table``.
-The Citrine Platform will automatically recognize when a GEM Table contains formulations
+With the snapshot in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
+The first step is to define a :class:`~citrine.informatics.data_sources.SnapshotDataSource` based on the snapshot id.
+The Citrine Platform will automatically recognize when a data source contains formulations
 and produce a :class:`~citrine.informatics.descriptors.FormulationDescriptor` with key 'Formulation'
 for the training data.
 
 .. code-block:: python
 
-    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.data_sources import SnapshotDataSource
 
-    data_source = GemTableDataSource(
-        table_id=table.uid,
-        table_version=table.version
-    )
+    data_source = SnapshotDataSource(snapshot_id=snapshot_id)
 
 The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation -- it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
 This flattening efficiently teaches the predictor about the relationship between materials.
@@ -497,7 +327,7 @@ one that computes the mean price over all ingredients (this will be used to cons
         ingredients={"bottled lime juice", "water", "ice", "sugar", "tequila", "triple sec"},
     )
 
-    # These descriptors must match up with the Variable in the GEM Table and the associated Attribute Template
+    # These descriptors must match up with the associated Attribute Template
     price = RealDescriptor("price", lower_bound=0, upper_bound=100, units="1/kg")
     sucrose_fraction = RealDescriptor("sucrose fraction", lower_bound=0, upper_bound=1, units="")
     mean_price_predictor = MeanPropertyPredictor(
@@ -563,7 +393,7 @@ We also use ``blend time`` as an input.
     )
 
 Where did the descriptor keys ``margarita~blend time`` and ``margarita~tastiness`` come from?
-They came from concatenating the headers in the variables in the table, and the bounds and units came from the attribute templates.
+The keys came from the data source, and the bounds and units came from the attribute templates.
 It's a lot to keep track of, which is why there is the :func:`~citrine.resources.descriptors.DescriptorMethods.from_data_source` method.
 Calling ``project.descriptors.from_data_source(data_source)`` returns a list of all of the descriptors emitted by the data source.
 Make sure that these are the descriptors you are using as inputs to your predictor.

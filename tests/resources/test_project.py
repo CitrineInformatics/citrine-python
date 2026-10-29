@@ -7,7 +7,6 @@ from dateutil.parser import parse
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.predictors import GraphPredictor
 from citrine.resources.dataset import Dataset
-from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.team import READ, TeamMember
 from tests.utils.factories import ProjectDataFactory, TeamDataFactory, UserDataFactory
@@ -148,10 +147,6 @@ def test_generative_design_executions_get_project_id(project):
 
 def test_branches_get_project_id(project):
     assert project.uid == project.branches.project_id
-
-
-def test_ara_definitions_get_project_id(project):
-    assert project.uid == project.table_configs.project_id
 
 
 def test_failed_register():
@@ -496,7 +491,3 @@ def test_list_members(project, session):
     assert expect_call_1 == session.calls[0]
     assert expect_call_2 == session.calls[1]
     assert isinstance(members[0], TeamMember)
-
-
-def test_project_tables(project):
-    assert isinstance(project.tables, GemTableCollection)
