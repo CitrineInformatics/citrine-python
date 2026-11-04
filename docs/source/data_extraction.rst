@@ -90,7 +90,7 @@ In addition to defining variables, rows, and columns individually, there are con
 Use :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients` to add ingredient variables and columns to a copy of a Table Config.
 Provide a process template and a team with access to the data.
 The method finds process specs that use the template, then collects distinct names from their ingredient specs.
-It uses the data accessible to the team and adds columns in sorted ingredient name order.
+It reads only specs in the Table Config's datasets and adds columns in sorted ingredient name order.
 Each name has variables and columns for the ingredient identifier, labels, and quantity.
 Choose how to report quantities: mass fraction, volume fraction, number fraction, or absolute quantity.
 Absolute quantities also have a column for units.

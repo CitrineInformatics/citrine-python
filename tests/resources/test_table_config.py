@@ -420,6 +420,25 @@ def test_add_columns():
     assert "already used" in str(excinfo.value)
 
 
+DATASET_ID = uuid4()
+
+
+def scoped_defn() -> TableConfig:
+    return TableConfig(
+        name="scoped",
+        description="scoped",
+        datasets=[DATASET_ID],
+        rows=[],
+        variables=[],
+        columns=[],
+    )
+
+
+def _dataset(uid: UUID = DATASET_ID) -> dict:
+    """Build the response to getting one dataset."""
+    return DatasetDataFactory(id=str(uid))
+
+
 def _page(*objects) -> dict:
     """Build one page of a relation listing from the given objects."""
     return {"contents": [obj.dump() for obj in objects]}
@@ -443,6 +462,7 @@ def test_add_all_ingredients_via_team(session, team):
     def queue_discovery():
         session.set_responses(
             template.dump(),
+            _dataset(),
             _page(spec1, spec2),
             _page(*_ingredient_specs("gold nanoparticles", "methanol")),
             _page(*_ingredient_specs("methanol", "acetone")),
@@ -450,7 +470,7 @@ def test_add_all_ingredients_via_team(session, team):
 
     # WHEN we add all ingredients in a volume basis
     queue_discovery()
-    empty = empty_defn()
+    empty = scoped_defn()
     def1 = empty.add_all_ingredients(
         process_template=process_link,
         team=team,
@@ -514,14 +534,77 @@ def test_add_all_ingredients_via_team(session, team):
         )
 
     # If no process spec uses the template then no columns are added
-    session.set_responses(template.dump(), _page())
-    def3 = empty_defn().add_all_ingredients(
+    session.set_responses(template.dump(), _dataset(), _page())
+    def3 = scoped_defn().add_all_ingredients(
         process_template=process_link,
         team=team,
         quantity_dimension=IngredientQuantityDimension.VOLUME,
     )
     assert def3.variables == []
     assert def3.columns == []
+
+
+def test_add_all_ingredients_searches_each_dataset(session, team):
+    """Discovery searches only the Table Config's datasets, and each of them."""
+    # GIVEN a Table Config with two datasets, only the first of which has process specs
+    objects_dataset = uuid4()
+    other_dataset = uuid4()
+    defn = TableConfig(
+        name="scoped",
+        description="scoped",
+        datasets=[objects_dataset, other_dataset],
+        rows=[],
+        variables=[],
+        columns=[],
+    )
+    process_link = LinkByUID("id", "3a308f78-e341-f39c-8076-35a2c88292ad")
+    template = ProcessTemplate("mixing", uids={"id": process_link.id})
+    process_spec = ProcessSpec("mix", uids={"id": str(uuid4())})
+    # AND the process spec has an ingredient spec in each dataset
+    session.set_responses(
+        template.dump(),
+        _dataset(objects_dataset),
+        _dataset(other_dataset),
+        _page(process_spec),
+        _page(*_ingredient_specs("methanol")),
+        _page(*_ingredient_specs("acetone")),
+        _page(),
+    )
+
+    # WHEN we add all ingredients
+    defn = defn.add_all_ingredients(
+        process_template=process_link,
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+
+    # THEN the ingredients from both datasets get columns
+    assert [var.headers[1] for var in defn.variables[::3]] == ["acetone", "methanol"]
+    # AND the process spec listing is scoped to each dataset in turn
+    listings = [call for call in session.calls if call.path.endswith("/process-specs")]
+    assert [call.params["dataset_id"] for call in listings] == [
+        str(objects_dataset),
+        str(other_dataset),
+    ]
+    # AND the process spec's ingredients are looked up in each dataset
+    lookups = [call for call in session.calls if call.path.endswith("/ingredient-specs")]
+    assert [call.params["dataset_id"] for call in lookups] == [
+        str(objects_dataset),
+        str(other_dataset),
+    ]
+
+
+def test_add_all_ingredients_without_datasets(session, team):
+    """A Table Config with no datasets sends no discovery requests."""
+    process_link = LinkByUID("id", "3a308f78-e341-f39c-8076-35a2c88292ad")
+    session.set_response(ProcessTemplate("mixing", uids={"id": process_link.id}).dump())
+    defn = empty_defn().add_all_ingredients(
+        process_template=process_link,
+        team=team,
+        quantity_dimension=IngredientQuantityDimension.VOLUME,
+    )
+    assert defn.variables == []
+    assert session.num_calls == 1
 
 
 def test_add_all_ingredients_no_principal(session):
@@ -546,6 +629,7 @@ def test_add_all_ingredients_in_output_via_team(session, team):
 
     def queue_discovery():
         session.set_responses(
+            _dataset(),
             _page(spec1),
             _page(*_ingredient_specs(*names1)),
             _page(spec2),
@@ -554,7 +638,7 @@ def test_add_all_ingredients_in_output_via_team(session, team):
 
     # WHEN we add all ingredients in a volume basis
     queue_discovery()
-    empty = empty_defn()
+    empty = scoped_defn()
     def1 = empty.add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
         team=team,
@@ -617,8 +701,10 @@ def test_add_all_ingredients_in_output_via_team(session, team):
         )
 
     # If one template has no process specs then the other template's names are used
-    session.set_responses(_page(), _page(spec2), _page(*_ingredient_specs(*names2)))
-    def3 = empty_defn().add_all_ingredients_in_output(
+    session.set_responses(
+        _dataset(), _page(), _page(spec2), _page(*_ingredient_specs(*names2))
+    )
+    def3 = scoped_defn().add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
         team=team,
         quantity_dimension=IngredientQuantityDimension.VOLUME,
@@ -627,8 +713,8 @@ def test_add_all_ingredients_in_output_via_team(session, team):
     assert [var.headers[0] for var in def3.variables[::3]] == sorted(names2)
 
     # If no template has process specs then no columns are added
-    session.set_responses(_page())
-    def4 = empty_defn().add_all_ingredients_in_output(
+    session.set_responses(_dataset(), _page())
+    def4 = scoped_defn().add_all_ingredients_in_output(
         process_templates=[process1_link, process2_link],
         team=team,
         quantity_dimension=IngredientQuantityDimension.VOLUME,

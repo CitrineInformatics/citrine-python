@@ -31,19 +31,26 @@ from citrine.gemtables.variables import (
     Variable,
 )
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
-from citrine.resources.dataset import DatasetCollection
+from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_template import ProcessTemplate
 
 if TYPE_CHECKING:  # pragma: no cover
     from citrine.resources.team import Team
 
 
-def _distinct_ingredient_names(team: "Team", process_template: LinkByUID) -> set[str]:
-    """Return distinct ingredient names from process specs that use the template."""
+def _distinct_ingredient_names(process_template: LinkByUID, datasets: list[Dataset]) -> set[str]:
+    """Return distinct ingredient names from process specs that use the template.
+
+    Use specs from the provided datasets as a Table Config builds rows from its datasets.
+    An ingredient spec may live in a different dataset from its process spec.
+    """
     names = set()
-    for process_spec in team.process_specs.list_by_template(process_template):
-        for ingredient_spec in team.ingredient_specs.list_by_process(process_spec):
-            names.add(ingredient_spec.name)
+    for dataset in datasets:
+        for process_spec in dataset.process_specs.list_by_template(process_template):
+            for ingredient_dataset in datasets:
+                ingredient_specs = ingredient_dataset.ingredient_specs
+                for ingredient_spec in ingredient_specs.list_by_process(process_spec):
+                    names.add(ingredient_spec.name)
     return names
 
 
@@ -248,9 +255,9 @@ class TableConfig(Resource["TableConfig"]):
         """Add ingredient variables and columns using data associated with a process template.
 
         Collect distinct ingredient names from the ingredient specs of process specs that use
-        the template. Discovery includes the data accessible to the team. Add columns in sorted
-        ingredient name order, with columns for the identifier, labels, and quantity of each
-        ingredient. Absolute quantities also have a column for units.
+        the template. Discovery reads only specs in this Table Config's datasets. Add columns in
+        sorted ingredient name order, with columns for the identifier, labels, and quantity of
+        each ingredient. Absolute quantities also have a column for units.
 
         Return a new Table Config with the added variables and columns. If discovery finds no
         ingredient names, return a copy with the same variables and columns.
@@ -280,7 +287,8 @@ class TableConfig(Resource["TableConfig"]):
 
         new_variables = []
         new_columns = []
-        for name in sorted(_distinct_ingredient_names(team, link)):
+        datasets = [team.datasets.get(uid) for uid in self.datasets]
+        for name in sorted(_distinct_ingredient_names(link, datasets)):
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
                 name="_".join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
@@ -350,9 +358,10 @@ class TableConfig(Resource["TableConfig"]):
         """Add ingredient variables and columns for the outputs of process templates.
 
         Collect distinct ingredient names from the ingredient specs of process specs that use
-        any of the templates. Discovery includes the data accessible to the team. Combine names
-        across templates and add columns in sorted ingredient name order. Each name has columns
-        for the identifier, labels, and quantity. Absolute quantities also have a column for units.
+        any of the templates. Discovery reads only specs in this Table Config's datasets. Combine
+        names across templates and add columns in sorted ingredient name order. Each name has
+        columns for the identifier, labels, and quantity. Absolute quantities also have a column
+        for units.
 
         Populate columns using the "InOutput" method, which stops searching at processes that
         use any of the supplied templates. Return a new Table Config with the added variables
@@ -380,9 +389,10 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction",
         }
+        datasets = [team.datasets.get(uid) for uid in self.datasets]
         ingredient_names = set()
         for process_template_link in process_templates:
-            ingredient_names.update(_distinct_ingredient_names(team, process_template_link))
+            ingredient_names.update(_distinct_ingredient_names(process_template_link, datasets))
 
         new_variables = []
         new_columns = []
