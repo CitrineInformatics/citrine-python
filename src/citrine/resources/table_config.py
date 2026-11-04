@@ -31,11 +31,27 @@ from citrine.gemtables.variables import (
     Variable,
 )
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
-from citrine.resources.dataset import DatasetCollection
+from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_template import ProcessTemplate
 
 if TYPE_CHECKING:  # pragma: no cover
     from citrine.resources.team import Team
+
+
+def _distinct_ingredient_names(process_template: LinkByUID, datasets: list[Dataset]) -> set[str]:
+    """Return distinct ingredient names from process specs that use the template.
+
+    Use specs from the provided datasets as a Table Config builds rows from its datasets.
+    An ingredient spec may live in a different dataset from its process spec.
+    """
+    names = set()
+    for dataset in datasets:
+        for process_spec in dataset.process_specs.list_by_template(process_template):
+            for ingredient_dataset in datasets:
+                ingredient_specs = ingredient_dataset.ingredient_specs
+                for ingredient_spec in ingredient_specs.list_by_process(process_spec):
+                    names.add(ingredient_spec.name)
+    return names
 
 
 class TableBuildAlgorithm(BaseEnumeration):
@@ -236,11 +252,15 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for all of the possible ingredients in a process.
+        """Add ingredient variables and columns using data associated with a process template.
 
-        For each allowed ingredient name in the process template there is a column for the id of
-        the ingredient, id for ingredient labels, and a column for the quantity of the ingredient.
-        If the quantities are given in absolute amounts then there is also a column for units.
+        Collect distinct ingredient names from the ingredient specs of process specs that use
+        the template. Discovery reads only specs in this Table Config's datasets. Add columns in
+        sorted ingredient name order, with columns for the identifier, labels, and quantity of
+        each ingredient. Absolute quantities also have a column for units.
+
+        Return a new Table Config with the added variables and columns. If discovery finds no
+        ingredient names, return a copy with the same variables and columns.
 
         Parameters
         ------------
@@ -264,15 +284,11 @@ class TableConfig(Resource["TableConfig"]):
         }
         link = _make_link_by_uid(process_template)
         process: ProcessTemplate = team.process_templates.get(uid=link)
-        if not process.allowed_names:
-            raise RuntimeError(
-                f"Cannot add ingredients for process template '{process.name}' because it "
-                "has no defined ingredients (allowed_names is not defined)."
-            )
 
         new_variables = []
         new_columns = []
-        for name in process.allowed_names:
+        datasets = [team.datasets.get(uid) for uid in self.datasets]
+        for name in sorted(_distinct_ingredient_names(link, datasets)):
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
                 name="_".join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
@@ -339,21 +355,26 @@ class TableConfig(Resource["TableConfig"]):
         scope: str = CITRINE_SCOPE,
         unit: str | None = None,
     ):
-        """Add variables and columns for all possible ingredients in a list of processes.
+        """Add ingredient variables and columns for the outputs of process templates.
 
-        For each allowed ingredient name in the union of all passed process templates there is a
-        column for the id of the ingredient and a column for the quantity of the ingredient.
-        Columns are filled with the "InOutput" method halting at any of the passed process
-        templates. If the quantities are given in absolute amounts then there is also a column for
-        units.
+        Collect distinct ingredient names from the ingredient specs of process specs that use
+        any of the templates. Discovery reads only specs in this Table Config's datasets. Combine
+        names across templates and add columns in sorted ingredient name order. Each name has
+        columns for the identifier, labels, and quantity. Absolute quantities also have a column
+        for units.
+
+        Populate columns using the "InOutput" method, which stops searching at processes that
+        use any of the supplied templates. Return a new Table Config with the added variables
+        and columns. If discovery finds no ingredient names, return a copy with the same
+        variables and columns.
 
         Parameters
         ------------
         process_templates: list[LinkByUID]
-            registered process templates from which to pull allowed ingredients and at which to
-            halt searching
+            registered process templates used to discover ingredient names and stop the
+            "InOutput" search
         team: Team
-            a team that has access to the process template
+            a team that has access to the process templates
         quantity_dimension: IngredientQuantityDimension
             the dimension in which to report ingredient quantities
         scope: str | None
@@ -368,20 +389,14 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction",
         }
-        union_allowed_names = []
+        datasets = [team.datasets.get(uid) for uid in self.datasets]
+        ingredient_names = set()
         for process_template_link in process_templates:
-            process: ProcessTemplate = team.process_templates.get(process_template_link)
-            if not process.allowed_names:
-                raise RuntimeError(
-                    f"Cannot add ingredients for process template '{process.name}' "
-                    "because it has no defined ingredients (allowed_names is not defined)"
-                )
-            else:
-                union_allowed_names = list(set(union_allowed_names) | set(process.allowed_names))
+            ingredient_names.update(_distinct_ingredient_names(process_template_link, datasets))
 
         new_variables = []
         new_columns = []
-        for name in union_allowed_names:
+        for name in sorted(ingredient_names):
             identifier_variable = IngredientIdentifierInOutput(
                 name="_".join([name, str(hash(name + scope))]),
                 headers=[name, scope],
