@@ -74,11 +74,18 @@ class IngestionErrorLevel(BaseEnumeration):
     INFO = "info"
 
 
+class _IngestionErrorTypeProperty(properties.Enumeration):
+    """Maps error types this SDK doesn't know yet to UNKNOWN_ERROR, so the trace's msg survives."""
+
+    def _deserialize(self, value: str) -> IngestionErrorType:
+        return IngestionErrorType.from_str(value) or IngestionErrorType.UNKNOWN_ERROR
+
+
 class IngestionErrorTrace(Resource["IngestionErrorTrace"]):
     """[ALPHA] Detailed information about an ingestion issue."""
 
     family = properties.Enumeration(IngestionErrorFamily, "family")
-    error_type = properties.Enumeration(IngestionErrorType, "error_type")
+    error_type = _IngestionErrorTypeProperty(IngestionErrorType, "error_type")
     level = properties.Enumeration(IngestionErrorLevel, "level")
     msg = properties.String("msg")
     dataset_file_id = properties.Optional(properties.UUID(), "dataset_file_id", default=None)

@@ -396,3 +396,20 @@ def test_status_parses_server_error_types(error_type):
         )
     )
     assert status.errors[0].error_type == IngestionErrorType(error_type)
+
+
+def test_status_falls_back_on_unknown_error_type():
+    status = IngestionStatus.build(
+        IngestionStatusResponseDataFactory(
+            errors=[
+                {
+                    "family": "data",
+                    "error_type": "some_future_error",
+                    "level": "error",
+                    "msg": "A server-only ingestion error",
+                }
+            ]
+        )
+    )
+    assert status.errors[0].error_type == IngestionErrorType.UNKNOWN_ERROR
+    assert status.errors[0].msg == "A server-only ingestion error"
