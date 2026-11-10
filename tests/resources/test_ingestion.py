@@ -364,3 +364,35 @@ def test_ingestion_flow(
     )
     with pytest.raises(IngestionException, match="Missing ingredient"):
         ingest.build_objects()
+
+
+@pytest.mark.parametrize(
+    "error_type",
+    [
+        "file_extension_is_not_defined",
+        "missing_row_identifier",
+        "dataset_file_id_not_found",
+        "dataset_file_version_not_found",
+        "empty_file",
+        "type_hint_not_found",
+        "type_hint_found_multiple_times",
+        "decode_file_error",
+        "circular_reference",
+        "template_not_found_for_column",
+        "mixed_amount_and_ingredient",
+    ],
+)
+def test_status_parses_server_error_types(error_type):
+    status = IngestionStatus.build(
+        IngestionStatusResponseDataFactory(
+            errors=[
+                {
+                    "family": "data",
+                    "error_type": error_type,
+                    "level": "error",
+                    "msg": "Server-side ingestion error",
+                }
+            ]
+        )
+    )
+    assert status.errors[0].error_type == IngestionErrorType(error_type)
