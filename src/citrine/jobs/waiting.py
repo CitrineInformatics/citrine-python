@@ -5,12 +5,8 @@ from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._rest.collection import Collection
 from citrine.informatics.executions import PredictorEvaluation
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.executions.generative_design_execution import GenerativeDesignExecution
-from citrine.informatics.executions.sample_design_space_execution import SampleDesignSpaceExecution
 
-ExecutionType = (
-    PredictorEvaluation | DesignExecution | GenerativeDesignExecution | SampleDesignSpaceExecution
-)
+ExecutionType = PredictorEvaluation | DesignExecution
 
 
 class ConditionTimeoutError(RuntimeError):

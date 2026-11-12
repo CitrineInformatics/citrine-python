@@ -9,12 +9,13 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import FeatureRemovedError
+from citrine.informatics.generative_design import GENERATIVE_DESIGN_REMOVED
 from citrine.resources.branch import BranchCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
-from citrine.resources.generative_design_execution import GenerativeDesignExecutionCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.predictor_evaluation import PredictorEvaluationCollection
 from citrine.resources.project_member import ProjectMember
@@ -127,9 +128,9 @@ class Project(Resource["Project"]):
         return DesignWorkflowCollection(project_id=self.uid, session=self.session)
 
     @property
-    def generative_design_executions(self) -> GenerativeDesignExecutionCollection:
-        """Return a collection representing all visible generative design executions."""
-        return GenerativeDesignExecutionCollection(project_id=self.uid, session=self.session)
+    def generative_design_executions(self):
+        """Removed. Accessing it raises :class:`~citrine.exceptions.FeatureRemovedError`."""
+        raise FeatureRemovedError(GENERATIVE_DESIGN_REMOVED)
 
     @property
     def tables(self) -> GemTableCollection:

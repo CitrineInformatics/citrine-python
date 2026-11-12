@@ -7,7 +7,8 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine.resources.sample_design_space_execution import SampleDesignSpaceExecutionCollection
+from citrine.exceptions import FeatureRemovedError
+from citrine.informatics.design_spaces.sample_design_space import SAMPLING_REMOVED
 
 __all__ = ["TopLevelDesignSpace"]
 
@@ -72,7 +73,5 @@ class TopLevelDesignSpace(PolymorphicSerializable["TopLevelDesignSpace"], Asynch
 
     @property
     def sample_design_space_executions(self):
-        """Start a Sample Design Space Execution using the current Design Space."""
-        return SampleDesignSpaceExecutionCollection(
-            project_id=self._project_id, design_space_id=self.uid, session=self._session
-        )
+        """Removed. Accessing it raises :class:`~citrine.exceptions.FeatureRemovedError`."""
+        raise FeatureRemovedError(SAMPLING_REMOVED)
