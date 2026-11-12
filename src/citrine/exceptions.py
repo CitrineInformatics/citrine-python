@@ -138,6 +138,13 @@ class WorkflowNotReadyException(RetryableException):
     """The workflow is not ready to be executed. I.e., still validating. (http status 425)."""
 
 
+class FeatureRemovedError(NonRetryableException, AttributeError):
+    """The feature has been removed from the Citrine Platform.
+
+    It is also an AttributeError, so hasattr() and introspection skip the removed accessors.
+    """
+
+
 class PollingTimeoutError(NonRetryableException):
     """Polling for an asynchronous result has exceeded the timeout."""
 

@@ -1,18 +1,12 @@
-from citrine._serialization import properties
-from citrine._serialization.serializable import Serializable
+"""Design space sampling has been removed; this name remains so existing scripts fail clearly."""
+
+from citrine.exceptions import FeatureRemovedError
+
+SAMPLING_REMOVED = "Design space sampling has been removed from the Citrine Platform."
 
 
-class SampleDesignSpaceInput(Serializable["SampleDesignSpaceInput"]):
-    """A Citrine Sample Design Space Execution Input.
+class SampleDesignSpaceInput:
+    """Removed. Constructing one raises :class:`~citrine.exceptions.FeatureRemovedError`."""
 
-    Parameters
-    ----------
-    n_candidates: int
-        The number of non-correlated samples to draw from the design space domain.
-
-    """
-
-    n_candidates = properties.Integer("n_candidates")
-
-    def __init__(self, *, n_candidates: int):
-        self.n_candidates: int = n_candidates
+    def __init__(self, *args, **kwargs):
+        raise FeatureRemovedError(SAMPLING_REMOVED)
