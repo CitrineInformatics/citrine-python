@@ -68,7 +68,6 @@ def valid_data():
                 ]
             ],
             "allowed_labels": ["a", "b"],
-            "allowed_names": ["a name"],
             "description": "a long description",
         },
         file_links=[{"type": "file_link", "filename": "cake_recipe.txt", "url": "www.baking.com"}],
@@ -103,7 +102,6 @@ def test_simple_deserialization(valid_data):
         ],
         description="a long description",
         allowed_labels=["a", "b"],
-        allowed_names=["a name"],
     )
     assert process_spec.name == "Process 1"
     assert process_spec.notes == "make sure to use oven mitts"
@@ -118,4 +116,6 @@ def test_serialization(valid_data):
     serialized = process_spec.dump()
     # Audit info & dataset are not included in the dump
     serialized["audit_info"] = valid_data["audit_info"]
+    # The response lacks the deprecated allowed_names, which gemd dumps as an empty list
+    assert serialized["template"].pop("allowed_names") == []
     assert serialized == valid_data

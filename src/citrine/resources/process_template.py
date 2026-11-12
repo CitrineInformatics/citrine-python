@@ -1,5 +1,6 @@
 """Resources that represent process templates."""
 
+import warnings
 from collections.abc import Sequence
 
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -56,6 +57,12 @@ class ProcessTemplate(
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
+    allowed_labels: list[str], optional
+        Labels that ingredients of a process with this template may carry.
+    allowed_names: list[str], optional
+        [DEPRECATED] The platform ignores this value, and responses no longer include it.
+        Ingredient names are now discovered from ingredient specs. Passing a non-empty list emits a
+        DeprecationWarning. This argument will be removed in a future release.
 
     """
 
@@ -89,6 +96,15 @@ class ProcessTemplate(
         description: str | None = None,
         tags: list[str] | None = None,
     ):
+        # gemd serializes an unset allowed_names as an empty list, so only a non-empty list warns
+        if allowed_names:
+            warnings.warn(
+                "As of 5.3.0, 'allowed_names' on ProcessTemplate is deprecated. The platform "
+                "ignores it and discovers ingredient names from ingredient specs. It will be "
+                "removed in a future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         if uids is None:
             uids = dict()
         super(ObjectTemplate, self).__init__()
