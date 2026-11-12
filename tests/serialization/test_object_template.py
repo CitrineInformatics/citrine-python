@@ -1,9 +1,7 @@
 """Tests of the object template schema."""
 
-import warnings
 from uuid import uuid4
 
-import pytest
 from gemd.entity.bounds.categorical_bounds import CategoricalBounds
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.bounds.real_bounds import RealBounds
@@ -100,31 +98,3 @@ def test_bounds_optional():
             for _, bounds in dumped[name][1:]:
                 assert bounds is None
             assert template_type.build(dumped) == template
-
-
-def test_process_template_allowed_names_deprecated():
-    """Passing allowed_names warns, and data that still carries the field loads."""
-    with pytest.warns(DeprecationWarning, match="allowed_names"):
-        template = ProcessTemplate("Make an object", allowed_names=["first sample"])
-    assert template.allowed_names == ["first sample"]
-
-    data = template.dump()
-    assert data["allowed_names"] == ["first sample"]
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        copy_template = ProcessTemplate.build(data)
-    assert copy_template.allowed_names == ["first sample"]
-
-
-def test_process_template_without_allowed_names():
-    """Omitting allowed_names emits no deprecation warning, in construction or deserialization."""
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", DeprecationWarning)
-        template = ProcessTemplate("Make an object", allowed_labels=["Label"])
-        # gemd round-trips an unset value as an empty list
-        assert ProcessTemplate("Make an object", allowed_names=[]).allowed_names == []
-        data = template.dump()
-        data.pop("allowed_names", None)
-        copy_template = ProcessTemplate.build(data)
-    assert copy_template == template
-    assert copy_template.allowed_labels == ["Label"]

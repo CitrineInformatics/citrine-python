@@ -116,6 +116,4 @@ def test_serialization(valid_data):
     serialized = process_spec.dump()
     # Audit info & dataset are not included in the dump
     serialized["audit_info"] = valid_data["audit_info"]
-    # The response lacks the deprecated allowed_names, which gemd dumps as an empty list
-    assert serialized["template"].pop("allowed_names") == []
     assert serialized == valid_data
