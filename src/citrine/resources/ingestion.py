@@ -53,6 +53,17 @@ class IngestionErrorType(BaseEnumeration):
     INCOMPATIBLE_UNITS = "incompatible_units"
     EXISTING_TEMPLATE_WITH_REAL_BOUNDS = "existing_template_with_real_bounds"
     EMPTY_ASPECT_NAME = "empty_aspect_name"
+    FILE_EXTENSION_IS_NOT_DEFINED = "file_extension_is_not_defined"
+    MISSING_ROW_IDENTIFIER = "missing_row_identifier"
+    DATASET_FILE_ID_NOT_FOUND = "dataset_file_id_not_found"
+    DATASET_FILE_VERSION_NOT_FOUND = "dataset_file_version_not_found"
+    EMPTY_FILE = "empty_file"
+    TYPE_HINT_NOT_FOUND = "type_hint_not_found"
+    TYPE_HINT_FOUND_MULTIPLE_TIMES = "type_hint_found_multiple_times"
+    DECODE_FILE_ERROR = "decode_file_error"
+    CIRCULAR_REFERENCE = "circular_reference"
+    TEMPLATE_NOT_FOUND_FOR_COLUMN = "template_not_found_for_column"
+    MIXED_AMOUNT_AND_INGREDIENT = "mixed_amount_and_ingredient"
 
 
 class IngestionErrorLevel(BaseEnumeration):
@@ -63,11 +74,18 @@ class IngestionErrorLevel(BaseEnumeration):
     INFO = "info"
 
 
+class _IngestionErrorTypeProperty(properties.Enumeration):
+    """Maps error types this SDK doesn't know yet to UNKNOWN_ERROR, so the trace's msg survives."""
+
+    def _deserialize(self, value: str) -> IngestionErrorType:
+        return IngestionErrorType.from_str(value) or IngestionErrorType.UNKNOWN_ERROR
+
+
 class IngestionErrorTrace(Resource["IngestionErrorTrace"]):
     """[ALPHA] Detailed information about an ingestion issue."""
 
     family = properties.Enumeration(IngestionErrorFamily, "family")
-    error_type = properties.Enumeration(IngestionErrorType, "error_type")
+    error_type = _IngestionErrorTypeProperty(IngestionErrorType, "error_type")
     level = properties.Enumeration(IngestionErrorLevel, "level")
     msg = properties.String("msg")
     dataset_file_id = properties.Optional(properties.UUID(), "dataset_file_id", default=None)
