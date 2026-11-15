@@ -151,7 +151,7 @@ def test_get_history(collection, session):
         },
     )
     assert expected_call == session.last_call
-    assert run == cake
+    assert run == CitrineRun.build(cake.dump())
 
 
 def test_get_history_no_histories(collection, session):
@@ -558,7 +558,8 @@ def test_deep_equals(collection):
             registered.remove(x)
     assert len(registered) == 0, "All registered objects are in the flat list"
 
-    assert cake == CitrineRun.build(cake.dump()), "Equality works in hydrated form"
+    citrine_cake = CitrineRun.build(cake.dump())
+    assert citrine_cake == CitrineRun.build(citrine_cake.dump()), "Equality works in hydrated form"
 
 
 def test_nonmutating_dry_run(collection):

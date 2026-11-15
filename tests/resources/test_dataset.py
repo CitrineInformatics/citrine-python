@@ -399,7 +399,7 @@ def test_gemd_posts(dataset):
 def test_register_all_nested(dataset):
     cake = make_cake()
     after = dataset.register_all([cake], include_nested=True)
-    assert cake in after
+    assert MaterialRun.build(cake.dump()) in after
     assert len(after) == len(recursive_flatmap(cake, lambda o: [o], unidirectional=False))
 
 
