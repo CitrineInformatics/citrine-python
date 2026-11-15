@@ -1,0 +1,134 @@
+name: E2E Development-E2E
+
+# Runs the nextgen-devkit end-to-end suite against development-e2e, with
+# citrine installed from this checkout instead of from PyPI or a git ref.
+# Mirrors nextgen-devkit's pr-development.yml and test-e2e-aws.yml.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      devkit_ref:
+        description: "nextgen-devkit ref to take the e2e suite from"
+        required: false
+        default: "main"
+        type: string
+
+permissions:
+  contents: read
+  checks: write
+
+# Shares the group name with nextgen-devkit's pr-development.yml. GitHub scopes
+# concurrency groups to one repository, so this serializes runs here only.
+concurrency:
+  group: e2e-development-e2e
+  cancel-in-progress: false
+
+jobs:
+  e2e:
+    name: "E2E Tests (development-e2e)"
+    # Fork PRs receive no secrets, so run only for same-repo PRs and manual runs.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    timeout-minutes: 60
+    # nextgen-devkit runs this suite on the self-hosted ccl-builder runner.
+    # citrine-python is public, so this job uses a GitHub-hosted runner.
+    # If GitHub-hosted runners cannot reach development-e2e, change the runner.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout citrine-python
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: citrine-python
+          persist-credentials: false
+
+      # citrine-python cannot see the e2e secrets yet. Without them, skip the
+      # remaining steps so the job ends green instead of failing the PR.
+      - name: Check e2e secrets
+        id: secrets
+        env:
+          DEV_E2E_API_KEY_FE_ADMIN: ${{ secrets.DEV_E2E_API_KEY_FE_ADMIN }}
+          DEV_E2E_API_KEY_OTHER_USER: ${{ secrets.DEV_E2E_API_KEY_OTHER_USER }}
+          DEVKIT_APP_ID: ${{ secrets.DEVKIT_APP_ID }}
+          DEVKIT_APP_PRIVATE_KEY: ${{ secrets.DEVKIT_APP_PRIVATE_KEY }}
+        run: ./citrine-python/scripts/check_e2e_secrets.sh
+
+      - name: Generate GitHub App token
+        if: steps.secrets.outputs.available == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        id: generate_token
+        with:
+          app-id: ${{ secrets.DEVKIT_APP_ID }}
+          private-key: ${{ secrets.DEVKIT_APP_PRIVATE_KEY }}
+          owner: CitrineInformatics
+          repositories: |
+            nextgen-devkit
+
+      - name: Checkout nextgen-devkit
+        if: steps.secrets.outputs.available == 'true'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: CitrineInformatics/nextgen-devkit
+          ref: ${{ inputs.devkit_ref || 'main' }}
+          token: ${{ steps.generate_token.outputs.token }}
+          path: nextgen-devkit
+          persist-credentials: false
+
+      - name: Install Python
+        if: steps.secrets.outputs.available == 'true'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        if: steps.secrets.outputs.available == 'true'
+        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # 61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        with:
+          version: "latest"
+
+      # The suite's uv.lock pins citrine from PyPI. The --with layer takes
+      # precedence over the project environment; this step logs which citrine loads.
+      - name: Show citrine under test
+        if: steps.secrets.outputs.available == 'true'
+        working-directory: nextgen-devkit/end-to-end-tests
+        env:
+          CITRINE_PKG: "citrine @ file://${{ github.workspace }}/citrine-python"
+        run: uv run --with "$CITRINE_PKG" python -c "import citrine; print('citrine', citrine.__version__, citrine.__file__)"
+
+      # Same pytest command as nextgen-devkit's test-e2e-aws.yml, with citrine
+      # from this checkout. pytest creates the results/ directory for --junitxml.
+      - name: Run E2E tests
+        if: steps.secrets.outputs.available == 'true'
+        working-directory: nextgen-devkit/end-to-end-tests
+        env:
+          CITRINE_DEPLOYMENT_TYPE: "aws"
+          CITRINE_API_HOST: "development-e2e.citrine-platform.com"
+          CITRINE_API_PORT: "443"
+          CITRINE_API_SCHEME: "https"
+          CITRINE_API_KEY: "${{ secrets.DEV_E2E_API_KEY_FE_ADMIN }}"
+          CITRINE_API_KEY_2: "${{ secrets.DEV_E2E_API_KEY_OTHER_USER }}"
+          CITRINE_NO_PRELOAD: "1"
+          CITRINE_PRELOAD_PREFIX: "PR"
+          CITRINE_PRELOAD_SHARE: "none"
+          CITRINE_PKG: "citrine @ file://${{ github.workspace }}/citrine-python"
+        run: >-
+          uv run --with "$CITRINE_PKG"
+          pytest -v -rfexs -s -p no:warnings --tb=short --capture=sys --durations=15
+          -n "$(( $(getconf _NPROCESSORS_ONLN) / 2 ))"
+          --junitxml=results/TEST-e2e-aws.xml
+          tests/
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@5b7ee5a21e8674b695313d769f3cbdfd5d4d53a4 # v6.0.0
+        if: ${{ always() && steps.secrets.outputs.available == 'true' }}
+        with:
+          report_paths: "**/results/TEST-*.xml"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_failure: true
+          require_tests: true
+          fail_on_parse_error: true
+          annotate_only: true
+          include_passed: true

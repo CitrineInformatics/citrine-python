@@ -91,9 +91,10 @@ def test_process_template_equals():
 
     gemd_obj = GEMDProcessTemplate(name="My Name", tags=["tag!"])
     citrine_obj = CitrineProcessTemplate(name="My Name", tags=["tag!"])
-    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    built = CitrineProcessTemplate.build(gemd_obj.dump())
+    assert built == citrine_obj, "GEMD/Citrine equivalence"
     citrine_obj.name = "Something else"
-    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+    assert built != citrine_obj, "GEMD/Citrine detects difference"
 
 
 def test_material_template_equals():

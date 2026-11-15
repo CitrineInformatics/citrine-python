@@ -178,7 +178,7 @@ def test_cake():
     assert [ingred.labels for ingred in cake.process.ingredients] == [
         ingred.labels for ingred in gemd_cake.process.ingredients
     ]
-    assert gemd_cake == cake
+    assert MaterialRun.build(gemd_cake.dump()) == cake
 
     def _by_name(start: MaterialRun, names: Iterable[str]) -> MaterialRun | None:
         if isinstance(names, str):
