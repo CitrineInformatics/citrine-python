@@ -16,5 +16,4 @@ AI Engine
     data_sources
     predictor_reports
     predictor_evaluations
-    generative_design
     code_examples

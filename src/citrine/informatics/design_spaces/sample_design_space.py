@@ -1,18 +1,11 @@
-from citrine._serialization import properties
-from citrine._serialization.serializable import Serializable
+"""Design space sampling has been removed from the Citrine Platform.
 
+Importing a name from this module emits a DeprecationWarning.
+Using one of its classes raises :class:`~citrine.exceptions.FeatureRemovedError`.
+"""
 
-class SampleDesignSpaceInput(Serializable["SampleDesignSpaceInput"]):
-    """A Citrine Sample Design Space Execution Input.
+from citrine._utils import removed_features
 
-    Parameters
-    ----------
-    n_candidates: int
-        The number of non-correlated samples to draw from the design space domain.
-
-    """
-
-    n_candidates = properties.Integer("n_candidates")
-
-    def __init__(self, *, n_candidates: int):
-        self.n_candidates: int = n_candidates
+__getattr__ = removed_features.deprecated_names(
+    __name__, removed_features.SAMPLING_REMOVED, ["SampleDesignSpaceInput"]
+)
