@@ -1,4 +1,5 @@
 from citrine._serialization import properties
+from citrine._utils import removed_features as _removed_features
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
@@ -203,3 +204,8 @@ class HierarchicalDesignCandidate(Serializable["HierarchicalDesignCandidate"]):
     """:int: rank by score amongst other candidates produced by the design workflow"""
     material = properties.Object(HierarchicalDesignMaterial, "material")
     """:HierarchicalDesignMaterial: the material returned by the design workflow"""
+
+
+__getattr__ = _removed_features.deprecated_names(
+    __name__, _removed_features.SAMPLING_REMOVED, ["SampleSearchSpaceResultCandidate"]
+)

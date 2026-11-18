@@ -8,7 +8,7 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.exceptions import FeatureRemovedError
-from citrine.informatics.design_spaces.sample_design_space import SAMPLING_REMOVED
+from citrine._utils.removed_features import SAMPLING_REMOVED
 
 __all__ = ["TopLevelDesignSpace"]
 

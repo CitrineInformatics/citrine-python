@@ -1,12 +1,11 @@
-"""Design space sampling has been removed; this name remains so existing scripts fail clearly."""
+"""Design space sampling has been removed from the Citrine Platform.
 
-from citrine.exceptions import FeatureRemovedError
+Importing a name from this module emits a DeprecationWarning.
+Using one of its classes raises :class:`~citrine.exceptions.FeatureRemovedError`.
+"""
 
-SAMPLING_REMOVED = "Design space sampling has been removed from the Citrine Platform."
+from citrine._utils import removed_features
 
-
-class SampleDesignSpaceInput:
-    """Removed. Constructing one raises :class:`~citrine.exceptions.FeatureRemovedError`."""
-
-    def __init__(self, *args, **kwargs):
-        raise FeatureRemovedError(SAMPLING_REMOVED)
+__getattr__ = removed_features.deprecated_names(
+    __name__, removed_features.SAMPLING_REMOVED, ["SampleDesignSpaceInput"]
+)
