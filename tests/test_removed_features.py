@@ -58,11 +58,7 @@ REMOVED_IMPORTS = [
         "SampleDesignSpaceInput",
         SAMPLING_REMOVED,
     ),
-    (
-        "citrine.informatics.design_candidate",
-        "SampleSearchSpaceResultCandidate",
-        SAMPLING_REMOVED,
-    ),
+    ("citrine.informatics.design_candidate", "SampleSearchSpaceResultCandidate", SAMPLING_REMOVED),
     (
         "citrine.informatics.executions.sample_design_space_execution",
         "SampleDesignSpaceExecution",
