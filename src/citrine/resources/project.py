@@ -10,7 +10,7 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import FeatureRemovedError
-from citrine.informatics.generative_design import GENERATIVE_DESIGN_REMOVED
+from citrine._utils.removed_features import GENERATIVE_DESIGN_REMOVED
 from citrine.resources.branch import BranchCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
