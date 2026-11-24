@@ -65,7 +65,6 @@ class ProcessTemplate(
     parameters = Optional(List(_attr_tuple(GEMDParameterTemplate)), "parameters", override=True)
 
     allowed_labels = Optional(List(String()), "allowed_labels", override=True)
-    allowed_names = Optional(List(String()), "allowed_names", override=True)
 
     def __init__(
         self,
