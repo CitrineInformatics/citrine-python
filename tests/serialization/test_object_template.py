@@ -45,7 +45,6 @@ def test_object_template_serde():
         parameters=[index_template],
         conditions=[pressure_template],
         allowed_labels=["Label"],
-        allowed_names=["first sample", "second sample"],
     )
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
